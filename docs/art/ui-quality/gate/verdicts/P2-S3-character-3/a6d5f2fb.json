@@ -1,0 +1,39 @@
+[
+ {
+  "task_id": "P2-S3-character-3",
+  "sha": "a6d5f2fb37a9c8ece05887e6287eed3425beb649",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "advisory": true,
+  "at": "2026-11-16T11:56:00Z",
+  "item": "character at 200% text, pt_BR",
+  "quality": "Display type",
+  "samples": [
+   "fail",
+   "fail",
+   "pass",
+   "fail",
+   "fail",
+   "fail"
+  ],
+  "result": "fail",
+  "critique": "Split 2 to 1, so three more samples with 3x crops of each text rank: five fails of six. The subtitle 'Skyskipper · Carregador' and the level line 'Nível 3 de 10' sit straight on the starry backdrop with a dark edge down and right only, thinning to nothing on the top and left, so a drop stands in for the outline; and the flat gold HABILIDADE header differs from the stroked 'Subir de nível' header of the same rank. The 200 headline has the outline, hard drop and gradient. Character-2 passed this item at 6b7e6b42; check what changed on the backdrop labels since."
+ },
+ {
+  "task_id": "P2-S3-character-3",
+  "sha": "a6d5f2fb37a9c8ece05887e6287eed3425beb649",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "advisory": true,
+  "at": "2026-11-16T11:56:00Z",
+  "item": "character at 200% text, pt_BR",
+  "quality": "Hierarchy",
+  "samples": [
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "Three passes of three: the full-width gold Subir de nível card at the foot is the largest and heaviest light block and the eye lands on it first in grayscale; the dark selected Assalto tab pulls less than the anchor's gold tab; the HABILIDADE card holds information only and falls in behind (v3 ruling). Two samples note the HABILIDADE card is clipped by the Level up dock, a layout matter for another call."
+ }
+]

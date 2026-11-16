@@ -41,7 +41,7 @@ const GOAL_LINE_TIGHTER := 3.0
 ## The goal card's padding above and below its words at large text, in points
 ## (the kit's card keeps 8), and the gap between Collect and the goal there (6
 ## at 100%): the realms' chips keep two rows over the raid notice.
-const GOAL_PAD_LARGE := 4.0
+const GOAL_PAD_LARGE := 2.0
 const FOOT_GAP_LARGE := 3.0
 ## Collect's gold either side of its picture and words, in points together.
 const COLLECT_PAD := 16.0
@@ -51,6 +51,12 @@ const TAB_WORD_LEAST := 11.0
 ## The least share of its size strain's words take to keep the purse's fourth
 ## place at large text.
 const STRAIN_LEAST := 0.8
+## The side buttons' discs, and the gap down an edge between two (points).
+## Large text (§20.8) keeps the discs at the control size and closes the gap,
+## the realms' band keeping the height (board 3b's H).
+const SIDE_POINTS := 52.0
+const SIDE_GAP := 14.0
+const SIDE_GAP_LARGE := 2.0
 ## The gap between the purse's pills, in points, and the least it closes to
 ## (_fit_purse) before the row wraps.
 const PURSE_GAP := 6.0
@@ -94,10 +100,10 @@ var collect_button: Button
 var _top: Control
 ## The two edges of side buttons.
 var _edges: Array[Control] = []
-## At large text, the side buttons gave way because a realm's pin found no
-## room beside them; until the foot's room changes (the raid notice comes or
-## goes).
-var _edges_yield := false
+## At large text, how far the side buttons gave way because a realm's pin
+## found no room beside them: 0 not at all, 1 their columns (a row is left),
+## 2 the row too; until the foot's room changes (the raid notice comes or goes).
+var _edges_yield := 0
 var _foot: HFlowContainer
 ## Each side button's badge as last drawn, so a button is rebuilt only when
 ## its badge changes.
@@ -130,8 +136,9 @@ func _ready() -> void:
 		return
 	var column := UI.frame(self)
 	# Closer at large text (§20.8), where the world's room between the purse
-	# and the foot is what the realms' chips stand in.
-	column.add_theme_constant_override("separation", UI.px(4 if Settings.text_scale >= 150 else 6))
+	# and the foot is what the realms' chips and the left edge stand in
+	# (board 3b's H).
+	column.add_theme_constant_override("separation", UI.px(2 if Settings.text_scale >= 150 else 6))
 	world = UniverseView.behind(self, column)
 	world.next_chosen.connect(func() -> void: App.services.router.go(&"universe"))
 	world.realm_chosen.connect(_on_realm)
@@ -145,7 +152,14 @@ func _ready() -> void:
 	_edges = [_edge(LEFT), _edge(RIGHT)]
 	middle.add_child(_edges[0])
 	middle.add_child(_room())
-	middle.add_child(_edges[1])
+	if Settings.text_scale >= 150:
+		# Large text (§20.8): the right edge's two stand beside the keeper's
+		# plate, in the room strain leaves there for the purse, so the realms'
+		# band keeps the width a second column would take (board 3b's H).
+		_edges[1].size_flags_horizontal = Control.SIZE_EXPAND | Control.SIZE_SHRINK_END
+		column.get_child(0).add_child(_edges[1])
+	else:
+		middle.add_child(_edges[1])
 	column.add_child(middle)
 	column.pre_sort_children.connect(_fit_edges.bind(column, middle))
 	for edge: Control in _edges:
@@ -192,7 +206,7 @@ func _ready() -> void:
 	for c: Control in [goal_card, collect_button, notice]:
 		c.visibility_changed.connect(_frame_world, CONNECT_DEFERRED)
 	notice.visibility_changed.connect(func() -> void:
-		_edges_yield = false
+		_edges_yield = 0
 		column.queue_sort())
 	App.services.store.changed.connect(_on_changed)
 	show_keeper()
@@ -281,7 +295,7 @@ func _edge(which: Array) -> BoxContainer:
 	edge.vertical = true
 	edge.alignment = BoxContainer.ALIGNMENT_BEGIN
 	edge.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	edge.add_theme_constant_override("separation", UI.px(14))
+	edge.add_theme_constant_override("separation", UI.px(SIDE_GAP_LARGE if Settings.text_scale >= 150 else SIDE_GAP))
 	for s: Array in which:
 		var holder := CenterContainer.new()
 		holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -305,7 +319,7 @@ func _side(holder: CenterContainer, badge: String) -> void:
 	var s: Array = holder.get_meta("side")
 	var route: StringName = s[0]
 	var action := KitControls.round_action(s[1], Strings.t(s[2]), func() -> void: App.services.router.go(route), false,
-		52.0, badge, "sky")
+		UI.CONTROL_POINTS if Settings.text_scale >= 150 else SIDE_POINTS, badge, "sky")
 	# Large text (§20.8): the disc alone, its badge kept and its name still
 	# spoken; a word plate at 200% outgrows the edge and covers the islands.
 	if Settings.text_scale >= 150 and action.get_child_count() > 1:
@@ -337,8 +351,6 @@ func _build_tabs(badges: Dictionary) -> void:
 	for b: Button in tabs.buttons.values():
 		b.resized.connect(_fit_tab_words, CONNECT_DEFERRED)
 	tabs.resized.connect(_fit_tab_words, CONNECT_DEFERRED)
-	var lift := func() -> void: HomeParts.reserve_lift(tabs, column.get_theme_constant("separation"))
-	(chosen.find_child("Tile", true, false) as Control).item_rect_changed.connect(lift, CONNECT_DEFERRED)
 	_raise_heist()
 
 
@@ -452,9 +464,11 @@ func _process(_delta: float) -> void:
 ## the goal and Collect), every realm and pin clear of them (board 3's B).
 ## Collect and the goal always keep their place (A). The side buttons stand in
 ## columns where the room is tall enough, else side by side, discs alone at
-## large text (C); only where that row leaves the realms no room, or at large
-## text where a realm's pin finds none beside them, do they give way: each
-## place is on the badge's menu, and the raids on the notice.
+## large text (C), where the right edge's stand beside the keeper's plate and
+## only the left edge's take the realms' band (board 3b's H). Only where that
+## row leaves the realms no room, or at large text where a realm's pin finds
+## none beside them, do they give way: each place is on the badge's menu, and
+## the raids on the notice.
 func _fit_edges(column: VBoxContainer, middle: Control) -> void:
 	var frame := column.get_parent() as MarginContainer
 	var room := get_viewport_rect().size.y - frame.get_theme_constant("margin_top") \
@@ -468,6 +482,8 @@ func _fit_edges(column: VBoxContainer, middle: Control) -> void:
 	var tall := 0.0
 	var row := 0.0
 	for edge: Control in _edges:
+		if edge.get_parent() != middle:
+			continue
 		var column_tall := 0.0
 		for holder: Control in edge.get_children():
 			var h := holder.get_combined_minimum_size().y
@@ -475,9 +491,11 @@ func _fit_edges(column: VBoxContainer, middle: Control) -> void:
 			row = maxf(row, h)
 		tall = maxf(tall, column_tall - edge.get_theme_constant("separation"))
 	var band := room - need
-	var upright := tall <= band
-	var fits := not _edges_yield and (upright or row * 2.0 <= band)
+	var upright := _edges_yield == 0 and tall <= band
+	var fits := _edges_yield < 2 and (upright or row * 2.0 <= band)
 	for edge: Control in _edges:
+		if edge.get_parent() != middle:
+			continue
 		if edge.visible != fits:
 			edge.visible = fits
 		var box := edge as BoxContainer
@@ -492,7 +510,7 @@ func _frame_world() -> void:
 		if not (sides[route] as Control).is_visible_in_tree():
 			continue
 		# The button with what hangs off it: its badge past its rim, its plate.
-		var r := _reach(sides[route] as Control)
+		var r := HomeParts.reach(sides[route] as Control)
 		clear.append(Rect2(r.position - world.global_position, r.size))
 	# And of what floats over the foot: Collect or the goal, or the raid card.
 	for c: Control in [collect_button, goal_card, notice]:
@@ -500,17 +518,6 @@ func _frame_world() -> void:
 			var r := c.get_global_rect()
 			clear.append(Rect2(r.position - world.global_position, r.size))
 	world.keep_clear = clear
-
-
-## Where `c` and everything shown inside it reach on the screen: a side
-## button's badge stands past the button's own rect.
-static func _reach(c: Control) -> Rect2:
-	var r := c.get_global_rect()
-	for d: Node in c.find_children("*", "Control", true, false):
-		var k := d as Control
-		if k.is_visible_in_tree() and k.size.x > 0.0 and k.size.y > 0.0:
-			r = r.merge(k.get_global_rect())
-	return r
 
 
 ## The universe's floor: the top of the raid notice while it shows, else of the
@@ -598,11 +605,13 @@ func _fit_pins() -> void:
 			if pin != null and not pin.visible:
 				whole = false
 				break
-	if pins.short() and not _edges_yield and Settings.text_scale >= 150 and _edges[0].visible:
+	if pins.short() and _edges_yield < 2 and Settings.text_scale >= 150 and _edges[0].visible:
 		# Only where even the numbered chips find no place, laid each failing
 		# realm first, do the side buttons give way (AD's objection (g) on
-		# S2-R27): each place is on the badge's menu.
-		_edges_yield = true
+		# S2-R27): their columns first, for a row that leaves the realms the
+		# band's width (board 3b's H), then the row; each place is on the
+		# badge's menu.
+		_edges_yield = 1 if (_edges[0] as BoxContainer).vertical else 2
 		(_foot.get_parent() as Control).queue_sort()
 		return
 	if pins.visible != whole:

@@ -6,10 +6,17 @@ extends RefCounted
 
 
 ## The design's "Profile and stats" row under the account: the whole row
-## the one control.
+## the one control, on the parchment the Access tab's switch rows stand on,
+## so it sits value steps off the night as they do (board 5b's objection L).
+## The tap target covers the whole plate, edge to edge, as a switch row's
+## button does: a target inside the plate's margins would leave its edge a
+## dead ring, and a reader would see a plate whose rim does nothing.
 static func profile_row() -> PanelContainer:
-	var go := ScreenKit.text("›", 22.0, "words", "card", true)
-	var row := ScreenParts.item("screens", "character", Strings.t("PROFILE_TITLE"), "", go)
+	var go := ScreenKit.text("›", 22.0, "words", "parchment", true)
+	var plate := ScreenParts.item("screens", "character", Strings.t("PROFILE_TITLE"), "", go, "parchment")
+	var row := PanelContainer.new()
+	row.add_theme_stylebox_override("panel", StyleBoxEmpty.new())
+	row.add_child(plate)
 	ScreenParts.tap(row, func() -> void: App.services.router.go(&"profile"), Strings.t("PROFILE_TITLE"))
 	return row
 
