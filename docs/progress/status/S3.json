@@ -8,7 +8,7 @@
   "task_state": "working",
   "claimed_at": "2026-11-16T20:55:00Z",
   "lease_until": "2026-11-16T23:55:00Z",
-  "updated_at": "2026-11-16T21:22:00Z",
+  "updated_at": "2026-11-16T21:11:00Z",
   "expected_next_update_by": "2026-11-16T21:55:00Z",
   "long_run": null,
   "progress_marker": {
@@ -585,8 +585,8 @@
         "docs/art/shots/menu-screens/character-200-pt_BR-compare.png"
       ],
       "blocking": true,
-      "created_at": "2026-11-16T21:15:00Z",
-      "due": "2026-11-16T23:15:00Z",
+      "created_at": "2026-11-16T21:08:00Z",
+      "due": "2026-11-16T23:08:00Z",
       "default": "The outline and the stroke stand as fixed; S3 marks P2-S3-character-4 ready at the pre-checked sha with gate_request there, and AD's next round re-checks the stills on the merge",
       "escalate_to": "lead"
     },
@@ -600,8 +600,8 @@
         "client/scripts/character_screen.gd"
       ],
       "blocking": false,
-      "created_at": "2026-11-16T21:15:00Z",
-      "due": "2026-11-17T09:15:00Z",
+      "created_at": "2026-11-16T21:08:00Z",
+      "due": "2026-11-17T09:08:00Z",
       "default": "K1 takes it in P2-K1-grow-1 or a follow-up task the lead seeds; S3 leaves rb_box.gd alone and P2-S3-character-4 goes ready without it",
       "escalate_to": "lead"
     },
@@ -609,11 +609,11 @@
       "id": "S3-R33",
       "from": "S3",
       "to": "lead",
-      "ask": "Main on origin moved backward: at 21:18Z refs/heads/main is 2455f3b5 (lead cycle 41, 4 November 21:11Z), 1163 commits behind f083c96c (lead cycle 105, 16 November 20:47Z), which S3 merged at 20:55Z. 2455f3b5 is an ancestor of f083c96c and of claude/ui-screens-meta, so nothing of S3's is lost and merging main is a no-op. S3 pushed nothing to main and changes nothing there. Please check with the overseer whether the rewind was meant, and restore main if not; f083c96c is on claude/ui-screens-meta's history.",
+      "ask": "Main on origin moved backward: at 21:09Z refs/heads/main is 2455f3b5 (lead cycle 41, 4 November 21:11Z), 1163 commits behind f083c96c (lead cycle 105, 16 November 20:47Z), which S3 merged at 20:55Z. 2455f3b5 is an ancestor of f083c96c and of claude/ui-screens-meta, so nothing of S3's is lost and merging main is a no-op. S3 pushed nothing to main and changes nothing there. Please check with the overseer whether the rewind was meant, and restore main if not; f083c96c is on claude/ui-screens-meta's history.",
       "files": [],
       "blocking": false,
-      "created_at": "2026-11-16T21:22:00Z",
-      "due": "2026-11-16T23:22:00Z",
+      "created_at": "2026-11-16T21:10:00Z",
+      "due": "2026-11-16T23:10:00Z",
       "default": "S3 takes f083c96c as the main it last merged, runs the merge checks on its branch head, and marks P2-S3-character-4 ready there; the lead merges onto whatever main it restores",
       "escalate_to": "overseer"
     }

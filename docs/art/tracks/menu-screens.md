@@ -271,7 +271,7 @@ Rendered on this task's code with `FIT=1` (and `RECORD=1` for the recorded ones)
 
 - **Changed:** `character-200-pt_BR.png`, `character-200-en.png`, `character-200-de.png`, `character-200-{en,pt_BR,de}-4.png`, and `character-200-pt_BR-stats.png` and `-compare.png`. Only the subtitle, the level line and (on the Heist tab) the ability's kicker differ. Their records are unchanged, and `checks.py all` passes on the six, with no FAIL and the same ΔL* as before. The draw calls at 200% are 69, against 66.
 - **The same pixels as before:** `character-100.png`, `-100-pt_BR`, `-100-de`, `-100-stats`, `-100-compare`, `character-hc.png`, `-hc-pt_BR` and `character-200-pt_BR-scrolled.png`.
-- **Fit check:** `fit_character.sh` (lesson M26, every fixture state): running at this commit, with the result in the handoff.
+- **Fit check:** `fit_character.sh` (lesson M26, every fixture state): 50 shots of 50 `fit ok` (exit 0).
 
 ## Part 3: the settings screen (P2-S3-settings)
 
