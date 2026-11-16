@@ -438,7 +438,7 @@ Each still was shot with:
 
 The result table is in the handoff (`docs/progress/S1.md`).
 
-**Budgets.** `budget_shots.py --only heist/100,heist/200,heist/hc` reads 120, 118 and 121 draw calls, against records of 120, 116 and 120. The two calls are the law badges at large text and high contrast (+1, where at 100% the badge replaces the icon disc) and the crew's well (+1 at each size). A raise is asked of K1 through the lead (S1-R33). Tried first, with no gain:
+**Budgets.** `budget_shots.py --only heist/100,heist/200,heist/hc` reads 120, 118 and 121 draw calls, against records of 120, 116 and 120. The two calls are the law badges at large text and high contrast (+1, where at 100% the badge replaces the icon disc) and the crew's well (+1 at each size). A raise was asked through the lead (S1-R33), and the lead approved it in cycle 106 under M33: the lead writes 118 and 121 in this task's merge. Tried first, with no gain:
 
 - dropping the names' drop fill;
 - the figures as outlined live words (+11);
@@ -448,6 +448,6 @@ Textures and word contrast are unchanged. No word is below 4.5:1. `check_screens
 
 ### What is still worse
 
-- **The tray costs two draw calls over the record** until S1-R33 is answered. If it is refused, S1-R33's default applies: the well comes out, and the large-text badges go back to the kit's icon disc.
+- **The tray costs two draw calls over the old records** (heist/200 116 to 118, heist/hc 120 to 121), approved as S1-R33. Until the lead writes the new records in the merge, `guard.sh` fails on those two stills only.
 - **The bubble can rest on the tray** when the world has no room for it (200% text). It stays off every word and badge, but it covers the tray's empty right side.
 - **Long names at 200% text shrink** to fit their third of the row, on two lines. They fit, but they read smaller than the short names beside them.

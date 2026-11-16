@@ -8,12 +8,12 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-16T20:51:41Z",
   "lease_until": "2026-11-17T01:09:33Z",
-  "updated_at": "2026-11-16T22:09:33Z",
-  "expected_next_update_by": "2026-11-16T22:54:33Z",
+  "updated_at": "2026-11-16T22:14:45Z",
+  "expected_next_update_by": "2026-11-16T22:59:45Z",
   "progress_marker": {
     "last_green_sha": "8d2488cb5ff09f939c62cec641d6bb2a34bbc39b",
-    "next_step": "gate re-judge of the 200% still (display type, character presence), M26 sweep end, then merge main and full checks",
-    "at": "2026-11-16T22:09:33Z"
+    "next_step": "M26 sweep on the final tree, handoff, pre-check, gate request",
+    "at": "2026-11-16T22:14:45Z"
   },
   "precheck": {
     "sha": "8d2488cb5ff09f939c62cec641d6bb2a34bbc39b",
@@ -552,7 +552,14 @@
       "from": "AD",
       "at": "2026-11-15T23:58:00Z",
       "answer": "Objection F is met at 904a3567. A, B, D and E still hold, and the result may merge (M20). One note for board 4b, not an objection: at pt_BR 200% the first screen ends on the unfinished phrase 'Taxa de entrada de'. Keeping a label's lines together at the fold would read better, if it costs no draw call. Left for board 4b."
+    },
+    {
+      "request_id": "S1-R33",
+      "from": "lead",
+      "at": "2026-11-16T21:39:00Z",
+      "answer": "Approved under M33 (both calls close failed gate qualities). The lead writes heist/200 118 and heist/hc 121, with a raises entry, in the merge of heist-1.",
+      "where": "docs/progress/lead.md, Now, cycle 106"
     }
   ],
-  "next_step": "Gate re-run on the part 6 stills (ed766fe9): heist 100% and pt_BR pass, 200% passes all but display type 2/3 (the speech bubble over Bramble's count badge), fixed in ed766fe9 and being re-judged. M26 sweep at 200%: en and pt_BR all fit ok, de running. Then AD preview, merge main, full checks, gate request."
+  "next_step": "Main merged at 92527b7e: setup line and client/build.sh exit 0. M26 sweep of 33 states at 200% re-running alone on the final tree. Then the handoff, the pre-check on its commit, guard and check_screens, and the gate request."
 }
