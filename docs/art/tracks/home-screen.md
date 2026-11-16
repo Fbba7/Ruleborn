@@ -385,6 +385,24 @@ Guard fails on home/200 alone, 2 over its record and 29 under the cap of 150; th
 - **At 200% in German with the raid notice up, the notice still drops its red disc** (Part 3). The alarm glyph on the tag stays.
 - **At large text the right edge's discs are in the top row, not in a column beside the band**, where both 200% key frames draw them. The key frames keep one row of the purse where strain sits beside it; home's purse takes two rows in every language at large text (Part 3, C). Both edges in the band leave the realms no room with the notice up, so AD may weigh the place on the board.
 
+## Part 5: the purse's counts in the kit's display type (P2-S2-home-5)
+
+The gate's last verdict on home at 100% (`verdicts/P2-S2-home-1/977edd5b.json`) failed Display type: the purse's counts read as flat cream. This task first asked the gate to re-run 'home at 100% text' and 'home in high contrast' on current main (`f083c96c`), to learn whether that fail still stands.
+
+**Does the fail still stand?** VERDICT_PENDING
+
+**Why the counts read flat.** The counts and the keeper's name were drawn in the kit's small display role (`display_s`) through the theme, which draws the role's 2-point ink outline and its 1.5-point drop with no outline of its own. The outline covers the drop, so no drop shows. On the purse's near-black plates, the ink outline does not show either, so the counts read as plain cream type.
+
+**What changed.**
+
+- **The counts are in the kit's baked numerals** (kit-spec.md section 2.2, T3, as K23's Currency pill specifies): a gradient fill, a thick ink stroke and a hard drop, from `num_white` on `kit_3.webp`. `HomeParts.figures` builds them with `KitNumerals.make` in a row that takes the amount label's place. The words after the figures ("k", " mil", " Tsd.") stay live type beside them. The hidden label keeps its words, so a screen reader and the purse's fit still read them. The renown ("1,460", K23) and the strain card's share ("82%") take the same figures, through `Home.home_figure`.
+  - **They are baked only where the purse's row fits them at full size** (`Home._fit_amounts`, `HomeParts.amounts_over`). The baked figures have fixed advances and run about a fifth wider than the live face. Where the row does not fit them at full size, the amounts stay live type, which may shrink to 85% as before. At 100% this bakes them in English. In German and Portuguese ("142,0 Tsd.", "142,0 mil") and at 150% and 200% in every language, the amounts stay live. Baking them there broke the purse into three rows at 200% in pt_BR and hid two side buttons.
+  - **Their size** is 90% of the role's line (`FIGURE_LINE`), foot on the line's foot. At the full line the figures stood taller and higher than the live "k" beside them. At this share their bodies match the live face and stand on its baseline.
+- **The keeper's name and every live word in home's figures take a heavier T2** (`HomeParts.inked`): the ink outline is half again as thick as the role's, and the drop is the glyph with that outline, set down by the role's drop half again. This is how `character_screen.gd` draws its upgrade title. The drop now shows under the stroke.
+- **Full hangs a little higher at 100%** (`HomeParts.FULL_LIFT`, 8 points beyond half its plate). The baked figures' tops stand higher than the live type's did, and the tag covered the top of the third pill's "0".
+
+**Evidence.** EVIDENCE_PENDING
+
 ## Left for other tasks
 
 These widgets are no longer used by home, but they are outside this task's files:
