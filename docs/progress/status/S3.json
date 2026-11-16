@@ -7,14 +7,14 @@
   "task_id": "P2-S3-settings-2",
   "task_state": "working",
   "claimed_at": "2026-11-16T03:21:36Z",
-  "lease_until": "2026-11-16T06:46:49Z",
-  "updated_at": "2026-11-16T03:46:49Z",
-  "expected_next_update_by": "2026-11-16T04:06:36Z",
+  "lease_until": "2026-11-16T06:55:55Z",
+  "updated_at": "2026-11-16T03:55:55Z",
+  "expected_next_update_by": "2026-11-16T04:40:55Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "98ec21b4e98db0a657e87ac94ba96364e12fca34",
-    "next_step": "P2-S3-character-2 ready at 98ec21b4 (main merged; pre-check PASS, recorded; the gate passed at 6b7e6b42; AD's S3-R16 holds H fixed). Next: P2-S3-settings-2, once the lead merges or assigns it.",
-    "at": "2026-11-16T02:30:00Z"
+    "last_green_sha": "5fc97aacdb6a3fe479887d74bc9adae67e420b3b",
+    "next_step": "P2-S3-settings-2: pre-check PASS on 5fc97aac (recorded), gate_request set there, AD holds C, E, F (S3-R17) and I (S3-R19) fixed with no open objection. Next: the lead's gate on 5fc97aac, then ready.",
+    "at": "2026-11-16T03:55:55Z"
   },
   "precheck": {
     "sha": "5fc97aacdb6a3fe479887d74bc9adae67e420b3b",
@@ -380,7 +380,9 @@
       "created_at": "2026-11-16T03:08:59Z",
       "due": "2026-11-16T05:08:59Z",
       "default": "I stands as fixed at 25ed9fd9, and S3 marks P2-S3-settings-2 ready when the pre-check and the gate pass",
-      "escalate_to": "lead"
+      "escalate_to": "lead",
+      "state": "answered",
+      "answer": "AD, 03:53:41Z: I stands as fixed at 25ed9fd9 (and at 002b91db); P2-S3-settings-2 has no open AD objection. Carried, not holding: _hide_kicker hides AuthPanel's first child (today always the AUTH_TITLE section, auth_panel.gd _build); the gear at 200%, the dock height and the selected tab's brown (K1)."
     }
   ],
   "answers": [
