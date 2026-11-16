@@ -22,6 +22,11 @@ same findings answer S2-R18 (the preview of home part 2).
 A's core, B, C at 100% and D are fixed. One objection, H, is open. See
 ["Round 2 (board 3b)"](#round-2-board-3b) at the end.
 
+**Round 3 (board 3c, 16 November 2026): the board stands.** H is fixed:
+at 200% the side buttons and the realm chips show in every case, with and
+without the notice, and every render prints "fit ok". See
+["Round 3 (board 3c)"](#round-3-board-3c).
+
 ## How to read it
 
 - **Golden reference.** The home key frames that AD approved in place of
@@ -486,3 +491,68 @@ tall, all without the notice.
 So S2's default holds. S2 sends the gate request at the pre-checked
 commit. Board 3c re-checks H once P2-K1-tabs-3 and P2-S2-home-4 are both
 merged.
+
+## Round 3 (board 3c)
+
+Posted by AD, P2-AD-board-3c, 16 November 2026, on the integration branch
+at `837835c3`, with P2-K1-tabs-3 (`1053266f`) and P2-S2-home-4
+(`5803122d`) merged. The head at posting, `2e93d4a3`, changes nothing
+under `client/`. As M12 asks, only H is re-checked, in the cases that
+"When the board stands" names, each beside key frame 01 at 200% text.
+
+AD rendered home at 200% with `FIT=1` in pt_BR, pt_PT, French, English
+and German, with and without the notice, and in English at 900 tall with
+and without the notice. AD added high-contrast pt_BR at 200% and English
+at 100% as a check that nothing else moved. **All 14 renders print "fit
+ok".**
+
+**Round 3 decision: board 3 stands.** H is fixed. The space that home
+held over the tab bar (`HomeParts.reserve_lift`) is gone: the goal card
+now ends just above the bar's gold edge. In every 200% case the four side
+buttons show as whole discs: Defence and Lab in the left column, Season
+and Shop at the top right (the place trade accepted in the preview of
+home-4). All seven realms show as numbered chips, none cut by the frame
+or covered. That meets the condition in "When the board stands". With
+A to D fixed in round 2, no objection is open on board 3.
+
+| ID | Round 2 | Round 3 |
+|----|---------|---------|
+| H | At 200% home holds about 68 px over the tab bar, so the side buttons go in pt_BR, pt_PT, French and every notice case, and the chips go in four notice cases. | **Fixed.** The side buttons and the realm chips show in all twelve cases named, and FIT prints "fit ok" for each. The chosen tab no longer rises at large text (`kit_tabs.gd`, `lifts()`), and home gives the height to the realms' band. |
+
+From left: key frame at 200% pt_BR, then the build without the notice in
+pt_BR, pt_PT and French.
+
+![200% without the notice: key frame, pt_BR, pt_PT, fr](board-3/r7-home-200-pt.png)
+
+With the notice, from left: English, German, pt_BR, pt_PT, French, and
+English at 900 tall.
+
+![200% with the notice: en, de, pt_BR, pt_PT, fr, en 900 tall](board-3/r7-home-notice-200.png)
+
+From left: key frame at 200%, then English, German, English at 900 tall,
+and high-contrast pt_BR, all without the notice.
+
+![200%: key frame, en, de, en 900 tall, hc pt_BR](board-3/r7-home-200.png)
+
+### Notes, not holding
+
+- The chosen tab's tile (Islands) still stands a little proud of the
+  bar's gold edge in home: its rim's top is about 7 px (5 pt) above the
+  edge in every 200% case, and the rest of the tile sits inside the bar.
+  It clears the goal card in every case, high contrast included. The
+  cause is home's raised Heist tab: the bar's inset is set from the
+  tallest tab, so the gold edge sits lower than the chosen tile's top.
+  In the key frame the tile sits wholly inside the plate. This is light
+  and does not cost any content, so it is K1's to weigh with the Heist
+  capsule note at the next kit pass. It is not a new objection (M23).
+- Home-4's advisory verdict at `1697a6c6`: hierarchy passes 3 of 3, and
+  display type passes on a split (3 of 6 fail). The judges read the
+  currency counts as flat cream and ask for a clearer hard drop. That is
+  advice only (display type is owner-checked), and AD reads the counts
+  as finished at phone size. A later pass can weigh it.
+- The notes carried from round 2 and the preview still stand: the
+  fixture has no notifications, no shield and no locked realm, so the
+  dock's badges, the Defence timer and Lantern Vale's lock are unchecked;
+  the Heist capsule against the key frame's gold disc; the companion's
+  yaw; the strain mark's cyan dot; Collect's shine; and the tight chips
+  over the world art with the notice up at 200%.
