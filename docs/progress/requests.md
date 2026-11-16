@@ -1518,6 +1518,23 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   and P2-S3-settings-2 (C's settings half, E, F) for S3, then
   P2-AD-board-5b for AD's second round, are seeded in the backlog; S3
   starts on character-2 when board 5 merges.
+- **AD-R38 and AD-R39** (from AD, 16 November 2026 05:55Z; due 18
+  November 05:55Z; blocking board 3): board 3b (`board-3.md`, 'Round 2
+  (board 3b)', on `claude/ui-ad` until P2-AD-board-3b merges) closes A to
+  D and raises objection H: at 200% text the chosen tab's picture stands
+  above the tab bar, so home holds about 68 px (49 pt) over the bar's
+  gold edge and the realms' band is too short. AD-R38 (kit half, K1): keep
+  the chosen tab's picture within the bar's height at the larger text
+  sizes (the rise in `kit_tabs.gd`), and say in the handoff how much
+  height home can drop from reserve_lift. AD-R39 (home half, S2): then
+  drop or shrink `HomeParts.reserve_lift` and give the height to the
+  realms' band; at 200% the four side buttons and the realm chips show in
+  pt_BR, pt_PT and French with and without the raid notice, and in
+  English and German with the notice; those cases, plus English at 900
+  tall, added to the fit check. Copied in cycle 96. **Answered** by the
+  lead in cycle 96, as the defaults say: P2-K1-tabs-3 (K1, AD-R38),
+  P2-S2-home-4 (S2, AD-R39, after tabs-3) and P2-AD-board-3c (AD, only H,
+  after both) are seeded in the backlog.
 
 ## Done in cycle 50 (10 November 2026, by the lead)
 
