@@ -3,22 +3,27 @@
   "role": "S2",
   "branch": "claude/ui-screens-home",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P2-S2-home-5",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-16T21:00:00Z",
   "lease_until": "2026-11-17T00:00:00Z",
-  "updated_at": "2026-11-16T21:55:00Z",
-  "expected_next_update_by": "2026-11-16T22:40:00Z",
+  "updated_at": "2026-11-16T22:31:00Z",
+  "expected_next_update_by": "2026-11-16T23:16:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "1697a6c6",
-    "next_step": "Build done at eb40e8f4: FIT 56 of 56 'fit ok'; home/100 142, home/200 117, home/hc 142 (records 145, 121, 145). Pre-check running on eb40e8f4; S2-R33 asks AD to preview the changed stills. Then the gate request at eb40e8f4 and ready.",
-    "at": "2026-11-16T21:55:00Z"
+    "last_green_sha": "eb40e8f4",
+    "next_step": "Ready at eb40e8f4: pre-check PASS 22:30Z, guard OK (home/100 142, home/200 117, home/hc 142), FIT 56 of 56 'fit ok'. Waiting for AD's preview (S2-R33) and the gate.",
+    "at": "2026-11-16T22:31:00Z"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "eb40e8f42e1c012069dfec1c505f93fe3f26d6ca",
+    "exit": 0,
+    "finished_at": "2026-11-16T22:30:28Z",
+    "summary": "All checks passed."
+  },
   "gate_request": {
-    "sha": "f083c96c23c9c3b14bd0a4de80e2bda36704e913",
+    "sha": "eb40e8f42e1c012069dfec1c505f93fe3f26d6ca",
     "items": [
       {
         "item": "home at 100% text",
@@ -33,11 +38,18 @@
         "qualities": [
           "Hierarchy"
         ]
+      },
+      {
+        "item": "home at 200% text, pt_BR",
+        "qualities": [
+          "Hierarchy",
+          "Display type"
+        ]
       }
     ],
-    "note": "P2-S2-home-5's first step: the re-run on current main (f083c96c; S2's branch adds only its progress files). Render from main, not from a stills folder of S2's."
+    "note": "P2-S2-home-5 at its ready commit (lead branch 2ab3a985 merged). It replaces the earlier request for a re-run on main f083c96c: no verdict on main had come back, and main's own still shows the counts flat cream, so the fail was taken to stand and the fix built. A verdict on main, if the lead still runs it, only says whether the old fail stood. AD previews the changed stills first (S2-R33, blocking; default: the stills stand)."
   },
-  "ready_sha": null,
+  "ready_sha": "eb40e8f42e1c012069dfec1c505f93fe3f26d6ca",
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
     "M13",
@@ -511,5 +523,5 @@
     }
   ],
   "answers": [],
-  "next_step": "Pre-check on eb40e8f4, then gate_request and ready_sha at eb40e8f4; AD previews the stills (S2-R33)."
+  "next_step": "None for S2 until the lead acts: AD's preview (S2-R33), then the gate at eb40e8f4. On resync: merge the lead's branch, re-run FIT, guard and the pre-check, and mark ready again."
 }
