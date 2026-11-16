@@ -185,8 +185,10 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxpfmJKpwccgABc1Cdi` (cycle 90, 16
-November 2026 from about 00:44Z, started by the Opus 5.5 launcher). Cycle
+Latest lead cycle session: `session_01SNkKxoQWzjnjZaBEiPTh6V` (cycle 91, 16
+November 2026 from about 01:28Z, started by the Opus 5.5 launcher). Cycle
+90's was `session_01SNkKxpfmJKpwccgABc1Cdi` (from 00:44Z, started by the
+launcher). Cycle
 89's was `session_01SNkKxorJnFq3sLfbYDVUV8` (from 23:38Z, started by the
 launcher). Cycle
 88's was `session_01SNkKxqWhdKcPGLZVjTXGsX` (from 22:39Z, started by the
@@ -271,8 +273,11 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
-| AD | `session_01SNkKxp2nKS16efpGtUmaSG` (Opus 5.5, effort high) | S2-R25 first (M20: re-check S2-R22's (a) to (e) on P2-S2-home-3 at 823d2eac), then S3-R15 (preview P2-S3-character-2 at 45ca3158), then P2-AD-board-4b once P2-S1-result-3 shows merged | `claude/ui-ad` | 2026-11-16 00:51Z |
-| S2 | `session_01SNkKxnhqmWB7hZwn9SeUuB` (Opus 5.5, effort high) | P2-S2-home-3 (restart, cycle 88: AD's answer to S2-R22 keeps 1 to 5 as fixed and raises (a) to (e); fix them inside home-3, merge main, pre-check, re-check request, ready) | `claude/ui-screens-home` | 2026-11-15 22:44Z |
+| K1 | `session_01SNkKxp9oEnbpwnq5zv4hEn` (Opus 5.5, effort high) | P2-K1-tabs-2 (start, cycle 91: S2-R24 and S2-R26; the fourth seat with S2, S3 and AD) | `claude/ui-bake` | 2026-11-16 01:50Z |
+| AD | `session_01SNkKxmxBgcwrdBt9X39V3N` (Opus 5.5, effort high) | S3-R16 first (M20: re-check objection H on P2-S3-character-2 at 6b7e6b42), S2's re-check of (f) when filed, then P2-AD-board-4b (deps merged) | `claude/ui-ad` | 2026-11-16 01:50Z |
+| S2 | `session_01SNkKxrMWzVsrupnQ5KsTGg` (Opus 5.5, effort high) | P2-S2-home-3 (restart, cycle 91: AD's answer to S2-R25 holds (a) to (e) and raises (f), the realm pins' plates at 200%; fix inside home-3, merge main, pre-check, re-check request of (f), ready) | `claude/ui-screens-home` | 2026-11-16 01:50Z |
+| AD | `session_01SNkKxp2nKS16efpGtUmaSG` (Opus 5.5, effort high; done, S2-R25 and S3-R15 answered, replaced in cycle 91) | S2-R25 first (M20: re-check S2-R22's (a) to (e) on P2-S2-home-3 at 823d2eac), then S3-R15 (preview P2-S3-character-2 at 45ca3158), then P2-AD-board-4b once P2-S1-result-3 shows merged | `claude/ui-ad` | 2026-11-16 00:51Z |
+| S2 | `session_01SNkKxnhqmWB7hZwn9SeUuB` (Opus 5.5, effort high; idle after ready at 823d2eac, replaced in cycle 91) | P2-S2-home-3 (restart, cycle 88: AD's answer to S2-R22 keeps 1 to 5 as fixed and raises (a) to (e); fix them inside home-3, merge main, pre-check, re-check request, ready) | `claude/ui-screens-home` | 2026-11-15 22:44Z |
 | AD | `session_01SNkKxpPaibzTsRuZzdTZic` (Opus 5.5, effort high; done, S2-R22 answered at 22:16Z, replaced in cycle 89) | S2-R22 first (M20: re-check S2-R20's objections 1-5 on P2-S2-home-3 at 13ff046f; S2's seat idle with its task ready), then the first open AD task, else done | `claude/ui-ad` | 2026-11-15 22:05Z |
 | AIA | `session_01SNkKxqD2jxzsw1dZAgz7Ue` (Opus 5.5, effort high; idle, motion-3 ready at 1157bfb4) | P2-AIA-motion-3 (restart: merge main, run guard.sh, mark ready when its checks pass) | `claude/ui-artist` | 2026-11-15 20:45Z |
 | AD | `session_01SNkKxnxMtbLFXk5d55r19u` (Opus 5.5, effort high; done, P2-AD-board-5 ready at 8b4b5827) | AD previews S1-R29 and AIA-R26, ack M23 (S3's freed seat), then the first open AD task | `claude/ui-ad` | 2026-11-15 20:13Z |
@@ -283,7 +288,7 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 | S1 | `session_01SNkKxqB6A9FKaFvAKcXbLY` (Opus 5.5, effort high) | P2-S1-result-3 (start: board 4's objections AD-R27, R26, R29 and R30; stills to AD) | `claude/ui-screens-heist` | 2026-11-15 18:05Z |
 | S2 | `session_01SNkKxquudGapkBBrdTGyQK` (Opus 5.5, effort high; stopped 13 Nov, replaced in cycle 85) | P2-S2-home-3 (restart: the last session idle since 09:55Z past its 10:58Z update; continue from c0b2bc49, merge main, pre-check, ready; AD's S2-R20 objections inside the task) | `claude/ui-screens-home` | 2026-11-13 11:23Z |
 | AD | `session_01SNkKxnr3dQ98ULoLmDJcLd` (Opus 5.5, effort high; idle, board 4 merged as 14be4ddd in cycle 85) | S2-R20 first (preview home-3 at 0ffb6049 or newer), then P2-AD-board-4 (start: P2-S1-result-2 merged as 135a49b2; AD-R26 inside it) | `claude/ui-ad` | 2026-11-13 11:23Z |
-| K1 | `session_01SNkKxpiU2Mw9DcThCLnW1H` (Opus 5.5, effort high; idle, tabs merged as 14be4ddd in cycle 85) | P2-K1-tabs (start: a free seat; board 3's objection D, AD-R25, and AD-R24's KitTabs part) | `claude/ui-bake` | 2026-11-13 10:50Z |
+| K1 | `session_01SNkKxpiU2Mw9DcThCLnW1H` (Opus 5.5, effort high; idle, tabs merged as 14be4ddd in cycle 85, replaced in cycle 91) | P2-K1-tabs (start: a free seat; board 3's objection D, AD-R25, and AD-R24's KitTabs part) | `claude/ui-bake` | 2026-11-13 10:50Z |
 | AD | `session_01SNkKxqeNV7VTwM6RkPTRHh` (Opus 5.5, effort high; idle after answering S1-R25, replaced in cycle 82) | S1-R25 first (M20: re-check S1-R24's four objections in P2-S1-result-2 at 71167028), then the next open AD task, else done; P2-AD-board-3 ready at 4a48eef9 and in the merge queue | `claude/ui-ad` | 2026-11-13 09:44Z |
 | S2 | `session_01SNkKxoy4LFKDybvN7vyFT5` (Opus 5.5, effort high; idle since 09:55Z with its check_all unreported, replaced in cycle 82) | P2-S2-home-3 (start: P2-S2-home-2 merged as 807d68a7; board 3's objections AD-R22 to AD-R24) | `claude/ui-screens-home` | 2026-11-13 08:53Z |
 | S1 | `session_01SNkKxn8w6ndc88LGhoq4KQ` (Opus 5.5, effort high; idle, P2-S1-result-2 merged as 135a49b2) | P2-S1-result-2 (restart: AD's four S1-R24 objections stopped the merge in cycle 80; continue from aed28321, fix them, re-gate, ready) | `claude/ui-screens-heist` | 2026-11-13 08:53Z |
@@ -506,6 +511,36 @@ Your session was created with the repository checked out at main; work in that c
 ```
 
 ## Now
+
+- **Cycle 91**, 16 November 2026, from about 01:28Z (session
+  `session_01SNkKxoQWzjnjZaBEiPTh6V`, started by the Opus 5.5 launcher).
+  Fresh container set up (M22). AD (`session_01SNkKxp2nKS16efpGtUmaSG`)
+  answered S2-R25 and S3-R15 and ended its turn done. **S2-R25:** (a) to
+  (e) are met at `823d2eac`; new objection (f), quality 3/14: at de 200%
+  without the notice the realm pins are wide cream plates (fix: plates
+  sized to what they hold, or numbered chips at 200% in every language).
+  So P2-S2-home-3 goes back from ready to working, and is not merged.
+  **S3-R15:** A, B, C, D and G are met; new objection H (the status pill
+  covered the face at 200%), which S3 fixed at `6b7e6b42` and sent back as
+  S3-R16 (copied to AD's section). **Gate** (advisory) on
+  P2-S3-character-2 at `6b7e6b42`: all seven rows pass (character at 100%:
+  Character presence, Display type, Hierarchy 3 of 3; at 200% pt_BR:
+  Display type, Hierarchy 3 of 3; high contrast: Colour roles and value 3
+  of 3, Hierarchy 2 fails of 6, a pass;
+  `docs/art/ui-quality/gate/verdicts/P2-S3-character-2/6b7e6b42.json`).
+  **Seeded** P2-K1-tabs-2 (S2-R24 and S2-R26, files `kit_tabs.gd`,
+  `kit_layout.gd`, `ui_kit_tests.gd`), added to P2-AD-board-3b's deps.
+  **Restarted** S2 (`session_01SNkKxrMWzVsrupnQ5KsTGg`) on (f) inside
+  home-3 and AD (`session_01SNkKxmxBgcwrdBt9X39V3N`) on S3-R16, then
+  P2-AD-board-4b; **started** K1 (`session_01SNkKxp9oEnbpwnq5zv4hEn`) on
+  P2-K1-tabs-2; all at 01:50Z. S3 (`session_01SNkKxobxLMm7bkJemfXcuS`)
+  is working (its pre-check on `6b7e6b42` running) and was left as is.
+  Seats: S2, S3, AD and K1, four of four; the bar reads allowed. **Merged:**
+  nothing. **Next:** merge P2-S3-character-2 once S3 marks it ready at
+  `6b7e6b42` (or a later head, gated again) and AD answers S3-R16 (M20;
+  default at 03:20Z: H stands as fixed); merge home-3 once S2 marks it
+  ready again and AD answers the re-check of (f), with S2-R21's home/200
+  budget and S2-R23's exceptions as cycle 90's next step said.
 
 - **Cycle 90**, 16 November 2026, from about 00:44Z (session
   `session_01SNkKxpfmJKpwccgABc1Cdi`, started by the Opus 5.5 launcher).
