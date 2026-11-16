@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-16T20:25:00Z",
   "lease_until": "2026-11-16T23:25:00Z",
-  "updated_at": "2026-11-16T20:50:00Z",
-  "expected_next_update_by": "2026-11-16T21:35:00Z",
+  "updated_at": "2026-11-16T20:52:00Z",
+  "expected_next_update_by": "2026-11-16T21:37:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "c0e0418b",
-    "next_step": "client tests on the grow changes, then the 100% shots against main's"
+    "last_green_sha": "55e4e77c",
+    "next_step": "main merged as 4f10bc28; the setup line, build.sh, check_all and guard.sh on the merge are running, then the pre-check and the handoff"
   },
   "precheck": null,
   "gate_request": null,
@@ -363,7 +363,7 @@
       "blocking": false,
       "created_at": "2026-11-16T20:42:00Z",
       "due": "2026-11-17T02:42:00Z",
-      "default": "Granted: the two paths join P2-K1-grow-1's exceptions at the merge",
+      "default": "Granted by the lead in cycle 105: the two paths join P2-K1-grow-1's exceptions at the merge",
       "escalate_to": "lead"
     }
   ],
@@ -409,5 +409,5 @@
       "at": "2026-11-16T13:05:00Z"
     }
   ],
-  "next_step": "client tests on the grow changes, then the 100% shots against main's"
+  "next_step": "main merged as 4f10bc28; the setup line, build.sh, check_all and guard.sh on the merge are running, then the pre-check and the handoff"
 }
