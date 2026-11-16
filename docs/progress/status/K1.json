@@ -5,15 +5,15 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P2-K1-guard-prereq",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-16T18:00:00Z",
   "lease_until": "2026-11-16T21:00:00Z",
-  "updated_at": "2026-11-16T18:00:00Z",
-  "expected_next_update_by": "2026-11-16T18:45:00Z",
+  "updated_at": "2026-11-16T18:15:00Z",
+  "expected_next_update_by": "2026-11-16T19:00:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "a81435a9",
-    "next_step": "add the prerequisite check to tools/ui_bake/guard.sh, with its self-test"
+    "next_step": "prereq check written; waiting for client/build.sh, then --self-test, the full guard and the pre-check"
   },
   "precheck": null,
   "gate_request": null,
