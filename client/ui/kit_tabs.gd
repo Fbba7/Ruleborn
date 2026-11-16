@@ -56,6 +56,10 @@ var _plain: Dictionary = {}
 var _glows: Dictionary = {}
 var _tiles: Dictionary = {}
 var _heads: Dictionary = {}
+## Each tab's height as `_stand` last set it, and a height a screen set
+## since, kept as the tab's floor until a tab is chosen.
+var _stood: Dictionary = {}
+var _floors: Dictionary = {}
 var _bar: RbBox
 
 
@@ -193,6 +197,7 @@ func face(id: String, picture: Texture2D) -> void:
 ## Chooses a tab: it rises, widens and lights; the others settle.
 func choose(id: String, animate := true) -> void:
 	active = id
+	_floors.clear()
 	if is_inside_tree():
 		_fit.call_deferred()
 	for k: String in buttons:
@@ -234,14 +239,14 @@ func choose(id: String, animate := true) -> void:
 		var faced := on and _faces.has(k)
 		icon.texture = (_faces[k] if faced else _plain[k]) as Texture2D
 		icon.custom_minimum_size = Vector2.ONE * UI.px(FACE if faced else (ICON if on else 36.0))
-		icon.offset_bottom = -float(UI.px(5.0 if on else 3.0))
+		icon.offset_bottom = -rest(on)
 		if _bobs.has(k):
 			(_bobs[k] as Tween).kill()
 			_bobs.erase(k)
 		if on and animate:
 			Motion.pop(icon)
 		if on and is_inside_tree():
-			var bob := Motion.bob(icon, 2.0)
+			var bob := Motion.bob(icon, BOB)
 			if bob != null:
 				_bobs[k] = bob
 		if _glows.has(k):
@@ -273,6 +278,15 @@ func _stand() -> void:
 		var label: Label = _labels[k]
 		var icon: TextureRect = _icons[k]
 		var base := float(UI.px(Tokens.number("size", "tab_height") + (RISE if on else 0.0)))
+		# A screen that set a tab's height since (home raises its Heist) keeps
+		# it raised, its tile taller by as much; the gold edge stays at the
+		# plain tabs' top. Set lower than the tab last stood counts too: the
+		# tab stood taller only while its name showed.
+		if _stood.has(k) and absf(b.custom_minimum_size.y - float(_stood[k])) > 0.5:
+			_floors[k] = b.custom_minimum_size.y
+		var raised := _floors.has(k) and float(_floors[k]) > base + 0.5
+		if raised:
+			base = float(_floors[k])
 		var rim := float(UI.px(RIM))
 		var foot := float(UI.px(FOOT))
 		# The name's height as shown, and as it is at 100% text.
@@ -281,7 +295,8 @@ func _stand() -> void:
 		var at_100 := words - font.get_height(label.get_theme_font_size("font_size")) + font.get_height(
 			UI.px(15.0 if on else 13.0))
 		var tile := base - foot - at_100 - rim
-		var picture := icon.custom_minimum_size.y - icon.offset_bottom + (UI.PX_PER_POINT * BOB if on else 0.0)
+		# Where it rests (its bob moves it up from there and back), and its bob.
+		var picture := icon.custom_minimum_size.y + rest(on) + (UI.PX_PER_POINT * BOB if on else 0.0)
 		var head := maxf(0.0, ceilf(picture - tile))
 		var shown := words + rim if label.visible else 0.0
 		var h := maxf(base, ceilf(foot + shown + tile + head))
@@ -291,11 +306,18 @@ func _stand() -> void:
 		if head > rim:
 			(_heads[k] as Control).custom_minimum_size.y = head - rim
 		b.custom_minimum_size.y = h
+		_stood[k] = h
 		tallest = maxf(tallest, h)
-		if not on:
+		if not on and not raised:
 			plain = maxf(plain, h)
 	if _bar != null and plain > 0.0:
 		_bar.inset_top = tallest - plain
+
+
+## How far a tab's picture rests above its tile's foot, in pixels: the
+## chosen tab's or a tab not chosen.
+static func rest(on: bool) -> float:
+	return float(UI.px(5.0 if on else 3.0))
 
 
 ## Tab `k`'s tile width in pixels: the chosen tile's or the Heist's, inside

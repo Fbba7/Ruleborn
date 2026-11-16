@@ -45,12 +45,14 @@ static func tap_once(tree: SceneTree, check: Callable) -> void:
 static func say(check: Callable, found: Array) -> void:
 	check.call("the chosen tab's picture, at the top of its bob, stands inside its tab and the bar's rect, so the bar "
 			+ "takes the height it draws, at 100%, 150% and 200% text in English, German and Portuguese; the bar's "
-			+ "gold edge stays at the plain tabs' top, and at 100% the chosen tile still rises RISE above it "
+			+ "gold edge stays at the plain tabs' top, and at 100% the chosen tile still rises RISE above it; a tab "
+			+ "a screen raises (home's Heist) stays raised, the gold edge where it was, until a tab is chosen "
 			+ "(S2-R24)", found.is_empty(), "; ".join(found))
 
 
 ## Where tab bar `tabs` draws its chosen tab's picture against its rects
-## (S2-R24), named `said`; at 100% text (`full`) the chosen tile's rise too.
+## (S2-R24), named `said`; at 100% text (`full`) the chosen tile's rise too,
+## and a Heist raised by the screen, as home raises it, kept raised.
 static func heads(tabs: KitTabs, said: String, full: bool) -> Array:
 	var bad := []
 	var b: Button = tabs.buttons[tabs.active]
@@ -58,7 +60,7 @@ static func heads(tabs: KitTabs, said: String, full: bool) -> Array:
 	var icon: TextureRect = tabs._icons[tabs.active]
 	var r := b.get_global_rect()
 	# Where it rests, wherever its bob has it now, then its bob's top.
-	var top := tile.global_position.y + tile.size.y + icon.offset_bottom - maxf(icon.size.y,
+	var top := tile.global_position.y + tile.size.y - KitTabs.rest(true) - maxf(icon.size.y,
 		icon.custom_minimum_size.y) - UI.PX_PER_POINT * KitTabs.BOB
 	var bar := tabs.get_global_rect()
 	if top < r.position.y - 0.5 or top < bar.position.y - 0.5:
@@ -71,4 +73,36 @@ static func heads(tabs: KitTabs, said: String, full: bool) -> Array:
 	if full and absf(plain.global_position.y - tile.global_position.y - UI.px(KitTabs.RISE)) > 0.5:
 		bad.append("%s: the chosen tile's top %.0f, not RISE over the plain tabs' %.0f" % [said,
 			tile.global_position.y, plain.global_position.y])
+	if full and tabs.buttons.has("heist") and tabs.active != "heist":
+		var heist: Button = tabs.buttons["heist"]
+		var was := tabs._bar.inset_top
+		var raised := heist.custom_minimum_size.y + UI.px(KitTabs.RISE * 0.75)
+		heist.custom_minimum_size.y = raised
+		tabs._stand()
+		tabs._stand()
+		if absf(heist.custom_minimum_size.y - raised) > 0.5 or absf(tabs._bar.inset_top - was) > 0.5:
+			bad.append("%s: the Heist raised to %.0f stands %.0f, the gold edge's inset %.0f, was %.0f" % [said,
+				raised, heist.custom_minimum_size.y, tabs._bar.inset_top, was])
+		tabs.choose(tabs.active, false)
+		if heist.custom_minimum_size.y > raised - 0.5:
+			bad.append("%s: the Heist still raised once a tab was chosen" % said)
+	if tabs.buttons.has("heist") and tabs.active != "heist":
+		# Home's own case: raised to its height while its name showed (the
+		# tab stood taller then), its name hidden after.
+		var heist: Button = tabs.buttons["heist"]
+		var label: Label = tabs._labels["heist"]
+		var shown := label.visible
+		var was := tabs._bar.inset_top
+		label.visible = true
+		tabs._stand()
+		var home := float(UI.px(Tokens.number("size", "tab_height") + KitTabs.RISE * 0.75))
+		heist.custom_minimum_size.y = home
+		label.visible = false
+		tabs._stand()
+		tabs._stand()
+		if absf(heist.custom_minimum_size.y - home) > 0.5 or absf(tabs._bar.inset_top - was) > 0.5:
+			bad.append("%s: the Heist raised as home raises it to %.0f stands %.0f, the gold edge's inset %.0f, was %.0f"
+				% [said, home, heist.custom_minimum_size.y, tabs._bar.inset_top, was])
+		label.visible = shown
+		tabs.choose(tabs.active, false)
 	return bad
