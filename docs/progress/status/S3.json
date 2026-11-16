@@ -3,12 +3,12 @@
   "role": "S3",
   "branch": "claude/ui-screens-meta",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P2-S3-account-4",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-16T16:45:00Z",
   "lease_until": "2026-11-16T19:45:00Z",
-  "updated_at": "2026-11-16T16:45:00Z",
+  "updated_at": "2026-11-16T18:10:00Z",
   "expected_next_update_by": "2026-11-16T17:30:00Z",
   "long_run": null,
   "progress_marker": {
@@ -16,9 +16,14 @@
     "next_step": "claimed P2-S3-account-4; main 837835c3 merged; measure value-steps on the signed-in Account tab",
     "at": "2026-11-16T16:45:00Z"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "635c33ee50e1dc54bdbce7b5e0795a66ecf8c976",
+    "exit": 0,
+    "finished_at": "2026-11-16T18:09:25Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "635c33ee50e1dc54bdbce7b5e0795a66ecf8c976",
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
     "M26",
