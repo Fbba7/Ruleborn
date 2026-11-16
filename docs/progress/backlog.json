@@ -4464,6 +4464,14 @@
       "sent_at": "2026-11-16T02:00:00Z",
       "ack_by": "2026-11-16T04:00:00Z",
       "acked_at": "2026-11-16T03:19:47Z"
+    },
+    {
+      "id": "M25",
+      "to": "lead",
+      "text": "Lesson from the UI report (Builders at once rated worse two reports in a row: 3 of 4, then 2 of 4, at reports 87 and 88). In cycle 94 S2 and K1 merged their tasks and ended their turns done with no next task, and cycle 95 recorded that no other builder task was open, so two of four seats stood empty. Yet the backlog's idle queue held two open tasks for any role, IQ-import-check and IQ-kit-docs (1h each), and report.md section 3.2 says an agent that finishes early takes a task from the idle queue. Phase 2's exit criteria also leave work to seed: every screen passing the gate at 100%, 200% and high contrast, boards 2 to 5 posted, the exceptions queue empty and the first blind audit O6. The rule: before you let a builder end its turn done with no product task, give it an open idle-queue task, or seed phase 2 exit work its files allow (an overflow sweep of its own screen in pt_BR at 200% text, fixes from the advisory gate notes on its screen, or the preparation for O6), and start it in the same cycle. Keep four seats filled while the seven-day bar reads allowed (order 3). This applies first to S2 and K1. Ack by adding M25 to your status acks.",
+      "sent_at": "2026-11-16T06:00:00Z",
+      "ack_by": "2026-11-16T08:00:00Z",
+      "acked_at": null
     }
   ]
 }
