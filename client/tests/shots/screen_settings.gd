@@ -2,8 +2,10 @@ extends SceneTree
 ## The settings screen (tools/render/shoot.sh): TAB picks the tab ("access",
 ## key frame 05's, by default; "game" or "account"); SCROLL scrolls; TEXT=200
 ## and HC=1 render §20.8's larger text and high contrast; LOCALE picks the
-## words (pt_BR); FIT=1 fails the run if any words do not fit; RECORD=1
-## writes the still's shot record beside it, named as key frame 05's
+## words (pt_BR); SIGNED=1 signs the account in (its devices and ways to
+## sign in on the account tab); FIT=1 fails the run if any words do not fit
+## (and writes what it found to the still's .fit.txt); RECORD=1 writes the
+## still's shot record beside it, named as key frame 05's
 ## (art/ui/keyframes/05-settings.shot.json, docs/art/ui-quality/gate/shots.md).
 func _initialize() -> void:
 	_go()
@@ -13,6 +15,8 @@ func _go() -> void:
 	root.size = Vector2i(1080, 2340)
 	_environment()
 	App.services = Fixtures.answered(Services.build(root, "", null, "user://outbox-shot.json"))
+	if OS.get_environment("SIGNED") != "":
+		_signed_in()
 	App.services.router.go(&"settings")
 	await process_frame
 	var screen: SettingsScreen = null
@@ -32,6 +36,10 @@ func _go() -> void:
 	screen._build()
 	for i in 6:
 		await process_frame
+	if OS.get_environment("SIGNED") != "":
+		_devices()
+		for i in 4:
+			await process_frame
 	if OS.get_environment("SCROLL") != "":
 		screen.list_scroll.scroll_vertical = int(OS.get_environment("SCROLL"))
 	for i in 4:
@@ -42,9 +50,16 @@ func _go() -> void:
 		write_record(screen, OS.get_environment("SHOT"))
 	if OS.get_environment("FIT") != "":
 		var bad := fit(screen)
+		var said := ""
 		for b: String in bad:
-			print("fit FAIL ", b)
-		print("fit ", "ok" if bad.is_empty() else "FAIL")
+			said += "fit FAIL %s\n" % b
+		said += "fit %s\n" % ("ok" if bad.is_empty() else "FAIL")
+		print(said.strip_edges())
+		# shoot.sh keeps only the run's last lines, and the leaks Godot reports
+		# at exit can push these out: the fit checks read them from beside the still.
+		var out := FileAccess.open(OS.get_environment("SHOT").get_basename() + ".fit.txt", FileAccess.WRITE)
+		out.store_string(said)
+		out.close()
 		if not bad.is_empty():
 			quit(1)
 			return
@@ -60,6 +75,30 @@ func _environment() -> void:
 	Settings.high_contrast = OS.get_environment("HC") != ""
 	Settings.locale = OS.get_environment("LOCALE") if OS.get_environment("LOCALE") != "" else "en"
 	Settings.apply()
+
+
+## SIGNED=1: the account signed in, as auth_panel.gd's shot signs it in
+## (a token, so AuthPanel's refresh keeps it signed in), before the screen
+## builds.
+func _signed_in() -> void:
+	var s := App.services
+	s.api.token = "shot"
+	s.store.dispatch(&"signed_in", {"account": "shot"})
+	s.store.dispatch(&"auth_status", {"status": "signed_in"})
+
+
+## SIGNED=1, once AuthPanel has built: two devices, this phone and a nameless
+## Android phone, with Game Center and Google Play both linked, as the
+## server's session list reads (auth_tests.gd's), so the account tab shows
+## its Devices and Methods sections.
+func _devices() -> void:
+	App.services.store.dispatch(&"auth_devices", {"devices": 2, "list": [
+		{"id": 7, "current": true, "via": "gc", "device": "iphone", "model": "iPhone 15", "place": "PT", "idleHours": 0},
+		{"id": 3, "current": false, "via": "gp", "device": "android_phone", "model": null, "place": null,
+			"idleHours": 50}],
+		"identities": [{"platform": "gc", "primary": true, "linkedAt": null},
+			{"platform": "gp", "primary": false, "linkedAt": 0}],
+		"platforms": ["gc", "gp"]})
 
 
 ## What does not fit on `screen`, one line each: a label's widest line wider
