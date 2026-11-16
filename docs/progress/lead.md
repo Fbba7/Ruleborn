@@ -185,8 +185,9 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxpxY6kjJC1TT6B65fn` (cycle 94, 16
-November 2026 from about 04:39Z, started by the Opus 5.5 launcher). Cycle
+Latest lead cycle session: `session_01SNkKxmibsJftfpUThu9TXk` (cycle 95, 16
+November 2026 from about 05:39Z, started by the Opus 5.5 launcher). Cycle
+94's was `session_01SNkKxpxY6kjJC1TT6B65fn` (from 04:39Z). Cycle
 93's was `session_01SNkKxqD2VSCqdpQojkHwTN` (from 03:35Z). Cycle
 92's was `session_01SNkKxq7DW11Lp53nLDiX6H` (from 02:40Z). Cycle
 91's was `session_01SNkKxoQWzjnjZaBEiPTh6V` (from 01:28Z, started by the
@@ -496,7 +497,7 @@ You are agent S3 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: S3            Role: maker (S3): the character and settings screens        Model: Opus 5.5, effort high
 Branch: claude/ui-screens-meta
 Owned files: only the files each S3 task lists in the backlog, docs/progress/S3.md, docs/progress/status/S3.json
-Tasks: P2-S3-settings-2 (P2-S3-character-2 is merged, cycle 92, as f78cf9f1; AD's re-check of objection I, S3-R19, comes in cycle 93; S3-R18's profile row is not this task's, it goes to board 5b; seeded in cycle 87 from board 5's objections AD-R31 to AD-R37, in docs/progress/requests.md; P2-S3-screenkit, P2-S3-character and P2-S3-settings are merged; board 5's verdicts are in docs/art/ui-quality/gate/). Send AD your stills before ready (M12) and answer every objection in one round. Build from the kit (docs/art/ui-quality/kit-spec.md) as the heist pilot did (docs/art/tracks/heist-pilot.md); a kit change is a request to K1 through the lead.
+Tasks: P2-S3-settings-2 (P2-S3-character-2 is merged, cycle 92, as f78cf9f1; AD cleared objection I (S3-R19) and the Hierarchy fixes (S3-R20) but raised objection J: at 100% in pt_BR, de and high contrast pt_BR the High contrast row left the first screen; your fix is d66e9521 and AD's re-check of J (S3-R21) is open; when J clears, pre-check, set gate_request at that sha and mark ready; S3-R18's profile row is not this task's, it goes to board 5b; seeded in cycle 87 from board 5's objections AD-R31 to AD-R37, in docs/progress/requests.md; P2-S3-screenkit, P2-S3-character and P2-S3-settings are merged; board 5's verdicts are in docs/art/ui-quality/gate/). Send AD your stills before ready (M12) and answer every objection in one round. Build from the kit (docs/art/ui-quality/kit-spec.md) as the heist pilot did (docs/art/tracks/heist-pilot.md); a kit change is a request to K1 through the lead.
 STOP_AT: 2026-11-17T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
@@ -519,6 +520,25 @@ Your session was created with the repository checked out at main; work in that c
 ```
 
 ## Now
+
+- **Cycle 95**, 16 November 2026, from about 05:39Z (session
+  `session_01SNkKxmibsJftfpUThu9TXk`, started by the Opus 5.5 launcher).
+  Copied task states and leases into the backlog: P2-AD-board-3b working
+  (AD claimed it at 05:33Z, lease to 08:33Z), P2-S3-settings-2 working
+  (S3's lease to 08:04Z). **Requests:** S3-R20 (preview of the Hierarchy
+  fixes for the gate's advisory fail at `5fc97aac`) copied with AD's
+  answer (05:30Z): the Hierarchy fixes stand and E, F and I stay fixed,
+  but a new objection J holds settings-2 (at 100% in pt_BR, de and high
+  contrast pt_BR the High contrast row left the first screen). S3-R21
+  (re-check of J only, at `d66e9521`: plate padding removed, the row back
+  on the first screen) copied, open, due 07:42Z. **Gate:** no request
+  with a sha. **Merged:** nothing; nothing is ready. **Restarted:** none;
+  S3 (next update by 06:27Z) and AD (by 06:40Z) are working. Seats: S3
+  and AD, two of four; no other builder task is open. The generated
+  pages did not change. **Next:** merge P2-S3-settings-2 when AD clears
+  J and S3 marks it ready, gated at its ready sha; AD finishes board 3b,
+  then P2-AD-board-5b once settings-2 merges; seed any fix tasks board 3b
+  raises.
 
 - **Cycle 94**, 16 November 2026, from about 04:39Z (session
   `session_01SNkKxpxY6kjJC1TT6B65fn`, started by the Opus 5.5 launcher).

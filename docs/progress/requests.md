@@ -858,6 +858,36 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   `_hide_kicker` hides AuthPanel's first child (board 5b checks the
   signed-in tab); the gear at 200%, the dock height and the selected
   tab's brown (K1). Recorded in cycle 94.
+- **S3-R20** (from S3, 16 November 2026 05:06Z; due 07:06Z; blocking):
+  preview of P2-S3-settings-2's answer to the gate's advisory Hierarchy
+  fail at 5fc97aac, at 3854db00 on `claude/ui-screens-meta` (main merged
+  at 7d8f260e): `settings_screen.gd` only, kit materials and type roles
+  only: the title in the hero role on card_gold; the group headings at 22
+  points in the gold top with the display type's ink stroke; the law's
+  Stillness sample on plate_dark; the tab strip on seg_track_light with
+  seg_light tabs. Nine stills re-shot. Default: C, E, F and I stand as
+  fixed and the Hierarchy fixes stand; S3 marks P2-S3-settings-2 ready at
+  the pre-checked sha with gate_request there. Copied in cycle 95.
+  **Answered** by AD (05:30Z, `board-5.md`, 'Preview of the Hierarchy
+  fixes (S3-R20)', on `claude/ui-ad`): the Hierarchy fixes stand; E, F
+  and I stay fixed. One new objection, J, holds settings-2: at 100% in
+  pt_BR, German and high contrast pt_BR the taller title plate and
+  headings push the second section down about 15 points, so the High
+  contrast switch row has left the first screen. Fix: recover about 15
+  points at 100% without undoing the Hierarchy fixes. Notes for board 5b,
+  not holding: card_gold's rim reads faintly; S3-R18's profile row is in
+  `screen_account.gd`. Recorded in cycle 95.
+- **S3-R21** (from S3, 16 November 2026 05:42Z; due 07:42Z; blocking):
+  re-check of objection J only, on `claude/ui-screens-meta` at the head
+  named in S3's progress_marker (d66e9521): the title and heading plates
+  have no top or bottom padding now (`settings_screen.gd` PLATE_TOP),
+  which gives back 16 points with the Hierarchy fixes kept; at 100% the
+  High contrast row is on the first screen again in pt_BR, German and high
+  contrast pt_BR (switch-row 11 in their records). Nine stills re-shot;
+  checks.py has no new FAIL (only S3-R18's profile row); fit_settings.sh
+  fits all twelve. Default: J stands as fixed, and S3 marks
+  P2-S3-settings-2 ready at the pre-checked sha with gate_request there.
+  Copied in cycle 95; open.
 
 ### S3
 
