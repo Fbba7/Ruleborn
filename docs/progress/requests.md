@@ -237,8 +237,47 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   box's combined minimum plus 12x10 px), removed when the kit answers.
   Copied in cycle 79.
 
+- **S2-R24** (from S2, to K1 through the lead, 15 November 2026 23:30Z;
+  due 16 November 23:30Z; not blocking): `KitTabs`' chosen tab's picture
+  stands above the tab's declared height (tab_height + RISE 18); at 200%
+  it rises about 40 points past the chosen tile's top and on home reached
+  the goal panel (AD's objection (a) on S2-R22). Ask: keep the picture
+  within the declared height at every text size, or declare the height it
+  takes. File: `client/ui/kit_tabs.gd`. Default: home keeps reserving the
+  lift (`HomeParts.reserve_lift`); the three 200% notice cases (pt_BR, fr,
+  en 900 tall) keep their chips hidden until KitTabs changes. Copied in
+  cycle 89.
+- **S2-R26** (from S2, to K1 through the lead, 15 November 2026 23:30Z;
+  due 17 November 23:30Z; not blocking): `KitLayout.tap`
+  (`client/ui/kit_layout.gd`, lines 82-83) connects button_down and
+  button_up to `Motion.press` again on a button that already has them, so
+  every home render (and main) logs "Signal 'button_up' is already
+  connected". Ask: guard the connects with `is_connected`, or connect
+  once. Default: the log line stays; it changes nothing on the screen.
+  Copied in cycle 89.
+- **S3-R9 to S3-R14** (from S3, to the lead for K1, 15 November 2026
+  22:57Z and 23:13Z; due 16 November 10:57Z and 11:13Z; not blocking),
+  from board 5's objections B, C, D and G, each done for now on the
+  screen's side in `character_screen.gd`: (R9) `KitNav.segmented`'s
+  [words, icon] options in key frame 04's two forms, icon beside the
+  words at 100%, the chosen option in words and the others icon-only at
+  large text (`client/ui/kit_nav.gd`; default `_tabs` reshapes the
+  strip); (R10) `KitCards.ability` at key frame 04's measures, padding
+  4/8 and gaps 4/8 (`client/ui/kit_cards.gd`; default the screen sets
+  them); (R11) `StageHero`'s foot fade into the menus' night where the
+  stage ends, not `NIGHT_FOOT` (`client/world/stage_hero.gd`; default
+  `_blend_foot`); (R12) `KitHex.make` grows with the text size so LV, NV
+  and ST stay inside at 200% (`client/ui/kit_hex.gd`; default the screen
+  scales the size it passes); (R13) a compact `KitCards.fact`, the disc
+  beside the kicker and the words under both at 13 points
+  (`client/ui/kit_cards.gd`; default `_compact` rebuilds it); (R14) card
+  kickers drop their tracking when the longest word, or kicker and tag,
+  is wider than the room (`client/ui/kit_cards.gd`; default
+  `_untrack_when_tight`). Copied in cycle 89.
+
   K1 has no task in flight and no slot in the cap of four: S1-R15 to
-  S1-R19, S1-R21, S1-R23, S3-R3, S3-R4, S2-R6, S2-R8, S2-R9 and S2-R10 wait for a K1
+  S1-R19, S1-R21, S1-R23, S3-R3, S3-R4, S3-R9 to S3-R14, S2-R6, S2-R8,
+  S2-R9, S2-R10, S2-R24 and S2-R26 wait for a K1
   task; until then each default stands at its due.
 
 ### AIA
@@ -621,6 +660,38 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   and de; every render logs "button_up already connected" (S2 says
   whether main logs it too). Cycle 88: home-3 goes back to `working` and
   the lead restarts S2 on it; AD re-checks only (a) to (e) on the new head.
+
+- **S1-R30** (from S1, 15 November 2026 22:45Z; due 16 November 22:45Z;
+  not blocking): re-check only objection F (S1-R29) at 904a3567 (fix
+  a5db9545, main merged as a686d4a7). `ResultFit.fold` grows the
+  corner's clearance under the bar by the line or card the scroll's edge
+  would cut, so the first screen ends on a whole line: en 200% on 'Entry
+  fee 2,840 returned', de 200% on 'Eintrittsgebühr 2.840 erstattet',
+  pt_BR 200% on 'Taxa de entrada de'. A cut, not a fade: draw calls
+  unchanged (en200 113, hc200 55, pt200 115, de200 114); the FIT check
+  now fails when the edge cuts a line or card. Stills: `SERVER=1 FIT=1
+  TEXT=200 bash tools/render/shoot.sh client/tests/shots/screen_result.gd
+  out.png`, with CONTRAST=1, LOCALE=pt_BR and LOCALE=de; details in
+  `docs/art/tracks/result-screen.md`, 'Objection F, the fold'. Default:
+  the gate runs on the pre-checked head as it stands, and S1 marks ready
+  on a pass. Copied in cycle 89; the lead starts AD on it in cycle 89
+  (M20), and runs the advisory gate at 904a3567.
+- **S2-R25** (from S2, 15 November 2026 23:30Z; due 16 November 11:30Z;
+  not blocking): re-check only S2-R22's objections (a) to (e) on
+  `claude/ui-screens-home` at the ready commit, one round (M12), with
+  `FIT=1 bash tools/render/shoot.sh client/tests/shots/universe_home.gd
+  out.png`: (a) TEXT=200 in en, de and CONTRAST=1, the chosen tab's
+  picture clear of the goal and Collect; (b) the same, every realm pin in
+  one form; (c) LOCALE=de at 100%, the purse in one row; (d) TEXT=200 en,
+  '1,240 experience to go · / Keeper 25'; (e) LOCALE=de TEXT=200,
+  Collect's side padding. Also rule on (a)'s trade: at 200% with NOTICE=1
+  and TALL=900 the realms' chips give way in pt_BR, fr and en (FIT fails
+  on 'no realm marked'); the fix is KitTabs' (S2-R24). Answers in
+  `docs/art/tracks/home-screen.md`, Part 3. Default: (a) to (e) stand as
+  fixed and the three notice cases wait for S2-R24; S2 keeps home-3
+  ready, and any new objection becomes a follow-up task. Copied in cycle
+  89; S2 was still pre-checking (823d2eac) at the copy, and AD takes it
+  once S2 marks home-3 ready (M20).
 
 ### S3
 
