@@ -8,13 +8,13 @@
   "task_state": "working",
   "claimed_at": "2026-11-16T21:00:00Z",
   "lease_until": "2026-11-17T00:00:00Z",
-  "updated_at": "2026-11-16T21:30:00Z",
-  "expected_next_update_by": "2026-11-16T22:15:00Z",
+  "updated_at": "2026-11-16T21:42:00Z",
+  "expected_next_update_by": "2026-11-16T22:27:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "1697a6c6",
-    "next_step": "Waiting for the gate re-run on main f083c96c. Meanwhile a WIP on the branch gives the purse's counts the kit's baked numerals (T3, K23) where their row fits at full size, and the keeper's name and the counts' words a heavier T2 (outline and visible drop); M26's fit cases are running.",
-    "at": "2026-11-16T21:30:00Z"
+    "next_step": "No verdict yet for the re-run on main f083c96c. The WIP on the branch (purse's counts in the kit's baked numerals where their row fits at full size, the keeper's name and the counts' words a heavier T2 with a visible drop) was over the draw-call cap (home/100 151); the drop is now the glyph's own shadow set below the outline, and the baked rows stand one layer above the words so they batch in one call: home/100 142, home/200 120, under the records. M26's 56 fit cases are re-running.",
+    "at": "2026-11-16T21:42:00Z"
   },
   "precheck": null,
   "gate_request": {

@@ -325,9 +325,10 @@ class Raids:
 ## T2 on `l` where the role's theme draws it too lightly to see: the role's
 ## outline is 2 points and its drop 1.5 with no outline of its own, so the
 ## stroke covers the drop (P2-S2-home-5: the purse's counts read flat cream).
-## The outline here is half again as thick, and the drop is the glyph with
-## that outline, set down by the role's drop, as character_screen.gd's
-## upgrade title draws it.
+## The outline here is half again as thick, and the drop is the glyph's own
+## shadow set down by the outline and the role's drop, so it shows below the
+## stroke. A shadow with an outline of its own would draw it in one more call
+## per label, which takes home over §21.3's 150.
 static func inked(l: Label) -> void:
 	var t := Tokens.type_role(FIGURE_ROLE)
 	var outline := UI.px(float(t["outline"]) * INK_HEAVIER)
@@ -336,8 +337,8 @@ static func inked(l: Label) -> void:
 	l.add_theme_constant_override("outline_size", outline)
 	l.add_theme_color_override("font_shadow_color", Tokens.color("drop"))
 	l.add_theme_constant_override("shadow_offset_x", 0)
-	l.add_theme_constant_override("shadow_offset_y", maxi(1, UI.px(float(t["drop"]) * INK_HEAVIER)))
-	l.add_theme_constant_override("shadow_outline_size", outline)
+	l.add_theme_constant_override("shadow_offset_y", outline + maxi(1, UI.px(float(t["drop"]) * INK_HEAVIER)))
+	l.add_theme_constant_override("shadow_outline_size", 0)
 
 
 ## `text` cut where the baked numerals end: [the figures, the words after
@@ -387,6 +388,9 @@ static func figures(l: Label) -> void:
 	var line := RbTheme.role_font(FIGURE_ROLE).get_height(px)
 	(digits as KitNumerals.Row).height = floorf(line * FIGURE_LINE)
 	digits.size_flags_vertical = Control.SIZE_SHRINK_END
+	# One layer above the words: every baked row then draws in one call from
+	# the numerals' atlas page, not splitting the art's or the words' batches.
+	digits.z_index = UI.WORDS_Z + 1
 	digits.update_minimum_size()
 	var box := HBoxContainer.new()
 	box.name = String(l.name) + "Figures"
