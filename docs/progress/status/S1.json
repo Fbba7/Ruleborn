@@ -3,18 +3,18 @@
   "role": "S1",
   "branch": "claude/ui-screens-heist",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
+  "agent_state": "active",
   "task_id": "P2-S1-result-4",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-16T09:50:00Z",
-  "lease_until": "2026-11-16T12:50:00Z",
-  "updated_at": "2026-11-16T11:16:29Z",
-  "expected_next_update_by": "2026-11-16T12:01:29Z",
+  "lease_until": "2026-11-16T14:50:18Z",
+  "updated_at": "2026-11-16T11:50:18Z",
+  "expected_next_update_by": "2026-11-16T12:35:18Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "8753618ad66d4dbbd552a2960c5798f2f8ee9811",
-    "next_step": "Waiting for the gate at 8753618a. Pre-check PASS (recorded); check_all exit 0, guard.sh exit 0 (result 91/99/27 as recorded), check_screens OK on 8753618a. Ready on a gate pass.",
-    "at": "2026-11-16T11:16:29Z"
+    "next_step": "M30: ink outline scaling with text on every word over the sunburst sky (kicker included); then fit sweep, pre-check, AD stills, gate request.",
+    "at": "2026-11-16T11:50:18Z"
   },
   "precheck": {
     "sha": "8753618ad66d4dbbd552a2960c5798f2f8ee9811",
@@ -46,7 +46,8 @@
     "M6",
     "M7",
     "M11",
-    "M26"
+    "M26",
+    "M30"
   ],
   "requests": [
     {
