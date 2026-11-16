@@ -290,13 +290,15 @@ static func _badge(chip: PanelContainer, icon: String, law: String) -> void:
 		return
 	var old := row.get_child(0) as Control
 	var links: Array = LawFxLinks.LAWS.get(law, [""])
-	var badge := FxLawBadge.make(icon, str(links[0]), 26.0 if Settings.text_scale > 130 else 32.0)
+	# 22 points at 100% text keeps the laws column inside §21.1's frame width.
+	var large := Settings.text_scale > 130
+	var badge := FxLawBadge.make(icon, str(links[0]), 26.0 if large else 22.0)
 	badge.name = "Badge"
 	row.add_child(badge)
 	row.move_child(badge, 0)
 	row.remove_child(old)
 	old.queue_free()
-	row.add_theme_constant_override("separation", UI.px(4))
+	row.add_theme_constant_override("separation", UI.px(4 if large else 1))
 
 
 static func _through(node: Node) -> void:

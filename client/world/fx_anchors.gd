@@ -506,6 +506,50 @@ func _off_panels(box: Rect2, px: float) -> Rect2:
 	return best
 
 
+## Each control's rect in `layer`'s pixels (a portrait's as it draws, its
+## tag included), for keep_off and keep_soft.
+static func rects_of(controls: Array, layer: Control) -> Array:
+	var out: Array = []
+	for c: Variant in controls:
+		var ctl := c as Control
+		if ctl != null and ctl.is_visible_in_tree() and ctl.size.x > 0.0:
+			var r: Rect2 = ctl.call("drawn_rect") if ctl.has_method("drawn_rect") else ctl.get_global_rect()
+			r.position -= layer.global_position
+			out.append(r)
+	return out
+
+
+## The words of every label under `roots`, each as its lines stand in the
+## label (not the label's whole rect), in `layer`'s pixels.
+static func words_in(roots: Array, layer: Control) -> Array:
+	var out: Array = []
+	for root: Control in roots:
+		for l: Label in root.find_children("*", "Label", true, false):
+			if l.is_visible_in_tree() and l.text != "":
+				var r := words_rect(l)
+				r.position -= layer.global_position
+				out.append(r)
+	return out
+
+
+## Where a label's words stand on screen: as wide as its widest line (wrapped
+## at its width where it wraps), placed by its alignment, as tall as it is.
+static func words_rect(l: Label) -> Rect2:
+	var at := l.get_global_rect()
+	var wraps := l.autowrap_mode != TextServer.AUTOWRAP_OFF
+	var wide := l.get_theme_font("font").get_multiline_string_size(l.text, HORIZONTAL_ALIGNMENT_LEFT,
+		at.size.x if wraps else -1.0, l.get_theme_font_size("font_size")).x
+	wide = minf(wide, at.size.x)
+	var x := at.position.x
+	if l.horizontal_alignment == HORIZONTAL_ALIGNMENT_CENTER:
+		x += (at.size.x - wide) * 0.5
+	elif l.horizontal_alignment == HORIZONTAL_ALIGNMENT_RIGHT:
+		x += at.size.x - wide
+	elif l.horizontal_alignment == HORIZONTAL_ALIGNMENT_FILL:
+		wide = at.size.x
+	return Rect2(x, at.position.y, wide, at.size.y)
+
+
 ## The screen's panels, keep_off's and keep_soft's together.
 func _all_panels() -> Array:
 	var out: Array = keep_off.call() if keep_off.is_valid() else []

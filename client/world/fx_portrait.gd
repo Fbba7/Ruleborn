@@ -163,6 +163,14 @@ func _radius() -> float:
 	return minf(UI.px(25), size.y - UI.px(32))
 
 
+## Where it draws, on screen: its rect, and above it the ability's tag (its
+## pill stands over the disc's top, `_pips`), which a guard's bubble keeps off.
+func drawn_rect() -> Rect2:
+	var r := get_global_rect()
+	var reach := maxf(0.0, _radius() * 0.21 + UI.px(5))
+	return Rect2(r.position - Vector2(0.0, reach), r.size + Vector2(0.0, reach))
+
+
 ## Its school's colour (its role's when played by role alone).
 func school_ground() -> Color:
 	return Palette.SCHOOL.get(StageHeroFigure.school(kind), Palette.ROLE.get(role, Palette.STONE)) \

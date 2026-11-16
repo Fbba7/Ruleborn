@@ -303,12 +303,16 @@ static func fit(screen: HeistScreen) -> Array[String]:
 	if layer == null or layer.get_parent() != screen or layer.get_index() < top.get_index():
 		bad.append("the guards' words are drawn below the panels")
 	# A bubble may lie over a panel's edge where the world shows no room for
-	# it (it is drawn above the panels), but never over a panel's words.
+	# it (it is drawn above the panels), but never over a panel's words (as
+	# their lines stand) nor a portrait with its name and tag.
 	var words: Array[Rect2] = []
 	for root: Control in [screen.hud, screen.actions_band, screen.hint_panel]:
 		for l: Label in root.find_children("*", "Label", true, false):
 			if l.is_visible_in_tree() and l.text != "":
-				words.append(l.get_global_rect())
+				words.append(FxAnchors.words_rect(l))
+	for b: FxPortrait in screen.crew_buttons:
+		if b.is_visible_in_tree():
+			words.append(b.drawn_rect())
 	for box: Rect2 in anchors.speech_boxes:
 		var on := Rect2(box.position + layer.global_position, box.size)
 		if not whole.encloses(on):

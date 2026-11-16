@@ -723,21 +723,16 @@ func _build() -> void:
 ## shows no room between the loot and the tray (large text, M26's alarm),
 ## drawn above it, rather than over the loot's last line.
 func _panel_rects(layer: Control, soft: bool) -> Array:
-	var out: Array = []
 	var tray_inside: Control = actions_band.get_child(0) if actions_band.get_child_count() > 0 else actions_band
-	var panels: Array = [tray_inside]
-	if not soft:
-		panels = [hud.clock_panel, hud.alarm_panel, hud.loot_panel, hint_panel]
-		if hud.laws_box != null:
-			panels.append_array(hud.laws_box.get_children())
-		# The portraits' names and counts are words too (no clipped figure).
-		panels.append_array(crew_buttons)
-	for c: Variant in panels:
-		var ctl := c as Control
-		if ctl != null and ctl.is_visible_in_tree() and ctl.size.x > 0.0:
-			var r := ctl.get_global_rect()
-			r.position -= layer.global_position
-			out.append(r)
+	if soft:
+		return FxAnchors.rects_of([tray_inside], layer)
+	var panels: Array = [hud.clock_panel, hud.alarm_panel, hud.loot_panel, hint_panel]
+	if hud.laws_box != null:
+		panels.append_array(hud.laws_box.get_children())
+	# The panels' words, and the portraits with their names and tags, count
+	# twice: a bubble with no clear place covers a panel's frame before them.
+	var out := FxAnchors.rects_of(panels + crew_buttons + crew_buttons, layer)
+	out.append_array(FxAnchors.words_in([hud, hint_panel], layer))
 	return out
 
 

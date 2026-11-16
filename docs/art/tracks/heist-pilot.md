@@ -387,7 +387,7 @@ So Get out and Alarm share the danger role, Cast has the gold fill and the rings
 ### What was done
 
 - **Layered materials: a leather tray with a well.** The crew and the hand now sit on one opaque tray in the kit's leather, the plum and gold frame that the loot and alarm plates wear. This replaces the see-through scrim. The crew sit in the tray's inner well (`ScreenKit.panel('well')`), so each portrait sits in a pocket, not on the plate's face. The load bar, the crew bars and the hint pill keep the kit's chunky inked material from part 4.
-- **Painted icons: law badges.** Each "Laws here" chip shows its icon as a rendered badge (`FxLawBadge`): the school's shape as a frame, a cream disc, and the icon at its painted size, drawn through `Icons.view`. This replaces the kit's small glyph. Bloom, Cast and Get out keep their painted icons at their painted size.
+- **Painted icons: law badges.** Each "Laws here" chip shows its icon as a rendered badge (`FxLawBadge`): the school's shape as a frame, a cream disc, and the icon at its painted size, drawn through `Icons.view`. This replaces the kit's small glyph. The badge is 26 points at large text and 22 points at 100% text, with 1 point to its name; at 100% text a larger badge widens the laws column past §21.1's frame (see "After the pre-check"). Bloom, Cast and Get out keep their painted icons at their painted size.
 - **Display type: baked figures, inked names, room off the frame.**
   - With large text, the alarm count, Room and Left figures use the kit's baked numerals (`KitNumerals`), the finish the clock wears: a stroke and a hard drop baked in. The kit's label stays the source, hidden. A "~" the numerals do not bake stays live text in front of them.
   - The crew names carry the words-over-art treatment: a hard ink drop, an ink outline, then the fill. The drop and the outline share one glyph cache, so they go as one draw.
@@ -397,6 +397,7 @@ So Get out and Alarm share the danger role, Cast has the gold fill and the rings
   - **Law names.** A law name that would wrap at more than 130% text steps its size down to keep one line, to 80% at most. It is measured afresh at each width. This is for pt_BR's longer law names.
   - **The bubble with no room in the world.** A guard's speech bubble that has no room in the world now rests on the tray's content above the panels, not over the loot's words. In `fx_anchors`, the tray band is a soft keep-off counted at a quarter of its area, and the bubble is drawn on the layer above the panels.
   - **The bubble beside a panel.** The crew buttons, which hold the names and the count badges, are hard keep-offs. The bubble also tries places beside a hard panel, not only above or below one. This came from the gate re-run below.
+  - **The bubble off the words and the tags.** The panels' words, and the portraits with their names and tags, count twice in the bubble's cover: a bubble with no clear place covers a panel's frame before them. Words count as their lines stand (`FxAnchors.words_rect`), not as the label's whole rect, and a portrait counts as it draws, its ability tag above its rect included (`FxPortrait.drawn_rect`). The `FIT` check measures the same way, and it also fails a bubble over a portrait or its tag. This came from the sweep after the pre-check.
   - **Fixture states.** `screen_heist.gd` has new fixture states: `CREW=n` (one to four crew), `LONG=1` (the longest names), `END=1` (the end of the timer) and `LONGEST` (each language's longest crew and law names).
 
 ### The gate re-run on the fixes
@@ -416,9 +417,16 @@ The judges ran on the part 6 stills, with the same anchors as `main1`:
 
 The heist3 fix (ed766fe9) moves only the speech bubble. On the 200% en still the bubble now sits at the top right of the tray, clear of every badge and name. The 100% and pt_BR stills were re-shot on ed766fe9, and their bubble stays in the world. These samples are this task's own runs. The lead's gate run (gate: Screen) gives the verdict.
 
+### After the pre-check
+
+- **The pre-check at f49852ed failed on §21.1.** At 100% text the heist screen asked 1110 of 1080 px in en, en_US, pt_BR, pt_PT, de and fr, and the replay screen (the same HUD) asked 1092 to 1110 px in pt_BR, pt_PT, de and fr. The cause was the law badge at 32 points (96 px) beside "Glowing dark": the laws column reached 351 px.
+  - Tried: one badge size of 26 points at every text size. The widest was still 1092 to 1094 px.
+  - Kept: 22 points at 100% text, with 1 point to the name (as the kit's chip at large text). The widest is now 1071 to 1073 px on the heist screen and 1039 to 1071 px on the replay screen, in every locale. Large text keeps 26 points and 4 points, so the 200% stills do not change for it.
+- **The sweep on the final tree found en, longest names, a bubble 2 px over the loot's last line** ("Load to 80%"), with the "Who's there?" bubble in the 29 px gap between the loot and the tray. Weighting the words and the tags (above) moves it into the loot panel's empty lower right, beside the words and clear of Bramble's tag.
+
 ### Evidence
 
-Stills are in `docs/art/shots/heist-pilot/`, all from ed766fe9:
+Stills are in `docs/art/shots/heist-pilot/`, all re-shot on the tree after the pre-check fixes:
 
 - `part6-h100.png`: crew plan, 100% text, en; the gate still for "heist at 100% text";
 - `part6-h200.png`: crew plan, 200% text, en; the gate still for "heist at 200% text";
@@ -449,5 +457,6 @@ Textures and word contrast are unchanged. No word is below 4.5:1. `check_screens
 ### What is still worse
 
 - **The tray costs two draw calls over the old records** (heist/200 116 to 118, heist/hc 120 to 121), approved as S1-R33. Until the lead writes the new records in the merge, `guard.sh` fails on those two stills only.
-- **The bubble can rest on the tray** when the world has no room for it (200% text). It stays off every word and badge, but it covers the tray's empty right side.
+- **The bubble can rest on a panel** when the world has no room for it (200% text): on the tray's empty right side, or on the loot panel's empty lower right. It stays off every word, portrait and tag, but it covers the frame.
+- **The law badge is smaller at 100% text** (22 points, from 32) so the laws column fits §21.1's frame. The icon inside is about 10 points.
 - **Long names at 200% text shrink** to fit their third of the row, on two lines. They fit, but they read smaller than the short names beside them.
