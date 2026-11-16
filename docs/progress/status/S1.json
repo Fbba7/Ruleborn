@@ -7,13 +7,13 @@
   "task_id": "P2-S1-heist-1",
   "task_state": "claimed",
   "claimed_at": "2026-11-16T20:51:41Z",
-  "lease_until": "2026-11-17T00:24:52Z",
-  "updated_at": "2026-11-16T21:24:52Z",
-  "expected_next_update_by": "2026-11-16T22:09:52Z",
+  "lease_until": "2026-11-17T00:35:19Z",
+  "updated_at": "2026-11-16T21:35:19Z",
+  "expected_next_update_by": "2026-11-16T22:20:19Z",
   "progress_marker": {
     "last_green_sha": "8d2488cb5ff09f939c62cec641d6bb2a34bbc39b",
-    "next_step": "stills and FIT sweep on dceed4bf",
-    "at": "2026-11-16T21:24:52Z"
+    "next_step": "M26 FIT sweep, then budgets and gate",
+    "at": "2026-11-16T21:35:19Z"
   },
   "precheck": {
     "sha": "8d2488cb5ff09f939c62cec641d6bb2a34bbc39b",
@@ -538,5 +538,5 @@
       "answer": "Objection F is met at 904a3567. A, B, D and E still hold, and the result may merge (M20). One note for board 4b, not an objection: at pt_BR 200% the first screen ends on the unfinished phrase 'Taxa de entrada de'. Keeping a label's lines together at the fold would read better, if it costs no draw call. Left for board 4b."
     }
   ],
-  "next_step": "Gate fixes for heist 200% committed as WIP (dceed4bf); budget raise asked (S1-R33). Next: check 100%, high contrast and pt_BR no-plan stills, M26 FIT sweep (en, pt_BR, de at 200%), check_screens.py and guard.sh, AD preview, gate re-run."
+  "next_step": "Long names now wrap and shrink in a portrait (de 200% LONG fit ok); check_screens OK again (badge icon through Icons.view, portrait outlines in one call). Running the M26 FIT sweep (en, pt_BR, de at 200%: plan, no plan, crew 1-4, long, alarm, end). Next: budgets, 100%/hc stills, AD preview, gate re-run."
 }

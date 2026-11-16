@@ -20,6 +20,13 @@ static func make(icon_name: String, school_name: String, points := 30.0) -> FxLa
 	b.custom_minimum_size = Vector2.ONE * UI.px(points)
 	b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	b.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	# The icon at its painted size on the disc (0.7 of the radius, the icon
+	# 1.3 of that): the set's own view, a child so it draws over the disc.
+	if icon_name != "" and Icons.has(icon_name):
+		var view := Icons.view(icon_name, points * 0.455)
+		view.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		b.add_child(view)
+		view.set_anchors_and_offsets_preset(Control.PRESET_CENTER, Control.PRESET_MODE_MINSIZE)
 	return b
 
 
@@ -48,6 +55,3 @@ func _draw() -> void:
 	d.circle(c - Vector2(0, disc * 0.04), disc * 0.74, Color("#FFF4DC"))
 	d.circle(c - Vector2(disc * 0.28, disc * 0.4), disc * 0.2, Color(1, 1, 1, 0.6), 12)
 	d.flush(get_canvas_item())
-	if icon != "" and Icons.has(icon):
-		var side := disc * 1.3
-		draw_texture_rect(Icons.texture(icon), Rect2(c - Vector2.ONE * side * 0.5, Vector2.ONE * side), false)

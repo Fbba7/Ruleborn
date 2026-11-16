@@ -48,6 +48,10 @@ var role := ""
 ## role; and the name shown under it.
 var kind := ""
 var letters := ""
+## The name as drawn: its lines (broken between words when one line is
+## wider than NAME_WIDE) and the size they are drawn at (`_lay_name`).
+var _lines := PackedStringArray()
+var _name_px := 0
 var chosen := false
 var health := 1.0
 var carried := 0.0
@@ -82,13 +86,14 @@ func _init(member_role := "", pressed_call: Callable = Callable(), member_kind :
 	text = ""
 	var side := UI.px(50)
 	# As wide as its name, so with large text names never run together.
-	var name_w := FxSkin.words().get_string_size(letters, HORIZONTAL_ALIGNMENT_LEFT, -1, UI.text_px(13.0)).x
+	var name_w := _lay_name()
 	# At 100% a name may reach a little past its disc, as the design's do, so
 	# five fit beside the hand; with large text names keep apart.
 	var spare := UI.px(4) if Settings.text_scale > 100 else -UI.px(4)
 	# As tall as its disc, its bar and its name at the player's text size,
 	# so a second row of portraits never lies over a name.
-	custom_minimum_size = Vector2(maxf(side, name_w + spare), side + UI.px(15) + ceilf(UI.text_px(13.0) * 1.35))
+	custom_minimum_size = Vector2(maxf(side, name_w + spare),
+		side + UI.px(15) + ceilf(_name_px * (1.35 + 1.1 * (_lines.size() - 1))))
 	focus_mode = Control.FOCUS_ALL
 	var clear := StyleBoxFlat.new()
 	# A dark fill, so a screen's checks find what is behind its words.
@@ -220,9 +225,7 @@ func _paint() -> void:
 		_pips_number(tag, r)
 	# Its name under the bar, ink-outlined, centred on the portrait.
 	var font := FxSkin.words()
-	var px := UI.text_px(13.0)
-	var wide := font.get_string_size(letters, HORIZONTAL_ALIGNMENT_LEFT, -1, px).x
-	var base := Vector2(w * 0.5 - wide * 0.5, bar.end.y + px * 1.05)
+	var px := _name_px
 	# The display treatment (kit-spec's words over art): a hard drop in ink
 	# below, then the ink outline, then the fill, so the name holds on any
 	# ground; thicker with large text, where it is read first. The drop is
@@ -230,9 +233,60 @@ func _paint() -> void:
 	# as one draw, and the drop's own fill would be hidden under the name.
 	var line := UI.px(5) if Settings.text_scale > 130 else UI.px(4)
 	var drop := Vector2(0, UI.px(2))
-	FxPen.string_outline(self, font, base + drop, letters, HORIZONTAL_ALIGNMENT_LEFT, -1, px, line, FxSkin.INK_LINE)
-	FxPen.string_outline(self, font, base, letters, HORIZONTAL_ALIGNMENT_LEFT, -1, px, line, FxSkin.INK_LINE)
-	FxPen.string(self, font, base, letters, HORIZONTAL_ALIGNMENT_LEFT, -1, px, FxSkin.GOLD if chosen else FxSkin.ON_DARK)
+	var bases: Array[Vector2] = []
+	for i in _lines.size():
+		var wide := font.get_string_size(_lines[i], HORIZONTAL_ALIGNMENT_LEFT, -1, px).x
+		bases.append(Vector2(w * 0.5 - wide * 0.5, bar.end.y + px * (1.05 + 1.1 * i)))
+	# The hard drop, then the edge, under every line before any fill, so the
+	# fills batch together.
+	for i in _lines.size() * 2:
+		var at: Vector2 = bases[i >> 1] + (drop if i % 2 == 0 else Vector2.ZERO)
+		FxPen.string_outline(self, font, at, _lines[i >> 1], HORIZONTAL_ALIGNMENT_LEFT, -1, px, line, FxSkin.INK_LINE)
+	for i in _lines.size():
+		FxPen.string(self, font, bases[i], _lines[i], HORIZONTAL_ALIGNMENT_LEFT, -1, px,
+			FxSkin.GOLD if chosen else FxSkin.ON_DARK)
+
+
+## The widest a name may stand, in points: a third of the crew's row, so
+## three portraits always share one (M26: the word list's longest names,
+## "Bernsteinfarbenes Leuchtfeuer" at 200%, made the row wider than the
+## screen). Beside the hand at normal text the row is narrower.
+static func name_wide() -> float:
+	return UI.px(92.0) if Settings.text_scale > 130 else UI.px(62.0)
+
+
+## Lays out the name: on one line at the name size when it fits
+## `name_wide`, else broken between words into the two most even lines, and
+## then, if a word is still too wide, the size stepped down until it fits.
+## Returns the widest line's width.
+func _lay_name() -> float:
+	var font := FxSkin.words()
+	_name_px = UI.text_px(13.0)
+	_lines = PackedStringArray([letters])
+	var cap := name_wide()
+	var widest := func(lines: PackedStringArray, px: int) -> float:
+		var most := 0.0
+		for l: String in lines:
+			most = maxf(most, font.get_string_size(l, HORIZONTAL_ALIGNMENT_LEFT, -1, px).x)
+		return most
+	if widest.call(_lines, _name_px) <= cap:
+		return widest.call(_lines, _name_px)
+	var words := letters.split(" ", false)
+	if words.size() > 1:
+		var best := PackedStringArray()
+		var best_w := INF
+		for k in range(1, words.size()):
+			var two := PackedStringArray([" ".join(words.slice(0, k)), " ".join(words.slice(k))])
+			var wide: float = widest.call(two, _name_px)
+			if wide < best_w:
+				best_w = wide
+				best = two
+		_lines = best
+	var wide: float = widest.call(_lines, _name_px)
+	if wide > cap:
+		_name_px = maxi(1, int(floorf(_name_px * cap / wide)))
+		wide = widest.call(_lines, _name_px)
+	return wide
 
 
 ## The ability's tag: a dark pill with two diamonds, filled for each use
