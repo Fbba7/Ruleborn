@@ -184,6 +184,35 @@ The draw calls are the same as at `d896f254`, because the cut moves layout only 
 - (F) The first fold, fitted only when the page resized: it ran before the raid bar grew, and FIT failed at pt_BR and de 100% and 200%. It now also refits when the scroll resizes, measuring from the edge without the cut.
 - (F) Counting every clipped line as a part line: Renome's "+0" lost 3 px of its descent and was counted as cut, which lifted the bar over the whole Renome tile at pt_BR 200%. A line is cut only when less than its ascent shows.
 
+## Phase 2's exit (P2-S1-result-4)
+
+The overflow sweep, the advisory gate's close points at `904a3567`, AD's board 4b note, and M26's rule that the fit check covers every state the screen shows.
+
+- **Home and the laws in the tertiary face.** The gate's close point said Home and the law pills read lighter than Raid again in grayscale, so the raid led by size and place but not by value. Both are now `UI.action` in the kit's `ghost` skin (K01's tertiary button: violet on the glass or card), which is darker than gold in grayscale. Raid again stays the one light, wide shape at the foot. In high contrast the kit's own high-contrast faces apply, unchanged. No draw call more: the skin replaces the parchment one.
+- **The reward tiles keep no character frame.** The gate's other close point (Character presence, 3 of 3) asked for character art on the reward tiles. The tiles are currency, Starlight, Essence and Renown, each with its own icon, and the crew card under them carries the characters' faces. A character frame on a currency tile would be a new placement of character art, which is AD's and the kit's to decide, not a fit fix. It is answered in AD's preview (S1-R31) and left as it is.
+- **A short label goes under the fold whole.** AD's note for board 4b (S1-R30): at pt_BR 200% the first screen ended on "Taxa de entrada de", the first line of a two-line label. `ResultFit.part_line` now treats a label of up to three lines (`KEEP`) as one piece: when only its first lines show above the scroll's edge, the whole label goes under it, and the bar rises by the lines that would have shown. A longer label may still break at a line. It is still a cut, not a fade, so it adds no draw call. pt_BR 200% now ends on the Renome tile.
+- **Every state in the fit check (M26).** `screen_result.gd` takes `STATE`: `confirming` (the server still re-simulating), `refused` (`REFUSED` is the server's code, default `replay_malformed`, worded from the error catalogue), `testing` (a rehearsal from the builder: Watch it, Back to the builder, Publish it) and `play` (a workshop play, settled as `WorkshopController` settles it: no split). With no `STATE` it shows the plain result, local or (with `SERVER`) server-checked, on any of the five goldens. The sweep below runs them all at 200% in en, pt_BR and de.
+
+- **A rehearsal action's long word stays whole.** At 200% in German, "Veröffentlichen" (735 px) was wider than the widest control (666 px) and broke between its letters, which also left the page's foot 78 px into a line. `ResultFit.fit_whole` steps the button's words down the least sizes that keep its longest word whole; the other actions keep their size.
+
+Draw calls from each still's `budget:` line, with `FIT=1` (rehearsal rows after the fix above):
+
+| State | en 200% | pt_BR 200% | de 200% |
+|---|---|---|---|
+| Server-checked, planned-clean | 113 | 115 | 114 |
+| Server-checked, short-crew3 | 109 | 113 | 113 |
+| Server-checked, mid-crew4 | 108 | 112 | 112 |
+| Server-checked, long-crew5 | 111 | 115 | 115 |
+| Server-checked, edge-seed-max | 107 | 111 | 111 |
+| Local (not yet checked) | 99 | 99 | 101 |
+| Confirming | 114 | 115 | 115 |
+| Refused (`replay_malformed`) | 77 | 77 | 79 |
+| Workshop play | 88 | 88 | 88 |
+| Rehearsal | 97 | 97 | 100 |
+| Rehearsal, high contrast | 32 | 32 | 35 |
+
+All "fit ok". At 100% in English: local 91, confirming 118, refused 73, play 80, rehearsal 88 (de 90). The longest refusal, `removed_from_constellation` in German at 200%: 87. The plain result's sweep (en, pt_BR, de at 100% and 200%, each also in high contrast, long-crew5, reduced motion): 17 stills, all "fit ok", draw calls as before.
+
 # The reward sequence (P2-S1-result-2)
 
 Branch `claude/ui-screens-heist`, task P2-S1-result-2. The rewards are counted in on the kit's `Motion.reward`, and the screen no longer counts them itself in `_process`.
