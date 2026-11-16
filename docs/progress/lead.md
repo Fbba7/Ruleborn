@@ -185,8 +185,9 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxorVw3MyhDkJsvRqhq` (cycle 97, 16
-November 2026 from about 08:39Z, started by the Opus 5.5 launcher). Cycle
+Latest lead cycle session: `session_01SNkKxpnLgsoTHAqFj6UTHk` (cycle 98, 16
+November 2026 from about 09:35Z, started by the Opus 5.5 launcher). Cycle
+97's was `session_01SNkKxorVw3MyhDkJsvRqhq` (from 08:39Z). Cycle
 96's was `session_01SNkKxo5L5nkx6LE2sYyMSz` (from 06:41Z). Cycle
 95's was `session_01SNkKxmibsJftfpUThu9TXk` (from 05:39Z). Cycle
 94's was `session_01SNkKxpxY6kjJC1TT6B65fn` (from 04:39Z). Cycle
@@ -280,6 +281,7 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| S1 | `session_01SNkKxpR61Xc97jycRSyB3B` (Opus 5.5, effort high) | P2-S1-result-4 (start, cycle 98: M25's fourth seat, phase 2's exit for the result screen; P2-S1-result-3 merged as 19cfe498) | `claude/ui-screens-heist` | 2026-11-16 09:43Z |
 | K1 | `session_01SNkKxoSc1gCBJ4YfneEqN5` (Opus 5.5, effort high) | P2-K1-kit-gaps-1 (start, cycle 97: S3-R22, R24, R26 and R27 from IQ-kit-docs; P2-K1-tabs-3 merged as 1053266f) | `claude/ui-bake` | 2026-11-16 09:29Z |
 | S3 | `session_01SNkKxpuAx4fJLdVkzpdFw8` (Opus 5.5, effort high) | P2-S3-character-3 (start, cycle 97: board 5b's objections K and L, AD-R40 and AD-R41; board 5b merged as 1053266f) | `claude/ui-screens-meta` | 2026-11-16 09:29Z |
 | S2 | `session_01SNkKxoR9hEzsNNp5XQnTTG` (Opus 5.5, effort high) | P2-S2-home-4 (start, cycle 97: P2-K1-tabs-3 merged as 1053266f; the branch also carries IQ-import-check) | `claude/ui-screens-home` | 2026-11-16 09:28Z |
@@ -530,6 +532,26 @@ Your session was created with the repository checked out at main; work in that c
 ```
 
 ## Now
+
+- **Cycle 98**, 16 November 2026, from about 09:35Z (session
+  `session_01SNkKxpnLgsoTHAqFj6UTHk`, started by the Opus 5.5 launcher).
+  Copied claims and leases into the backlog: P2-K1-kit-gaps-1 (K1, lease
+  12:35Z), P2-S2-home-4 (S2, lease 12:35Z) and P2-S3-character-3 (S3,
+  lease 12:30:15Z). **Requests:** none new. **Gate:** no task with gate
+  items was ready. **Merged:** nothing; nothing new was ready, and
+  IQ-import-check (`ade915de`) still waits to merge with P2-S2-home-4.
+  **Seeded:** P2-S1-result-4 (S1, M25: phase 2's exit for the result
+  screen, an overflow sweep in en, pt_BR and de at 100% and 200% text and
+  in high contrast, the gate at 200% pt_BR and in high contrast, the
+  advisory close points of result-3 answered); `owners.py claims`: tasks
+  in flight disjoint. **Started:** at 09:43Z S1 on P2-S1-result-4
+  (`session_01SNkKxpR61Xc97jycRSyB3B`). Seats: K1, S2, S3 and S1 working,
+  four of four; the seven-day bar reads allowed. AD's last session
+  (board 5b) is idle; its open question (AD-R40 and AD-R41's default) was
+  answered in cycle 97 with character-3 and board 5c. **Next:** merge
+  home-4 with IQ-import-check, then AD takes board 3c; merge character-3,
+  then AD takes board 5c; merge kit-gaps-1, then K1 takes kit-gaps-2;
+  merge result-4 when ready.
 
 - **Cycle 97**, 16 November 2026, from about 08:39Z (session
   `session_01SNkKxorVw3MyhDkJsvRqhq`, started by the Opus 5.5 launcher).

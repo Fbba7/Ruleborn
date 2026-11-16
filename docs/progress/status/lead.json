@@ -1,8 +1,8 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-16T09:32:00Z",
-  "expected_next_update_by": "2026-11-16T10:47:00Z",
-  "cycle": 97,
+  "updated_at": "2026-11-16T09:46:00Z",
+  "expected_next_update_by": "2026-11-16T11:01:00Z",
+  "cycle": 98,
   "merging": null,
   "last_merged": {
     "task_id": "IQ-kit-docs",
@@ -27,5 +27,5 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Cycle 98: S2 on P2-S2-home-4 (its branch carries IQ-import-check, ready at ade915de; merge them together), then AD on P2-AD-board-3c; S3 on P2-S3-character-3, then AD on P2-AD-board-5c; K1 on P2-K1-kit-gaps-1, then P2-K1-kit-gaps-2; S2-R29 (three orphan .uid files) waits for a lead-owned removal, default stands; S3-R28's default stands."
+  "next_step": "Cycle 99: S2 on P2-S2-home-4 (its branch carries IQ-import-check, ready at ade915de; merge them together), then AD on P2-AD-board-3c; S3 on P2-S3-character-3, then AD on P2-AD-board-5c; K1 on P2-K1-kit-gaps-1, then P2-K1-kit-gaps-2; S1 on P2-S1-result-4 (seeded in cycle 98, M25), merge when ready; S2-R29 (three orphan .uid files) waits for a lead-owned removal, default stands; S3-R28's default stands."
 }
