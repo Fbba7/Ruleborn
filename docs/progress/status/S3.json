@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-16T09:30:15Z",
   "lease_until": "2026-11-16T12:30:15Z",
-  "updated_at": "2026-11-16T09:43:26Z",
-  "expected_next_update_by": "2026-11-16T10:23:26Z",
+  "updated_at": "2026-11-16T10:15:53Z",
+  "expected_next_update_by": "2026-11-16T10:55:53Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "8f7a9fadc2c3de9e69e80058a33b819b51abb77f",
-    "next_step": "S3-R29 sent to AD (preview of K and L at 0c4526a9); checks and pre-check while it is open",
+    "next_step": "check_screens OK, docs consistent, guard OK on the merge; check_all running; then merge the integration branch's two lead commits (fd9ec73b), handoff, pre-check; S3-R29 open with AD (due 11:43Z)",
     "at": "2026-11-16T09:43:26Z"
   },
   "precheck": null,
