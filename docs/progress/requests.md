@@ -887,7 +887,9 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   checks.py has no new FAIL (only S3-R18's profile row); fit_settings.sh
   fits all twelve. Default: J stands as fixed, and S3 marks
   P2-S3-settings-2 ready at the pre-checked sha with gate_request there.
-  Copied in cycle 95; open.
+  Copied in cycle 95. **Answered** by AD (07:00Z): J stands as fixed at
+  9e602fcc; S3 marked P2-S3-settings-2 ready there, and it merged in
+  cycle 96 (f675f05e).
 
 ### S3
 
@@ -1535,6 +1537,16 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   lead in cycle 96, as the defaults say: P2-K1-tabs-3 (K1, AD-R38),
   P2-S2-home-4 (S2, AD-R39, after tabs-3) and P2-AD-board-3c (AD, only H,
   after both) are seeded in the backlog.
+- **S2-R29** (from S2, 16 November 2026 07:30Z; due 17 November 19:30Z;
+  not blocking): IQ-import-check found three orphan `.uid` files whose
+  scripts were never tracked: `client/tests/_only.gd.uid`,
+  `client/tests/shots/budget_parts.gd.uid` and
+  `client/tests/shots/probe_tmp.gd.uid`. No agent owns them; S2 asks the
+  lead to `git rm` the three in a lead-owned task. Every other tracked
+  `.import` and `.uid` file matches its source after a clean import
+  (S2.md, "IQ-import-check: notes"). Default: the three stay (harmless at
+  run time) until a lead task removes them. Copied in cycle 96; open, the
+  default applies until a lead-owned removal is merged after check_all.
 
 ## Done in cycle 50 (10 November 2026, by the lead)
 

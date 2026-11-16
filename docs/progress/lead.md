@@ -185,8 +185,9 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxmibsJftfpUThu9TXk` (cycle 95, 16
-November 2026 from about 05:39Z, started by the Opus 5.5 launcher). Cycle
+Latest lead cycle session: `session_01SNkKxo5L5nkx6LE2sYyMSz` (cycle 96, 16
+November 2026 from about 06:41Z, started by the Opus 5.5 launcher). Cycle
+95's was `session_01SNkKxmibsJftfpUThu9TXk` (from 05:39Z). Cycle
 94's was `session_01SNkKxpxY6kjJC1TT6B65fn` (from 04:39Z). Cycle
 93's was `session_01SNkKxqD2VSCqdpQojkHwTN` (from 03:35Z). Cycle
 92's was `session_01SNkKxq7DW11Lp53nLDiX6H` (from 02:40Z). Cycle
@@ -410,7 +411,7 @@ You are agent AD of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: AD            Role: art director (AD)        Model: Opus 5.5, effort high
 Branch: claude/ui-ad
 Owned files: docs/art/ui-quality/gate/** except gate/verdicts/, tools/ui_gate/**, docs/progress/AD.md, docs/progress/status/AD.json
-Tasks: first answer S3-R21 (docs/progress/requests.md, section AD; due 07:42Z): re-check objection J only on claude/ui-screens-meta at 9e602fcc (S3's pre-checked head; read with git show origin/claude/ui-screens-meta:<path>), against board 5b's full list (M23), and push the answer in your status file's answers as soon as it is written; the lead waits for it to merge P2-S3-settings-2 with P2-AD-board-3b. P2-AD-board-3b is ready at 31c4de6c and merges in cycle 96; its objection H went to P2-K1-tabs-3 (K1, AD-R38) and P2-S2-home-4 (S2, AD-R39), and P2-AD-board-3c (only H, after both) is yours later. Then P2-AD-board-5b (character and settings, after P2-S3-character-2 and P2-S3-settings-2) once settings-2 merges; the advisory gate's notes for board 5b are in docs/art/ui-quality/gate/verdicts/P2-S3-settings-2/. With only previews to answer, answer them, set agent_state "done", push and end the session (board 2, icons, waits for icon batches 3-4, deferred by D13's answer (c)). Ack M23 in your status acks. Between boards, review the stills builders send you before ready within the same cycle, every objection in one round (M12, M23). Boards 1, 3 (rounds 1-2), 4, 4b and 5 are merged or merging. O2, O2-2 and O3 were yours (report.md section 3.4): you approve the board and contract, and label the golden set, in place of the owner; for O3's blind second labelling, launch a fresh subagent given only gate/rubric.md and the held-out items.
+Tasks: P2-AD-board-5b (board 5, second round: re-check objections A to G on P2-S3-character-2's and P2-S3-settings-2's stills, against board 5b's full list (M23), and let board 5 stand or list what is still open; both merged, settings-2 in cycle 96 as f675f05e). The advisory gate's notes for board 5b are in docs/art/ui-quality/gate/verdicts/P2-S3-settings-2/9e602fcc.json (give the group headers more weight than the rows at 200%, quieten the gold steppers) and S3-R18's profile row on the Account tab is board 5b's to judge. Any objection you keep goes to the lead as a request with a default, so the lead can seed fix tasks. P2-AD-board-3c (only H) is yours later, after P2-K1-tabs-3 and P2-S2-home-4 merge; do not start it in this session. Boards 1, 3 (rounds 1-2), 4, 4b and 5 are merged. Ack M23 in your status acks. Between boards, review the stills builders send you before ready within the same cycle, every objection in one round (M12, M23). O2, O2-2 and O3 were yours (report.md section 3.4): you approve the board and contract, and label the golden set, in place of the owner; for O3's blind second labelling, launch a fresh subagent given only gate/rubric.md and the held-out items.
 STOP_AT: 2026-11-17T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
@@ -500,7 +501,7 @@ You are agent S3 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: S3            Role: maker (S3): the character and settings screens        Model: Opus 5.5, effort high
 Branch: claude/ui-screens-meta
 Owned files: only the files each S3 task lists in the backlog, docs/progress/S3.md, docs/progress/status/S3.json
-Tasks: P2-S3-settings-2 (P2-S3-character-2 is merged, cycle 92, as f78cf9f1; AD cleared objection I (S3-R19) and the Hierarchy fixes (S3-R20) but raised objection J: at 100% in pt_BR, de and high contrast pt_BR the High contrast row left the first screen; your fix is d66e9521 and AD's re-check of J (S3-R21) is open; when J clears, pre-check, set gate_request at that sha and mark ready; S3-R18's profile row is not this task's, it goes to board 5b; seeded in cycle 87 from board 5's objections AD-R31 to AD-R37, in docs/progress/requests.md; P2-S3-screenkit, P2-S3-character and P2-S3-settings are merged; board 5's verdicts are in docs/art/ui-quality/gate/). Send AD your stills before ready (M12) and answer every objection in one round. Build from the kit (docs/art/ui-quality/kit-spec.md) as the heist pilot did (docs/art/tracks/heist-pilot.md); a kit change is a request to K1 through the lead.
+Tasks: IQ-kit-docs from the backlog's idle queue (assigned to you in cycle 96, M25): read docs/art/ui-quality/kit-spec.md against client/ui/ and list every component the spec names and the code lacks, as a request to K1 through the lead in your status file, each with a default; your notes in docs/progress/S3.md only, no code change. P2-S3-settings-2 merged in cycle 96 (f675f05e) and P2-S3-character-2 in cycle 92 (f78cf9f1); fix tasks from board 5b, if AD keeps any objection, come to you later. Build from the kit (docs/art/ui-quality/kit-spec.md) as the heist pilot did (docs/art/tracks/heist-pilot.md); a kit change is a request to K1 through the lead.
 STOP_AT: 2026-11-17T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
@@ -523,6 +524,31 @@ Your session was created with the repository checked out at main; work in that c
 ```
 
 ## Now
+
+- **Cycle 96**, 16 November 2026, from about 06:41Z (session
+  `session_01SNkKxo5L5nkx6LE2sYyMSz`, started by the Opus 5.5 launcher).
+  **Requests:** AD-R38 and AD-R39 (board 3b's objection H) answered as
+  their defaults say: P2-K1-tabs-3 (K1), P2-S2-home-4 (S2, after tabs-3)
+  and P2-AD-board-3c (AD, only H, after both) seeded. S3-R21 answered by
+  AD at 07:00Z: J stands as fixed at `9e602fcc`, and S3 marked
+  P2-S3-settings-2 ready there. S2-R29 (three orphan `.uid` files under
+  `client/tests/`) copied, open; its default holds until a lead-owned
+  removal. **Gate** (advisory, rubric v3): P2-S3-settings-2 at `9e602fcc`
+  passes all four rows (`verdicts/P2-S3-settings-2/9e602fcc.json`); 100%
+  Hierarchy clears `5fc97aac`'s fail, and 200% pt_BR Hierarchy split and
+  passed on six samples, three fails of six. **Merged:** candidate
+  `3ca39573` (P2-AD-board-3b at `31c4de6c`, P2-S3-settings-2 at
+  `9e602fcc`) as `f675f05e`, after check_all PASS (07:32:14Z) and
+  guard.sh "ui guard: OK". The first guard run timed out, and the second
+  had no native library in the candidate's worktree; the third was clean.
+  The lock was taken at 06:52Z and cleared with the merge. **Restarted:**
+  at 06:49Z AD (S3-R21), K1 (P2-K1-tabs-3) and S2 (IQ-import-check from
+  the idle queue, M25). After the merge, AD on P2-AD-board-5b and S3 on
+  IQ-kit-docs (idle queue, M25). S2's IQ-import-check is ready at
+  `ade915de` (docs only). Seats: K1, AD and S3 working, S2 waiting on
+  tabs-3, four of four. M25 acked. **Next:** merge IQ-import-check; K1
+  finishes tabs-3, then S2 takes home-4, then AD takes board 3c; seed fix
+  tasks from any objection board 5b keeps.
 
 - **Cycle 95**, 16 November 2026, from about 05:39Z (session
   `session_01SNkKxmibsJftfpUThu9TXk`, started by the Opus 5.5 launcher).
