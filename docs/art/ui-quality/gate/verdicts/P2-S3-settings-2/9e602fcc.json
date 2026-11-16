@@ -1,0 +1,73 @@
+[
+  {
+    "task_id": "P2-S3-settings-2",
+    "sha": "9e602fccafac7ffbb855e2049d8ad9db411805d2",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-16T06:56:00Z",
+    "item": "settings at 100% text",
+    "quality": "Display type",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes of three. Every word sits on a plate or card, none over the starfield; the '100%' figure keeps its ink outline, hard drop and gradient, and the title and group headers of one rank share one treatment."
+  },
+  {
+    "task_id": "P2-S3-settings-2",
+    "sha": "9e602fccafac7ffbb855e2049d8ad9db411805d2",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-16T06:56:00Z",
+    "item": "settings at 100% text",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes of three. Settings has no primary, so the title must lead in grayscale: the large white 'Settings' title at the top is where the eye lands first on size, place and weight, the gold A text-size buttons are about a third of its size and fall in behind it, the dark selected tab does not compete, and the serif group headers outrank the rows by type size. The cream toggle rows are the only close call. The four-of-six fail at 5fc97aac is cleared."
+  },
+  {
+    "task_id": "P2-S3-settings-2",
+    "sha": "9e602fccafac7ffbb855e2049d8ad9db411805d2",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-16T06:56:00Z",
+    "item": "settings at 200% text, pt_BR",
+    "quality": "Display type",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes of three. No word sits over the art; the '200%' figure's outline and drop scaled with it, and the 'Ajustes' title and the group headers share one treatment at the larger size."
+  },
+  {
+    "task_id": "P2-S3-settings-2",
+    "sha": "9e602fccafac7ffbb855e2049d8ad9db411805d2",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-16T06:56:00Z",
+    "item": "settings at 200% text, pt_BR",
+    "quality": "Hierarchy",
+    "samples": [
+      "fail",
+      "fail",
+      "pass",
+      "pass",
+      "pass",
+      "fail"
+    ],
+    "result": "pass",
+    "critique": "Split on the first three (two fails, one pass), so three more were taken: three fails of six, a pass (advisory). The three passes put the full-width 'Ajustes' title first in grayscale by size and place, with the cream tab strip, the 'Acesso' header and the gold A steppers (each under half the title plate's size) behind it. The three fails read the gold A-/A+ steppers and the cream tab strip as at least as loud as the thin 'Ajustes' title, and the steppers and the bold 200% description text as heavier than the small thin 'Acesso' header, so a row outranks its group header. Notes for board 5b: give the group headers more weight than the rows at 200%, and quieten the gold steppers in grayscale."
+  }
+]
