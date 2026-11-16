@@ -3,25 +3,38 @@
   "role": "S3",
   "branch": "claude/ui-screens-meta",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P2-S3-character-3",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-16T09:30:15Z",
   "lease_until": "2026-11-16T13:56:55Z",
-  "updated_at": "2026-11-16T11:03:00Z",
-  "expected_next_update_by": "2026-11-16T11:41:55Z",
-  "long_run": {
-    "log": "/tmp/check-a6d5f2fb37a9c8ece05887e6287eed3425beb649.log",
-    "expected_end": "2026-11-16T11:50:00Z"
-  },
+  "updated_at": "2026-11-16T11:45:00Z",
+  "expected_next_update_by": null,
+  "long_run": null,
   "progress_marker": {
-    "last_green_sha": "8f7a9fadc2c3de9e69e80058a33b819b51abb77f",
-    "next_step": "pre-check on a6d5f2fb running (main e1c460f merged); on PASS record it, gate_request at that sha, ready (S3-R29's default applies after 11:43Z)",
+    "last_green_sha": "a6d5f2fb37a9c8ece05887e6287eed3425beb649",
+    "next_step": "ready at a6d5f2fb (pre-check PASS 11:36:30Z, gate_request there); waiting for the lead's gate and merge",
     "at": "2026-11-16T10:56:55Z"
   },
-  "precheck": null,
-  "gate_request": null,
-  "ready_sha": null,
+  "precheck": {
+    "sha": "a6d5f2fb37a9c8ece05887e6287eed3425beb649",
+    "exit": 0,
+    "finished_at": "2026-11-16T11:36:30Z",
+    "summary": "All checks passed."
+  },
+  "gate_request": {
+    "sha": "a6d5f2fb37a9c8ece05887e6287eed3425beb649",
+    "items": [
+      {
+        "item": "character at 200% text, pt_BR",
+        "qualities": [
+          "Display type",
+          "Hierarchy"
+        ]
+      }
+    ]
+  },
+  "ready_sha": "a6d5f2fb37a9c8ece05887e6287eed3425beb649",
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
     "M26",
@@ -542,7 +555,10 @@
           "docs/art/shots/menu-screens/settings-200-de-account-signed-1800.png"
         ],
         "default": "as R29's: K and L stand as fixed, and the auth panel's fixes stand; ready at the pre-checked sha, board 5c re-checks them on the merge"
-      }
+      },
+      "state": "default applied",
+      "default_applied_at": "2026-11-16T11:45:00Z",
+      "note": "No answer from AD by the due (11:43Z; claude/ui-ad last pushed 08:35Z): K and L stand as fixed, ready at the pre-checked sha a6d5f2fb; AD's round 3 re-checks K, L and the auth panel's addition on the merge."
     },
     {
       "id": "S3-R30",
@@ -571,5 +587,5 @@
       "answer": "The key frame's pair already matches: art/ui/keyframes/05-settings.png and 05-settings.shot.json both show the Access tab (checked by eye at 1080x2340; every control in the record passes value-steps). The mismatch was elsewhere: the gate cut the candidate still, rendered by client/tests/shots/screen_meta.gd on the settings screen's opening Game tab, with the key frame's Access rectangles, because screen_meta.gd writes no record. Fixed in P2-S3-screenkit without touching the key frame: docs/art/shots/menu-screens/shot_record.gd renders the settings screen and writes the record from the same frame (TAB=game or TAB=access). P2-S3-screenkit's item 'settings at 100% text' shows the Game tab: the screen's opening tab and the one with the volume bars and row wells this task changed. Its still and record are docs/art/shots/menu-screens/after-settings-100-game.png and .shot.json (the still is pixel for pixel after-settings-100.png). P2-S3-settings' items should show the Access tab, as key frame 05 does: after-settings-100-access.png and .shot.json. Details in docs/art/tracks/menu-screens.md, 'The settings shot record (Lead-R1)'. No file outside the claim was needed."
     }
   ],
-  "next_step": "pre-check on a6d5f2fb running (main e1c460f merged); on PASS record it, gate_request at that sha, ready (S3-R29's default applies after 11:43Z)"
+  "next_step": "ready at a6d5f2fb (pre-check PASS 11:36:30Z, gate_request there); waiting for the lead's gate and merge"
 }
