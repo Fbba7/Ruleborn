@@ -7,13 +7,13 @@
   "task_id": "P2-S1-heist-1",
   "task_state": "claimed",
   "claimed_at": "2026-11-16T20:51:41Z",
-  "lease_until": "2026-11-17T00:57:21Z",
-  "updated_at": "2026-11-16T21:57:21Z",
-  "expected_next_update_by": "2026-11-16T22:42:21Z",
+  "lease_until": "2026-11-17T01:09:33Z",
+  "updated_at": "2026-11-16T22:09:33Z",
+  "expected_next_update_by": "2026-11-16T22:54:33Z",
   "progress_marker": {
     "last_green_sha": "8d2488cb5ff09f939c62cec641d6bb2a34bbc39b",
-    "next_step": "M26 sweep re-run, then gate stills and gate",
-    "at": "2026-11-16T21:57:21Z"
+    "next_step": "gate re-judge of the 200% still (display type, character presence), M26 sweep end, then merge main and full checks",
+    "at": "2026-11-16T22:09:33Z"
   },
   "precheck": {
     "sha": "8d2488cb5ff09f939c62cec641d6bb2a34bbc39b",
@@ -521,6 +521,17 @@
       "due": "2026-11-17T09:00:00Z",
       "default": "S1 takes the crew well out (the band's tray alone holds the crew) and draws the badges at large text as the kit's icon_disc with the icon at its painted size, without the school's shape behind it, so heist/200 and heist/hc keep 116 and 120.",
       "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R34",
+      "from": "S1",
+      "to": "AD",
+      "via": "lead",
+      "at": "2026-11-16T22:09:33Z",
+      "ask": "AD preview for P2-S1-heist-1 before ready (M10, M12, M23): the stills docs/art/shots/heist-pilot/part6-h100.png, part6-h200.png and part6-hpt.png on claude/ui-screens-heist at ed766fe9 (heist at 100% text, 200% text en, 200% text pt_BR with no crew plan). Objections, if any, as a list S1 can answer in this task.",
+      "due": "2026-11-17T10:09:33Z",
+      "default": "If no answer by the due time, S1 sets ready with the gate passed and the stills named in the handoff; AD's notes, when they come, are answered in a follow-up task.",
+      "state": "open"
     }
   ],
   "answers": [
@@ -538,5 +549,5 @@
       "answer": "Objection F is met at 904a3567. A, B, D and E still hold, and the result may merge (M20). One note for board 4b, not an objection: at pt_BR 200% the first screen ends on the unfinished phrase 'Taxa de entrada de'. Keeping a label's lines together at the fold would read better, if it costs no draw call. Left for board 4b."
     }
   ],
-  "next_step": "M26 fixes in: two-line names on a tight line step, the large-text crew rows closer, a law name that would wrap at 200% steps its size down to one line (pt_BR), and a guard's bubble with no room in the world rests on the tray's content (fx_anchors keep_soft) above the panels, not over the loot's words. en long, en alarm and pt_BR plan now fit ok; the full sweep (en, pt_BR, de at 200%) is re-running on this code. Budgets unchanged at 120/118/121 (S1-R33 stands). Next: 100%/hc checks, gate stills, AD preview, gate re-run."
+  "next_step": "Gate re-run on the part 6 stills (ed766fe9): heist 100% and pt_BR pass, 200% passes all but display type 2/3 (the speech bubble over Bramble's count badge), fixed in ed766fe9 and being re-judged. M26 sweep at 200%: en and pt_BR all fit ok, de running. Then AD preview, merge main, full checks, gate request."
 }
