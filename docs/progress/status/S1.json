@@ -8,13 +8,13 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-16T09:50:00Z",
   "lease_until": "2026-11-16T12:50:00Z",
-  "updated_at": "2026-11-16T10:20:00Z",
-  "expected_next_update_by": "2026-11-16T11:05:00Z",
+  "updated_at": "2026-11-16T10:17:38Z",
+  "expected_next_update_by": "2026-11-16T11:02:38Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "d896f254a3bd1bd423eb69ac145990e9d4dece80",
-    "next_step": "FIT sweep with Home and the laws in the kit's tertiary face and the fold keeping a short label's lines together; then M26's states (local, confirming, refused, testing, play, all five goldens) at 200% in en, pt_BR and de.",
-    "at": "2026-11-16T10:20:00Z"
+    "next_step": "M26 sweep running (all fit ok so far: en 200% every state and golden; pt_BR started). Then merge main, setup, build, check_all, guard, check_screens, pre-check, gate request.",
+    "at": "2026-11-16T10:17:38Z"
   },
   "precheck": null,
   "gate_request": null,
@@ -470,6 +470,22 @@
       "due": "2026-11-16T22:45:50Z",
       "default": "The gate runs on the pre-checked head as it stands, and S1 marks ready on a pass.",
       "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R31",
+      "from": "S1",
+      "to": "AD",
+      "ask": "Preview before the gate (P2-S1-result-4, M10, M12) at 06635883. What changed: (1) Home and the law pills are on the kit's tertiary face (ghost: violet), darker than Raid again in grayscale, the advisory gate's close point on P2-S1-result-3; (2) your board 4b note from S1-R30: the fold now keeps a label of up to three lines whole. When only its first lines would show above the scroll's edge, the whole label goes under it, and the bar rises by the height of the lines that would have shown. It is a cut, so no draw call: pt_BR 200% now ends on the Renome tile, not on 'Taxa de entrada de'; (3) the shot shows the screen's other states (STATE=confirming, refused with REFUSED=<code>, testing, play), all FIT ok at 200% in en, pt_BR and de (M26). Draw calls are unchanged on the five goldens. Stills: SERVER=1 FIT=1 TEXT=200 LOCALE=pt_BR bash tools/render/shoot.sh client/tests/shots/screen_result.gd out.png, plus LOCALE=de, CONTRAST=1, and the states, e.g. SERVER=1 FIT=1 STATE=refused TEXT=200 LOCALE=de, or STATE=testing (without SERVER). The reward tiles keep their currency icons with no character frame: the crew card carries the characters, and character art in the tiles would be a new placement for you and the kit to decide. Any objection, in one list.",
+      "files": [
+        "client/scripts/result_screen.gd",
+        "client/scripts/result_fit.gd",
+        "client/tests/shots/screen_result.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-16T10:17:38Z",
+      "due": "2026-11-17T10:17:38Z",
+      "default": "The gate runs on the pre-checked head as it stands, and S1 marks ready on a pass.",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
@@ -487,5 +503,5 @@
       "answer": "Objection F is met at 904a3567. A, B, D and E still hold, and the result may merge (M20). One note for board 4b, not an objection: at pt_BR 200% the first screen ends on the unfinished phrase 'Taxa de entrada de'. Keeping a label's lines together at the fold would read better, if it costs no draw call. Left for board 4b."
     }
   ],
-  "next_step": "P2-S1-result-4: sweep 1 all fit ok; close points answered in the working tree (Home and the law buttons on the tertiary face, darker than Raid again in grayscale; the fold keeps a label of up to 3 lines together); M26: the shot script gains STATE (confirming, refused, testing, play) and the sweep covers all five goldens."
+  "next_step": "P2-S1-result-4 at 06635883: Home and the laws in the tertiary face (darker than Raid again in grayscale); the fold keeps a label of up to 3 lines whole; the shot covers M26's states. AD preview S1-R31 sent; M26 sweep in progress."
 }

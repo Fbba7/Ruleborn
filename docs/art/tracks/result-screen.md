@@ -12,9 +12,9 @@ Before, the screen drew its own surfaces: `FxSkin` plates, `RbBox`, `StyleBoxFla
 | Kicker, medal, title, condition, multipliers, length and peak | `KitNav.hero`, with the title at 40 points as the key frame's Marcellus (the kit hero uses 52). The medal sits beside the title, and the multipliers go on `KitStatus.set_pill`. |
 | The moment | `UI.panel("card")` holding `KitControls.big_action` in gold with the replay's length, beside when and what happened. With large text they stand one above the other. |
 | Starlight, Essence, Renown | `KitCards.reward` tiles. Starlight is on parchment and wider; the other two are on glass. They sit in `KitLayout.columns`, and stack one above another with large text. |
-| Study one law you crossed | `UI.panel("card")`. The laws are buttons in `KitLayout.columns` with the heading font and `UI.clear_box(6, 4)`. They fall to a two-column `KitLayout.grid` when a word will not fit (`_fit_laws`). |
+| Study one law you crossed | `UI.panel("card")`. The laws are `UI.action` buttons in the kit's tertiary face (`ghost`: violet on the dark card) in `KitLayout.columns`, with the heading font and `UI.clear_box(6, 4)`. They fall to a two-column `KitLayout.grid` when a word will not fit (`_fit_laws`). |
 | The crew home | `UI.panel("glass")`. Three faces overlap in `KitRing`s, framed as `KitSocial`'s avatars, beside how long the crew rests. |
-| Home and Raid again | `UI.panel("glass")`, as the key frame's `result-bottom glass`. Inside are `UI.action` on parchment with the `hud/home` icon, and `KitControls.action2` wide in gold (red when foiled) with the idle crew line. |
+| Home and Raid again | `UI.panel("glass")`, as the key frame's `result-bottom glass`. Inside are `UI.action` in the kit's tertiary face (`ghost`: violet on glass) with the `hud/home` icon, and `KitControls.action2` wide in gold (red when foiled) with the idle crew line. |
 
 Decisions:
 
