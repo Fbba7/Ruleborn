@@ -1,0 +1,67 @@
+{
+ "controls": [
+  {
+   "interactive": false,
+   "name": "set-head 1: Einstellungen",
+   "rect": [
+    17.33,
+    47.67,
+    355.33,
+    50.56
+   ]
+  },
+  {
+   "name": "row 2: Spiel Zugang Konto",
+   "rect": [
+    17.33,
+    106.89,
+    355.33,
+    56.33
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "words 3: Konto",
+   "rect": [
+    30.33,
+    171.89,
+    66.08,
+    32.86
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "words 4: ›",
+   "rect": [
+    346.31,
+    452.47,
+    15.53,
+    32.86
+   ]
+  },
+  {
+   "name": "button 5: Profil und Statistik",
+   "rect": [
+    28.17,
+    449.58,
+    333.67,
+    39.0
+   ]
+  },
+  {
+   "name": "back 6: Zurück",
+   "rect": [
+    28.17,
+    723.67,
+    132.17,
+    52.0
+   ]
+  }
+ ],
+ "frame_pt": [
+  390.0,
+  845.0
+ ],
+ "image": "settings-account-de.png",
+ "text_scale": 1.0
+}
