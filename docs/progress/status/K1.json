@@ -3,21 +3,26 @@
   "role": "K1",
   "branch": "claude/ui-bake",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P2-K1-tabs-2",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-16T01:58:00Z",
   "lease_until": "2026-11-16T04:58:00Z",
-  "updated_at": "2026-11-16T03:31:00Z",
-  "expected_next_update_by": "2026-11-16T04:15:00Z",
+  "updated_at": "2026-11-16T04:16:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": null,
-    "next_step": "check_all, pre-check, handoff"
+    "last_green_sha": "87b21b0628a903a5162839b90c88f572787253c1",
+    "next_step": "none: ready, waiting for the lead (K1-R21, K1-R22, merge queue)"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "87b21b0628a903a5162839b90c88f572787253c1",
+    "exit": 0,
+    "finished_at": "2026-11-16T04:15:28Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "87b21b0628a903a5162839b90c88f572787253c1",
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
     "M2",
@@ -370,5 +375,5 @@
       "at": "2026-11-16T03:31:00Z"
     }
   ],
-  "next_step": "P2-K1-tabs-2 working: Heist raise kept at 200% (2d3da1bb), kit tests 27 of 27; check_all running on the merge 19bb8764, guard FAIL only home/200 115 vs 114 (K1-R22)"
+  "next_step": "P2-K1-tabs-2 ready at 87b21b06 (pre-check PASS 04:15:28Z); the lead answers K1-R21 and K1-R22 and merges"
 }
