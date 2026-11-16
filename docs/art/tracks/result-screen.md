@@ -76,6 +76,7 @@ Each of these is a request to K1 through the lead, with the default the screen u
 - **The hero title's size** (S1-R16). The kit spec says 34, `KitNav.hero` uses 52, and the key frame 40. The screen sets 40.
 - **A portrait stack** (S1-R17). The overlapping faces are composed by the screen from `KitRing`s at the kit avatar's framing.
 - **A dusk backdrop for a foiled heist** (S1-R18). The key frame's set has none. A foiled heist keeps the plain night.
+- **`KitNav.reward` dresses the sunburst in high contrast too** (S1-R32). It dresses `Sky` with `night_rays` whatever the outcome or the contrast, and the token has no high-contrast form, while key frame 03-result_hc keeps the plain night. Until K1 answers, `start_reward` puts the plain night back after the call where the outcome does not celebrate (`_celebrates`).
 
 ## Open
 
@@ -213,6 +214,44 @@ Draw calls from each still's `budget:` line, with `FIT=1` (rehearsal rows after 
 | Rehearsal, high contrast | 32 | 32 | 35 |
 
 All "fit ok". At 100% in English: local 91, confirming 118, refused 73, play 80, rehearsal 88 (de 90). The longest refusal, `removed_from_constellation` in German at 200%: 87. The plain result's sweep (en, pt_BR, de at 100% and 200%, each also in high contrast, long-crew5, reduced motion): 17 stills, all "fit ok", draw calls as before.
+
+## The reward on K40's entry point (P2-S1-result-5)
+
+`start_reward` now calls `KitNav.reward(self, grade_icon, tile, 0, to, tier, _write_reward.bind(to))` in place of `Motion.reward`. The medal, the coins into the Starlight tile (else the haul's), the other tiles counting with it, the outcome's tier and the reduced form under reduced motion are unchanged: `KitNav.reward` hands them to `Motion.reward` as before. `_lift_reward()` stays, after the call, so the medal's and coins' `top_level` layer still sits over the page.
+
+- **`KitNav.celebrate(self)` is kept in `_ready`.** It dresses the sunburst from the first frame, while the reward waits `REWARD_WAIT` before it starts; dropped, the hero would stand on the plain night for that wait and then change backdrop under the title. It is only called where the outcome celebrates: a heist that paid (Clean, Loud, Partial), not in high contrast (`_celebrates`, which also replaces the inline test `_ready` had). The second dressing by `KitNav.reward`, with the same material, changes nothing on a celebrating outcome.
+- **The plain night back where the outcome does not celebrate.** `KitNav.reward` dresses `Sky` with `night_rays` on every call. In high contrast that put rays behind the whole page (seen on the server-checked still with `CONTRAST=1`, the one high-contrast state whose reward plays: the diff with main covered the full backdrop), against key frame 03-result_hc and AD's S1-R24. `start_reward` dresses `Sky` back to `night` when `_celebrates` is false. Asked of K1 as S1-R32, under "What the kit cannot do yet".
+- **No draw call more.** Budget shots: result/100 91, result/200 99, result/hc 27, each as its record in `tools/ui_bake/budgets.json`. Server-checked, en 200%: 113 planned-clean as before; server-checked high contrast 55.
+- **`check_screens.py`: OK.**
+
+The fit sweep, `FIT=1` on `client/tests/shots/screen_result.gd`, 56 stills, every one "fit ok" with 0 fails (M27: every fixture state the screen shows), in en, pt_BR and de each:
+
+- the plain result at 100% and 200%, each also in high contrast;
+- server-checked at 200% on each of the five goldens (planned-clean, short-crew3, mid-crew4, long-crew5, edge-seed-max), and server-checked in high contrast at 200%;
+- local long-crew5 at 200%;
+- at 200%: confirming (server-checked and local), refused (`replay_malformed`), testing (server-checked, local and high contrast) and workshop play;
+- and en 100% with reduced motion, de 200% refused with `removed_from_constellation`.
+
+| State | en 200% | pt_BR 200% | de 200% |
+|---|---|---|---|
+| Plain result | 99 | 99 | 101 |
+| Plain result, high contrast | 34 | 34 | 36 |
+| Server-checked, planned-clean | 113 | 115 | 114 |
+| Server-checked, short-crew3 | 109 | 113 | 113 |
+| Server-checked, mid-crew4 | 108 | 112 | 112 |
+| Server-checked, long-crew5 | 111 | 115 | 115 |
+| Server-checked, edge-seed-max | 107 | 111 | 111 |
+| Server-checked, high contrast | 55 | 57 | 56 |
+| Local long-crew5 | 105 | 107 | 107 |
+| Confirming (server-checked) | 114 | 115 | 115 |
+| Confirming (local) | 101 | 101 | 102 |
+| Refused (`replay_malformed`) | 77 | 77 | 79 |
+| Testing (server-checked) | 111 | 113 | 114 |
+| Testing (local) | 97 | 97 | 100 |
+| Testing, high contrast | 32 | 32 | 35 |
+| Workshop play | 88 | 88 | 88 |
+
+At 100%: plain 91 (pt_BR, de 93), high contrast 27 (pt_BR, de 29), reduced motion 90. de 200% refused with `removed_from_constellation`: 87. Each row matches the earlier sweep where that sweep shot the same state.
 
 # The reward sequence (P2-S1-result-2)
 

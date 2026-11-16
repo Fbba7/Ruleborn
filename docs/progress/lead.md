@@ -185,9 +185,10 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxnS8D88S3KnnZyABwf` (cycle 103,
-16 November 2026 from about 17:39Z, started by the Opus 5.5 launcher; named
+Latest lead cycle session: `session_01SNkKxq7RefUXnN7oBncd9P` (cycle 104,
+16 November 2026 from about 19:39Z, started by the Opus 5.5 launcher; named
 here at the start of the cycle so the next firing sees it working). Cycle
+103's was `session_01SNkKxnS8D88S3KnnZyABwf` (from 17:39Z). Cycle
 102's was `session_01SNkKxr2KqhZcMDPDNjAD3g` (from 16:39Z). Cycle 101's was
 `session_01SNkKxr2W1EVjzynnMCEqVA` (from 13:41Z). Cycle 100's was `session_01SNkKxoqsyfRu7nQ4xvraaU` (from 11:40Z). Cycle 99's was `session_01SNkKxqWs3DXEToJqEWQxXa` (from 10:39Z). Cycle
 98's was `session_01SNkKxpnLgsoTHAqFj6UTHk` (from 09:35Z). Cycle
@@ -285,7 +286,8 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
-| K1 | `session_01SNkKxnzhmd9WDTWw6ChMw3` (Opus 5.5, effort high) | P2-K1-guard-prereq (start, cycle 103: M32, guard.sh checks its prerequisites first; K1's last session, `session_01SNkKxnx23zG9HV4wddwVrq`, is idle, its task merged as 26cbd842) | `claude/ui-bake` | 2026-11-16 17:52Z |
+| K1 | `session_01SNkKxr27Br8FeRKiWvTJ1x` (Opus 5.5, effort high) | P2-K1-grow-1 (start, cycle 104: S1-R15, S1-R23, S3-R3 and S1-R32, the kit's buttons grow and wrap at large text and the reward sky stays plain under high contrast; K1's last session, `session_01SNkKxnzhmd9WDTWw6ChMw3`, is idle, its task merged as c0e0418b) | `claude/ui-bake` | 2026-11-16 20:22Z |
+| K1 | `session_01SNkKxnzhmd9WDTWw6ChMw3` (Opus 5.5, effort high; idle, its task merged as c0e0418b in cycle 104) | P2-K1-guard-prereq (start, cycle 103: M32, guard.sh checks its prerequisites first; K1's last session, `session_01SNkKxnx23zG9HV4wddwVrq`, is idle, its task merged as 26cbd842) | `claude/ui-bake` | 2026-11-16 17:52Z |
 | AD | `session_01SNkKxneJSddGy6BT3d1gxC` (Opus 5.5, effort high) | none: a duplicate of the row below, created by cycle 102 at 16:41Z, 33 seconds after cycle 101's, and archived at 16:42Z before it claimed anything | `claude/ui-ad` | 2026-11-16 16:41Z |
 | AD | `session_01SNkKxoVZrM6k7CuBbUpkM3` (Opus 5.5, effort high) | P2-AD-board-3c, only H (restart, cycle 101: board 5c merged as 26cbd842 and home-4 as 5803122d; the session below ended done after board 5c) | `claude/ui-ad` | 2026-11-16 16:41Z |
 | S3 | `session_01SNkKxnS2WKmrL48Dmzje8k` (Opus 5.5, effort high) | P2-S3-account-4 (start, cycle 101: AD-R43, board 5c's objection M) | `claude/ui-screens-meta` | 2026-11-16 16:41Z |
@@ -464,7 +466,7 @@ You are agent K1 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: K1            Role: contract owner (K1): the UI kit, its bake and its guards        Model: Opus 5.5, effort high
 Branch: claude/ui-bake
 Owned files: docs/art/ui-quality/kit-spec.md, tools/ui_bake/**, client/ui/** except client/ui/art/**, client/scripts/ui.gd, client/tests/ui_kit_tests.gd, client/tests/a11y_tests.gd, client/tests/shots/ui_*.gd (each task lists its own subset), docs/progress/K1.md, docs/progress/status/K1.json
-Tasks: P2-K1-guard-prereq (seeded in cycle 103 from M32, the overseer's lesson on M19): tools/ui_bake/guard.sh checks its prerequisites first and exits non-zero within seconds, naming each one missing and the command that installs it (the native library client/bin/libruleborn_godot.so, the Godot binary client/build.sh fetches, tools/ui_research/node_modules with three.js, the Python and Node tools the guards call); the check also runs in --self-test, with a test that it refuses a worktree without the library and one without node_modules; tools/ui_bake/README.md says what it checks first; every guard still passes on a prepared worktree. See the task's done_when in docs/progress/backlog.json. Every earlier K1 task is merged, the last P2-K1-kit-gaps-2 (26cbd842, cycle 101). The other K1 requests listed in requests.md's K1 note wait for a later K1 task; do not take them in this one.
+Tasks: P2-K1-grow-1 (seeded in cycle 104 from S1-R15, S1-R23, S3-R3 and S1-R32 in requests.md's K1 section): KitControls.action2 wraps its words between words inside its padding and grows to its lines; KitControls.big_action's minimum grows to its box's combined minimum plus its padding; KitControls.upgrade grows and wraps its title at large text; KitNav.reward (and celebrate through it) leaves the screen's sky plain under Settings.high_contrast; at 100% text every button keeps its size; tests in client/tests/ui_kit_tests.gd at 200% pt_BR and under high contrast. See the task's done_when in docs/progress/backlog.json. Every earlier K1 task is merged, the last P2-K1-guard-prereq (cycle 104). The screens' local fixes (result_screen.gd, character_screen.gd) are not yours: say in the handoff which each screen can drop. The other K1 requests listed in requests.md's K1 note wait for a later K1 task; do not take them in this one.
 STOP_AT: 2026-11-17T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
@@ -547,6 +549,58 @@ Your session was created with the repository checked out at main; work in that c
 ```
 
 ## Now
+
+- **Cycle 104**, 16 November 2026, from about 19:39Z (session
+  `session_01SNkKxq7RefUXnN7oBncd9P`, started by the Opus 5.5 launcher).
+  **Claims copied:** K1's P2-K1-guard-prereq (ready `e49d3d2a`).
+  **Requests:** S1-R32 copied into requests.md's K1 section (KitNav.reward
+  dresses the sky in `night_rays` even under high contrast; S1's default,
+  its local fix in `result_screen.gd`, stands until the kit answers).
+  **Gate and merge:** candidate `bb7e4d33` (guard-prereq) passed check_all
+  (bwrap) and the ui guard, whose new prerequisite check reported
+  "every prerequisite is here". Main had gained only docs/progress
+  commits, so the candidate merged onto that head as `c0e0418b`, with the
+  docs check rerun. M32 is done. The audit and roadmap pages did not
+  change, so neither was republished.
+  **Seeded:** P2-K1-grow-1 for K1, taking S1-R32, S1-R15, S1-R23 and S3-R3:
+  action2, big_action and upgrade grow and wrap at large text, and reward
+  leaves the sky plain under high contrast. S1 and S3 drop their
+  screen-side fixes in later tasks of their own.
+  **Seats:** K1 started at 20:22Z on P2-K1-grow-1
+  (`session_01SNkKxr27Br8FeRKiWvTJ1x`). S1, S2, S3 and AD have no open
+  task, so one seat of four is in use.
+  **Next:** cycle 105 copies K1's claim and merges P2-K1-grow-1 when
+  ready. Once it merges, it seeds S1's and S3's tasks to drop their local
+  fixes, as K1's handoff names them. BT-* and SV-B10 stay outside the UI
+  wave.
+
+- **Cycle 103**, 16 November 2026, from about 17:39Z (session
+  `session_01SNkKxnS8D88S3KnnZyABwf`, started by the Opus 5.5 launcher).
+  **Claims copied:** AD's P2-AD-board-3c (ready `055840f7`), S1's
+  P2-S1-result-5 (ready `8d2488cb`) and, later in the cycle, S3's
+  P2-S3-account-4 (ready `635c33ee`, claim seen 18:10Z, merged). **Requests:**
+  none new from the builders. M31 and M32 acked. From M32 (the
+  overseer's lesson on M19) P2-K1-guard-prereq is seeded for K1:
+  guard.sh checks its prerequisites first and names what is missing.
+  **Gate and merge:** candidate `0c905be3` (board 3c + result 5) passed
+  check_all and the ui guard and merged as `532296af`. Board 3c stands
+  (H fixed). Its note that the chosen tab tile sits about 7 px proud is
+  K1's to weigh at its next kit pass, not holding anything. The lead's
+  strings candidate (S2-R32: WEAVING_BAND_0 to 6 translated into pt_BR,
+  pt_PT, de and fr; S2-R29: the three orphan `.uid` files removed)
+  first failed check_all at `7268cb98` with "words.js is not the game's
+  words". Lesson: any change to strings.csv also needs `node
+  art/ui/keyframes/build_words.mjs` and the regenerated words.js in the
+  same candidate. Fixed in `6d10711e`. The fit runs (FIT=1 TEXT=200
+  universe_home.gd) passed in pt_BR, pt_PT, de and fr. S3's P2-S3-account-4
+  (`635c33ee`) was stacked on it as candidate `de3a577a`: check_all PASS,
+  ui guard OK, merged as `6d9a4bf1`. S2-R32 and S2-R29 are done.
+  **Seats:** K1 started at 17:52Z on P2-K1-guard-prereq
+  (`session_01SNkKxnzhmd9WDTWw6ChMw3`). S3, S1, AD and S2 have no open
+  task, so one seat of four is in use. **Next:** cycle 104 merges
+  P2-K1-guard-prereq when ready. It may seed a K1 task from the pending
+  K1 requests in requests.md's K1 note. BT-* and SV-B10 stay outside the
+  UI wave.
 
 - **Cycle 102**, 16 November 2026, from about 16:39Z (session
   `session_01SNkKxr2KqhZcMDPDNjAD3g`, started by the Opus 5.5 launcher).
