@@ -12,6 +12,13 @@ extends VBoxContainer
 ## gets the account back. Every sign-out and removal asks first, with the
 ## safe answer focused. Words from AuthPresenter.
 
+## A lesser action that sits on a card (the status card's sign-out, a
+## device's, a way to sign in's removal): the kit's tertiary (K01), the dark
+## card's own face lifted two value steps off it. Leather on the card stood
+## only 1.6 to 1.8 steps off it (board 5's objection M); leather stays for
+## the actions on the night, where it stands 2.4 steps off.
+const ON_CARD := "ghost"
+
 var status_label: Label
 var detail_label: Label
 var _dialog: Control
@@ -82,7 +89,7 @@ func _status(v: Dictionary, slice: Dictionary) -> Control:
 		if a == "sign_out_everywhere":
 			continue
 		var main := a in ["sign_in", "retry"]
-		actions.add_child(_button(a, AuthPresenter.action(a), _act.bind(a), "gold" if main else "leather"))
+		actions.add_child(_button(a, AuthPresenter.action(a), _act.bind(a), "gold" if main else ON_CARD))
 	# Past side by side (S3-R30), the actions go under the words, each the
 	# card's width: beside them, "Abmelden" left the words too narrow at 200%.
 	var card := _item("account", str(v["line"]), detail, actions if actions.get_child_count() > 0 else null)
@@ -143,7 +150,7 @@ func _devices(slice: Dictionary) -> void:
 		var end: Control = ScreenParts.pill(Strings.t("AUTH_THIS_DEVICE"), "gold")
 		if not bool(row["current"]):
 			end = _button("end_device", Strings.t("AUTH_SIGN_OUT"),
-				ask_change.bind("device", int(row["id"]), str(row["title"])), "leather")
+				ask_change.bind("device", int(row["id"]), str(row["title"])), ON_CARD)
 			end.accessibility_name = "%s: %s" % [Strings.t("AUTH_SIGN_OUT"), row["title"]]
 		var item := _item("account", str(row["title"]), str(row["line"]), end)
 		item.accessibility_name = str(row["spoken"])
@@ -173,7 +180,7 @@ func _methods(slice: Dictionary) -> void:
 				end = _button("link", Strings.t("AUTH_LINK"), _link.bind(p), "gold")
 			"unlink":
 				end = _button("unlink", Strings.t("AUTH_UNLINK"), ask_change.bind("unlink", 0, str(m["title"]), p),
-					"leather")
+					ON_CARD)
 		var icon := "account" if p == "gc" else "privacy"
 		items.append(_item(icon, str(m["title"]), str(m["line"]), end))
 	add_child(_group(items, "Methods"))
