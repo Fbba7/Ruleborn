@@ -1,9 +1,17 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-16T14:31:00Z",
+  "updated_at": "2026-11-16T14:36:00Z",
   "expected_next_update_by": "2026-11-16T15:36:00Z",
   "cycle": 100,
-  "merging": null,
+  "merging": {
+    "candidate_sha": "6e323a0f",
+    "task_ids": [
+      "P2-S2-home-4",
+      "IQ-import-check"
+    ],
+    "started_at": "2026-11-16T14:36:00Z",
+    "expires_at": "2026-11-16T15:46:00Z"
+  },
   "last_merged": {
     "task_id": "P2-S1-result-4",
     "sha": "9a1d4db5"
