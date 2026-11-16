@@ -325,9 +325,65 @@ The lead's advisory gate on f0a36a41 (`docs/art/ui-quality/gate/verdicts/P2-S3-s
 
 Main was merged into the branch at eb692c67, with no change to the settings screen's files or the kit it uses. On that merge the setup line and `bash client/build.sh` exit 0, `check_all.sh` passed ("All checks passed.", 18:49:12Z on 15 November), and `guard.sh` is OK, the settings budget shots reading 48, 41 and 48 against 52, 47 and 52 recorded.
 
+### Board 5's objections (P2-S3-settings-2)
+
+AD's board 5 (`docs/art/ui-quality/gate/boards/board-5.md`) raised three objections on the settings screen: C (the fold at 100% text), E (German at 200% text) and F (hierarchy at 100%), AD-R33, AD-R35 and AD-R36 in `docs/progress/requests.md`. Each is answered in `client/scripts/settings_screen.gd`, with no change to the kit.
+
+- **C: the first screen at 100% text.**
+  - **English** shows both switch rows, High contrast and Motion, above the dock, as key frame 05.
+  - **Portuguese and German** show the second section's heading and its first switch row, High contrast, above the dock. The pt_BR key frame (`05-settings_pt_BR.png`) shows the same one row; the board's "both switch rows" reads more than it holds. Motion is the next row, below the chevron.
+  - **How.** The vertical padding is tighter: the title plate (4 points, was 7), the group heading pills (2, was 4), the switch rows (48 points tall, the kit's control size, was 52, with 5 points of padding, was 7), the text card and the law's card, and the shapes card (6, was 10, with 4 points between its rows, was 8). Where the shapes stand three to a line (pt_BR, de), a coin's rim is 3 points, not 4, and its name sits right under it; where a coin and its name fit side by side in a column, they stand so.
+  - **The dock.** The back button, not its glass bar, keeps the corners' lift (`ScreenNav.CORNER_LIFT_POINTS`, 20 points), as a ScreenNav dock's buttons do: the bar's own 10-point foot counts toward it. The button is the kit's 48 points tall (was 56). The back button's lower edge stays above the layout check's corner band.
+- **E: German at 200% text.**
+  - **The title** wraps between words only. A word too long for the title's row ("Einstellungen") shrinks the title until it fits, rather than breaking it. It stays well above a group heading.
+  - **The gear** grows with the title at large text, 1.4 times, as key frame 05's does at 200% (the board's note on item 8).
+  - **The Stillness card** shows the whole law at 200% in German, as in English and pt_BR.
+  - **A switch row** keeps its icon where its longest word, on or off, fits beside it. Where one does not ("verschwinden"), the row drops the icon rather than break the word; the words and the switch still say it all.
+  - **The steppers' wells** hug their icons at large text (4 points, was 7), so "Hinweise" on the game tab keeps whole beside its icon.
+  - **The scripted fit check** is `docs/art/shots/menu-screens/fit_settings.sh`. It renders the access tab at 100% and 200% text in en, pt_BR and de, and in high contrast in en and pt_BR, and the game and account tabs at 200% in German, with `FIT=1`. It fails unless every shot prints `fit ok`. `FIT=1` in `client/tests/shots/screen_settings.gd` now also fails a word broken in two, and checks a wrapped button by its widest word. All ten shots print `fit ok`.
+- **F: hierarchy at 100% text.** The small A and the large A are gold, as key frame 05 has them, in high contrast too (`05-settings_hc.png`). The text size is the access tab's main action. On the access tab nothing else is gold, so the As lead in the squint. The ΔL* that value-steps measures on the As is 57 and 58 against the violet card at 100%, and 75 in high contrast.
+
+#### Evidence
+
+The stills and records are in `docs/art/shots/menu-screens/`, rendered on the board-5 code with the command below and the table's env set. Every still printed `fit ok`.
+
+```
+[env] FIT=1 RECORD=1 bash tools/render/shoot.sh client/tests/shots/screen_settings.gd <still>
+```
+
+| Still | Env | Record |
+|---|---|---|
+| `settings-100.png` | – | `.shot.json`, 13 controls |
+| `settings-pt_BR.png`, `settings-de.png` | `LOCALE=pt_BR`, `LOCALE=de` | `.shot.json`, 12 controls |
+| `settings-200-pt_BR.png`, `settings-200-de.png` | `TEXT=200 LOCALE=pt_BR`, `TEXT=200 LOCALE=de` | `.shot.json`, 9 controls |
+| `settings-hc.png` | `HC=1` | `.shot.json`, 13 controls |
+| `settings-hc-pt_BR.png` | `HC=1 LOCALE=pt_BR` | `.shot.json`, 12 controls |
+
+`settings-de`, `settings-200-de` and `settings-hc-pt_BR` are new. The 100% records hold one control more than before: Motion's row in English, and High contrast's in pt_BR and German.
+
+`python3 tools/ui_gate/checks.py all` passes on all seven records, with no FAIL. Hud-share passes, and hierarchy reads N/A, as before (the record names no primary). The ΔL* that value-steps measures:
+
+| Still | Tabs | As | Switch rows | Back |
+|---|---:|---:|---:|---:|
+| 100%, en | 78 | 58 and 57 | 69 and 68 | 84 |
+| 100%, pt_BR and de | 80 | 58 and 57 | 67 | 84 |
+| 200%, pt_BR | 55 | 59 and 59 | – | 79 |
+| 200%, de | 58 | 59 and 59 | – | 79 |
+| High contrast, en | 91 | 75 and 75 | 77 and 76 | 96 |
+| High contrast, pt_BR | 91 | 75 and 75 | 75 | 96 |
+
+`bash tools/check_screens.sh` passes, and `bash tools/render/build.sh` exits 0. On the guard's settings shot at 100% text the screen draws 48 calls (52 recorded before), and its worst word stands at 9.37:1.
+
+#### What still differs from the key frame
+
+- **The dock's height above the foot.** The back button stands higher than key frame 05's. Its lift is the corners' 20 points over `ui.gd`'s bottom margin of 44 points (`safe_top_points`), which is K1's (board 5's note). The layout check's corner band holds the button at least 62 points above the screen's foot, so it can come down only a little.
+- **Motion's row in pt_BR and German at 100%.** It is below the chevron, as on the pt_BR key frame. The German words are longer still.
+- **The selected tab** is the kit's dark brown, where key frame 05 shows gold. It is the kit's, consistent across screens, and keeps one gold lead per screen (K1, board 5's note).
+- **English content.** "Stillness" and its law are English in pt_BR and German. This is content localisation, for the lead, not the screen's work.
+
 ### What is still worse than before
 
-- **The group headings at 100%.** The gate passed Hierarchy at 100% narrowly: in grayscale the dark heading plates weigh less than the cream rows below them.
+- **The group headings at 100%.** The gate passed Hierarchy at 100% narrowly: in grayscale the dark heading plates weigh less than the cream rows below them. Since board 5's F, the gold As lead the access tab instead (above).
 - **The tab and back words.** Key frame 05 sets them in capitals. The screen keeps the kit's sentence case (`Tokens.type_role`). Capitals would be a change to the kit's type roles, which is K1's work.
 - **The shapes in pt_BR.** At 100% text, the longer Portuguese names (Movimento, Matéria) put the six coins three to a line, not the key frame's six in one row.
 - **The fold at 200% text.** The whole law shows, but the text card runs past the window, the colour-blind card and the switches are below the fold (`SCROLL`), and the cue is a chevron with no fade, until the kit has a scroll cue (S3-R8).

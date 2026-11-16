@@ -14,6 +14,17 @@ const TITLE_LEAD := 1.5
 const HEADING_LEAD := 1.1
 ## A heading plate's side padding, in points.
 const SECTION_PAD := 12.0
+## The title plate's side padding, in points.
+const HEAD_PAD := 16.0
+## The gear beside the title, in points, and how much larger it is at large
+## text (key frame 05 at 200%).
+const MARK_POINTS := 28.0
+const MARK_LARGE := 1.4
+## A school's coin on the shapes card: its 24-point shape and 4 points of
+## rim a side.
+const COIN_POINTS := 32.0
+## The glass bar's padding round the back button.
+const BAR_PAD := 10.0
 ## The base frame's width in points (tokens.json's px_per_point: 1080 pixels
 ## for a 360-point phone).
 const SCREEN_POINTS := 360.0
@@ -149,11 +160,14 @@ func _layout() -> void:
 func _head() -> Control:
 	var plate := PanelContainer.new()
 	plate.name = "Head"
-	plate.add_theme_stylebox_override("panel", UI.clear_box(16, 7))
+	plate.add_theme_stylebox_override("panel", UI.clear_box(HEAD_PAD, 4))
 	UI.dress(plate, "plate_dark")
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", UI.px(10))
-	var mark := Icons.view("generalui/settings", 28)
+	# The gear grows with the title at large text, as key frame 05's does at
+	# 200% (board 5's note).
+	var gear := MARK_POINTS * (MARK_LARGE if Settings.text_scale > KitLayout.SIDE_BY_SIDE_UP_TO else 1.0)
+	var mark := Icons.view("generalui/settings", gear)
 	mark.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	row.add_child(mark)
 	var t := UI.label(Strings.t("SETTINGS_TITLE"), Tokens.type_role("title")["points"], true)
@@ -164,6 +178,19 @@ func _head() -> Control:
 	t.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_stroked(t, 2.0, 3.0)
 	_grown(t, TITLE_LEAD)
+	# A title wraps between words only, and a word too long for the row
+	# ("Einstellungen" at 200%, board 5's objection E) shrinks the title until
+	# it fits, rather than breaking: still well above a group's heading.
+	t.autowrap_mode = TextServer.AUTOWRAP_WORD
+	var room := UI.px(SCREEN_POINTS - 2.0 * (Tokens.number("size", "safe_side_points") + HEAD_PAD) - gear - 10.0
+		- 2.0 * 2.0)
+	var size := t.get_theme_font_size("font_size")
+	var font := Tokens.font("title", 400)
+	var longest := 0.0
+	for word: String in t.text.split(" ", false):
+		longest = maxf(longest, font.get_string_size(word, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x)
+	if longest > room:
+		t.add_theme_font_size_override("font_size", floori(size * room / longest))
 	row.add_child(t)
 	plate.add_child(row)
 	return plate
@@ -178,7 +205,7 @@ func _head() -> Control:
 func _section(key: String) -> Control:
 	var plate := PanelContainer.new()
 	plate.name = "SectionPlate"
-	plate.add_theme_stylebox_override("panel", UI.clear_box(SECTION_PAD, 4))
+	plate.add_theme_stylebox_override("panel", UI.clear_box(SECTION_PAD, 2))
 	UI.dress(plate, "plate_dark")
 	var l := KitPanels.section(Strings.t(key))
 	_grown(l, HEADING_LEAD)
@@ -289,7 +316,10 @@ func _stepper(icon: String, words: Label, down: Callable, up: Callable, spoken_d
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", UI.px(8))
 	var well := PanelContainer.new()
-	well.add_theme_stylebox_override("panel", UI.clear_box(7, 7))
+	# At large text the well hugs its icon, so that a long word ("Hinweise")
+	# keeps whole beside it.
+	var hug := 4.0 if Settings.text_scale > KitLayout.SIDE_BY_SIDE_UP_TO else 7.0
+	well.add_theme_stylebox_override("panel", UI.clear_box(hug, hug))
 	UI.dress(well, "well")
 	well.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	well.add_child(Icons.view("settingsandwellbeing/" + icon, 26))
@@ -317,15 +347,27 @@ func _toggle(setting: String, words: String, icon: String) -> Control:
 	var on := Settings.flag(setting)
 	var b := UI.action(Strings.t(words + ("_ON" if on else "_OFF")), flip.bind(setting), "parchment")
 	b.alignment = HORIZONTAL_ALIGNMENT_LEFT
-	b.icon = Icons.texture("settingsandwellbeing/" + icon)
+	# A row keeps its icon where its longest word, said either way, fits
+	# beside it; where one does not ("verschwinden" at 200%, board 5's E),
+	# the row drops the icon rather than break the word. The words and the
+	# switch still say it all.
+	var room := SCREEN_POINTS - 2.0 * Tokens.number("size", "safe_side_points") - 12.0 - (12 + 46 + 10) \
+		- 28.0 - 10.0 - 4.0
+	var longest := 0.0
+	for said: String in [Strings.t(words + "_ON"), Strings.t(words + "_OFF")]:
+		for word: String in said.split(" ", false):
+			longest = maxf(longest, b.get_theme_font("font").get_string_size(word, HORIZONTAL_ALIGNMENT_LEFT, -1,
+				b.get_theme_font_size("font_size")).x)
+	if longest <= UI.px(room):
+		b.icon = Icons.texture("settingsandwellbeing/" + icon)
 	b.expand_icon = true
 	b.add_theme_constant_override("icon_max_width", UI.px(28))
 	b.add_theme_constant_override("h_separation", UI.px(10))
 	b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	b.custom_minimum_size = Vector2(0, UI.px(52))
+	b.custom_minimum_size = Vector2(0, UI.px(UI.CONTROL_POINTS))
 	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	for state: String in ["normal", "hover", "pressed", "focus", "disabled"]:
-		var box := UI.clear_box(12, 7)
+		var box := UI.clear_box(12, 5)
 		box.content_margin_right = UI.px(12 + 46 + 10)
 		b.add_theme_stylebox_override(state, box)
 	var sw := ScreenSwitch.make(on)
@@ -342,11 +384,11 @@ func _toggle(setting: String, words: String, icon: String) -> Control:
 	return _tag(b, setting)
 
 
-## §20.8's text size as key frame 05's card: a small A and a large A on
-## parchment, a cream face off the violet card as the tabs and the toggles
-## (gold stays the main actions'), either side of the size in large figures
-## over a dot a step, and a law's card in the size chosen, to read before
-## leaving.
+## §20.8's text size as key frame 05's card: a small A and a large A either
+## side of the size in large figures over a dot a step, and a law's card in
+## the size chosen, to read before leaving. The As are gold, as key frame 05
+## has them (in high contrast too): the text size is the access tab's main
+## action, and the one gold on the tab lets it lead in the squint (board 5, F).
 func _text_card() -> Control:
 	var steps := Settings.text_steps()
 	var at := steps.find(Settings.text_scale)
@@ -371,19 +413,19 @@ func _text_card() -> Control:
 		dots.add_child(dot)
 	mid.add_child(dots)
 	for side: Array in [[-1, 14.0, "text-", "SETTINGS_SMALLER"], [1, 26.0, "text+", "SETTINGS_LARGER"]]:
-		var a := UI.action(Strings.t("SCREEN_TEXT_A"), text_step.bind(side[0]), "parchment",
+		var a := UI.action(Strings.t("SCREEN_TEXT_A"), text_step.bind(side[0]), "gold",
 			Strings.t(side[3], size_name))
 		a.add_theme_font_size_override("font_size", UI.text_px(side[1]))
 		a.set_meta("points", side[1])
-		a.custom_minimum_size = Vector2(UI.px(76 if large else 64), UI.px(76 if large else 56))
+		a.custom_minimum_size = Vector2(UI.px(76 if large else 64), UI.px(76.0 if large else UI.CONTROL_POINTS))
 		a.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		_tag(a, side[2])
 		row.add_child(a)
 		if side[0] < 0:
 			row.add_child(mid)
 	var sample := PanelContainer.new()
-	var room := UI.clear_box(10, 8)
-	room.content_margin_bottom = UI.px(10)
+	var room := UI.clear_box(10, 6)
+	room.content_margin_bottom = UI.px(8)
 	sample.add_theme_stylebox_override("panel", room)
 	UI.dress(sample, "parchment")
 	var line := HBoxContainer.new()
@@ -408,10 +450,10 @@ func _text_card() -> Control:
 	line.add_child(words)
 	sample.add_child(line)
 	var card := PanelContainer.new()
-	card.add_theme_stylebox_override("panel", UI.clear_box(10, 12))
+	card.add_theme_stylebox_override("panel", UI.clear_box(10, 8))
 	UI.dress(card, "card")
 	var box := VBoxContainer.new()
-	box.add_theme_constant_override("separation", UI.px(10))
+	box.add_theme_constant_override("separation", UI.px(8))
 	box.add_child(row)
 	box.add_child(sample)
 	card.add_child(box)
@@ -423,14 +465,14 @@ func _text_card() -> Control:
 ## marks on their coins with their names, and that said.
 func _shapes() -> Control:
 	var card := PanelContainer.new()
-	card.add_theme_stylebox_override("panel", UI.clear_box(12, 10))
+	card.add_theme_stylebox_override("panel", UI.clear_box(12, 6))
 	UI.dress(card, "card")
 	var box := VBoxContainer.new()
-	box.add_theme_constant_override("separation", UI.px(6))
+	box.add_theme_constant_override("separation", UI.px(4))
 	card.add_child(box)
 	var grid := GridContainer.new()
 	grid.add_theme_constant_override("h_separation", UI.px(4))
-	grid.add_theme_constant_override("v_separation", UI.px(8))
+	grid.add_theme_constant_override("v_separation", UI.px(4))
 	var schools := ["time", "motion", "matter", "energy", "life", "spirit"]
 	# Six a row where every name fits a sixth of the card; three where one
 	# does not (Portuguese "Movimento", French "Mouvement") or at large text.
@@ -442,20 +484,35 @@ func _shapes() -> Control:
 	grid.columns = 6
 	while grid.columns > 1 and widest * grid.columns + UI.px(4) * (grid.columns - 1) > room:
 		grid.columns = 3 if grid.columns == 6 else (2 if grid.columns == 3 else 1)
+	# Where a row holds fewer than six, each coin stands beside its name when
+	# both fit the column, so the card keeps two short rows (board 5, C).
+	var beside := grid.columns < 6 \
+		and widest + UI.px(COIN_POINTS + 4.0) <= (room - UI.px(4) * (grid.columns - 1)) / grid.columns
 	for school: String in schools:
-		var col := VBoxContainer.new()
+		var col: BoxContainer
+		if beside:
+			col = HBoxContainer.new()
+		else:
+			col = VBoxContainer.new()
 		col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		col.add_theme_constant_override("separation", UI.px(2))
+		# Stacked, a coin's rim is a point thinner and its name sits close
+		# under it, so the first screen keeps a switch row (board 5, C).
+		col.add_theme_constant_override("separation", UI.px(4) if beside else 0)
+		var rim := 4.0 if beside or grid.columns == 6 else 3.0
 		var coin := PanelContainer.new()
-		coin.add_theme_stylebox_override("panel", UI.clear_box(4, 4))
+		coin.add_theme_stylebox_override("panel", UI.clear_box(rim, rim))
 		UI.dress(coin, "window_" + school, 999)
-		coin.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		coin.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN if beside else Control.SIZE_SHRINK_CENTER
+		coin.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		coin.add_child(Icons.view("schools/" + school, 24))
 		col.add_child(coin)
 		var name := UI.label(Strings.t("SCHOOL_" + school.to_upper()), Tokens.type_role("caption")["points"])
 		name.theme_type_variation = "Caption"
 		name.add_theme_font_override("font", UI.bold_font())
 		name.set_meta("bold", true)
+		if beside:
+			name.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+			name.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		col.add_child(name)
 		grid.add_child(col)
 	box.add_child(grid)
@@ -548,14 +605,16 @@ func _show_cue() -> void:
 	scroll_cue.visible = bar.value + bar.page < bar.max_value - 1.0
 
 
-## Back home, on the glass bar at the foot of the screen, lifted off its
-## corner (ScreenNav.CORNER_LIFT_POINTS).
+## Back home, on the glass bar at the foot of the screen. The button, not the
+## glass, keeps the corners' lift (ScreenNav.CORNER_LIFT_POINTS), as a
+## ScreenNav dock's buttons do: the bar's own foot counts toward it, so the
+## first screen keeps both switch rows (board 5, C).
 func _bottom() -> Control:
 	var dock := MarginContainer.new()
 	dock.name = "Dock"
-	dock.add_theme_constant_override("margin_bottom", UI.px(ScreenNav.CORNER_LIFT_POINTS))
+	dock.add_theme_constant_override("margin_bottom", UI.px(ScreenNav.CORNER_LIFT_POINTS - BAR_PAD))
 	var bar := PanelContainer.new()
-	bar.add_theme_stylebox_override("panel", UI.clear_box(10, 10))
+	bar.add_theme_stylebox_override("panel", UI.clear_box(BAR_PAD, BAR_PAD))
 	UI.dress(bar, "glass", 22)
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", UI.px(10))
@@ -566,7 +625,8 @@ func _bottom() -> Control:
 	back.expand_icon = true
 	back.add_theme_constant_override("icon_max_width", UI.px(28))
 	back.add_theme_constant_override("h_separation", UI.px(8))
-	back.custom_minimum_size = Vector2(maxf(back.custom_minimum_size.x + UI.px(28 + 8 + 12), UI.px(120)), UI.px(56))
+	var wide := maxf(back.custom_minimum_size.x + UI.px(28 + 8 + 12), UI.px(120))
+	back.custom_minimum_size = Vector2(wide, UI.px(UI.CONTROL_POINTS))
 	for state: String in ["normal", "hover", "pressed", "focus", "disabled"]:
 		var box := UI.clear_box(12, 0)
 		box.content_margin_right = UI.px(18)
