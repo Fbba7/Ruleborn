@@ -229,9 +229,8 @@ static func parts() -> Array:
 		var r := _flow()
 		for s: String in ["N", "P", "D", "RM"]:
 			r.add_child(_cell("K06", s, func() -> Control:
-				var slider := HSlider.new()
-				slider.custom_minimum_size = Vector2(UI.px(150), UI.px(48))
-				slider.value = 60
+				var slider := KitControls.slider(Strings.t("SETTINGS_MUSIC", 60), 60, none)
+				slider.size_flags_horizontal = Control.SIZE_FILL
 				return slider))
 		return _part("K06 Slider", [r])])
 	out.append(["K07 Segmented control", func() -> Control:
@@ -337,17 +336,24 @@ static func parts() -> Array:
 		return _part("K16 Sheet", rows)])
 	_motion(out, "K16 Sheet", sheet.call("sheet"),
 		func(c: Control) -> void: Motion.sheet_in(c), Tokens.number("motion", "sheet_ms"), true, true, true)
-	var popup := func() -> Control:
+	var popup := func(kind: String) -> Control:
 		var stage := Control.new()
 		stage.custom_minimum_size = Vector2(UI.px(340), UI.px(230) * maxf(1.0, Settings.text_scale / 100.0))
 		stage.clip_contents = true
+		var actions := [UI.action(t.call("COMMON_DISMISS"), none, "gold")]
+		if kind == "confirm":
+			actions = [UI.action(t.call("KIT_BACK"), none), UI.action(t.call("SHOP_BUY"), none, "gold")]
 		KitPanels.dialog(stage, t.call("SHOP_BUY"), t.call("ERR_NOT_ENOUGH_ESSENCE"),
-			[UI.action(t.call("COMMON_DISMISS"), none, "gold")])
+			[] if kind == "info" else actions, kind)
 		return stage
 	out.append(["K17 Popup", func() -> Control:
-		var rows := [_wide("K17", "N", popup, "dialog"), _wide("K17", "RM", popup)]
+		var rows := [_wide("K17", "N", popup.bind("dialog"), "dialog"), _wide("K17", "RM", popup.bind("dialog"))]
 		return _part("K17 Popup", rows)])
-	_motion(out, "K17 Popup", popup, func(c: Control) -> void:
+	# The confirm and the info: a ribbon title and one primary action (S3-R27).
+	out.append(["K17 Confirm and info", func() -> Control:
+		var rows := [_wide("K17", "N", popup.bind("confirm"), "confirm"), _wide("K17", "N", popup.bind("info"), "info")]
+		return _part("K17 Confirm and info", rows)])
+	_motion(out, "K17 Popup", popup.bind("dialog"), func(c: Control) -> void:
 		var cards := c.find_children("*", "PanelContainer", true, false)
 		if not cards.is_empty():
 			Motion.pop(cards[0] as Control), Tokens.number("motion", "pop_ms"), false, false, true, 0.4)
@@ -463,17 +469,19 @@ static func parts() -> Array:
 	_motion(out, "K29 Banner", banner.call("success", "SHOP_BUY"),
 		func(c: Control) -> void: Motion.pop(c), Tokens.number("motion", "pop_ms"), true, false, true)
 	out.append(["K30 Info popover", func() -> Control:
-		# None today: a stand-in from today's parts (an (i) control and a
-		# small glass frame), so the pair has its place.
+		# The (i) control over its popover as a tap opens it.
 		var pop := func() -> Control:
 			var v := VBoxContainer.new()
-			v.add_child(KitControls.icon_button("generalui/info", "", none))
-			var p := _panel("glass", t.call("ERR_NOT_ENOUGH_ESSENCE"))
-			v.add_child(p)
+			v.add_theme_constant_override("separation", 0)
+			var i := KitPanels.info(t.call("SHOP_BUY"), t.call("ERR_NOT_ENOUGH_ESSENCE"))
+			i.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+			v.add_child(i)
+			v.add_child(KitPanels.popover(t.call("ERR_NOT_ENOUGH_ESSENCE")))
+			v.set_meta("target", i)
 			return v
 		var r := _flow()
-		r.add_child(_cell("K30", "N", pop, "stand-in, none today"))
-		r.add_child(_cell("K30", "RM", pop, "stand-in, none today"))
+		r.add_child(_cell("K30", "N", pop, "open"))
+		r.add_child(_cell("K30", "RM", pop, "open"))
 		return _part("K30 Info popover", [r])])
 	out.append(["K31 Heist clock and alarm meter", func() -> Control:
 		var r := _flow()
@@ -518,7 +526,7 @@ static func parts() -> Array:
 		return _part("K34 Spinner", [_caption("full"), r, _caption("reduced"), still])])
 	out.append(["K35 Empty state", func() -> Control:
 		return _part("K35 Empty state", [_wide("K35", "N", func() -> Control:
-			return ScreenParts.empty("generalui", "info", t.call("LAB_FOUND_NONE"), func() -> void: pass))])])
+			return KitPanels.empty("generalui/info", t.call("LAB_FOUND_NONE"), t.call("SCREEN_TRY_AGAIN"), none))])])
 	out.append(["K36 Avatar", func() -> Control:
 		var r := _flow()
 		for s: String in ["N", "P", "S", "A"]:
