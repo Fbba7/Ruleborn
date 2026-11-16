@@ -28,7 +28,7 @@
 | P2-AD-board-3b: board 3, second round | 1 | ready (pre-check in the status file) | `gate/boards/board-3.md` "Round 2 (board 3b)" and `gate/boards/board-3/r5-*.png` (five sheets); home rendered on main at `ee31b0d9` with `FIT=1` at 100% (en, pt_BR, pt_PT, fr, de, hc, hc pt_BR; notice en, pt_BR, de) and 200% (en, pt_BR, pt_PT, fr, de, hc, hc pt_BR; notice en, pt_BR, pt_PT, fr, de, en 900 tall), beside `art/ui/keyframes/01-home*`; B and D fixed, A's core fixed; H open as AD-R38 and AD-R39 |
 
 ## Handoff
-- Last verified commit: `31c4de6c` (P2-AD-board-3b; pre-check result in `status/AD.json`). `check_docs_consistency.py` passes.
+- Last verified commit: `31c4de6c` (P2-AD-board-3b; pre-check PASS, 2026-11-16T06:13:10Z, `All checks passed.`, exit 0). `check_docs_consistency.py` passes.
 - Done this session (2026-11-16, cycle 94):
   - S3-R20 answered at 05:30Z: the Hierarchy fixes stand at `3854db00`; new objection J for 5b.
   - P2-AD-board-3b posted. H's measurement: at 200% pt_BR without the notice, the goal card ends at y 920 and the bar's gold edge is at 991 (540×1170), on the right half. That is `reserve_lift`'s room for the chosen tab's raised picture. The chips miss by 3 px (S2's 149 vs 152).

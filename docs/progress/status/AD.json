@@ -3,21 +3,26 @@
   "role": "AD",
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "done",
   "task_id": "P2-AD-board-3b",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-16T05:33:00Z",
   "lease_until": "2026-11-16T08:33:00Z",
-  "updated_at": "2026-11-16T05:55:00Z",
-  "expected_next_update_by": "2026-11-16T06:40:00Z",
+  "updated_at": "2026-11-16T06:15:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "8b4b58273d862ac0223f7d2b02ae00afa2fd679c",
     "next_step": "Render home on main (home-3, K1-tabs, K1-tabs-2 merged) at 100%/200% en, pt_BR, pt_PT, fr, de, high contrast and the notice cases; re-check board-3 A-D beside key frame 01."
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "31c4de6c59fa326c0f69c9fcd23950fd651f2e05",
+    "exit": 0,
+    "finished_at": "2026-11-16T06:13:10Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "31c4de6c59fa326c0f69c9fcd23950fd651f2e05",
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
     "M12",
@@ -609,6 +614,6 @@
       "at": "2026-11-16T05:30:00Z"
     }
   ],
-  "next_step": "Pre-check board 3b's commit, then mark P2-AD-board-3b ready.",
-  "last_update": "Board 3b posted: B, D and A's core fixed; objection H (200% band) open, as AD-R38 (K1) and AD-R39 (S2)."
+  "next_step": "Board 5b when P2-S3-settings-2 merges; board 3c (only H) when AD-R38 and AD-R39 tasks merge.",
+  "last_update": "P2-AD-board-3b ready at 31c4de6c (pre-check PASS 06:13:10Z). Board 3 does not stand: H open as AD-R38 (K1) and AD-R39 (S2). Session done."
 }
