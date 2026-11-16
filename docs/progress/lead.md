@@ -282,11 +282,12 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| K1 | `session_01SNkKxnx23zG9HV4wddwVrq` (Opus 5.5, effort high) | P2-K1-kit-gaps-2 (start, cycle 100: P2-K1-kit-gaps-1 merged as cf6165e9; the fourth seat with S2, AD and S1) | `claude/ui-bake` | 2026-11-16 12:24Z |
 | AD | `session_01SNkKxoT1Zvr4LionPdFkEt` (Opus 5.5, effort high) | S2-R31 first (preview P2-S2-home-4 at c8de70fe), then S1-R31 (preview P2-S1-result-4), then P2-AD-board-5c and -3c when their tasks merge (restart, cycle 100: a seat free; S3-R29's default applied at 11:43Z) | `claude/ui-ad` | 2026-11-16 11:49Z |
 | S1 | `session_01SNkKxnXsUaw4HRQU3Yc69h` (Opus 5.5, effort high) | P2-S1-result-4 (restart, cycle 100: the session below went idle waiting for the gate; the gate at 8753618a failed Display type, M30's close point) | `claude/ui-screens-heist` | 2026-11-16 11:49Z |
 | S3 | `session_01SNkKxqxSgTQePYHeS97vWa` (Opus 5.5, effort high) | P2-S3-character-3 (restart, cycle 99: S3-R30 granted, `client/scripts/auth_panel.gd` in its exceptions; the session below ended its turn waiting on it) | `claude/ui-screens-meta` | 2026-11-16 10:44Z |
 | S1 | `session_01SNkKxpR61Xc97jycRSyB3B` (Opus 5.5, effort high; idle waiting for the gate, replaced in cycle 100) | P2-S1-result-4 (start, cycle 98: M25's fourth seat, phase 2's exit for the result screen; P2-S1-result-3 merged as 19cfe498) | `claude/ui-screens-heist` | 2026-11-16 09:43Z |
-| K1 | `session_01SNkKxoSc1gCBJ4YfneEqN5` (Opus 5.5, effort high) | P2-K1-kit-gaps-1 (start, cycle 97: S3-R22, R24, R26 and R27 from IQ-kit-docs; P2-K1-tabs-3 merged as 1053266f) | `claude/ui-bake` | 2026-11-16 09:29Z |
+| K1 | `session_01SNkKxoSc1gCBJ4YfneEqN5` (Opus 5.5, effort high; idle, its task merged as cf6165e9 in cycle 100) | P2-K1-kit-gaps-1 (start, cycle 97: S3-R22, R24, R26 and R27 from IQ-kit-docs; P2-K1-tabs-3 merged as 1053266f) | `claude/ui-bake` | 2026-11-16 09:29Z |
 | S3 | `session_01SNkKxpuAx4fJLdVkzpdFw8` (Opus 5.5, effort high; waiting on S3-R30, replaced in cycle 99) | P2-S3-character-3 (start, cycle 97: board 5b's objections K and L, AD-R40 and AD-R41; board 5b merged as 1053266f) | `claude/ui-screens-meta` | 2026-11-16 09:29Z |
 | S2 | `session_01SNkKxoR9hEzsNNp5XQnTTG` (Opus 5.5, effort high) | P2-S2-home-4 (start, cycle 97: P2-K1-tabs-3 merged as 1053266f; the branch also carries IQ-import-check) | `claude/ui-screens-home` | 2026-11-16 09:28Z |
 | AD | `session_01SNkKxrDXY9opvGEQBWJJEm` (Opus 5.5, effort high; idle, board 5b merged; replaced in cycle 100) | P2-AD-board-5b (restart, cycle 96: P2-S3-settings-2 merged as f675f05e; board 3c later) | `claude/ui-ad` | 2026-11-16 07:44Z |
