@@ -357,6 +357,8 @@ func _refresh() -> void:
 	actions_node.visible = not choosing
 	actions_band.visible = not choosing
 	crew_node.visible = not choosing
+	if crew_node.get_parent() is PanelContainer:
+		(crew_node.get_parent() as Control).visible = not choosing
 	view.landing_marks = controller.shown_marks() if choosing else []
 	view.landing_pick = controller.shown_pick()
 	view.follow = [] if choosing else [controller.selected]
@@ -631,7 +633,14 @@ func _build() -> void:
 	crew_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	crew_row.size_flags_vertical = Control.SIZE_SHRINK_END
 	crew_node = crew_row
-	band.add_child(crew_row)
+	# The crew in the tray's inner well (layered: the plate's body, its
+	# frame, the well sunk in it), so the portraits sit in a pocket, not on
+	# the plate's face.
+	var well := ScreenKit.panel("well", crew_row, 12.0, 4.0)
+	well.name = "CrewWell"
+	well.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	well.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	band.add_child(well)
 	_build_crew()
 	hand = HeistHand.new(_get_out)
 	hand.host = self
@@ -661,9 +670,11 @@ func _build() -> void:
 			c.reparent(flow)
 		band.add_child(flow)
 		actions_node = flow
-	# The crew and the hand on one tray of dark glass (the design's), so the
-	# portraits and buttons keep their value step off the bright world.
-	var tray := FxSkin.panel("glass", 14.0, 5.0)
+	# The crew and the hand on one opaque tray, the kit's leather (the plum
+	# and gold frame the loot and alarm plates wear), so the portraits and
+	# buttons keep their value step off the bright world and the tray reads
+	# as a layered plate rather than a see-through scrim.
+	var tray := FxSkin.panel("leather", 14.0, 5.0)
 	tray.name = "Tray"
 	tray.add_child(band)
 	actions_band = tray
@@ -832,7 +843,7 @@ func _dress_hand() -> void:
 	var cast := _hand_order("heistcontrols/cast", Strings.t("HEIST_CAST"), hand._open_casts, "gold",
 		Vector2(92, 76), 34.0)
 	var go := _hand_order("heistcontrols/getout", Strings.t("HEIST_GET_OUT"), _get_out, "leather",
-		Vector2(66, 54), 24.0)
+		Vector2(66, 54), 32.0)
 	for pair: Array in [[hand.cast_button, cast], [hand.go_button, go]]:
 		var old: Button = pair[0]
 		var at := old.get_index()

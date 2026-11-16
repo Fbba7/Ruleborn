@@ -223,7 +223,15 @@ func _paint() -> void:
 	var px := UI.text_px(13.0)
 	var wide := font.get_string_size(letters, HORIZONTAL_ALIGNMENT_LEFT, -1, px).x
 	var base := Vector2(w * 0.5 - wide * 0.5, bar.end.y + px * 1.05)
-	FxPen.string_outline(self, font, base, letters, HORIZONTAL_ALIGNMENT_LEFT, -1, px, UI.px(4), FxSkin.INK_LINE)
+	# The display treatment (kit-spec's words over art): a hard drop in ink
+	# below, then the ink outline, then the fill, so the name holds on any
+	# ground; thicker with large text, where it is read first. The drop is
+	# the outline again, lower: the two outlines share one glyph cache and go
+	# as one draw, and the drop's own fill would be hidden under the name.
+	var line := UI.px(5) if Settings.text_scale > 130 else UI.px(4)
+	var drop := Vector2(0, UI.px(2))
+	FxPen.string_outline(self, font, base + drop, letters, HORIZONTAL_ALIGNMENT_LEFT, -1, px, line, FxSkin.INK_LINE)
+	FxPen.string_outline(self, font, base, letters, HORIZONTAL_ALIGNMENT_LEFT, -1, px, line, FxSkin.INK_LINE)
 	FxPen.string(self, font, base, letters, HORIZONTAL_ALIGNMENT_LEFT, -1, px, FxSkin.GOLD if chosen else FxSkin.ON_DARK)
 
 

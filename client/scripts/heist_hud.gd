@@ -139,16 +139,96 @@ func _init() -> void:
 ## With §20.8's large text a panel's leather is thinner (3 points top and
 ## bottom, and 5 at the sides where `sides`), so the HUD's column keeps clear
 ## of the hand's tray and a law's two words keep one line beside the alarm.
-static func _tight(p: PanelContainer, sides := true) -> void:
+static func _tight(p: PanelContainer, sides := true, side := 5.0) -> void:
 	if Settings.text_scale <= 130:
 		return
 	var box := p.get_theme_stylebox("panel").duplicate() as StyleBox
 	if sides:
-		box.content_margin_left = UI.px(5)
-		box.content_margin_right = UI.px(5)
+		box.content_margin_left = UI.px(side)
+		box.content_margin_right = UI.px(side)
 	box.content_margin_top = UI.px(3)
 	box.content_margin_bottom = UI.px(3)
 	p.add_theme_stylebox_override("panel", box)
+
+
+## The alarm panel's count (KitHud.alarm_fit names it "Count").
+static func alarm_label_of(piece: PanelContainer) -> Label:
+	return piece.find_child("Count", true, false) as Label
+
+
+## A figure in the kit's baked numerals (KitNumerals), the display finish
+## the clock wears (a stroke and a hard drop baked in), in place of its flat
+## live words: only with §20.8's large text, where the gate reads the
+## figures at display size, and while the numerals' skin is on. The kit's
+## label stays the figure's source (set_loot and set_alarm write to it),
+## hidden inside a box (marked "baked") that holds the baked row; `_sync` redraws the row
+## when the words change. A mark the numerals do not bake (the estimate's
+## "~") stays live text before them. Baked glyphs batch with the atlas, so
+## the figures cost few draws of their own (an outline and a drop on the
+## live words cost 11 at 200%).
+static func _bake(l: Label, finish: String) -> void:
+	if l == null or Settings.text_scale <= 130 or not KitSkin.is_on("numerals"):
+		return
+	var box := HBoxContainer.new()
+	box.name = "Baked"
+	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	box.alignment = BoxContainer.ALIGNMENT_END if l.horizontal_alignment == HORIZONTAL_ALIGNMENT_RIGHT \
+		else BoxContainer.ALIGNMENT_BEGIN
+	box.add_theme_constant_override("separation", 0)
+	box.custom_minimum_size.y = l.custom_minimum_size.y
+	box.size_flags_horizontal = l.size_flags_horizontal
+	box.size_flags_vertical = l.size_flags_vertical
+	box.set_meta("finish", finish)
+	box.set_meta("baked", true)
+	var parent := l.get_parent()
+	var at := l.get_index()
+	parent.remove_child(l)
+	parent.add_child(box)
+	parent.move_child(box, at)
+	box.add_child(l)
+	l.visible = false
+	_sync(l)
+
+
+## A baked figure's row (`_bake`) drawn again for its label's words and the
+## finish asked, when either changed; nothing for a label not baked.
+static func _sync(l: Label, finish := "") -> void:
+	if l == null or l.get_parent() == null or not l.get_parent().has_meta("baked"):
+		return
+	var box := l.get_parent() as HBoxContainer
+	if finish == "":
+		finish = str(box.get_meta("finish"))
+	var shown := "%s|%s" % [l.text, finish]
+	if str(box.get_meta("shown", "")) == shown:
+		return
+	box.set_meta("shown", shown)
+	box.set_meta("finish", finish)
+	for c: Node in box.get_children():
+		if c != l:
+			box.remove_child(c)
+			c.queue_free()
+	var text := l.text
+	if text.begins_with("~"):
+		var mark := Label.new()
+		mark.text = "~"
+		mark.add_theme_font_size_override("font_size", l.get_theme_font_size("font_size"))
+		mark.add_theme_color_override("font_color", l.get_theme_color("font_color"))
+		mark.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		mark.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		box.add_child(mark)
+		text = text.substr(1)
+	# "4 / 6" closes up to "4/6": the baked glyphs' own sidebearings space
+	# them, and the alarm's column keeps a law's two words on one line.
+	var row := KitNumerals.make(text.replace(" ", ""), finish, "number", l.text)
+	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	box.add_child(row)
+	_through(box)
+
+
+## The alarm count's finish: white, and the timer's red from past half the
+## bells, as KitHud colours the live count (§20.8).
+func _alarm_finish() -> String:
+	return "num_timer_red" if _alarm >= BELLS / 2 + 1 else "num_white"
 
 
 ## A side column of the top row: it takes what room there is.
@@ -174,6 +254,25 @@ func _swap(old: Control, piece: Control) -> void:
 	parent.add_child(piece)
 	parent.move_child(piece, at)
 	_through(piece)
+
+
+## The chip's icon as a rendered badge in its school's shape (FxLawBadge,
+## §21.8), at its painted size, in place of the kit's small glyph or disc.
+static func _badge(chip: PanelContainer, icon: String, law: String) -> void:
+	if not Icons.has(icon) or chip.get_child_count() == 0:
+		return
+	var row := chip.get_child(0) as HBoxContainer
+	if row == null or row.get_child_count() < 2:
+		return
+	var old := row.get_child(0) as Control
+	var links: Array = LawFxLinks.LAWS.get(law, [""])
+	var badge := FxLawBadge.make(icon, str(links[0]), 26.0 if Settings.text_scale > 130 else 32.0)
+	badge.name = "Badge"
+	row.add_child(badge)
+	row.move_child(badge, 0)
+	row.remove_child(old)
+	old.queue_free()
+	row.add_theme_constant_override("separation", UI.px(4))
 
 
 static func _through(node: Node) -> void:
@@ -230,7 +329,11 @@ func _figures(text: String) -> void:
 
 func _build_alarm() -> void:
 	var piece := KitHud.alarm_fit(_alarm, BELLS, Strings.t("HUD_ALARM_WORD"))
-	_tight(piece)
+	# The leather's frame is thick: with large text its words keep 8 points
+	# off it, so "Alarm" and the count stand inside the plate (gate, display
+	# type: the words ran into the frame at 5).
+	_tight(piece, true, 8.0)
+	_bake(alarm_label_of(piece), _alarm_finish())
 	_swap(alarm_panel, piece)
 	alarm_panel = piece
 	alarm_label = piece.find_child("Count", true, false)
@@ -260,7 +363,12 @@ func _build_loot(rows: Array, bags: float, load_words: String, vault: Array) -> 
 	# _swap carries the old panel's spoken name over; the kit's names every
 	# number.
 	var spoken := piece.accessibility_name
-	_tight(piece)
+	# As the alarm: the figures keep clear of the leather's frame, and are
+	# the kit's baked gold numerals, so 946 and ~2,600 read as display
+	# figures rather than flat gold words on the plate.
+	_tight(piece, true, 10.0)
+	for n: Variant in piece.get_meta("numbers", []):
+		_bake(n as Label, "num_gold")
 	_swap(loot_panel, piece)
 	loot_panel = piece
 	loot_panel.accessibility_name = spoken
@@ -277,6 +385,7 @@ func show_state(r: RulebornReplay) -> void:
 		var rose := r.alarm() > _alarm and r.tick() > 0
 		_alarm = r.alarm()
 		KitHud.set_alarm(alarm_panel, _alarm)
+		_sync(alarm_label, _alarm_finish())
 		if rose and is_inside_tree():
 			Motion.pop(alarm_panel)
 	var carried := 0
@@ -307,6 +416,8 @@ func show_state(r: RulebornReplay) -> void:
 	else:
 		var aim := load_target / 100.0 if load_target >= 0 else -1.0
 		KitHud.set_loot(loot_panel, rows, bags, aim, load_words, vault)
+		for n: Variant in loot_panel.get_meta("numbers", []):
+			_sync(n as Label)
 	realm_label.text = realm(r.realm_code(), r.realms_to_go())
 	realm_label.visible = realm_label.text != ""
 	(realm_label.get_parent() as Control).visible = realm_label.visible
@@ -330,6 +441,7 @@ func _show_laws(r: RulebornReplay) -> void:
 	for law in laws:
 		var icon := "laws/" + law.replace("_", "")
 		var chip := KitCards.law_chip_fit(icon if Icons.has(icon) else "", Strings.term("LAW", law))
+		_badge(chip, icon, law)
 		_tight(chip)
 		laws_box.add_child(chip)
 		_through(chip)
