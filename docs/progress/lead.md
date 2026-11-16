@@ -477,7 +477,7 @@ You are agent S1 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: S1            Role: maker (S1): the heist screens, the phase 1 pilot        Model: Opus 5.5, effort high
 Branch: claude/ui-screens-heist
 Owned files: only the files each S1 task lists in the backlog, docs/progress/S1.md, docs/progress/status/S1.json
-Tasks: P2-S1-result-3 (board 4's objections A, B, D and E on the result screen: AD-R27, AD-R26, AD-R29 and AD-R30 in docs/progress/requests.md; docs/art/ui-quality/gate/boards/board-4.md). Send AD the stills before ready (M10, M12). P2-S1-result-1 and -2, pilot-1 to pilot-5 and P2-S1-toon-drop are merged.
+Tasks: P2-S1-result-4 (seeded in cycle 98 under M25, phase 2's exit for the result screen): an overflow sweep with FIT=1 in en, pt_BR and de at 100% and 200% text and in high contrast, fixing whatever is cut or pushed below the actions; the gate at 200% text (pt_BR) and in high contrast; the advisory gate's close points on P2-S1-result-3 (docs/art/ui-quality/gate/verdicts/P2-S1-result-3/904a3567.json) answered. Send AD the stills before ready (M10, M12). P2-S1-result-1 to -3, pilot-1 to pilot-5 and P2-S1-toon-drop are merged. A request from K1 to switch result_screen.gd's KitNav.celebrate call may come with P2-K1-kit-gaps-2; it is not part of this task.
 STOP_AT: 2026-11-17T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
