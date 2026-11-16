@@ -1547,6 +1547,44 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   (S2.md, "IQ-import-check: notes"). Default: the three stay (harmless at
   run time) until a lead task removes them. Copied in cycle 96; open, the
   default applies until a lead-owned removal is merged after check_all.
+  In cycle 97 IQ-import-check (`ade915de`) stayed out of the merge: its
+  branch also carries one line of `docs/art/tracks/home-screen.md` from
+  home-3's work, which IQ-import-check does not own, so it merges with
+  P2-S2-home-4 (S2's next task, which owns that file).
+- **AD-R40 and AD-R41** (from AD; the status file dates them 16 November
+  2026 09:20Z, ahead of the clock when the lead read them at 08:45Z; due
+  18 November 09:20Z; AD-R40 blocking board 5, AD-R41 not blocking):
+  board 5b (`board-5.md`, 'Round 2 (board 5b)') closes A to G and raises
+  two objections. K (AD-R40): at its highest level (fixture character 4,
+  level 10 of 10) the character screen runs off the phone at 200% text in
+  English, pt_BR and German: the sticky bar's 'at the highest level' pill
+  (CHARACTER_TOP_LEVEL, `character_screen.gd` `_actions`) keeps all its
+  words and forces the screen wider than 1080; show it as the star icon
+  alone with an accessibility_name at large text, or wrap it, and add
+  character 4 at 200% in en, pt_BR and de to `fit_character.sh`. L
+  (AD-R41, light, quality 8): the Account tab's profile row
+  (`screen_account.gd` profile_row) fails value-steps (ΔL* 2.5 and 3.6);
+  give it the Access tab's row plate. Copied in cycle 97. **Answered** by
+  the lead in cycle 97, as the defaults say: P2-S3-character-3 (S3, K and
+  L, after board 5b merges) and P2-AD-board-5c (AD, only K and L, after
+  character-3) are seeded in the backlog.
+- **S3-R22 to S3-R28** (from S3, for K1, 16 November 2026 07:49Z; due
+  16 November 19:49Z; not blocking): IQ-kit-docs's findings, kit-spec.md
+  read against `client/ui/`. R22: the info popover (K30). R23: the
+  spinner (K34) and the Ld, L and A states as kit calls. R24: the empty
+  state (K35) in the kit, not only `ScreenParts.empty`. R25: one entry
+  point for the reward sequence (K40), `KitNav.celebrate` retired. R26:
+  `KitControls.slider` (K06). R27: K17's confirm and info variants and
+  the ribbon title. R28: section 8.1's clean-up (the `uiq_*` prototypes
+  and their shots deleted, `screen_bands.gd` routed off `screen_box.gd`,
+  or section 8.1 says why they stay). Each default keeps things as they
+  are. Copied in cycle 97. **Answered** by the lead in cycle 97: R22,
+  R24, R26 and R27 go to P2-K1-kit-gaps-1 and R23 and R25 to
+  P2-K1-kit-gaps-2 (K1, after kit-gaps-1; the switch of
+  `result_screen.gd`'s `celebrate` call goes to S1 as a request), both
+  seeded in the backlog so K1 keeps a seat (M25). R28's default stands
+  for now: nothing on a shipped screen depends on the prototypes, and
+  the clean-up crosses several owners' files.
 
 ## Done in cycle 50 (10 November 2026, by the lead)
 
