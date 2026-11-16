@@ -1,0 +1,53 @@
+[
+  {
+    "task_id": "P2-S1-result-4",
+    "sha": "8753618ad66d4dbbd552a2960c5798f2f8ee9811",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-16T10:51:00Z",
+    "item": "result at 200% text, pt_BR",
+    "quality": "Display type",
+    "samples": [
+      "fail",
+      "fail",
+      "fail"
+    ],
+    "result": "fail",
+    "critique": "Three fails, on the same region. The gold kicker 'ASSALTO CONCLUÍDO' sits straight on the sunburst sky with no dark ink outline, and its edge melts into the navy rays. The summary lines below it ('Nenhum guarda alertado…', '2:45 · O alarme do reino…') over the same art have only a hairline dark edge, about 2–3 px on glyphs about 45 px tall, far under 1.5 pt or 12% of the size. That outline did not scale with the 200% text. All three samples passed the rest: 'Limpo' is inked, and the headline figures +2.310, +805 and +15 carry outline, hard drop and gradient fill, as the pass anchor's figures do. Close point: give every word over the sky an ink outline at least 12% of its size that grows with text scale, the kicker included (rulings v2: the sky with rays is art; a card is not)."
+  },
+  {
+    "task_id": "P2-S1-result-4",
+    "sha": "8753618ad66d4dbbd552a2960c5798f2f8ee9811",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-16T10:51:00Z",
+    "item": "result at 200% text, pt_BR",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes. In grayscale 'ASSALTAR DE NOVO' (Raid again) is the full-width gold control at the foot, the largest and heaviest one, and the eye lands on it first. The cream Luz-estelar card is lighter but much shorter and holds no action, so under ruling v3 it falls in behind. The Home button is icon-only and small. The 200% prose is regular weight, under the bold rewards. All three find a clearer lead than the pass anchor's Level up, whose cream HEIST tab strip competes more."
+  },
+  {
+    "task_id": "P2-S1-result-4",
+    "sha": "8753618ad66d4dbbd552a2960c5798f2f8ee9811",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-16T10:51:00Z",
+    "item": "result in high contrast",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes. RAID AGAIN is the widest, most saturated control at the foot, clearly larger than Home and the gold 3 s replay tile, which is under half its size. The white Starlight card is the lightest thing in grayscale but holds information only and is not clearly larger, and in high contrast the light cards are the mode's design (ruling v3). The law pills sit lower in value. All three find the lead at least as clear as the pass anchor's."
+  }
+]
