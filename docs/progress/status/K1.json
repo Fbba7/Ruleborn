@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-16T09:35:00Z",
   "lease_until": "2026-11-16T12:35:00Z",
-  "updated_at": "2026-11-16T09:46:00Z",
-  "expected_next_update_by": "2026-11-16T10:30:00Z",
+  "updated_at": "2026-11-16T10:31:00Z",
+  "expected_next_update_by": "2026-11-16T11:15:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "9e08db75",
-    "next_step": "build.sh, check_all.sh and guard.sh running on merge 3b9f77ba (stills d90a8cce); then precheck"
+    "last_green_sha": "3b9f77ba",
+    "next_step": "pre-check running at 9ec2e61b; record it, then ready"
   },
   "precheck": null,
   "gate_request": null,
