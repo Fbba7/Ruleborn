@@ -366,3 +366,88 @@ These are from `budget_shots.py --only heist/100,heist/200,heist/hc`. No record 
 - Objection A (numerals switched on) is P1-K1-numerals-on.
 - The portrait art at its source (a flat-painted Bramble and Hollow) would be AIA-2's. A request to the lead is in S1.json.
 - P1-AD-board-1d re-checks D and F.
+
+## Part 6: the gate's heist items on current main (P2-S1-heist-1)
+
+The phase 2 exit (M25) asks for the three heist items again, this time on current main. The latest verdicts were P1-S1-pilot-1 at 5470c4d3, P1-S1-pilot-2 at a4d87d18 and P1-S1-pilot-4 at e846c531. Before changing anything, the gate's judges were re-run on stills of main (run `main1`, three samples per quality):
+
+| Item | Quality | main1 |
+|---|---|---|
+| heist at 100% text | Colour roles and value | pass 3/3 |
+| heist at 100% text | One art-direction idea | pass |
+| heist at 200% text | Colour roles and value | pass 3/3 |
+| heist at 200% text | Character presence | pass 3/3 |
+| heist at 200% text | Layered materials | **fail 3/3**: the crew tray was a translucent scrim with a hairline rim, with no frame, well or lip |
+| heist at 200% text | Painted or rendered icons | **fail 3/3**: the law icons were tiny flat glyphs with no school-shaped frame |
+| heist at 200% text | Display type | **fail 3/3**: the crew names had no outline over the see-through scrim; 946 and ~2,600 were flat gold; Alarm and the figures ran into their card frames |
+| heist at 200% text, pt_BR, no crew plan | Hierarchy | pass 3/3 (Lançar leads) |
+
+So Get out and Alarm share the danger role, Cast has the gold fill and the rings differ by shape (the five trailing shapes of part 4), as before. What was missing at 200% was the materials, the icons and the display figures.
+
+### What was done
+
+- **Layered materials: a leather tray with a well.** The crew and the hand now sit on one opaque tray in the kit's leather, the plum and gold frame that the loot and alarm plates wear. This replaces the see-through scrim. The crew sit in the tray's inner well (`ScreenKit.panel('well')`), so each portrait sits in a pocket, not on the plate's face. The load bar, the crew bars and the hint pill keep the kit's chunky inked material from part 4.
+- **Painted icons: law badges.** Each "Laws here" chip shows its icon as a rendered badge (`FxLawBadge`): the school's shape as a frame, a cream disc, and the icon at its painted size, drawn through `Icons.view`. This replaces the kit's small glyph. Bloom, Cast and Get out keep their painted icons at their painted size.
+- **Display type: baked figures, inked names, room off the frame.**
+  - With large text, the alarm count, Room and Left figures use the kit's baked numerals (`KitNumerals`), the finish the clock wears: a stroke and a hard drop baked in. The kit's label stays the source, hidden. A "~" the numerals do not bake stays live text in front of them.
+  - The crew names carry the words-over-art treatment: a hard ink drop, an ink outline, then the fill. The drop and the outline share one glyph cache, so they go as one draw.
+  - With large text, the words keep 8 points off the leather's thick frame, so "Alarm" and the figures stand inside their plates.
+- **M26: fit at 200% for every state.** Five fixes:
+  - **Crew names.** Names wrap to two lines on a tight line step, and shrink to fit their third of the row. The large-text crew rows sit closer (v_separation of 3 points), so the longest names fit.
+  - **Law names.** A law name that would wrap at more than 130% text steps its size down to keep one line, to 80% at most. It is measured afresh at each width. This is for pt_BR's longer law names.
+  - **The bubble with no room in the world.** A guard's speech bubble that has no room in the world now rests on the tray's content above the panels, not over the loot's words. In `fx_anchors`, the tray band is a soft keep-off counted at a quarter of its area, and the bubble is drawn on the layer above the panels.
+  - **The bubble beside a panel.** The crew buttons, which hold the names and the count badges, are hard keep-offs. The bubble also tries places beside a hard panel, not only above or below one. This came from the gate re-run below.
+  - **Fixture states.** `screen_heist.gd` has new fixture states: `CREW=n` (one to four crew), `LONG=1` (the longest names), `END=1` (the end of the timer) and `LONGEST` (each language's longest crew and law names).
+
+### The gate re-run on the fixes
+
+The judges ran on the part 6 stills, with the same anchors as `main1`:
+
+| Item | Quality | heist2 (6e8af315) | heist3 (ed766fe9) |
+|---|---|---|---|
+| heist at 100% text | Colour roles and value | pass | (no change) |
+| heist at 100% text | One art-direction idea | pass | (no change) |
+| heist at 200% text | Layered materials | pass 3/3 | (no change) |
+| heist at 200% text | Painted or rendered icons | pass 3/3 | (no change) |
+| heist at 200% text | Display type | 2/3: sample 2 failed on the "Who's there?" bubble over the top of Bramble's count badge | **pass 3/3** |
+| heist at 200% text | Colour roles and value | pass | (no change) |
+| heist at 200% text | Character presence | pass | pass |
+| heist at 200% text, pt_BR, no crew plan | Hierarchy | pass | (no change) |
+
+The heist3 fix (ed766fe9) moves only the speech bubble. On the 200% en still the bubble now sits at the top right of the tray, clear of every badge and name. The 100% and pt_BR stills were re-shot on ed766fe9, and their bubble stays in the world. These samples are this task's own runs. The lead's gate run (gate: Screen) gives the verdict.
+
+### Evidence
+
+Stills are in `docs/art/shots/heist-pilot/`, all from ed766fe9:
+
+- `part6-h100.png`: crew plan, 100% text, en; the gate still for "heist at 100% text";
+- `part6-h200.png`: crew plan, 200% text, en; the gate still for "heist at 200% text";
+- `part6-hpt.png`: no crew plan, 200% text, pt_BR; the gate still for "heist at 200% text, pt_BR, no crew plan".
+
+Each still was shot with:
+
+`env FIT=1 ESTIMATE=2600 LAWS=bloom,glowing_dark MOMENT=sneak [MANIFEST=1] TEXT=100|200 [LOCALE=pt_BR] bash tools/render/shoot.sh client/tests/shots/screen_heist.gd OUT.png`
+
+**M26 sweep at 200% text.** Each state was shot with `FIT=1`, in en, pt_BR and de:
+
+- with a crew plan and with none;
+- each crew size from one to four;
+- the longest names, with a plan and with none;
+- the alarm;
+- the end of the timer, and the end of the timer with the longest names at the alarm.
+
+The result table is in the handoff (`docs/progress/S1.md`).
+
+**Budgets.** `budget_shots.py --only heist/100,heist/200,heist/hc` reads 120, 118 and 121 draw calls, against records of 120, 116 and 120. The two calls are the law badges at large text and high contrast (+1, where at 100% the badge replaces the icon disc) and the crew's well (+1 at each size). A raise is asked of K1 through the lead (S1-R33). Tried first, with no gain:
+
+- dropping the names' drop fill;
+- the figures as outlined live words (+11);
+- drawing the portraits' names before their shapes.
+
+Textures and word contrast are unchanged. No word is below 4.5:1. `check_screens.py` passes (212 draw, 25 fill, 25 texture).
+
+### What is still worse
+
+- **The tray costs two draw calls over the record** until S1-R33 is answered. If it is refused, S1-R33's default applies: the well comes out, and the large-text badges go back to the kit's icon disc.
+- **The bubble can rest on the tray** when the world has no room for it (200% text). It stays off every word and badge, but it covers the tray's empty right side.
+- **Long names at 200% text shrink** to fit their third of the row, on two lines. They fit, but they read smaller than the short names beside them.
