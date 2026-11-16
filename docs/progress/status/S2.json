@@ -8,13 +8,13 @@
   "task_state": "in_progress",
   "claimed_at": "2026-11-16T09:35:00Z",
   "lease_until": "2026-11-16T12:35:00Z",
-  "updated_at": "2026-11-16T11:28:00Z",
-  "expected_next_update_by": "2026-11-16T12:13:00Z",
+  "updated_at": "2026-11-16T11:50:00Z",
+  "expected_next_update_by": "2026-11-16T12:35:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "ade915de",
-    "next_step": "P2-S2-home-4: pre-check PASS on fc48b017. Waiting on AD's preview (S2-R31, default 14:58Z) and the lead on S2-R30; then the gate request at fc48b017.",
-    "at": "2026-11-16T11:28:00Z"
+    "next_step": "P2-S2-home-4: M26's states added (19085e9b); pre-check running on 1697a6c6 (main e1c460fc merged). Then wait on AD's preview (S2-R31, default 14:58Z) and the lead on S2-R30; then the gate request at the pre-checked commit.",
+    "at": "2026-11-16T11:50:00Z"
   },
   "precheck": {
     "sha": "fc48b017bf55351211b9180f22356a8970e9f658",
@@ -26,7 +26,9 @@
   "ready_sha": null,
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
-    "M13"
+    "M13",
+    "M28",
+    "M26"
   ],
   "requests": [
     {
@@ -462,8 +464,22 @@
       "due": "2026-11-16T14:58:00Z",
       "default": "The stills stand as previewed: S2 sends the gate request at the pre-checked commit, and any objection becomes a follow-up task.",
       "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R32",
+      "from": "S2",
+      "to": "lead",
+      "ask": "Seen while covering home's empty state (M26): client/i18n/strings.csv has WEAVING_BAND_0 to WEAVING_BAND_6 (Quiet, Steady, Humming, Brimming, Strained, Cracking, Breaking) in English in every column, pt_BR, pt_PT, de and fr included, so home's strain pill reads 'Quiet' and 'Humming' in every language. The lead owns the strings: please have them translated, or say they are names kept in English on purpose. Repro: `FIT=1 TEXT=200 LOCALE=pt_BR EMPTY=1 OUTER=0 NOTICE=1 bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`.",
+      "files": [
+        "client/i18n/strings.csv"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-16T11:33:00Z",
+      "due": "2026-11-17T19:33:00Z",
+      "default": "The seven band names stay in English in every language, as now; home does not change.",
+      "escalate_to": "lead"
     }
   ],
   "answers": [],
-  "next_step": "AD previews home-4 (S2-R31) and the lead answers S2-R30; then S2 runs the pre-check and sends the gate request (home at 200% text, pt_BR)."
+  "next_step": "P2-S2-home-4: M26's states added (19085e9b); pre-check running on 1697a6c6 (main e1c460fc merged). Then wait on AD's preview (S2-R31, default 14:58Z) and the lead on S2-R30; then the gate request at the pre-checked commit."
 }
