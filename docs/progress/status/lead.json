@@ -1,15 +1,16 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-16T18:23:00Z",
-  "expected_next_update_by": "2026-11-16T19:38:00Z",
+  "updated_at": "2026-11-16T18:30:00Z",
+  "expected_next_update_by": "2026-11-16T19:45:00Z",
   "cycle": 103,
   "merging": {
-    "candidate_sha": "7268cb98",
+    "candidate_sha": "de3a577a",
     "task_ids": [
+      "P2-S3-account-4",
       "lead: S2-R32, S2-R29"
     ],
-    "started_at": "2026-11-16T18:00:00Z",
-    "expires_at": "2026-11-16T19:00:00Z"
+    "started_at": "2026-11-16T18:30:00Z",
+    "expires_at": "2026-11-16T19:30:00Z"
   },
   "last_merged": {
     "task_id": "P2-S1-result-5",
@@ -37,5 +38,5 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Cycle 103 (session_01SNkKxnS8D88S3KnnZyABwf) merged P2-AD-board-3c and P2-S1-result-5 as 532296af and is checking the lead-owned strings candidate 7268cb98 (S2-R32 band names, S2-R29 orphan .uid files)."
+  "next_step": "Cycle 103 (session_01SNkKxnS8D88S3KnnZyABwf) merged P2-AD-board-3c and P2-S1-result-5 as 532296af and is checking candidate de3a577a: the lead-owned strings change (S2-R32 band names, S2-R29 orphan .uid files, words.js regenerated) and P2-S3-account-4 (635c33ee)."
 }
