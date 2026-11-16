@@ -5,16 +5,16 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "IQ-import-check",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-16T06:55:00Z",
   "lease_until": "2026-11-16T09:55:00Z",
-  "updated_at": "2026-11-16T06:55:00Z",
-  "expected_next_update_by": "2026-11-16T07:40:00Z",
+  "updated_at": "2026-11-16T07:30:00Z",
+  "expected_next_update_by": "2026-11-16T08:15:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "40d457c6",
-    "next_step": "Fresh-container setup, clean import in a scratch copy, compare tracked .import and .uid files.",
-    "at": "2026-11-16T06:55:00Z"
+    "next_step": "Notes written and S2-R29 filed; pre-check on this head, then record it and set done.",
+    "at": "2026-11-16T07:30:00Z"
   },
   "precheck": null,
   "gate_request": null,
@@ -409,6 +409,22 @@
       "created_at": "2026-11-16T03:58:00Z",
       "due": "2026-11-16T15:58:00Z",
       "default": "(g) stands as fixed; the pt_BR, pt_PT and fr give-way at 200% is accepted as a trade like (a) until S2-R24; S2 keeps P2-S2-home-3 ready, and any new objection becomes a follow-up task.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R29",
+      "from": "S2",
+      "to": "lead",
+      "ask": "IQ-import-check found three orphan .uid files whose scripts were never tracked: client/tests/_only.gd.uid (d070e02b), client/tests/shots/budget_parts.gd.uid and client/tests/shots/probe_tmp.gd.uid (3748ce5b). Godot leaves them out of its UID cache, so they are dead files that a later script of the same name would inherit. No agent owns them, so they are the lead's: please git rm the three in a lead-owned task. Every other tracked .import and .uid file matches its source after a clean import (notes in docs/progress/S2.md, 'IQ-import-check: notes').",
+      "files": [
+        "client/tests/_only.gd.uid",
+        "client/tests/shots/budget_parts.gd.uid",
+        "client/tests/shots/probe_tmp.gd.uid"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-16T07:30:00Z",
+      "due": "2026-11-17T19:30:00Z",
+      "default": "The three files stay as they are (harmless at run time) until a lead task removes them; nothing else changes.",
       "escalate_to": "lead"
     }
   ],
