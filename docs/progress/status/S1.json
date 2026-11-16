@@ -526,12 +526,17 @@
       "id": "S1-R34",
       "from": "S1",
       "to": "AD",
-      "via": "lead",
-      "at": "2026-11-16T22:09:33Z",
       "ask": "AD preview for P2-S1-heist-1 before ready (M10, M12, M23): the stills docs/art/shots/heist-pilot/part6-h100.png, part6-h200.png and part6-hpt.png on claude/ui-screens-heist at ed766fe9 (heist at 100% text, 200% text en, 200% text pt_BR with no crew plan). Objections, if any, as a list S1 can answer in this task.",
+      "files": [
+        "docs/art/shots/heist-pilot/part6-h100.png",
+        "docs/art/shots/heist-pilot/part6-h200.png",
+        "docs/art/shots/heist-pilot/part6-hpt.png"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-16T22:09:33Z",
       "due": "2026-11-17T10:09:33Z",
       "default": "If no answer by the due time, S1 sets ready with the gate passed and the stills named in the handoff; AD's notes, when they come, are answered in a follow-up task.",
-      "state": "open"
+      "escalate_to": "lead"
     }
   ],
   "answers": [
