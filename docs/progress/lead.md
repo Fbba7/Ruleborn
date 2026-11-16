@@ -185,8 +185,9 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxpseg4mh8yx1YBk6dS` (cycle 105,
-16 November 2026 from about 20:38Z, started by the Opus 5.5 launcher). Cycle
+Latest lead cycle session: `session_01SNkKxotGbP1EXkMF8w5cpy` (cycle 106,
+16 November 2026 from about 21:39Z, started by the Opus 5.5 launcher). Cycle
+105's was `session_01SNkKxpseg4mh8yx1YBk6dS` (from 20:38Z). Cycle
 104's was `session_01SNkKxq7RefUXnN7oBncd9P` (from 19:39Z). Cycle
 103's was `session_01SNkKxnS8D88S3KnnZyABwf` (from 17:39Z). Cycle
 102's was `session_01SNkKxr2KqhZcMDPDNjAD3g` (from 16:39Z). Cycle 101's was
@@ -286,14 +287,17 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| S3 | `session_01SNkKxpXsYHy2L9mKvHcZBk` (Opus 5.5, effort high) | P2-S3-character-4 (start, cycle 105: phase 2 exit, M25; the advisory gate's Display type fail on character at 200% text, pt_BR; S3's last session, `session_01SNkKxnS2WKmrL48Dmzje8k`, is idle, its task merged as 6d9a4bf1) | `claude/ui-screens-meta` | 2026-11-16 20:49Z |
+| S2 | `session_01SNkKxnd61Vr6rsj7aeL4cz` (Opus 5.5, effort high) | P2-S2-home-5 (start, cycle 105: phase 2 exit, M25; the gate's Display type fail on home at 100% text; S2's last session, `session_01SNkKxrBFcY868FRDPnvoUz`, is idle, its task merged as 5803122d) | `claude/ui-screens-home` | 2026-11-16 20:49Z |
+| S1 | `session_01SNkKxo7UZxeUrogyt29c1R` (Opus 5.5, effort high) | P2-S1-heist-1 (start, cycle 105: phase 2 exit, M25; the heist screen's open gate fails at 100% and 200% text; S1's last session, `session_01SNkKxpVcMU7QCMYR9SLhx3`, is idle, its task merged as 532296af) | `claude/ui-screens-heist` | 2026-11-16 20:47Z |
 | K1 | `session_01SNkKxr27Br8FeRKiWvTJ1x` (Opus 5.5, effort high) | P2-K1-grow-1 (start, cycle 104: S1-R15, S1-R23, S3-R3 and S1-R32, the kit's buttons grow and wrap at large text and the reward sky stays plain under high contrast; K1's last session, `session_01SNkKxnzhmd9WDTWw6ChMw3`, is idle, its task merged as c0e0418b) | `claude/ui-bake` | 2026-11-16 20:22Z |
 | K1 | `session_01SNkKxnzhmd9WDTWw6ChMw3` (Opus 5.5, effort high; idle, its task merged as c0e0418b in cycle 104) | P2-K1-guard-prereq (start, cycle 103: M32, guard.sh checks its prerequisites first; K1's last session, `session_01SNkKxnx23zG9HV4wddwVrq`, is idle, its task merged as 26cbd842) | `claude/ui-bake` | 2026-11-16 17:52Z |
 | AD | `session_01SNkKxneJSddGy6BT3d1gxC` (Opus 5.5, effort high) | none: a duplicate of the row below, created by cycle 102 at 16:41Z, 33 seconds after cycle 101's, and archived at 16:42Z before it claimed anything | `claude/ui-ad` | 2026-11-16 16:41Z |
 | AD | `session_01SNkKxoVZrM6k7CuBbUpkM3` (Opus 5.5, effort high) | P2-AD-board-3c, only H (restart, cycle 101: board 5c merged as 26cbd842 and home-4 as 5803122d; the session below ended done after board 5c) | `claude/ui-ad` | 2026-11-16 16:41Z |
-| S3 | `session_01SNkKxnS2WKmrL48Dmzje8k` (Opus 5.5, effort high) | P2-S3-account-4 (start, cycle 101: AD-R43, board 5c's objection M) | `claude/ui-screens-meta` | 2026-11-16 16:41Z |
-| S1 | `session_01SNkKxpVcMU7QCMYR9SLhx3` (Opus 5.5, effort high) | P2-S1-result-5 (start, cycle 101: K1-R23, after P2-K1-kit-gaps-2 merged as 26cbd842) | `claude/ui-screens-heist` | 2026-11-16 16:41Z |
+| S3 | `session_01SNkKxnS2WKmrL48Dmzje8k` (Opus 5.5, effort high; idle, its task merged as 6d9a4bf1) | P2-S3-account-4 (start, cycle 101: AD-R43, board 5c's objection M) | `claude/ui-screens-meta` | 2026-11-16 16:41Z |
+| S1 | `session_01SNkKxpVcMU7QCMYR9SLhx3` (Opus 5.5, effort high; idle, its task merged as 532296af) | P2-S1-result-5 (start, cycle 101: K1-R23, after P2-K1-kit-gaps-2 merged as 26cbd842) | `claude/ui-screens-heist` | 2026-11-16 16:41Z |
 | AD | `session_01SNkKxr9VhN89uNMPX1WQ6Y` (Opus 5.5, effort high) | P2-AD-board-5c, then P2-AD-board-3c when P2-S2-home-4 merges (restart, cycle 101: board 5c opened with character-3's merge; the session below ended done) | `claude/ui-ad` | 2026-11-16 13:46Z |
-| S2 | `session_01SNkKxrBFcY868FRDPnvoUz` (Opus 5.5, effort high) | P2-S2-home-4: gate request at 1697a6c6 and ready (restart, cycle 101: the session before went idle blocked on S2-R31 and S2-R30, both answered) | `claude/ui-screens-home` | 2026-11-16 13:46Z |
+| S2 | `session_01SNkKxrBFcY868FRDPnvoUz` (Opus 5.5, effort high; idle, its task merged as 5803122d) | P2-S2-home-4: gate request at 1697a6c6 and ready (restart, cycle 101: the session before went idle blocked on S2-R31 and S2-R30, both answered) | `claude/ui-screens-home` | 2026-11-16 13:46Z |
 | K1 | `session_01SNkKxnx23zG9HV4wddwVrq` (Opus 5.5, effort high) | P2-K1-kit-gaps-2 (start, cycle 100: P2-K1-kit-gaps-1 merged as cf6165e9; the fourth seat with S2, AD and S1) | `claude/ui-bake` | 2026-11-16 12:24Z |
 | AD | `session_01SNkKxoT1Zvr4LionPdFkEt` (Opus 5.5, effort high) | S2-R31 first (preview P2-S2-home-4 at c8de70fe), then S1-R31 (preview P2-S1-result-4), then P2-AD-board-5c and -3c when their tasks merge (restart, cycle 100: a seat free; S3-R29's default applied at 11:43Z) | `claude/ui-ad` | 2026-11-16 11:49Z |
 | S1 | `session_01SNkKxnXsUaw4HRQU3Yc69h` (Opus 5.5, effort high) | P2-S1-result-4 (restart, cycle 100: the session below went idle waiting for the gate; the gate at 8753618a failed Display type, M30's close point) | `claude/ui-screens-heist` | 2026-11-16 11:49Z |
@@ -549,6 +553,66 @@ Your session was created with the repository checked out at main; work in that c
 ```
 
 ## Now
+
+- **Cycle 106**, 16 November 2026, from about 21:39Z (session
+  `session_01SNkKxotGbP1EXkMF8w5cpy`, started by the Opus 5.5 launcher).
+  **Claims copied:** S1's P2-S1-heist-1, S2's P2-S2-home-5 and S3's
+  P2-S3-character-4, all three working. K1's P2-K1-grow-1 claim was seen
+  at 21:50Z. It is not ready yet: its pre-check is running at 050be78b, on
+  the merge 4f10bc28.
+  **Requests:** four copied.
+  - S1-R33 (heist/200 and heist/hc draw-call budgets) is approved under
+    M33, because both calls close failed gate qualities. The lead writes
+    those records, with a raises entry, in the merge of heist-1.
+  - S3-R32 (rb_box's parchment panel not drawn when scrolled) is logged
+    for phase 3, about 1.5 h. No task is seeded under M33.
+  - S3-R31 (AD preview of character-4) waits for a seat, which it does not
+    have: all four are in use. Its default stands at its due, 23:08Z.
+  - S3-R33 ("main moved backward") is answered: origin's `main` is the
+    stray branch of 4 November, and the program's main contains f083c96c.
+  **Gate:** S2's gate request, the re-run on main f083c96c that home-5
+  asks for first, has its verdict in
+  `docs/art/ui-quality/gate/verdicts/P2-S2-home-5/f083c96c.json`.
+  - Display type at home 100% fails, 0 of 3. The purse's counts are flat
+    cream, and 'Keeper 24' sits over the sky without an outline. The fail
+    of 977edd5b stands, and S2's fix on its branch is the right one.
+  - Hierarchy at 100% passes 3 of 3, and so does Hierarchy in high
+    contrast.
+  - Character presence at 100% passes 3 of 3; it failed at 977edd5b.
+  - This run judged main as a baseline, so it adds nothing to home-5's
+    attempts.
+  **Merge:** none, because nothing was ready and the lock stayed null.
+  **Seats:** four of four (K1, S1, S2, S3), so AD is not started.
+  **Next:** cycle 107 merges grow-1, heist-1, home-5 and character-4 as
+  each becomes ready, with S1-R33's records in heist-1's merge. Once a
+  seat frees, it starts AD on the preview requests. Result-6 opens once
+  grow-1 and heist-1 have merged. BT-* and SV-B10 stay outside the UI wave.
+
+- **Cycle 105**, 16 November 2026, from about 20:38Z (session
+  `session_01SNkKxpseg4mh8yx1YBk6dS`, started by the Opus 5.5 launcher).
+  **Claims copied:** K1's P2-K1-grow-1 (claimed 20:25Z, seen 20:42Z).
+  **Requests:** K1-R24 copied and granted:
+  `client/tests/shots/ui_kit_grow.gd` and its `.uid` are in grow-1's
+  exceptions now. M33 and M34 acked. Following M34, every agent's prompt
+  now carries the words.js line: a commit that changes strings.csv or
+  content.csv also commits a regenerated words.js, and
+  check_keyframes.mjs passes before ready.
+  **Gate and merge:** none. Nothing was ready, and the lock was null.
+  **Seeded** (each closes a failed gate quality, M33): P2-S1-heist-1 (the
+  heist screen's open fails at 100% and 200% text and at 200% pt_BR),
+  P2-S2-home-5 (Display type at home 100%, re-gated first),
+  P2-S3-character-4 (Display type at character 200% pt_BR) and
+  P2-S1-result-6 (it drops result's local fixes and re-gates 100%; its
+  deps are grow-1 and heist-1).
+  **Seats:** K1 on grow-1, S1 on heist-1
+  (`session_01SNkKxo7UZxeUrogyt29c1R`, 20:47Z), S2 on home-5
+  (`session_01SNkKxnd61Vr6rsj7aeL4cz`, 20:49Z) and S3 on character-4
+  (`session_01SNkKxpXsYHy2L9mKvHcZBk`, 20:49Z). Four seats of four are in
+  use; AD previews through requests.
+  **Next:** cycle 106 copies the new claims, routes the AD preview
+  requests and merges grow-1, heist-1, home-5 and character-4 as each
+  becomes ready. Result-6 opens once grow-1 and heist-1 have merged.
+  BT-* and SV-B10 stay outside the UI wave.
 
 - **Cycle 104**, 16 November 2026, from about 19:39Z (session
   `session_01SNkKxq7RefUXnN7oBncd9P`, started by the Opus 5.5 launcher).

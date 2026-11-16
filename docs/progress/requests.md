@@ -298,6 +298,43 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   task of their own. The others still wait for a K1 task, and each
   default stands at its due.
 
+- **S1-R33** (from S1, to K1 through the lead, 16 November 2026 21:24Z;
+  due 17 November 09:00Z; not blocking): record two draw-call raises for
+  P2-S1-heist-1's gate fixes in `tools/ui_bake/budgets.json`, with a
+  raises entry: heist/200 116 to 118 and heist/hc 120 to 121 (heist/100
+  stays 120). The calls are the 'Laws here' badges (FxLawBadge, the
+  school's shape as a frame behind a cream disc and the painted icon, for
+  the gate's Painted icons fail; +1 at 200 and hc) and the crew's inner
+  well (`ScreenKit.panel('well')` in the tray, for the Layered materials
+  fail; +1 at each size). Measured at dceed4bf with `budget_shots.py
+  --only heist/100,heist/200,heist/hc`: 120, 118, 121; S1 tried three
+  cheaper orders first. The heist stays 29 under the cap of 150. Default:
+  S1 drops the well and draws the badges without the school's shape, so
+  the records hold at 116 and 120. Copied in cycle 106.
+  **Answered** by the lead in cycle 106, approved: both calls close
+  failed gate qualities, so M33 allows them. As for S2-R30, the lead
+  writes heist/200 at 118 and heist/hc at 121 with a raises entry for
+  S1-R33 in the merge of P2-S1-heist-1; S1 marks ready with guard.sh
+  failing only on those two records, and says so in its handoff.
+- **S3-R32** (from S3, for K1 through the lead, 16 November 2026 21:08Z;
+  due 17 November 09:08Z; not blocking): on the character screen's Stats
+  tab at 200% text in en and pt_BR, scrolled to the end (SCROLL=1600 and
+  after), the parchment panel behind the stat tiles and their note
+  (`UI.panel('parchment')`, drawn by RbBox) is not drawn once its top
+  edge has scrolled above the screen, so the note's dark-brown words
+  stand on the night sky, unreadable. German's shorter page is not
+  affected; it shows on main without S3's change. Repro: `TEXT=200
+  LOCALE=pt_BR TAB=1 SCROLL=99999 bash tools/render/shoot.sh
+  client/tests/shots/screen_character.gd out.png`. Files:
+  `client/ui/rb_box.gd`, `client/scripts/character_screen.gd`. Default:
+  K1 takes it in P2-K1-grow-1 or a follow-up task; S3 leaves rb_box.gd
+  alone and P2-S3-character-4 goes ready without it. Copied in cycle 106.
+  **Answered** by the lead in cycle 106: logged for phase 3, about 1.5 h
+  (K1, `client/ui/rb_box.gd`). It closes no open objection, failed gate
+  quality or merge-blocking check, so M33 seeds no task for it before the
+  phase 2 stop, and P2-K1-grow-1 is at its pre-check, so it is not added
+  there. S3 goes ready without it, as the default says.
+
 ### AIA
 
 - **K1-R14, parts 1 and 2** (from K1, 10 November 2026; due 11 November
@@ -961,6 +998,25 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   join the task's exceptions at the merge. Copied in cycle 105.
   **Answered** by the lead in cycle 105, granted: both paths are in
   P2-K1-grow-1's exceptions in backlog.json now.
+
+- **S3-R31** (from S3, 16 November 2026 21:08Z; due 23:08Z; blocking):
+  preview P2-S3-character-4 at 8ca0058d on `claude/ui-screens-meta`, for
+  the gate's Display type fail on 'character at 200% text, pt_BR'
+  (verdict P2-S3-character-3/a6d5f2fb): the subtitle and the level line
+  on the starry backdrop wear an ink outline on every side (the greater
+  of 1.5 pt or 12% of the size; subtitle 21 px, level line 19), set again
+  after the words shrink to fit; HABILIDADE is stroked and dropped in ink
+  at large text; at 200%, scrolled to the end, every tab's last card ends
+  clear above the dock in en, pt_BR and de. 100% and high-contrast stills
+  are unchanged. Stills in `docs/art/shots/menu-screens/character-200-*`.
+  Every objection in one round, please. Default: the outline and the
+  stroke stand as fixed; S3 marks P2-S3-character-4 ready at the
+  pre-checked sha with gate_request there, and AD's next round re-checks
+  the stills on the merge. Copied in cycle 106.
+  **Answered** by the lead in cycle 106: all four seats are in use (K1,
+  S1, S2, S3), so AD is not started for it this cycle. If a seat frees
+  before 23:08Z the lead starts AD on the preview; otherwise the default
+  stands at its due, and the gate's re-run on the merge judges the stills.
 
 ### S1
 
@@ -1748,6 +1804,19 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   and L meanwhile. Copied in cycle 101. **Answered** by the lead in
   cycle 101, as the default says: P2-S3-account-4 seeded, open once
   P2-AD-board-5c merges.
+
+- **S3-R33** (from S3, 16 November 2026 21:10Z; due 23:10Z; not
+  blocking): "main on origin moved backward": at 21:09Z `refs/heads/main`
+  is 2455f3b5 (lead cycle 41, 4 November), 1163 commits behind f083c96c.
+  Default: S3 takes f083c96c as the main it last merged and marks ready
+  on its branch head. Copied in cycle 106.
+  **Answered** by the lead in cycle 106: no rewind. The branch named
+  `main` on origin is the stray one a lead push made by mistake on
+  4 November 2026 (owner-inbox, 2026-11-04 21:40Z) and has not moved
+  since. The program's main is `claude/videogame-project-analysis-ewkkk2`
+  (the protocol and every builder's prompt name it), at 2ab3a985 in
+  cycle 106, which contains f083c96c. Merge main by that name; S3's
+  default stands.
 
 ## Done in cycle 50 (10 November 2026, by the lead)
 
