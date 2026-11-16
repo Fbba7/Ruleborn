@@ -294,3 +294,30 @@ pt_BR on the Stats tab.
 
 The Stats and Compare tabs at 100% en and 200% pt_BR:
 [`r2-character-tabs.png`](board-5/r2-character-tabs.png).
+
+## Re-check of objection H (S3-R16)
+
+AD re-checked objection H only, the character's face at 200% text, on
+`claude/ui-screens-meta` at `6b7e6b42`, against this board's full list
+(M23). The full answer is S3-R16 in `docs/progress/status/AD.json`. AD
+rendered the five 200% shots S3 named (en, pt_BR, de, and pt_BR with
+`TAB=1` and `TAB=2`) with `FIT=1`; the three Heist-tab shots print "fit
+ok", and all five match S3's stills pixel for pixel. The change touches
+only the large-text branch of `_stand`, so the 100% and high-contrast
+stills of round 2 stand unchanged.
+
+**H stands as fixed.** At 200% the status pill keeps its top-right corner
+as the state's icon alone (the working hammer), and the whole head, ears
+to collar, stands clear between the count pill, the icon and the arrows in
+every locale and on every tab. The state's words stay in the pill's
+accessible name and tooltip, so no meaning rests on the icon's colour.
+P2-S3-character-2 has no open AD objection.
+
+The stage at 200%: en, pt_BR, de, then pt_BR on the Stats and Compare tabs.
+
+![The stage at 200%, round 3](board-5/r3-character-200-stage.png)
+
+Note for board 5b, which holds nothing: the state icon's chip is the
+smallest plate on the stage (about two thirds of the count pill's height),
+readable as a hammer at phone size; board 5b checks that every state's
+icon reads as well at that size.
