@@ -3,8 +3,8 @@
 # renders the screen with FIT=1 and fails when any shot does not find
 # "fit ok" (a word broken in two fails it too).
 # - The access tab at 100% text in English, Brazilian Portuguese and German,
-#   and in high contrast; the account tab at 100% in English and German,
-#   signed out and, in English, signed in.
+#   and in high contrast; the account tab at 100% in English, Brazilian
+#   Portuguese and German, signed out and signed in (P2-S3-account-4).
 # - At 200% text, in English, Brazilian Portuguese and German, every tab
 #   (game, access, account) and the account tab signed in (its devices and
 #   ways to sign in, SIGNED=1).
@@ -18,7 +18,8 @@ out=${OUT:-$(mktemp -d)}
 jobs=${JOBS:-2}
 mkdir -p "$out"
 specs=("100 en access" "100 pt_BR access" "100 de access" "hc en access" "hc pt_BR access"
-	"100 en account" "100 de account" "100 en account signed")
+	"100 en account" "100 pt_BR account" "100 de account"
+	"100 en account signed" "100 pt_BR account signed" "100 de account signed")
 for l in en pt_BR de; do
 	for tab in game access account; do specs+=("200 $l $tab"); done
 	specs+=("200 $l account signed")

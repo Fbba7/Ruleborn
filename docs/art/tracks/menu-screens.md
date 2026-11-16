@@ -450,6 +450,22 @@ Evidence: `fit_settings.sh` 20 of 20 `fit ok`; `fit_character.sh` 50 of 50. `set
 
 **Note 5 (`_hide_kicker`), now checkable.** It hides only the panel's first child, the AUTH_TITLE label, so the screen's header pill heads the group. The Devices and Methods sections keep `ScreenParts.section`'s gold caps label ("ANGEMELDETE GERÄTE 2", "ANMELDEWEGE"), not the screen's header pill. They read as subheadings within the account group, a step below its pill, so this task leaves them; making them pills would need `settings_screen.gd`'s `_section`, which this task does not hold. It goes to AD with the new stills (S3-R29's addition).
 
+### Board 5c's objection M (P2-S3-account-4)
+
+- **M: the sign-outs on the account card (AD-R43).** Signed in, at 100%, `checks.py value-steps` failed the leather "Sign out" buttons on the Account tab's cards at ΔL* 16.1 to 17.5, which is 1.6 to 1.8 steps (2 are needed), in English and German. The cause is the card, not the leather. Leather was chosen for the night, where it stands 2.4 steps off. On the dark violet card, whose median L* is about 13, its brown face (about 29) is only 1.7 steps lighter.
+- **The fix**, in `client/scripts/auth_panel.gd`. A lesser action that sits on a card takes the kit's tertiary (`ON_CARD`, the `ghost` look, kit-spec K01): the card's own violet, lifted two value steps off it. That covers the status card's sign-out, a device's sign-out and a way to sign in's removal. "Sign out every other device" stays leather, and "Sign out everywhere" stays red. Both stand on the night, not on a card, and both pass (24.1 and 50.6). Board 5c offered two ways to fix it: a lighter face on the card, or the parchment plate. This takes the first, using the kit's own button for it. Parchment would have put a light plate under each device's row and made the sign-outs weigh as much as the profile row.
+
+Evidence: every render printed `fit ok`. `checks.py value-steps`, ΔL* off the card:
+
+| Render | Sign out (status card) | Sign out: Android phone | Remove (a way to sign in) |
+|---|---:|---:|---:|
+| 100% English (`settings-account-signed-100`) | 32.1 | 31.7 | below the fold |
+| 100% German (`settings-account-signed-de`) | 32.5 | 32.1 | below the fold |
+| high contrast, English | 32.3 | 32.3 | passes (`SCROLL=1800`) |
+| 100% English, `SCROLL=1800` | – | 34.1 | 32.1 |
+
+Every other control on these records passes too: the tabs at 71.5, the back button at 83.6, and the profile row at 69.2 when scrolled. `settings-account-signed-100` and `settings-account-signed-de` are new stills with their records. `settings-200-de-account-signed` and its `-900` and `-1800` are re-shot. `fit_settings.sh` now also covers the account tab at 100% signed out in pt_BR, and signed in at 100% in English, pt_BR and German. That makes 23 shots, all `fit ok` (at 100% and 200%, in English, pt_BR and German). `check_screens.py` and `guard.sh` pass.
+
 ### What is still worse than before
 
 - **The switch rows.** In grayscale the cream switch rows still weigh about as much as the headings above them. The switch's off track vanishes on a dark card, so they stay parchment (above).

@@ -1,0 +1,94 @@
+{
+ "controls": [
+  {
+   "interactive": false,
+   "name": "set-head 1: Settings",
+   "rect": [
+    17.33,
+    47.67,
+    352.44,
+    50.56
+   ]
+  },
+  {
+   "name": "row 2: Game Access Account",
+   "rect": [
+    17.33,
+    106.89,
+    352.44,
+    56.33
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "words 3: Account",
+   "rect": [
+    30.33,
+    171.89,
+    90.64,
+    32.86
+   ]
+  },
+  {
+   "name": "button 4: Sign out",
+   "rect": [
+    267.58,
+    224.25,
+    91.36,
+    52.0
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "sample 5: iPhone 15 Portugal · Game Center This device",
+   "rect": [
+    21.67,
+    328.25,
+    343.78,
+    63.92
+   ]
+  },
+  {
+   "name": "button 6: Sign out: Android phone",
+   "rect": [
+    263.25,
+    409.5,
+    91.36,
+    52.0
+   ]
+  },
+  {
+   "name": "button 7: Sign out every other device",
+   "rect": [
+    17.33,
+    490.75,
+    352.44,
+    52.0
+   ]
+  },
+  {
+   "name": "button 8: Sign out everywhere",
+   "rect": [
+    17.33,
+    551.42,
+    352.44,
+    52.0
+   ]
+  },
+  {
+   "name": "back 9: Back",
+   "rect": [
+    28.17,
+    723.67,
+    130.0,
+    52.0
+   ]
+  }
+ ],
+ "frame_pt": [
+  390.0,
+  845.0
+ ],
+ "image": "settings-account-signed-100.png",
+ "text_scale": 1.0
+}
