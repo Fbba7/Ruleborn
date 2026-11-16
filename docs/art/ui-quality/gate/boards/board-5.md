@@ -400,3 +400,70 @@ that this is the caps label. If the signed-in or device layout ever opens
 with another node, that node would vanish. Board 5b checks the signed-in
 Account tab. The earlier notes still stand: the gear at 200%, the dock's
 height and the selected tab's brown (K1).
+
+## Preview of the Hierarchy fixes (S3-R20)
+
+AD previewed S3's answer to the gate's advisory Hierarchy fail at
+`5fc97aac` (`verdicts/P2-S3-settings-2/5fc97aac.json`) on
+`claude/ui-screens-meta` at `3854db00`. Against this board's full list
+(M23), the only client change since `5fc97aac` is `settings_screen.gd`:
+the title in the hero role (34 points) on `card_gold`, the group headings
+at 22 points in the gold top with the display type's ink stroke, the
+Stillness sample on `plate_dark`, and the tab strip on `seg_track_light`.
+AD compared S3's nine re-shot stills with the stills at `5fc97aac` and key
+frame 05, in colour and in the grayscale squint, and ran `checks.py all`
+on seven of the shots. The full answer is S3-R20 in
+`docs/progress/status/AD.json`.
+
+**The Hierarchy fixes stand.** In the grayscale squint the title is now the
+largest type at the top, at 100% and at 200%. Each group heading outranks
+the rows it heads by size. At 200% the Stillness card no longer outweighs
+the title: it is a dark plate holding its prose. The tab strip is a step
+under the cards' cream. The card leaves key frame 05's cream sample, as the
+gate's notes asked. From left: key frame, build at `5fc97aac`, build at
+`3854db00`, in colour and in grayscale.
+
+![100%: key frame, before, after](board-5/r5-settings-100.png)
+
+![100% in grayscale](board-5/r5-settings-100-gray.png)
+
+![200% pt_BR: key frame, before, after; then German after](board-5/r5-settings-200.png)
+
+![200% in grayscale](board-5/r5-settings-200-gray.png)
+
+**E, F and I stand as fixed.** At 200% German reads "Einstellungen" whole,
+and the whole Stillness law shows. The small and large A stay gold. The
+Account tab keeps the header pill, now in the same gold type as the other
+headings. From left: key frame in high contrast, high contrast in English,
+then Account at 100% in English and German.
+
+![High contrast and Account](board-5/r5-settings-hc.png)
+
+**C moved: one new objection, J, holds P2-S3-settings-2.** The taller
+title plate (+9 points) and the two taller headings (+3 points each) push
+the second section down about 15 points. At 100% in pt_BR, in German and in
+high contrast pt_BR, the High contrast row has left the first screen. Only
+the "Visão e conforto" / "Sehen und Komfort" heading stands above the
+chevron, with nothing under it. At `5fc97aac` that row was on the first
+screen, as on the pt_BR key frame (C's fixed state). The shots confirm it:
+`settings-pt_BR`, `settings-de` and `settings-hc-pt_BR` now list no
+switch row, and `checks.py all` reports six results where `5fc97aac` had
+seven. English at 100% still shows both rows. From left: key frame pt_BR,
+pt_BR at `5fc97aac`, then at `3854db00` pt_BR, German and high contrast
+pt_BR.
+
+![100% fold: key frame pt_BR, before, after in pt_BR, de, hc pt_BR](board-5/r5-settings-fold.png)
+
+| ID | Quality | Objection | Proposed fix | Owner |
+|---|---|---|---|---|
+| J | 14 | At 100% in pt_BR, German and high contrast pt_BR the High contrast row has fallen below the fold, leaving the second heading alone above the chevron (C moved). | In `client/scripts/settings_screen.gd`, find about 15 points at 100% without undoing the Hierarchy fixes: tighten the title plate's and the heading plates' vertical padding, `TITLE_LEAD` and `HEADING_LEAD`, or the gaps between groups. If that is not enough, set the headings to the 20-point heading slot, keeping the gold top and the stroke. Check that `settings-pt_BR`, `settings-de` and `settings-hc-pt_BR` list the High contrast switch row again. | S3 |
+
+Notes carried to board 5b, which do not hold the preview:
+- `card_gold`'s rim is a 1.5-point gold at 70% alpha on `card_lit`. On
+  the title plate it reads faintly, so the plate looks much as the dark
+  plate did. The title leads by size, so this stands.
+- The Account tab's profile row fails value-steps (S3-R18, en and de,
+  ΔL* 2.5 and 3.6), in `screen_account.gd`, which is not settings-2's
+  file. Board 5b lists it.
+- Earlier notes stand: the gear at 200%, the dock's height and the
+  selected tab's brown (K1), `_hide_kicker` on the signed-in Account tab.
