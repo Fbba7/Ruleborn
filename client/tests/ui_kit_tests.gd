@@ -22,6 +22,7 @@ const Rest := preload("res://tests/shots/ui_kit_rest.gd")
 const Round := preload("res://tests/shots/ui_kit_round.gd")
 const Heist := preload("res://tests/shots/ui_kit_heist.gd")
 const MotionKit := preload("res://tests/shots/ui_kit_motion.gd")
+const Tabs := preload("res://tests/shots/ui_kit_tabs.gd")
 ## The components whose baked faces are skins, and those skins' faces: once a
 ## skin has art, each of the component's baked states is a piece of it.
 ## The bar's pieces are K46's (N RM), the component built from them: K25's
@@ -88,6 +89,7 @@ func run() -> void:
 	_fonts()
 	await _boxes()
 	await _press()
+	await Tabs.tap_once(tree, check)
 	_motion()
 	await _reward()
 	await _shine()
@@ -238,6 +240,7 @@ func _icons() -> void:
 func _tab_words() -> void:
 	var bad := []
 	var rims := []
+	var heads := []
 	var was := Settings.text_scale
 	var locale := TranslationServer.get_locale()
 	var clear := float(UI.px(KitTabs.RIM))
@@ -278,6 +281,7 @@ func _tab_words() -> void:
 					scale, case[1], id, words.position.y, words.end.y, rim.position.y, rim.end.y])
 		if tiles != 2:
 			rims.append("%d%% %s %d tiles drawn, not the chosen one and the Heist's" % [scale, case[1], tiles])
+		heads.append_array(Tabs.heads(tabs, "%d%% %s" % [scale, case[1]], scale == 100))
 		var chosen: Label = tabs._labels["friends"]
 		if not chosen.is_visible_in_tree():
 			bad.append("%d%% %s the chosen tab's word hidden" % [scale, case[1]])
@@ -293,6 +297,7 @@ func _tab_words() -> void:
 	check.call("no tab's name crosses its tile's gold rim: each sits under the chosen tile and the Heist's ring, or "
 			+ "inside with clear space, at 100%, 150% and 200% text in English, German and Portuguese (board 3's "
 			+ "objection D, AD-R25)", rims.is_empty(), "; ".join(rims))
+	Tabs.say(check, heads)
 
 
 func _small_disc() -> void:
