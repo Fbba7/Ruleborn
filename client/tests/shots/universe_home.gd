@@ -7,7 +7,10 @@ extends SceneTree
 ## MOST every amount at its widest (else the key frame's state, `keyframe`);
 ## LOCALE the language; CONTRAST high contrast; TALL the window's height in
 ## points over 540 wide (960 for 9:16). FIT checks that everything fits (see
-## `fit`); the run fails where something does not.
+## `fit`); the run fails where something does not. The cases it must pass are
+## listed in docs/art/tracks/home-screen.md; among them, board 3b's H (AD-R39):
+## at 200% the four side buttons and the realms' chips in pt_BR, pt_PT and fr
+## with and without NOTICE, in en and de with it, and in en at TALL=900.
 
 
 func _initialize() -> void:
@@ -203,10 +206,11 @@ static func live(screen: Home) -> Array[String]:
 	return bad
 
 
-## Board 3's objections A and C (AD-R22, AD-R24): what home never drops at any
-## text size, with or without the raid notice. Collect, while anything waits,
-## with its whole rect inside the viewport; the goal, while there is one; the
-## chosen tab's name. One line each that fails.
+## Board 3's objections A and C (AD-R22, AD-R24) and board 3b's H (AD-R39):
+## what home never drops at any text size, with or without the raid notice.
+## Collect, while anything waits, with its whole rect inside the viewport; the
+## goal, while there is one; the four side buttons; the chosen tab's name. One
+## line each that fails.
 static func must_show(screen: Home) -> Array[String]:
 	var bad: Array[String] = []
 	var view := screen.get_viewport_rect()
@@ -218,6 +222,10 @@ static func must_show(screen: Home) -> Array[String]:
 		musts["Collect"] = screen.collect_button
 	if not screen.goal.is_empty():
 		musts["goal"] = screen.goal_card
+	# The four side buttons, at every text size and with the notice up too
+	# (board 3b's objection H): the key frames keep them at 200% as discs.
+	for side: StringName in screen.sides:
+		musts["side button %s" % side] = screen.sides[side]
 	var chosen := screen.tabs.buttons.get(screen.tabs.active, null) as Control
 	if chosen != null:
 		for l: Label in chosen.find_children("*", "Label", true, false):

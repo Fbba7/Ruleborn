@@ -8,13 +8,13 @@
   "task_state": "in_progress",
   "claimed_at": "2026-11-16T09:35:00Z",
   "lease_until": "2026-11-16T12:35:00Z",
-  "updated_at": "2026-11-16T09:55:00Z",
-  "expected_next_update_by": "2026-11-16T10:40:00Z",
+  "updated_at": "2026-11-16T10:05:00Z",
+  "expected_next_update_by": "2026-11-16T10:50:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "ade915de",
-    "next_step": "P2-S2-home-4: reserve_lift is already 0 at 200% after tabs-3 (no band gain). With the notice at 200% the band is 252 (fr, pt) to 380 (en); columns plus chips need ~400. Working on: side buttons give way in stages, right column beside the keeper plate at large text, tighter large-text gaps; then the fit cases.",
-    "at": "2026-11-16T09:55:00Z"
+    "next_step": "P2-S2-home-4: reserve_lift dropped; at large text the right edge stands beside the keeper plate and the large-text gaps are tighter. FIT ok at 200% with the notice in fr, pt_BR, pt_PT, en at TALL=900. Now: the full fit matrix, check_screens, guard, check_all, the track's part 4, AD's preview.",
+    "at": "2026-11-16T10:05:00Z"
   },
   "precheck": {
     "sha": "ade915de1fcf7e6cc3d00d207879f7c3a31a5959",
