@@ -8,12 +8,12 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-16T20:51:41Z",
   "lease_until": "2026-11-17T01:09:33Z",
-  "updated_at": "2026-11-16T22:14:45Z",
-  "expected_next_update_by": "2026-11-16T22:59:45Z",
+  "updated_at": "2026-11-16T22:34:18Z",
+  "expected_next_update_by": "2026-11-16T23:19:18Z",
   "progress_marker": {
     "last_green_sha": "8d2488cb5ff09f939c62cec641d6bb2a34bbc39b",
-    "next_step": "M26 sweep on the final tree, handoff, pre-check, gate request",
-    "at": "2026-11-16T22:14:45Z"
+    "next_step": "fix the en long bubble, commit, pre-check",
+    "at": "2026-11-16T22:34:18Z"
   },
   "precheck": {
     "sha": "8d2488cb5ff09f939c62cec641d6bb2a34bbc39b",
@@ -561,5 +561,5 @@
       "where": "docs/progress/lead.md, Now, cycle 106"
     }
   ],
-  "next_step": "Main merged at 92527b7e: setup line and client/build.sh exit 0. M26 sweep of 33 states at 200% re-running alone on the final tree. Then the handoff, the pre-check on its commit, guard and check_screens, and the gate request."
+  "next_step": "Pre-check at f49852ed FAILED on §21.1 (heist and replay screens ask 1110 of 1080 px at 100% text: the law badges). Fixed in the tree (badge 22 pt at 100% text; widest now 1073). The re-run sweep found en long at 200% with the bubble 2 px over the loot's last line; fixing that, then re-shoot, commit, pre-check again, handoff and gate request."
 }
