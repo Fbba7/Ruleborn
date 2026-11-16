@@ -1,7 +1,7 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-16T13:52:00Z",
-  "expected_next_update_by": "2026-11-16T14:23:00Z",
+  "updated_at": "2026-11-16T14:21:00Z",
+  "expected_next_update_by": "2026-11-16T15:36:00Z",
   "cycle": 100,
   "merging": {
     "candidate_sha": "049266b5",
@@ -9,7 +9,7 @@
       "P2-S1-result-4"
     ],
     "started_at": "2026-11-16T13:52:00Z",
-    "expires_at": "2026-11-16T14:52:00Z"
+    "expires_at": "2026-11-16T15:12:00Z"
   },
   "last_merged": {
     "task_id": "P2-S3-character-3",
