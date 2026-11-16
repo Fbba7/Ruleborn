@@ -1,0 +1,94 @@
+{
+ "controls": [
+  {
+   "interactive": false,
+   "name": "set-head 1: Einstellungen",
+   "rect": [
+    17.33,
+    47.67,
+    352.44,
+    50.56
+   ]
+  },
+  {
+   "name": "row 2: Spiel Zugang Konto",
+   "rect": [
+    17.33,
+    106.89,
+    352.44,
+    56.33
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "words 3: Konto",
+   "rect": [
+    30.33,
+    171.89,
+    66.08,
+    32.86
+   ]
+  },
+  {
+   "name": "button 4: Abmelden",
+   "rect": [
+    253.14,
+    224.25,
+    105.81,
+    52.0
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "sample 5: iPhone 15 Portugal · Game Center Dieses Gerät",
+   "rect": [
+    21.67,
+    328.25,
+    343.78,
+    84.5
+   ]
+  },
+  {
+   "name": "button 6: Abmelden: Android-Handy",
+   "rect": [
+    248.81,
+    440.19,
+    105.81,
+    52.0
+   ]
+  },
+  {
+   "name": "button 7: Alle anderen Geräte abmelden",
+   "rect": [
+    17.33,
+    531.92,
+    352.44,
+    52.0
+   ]
+  },
+  {
+   "name": "button 8: Überall abmelden",
+   "rect": [
+    17.33,
+    592.58,
+    352.44,
+    52.0
+   ]
+  },
+  {
+   "name": "back 9: Zurück",
+   "rect": [
+    28.17,
+    723.67,
+    132.17,
+    52.0
+   ]
+  }
+ ],
+ "frame_pt": [
+  390.0,
+  845.0
+ ],
+ "image": "settings-account-signed-de.png",
+ "text_scale": 1.0
+}

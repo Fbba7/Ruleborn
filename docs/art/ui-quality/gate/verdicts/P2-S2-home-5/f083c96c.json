@@ -1,0 +1,70 @@
+[
+  {
+    "task_id": "P2-S2-home-5",
+    "sha": "f083c96c23c9c3b14bd0a4de80e2bda36704e913",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-16T21:51:00Z",
+    "item": "home at 100% text",
+    "quality": "Display type",
+    "samples": [
+      "fail",
+      "fail",
+      "fail"
+    ],
+    "result": "fail",
+    "critique": "Three fails, so the fail of 977edd5b stands at main f083c96c. All three read the purse's counts (142.0k, 31.4k, 61.0k) as home's headline figures (calibration ruling v2) and saw them in the counts crop as flat cream fills with no visible ink outline, no hard drop and no gradient: the 'plain flat headline figure' fail. Two of the three also saw 'Keeper 24' straight over the sky with at best a soft shadow, not an outline all round. Fix: give the counts the kit's big-number treatment (outline, hard drop and gradient fill) and the keeper's name a stroked outline at least 1.5 pt wide, as S2's branch is doing. This run judged main, as the task's first step asks; it is a baseline and adds nothing to the task's attempts."
+  },
+  {
+    "task_id": "P2-S2-home-5",
+    "sha": "f083c96c23c9c3b14bd0a4de80e2bda36704e913",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-16T21:51:00Z",
+    "item": "home at 100% text",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes. In grayscale Collect 3.4k is the largest light, heavy control and leads. The dark experience panel beside it, the small island-name pills, the currency strip and the Islands tab fall in behind it. One judge called it less dominant than the pass anchor's Level up, but still a single clear lead."
+  },
+  {
+    "task_id": "P2-S2-home-5",
+    "sha": "f083c96c23c9c3b14bd0a4de80e2bda36704e913",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-16T21:51:00Z",
+    "item": "home at 100% text",
+    "quality": "Character presence",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes. The Keeper portrait (about 90 px in a gold ring against purple) is larger than the pass anchor's crew portraits. It reads as a face with eyes and outlines, in flat toon fills with soft stepped shading, with no grain, gloss or specular sheen."
+  },
+  {
+    "task_id": "P2-S2-home-5",
+    "sha": "f083c96c23c9c3b14bd0a4de80e2bda36704e913",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-16T21:51:00Z",
+    "item": "home in high contrast",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes. In grayscale Collect is the largest bright filled block and draws the eye first. The experience panel is dark and holds no action, the island pills are small and the tabs are about half Collect's size or less."
+  }
+]

@@ -98,15 +98,10 @@ func _ready() -> void:
 	App.ready(self)
 	var heist: Dictionary = App.services.store.get_slice(AppState.HEIST)
 	var v0: Dictionary = heist["verdict"]
-	# The kit's frame: the night, and the column inside the safe areas. A
-	# heist that paid turns the night to the sunburst behind its title; a
-	# foiled or refused one keeps the plain night (§23.2: "Celebrate or
-	# learn"). High contrast keeps the plain night, as key frame 03-result_hc:
-	# no rays, stars or glow behind the words (AD's S1-R24, as Collect's
-	# shine).
+	# The kit's frame: the night, and the column inside the safe areas; the
+	# sunburst behind the title where the outcome celebrates (`_celebrates`).
 	var column := UI.frame(self)
-	if v0.get("ok", false) and str(v0.get("grade", "")) in ["Clean", "Loud", "Partial"] \
-			and not Settings.high_contrast:
+	if _celebrates(v0):
 		KitNav.celebrate(self)
 	_build_world(heist)
 	if world_view != null:
@@ -485,23 +480,38 @@ func _process(delta: float) -> void:
 		world_view.sway(sin(_clock * 0.25) * 0.5)
 
 
-## The reward (report.md step 8) on the kit's `Motion.reward`: the medal
-## bursts and coins fly into the Starlight tile (else the haul's), the other
-## tiles counting with it, in the outcome's tier (TIERS); its reduced form
-## with reduced motion. With nothing to reward it ends at once and returns
-## null; else it returns the sequence's tween.
+## The reward (report.md step 8) on the kit's one entry point, K40's
+## `KitNav.reward`: the medal bursts and coins fly into the Starlight tile
+## (else the haul's), the other tiles counting with it, in the outcome's tier
+## (TIERS); its reduced form with reduced motion. With nothing to reward it
+## ends at once and returns null; else it returns the sequence's tween.
 func start_reward() -> Tween:
 	var to := _reward_to()
 	if to <= 0 or not grade_icon.visible or not is_inside_tree():
 		_end_reward.call_deferred()
 		return null
 	var tile := _reward_mark()
+	var tier := str(TIERS.get(str(_verdict.get("grade", "")), "common"))
 	_write_reward(0, to)
-	reward_tween = Motion.reward(grade_icon, tile, 0, to, str(TIERS.get(str(_verdict.get("grade", "")), "common")),
-		_write_reward.bind(to))
+	reward_tween = KitNav.reward(self, grade_icon, tile, 0, to, tier, _write_reward.bind(to))
+	if reward_tween == null:
+		_end_reward.call_deferred()
+		return null
+	# KitNav.reward dresses the sunburst too (as `_ready` did); where the
+	# outcome keeps the plain night, the night goes back (S1-R32).
+	if not _celebrates(_verdict):
+		RbBox.dress(get_node("Sky") as Control, "night", 0)
 	_lift_reward()
 	reward_tween.finished.connect(_end_reward)
 	return reward_tween
+
+
+## A heist that paid turns the night to the sunburst; a foiled or refused one
+## keeps the plain night (§23.2: "Celebrate or learn"), and so does high
+## contrast, as key frame 03-result_hc: no rays behind the words (AD's S1-R24).
+func _celebrates(v: Dictionary) -> bool:
+	return v.get("ok", false) and str(v.get("grade", "")) in ["Clean", "Loud", "Partial"] \
+			and not Settings.high_contrast
 
 
 ## Motion's reward layer is `top_level`, so its z of 10 does not add to the
