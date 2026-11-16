@@ -384,9 +384,21 @@ The stills and records are in `docs/art/shots/menu-screens/`, rendered on the bo
 - **The selected tab** is the kit's dark brown, where key frame 05 shows gold. It is the kit's, consistent across screens, and keeps one gold lead per screen (K1, board 5's note).
 - **English content.** "Stillness" and its law are English in pt_BR and German. This is content localisation, for the lead, not the screen's work.
 
+#### The gate at 5fc97aac: Hierarchy failed
+
+The lead's gate at 5fc97aac (`docs/art/ui-quality/gate/verdicts/P2-S3-settings-2/5fc97aac.json`) passed Display type and failed Hierarchy, at 100% (4 fails of 6) and at 200% pt_BR (5 of 6). The screen has no main action, so its title must be where the eye lands first in the squint, and the judge saw the full cream tab strip and the cream Stillness card first, with the dark heading plates weighing less than the rows under them. Each of its notes, answered in `client/scripts/settings_screen.gd` with the kit's materials and type roles only:
+
+- **"Lift the title plate's value or weight."** The title is in the kit's hero role (34 points, 48 at 200%), not the title role's 28, on the lit feature card (`card_gold`: the violet glow with the gold rim) where it had the dark plate.
+- **"Give the headers more weight than the rows."** The group headings are 22 points, a step over the 16-point rows and the heading role's 20, in the gold top that `ScreenParts.section` gives its kickers, with the display type's ink stroke. Their plates stay dark.
+- **"Quieten the tab strip."** The strip is the kit's segment track for light segments (`seg_track_light`, the build tray's deeper parchment, #EBDDBE to #E0CDA4) with the kit's clear light tabs (`seg_light`), a step under the cards' cream. The night's dark track (`seg_track`) was tried first: it failed value-steps (row 2 at 0.5 steps off the night, needs 2), and the leather plates are as dark, so the light track is the only kit strip that passes.
+- **"Quieten the Stillness card; at 200% shrink or darken it."** The law's sample is on the dark plate (`plate_dark`), not parchment: it is prose, not an action, and a cream card larger than the title drew the eye first.
+- **Tried and dropped:** the toggle rows on the dark card. The switch's off track is the dark plate and vanished on it, so they stay parchment.
+
+Evidence: the nine stills and records are re-shot (`settings-100`, `-pt_BR`, `-de`, `-200-pt_BR`, `-200-de`, `-hc`, `-hc-pt_BR`, `-account-100`, `-account-de`). `checks.py all` has no new FAIL on them; the only FAIL is the account profile row, `screen_account.gd`'s (S3-R18). `fit_settings.sh` prints `fit ok` for all twelve shots. In grayscale the title on its lit plate, the gold headings and the gold As lead; the cream switch rows stay bright, which the notes did not ask to change.
+
 ### What is still worse than before
 
-- **The group headings at 100%.** The gate passed Hierarchy at 100% narrowly: in grayscale the dark heading plates weigh less than the cream rows below them. Since board 5's F, the gold As lead the access tab instead (above).
+- **The switch rows.** In grayscale the cream switch rows still weigh about as much as the headings above them. The switch's off track vanishes on a dark card, so they stay parchment (above).
 - **The tab and back words.** Key frame 05 sets them in capitals. The screen keeps the kit's sentence case (`Tokens.type_role`). Capitals would be a change to the kit's type roles, which is K1's work.
 - **The shapes in pt_BR.** At 100% text, the longer Portuguese names (Movimento, Matéria) put the six coins three to a line, not the key frame's six in one row.
 - **The fold at 200% text.** The whole law shows, but the text card runs past the window, the colour-blind card and the switches are below the fold (`SCROLL`), and the cue is a chevron with no fade, until the kit has a scroll cue (S3-R8).
