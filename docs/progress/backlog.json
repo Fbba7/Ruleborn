@@ -2,7 +2,7 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026. Phase 2 started on 12 November 2026 (lead cycle 70): P1-AD-board-1d let board 1 stand and phase 1's other exit criteria hold (report.md section 3.2); its first tasks are the flow findings (S1, S2) and board 1's note G (AIA-2), within the same cap of three. Since 12 November 2026, about 20:00Z, the cap is four UI builders by the owner's order (CLAUDE.md order 3; three while the seven-day bar reads allowed_warning).",
   "wave": "UI wave",
   "phase": 2,
-  "updated_at": "2026-11-16T10:45:00Z",
+  "updated_at": "2026-11-16T10:55:00Z",
   "updated_by": "lead (cycle 99)",
   "stop_at": "2026-11-17T21:00:00Z",
   "lease_hours": 3,
@@ -4918,6 +4918,14 @@
       "text": "Lesson M26 from the UI report (board 5b's objection K went unseen because fit_character.sh covered one fixture only). Your task's done_when now carries it: the screen's scripted fit check covers every fixture state the screen shows, extremes included (highest level, longest name, empty, signed in and out, every tab), at 200% text in English, pt_BR and German; add any missing fixture to the script and get \"fit ok\" on every run before you mark the task ready. For P2-S3-character-3 this is S3-R30's wider fit_settings.sh (20 of 20) and fit_character.sh (50 of 50), granted with auth_panel.gd in cycle 99.",
       "sent_at": "2026-11-16T10:45:00Z",
       "ack_by": "2026-11-16T12:45:00Z",
+      "acked_at": null
+    },
+    {
+      "id": "M30",
+      "to": "S1",
+      "text": "The advisory gate on P2-S1-result-4 at 8753618a (cycle 99, docs/art/ui-quality/gate/verdicts/P2-S1-result-4/8753618a.json): Hierarchy passes 3 of 3 at 200% pt_BR and 3 of 3 in high contrast. Display type at 200% pt_BR fails 3 of 3 on one region: the gold kicker 'ASSALTO CONCLUÍDO' over the sunburst sky has no ink outline, and the summary lines over the sky keep a hairline edge that did not scale with text (about 2-3 px on 45 px glyphs; the rubric asks for at least 1.5 pt or 12% of the size). The reward figures and 'Limpo' pass. Close point, advisory: give every word over the sky an ink outline that grows with text scale, the kicker included, then send AD the stills and mark ready. If it cannot be done in this task, say so in your handoff and mark ready; the lead seeds a follow-up.",
+      "sent_at": "2026-11-16T10:55:00Z",
+      "ack_by": "2026-11-16T12:55:00Z",
       "acked_at": null
     }
   ]
