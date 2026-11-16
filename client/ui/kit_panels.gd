@@ -98,7 +98,13 @@ static func sheet(title: String, look := "sheet") -> PanelContainer:
 ## A dialog over `host`: the screen dimmed behind, a card with a title,
 ## words and `actions` in the thumb's reach; it pops in. Closing it is the
 ## caller's (queue_free on what this returns).
-static func dialog(host: Control, title: String, words: String, actions: Array) -> Control:
+## `kind` "confirm" or "info" (K17) sets the title on a ribbon (K19) and
+## marks one action primary: gold, with meta "primary", every other gold
+## one turned leather. It is the action at `primary`, else a confirm's last
+## and an info's first. An info with no actions gets a Dismiss that closes
+## it. `kind` "dialog" is the plain card, as before.
+static func dialog(host: Control, title: String, words: String, actions: Array, kind := "dialog",
+		primary := -1) -> Control:
 	var veil := Control.new()
 	veil.name = "Dialog"
 	veil.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -113,10 +119,26 @@ static func dialog(host: Control, title: String, words: String, actions: Array) 
 	card.custom_minimum_size.x = UI.px(300)
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", UI.px(12))
-	var t := UI.label(title, float(Tokens.type_role("heading")["points"]), true)
-	t.theme_type_variation = "Heading"
-	v.add_child(t)
-	v.add_child(KitNav.rule())
+	if kind == "dialog":
+		var t := UI.label(title, float(Tokens.type_role("heading")["points"]), true)
+		t.theme_type_variation = "Heading"
+		v.add_child(t)
+		v.add_child(KitNav.rule())
+	else:
+		veil.name = kind.capitalize()
+		v.add_child(ribbon(title))
+		if kind == "info" and actions.is_empty():
+			actions = [UI.action(Strings.t("COMMON_DISMISS"), veil.queue_free, "gold")]
+		var chosen := primary if primary >= 0 else (actions.size() - 1 if kind == "confirm" else 0)
+		for i: int in actions.size():
+			var a := actions[i] as Control
+			var look := "gold" if i == chosen else ("leather" if RbBox.of(a) != null and RbBox.of(a).look == "gold" else "")
+			if look != "" and a is Button:
+				UI.set_look(a as Button, look)
+			elif look != "":
+				UI.dress(a, look)
+			if i == chosen:
+				a.set_meta("primary", true)
 	if words != "":
 		v.add_child(UI.label(words, 16, true))
 	var r := UI.row()
@@ -129,6 +151,132 @@ static func dialog(host: Control, title: String, words: String, actions: Array) 
 	veil.theme = RbTheme.of("dark")
 	card.ready.connect(func() -> void: Motion.pop(card))
 	return veil
+
+
+## A ribbon title (K19): the words in Marcellus on the gold band the ribbon
+## skin draws while it is on, centred (a popup's title, a section's).
+static func ribbon(title: String) -> PanelContainer:
+	var p := UI.panel("chapter")
+	p.name = "Ribbon"
+	# 24 points, as the chapter's band: Marcellus on the gold stands at
+	# §21.8's large size.
+	var t := UI.label(title, 24, true)
+	t.theme_type_variation = "Heading"
+	p.add_child(t)
+	return p
+
+
+## An info popover's frame (K30): a small popup box with `words`, and a
+## pointer on its top edge toward what it explains (on its bottom edge when
+## `below` is false, the popover then standing over that control).
+static func popover(words: String, below := true) -> VBoxContainer:
+	var v := VBoxContainer.new()
+	v.name = "Popover"
+	v.add_theme_constant_override("separation", 0)
+	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var card := UI.panel("card")
+	RbBox.of(card).skin_shape = "popup/box"
+	card.custom_minimum_size.x = UI.px(160)
+	# A tap on the frame closes it too: it falls through to the layer.
+	card.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var l := UI.label(words, 14, true)
+	l.custom_minimum_size.x = UI.px(200)
+	card.add_child(l)
+	# The pointer's strip, as wide as the frame: it is drawn at its meta "x"
+	# (the middle of what it explains), else at its middle.
+	var tip := Control.new()
+	tip.name = "Pointer"
+	tip.custom_minimum_size = Vector2(UI.px(18), UI.px(9))
+	tip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var spec := Tokens.material("card")
+	var fill := Tokens.gradient(str(spec["fill"])).sample(0.0 if below else 1.0)
+	var edge: Color = (spec.get("line", spec.get("rim", [Color.TRANSPARENT])) as Array)[0]
+	tip.draw.connect(func() -> void:
+		var x := float(tip.get_meta("x")) if tip.has_meta("x") else tip.size.x * 0.5
+		var w := UI.px(9)
+		var h := tip.size.y
+		var pts := PackedVector2Array([Vector2(x - w, h), Vector2(x, 0), Vector2(x + w, h)]) if below \
+			else PackedVector2Array([Vector2(x - w, 0), Vector2(x, h), Vector2(x + w, 0)])
+		tip.draw_colored_polygon(pts, fill)
+		tip.draw_polyline(pts, edge, maxf(1.0, UI.px(1.5)), true))
+	v.add_child(tip if below else card)
+	v.add_child(card if below else tip)
+	return v
+
+
+## An info control (K30, in place of a tooltip, §21.8): the (i) as a round
+## button of 48 points named `spoken`; a tap opens `words` in a popover by
+## it, over the whole window, and a tap anywhere closes it. The open
+## popover's layer is the button's meta "open" while it stands.
+static func info(spoken: String, words: String) -> Button:
+	var b := KitControls.icon_button("generalui/info", spoken, func() -> void: pass)
+	b.name = "Info"
+	b.pressed.connect(func() -> void: _toggle_info(b, words))
+	return b
+
+
+static func _toggle_info(b: Button, words: String) -> void:
+	if b.has_meta("open") and is_instance_valid(b.get_meta("open")):
+		(b.get_meta("open") as Node).queue_free()
+		b.remove_meta("open")
+		return
+	var layer := Control.new()
+	layer.name = "PopoverLayer"
+	layer.set_anchors_preset(Control.PRESET_FULL_RECT)
+	layer.mouse_filter = Control.MOUSE_FILTER_STOP
+	layer.theme = RbTheme.of("dark")
+	var view := b.get_viewport_rect().size
+	var at := b.get_global_rect()
+	var below := at.end.y + UI.px(160) < view.y
+	var pop := popover(words, below)
+	layer.add_child(pop)
+	layer.gui_input.connect(func(e: InputEvent) -> void:
+		if (e is InputEventMouseButton and (e as InputEventMouseButton).pressed) \
+				or (e is InputEventScreenTouch and (e as InputEventScreenTouch).pressed):
+			layer.accept_event()
+			layer.queue_free()
+			if is_instance_valid(b):
+				b.remove_meta("open"))
+	b.get_viewport().add_child(layer)
+	b.set_meta("open", layer)
+	pop.reset_size()
+	var w := pop.get_combined_minimum_size().x
+	var h := pop.get_combined_minimum_size().y
+	var side := UI.px(8)
+	pop.position = Vector2(clampf(at.get_center().x - w * 0.5, side, maxf(side, view.x - w - side)),
+		at.end.y if below else at.position.y - h)
+	# The pointer stays on the (i) when the frame is held inside the window.
+	var tip := pop.get_node("Pointer") as Control
+	tip.set_meta("x", clampf(at.get_center().x - pop.position.x, UI.px(20), maxf(UI.px(20), w - UI.px(20))))
+	tip.queue_redraw()
+	Motion.pop(pop)
+
+
+## An empty state (K35): a list with nothing in it says so with its icon,
+## its words, and one gold action (`action` names it; none when ""), on a
+## card in the kit's materials. The action is the card's meta "action".
+static func empty(icon: String, words: String, action := "", acted := Callable()) -> PanelContainer:
+	var p := UI.panel("card")
+	p.name = "Empty"
+	p.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var v := VBoxContainer.new()
+	v.alignment = BoxContainer.ALIGNMENT_CENTER
+	v.add_theme_constant_override("separation", UI.px(12))
+	if icon != "":
+		var i := Icons.view(icon, 96)
+		i.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		i.modulate.a = 0.8
+		v.add_child(i)
+	var l := UI.label(words, 16, true)
+	l.theme_type_variation = "Secondary"
+	v.add_child(l)
+	if action != "":
+		var go := UI.action(action, acted, "gold")
+		go.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		p.set_meta("action", go)
+		v.add_child(go)
+	p.add_child(v)
+	return p
 
 
 ## A row that goes somewhere (Profile and stats, Privacy policy): a list

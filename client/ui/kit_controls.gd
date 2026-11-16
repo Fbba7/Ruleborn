@@ -346,3 +346,34 @@ static func upgrade(text: String, line: String, icon: String, price: String, pre
 	cost.offset_right = -UI.px(10)
 	b.add_child(cost)
 	return b
+
+
+## A slider (K06; §20.8's separate volumes): the slider skin's track, fill
+## and knob while it is on, `RbTheme`'s code-drawn ones while it is off,
+## 48 points tall (§21.1). A screen reader hears `spoken` as its name and
+## its value in words: `said` turns the value into them, else the share of
+## the way from `low` to `high` as a percentage. `changed` is called with
+## each new value.
+static func slider(spoken: String, value: float, changed: Callable, low := 0.0, high := 100.0, step := 1.0,
+		said := Callable()) -> HSlider:
+	var s := HSlider.new()
+	s.name = "Slider"
+	s.min_value = low
+	s.max_value = high
+	s.step = step
+	s.value = value
+	s.custom_minimum_size = Vector2(UI.px(150), UI.px(UI.CONTROL_POINTS))
+	s.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	s.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	s.accessibility_name = spoken
+	var say := func(v: float) -> void:
+		if said.is_valid():
+			s.accessibility_description = str(said.call(v))
+		else:
+			s.accessibility_description = "%d%%" % roundi(100.0 * (v - low) / maxf(high - low, 0.0001))
+	say.call(s.value)
+	s.value_changed.connect(func(v: float) -> void:
+		say.call(v)
+		if changed.is_valid():
+			changed.call(v))
+	return s
