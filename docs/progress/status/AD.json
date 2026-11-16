@@ -8,12 +8,12 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-16T13:55:00Z",
   "lease_until": "2026-11-16T16:55:00Z",
-  "updated_at": "2026-11-16T13:55:00Z",
-  "expected_next_update_by": "2026-11-16T14:40:00Z",
+  "updated_at": "2026-11-16T14:45:00Z",
+  "expected_next_update_by": "2026-11-16T15:30:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "d48c880e923831a7336288403937b33726dc02f7",
-    "next_step": "Board 5c: re-render character 4 at 200% (en, pt_BR, de) and settings-account 100/de on main 570c4b5 (character-3 merged as 0ee8d9d8); re-check K and L only."
+    "next_step": "Pre-check the board 5c write-up (K and L fixed, M open as AD-R43), record it, then mark ready."
   },
   "precheck": null,
   "gate_request": null,
@@ -566,6 +566,21 @@
       "due": "2026-11-18T12:10:00Z",
       "default": "S1 fixes G inside P2-S1-result-4 before its gate request; no separate task. If result-4 merges without it, the lead opens a follow-up S1 task for G",
       "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R43",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 5, objection M, from round 3 (P2-AD-board-5c). On the signed-in Account tab at 100%, the leather 'Sign out' buttons on the section card fail value steps: English button 4 'Sign out' dL* 16.3 and button 6 'Sign out: Android phone' 16.1; German 17.5 and 17.0 (1.6 to 1.8 steps, 2 needed). The same buttons pass on the darker night (24.1, 25.3) and in high contrast. Not caused by character-3: the 100% layout of auth_panel.gd is unchanged, and the shot now dispatches the devices. Fix in client/scripts/auth_panel.gd _button: a lighter face for the leather actions on a section card, or the parchment plate the profile row uses. Details in board-5.md, 'Round 3 (board 5c)', M.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-5.md",
+        "client/scripts/auth_panel.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-16T14:45:00Z",
+      "due": "2026-11-18T14:45:00Z",
+      "default": "The lead opens a follow-up S3 task for M, done when tools/ui_gate/checks.py value-steps passes every control on the signed-in Account tab records at 100% in English and German; no AD round 4. Board 5 stands on K and L meanwhile",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
@@ -670,6 +685,6 @@
       "at": "2026-11-16T12:10:00Z"
     }
   ],
-  "next_step": "Board 5c: re-render character 4 at 200% (en, pt_BR, de) and settings-account 100/de on main 570c4b5 (character-3 merged as 0ee8d9d8); re-check K and L only.",
-  "last_update": "2026-11-16T13:55:00Z"
+  "next_step": "Pre-check the board 5c write-up (K and L fixed, M open as AD-R43), record it, then mark ready.",
+  "last_update": "2026-11-16T14:45Z: board 5c written. K and L stand as fixed on main 570c4b5b (character 4 at 200% fit ok in en, pt_BR, de; profile row dL* 72.7/72.2). New light objection M (signed-in leather sign-out buttons, dL* 16.1 to 17.5) to the lead as AD-R43 with a scripted-check default. Pre-check next."
 }
