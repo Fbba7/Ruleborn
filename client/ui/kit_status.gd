@@ -451,8 +451,10 @@ static func loading(c: Control, on := true) -> void:
 	over.set_anchors_preset(Control.PRESET_FULL_RECT)
 	# It takes the taps the control would.
 	over.mouse_filter = Control.MOUSE_FILTER_STOP
+	over.z_index = UI.WORDS_Z
 	over.add_child(spinner(side / UI.PX_PER_POINT, false))
-	host.add_child(over)
+	# An internal child: no container lays it out.
+	host.add_child(over, false, Node.INTERNAL_MODE_BACK)
 	host.set_meta("kit_loading", {"hidden": hidden, "over": over, "focus": host.focus_mode,
 		"said": host.accessibility_description})
 	if host.has_focus():
@@ -466,12 +468,13 @@ static func is_loading(c: Control) -> bool:
 	return _acted_on(c).has_meta("kit_loading")
 
 
-## The L overlay (kit-spec.md section 3) on `c`, or off with `on` false: the
-## locked material (with `face`) and the lock mark at its top left; a tap
-## anywhere on it opens a popover of `why` (how it unlocks) instead of
-## acting. Returns the mark, or null when turned off.
+## The L overlay (kit-spec.md section 3) on `c`, any control (a button, a
+## card), or off with `on` false: the locked material on its kit box (with
+## `face`) and the lock mark at its top left, over its words, out of any
+## layout; a tap anywhere on it opens a popover of `why` (how it unlocks)
+## instead of acting. Returns the mark, or null when turned off.
 static func locked(c: Control, why := "", on := true, face := true) -> Control:
-	var host := _acted_on(c)
+	var host := c
 	var old := host.get_node_or_null("Lock")
 	if old != null:
 		host.remove_child(old)
@@ -493,6 +496,7 @@ static func locked(c: Control, why := "", on := true, face := true) -> Control:
 	for state: String in ["normal", "hover", "pressed", "focus", "disabled"]:
 		cover.add_theme_stylebox_override(state, StyleBoxEmpty.new())
 	cover.set_anchors_preset(Control.PRESET_FULL_RECT)
+	cover.z_index = UI.WORDS_Z
 	cover.accessibility_name = why if why != "" else Strings.t("SCREEN_SLOT_LOCKED")
 	if why != "":
 		cover.pressed.connect(func() -> void: KitPanels._toggle_info(cover, why))
@@ -504,17 +508,18 @@ static func locked(c: Control, why := "", on := true, face := true) -> Control:
 	mark.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	mark.position = Vector2.ONE * -UI.px(4)
 	cover.add_child(mark)
-	host.add_child(cover)
+	host.add_child(cover, false, Node.INTERNAL_MODE_BACK)
 	return mark
 
 
-## The A overlay (kit-spec.md section 3) on `c`, or off with `on` false: a
-## count badge of `count`, or the attention dot with no count, at its top
-## right inside its hit area. It replaces any mark this call put there
-## before, so a control carries one at most, and pulses once on arrival
-## (reduced motion: no pulse). Returns the mark, or null when turned off.
+## The A overlay (kit-spec.md section 3) on `c`, any control, or off with
+## `on` false: a count badge of `count`, or the attention dot with no count,
+## at its top right inside its hit area, over its words, out of any layout.
+## It replaces any mark this call put there before, so a control carries one
+## at most, and pulses once on arrival (reduced motion: no pulse). Returns
+## the mark, or null when turned off.
 static func notice(c: Control, count := "", on := true) -> Control:
-	var host := _acted_on(c)
+	var host := c
 	var old := host.get_node_or_null("Notice")
 	if old != null:
 		host.remove_child(old)
@@ -531,7 +536,8 @@ static func notice(c: Control, count := "", on := true) -> Control:
 	mark.offset_right = 0.0
 	mark.offset_top = 0.0
 	mark.offset_bottom = side.y
-	host.add_child(mark)
+	mark.z_index = UI.WORDS_Z
+	host.add_child(mark, false, Node.INTERNAL_MODE_BACK)
 	if not Settings.reduced_motion:
 		var pulse := func() -> void:
 			mark.pivot_offset = mark.size * 0.5

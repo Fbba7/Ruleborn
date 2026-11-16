@@ -308,7 +308,7 @@ static func _marks(tree: SceneTree, screen: Control, check: Callable) -> void:
 	KitStatus.notice(b, "3")
 	var dot := KitStatus.notice(b)
 	await tree.process_frame
-	var marks := b.get_children().filter(func(n: Node) -> bool: return n.name == "Notice")
+	var marks := b.get_children(true).filter(func(n: Node) -> bool: return n.name == "Notice")
 	if marks.size() != 1 or marks[0] != dot:
 		bad.append("%d attention marks after two" % marks.size())
 	elif not Rect2(Vector2.ZERO, b.size).grow(0.5).encloses(Rect2(dot.position, dot.size)) \
