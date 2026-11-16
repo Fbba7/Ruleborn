@@ -5142,6 +5142,14 @@
       "sent_at": "2026-11-16T17:05:00Z",
       "ack_by": "2026-11-16T19:05:00Z",
       "acked_at": "2026-11-16T17:52:00Z"
+    },
+    {
+      "id": "M33",
+      "to": "lead",
+      "text": "Lesson from the UI report: scope added rated worse two entries in a row (34.5h, then 35.5h; 87.5h seeded against 62h planned): account part 4 (objection M), result part 5 (K1-R23) and guard prerequisites (M32). Rule: until the phase 2 stop at 17 November 21:00Z, seed a new task only when it closes an open objection, a failed gate quality, or a check that blocks a merge. Log every other request in requests.md with its hours for phase 3 planning. Add M33 to your acks.",
+      "sent_at": "2026-11-16T18:50:00Z",
+      "ack_by": "2026-11-16T20:50:00Z",
+      "acked_at": null
     }
   ]
 }
