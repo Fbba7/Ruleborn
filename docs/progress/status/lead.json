@@ -1,12 +1,12 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-15T23:12:00Z",
-  "expected_next_update_by": "2026-11-16T00:27:00Z",
-  "cycle": 88,
+  "updated_at": "2026-11-16T01:55:00Z",
+  "expected_next_update_by": "2026-11-16T03:10:00Z",
+  "cycle": 91,
   "merging": null,
   "last_merged": {
-    "task_id": "P2-AIA-motion-3",
-    "sha": "746c0651"
+    "task_id": "P2-S1-result-3",
+    "sha": "19cfe498"
   },
   "acks": [
     "M15",
@@ -25,5 +25,5 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Cycle 89: merge P2-S1-result-3 when ready after objection F and AD's re-check (record S1-R28's budgets result/100 91 and result/200 99 in tools/ui_bake/budgets.json with a raises entry); merge P2-S2-home-3 when S2 marks it ready again after AD's objections (a) to (e) and AD's re-check (M20), recording S2-R21's home/200 at 124 and S2-R23's exceptions; start AD when S1 or S2 files its re-check request and a seat is free (M20); P2-AD-board-4b once result-3 merges (motion-3 merged as 746c0651), P2-AD-board-3b after home-3, P2-AD-board-5b after P2-S3-character-2 and P2-S3-settings-2. Running: S1 (result-3), S2 (home-3, restarted 22:44Z), S3 (character-2); one seat free; cap four."
+  "next_step": "Cycle 92: merge P2-S3-character-2 once S3 marks it ready at 6b7e6b42 (advisory gate passed there, verdicts/P2-S3-character-2/6b7e6b42.json; a later head is gated again) and AD answers S3-R16 (M20; due 03:20Z, default H stands as fixed). P2-S2-home-3 is back to working for AD's objection (f) (S2 restarted 01:50Z); merge it once S2 marks it ready again and AD answers S2's re-check of (f), with S2-R21's home/200 draw calls at 124 in tools/ui_bake/budgets.json with a raises entry and S2-R23's exceptions; gate the new head. K1 works P2-K1-tabs-2 (S2-R24, S2-R26); AD takes P2-AD-board-4b after S3-R16. Seats S2, S3, AD, K1: four of four."
 }

@@ -46,6 +46,17 @@
       },
       "reason": "S1-R26: AD's 200% first screen for S1-R24 puts the haul above the moment card, the reward tiles in rows and the multipliers pill on one line (P2-S1-result-2); a bisect shows removing any one brings back an objection. Textures and words below 4.5:1 unchanged; result/200 stays 52 under the cap of 150. result/100 (94 -> 89) and result/hc (94 -> 27) are lowered with it, and check_screens' result_screen.gd (draw 5 -> 0, fill 1 -> 0) and character_screen.gd (fill 3 -> 0).",
       "request": "S1-R26"
+    },
+    {
+      "approved_by": "lead, cycle 90 (S1-R28)",
+      "date": "2026-11-16",
+      "field": "shots.recorded draw_calls",
+      "figures": {
+        "result/100": "89 -> 91",
+        "result/200": "98 -> 99"
+      },
+      "reason": "S1-R28: board 4's objection A, the hard drop under the three reward figures (the home's Keeper finish), on the result screen (P2-S1-result-3); with the drop taken out, result/100 reads 89 and result/200 97. Textures and words below 4.5:1 unchanged; result/hc stays 27; result/100 stays 59 and result/200 51 under the cap of 150.",
+      "request": "S1-R28"
     }
   ],
   "screens": {
@@ -339,12 +350,12 @@
         "words_below": 0
       },
       "result/100": {
-        "draw_calls": 89,
+        "draw_calls": 91,
         "texture_bytes": 580608,
         "words_below": 0
       },
       "result/200": {
-        "draw_calls": 98,
+        "draw_calls": 99,
         "texture_bytes": 580608,
         "words_below": 0
       },
