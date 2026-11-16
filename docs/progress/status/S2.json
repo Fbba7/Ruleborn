@@ -3,27 +3,35 @@
   "role": "S2",
   "branch": "claude/ui-screens-home",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P2-S2-home-3",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-15T17:40:00Z",
   "lease_until": "2026-11-16T03:00:00Z",
-  "updated_at": "2026-11-15T23:59:00Z",
-  "expected_next_update_by": "2026-11-16T00:45:00Z",
+  "updated_at": "2026-11-16T00:12:00Z",
+  "expected_next_update_by": "2026-11-16T00:57:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "13ff046f",
-    "next_step": "Pre-check running on 823d2eac (the merge of main a8f799c plus the measures); then mark P2-S2-home-3 ready there, S2-R25 to AD at that sha.",
-    "at": "2026-11-15T23:59:00Z"
+    "last_green_sha": "823d2eac",
+    "next_step": "Ready at 823d2eac: the lead records home/200 (S2-R21) and runs the gate; AD re-checks S2-R22's (a) to (e) and rules on (a)'s trade (S2-R25); K1 takes S2-R24 and S2-R26.",
+    "at": "2026-11-16T00:12:00Z"
   },
   "precheck": {
-    "sha": "13ff046f84c290ce47986ddeb7f46da60778f6bf",
+    "sha": "823d2eac9fe3fe7a3b622d79912676fd06cb13ee",
     "exit": 0,
-    "finished_at": "2026-11-15T20:42:22Z",
+    "finished_at": "2026-11-16T00:10:07Z",
     "summary": "All checks passed."
   },
-  "gate_request": null,
-  "ready_sha": null,
+  "gate_request": [
+    {
+      "item": "home at 100% text",
+      "qualities": [
+        "Hierarchy",
+        "Character presence"
+      ]
+    }
+  ],
+  "ready_sha": "823d2eac9fe3fe7a3b622d79912676fd06cb13ee",
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
     "M13"
@@ -357,7 +365,7 @@
       "id": "S2-R25",
       "from": "S2",
       "to": "AD",
-      "ask": "Re-check only S2-R22's objections (a) to (e) on claude/ui-screens-home at the ready commit (one round, M12). Reproduce with `FIT=1 bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`: (a) TEXT=200 in en, de, CONTRAST=1: the chosen tab's picture clear of the goal and Collect; (b) TEXT=200 in en, de, CONTRAST=1: every realm pin in one form; (c) LOCALE=de at 100%: the purse in one row; (d) TEXT=200 en: '1,240 experience to go · / Keeper 25'; (e) LOCALE=de TEXT=200: Collect's side padding. FIT now checks (a) to (c). Please also rule on one trade (a) makes: at 200% with NOTICE=1 the realms' chips give way in pt_BR, fr and en with TALL=900 (FIT fails on 'no realm marked'), as the reserve takes the world's room; the fix is KitTabs' (S2-R24). Answers in docs/art/tracks/home-screen.md, Part 3, \"AD's S2-R22 review\" and 'What (a) costs'.",
+      "ask": "Re-check only S2-R22's objections (a) to (e) on claude/ui-screens-home at the ready commit 823d2eac (one round, M12). Reproduce with `FIT=1 bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`: (a) TEXT=200 in en, de, CONTRAST=1: the chosen tab's picture clear of the goal and Collect; (b) TEXT=200 in en, de, CONTRAST=1: every realm pin in one form; (c) LOCALE=de at 100%: the purse in one row; (d) TEXT=200 en: '1,240 experience to go · / Keeper 25'; (e) LOCALE=de TEXT=200: Collect's side padding. FIT now checks (a) to (c). Please also rule on one trade (a) makes: at 200% with NOTICE=1 the realms' chips give way in pt_BR, fr and en with TALL=900 (FIT fails on 'no realm marked'), as the reserve takes the world's room; the fix is KitTabs' (S2-R24). Answers in docs/art/tracks/home-screen.md, Part 3, \"AD's S2-R22 review\" and 'What (a) costs'.",
       "files": [
         "client/scripts/home.gd",
         "client/scripts/home_parts.gd",
@@ -387,5 +395,5 @@
     }
   ],
   "answers": [],
-  "next_step": "Pre-check running on 823d2eac (the merge of main a8f799c plus the measures); then mark P2-S2-home-3 ready there, S2-R25 to AD at that sha."
+  "next_step": "Ready at 823d2eac: the lead records home/200 (S2-R21) and runs the gate; AD re-checks S2-R22's (a) to (e) and rules on (a)'s trade (S2-R25); K1 takes S2-R24 and S2-R26."
 }
