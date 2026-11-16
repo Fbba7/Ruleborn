@@ -172,7 +172,21 @@ static func hero_shrink(words: Array, numbers: Array, bar: Control) -> void:
 		if saved >= over or f == steps.back():
 			for pair: Array in words:
 				(pair[0] as Label).add_theme_font_size_override("font_size", UI.text_px(float(pair[1]) * f))
+				ink(pair[0] as Label)
 			return
+
+
+## An ink outline round words on the art with no plate (§21.8: 1.5 points or
+## 12% of their size, 3 points in high contrast), from the size the label is
+## drawn at, so it grows with the text size and follows the hero's shrink.
+## Godot strokes `outline_size` across the glyph's edge, half of it outside,
+## so the visible edge is half the constant.
+static func ink(l: Label) -> void:
+	var font_px := float(l.get_theme_font_size("font_size"))
+	var scale := Settings.text_scale / 100.0
+	var edge := maxf((3.0 if Settings.high_contrast else 1.5) * UI.PX_PER_POINT * scale, 0.12 * font_px)
+	l.add_theme_color_override("font_outline_color", Tokens.color("ink_line"))
+	l.add_theme_constant_override("outline_size", int(ceil(2.0 * edge)))
 
 
 ## How many lines `l`'s words take wrapped between words within `room`, at

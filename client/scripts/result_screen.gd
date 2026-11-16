@@ -156,7 +156,7 @@ func _ready() -> void:
 	paid.add_child(check_label)
 	# The lines under the tiles stand on the night with no plate.
 	for l: Label in [fee_label, detail_label, check_label]:
-		_ink(l, float(l.get_meta("points", UI.TEXT_POINTS)))
+		ResultFit.ink(l)
 	# The totals as the home's display figures: the lead deep gold, the
 	# others cream (key frame 03's "1,288", "+46" and "+12").
 	_display(haul_label, "starlight")
@@ -250,21 +250,11 @@ func _hero() -> VBoxContainer:
 	subline_label = UI.label("", 14, true)
 	subline_label.theme_type_variation = "Secondary"
 	hero.add_child(subline_label)
-	_ink(kicker_label, 14)  # The hero's words stand on the sunburst, unplated.
-	_ink(grade_label, TITLE_POINTS)
+	# The hero's words stand on the sunburst, unplated: inked by their size.
+	for l: Label in [kicker_label, grade_label, condition_label, subline_label]:
+		ResultFit.ink(l)
 	grade_label.add_theme_color_override("font_shadow_color", Color.TRANSPARENT)  # Outline for drop.
-	_ink(condition_label, 16)
-	_ink(subline_label, 14)
 	return hero
-
-
-## An ink outline round words on the art with no plate: 1.5 points or 12% of
-## their size (§21.8), as `UI.world_words`; 3 points in high contrast.
-static func _ink(l: Label, points: float) -> void:
-	if Settings.high_contrast:
-		points = maxf(points, 25.0)
-	l.add_theme_color_override("font_outline_color", Tokens.color("ink_line"))
-	l.add_theme_constant_override("outline_size", UI.px(maxf(1.5, 0.12 * points) + 0.5))
 
 
 ## A reward's total as the home's figures ("Keeper 24", `Home.home_figure`):
