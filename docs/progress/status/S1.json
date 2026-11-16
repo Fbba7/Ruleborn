@@ -8,8 +8,8 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-16T20:51:41Z",
   "lease_until": "2026-11-17T01:09:33Z",
-  "updated_at": "2026-11-16T22:57:04Z",
-  "expected_next_update_by": "2026-11-16T23:42:04Z",
+  "updated_at": "2026-11-16T23:50:38Z",
+  "expected_next_update_by": "2026-11-17T00:35:38Z",
   "progress_marker": {
     "last_green_sha": "8d2488cb5ff09f939c62cec641d6bb2a34bbc39b",
     "next_step": "fix the en long bubble, commit, pre-check",
@@ -561,5 +561,5 @@
       "where": "docs/progress/lead.md, Now, cycle 106"
     }
   ],
-  "next_step": "Pre-check at f49852ed failed on §21.1; fixed (law badge 22 pt at 100% text, widest 1073 of 1080) and committed at b8419c69. The sweep then found pt_BR longest names with the bubble in the loot caption's line; fixed (a bubble with no clean place near its guard takes the nearest place clear of words and portraits). Sweep re-running alone; then re-shoot the gate stills, budgets and guard, commit, pre-check, handoff and gate request."
+  "next_step": "Fixes committed (b8419c69, 9378b82d); M26 sweep 33 of 33 fit ok on 9378b82d; gate stills re-shot at 90c8b15c; guard fails only on S1-R33's two approved records. Pre-check of 90c8b15c running (started 23:17Z); on pass: handoff, gate request, ready."
 }
