@@ -6,10 +6,11 @@ extends RefCounted
 
 
 ## The design's "Profile and stats" row under the account: the whole row
-## the one control.
+## the one control, on the parchment the Access tab's switch rows stand on,
+## so it sits value steps off the night as they do (board 5b's objection L).
 static func profile_row() -> PanelContainer:
-	var go := ScreenKit.text("›", 22.0, "words", "card", true)
-	var row := ScreenParts.item("screens", "character", Strings.t("PROFILE_TITLE"), "", go)
+	var go := ScreenKit.text("›", 22.0, "words", "parchment", true)
+	var row := ScreenParts.item("screens", "character", Strings.t("PROFILE_TITLE"), "", go, "parchment")
 	ScreenParts.tap(row, func() -> void: App.services.router.go(&"profile"), Strings.t("PROFILE_TITLE"))
 	return row
 
