@@ -8,16 +8,33 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-16T09:50:00Z",
   "lease_until": "2026-11-16T12:50:00Z",
-  "updated_at": "2026-11-16T10:17:38Z",
-  "expected_next_update_by": "2026-11-16T11:02:38Z",
+  "updated_at": "2026-11-16T10:34:11Z",
+  "expected_next_update_by": "2026-11-16T11:19:11Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "d896f254a3bd1bd423eb69ac145990e9d4dece80",
-    "next_step": "M26 sweep running (all fit ok so far: en 200% every state and golden; pt_BR started). Then merge main, setup, build, check_all, guard, check_screens, pre-check, gate request.",
-    "at": "2026-11-16T10:17:38Z"
+    "next_step": "M26 sweep all fit ok after 91e5a056 (rehearsal word fit at de 200%). check_all, guard, check_screens and the pre-check running on 8753618a; then record and ready on a gate pass.",
+    "at": "2026-11-16T10:34:11Z"
   },
   "precheck": null,
-  "gate_request": null,
+  "gate_request": {
+    "sha": "8753618ad66d4dbbd552a2960c5798f2f8ee9811",
+    "items": [
+      {
+        "item": "result at 200% text, pt_BR",
+        "qualities": [
+          "Display type",
+          "Hierarchy"
+        ]
+      },
+      {
+        "item": "result in high contrast",
+        "qualities": [
+          "Hierarchy"
+        ]
+      }
+    ]
+  },
   "ready_sha": null,
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
@@ -503,5 +520,5 @@
       "answer": "Objection F is met at 904a3567. A, B, D and E still hold, and the result may merge (M20). One note for board 4b, not an objection: at pt_BR 200% the first screen ends on the unfinished phrase 'Taxa de entrada de'. Keeping a label's lines together at the fold would read better, if it costs no draw call. Left for board 4b."
     }
   ],
-  "next_step": "P2-S1-result-4 at 06635883: Home and the laws in the tertiary face (darker than Raid again in grayscale); the fold keeps a label of up to 3 lines whole; the shot covers M26's states. AD preview S1-R31 sent; M26 sweep in progress."
+  "next_step": "P2-S1-result-4 at 8753618a: the gate's close points answered (Home and the laws in the tertiary face; no character frame on the currency tiles), the fold keeps a short label whole, every state in the fit check (M26), German's long rehearsal word kept whole. Pre-check running; gate requested."
 }
