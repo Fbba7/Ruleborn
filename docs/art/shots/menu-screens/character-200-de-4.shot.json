@@ -1,0 +1,66 @@
+{
+ "controls": [
+  {
+   "name": "arrow 1: Vorheriger Charakter, Featherkin 2",
+   "rect": [
+    21.67,
+    110.86,
+    52.0,
+    52.0
+   ]
+  },
+  {
+   "name": "arrow 2: Nächster Charakter, Skyskipper",
+   "rect": [
+    313.44,
+    110.86,
+    52.0,
+    52.0
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "words 3: Mossbear",
+   "rect": [
+    119.89,
+    154.92,
+    146.97,
+    47.67
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "words 4: Mossbear · Wächter",
+   "rect": [
+    30.33,
+    294.31,
+    326.08,
+    47.67
+   ]
+  },
+  {
+   "name": "row 5: Raubzug Werte Vergleich",
+   "rect": [
+    17.33,
+    479.92,
+    352.44,
+    64.64
+   ]
+  },
+  {
+   "name": "back 6: Aufstellung",
+   "rect": [
+    28.17,
+    668.42,
+    60.67,
+    60.67
+   ]
+  }
+ ],
+ "frame_pt": [
+  390.0,
+  845.0
+ ],
+ "image": "character-200-de-4.png",
+ "text_scale": 2.0
+}
