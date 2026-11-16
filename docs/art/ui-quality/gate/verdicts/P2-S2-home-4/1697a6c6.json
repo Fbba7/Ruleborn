@@ -1,0 +1,39 @@
+[
+ {
+  "task_id": "P2-S2-home-4",
+  "sha": "1697a6c6675c22865eb28732ee50b410333a48de",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "advisory": true,
+  "at": "2026-11-16T14:00:00Z",
+  "item": "home at 200% text, pt_BR",
+  "quality": "Display type",
+  "samples": [
+   "pass",
+   "fail",
+   "pass",
+   "fail",
+   "pass",
+   "fail"
+  ],
+  "result": "pass",
+  "critique": "A split, so three more samples were run: 3 of 6 fail, under the 4 that make a fail. The judges who failed it read the headline currency counts (1.460, 142,0 mil, 31,4 mil, 61,0 mil) as a flat cream fill with no hard drop or gradient they could see on the dark plates, one also failed 'Guardião 24' over the starfield as unoutlined, and one failed 'Humming' as plain white beside the cream figures. The judges who passed it saw one outlined cream treatment across the rank, with the outline scaling at 200%, and called it close. Worth a look: a clearer hard drop under the currency counts would settle it."
+ },
+ {
+  "task_id": "P2-S2-home-4",
+  "sha": "1697a6c6675c22865eb28732ee50b410333a48de",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "advisory": true,
+  "at": "2026-11-16T14:00:00Z",
+  "item": "home at 200% text, pt_BR",
+  "quality": "Hierarchy",
+  "samples": [
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "In grayscale the full-width gold 'Coletar 3,4 mil' bar is the lightest and widest control, and the eye lands on it first. The currency panels, the XP card and the small red badges fall in behind it. That is a clearer single lead than the pass anchor's."
+ }
+]

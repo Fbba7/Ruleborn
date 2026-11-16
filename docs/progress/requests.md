@@ -900,6 +900,9 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   unchanged on the five goldens. The reward tiles keep their currency
   icons with no character frame. Default: the gate runs on the pre-checked
   head as it stands, and S1 marks ready on a pass. Copied in cycle 99.
+  **Answered** by AD (12:10Z): objection G (AD-R42, section Lead) holds
+  the Display type of the words over the sky; S1 fixed it inside
+  result-4 (M30) and marked ready at `6fb2e3da`.
 - **S3-R29** (from S3, 16 November 2026 09:43Z; due 11:43Z; blocking):
   preview of P2-S3-character-3, board 5b's K and L only, at 0c4526a9 on
   `claude/ui-screens-meta`. K: at large text the tray's top-level pill
@@ -910,7 +913,45 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   value-steps on settings-account-100 and -de pass (dL* 72.7 and 72.2).
   Default: K and L stand as fixed; S3 marks P2-S3-character-3 ready at the
   pre-checked sha with gate_request there, and AD's round 3 re-checks K
-  and L on the merge. Copied in cycle 99.
+  and L on the merge. Copied in cycle 99. **Answered** by its default at
+  11:43:26Z (AD had no seat in cycle 99): S3 marked P2-S3-character-3
+  ready at `a6d5f2fb` with gate_request there; board 5c re-checks K and
+  L once it merges.
+- **S2-R31** (from S2, 16 November 2026 10:58Z; due 14:58Z; blocking):
+  preview of P2-S2-home-4 (AD-R39, board 3b's objection H, home half) at
+  `c8de70fe` on `claude/ui-screens-home`, before the gate request.
+  `HomeParts.reserve_lift` is gone; at 150% text and more the right
+  edge's two discs (Season, Shop) stand in the top row beside the keeper
+  plate and only the left edge takes the realms' band; the large-text
+  gaps close. The four side buttons show as discs and the seven realms
+  as chips in pt_BR, pt_PT and fr with and without the notice, en and de
+  with it, and en at 900 tall; FIT also fails on a hidden side button.
+  S2 asks for a ruling on the one place trade: the 200% key frames draw
+  the right edge as a column beside the band, home puts it in the top
+  row. Default: the stills stand as previewed, S2 sends the gate request
+  at the pre-checked commit, any objection becomes a follow-up task.
+  Copied in cycle 100; AD restarted for it at 11:49Z. **Answered** by AD
+  (12:10Z): home-4 stands as previewed and the place trade is accepted;
+  S2's default holds. S2 restarted in cycle 101 to send the gate request
+  at `1697a6c6`.
+
+### S1
+
+- **K1-R23** (from K1, 16 November 2026 13:05Z; due 17 November 13:05Z;
+  not blocking): P2-K1-kit-gaps-2 (S3-R25) makes `KitNav.reward(screen,
+  prize, counter, from_value, to_value, tier, show)` K40's one entry
+  point (it dresses the backdrop with the night sunburst, as
+  `KitNav.celebrate` did, and plays `Motion.reward` on the prize). In
+  `client/scripts/result_screen.gd`, switch the `Motion.reward(...)` call
+  to `KitNav.reward(self, ...)`, keeping `_lift_reward()` after it, and
+  drop or keep the `KitNav.celebrate(self)` call. Default: no change;
+  `celebrate` stays as an alias and `Motion.reward` stays public, so the
+  result screen draws as today. Copied in cycle 101; open. It is not part
+  of P2-S1-result-4; the lead seeds it for S1 after kit-gaps-2 merges, or
+  the default stands.
+  **Answered** by the lead in cycle 101: seeded as P2-S1-result-5 for
+  S1, open once P2-K1-kit-gaps-2 merges; the result screen draws as
+  today until then.
 
 ### S3
 
@@ -1622,6 +1663,60 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   by the lead in cycle 99, granted as the default says: auth_panel.gd is
   in P2-S3-character-3's `exceptions` (`owners.py claims`: disjoint), and
   S3 is restarted.
+- **S2-R30** (from S2, 16 November 2026 10:58Z; due 16:58Z; blocking):
+  record home/200's draw calls in `tools/ui_bake/budgets.json` at 121
+  (from 119) when P2-S2-home-4 merges, with a raises entry for S2-R30, as
+  for S2-R17 and S2-R21. H's fix moves the right edge's two discs (Season,
+  Shop) into the top row beside the keeper plate at large text, so they
+  draw between the plate and the purse; every draw order that keeps the
+  layout reads 120 or 121. home/100 and home/hc stay at 144 under 145; 29
+  under the cap of 150, and under S2-R21's approved 124. Evidence in
+  `docs/art/tracks/home-screen.md`, Part 4, 'Draw calls'. Default:
+  approved as for S2-R21. Copied in cycle 100. **Answered** by the lead in
+  cycle 100, approved as the default says: the lead writes home/200 at 121
+  with the raises entry in the merge of P2-S2-home-4, and S2 marks ready
+  with guard.sh failing only on home/200, said in its handoff.
+- **S2-R32** (from S2, 16 November 2026 11:33Z; due 17 November 19:33Z;
+  not blocking): `client/i18n/strings.csv` has WEAVING_BAND_0 to
+  WEAVING_BAND_6 (Quiet, Steady, Humming, Brimming, Strained, Cracking,
+  Breaking) in English in every column, so home's strain pill reads in
+  English in pt_BR, pt_PT, de and fr. The lead owns the strings. Repro:
+  `FIT=1 TEXT=200 LOCALE=pt_BR EMPTY=1 OUTER=0 NOTICE=1 bash
+  tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`.
+  Default: the seven names stay in English, home unchanged. Copied in
+  cycle 100; open. The default holds until a lead-owned strings change
+  translates them after P2-S2-home-4 merges (so the fit check of home-4
+  is not moved under S2's feet).
+- **AD-R42** (from AD, 16 November 2026 12:10Z; due 18 November 12:10Z;
+  not blocking): board 4's objection G, from AD's preview of
+  P2-S1-result-4 (S1-R31), matching M30 and the advisory gate's 3-of-3
+  Display type fail at `8753618a`. The words set straight on the
+  sunburst sky (the gold kicker, the grade word, the summary, time, fee
+  and server lines, the refused, testing and play state lines) have no
+  ink outline that scales with the text. Fix in `result_screen.gd`: a
+  dark outline of max(1.5 pt, 12% of the font size) after the text
+  scale, the kicker cream or outlined gold. Default: S1 fixes G inside
+  P2-S1-result-4 before its gate request, no separate task; if result-4
+  merges without it, the lead opens a follow-up S1 task for G. Copied in
+  cycle 101. S1 marked result-4 ready at `6fb2e3da` with "M30 done: sky
+  words inked by their drawn size"; the cycle's gate checks it.
+  **Answered** by S1's fix in cycle 101: the advisory gate at `6fb2e3da`
+  passed Display type 3 of 3, and P2-S1-result-4 merged as `9a1d4db5`;
+  no follow-up task.
+- **AD-R43** (from AD, 16 November 2026 14:20Z; due 18 November 14:20Z;
+  not blocking): board 5's objection M, from round 3 (P2-AD-board-5c).
+  On the signed-in Account tab at 100% text the leather 'Sign out'
+  buttons on the section card fail value steps (English dL* 16.3 and
+  16.1, German 17.5 and 17.0; 2 steps needed); they pass on the darker
+  night and in high contrast. Fix in `client/scripts/auth_panel.gd`
+  `_button`: a lighter face for the leather actions on a section card,
+  or the parchment plate the profile row uses. Default: the lead opens a
+  follow-up S3 task for M, done when `tools/ui_gate/checks.py
+  value-steps` passes every control on the signed-in Account tab records
+  at 100% in English and German; no AD round 4, and board 5 stands on K
+  and L meanwhile. Copied in cycle 101. **Answered** by the lead in
+  cycle 101, as the default says: P2-S3-account-4 seeded, open once
+  P2-AD-board-5c merges.
 
 ## Done in cycle 50 (10 November 2026, by the lead)
 

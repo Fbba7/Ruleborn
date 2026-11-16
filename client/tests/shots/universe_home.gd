@@ -4,10 +4,15 @@ extends SceneTree
 ## ZOOM and FOCUS (as universe_zoom.gd), TEXT (the text size, 100) and TIME
 ## (seconds of animation) are optional; WHOLE shows the whole universe; RAIDS the
 ## raids not yet seen (2), on the Defence badge; NOTICE their notice too;
-## MOST every amount at its widest (else the key frame's state, `keyframe`);
+## MOST every amount at its widest; EMPTY a new Keeper's (`start`, with OUTER
+## and RAIDS for the realms and raids); else the key frame's state (`keyframe`);
 ## LOCALE the language; CONTRAST high contrast; TALL the window's height in
 ## points over 540 wide (960 for 9:16). FIT checks that everything fits (see
-## `fit`); the run fails where something does not.
+## `fit`); the run fails where something does not. The cases it must pass are
+## listed in docs/art/tracks/home-screen.md; among them, board 3b's H (AD-R39):
+## at 200% the four side buttons and the realms' chips in pt_BR, pt_PT and fr
+## with and without NOTICE, in en and de with it, and in en at TALL=900; and
+## M26's states (MOST, EMPTY, RAIDS=99) at 200% in en, pt_BR and de.
 
 
 func _initialize() -> void:
@@ -31,7 +36,9 @@ func _go() -> void:
 	var store := App.services.store
 	var raids := int(env.call("RAIDS", "2"))
 	UniverseSample.fill(store, int(env.call("OUTER", "6")), raids, env.call("MOST", "") != "")
-	if env.call("MOST", "") == "":
+	if env.call("EMPTY", "") != "":
+		start(store)
+	elif env.call("MOST", "") == "":
 		keyframe(store)
 	# The key frame's home has its raids on the Defence badge, the notice
 	# already dismissed; NOTICE shows the notice as it arrives.
@@ -151,6 +158,21 @@ static func keyframe(store: Store) -> void:
 		{"kind": "garden", "realm": "outer-4", "stored": 800, "holds": 860}]}})
 
 
+## A new Keeper's home (M26's empty state): level 1, nothing in the purse,
+## nothing waiting to be collected (so no Collect), no strain, the season
+## track untouched.
+static func start(store: Store) -> void:
+	store.dispatch(&"keeper_loaded", {"view": {"level": 1, "xp": 0, "toNext": 100}})
+	store.dispatch(&"wallet_loaded", {"balance": {"starlight": 0, "essence": 0}})
+	store.dispatch(&"codex_loaded", {"view": {"aether": 0}})
+	store.dispatch(&"league_loaded", {"view": {"renown": 0, "season": 1}})
+	store.dispatch(&"weaving_loaded", {"view": {"stability": {"strain": 0.0, "band": 0}}})
+	store.dispatch(&"roster_loaded", {"view": {"producers": [
+		{"kind": "star_well", "realm": "heart", "stored": 0, "holds": 320}]}})
+	store.dispatch(&"track_loaded", {"view": {"season": 1, "stars": 0, "claimed": 0, "tiers": [],
+		"next": {"tier": 1, "cost": 100}}})
+
+
 ## Every canvas item under `top`, internal children (the kit's boxes and
 ## faces) included.
 static func _all_inside(top: Node) -> Array:
@@ -203,10 +225,11 @@ static func live(screen: Home) -> Array[String]:
 	return bad
 
 
-## Board 3's objections A and C (AD-R22, AD-R24): what home never drops at any
-## text size, with or without the raid notice. Collect, while anything waits,
-## with its whole rect inside the viewport; the goal, while there is one; the
-## chosen tab's name. One line each that fails.
+## Board 3's objections A and C (AD-R22, AD-R24) and board 3b's H (AD-R39):
+## what home never drops at any text size, with or without the raid notice.
+## Collect, while anything waits, with its whole rect inside the viewport; the
+## goal, while there is one; the four side buttons; the chosen tab's name. One
+## line each that fails.
 static func must_show(screen: Home) -> Array[String]:
 	var bad: Array[String] = []
 	var view := screen.get_viewport_rect()
@@ -218,6 +241,10 @@ static func must_show(screen: Home) -> Array[String]:
 		musts["Collect"] = screen.collect_button
 	if not screen.goal.is_empty():
 		musts["goal"] = screen.goal_card
+	# The four side buttons, at every text size and with the notice up too
+	# (board 3b's objection H): the key frames keep them at 200% as discs.
+	for side: StringName in screen.sides:
+		musts["side button %s" % side] = screen.sides[side]
 	var chosen := screen.tabs.buttons.get(screen.tabs.active, null) as Control
 	if chosen != null:
 		for l: Label in chosen.find_children("*", "Label", true, false):

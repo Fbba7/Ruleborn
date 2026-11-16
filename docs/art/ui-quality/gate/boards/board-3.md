@@ -425,3 +425,64 @@ lead opens in their place) are merged, AD re-checks only H, at 200% in
 pt_BR, pt_PT, French, English and German, with and without the notice,
 and in English at 900 tall. The board then stands if the side buttons and
 the realm chips show in every case and FIT prints "fit ok" for each.
+
+## Preview of home-4 (S2-R31)
+
+AD previewed P2-S2-home-4 at 1697a6c6 on `claude/ui-screens-home` on
+16 November 2026. This is the home half of H only. K1's half (tabs-3)
+is not part of it. Each case was rendered with
+`FIT=1 TEXT=200 LOCALE=<loc> [NOTICE=1] [TALL=900] bash tools/render/shoot.sh client/tests/shots/universe_home.gd`.
+
+**All 12 cases print "fit ok":** pt_BR, pt_PT and French with and
+without the notice, English and German with the notice, and English at
+900 tall with and without the notice. In every case the four side
+buttons show as whole discs. Defence and Lab sit in the left column,
+and Season and Shop sit at the top right, beside the keeper plate. All
+seven realms show as numbered chips, and none is cut by the frame or
+covered by another part. That meets the condition in "When the board
+stands" for home's half of H.
+
+**The place trade is accepted.** At text sizes of 150% and more, Season
+and Shop move from a column beside the realms' band to the top row. The
+key frames draw them in the column, but at 200% with the notice up, a
+column on both sides leaves the realms no room. The top right is a clear
+place within reach of the thumb, and the discs keep their size and their
+faces. At 100% and 125% the column stays as the key frames draw it. The
+board takes this as the layout at large text, so it is not an objection.
+
+From left: key frame at 200% pt_BR, then the build without the notice in
+pt_BR, pt_PT and French.
+
+![200% without the notice: key frame, pt_BR, pt_PT, fr](board-3/r6-home-200-pt.png)
+
+With the notice, from left: English, German, pt_BR, pt_PT, French, and
+English at 900 tall.
+
+![200% with the notice: en, de, pt_BR, pt_PT, fr, en 900 tall](board-3/r6-home-notice-200.png)
+
+From left: key frame at 200%, then English, German, and English at 900
+tall, all without the notice.
+
+![200%: key frame, en, de, en 900 tall](board-3/r6-home-200.png)
+
+### Notes, not holding
+
+- With the notice up, the seven chips pack tightly over the world art in
+  two rows, and the strain mark sits between them. They do not overlap,
+  but the islands show only at the chips' edges. This is light. A later
+  pass can weigh dropping the island pictures from the chips at 200%.
+- At 200%, the chosen tab's picture (Islands) straddles the bar's gold
+  edge. That is K1's half (AD-R38, P2-K1-tabs-3), and board 3c checks it.
+- In German at 200% with the notice up, the notice drops its red disc,
+  and in English at 900 tall strain moves to its own row. Both read
+  cleanly.
+- S2 lists these as still open, and the board does not hold on them: the
+  goal keeps three lines at 200% in pt_BR, pt_PT and French, and the
+  home/200 draw calls go from 119 to 121 (S2-R30 to the lead).
+- The notes carried above still stand: the dock's badges, the shield
+  timer and the locked realm are unchecked, the Heist tab, the
+  companion's yaw, the strain mark's dot, and Collect's shine.
+
+So S2's default holds. S2 sends the gate request at the pre-checked
+commit. Board 3c re-checks H once P2-K1-tabs-3 and P2-S2-home-4 are both
+merged.
