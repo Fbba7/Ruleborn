@@ -3,18 +3,18 @@
   "role": "S2",
   "branch": "claude/ui-screens-home",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "IQ-import-check",
-  "task_state": "ready",
-  "claimed_at": "2026-11-16T06:55:00Z",
-  "lease_until": "2026-11-16T09:55:00Z",
-  "updated_at": "2026-11-16T07:29:00Z",
-  "expected_next_update_by": null,
+  "agent_state": "active",
+  "task_id": "P2-S2-home-4",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-16T09:35:00Z",
+  "lease_until": "2026-11-16T12:35:00Z",
+  "updated_at": "2026-11-16T09:35:00Z",
+  "expected_next_update_by": "2026-11-16T10:20:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "ade915de",
-    "next_step": "IQ-import-check ready at ade915de (docs only, no gate items): the lead merges S2.md and answers S2-R29. Then P2-S2-home-4 once P2-K1-tabs-3 merges.",
-    "at": "2026-11-16T07:29:00Z"
+    "next_step": "P2-S2-home-4: main 3daa6c03 merged (f02a4d60); drop reserve_lift at 200% per K1's tabs-3 handoff, measure with universe_home.gd FIT=1.",
+    "at": "2026-11-16T09:35:00Z"
   },
   "precheck": {
     "sha": "ade915de1fcf7e6cc3d00d207879f7c3a31a5959",
@@ -23,7 +23,7 @@
     "summary": "All checks passed."
   },
   "gate_request": null,
-  "ready_sha": "ade915de1fcf7e6cc3d00d207879f7c3a31a5959",
+  "ready_sha": null,
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
     "M13"
