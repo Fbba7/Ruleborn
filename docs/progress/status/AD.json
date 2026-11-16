@@ -3,17 +3,17 @@
   "role": "AD",
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "done",
   "task_id": "P2-AD-board-5",
   "task_state": "ready",
   "claimed_at": "2026-11-15T20:31:00Z",
   "lease_until": "2026-11-15T23:35:00Z",
-  "updated_at": "2026-11-16T01:40:00Z",
+  "updated_at": "2026-11-16T02:05:00Z",
   "expected_next_update_by": "2026-11-16T02:40:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "8b4b58273d862ac0223f7d2b02ae00afa2fd679c",
-    "next_step": "S2-R25 and S3-R15 answered. Next: boards 4b, 3b and 5b as their tasks merge (4b once P2-S1-result-3 shows merged on main)."
+    "next_step": "Session done: S2-R25 and S3-R15 answered; no AD board open on main. Next session: 4b once P2-S1-result-3 merges, 3b after P2-S2-home-3, 5b after P2-S3-character-2 and settings-2."
   },
   "precheck": {
     "sha": "8b4b58273d862ac0223f7d2b02ae00afa2fd679c",

@@ -1,9 +1,9 @@
 # AD art director: progress
 
-- Status: Green. S1-R30 answered: board 4's objection F is met at S1's `904a3567`, so P2-S1-result-3 may merge (M20). P2-AD-board-5 ready; P2-AD-board-4 merged.
+- Status: Green. S2-R25 and S3-R15 answered (cycle 90); no AD board is open on main yet, so this session ends with agent_state done. P2-AD-board-5 ready; P2-AD-board-4 merged.
 - Progress: 16 of 16 tasks merged or ready (P0-AD-rubric, P0-AD-sheet, O2, P0-AD-golden, O2-2, P0-AD-golden-2, O3, P0-AD-calibrate, P0-AD-calibrate-2, P1-AD-board-1, P1-AD-board-1b, P1-AD-board-1c, P1-AD-board-1d, P2-AD-board-3, P2-AD-board-4, P2-AD-board-5); 0 items passed by the gate (every judged quality is owner-checked, so AD's board check decides).
-- Done: answered S1-R30 (result-3 at `904a3567`, re-check of F, checked against board 4's full list, M23): F met; at 200% the first screen ends on a whole line in en, high contrast, de and pt_BR; one note for board 4b (pt_BR ends on the unfinished 'Taxa de entrada de'). Before that: S2-R22, S1-R29 and AIA-R26.
-- Next: S2-R25 (re-check of S2-R22's (a) to (e)) once S2 marks P2-S2-home-3 ready; board 4b after result-3 merges (motion-3 is merged); board 3b after home-3 and K1-tabs; board 5b after the S3 follow-ups.
+- Done: answered S2-R25 (home-3 at `823d2eac`): (a), (c), (d) and (e) met, (b) met in en, high contrast, pt_BR and fr; new objection (f): de 200% pins are wide empty cream plates with the level number over the icon (default fix: numbered chips as in en); (a)'s trade accepted for home-3, not for board 3b. Answered S3-R15 (character-2 preview at S3's sha): A, B, C, D and G met; new objection H (quality 9): at 200% the status chip covers the face, wholly in pt_BR (default fix: icon-only chip at 200% with the word in its accessible name, head between the arrows).
+- Next: board 4b once P2-S1-result-3 merges (it was working on main at cycle 90); board 3b after P2-S2-home-3 (P2-K1-tabs is merged); board 5b after P2-S3-character-2 and P2-S3-settings-2.
 - Blocked by: none.
 - Owner decision needed: none. AD decides the boards in place of the owner.
 | Deliverable | Weight (h) | Status | Evidence |
@@ -26,12 +26,12 @@
 | P2-AD-board-5: board 5 (character and settings) | 1 | ready (pre-check in the status file) | `gate/boards/board-5.md` and `gate/boards/board-5/*.png`; character and settings rendered on main at `b2adaf6a` with `FIT=1` at 100% and 200% (en, pt_BR, de) and high contrast beside `art/ui/keyframes/04-character*` and `05-settings*`, all "fit ok" except the character at 200% German (objection A); draw calls 36 to 81; verdicts of character (`f1251e68`, `6f6a3b15`) and settings (`eed8b817`, `f5719f28`, `f0a36a41`) cited; objections A to G as requests AD-R31 to AD-R37; `check_docs_consistency.py` clean |
 
 ## Handoff
-- Last verified commit: `8b4b5827` (pre-check PASS, 2026-11-15T21:19:40Z, `All checks passed.`, `DONE exit=0`); P2-AD-board-5 ready at that sha; P2-AD-board-4 merged as `14be4ddd`.
-- Done this session (2026-11-15, about 23:45Z, cycle 89): S1-R30 answered: F met at `904a3567`. Rendered with `SERVER=1 FIT=1` in a worktree at that sha: en 100% and 200%, HC en 200%, pt_BR 200%, de 200%, HC pt_BR 200%, all "fit ok", draw calls 126, 113, 55, 115, 114, 57 (as S1's). Evidence `board-4/r3-F-fold-200.png` and `r3-F-result-six.png`. Note for board 4b: pt_BR 200% ends on 'Taxa de entrada de'. S2-R25 not yet sent: P2-S2-home-3 was still working (pre-check running on `823d2eac`) when S1-R30 was answered.
-- Earlier (2026-11-15): S1-R29 answered: A (Keeper finish), B (de 200% haul above the fold), D (coins on the Starlight icon, no coin on a rolling digit) and E (Home icon-only at 200%) met; objection F: at 200% en and HC en 200%, the scroll ends mid-line above the bar and the tops of "Re-simulated by the server" show as stray marks (`board-4/r2-F-fold-en200.png`). AIA-R26 answered: the reward strips stand as shot (gather and tier spread met, coins on the starglass icon). On the scratch merge, the epic 2.8 burst covers the kicker and haul chip for 130 to 200 ms: accepted as a note. M23 acked.
-- Half done: none. Board 5 round 1 written: it does not stand (A Level up fit at 200%, B the 200% fold, C the 100% fold, D the badge tag, price and outlines, E the German settings title, F settings hierarchy, G the stage seam); notes for K1 (high contrast keeps the night backdrop, the bottom safe margin uses `safe_top_points`, the brown selected tab) and the lead (untranslated content).
-- Open hypotheses: the result fixture still has no idle crew; the pt_BR and de crew card at 100% goes under the action bar (a note since board 4).
-- Next step: when S3's follow-ups for AD-R31 to AD-R37 merge, re-shoot items 1 to 10 and write board 5's round 2.
+- Last verified commit: `8b4b5827` (pre-check PASS, 2026-11-15T21:19:40Z, `All checks passed.`, `DONE exit=0`); P2-AD-board-5 ready at that sha; P2-AD-board-4 merged as `14be4ddd`. This session changed only docs and evidence stills.
+- Done this session (2026-11-16, cycle 90): S2-R25 answered at 01:10Z (`board-3.md`, "Preview of home-3 (S2-R25)", stills `board-3/r2-home-*.png`); S3-R15 answered at 01:40Z (`board-5.md`, "Preview of character-2 (S3-R15)", stills `board-5/r2-character-*.png`). fit_character.sh passed all 8 shots and my renders matched S3's stills pixel for pixel. The FIT check on home-3 still fails on pt_BR, fr and en TALL=900 with the notice at 200% until S2-R24 (KitTabs); that is the trade I accepted for home-3 only.
+- Earlier (2026-11-15, cycle 89): S1-R30 answered: board 4's F met at `904a3567`; note for board 4b: pt_BR 200% ends on 'Taxa de entrada de'.
+- Half done: none.
+- Open hypotheses: the result fixture still has no idle crew; the pt_BR and de crew card at 100% goes under the action bar (a note since board 4). Board 5 notes for K1: the ability header plate runs under the tray at 200% (bottom margin), high contrast keeps the blue night backdrop; for the lead: content words still in English; the facts panel ends in a flat clip at 100%.
+- Next step: board 4b when P2-S1-result-3 merges (check S1's result-3 stills against board 4's full list plus the pt_BR fold note); board 3b when P2-S2-home-3 merges ((f) and the KitTabs fold must be met); board 5b when P2-S3-character-2 and settings-2 merge (H must be met).
 
 ## Flow review
 
