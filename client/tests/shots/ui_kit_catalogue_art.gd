@@ -8,9 +8,11 @@ const MANIFEST := "res://ui/art/kit.json"
 const FACES := {"N": "normal", "P": "pressed", "D": "disabled", "L": "locked"}
 ## The overlays section 3 lays over a state, each one piece in its normal
 ## state, drawn from the atlas when it has them: selected's rim, locked's
-## lock mark, loading's spinner. Their skins are not switched on, since no
-## material draws them as a face.
+## lock mark, loading's spinner. The sheet draws the rim itself; the lock and
+## the spinner are the kit's own marks (KitStatus.locked, KitStatus.loading),
+## named here by their KitSkin.PARTS key.
 const OVERLAYS := {"S": "selected__rim__normal", "L": "locked__lock__normal", "Ld": "spinner__ring__normal"}
+const KIT_MARKS := {"L": "lock", "Ld": "spinner"}
 ## K27's dot: the badge skin's second face, drawn as a sprite.
 const DOT := "badge__dot__normal"
 ## Section 2's T3 glyphs, in the order the sheet lays out a finish's set
@@ -29,7 +31,8 @@ static var pieces: Dictionary = {}
 ## files, and switches on each of them that has a face a material draws (its
 ## `box`, its parchment face, or one named after one of its materials): the
 ## sheet shows the baked faces (all skins ship off). A skin whose pieces are
-## only overlays (OVERLAYS) stays off; the sheet draws those itself.
+## only overlays (OVERLAYS) stays off, but for the spinner: the kit draws
+## its ring itself (KitSkin.mark), with no material behind it.
 static func art_on() -> Array[String]:
 	var on: Array[String] = []
 	KitSkin.reset()
@@ -43,9 +46,18 @@ static func art_on() -> Array[String]:
 		if skin not in on:
 			on.append(skin)
 		var face := key.get_slice("__", 1)
-		if face in ["box", "parchment"] or KitSkin.skin(face) == skin:
+		if face in ["box", "parchment"] or KitSkin.skin(face) == skin or key == OVERLAYS["Ld"]:
 			KitSkin.switch(skin, true)
 	return on
+
+
+## Records state `state`'s overlay (OVERLAYS) in `drawn` when the kit's mark
+## for it (KIT_MARKS) draws from the atlas: the kit call that laid it over a
+## cell drew it from there.
+static func kit_drew(state: String) -> void:
+	var key: String = OVERLAYS[state]
+	if not KitSkin.part(KIT_MARKS[state]).is_empty() and key not in drawn:
+		drawn.append(key)
 
 
 ## Whether the shipped atlas holds a piece of `skin` in `state`.
