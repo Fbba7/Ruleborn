@@ -5,15 +5,15 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P2-K1-tabs-2",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-16T01:58:00Z",
   "lease_until": "2026-11-16T04:58:00Z",
-  "updated_at": "2026-11-16T01:58:00Z",
-  "expected_next_update_by": "2026-11-16T02:43:00Z",
+  "updated_at": "2026-11-16T02:20:00Z",
+  "expected_next_update_by": "2026-11-16T03:05:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": null,
-    "next_step": "S2-R24 and S2-R26 in kit_tabs.gd and kit_layout.gd, with tests"
+    "next_step": "merge main, check_all, guard, pre-check"
   },
   "precheck": null,
   "gate_request": null,
@@ -330,5 +330,5 @@
       "at": "2026-11-12T22:37:00Z"
     }
   ],
-  "next_step": "P2-K1-tabs-2 claimed: S2-R24, S2-R26"
+  "next_step": "P2-K1-tabs-2 working: fix in, kit tests 27 of 27; merging main and running the checks"
 }
