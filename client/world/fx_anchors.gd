@@ -66,6 +66,10 @@ var keep_off := Callable()
 ## as keep_off's): counted at a quarter of their area, so a bubble with no
 ## clear place covers these before keep_off's words.
 var keep_soft := Callable()
+## What a bubble never covers, the panels' words and the portraits (a
+## Callable as keep_off's): where every place near its guard covers one, the
+## bubble goes to the nearest place on screen clear of them.
+var keep_clear := Callable()
 ## Where the last frame drew each bubble, in this layer's pixels.
 var speech_boxes: Array[Rect2] = []
 
@@ -487,8 +491,21 @@ func _off_panels(box: Rect2, px: float) -> Rect2:
 	for r: Rect2 in hard:
 		xs.append(r.position.x - box.size.x - px * 0.2)
 		xs.append(r.end.x + px * 0.2)
+	var clear: Array = keep_clear.call() if keep_clear.is_valid() else []
+	var best := _least_cover(box, xs, ys, cover, px, [], px * 6.0)
+	for r: Rect2 in clear:
+		if best.intersects(r):
+			return _least_cover(box, xs, ys, cover, px, clear, INF)
+	return best
+
+
+## Of the places at `xs` by `ys` on screen within `reach` up or down of
+## `box`, and clear of every rect in `clear`, the one covering the least of
+## the panels (`cover`), the nearest where two tie; `box` itself where none.
+func _least_cover(box: Rect2, xs: Array[float], ys: Array[float], cover: Callable, px: float,
+		clear: Array, reach: float) -> Rect2:
 	var best := box
-	var least: float = cover.call(box)
+	var least: float = INF if clear.size() > 0 else cover.call(box)
 	var far := INF
 	for x: float in xs:
 		if x < px * 0.2 or x + box.size.x > size.x - px * 0.2:
@@ -496,7 +513,9 @@ func _off_panels(box: Rect2, px: float) -> Rect2:
 		for y: float in ys:
 			var b := Rect2(Vector2(x, y), box.size)
 			var away := absf(y - box.position.y) + absf(x - box.position.x) * 0.5
-			if y < px * 0.2 or b.end.y > size.y - px * 0.2 or absf(y - box.position.y) > px * 6.0:
+			if y < px * 0.2 or b.end.y > size.y - px * 0.2 or absf(y - box.position.y) > reach:
+				continue
+			if clear.any(func(r: Rect2) -> bool: return b.intersects(r)):
 				continue
 			var c: float = cover.call(b)
 			if c < least or (c == least and away < far):

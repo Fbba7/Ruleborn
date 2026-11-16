@@ -713,19 +713,23 @@ func _build() -> void:
 	add_child(speech)
 	if view.anchors != null:
 		view.anchors.speech_layer = speech
-		view.anchors.keep_off = _panel_rects.bind(speech, false)
-		view.anchors.keep_soft = _panel_rects.bind(speech, true)
+		view.anchors.keep_off = _panel_rects.bind(speech, 0)
+		view.anchors.keep_soft = _panel_rects.bind(speech, 1)
+		view.anchors.keep_clear = _panel_rects.bind(speech, 2)
 
 
 ## The rects of the panels a guard's bubble keeps off, in `layer`'s pixels:
-## the HUD's and the hint's, which hold words; or, `soft`, the tray's
-## content, which a bubble may rest on (anchors' keep_soft) where the world
+## the HUD's and the hint's, which hold words (`which` 0); the tray's
+## content (1), which a bubble may rest on (anchors' keep_soft) where the world
 ## shows no room between the loot and the tray (large text, M26's alarm),
-## drawn above it, rather than over the loot's last line.
-func _panel_rects(layer: Control, soft: bool) -> Array:
+## drawn above it, rather than over the loot's last line; or every word and
+## portrait (2), which a bubble never covers (anchors' keep_clear).
+func _panel_rects(layer: Control, which: int) -> Array:
 	var tray_inside: Control = actions_band.get_child(0) if actions_band.get_child_count() > 0 else actions_band
-	if soft:
+	if which == 1:
 		return FxAnchors.rects_of([tray_inside], layer)
+	if which == 2:
+		return FxAnchors.rects_of(crew_buttons, layer) + FxAnchors.words_in([hud, actions_band, hint_panel], layer)
 	var panels: Array = [hud.clock_panel, hud.alarm_panel, hud.loot_panel, hint_panel]
 	if hud.laws_box != null:
 		panels.append_array(hud.laws_box.get_children())

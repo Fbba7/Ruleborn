@@ -398,6 +398,7 @@ So Get out and Alarm share the danger role, Cast has the gold fill and the rings
   - **The bubble with no room in the world.** A guard's speech bubble that has no room in the world now rests on the tray's content above the panels, not over the loot's words. In `fx_anchors`, the tray band is a soft keep-off counted at a quarter of its area, and the bubble is drawn on the layer above the panels.
   - **The bubble beside a panel.** The crew buttons, which hold the names and the count badges, are hard keep-offs. The bubble also tries places beside a hard panel, not only above or below one. This came from the gate re-run below.
   - **The bubble off the words and the tags.** The panels' words, and the portraits with their names and tags, count twice in the bubble's cover: a bubble with no clear place covers a panel's frame before them. Words count as their lines stand (`FxAnchors.words_rect`), not as the label's whole rect, and a portrait counts as it draws, its ability tag above its rect included (`FxPortrait.drawn_rect`). The `FIT` check measures the same way, and it also fails a bubble over a portrait or its tag. This came from the sweep after the pre-check.
+  - **The bubble with no clean place near its guard.** Where every place within six lines of the guard covers a word or a portrait, the bubble goes to the nearest place on screen that covers none of them (`keep_clear` in `fx_anchors`, the panels' words and the portraits). It may still rest on a panel's frame. This came from the second sweep after the pre-check.
   - **Fixture states.** `screen_heist.gd` has new fixture states: `CREW=n` (one to four crew), `LONG=1` (the longest names), `END=1` (the end of the timer) and `LONGEST` (each language's longest crew and law names).
 
 ### The gate re-run on the fixes
@@ -423,6 +424,7 @@ The heist3 fix (ed766fe9) moves only the speech bubble. On the 200% en still the
   - Tried: one badge size of 26 points at every text size. The widest was still 1092 to 1094 px.
   - Kept: 22 points at 100% text, with 1 point to the name (as the kit's chip at large text). The widest is now 1071 to 1073 px on the heist screen and 1039 to 1071 px on the replay screen, in every locale. Large text keeps 26 points and 4 points, so the 200% stills do not change for it.
 - **The sweep on the final tree found en, longest names, a bubble 2 px over the loot's last line** ("Load to 80%"), with the "Who's there?" bubble in the 29 px gap between the loot and the tray. Weighting the words and the tags (above) moves it into the loot panel's empty lower right, beside the words and clear of Bramble's tag.
+- **The second sweep found pt_BR, longest names, a bubble 25 px into the line of "Carregar até 80%"** (the caption runs wider in pt_BR, so the loot panel's lower right has no room, and the gap to the tray is narrower than the bubble). No place within six lines was off every word and tag. The bubble now takes the nearest clear place on screen: in the gap between the laws and the loot, on the loot panel's top edge.
 
 ### Evidence
 
@@ -457,6 +459,6 @@ Textures and word contrast are unchanged. No word is below 4.5:1. `check_screens
 ### What is still worse
 
 - **The tray costs two draw calls over the old records** (heist/200 116 to 118, heist/hc 120 to 121), approved as S1-R33. Until the lead writes the new records in the merge, `guard.sh` fails on those two stills only.
-- **The bubble can rest on a panel** when the world has no room for it (200% text): on the tray's empty right side, or on the loot panel's empty lower right. It stays off every word, portrait and tag, but it covers the frame.
+- **The bubble can rest on a panel** when the world has no room for it (200% text): on the tray's empty right side, on the loot panel's empty lower right, or (pt_BR, longest names) on the loot panel's top edge, further from its guard. It stays off every word, portrait and tag, but it covers the frame.
 - **The law badge is smaller at 100% text** (22 points, from 32) so the laws column fits §21.1's frame. The icon inside is about 10 points.
 - **Long names at 200% text shrink** to fit their third of the row, on two lines. They fit, but they read smaller than the short names beside them.
