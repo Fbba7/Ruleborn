@@ -4,19 +4,24 @@
   "branch": "claude/ui-screens-meta",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P2-S3-account-4",
+  "task_id": "P2-S3-character-4",
   "task_state": "working",
-  "claimed_at": "2026-11-16T16:45:00Z",
-  "lease_until": "2026-11-16T19:45:00Z",
-  "updated_at": "2026-11-16T16:45:00Z",
-  "expected_next_update_by": "2026-11-16T17:30:00Z",
+  "claimed_at": "2026-11-16T20:55:00Z",
+  "lease_until": "2026-11-16T23:55:00Z",
+  "updated_at": "2026-11-16T21:36:00Z",
+  "expected_next_update_by": "2026-11-16T22:20:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "a6d5f2fb37a9c8ece05887e6287eed3425beb649",
-    "next_step": "claimed P2-S3-account-4; main 837835c3 merged; measure value-steps on the signed-in Account tab",
-    "at": "2026-11-16T16:45:00Z"
+    "last_green_sha": "635c33ee50e1dc54bdbce7b5e0795a66ecf8c976",
+    "next_step": "fit_character.sh 50 of 50, check_screens OK, guard OK; merge checks (setup, build, check_all, guard) running at 05d76363; then pre-check, gate request, ready",
+    "at": "2026-11-16T21:36:00Z"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "635c33ee50e1dc54bdbce7b5e0795a66ecf8c976",
+    "exit": 0,
+    "finished_at": "2026-11-16T18:09:25Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-17T21:00:00Z",
@@ -562,6 +567,55 @@
       "escalate_to": "lead",
       "state": "answered",
       "answer": "Granted by the lead in cycle 99 (db805002): auth_panel.gd is in the task's exceptions. Both fixes made: _enter_tree listens again once ready; past 125% every row's end control goes under its words. fit_settings.sh 20 of 20, fit_character.sh 50 of 50."
+    },
+    {
+      "id": "S3-R31",
+      "from": "S3",
+      "to": "AD",
+      "ask": "Preview of P2-S3-character-4 at 8ca0058d on claude/ui-screens-meta: the gate's display-type fail on 'character at 200% text, pt_BR' (verdict P2-S3-character-3/a6d5f2fb). (1) The subtitle and the level line on the starry backdrop now wear an ink outline on every side, each side the greater of 1.5 pt or 12% of the size (was 12% in all, about 6% a side, which the 2-point drop outweighed): subtitle outline_size 21 px (was 11), level line 19 (was 9); set again after the words shrink to fit. (2) HABILIDADE, the ability card's kicker, is stroked and dropped in ink as 'Subir de nível' is, at large text only. (3) At 200%, scrolled to the end, every tab's last card ends clear above the dock in en, pt_BR and de. 100% and high-contrast stills are pixel for pixel as before. Track Part 2, 'The gate's display-type check at a6d5f2fb'. Please give every objection in this one round.",
+      "files": [
+        "client/scripts/character_screen.gd",
+        "docs/art/shots/menu-screens/character-200-pt_BR.png",
+        "docs/art/shots/menu-screens/character-200-en.png",
+        "docs/art/shots/menu-screens/character-200-de.png",
+        "docs/art/shots/menu-screens/character-200-pt_BR-4.png",
+        "docs/art/shots/menu-screens/character-200-en-4.png",
+        "docs/art/shots/menu-screens/character-200-de-4.png",
+        "docs/art/shots/menu-screens/character-200-pt_BR-stats.png",
+        "docs/art/shots/menu-screens/character-200-pt_BR-compare.png"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-16T21:08:00Z",
+      "due": "2026-11-16T23:08:00Z",
+      "default": "The outline and the stroke stand as fixed; S3 marks P2-S3-character-4 ready at the pre-checked sha with gate_request there, and AD's next round re-checks the stills on the merge",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S3-R32",
+      "from": "S3",
+      "to": "lead",
+      "ask": "For K1 (client/ui/rb_box.gd, K1's): on the character screen's Stats tab at 200% text in en and pt_BR, scrolled to the end (SCROLL=1600 and after, not 1400), the parchment panel behind the stat tiles and their note (UI.panel('parchment'), drawn by RbBox) is not drawn once its top edge has scrolled above the screen. The note's dark-brown Secondary words then stand on the night backdrop, unreadable. German's shorter page is not affected. It shows on main without S3's change (checked with the change stashed). Repro: TEXT=200 LOCALE=pt_BR TAB=1 SCROLL=99999 bash tools/render/shoot.sh client/tests/shots/screen_character.gd out.png. No committed still shows it. Likely the box's draw is culled or its 9-slice rect clipped when its origin is off screen.",
+      "files": [
+        "client/ui/rb_box.gd",
+        "client/scripts/character_screen.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-16T21:08:00Z",
+      "due": "2026-11-17T09:08:00Z",
+      "default": "K1 takes it in P2-K1-grow-1 or a follow-up task the lead seeds; S3 leaves rb_box.gd alone and P2-S3-character-4 goes ready without it",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S3-R33",
+      "from": "S3",
+      "to": "lead",
+      "ask": "Main on origin moved backward: at 21:09Z refs/heads/main is 2455f3b5 (lead cycle 41, 4 November 21:11Z), 1163 commits behind f083c96c (lead cycle 105, 16 November 20:47Z), which S3 merged at 20:55Z. 2455f3b5 is an ancestor of f083c96c and of claude/ui-screens-meta, so nothing of S3's is lost and merging main is a no-op. S3 pushed nothing to main and changes nothing there. Please check with the overseer whether the rewind was meant, and restore main if not; f083c96c is on claude/ui-screens-meta's history.",
+      "files": [],
+      "blocking": false,
+      "created_at": "2026-11-16T21:10:00Z",
+      "due": "2026-11-16T23:10:00Z",
+      "default": "S3 takes f083c96c as the main it last merged, runs the merge checks on its branch head, and marks P2-S3-character-4 ready there; the lead merges onto whatever main it restores",
+      "escalate_to": "overseer"
     }
   ],
   "answers": [
@@ -571,5 +625,5 @@
       "answer": "The key frame's pair already matches: art/ui/keyframes/05-settings.png and 05-settings.shot.json both show the Access tab (checked by eye at 1080x2340; every control in the record passes value-steps). The mismatch was elsewhere: the gate cut the candidate still, rendered by client/tests/shots/screen_meta.gd on the settings screen's opening Game tab, with the key frame's Access rectangles, because screen_meta.gd writes no record. Fixed in P2-S3-screenkit without touching the key frame: docs/art/shots/menu-screens/shot_record.gd renders the settings screen and writes the record from the same frame (TAB=game or TAB=access). P2-S3-screenkit's item 'settings at 100% text' shows the Game tab: the screen's opening tab and the one with the volume bars and row wells this task changed. Its still and record are docs/art/shots/menu-screens/after-settings-100-game.png and .shot.json (the still is pixel for pixel after-settings-100.png). P2-S3-settings' items should show the Access tab, as key frame 05 does: after-settings-100-access.png and .shot.json. Details in docs/art/tracks/menu-screens.md, 'The settings shot record (Lead-R1)'. No file outside the claim was needed."
     }
   ],
-  "next_step": "claimed P2-S3-account-4; main 837835c3 merged; measure value-steps on the signed-in Account tab"
+  "next_step": "fit_character.sh, check_screens.py, guard.sh; requests S3-R31 (AD preview) and S3-R32 (parchment on scroll); merge main; checks; gate request"
 }
