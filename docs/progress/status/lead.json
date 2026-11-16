@@ -1,8 +1,8 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-16T03:20:41Z",
-  "expected_next_update_by": "2026-11-16T04:35:41Z",
-  "cycle": 92,
+  "updated_at": "2026-11-16T03:43:13Z",
+  "expected_next_update_by": "2026-11-16T04:58:13Z",
+  "cycle": 93,
   "merging": null,
   "last_merged": {
     "task_id": "P2-S3-character-2",
@@ -26,5 +26,5 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Cycle 93: restart AD on S3-R19 (re-check of I on P2-S3-settings-2), then S2's re-check of (g) on P2-S2-home-3 once filed; by M24 prepare the home-3 candidate while AD reviews (home/200 at 124, home-3's exceptions) and merge in the same cycle if AD clears it; merge P2-S3-settings-2 when S3 marks it ready, gated, and AD clears I; merge P2-K1-tabs-2 when ready. Merged in cycle 92: P2-AD-board-4b as 9850213a, P2-S3-character-2 as f78cf9f1."
+  "next_step": "Cycle 94: merge P2-S2-home-3 when S2 marks it ready and AD clears (g) (M20, M24; home/200 at 124, K1-R22 interplay); merge P2-S3-settings-2 when ready, gated and AD clears I (S3-R19); merge P2-K1-tabs-2 when ready, with its budgets.json entry (K1-R22)."
 }

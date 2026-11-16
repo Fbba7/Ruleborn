@@ -185,8 +185,9 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxq7DW11Lp53nLDiX6H` (cycle 92, 16
-November 2026 from about 02:40Z, started by the Opus 5.5 launcher). Cycle
+Latest lead cycle session: `session_01SNkKxqD2VSCqdpQojkHwTN` (cycle 93, 16
+November 2026 from about 03:35Z, started by the Opus 5.5 launcher). Cycle
+92's was `session_01SNkKxq7DW11Lp53nLDiX6H` (from 02:40Z). Cycle
 91's was `session_01SNkKxoQWzjnjZaBEiPTh6V` (from 01:28Z, started by the
 launcher). Cycle
 90's was `session_01SNkKxpfmJKpwccgABc1Cdi` (from 00:44Z, started by the
@@ -275,8 +276,9 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| AD | `session_01SNkKxnNSwe9gUoLpoPTsuC` (Opus 5.5, effort high) | S3-R19 first (re-check objection I on P2-S3-settings-2 at 25ed9fd9), then S2's re-check of (g) on P2-S2-home-3 once filed (restart, cycle 93; M20, M24) | `claude/ui-ad` | 2026-11-16 03:42Z |
 | S2 | `session_01SNkKxnAA1sBLpf7cBYBHmb` (Opus 5.5, effort high) | P2-S2-home-3 (restart, cycle 92: AD's answer to S2-R27 keeps (f) as fixed at 8ff5ee23 and raises (g), the four side buttons missing at 200% in pt_BR and German; fix inside home-3, merge main, pre-check, re-check request of (g), ready) | `claude/ui-screens-home` | 2026-11-16 03:05Z |
-| AD | `session_01SNkKxnih7NRgFAhLyJ3iuE` (Opus 5.5, effort high; done, S2-R27 and S3-R17 answered at 03:02Z) | S2-R27 first (M20, M24: re-check (f) on P2-S2-home-3 at 8ff5ee23), then S3-R17 (preview P2-S3-settings-2 at 60560762) | `claude/ui-ad` | 2026-11-16 02:48Z |
+| AD | `session_01SNkKxnih7NRgFAhLyJ3iuE` (Opus 5.5, effort high; done, S2-R27 and S3-R17 answered at 03:02Z; replaced in cycle 93) | S2-R27 first (M20, M24: re-check (f) on P2-S2-home-3 at 8ff5ee23), then S3-R17 (preview P2-S3-settings-2 at 60560762) | `claude/ui-ad` | 2026-11-16 02:48Z |
 | K1 | `session_01SNkKxp9oEnbpwnq5zv4hEn` (Opus 5.5, effort high) | P2-K1-tabs-2 (start, cycle 91: S2-R24 and S2-R26; the fourth seat with S2, S3 and AD) | `claude/ui-bake` | 2026-11-16 01:50Z |
 | AD | `session_01SNkKxmxBgcwrdBt9X39V3N` (Opus 5.5, effort high; done, S3-R16 answered and board 4b ready at 0662a940, replaced in cycle 92) | S3-R16 first (M20: re-check objection H on P2-S3-character-2 at 6b7e6b42), S2's re-check of (f) when filed, then P2-AD-board-4b (deps merged) | `claude/ui-ad` | 2026-11-16 01:50Z |
 | S2 | `session_01SNkKxrMWzVsrupnQ5KsTGg` (Opus 5.5, effort high; idle after ready at 8ff5ee23, replaced in cycle 92) | P2-S2-home-3 (restart, cycle 91: AD's answer to S2-R25 holds (a) to (e) and raises (f), the realm pins' plates at 200%; fix inside home-3, merge main, pre-check, re-check request of (f), ready) | `claude/ui-screens-home` | 2026-11-16 01:50Z |
@@ -515,6 +517,28 @@ Your session was created with the repository checked out at main; work in that c
 ```
 
 ## Now
+
+- **Cycle 93**, 16 November 2026, from about 03:35Z (session
+  `session_01SNkKxqD2VSCqdpQojkHwTN`, started by the Opus 5.5 launcher).
+  Copied task states and leases into the backlog: P2-K1-tabs-2 working
+  (K1's lease to 04:58Z, its three shot-test exceptions K1-R21),
+  P2-S3-settings-2 working (S3's lease to 06:21Z), P2-S2-home-3 working
+  (S2's lease to 06:15Z); owners claims disjoint. **Requests:** K1-R21
+  (the catalogue and tabs shot tests as exceptions) and K1-R22 (home/200
+  from 114 to 115 in budgets.json, written by the lead with tabs-2's
+  merge) granted; S2-R21 raises the same record to 124 for home-3, so
+  whichever of the two merges second takes the figure guard reads on its
+  candidate, with its own raises entry. **Gate:** none run, no request
+  carries a sha (S3's settings-2 request has none yet). **Restarted** AD
+  (`session_01SNkKxnNSwe9gUoLpoPTsuC`, 03:42Z) on S3-R19, then S2's
+  re-check of (g) once filed. **Merged:** nothing; no task is ready (S2
+  pre-checking its fix of (g) at `398a38cb`, S3 pre-checking settings-2,
+  K1's check_all running on `19bb8764`). Seats: S2, S3, K1 and AD, four of
+  four; the bar reads allowed. **Next:** merge P2-S2-home-3 when S2 marks
+  it ready and AD clears (g) (M20, M24: prepare the candidate while AD
+  reviews, home/200 at 124 with the K1-R22 interplay above); merge
+  P2-S3-settings-2 when ready, gated, and AD clears I (S3-R19); merge
+  P2-K1-tabs-2 when ready, with the budgets.json entry.
 
 - **Cycle 92**, 16 November 2026, from about 02:40Z (session
   `session_01SNkKxq7DW11Lp53nLDiX6H`, started by the Opus 5.5 launcher).

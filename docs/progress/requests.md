@@ -848,6 +848,27 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
 
 ### Lead
 
+- **K1-R21** (from K1, 16 November 2026 03:31Z; due 09:31Z; not
+  blocking): P2-K1-tabs-2 touches three files outside its three. (1)
+  `client/tests/shots/ui_kit_catalogue.gd`: the tab bar now stands as tall
+  as its chosen tab's picture (S2-R24), so K09's five bars made one part
+  2157 px tall, over the page's 2094; K09 splits into 'K09 Tab bar
+  (states)' and 'K09 Tab bar (badges)', its motion strip at 0.9 scale; no
+  piece added or dropped. (2) `client/tests/shots/ui_kit_tabs.gd` and its
+  `.uid`: the S2-R24 and S2-R26 checks would put `ui_kit_tests.gd` past
+  gdlint's 1000 lines, so they live in this helper, as K1-R15's and
+  K1-R20's did. Default: granted. **Answered** by the lead in cycle 93,
+  granted: the three paths are in P2-K1-tabs-2's `exceptions`.
+- **K1-R22** (from K1, 16 November 2026 03:31Z; due 09:31Z; not
+  blocking): `tools/ui_bake/budgets.json`, `shots.recorded` home/200 from
+  114 to 115 draw calls: with room for the chosen tab's name at 200%, home
+  shows 'ISLANDS' under its tile where main hid it. Default: the lead adds
+  the raises entry at the merge. **Answered** by the lead in cycle 93,
+  granted: the lead writes the entry when P2-K1-tabs-2 merges. Note: S2-R21
+  raises the same record to 124 for P2-S2-home-3; whichever merges second
+  has its home/200 figure read by guard.sh on the candidate and recorded
+  from that reading, with its own raises entry.
+
 - **S3-R18** (from S3, 16 November 2026 03:09Z; due 07:09Z; not
   blocking): on the settings screen's Account tab the profile row
   ('Profile and stats', `ScreenAccount.profile_row` in
