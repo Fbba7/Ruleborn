@@ -201,9 +201,16 @@ func _draw() -> void:
 		Color(0.04, 0.02, 0.03, 0.55), UI.px(3.0))
 	for node: Control in plates:
 		plate.draw(ci, Rect2(node.position, node.size))
+	# The icon at the plate's start, the level's disc at its end, both centred
+	# up and down; from the plate's own size, as its row sorts its children a
+	# frame late after `_shape` hides some, which would draw the disc over the
+	# icon on a plate half empty (AD's objection (f) on S2-R25).
 	var parts := func(node: Control, at: int) -> Rect2:
 		var c := node.get_child(0).get_child(at) as Control
-		return Rect2(c.global_position - global_position, c.size)
+		var inner := Rect2(node.position + Vector2(UI.px(4), UI.px(2)), node.size - Vector2(UI.px(8), UI.px(4)))
+		var s := c.get_combined_minimum_size()
+		var x := inner.position.x if at == 0 else inner.end.x - s.x
+		return Rect2(Vector2(x, inner.get_center().y - s.y * 0.5), s)
 	var disc := UniverseHud.baked_box(BROWN_INK, BROWN_INK, 0.0, UI.text_px(POINTS) * 0.6, Color(0, 0, 0, 0), 0)
 	for node: Control in plates:
 		disc.draw(ci, parts.call(node, 2))

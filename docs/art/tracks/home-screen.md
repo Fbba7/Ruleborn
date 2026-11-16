@@ -229,6 +229,16 @@ AD re-checked 1 to 5 at `13ff046f` (S2-R22): they stand as fixed. AD made five n
 | 'Lantern Vale' and 'Humming' are untranslated in pt_BR and de | They are in `client/i18n/strings.csv`, which is not this task's file. |
 | Every render logs "button_up already connected" | Main logs it too. It comes from `KitLayout.tap` (`client/ui/kit_layout.gd`, lines 82 and 83), which connects `button_down` and `button_up` to the press motion again on a button that already has them. Home calls it from `UniverseBadge`. It is K1's file. |
 
+**AD's S2-R25 review (objection (f)).**
+
+AD re-checked (a) to (e) at `823d2eac` (S2-R25): (a), (c), (d) and (e) stand as fixed. AD accepts (a)'s trade for this task: at 200% with the notice up, in pt_BR, fr and on a phone 900 points tall, the realms' chips give way together. Board 3b re-checks those cases once S2-R24 gives back the dock's height. AD made one new objection.
+
+- **(f) At 200% in German, each realm pin holds its icon and its level, on a plate of their size.**
+  - The cause: German at 200% is the one case where the pins step to their second form, icon and level (objection (b)). The plate took its new width at once. Its row moved the level's disc only on the next frame, so the pins drew the disc over the icon, and the plate's right half stayed empty. The shot's still is taken on that frame, which AD saw.
+  - The fix: `UniversePins._draw` places the icon at the plate's start and the level's disc at its end, from the plate's own size, not from the row's children. The pin now draws right on the frame it changes form.
+  - The form itself is kept. German at 200% has room for each realm's icon, so the pins show it (objection (b) on S2-R22: the most that fits, in one form). Where a realm has no room for it, every pin steps to the numbered chip, as English does at 200%.
+  - The plate is 260 px wide at 200% (12 + 114 + 12 + 110 + 12: margin, icon, gap, disc, margin), against 134 px for a numbered chip.
+
 **What (a) costs.**
 
 - **At 200% with the raid notice up, the realms' chips give way where the world is shortest.** The reserve lifts the foot about 36 points. In three cases the world then keeps about 100 points, and no chip finds a free place near its island:
