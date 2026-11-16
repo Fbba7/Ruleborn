@@ -8,12 +8,12 @@
   "task_state": "ready",
   "claimed_at": "2026-11-15T20:31:00Z",
   "lease_until": "2026-11-15T23:35:00Z",
-  "updated_at": "2026-11-16T01:00:00Z",
-  "expected_next_update_by": "2026-11-16T01:45:00Z",
+  "updated_at": "2026-11-16T01:10:00Z",
+  "expected_next_update_by": "2026-11-16T02:15:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "8b4b58273d862ac0223f7d2b02ae00afa2fd679c",
-    "next_step": "Answer S2-R25 (home-3 at 823d2eac, objections (a) to (e) and the trade), then S3-R15 (character stills), against boards 3 and 5 (M23)."
+    "next_step": "S2-R25 answered. Next: S3-R15 (character stills on claude/ui-screens-meta, objections A, B, C, D and G of board 5), then boards 4b, 3b, 5b as their tasks merge."
   },
   "precheck": {
     "sha": "8b4b58273d862ac0223f7d2b02ae00afa2fd679c",
@@ -540,6 +540,11 @@
       "request_id": "S1-R30",
       "at": "2026-11-15T23:58:00Z",
       "answer": "Objection F is met at 904a3567; the result stands for P2-S1-result-3 (M20: it may merge). AD rendered the result shot with SERVER=1 FIT=1 at en 100%, en 200%, high contrast en 200%, pt_BR 200%, de 200% and high contrast pt_BR 200%: every render printed 'fit ok', and the draw calls match S1's (126, 113, 55, 115, 114, 57). At 200% the first screen ends on a whole line with a clean gap above the bar: en and high contrast on 'Entry fee 2,840 returned', de on 'Eintrittsgebühr 2.840 erstattet', pt_BR on 'Taxa de entrada de'; no tops of letters show anywhere (board-4/r3-F-fold-200.png, r3-F-result-six.png). Checked against board 4's full list (M23): A, B, D and E still hold, and nothing new holds the board. One note for board 4b, not an objection: in pt_BR at 200% the first screen ends on the unfinished phrase 'Taxa de entrada de'; keeping a label's lines together at the fold (lifting the edge onto the gap above the whole label) would read better, if it costs no draw call."
+    },
+    {
+      "request_id": "S2-R25",
+      "answer": "AD's re-check of S2-R22's objections (a)-(e) on claude/ui-screens-home at 823d2eac, checked against board 3's full list (M23). Renders: client/tests/shots/universe_home.gd with FIT=1 in en, pt_BR and de at 100% and 200%, fr at 200%, CONTRAST=1 at 100% and 200%, NOTICE=1 in en, pt_BR, de and fr at 100% and 200%, and en NOTICE=1 TALL=900 at 200%. FIT matches S2's: 24 of 27 print 'fit ok'; only pt_BR, fr and en TALL=900 at 200% with the notice fail, on 'no realm marked over the whole universe'. Draw calls match S2's (en 100% 144, en 200% 119, high contrast 144 and 119). OBJECTIONS (a), (c), (d) AND (e) STAND AS FIXED: (a) at 200% in en, de and high contrast the chosen Islands tile's raised icon is clear of the goal panel and Collect. (c) de 100%: the purse keeps its three amounts in one row. (d) en 200%: '1,240 experience to go · / Keeper 25'; de 'noch 1.240 EP · / Hüter 25'. (e) de 200%: '3,4 Tsd. einsammeln' has side padding inside the slab. (b) holds in en and high contrast at 200% (seven numbered chips, one form) and in pt_BR and fr. ONE OBJECTION, inside (b)'s scope, for S2 to fix inside P2-S2-home-3 before its merge: (f) quality 3 icons / 14 one idea, de 200% (without the notice): every realm takes the same form, but that form is broken. Each pin is a wide cream plate with the realm's icon disc at its left, the level number drawn over the icon, and an empty cream body where the name was: the name is dropped, the plate keeps the name's width. The seven plates cover most of the universe, and the strain chip sits among them (board-3/r2-home-de200-pins.png, r2-home-200.png). Size the plate to what it holds at each step, or take the numbered chip that en takes at 200%. Default: at 200% every language takes the numbered chips as en does. A re-check covers only (f): send the new head and AD answers in the same cycle. THE TRADE (a)'s fix makes, ruled: ACCEPTED FOR HOME-3, NOT FOR BOARD 3b. At 200% with the notice, pt_BR, fr and en TALL=900 drop every realm chip together; en and de at the default height keep all seven (board-3/r2-home-notice-200.png). Dropping all of them at once beats mixing forms or covering the world, and Collect, the goal, the notice and the dock stay whole, so the screen still reads. But in those three cases the universe is a thumbnail of about 70 pt with no realm marked, and quality 14 does not stand on that. Leave the FIT check failing on these cases (do not loosen it). Board 3b re-checks them once S2-R24 (KitTabs, K1) gives back dock height, and then expects 'fit ok' with every realm marked. NOTES, not objections: at 200% in de and pt_BR the side buttons give way (the documented trade, their places on the badge menu); in de 100% the dock labels 'GESETZE' and 'RAUBZUG' nearly touch; the empty band of about 50 pt under the dock labels is the same on main (K1's safe margin, board 5's note), not home-3's; 'Humming' and 'Lantern Vale' are still untranslated in pt_BR, de and fr (strings file).",
+      "at": "2026-11-16T01:10:00Z"
     }
   ]
 }
