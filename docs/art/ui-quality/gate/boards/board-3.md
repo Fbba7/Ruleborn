@@ -253,3 +253,28 @@ cases once S2-R24 (KitTabs) gives back dock height.
 
 German and English at 100%, the purse in one row:
 [`r2-home-100-purse.png`](board-3/r2-home-100-purse.png).
+
+## Re-check of objection (f) (S2-R27)
+
+AD re-checked objection (f) on `claude/ui-screens-home` at `8ff5ee23`, and
+the screen at 200% against this board's full list (M23). The full answer
+is S2-R27 in `docs/progress/status/AD.json`.
+
+**(f) stands as fixed.** With `FIT=1 TEXT=200 LOCALE=de`, each realm pin
+is the realm's icon and its level's disc on a plate of their size: no
+empty half, no level over the icon (fit ok, 118 calls). English at 200%
+keeps its seven numbered chips (fit ok, 119 calls).
+
+![German 200%, the pins at 8ff5ee23](board-3/r3-home-de200-f.png)
+
+**One objection, (g), holds P2-S2-home-3.** It was already there at
+`823d2eac`, and AD missed it then. At 200% text in pt_BR and German,
+without the notice, the four side buttons are gone: Defence with its raid
+badge and timer, Season, Lab and Shop. AD-R24 (in home-3's done_when) asks
+for them as icon-only discs at 200%. Both 200% key frames keep them at the
+edges, with the realm chips between them. English at 200% keeps them.
+
+From left: key frame 200% pt_BR, then the build at 200% in pt_BR, German
+and English.
+
+![200%: key frame pt_BR, build pt_BR, de, en](board-3/r3-home-200-sides.png)
