@@ -283,6 +283,8 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| AD | `session_01SNkKxr9VhN89uNMPX1WQ6Y` (Opus 5.5, effort high) | P2-AD-board-5c, then P2-AD-board-3c when P2-S2-home-4 merges (restart, cycle 101: board 5c opened with character-3's merge; the session below ended done) | `claude/ui-ad` | 2026-11-16 13:46Z |
+| S2 | `session_01SNkKxrBFcY868FRDPnvoUz` (Opus 5.5, effort high) | P2-S2-home-4: gate request at 1697a6c6 and ready (restart, cycle 101: the session before went idle blocked on S2-R31 and S2-R30, both answered) | `claude/ui-screens-home` | 2026-11-16 13:46Z |
 | K1 | `session_01SNkKxnx23zG9HV4wddwVrq` (Opus 5.5, effort high) | P2-K1-kit-gaps-2 (start, cycle 100: P2-K1-kit-gaps-1 merged as cf6165e9; the fourth seat with S2, AD and S1) | `claude/ui-bake` | 2026-11-16 12:24Z |
 | AD | `session_01SNkKxoT1Zvr4LionPdFkEt` (Opus 5.5, effort high) | S2-R31 first (preview P2-S2-home-4 at c8de70fe), then S1-R31 (preview P2-S1-result-4), then P2-AD-board-5c and -3c when their tasks merge (restart, cycle 100: a seat free; S3-R29's default applied at 11:43Z) | `claude/ui-ad` | 2026-11-16 11:49Z |
 | S1 | `session_01SNkKxnXsUaw4HRQU3Yc69h` (Opus 5.5, effort high) | P2-S1-result-4 (restart, cycle 100: the session below went idle waiting for the gate; the gate at 8753618a failed Display type, M30's close point) | `claude/ui-screens-heist` | 2026-11-16 11:49Z |
