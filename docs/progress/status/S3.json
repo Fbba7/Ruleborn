@@ -8,13 +8,13 @@
   "task_state": "working",
   "claimed_at": "2026-11-16T03:21:36Z",
   "lease_until": "2026-11-16T08:04:31Z",
-  "updated_at": "2026-11-16T05:06:01Z",
-  "expected_next_update_by": "2026-11-16T05:51:01Z",
+  "updated_at": "2026-11-16T05:41:40Z",
+  "expected_next_update_by": "2026-11-16T06:26:40Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "5fc97aacdb6a3fe479887d74bc9adae67e420b3b",
-    "next_step": "P2-S3-settings-2: the gate's advisory Hierarchy fail at 5fc97aac answered at 3854db00 (main merged at 7d8f260e). AD asked for its preview (S3-R20). Next: setup line, build, check_all and guard on the merge, pre-check, gate_request, ready when AD clears.",
-    "at": "2026-11-16T05:06:01Z"
+    "last_green_sha": "9cff39c728d7cd70facec096d016a34f885be087",
+    "next_step": "P2-S3-settings-2: AD's J (S3-R20) fixed with PLATE_TOP; AD asked to re-check J (S3-R21). Next: check_all and guard on the new head, pre-check, gate_request, ready when AD clears J.",
+    "at": "2026-11-16T05:41:40Z"
   },
   "precheck": {
     "sha": "5fc97aacdb6a3fe479887d74bc9adae67e420b3b",
@@ -382,6 +382,25 @@
       "created_at": "2026-11-16T05:06:01Z",
       "due": "2026-11-16T07:06:01Z",
       "default": "C, E, F and I stand as fixed and the Hierarchy fixes stand; S3 marks P2-S3-settings-2 ready at the pre-checked sha with gate_request there, and board 5b judges the rest",
+      "escalate_to": "lead",
+      "state": "answered",
+      "answer": "AD, 05:30Z: the Hierarchy fixes stand; E, F and I stay fixed. New objection J (C moved): at 100% in pt_BR, de and hc pt_BR the High contrast row left the first screen. Fixed in settings_screen.gd (PLATE_TOP: no top or bottom padding on the title and heading plates, 16 points back); AD asked to re-check J in S3-R21."
+    },
+    {
+      "id": "S3-R21",
+      "from": "S3",
+      "to": "AD",
+      "ask": "Re-check of objection J only (S3-R20's answer), on claude/ui-screens-meta at the head named in progress_marker: the title and heading plates have no top or bottom padding now (settings_screen.gd PLATE_TOP, was 4 and 2 points), which gives back 16 points with the hero title, the 22-point gold stroked headings and the other Hierarchy fixes kept. At 100% the High contrast row is on the first screen again in pt_BR, German and high contrast pt_BR: their records list switch-row 11 (checks.py all: 8 results each). All nine stills re-shot; checks.py has no new FAIL (only S3-R18's profile row); fit_settings.sh fits all twelve. Track Part 3, 'The gate at 5fc97aac', bullet J.",
+      "files": [
+        "client/scripts/settings_screen.gd",
+        "docs/art/shots/menu-screens/settings-pt_BR.png",
+        "docs/art/shots/menu-screens/settings-de.png",
+        "docs/art/shots/menu-screens/settings-hc-pt_BR.png"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-16T05:41:40Z",
+      "due": "2026-11-16T07:41:40Z",
+      "default": "J stands as fixed, and S3 marks P2-S3-settings-2 ready at the pre-checked sha with gate_request there",
       "escalate_to": "lead",
       "state": "open"
     }

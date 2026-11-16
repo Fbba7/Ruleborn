@@ -394,6 +394,8 @@ The lead's gate at 5fc97aac (`docs/art/ui-quality/gate/verdicts/P2-S3-settings-2
 - **"Quieten the Stillness card; at 200% shrink or darken it."** The law's sample is on the dark plate (`plate_dark`), not parchment: it is prose, not an action, and a cream card larger than the title drew the eye first.
 - **Tried and dropped:** the toggle rows on the dark card. The switch's off track is the dark plate and vanished on it, so they stay parchment.
 
+- **AD's objection J (S3-R20's preview).** The taller title plate (+9 points) and headings (+3 each) pushed the second group down about 15 points, so at 100% in pt_BR, German and high contrast pt_BR the High contrast row left the first screen and "Visão e conforto" stood alone above the chevron. The title and heading plates now have no top or bottom padding (`PLATE_TOP`, was 4 and 2 points): the display face's own line height leaves room over and under the words. That gives back 16 points, and the row is on the first screen again in all three (`switch-row 11` in their records), with the Hierarchy fixes kept.
+
 Evidence: the nine stills and records are re-shot (`settings-100`, `-pt_BR`, `-de`, `-200-pt_BR`, `-200-de`, `-hc`, `-hc-pt_BR`, `-account-100`, `-account-de`). `checks.py all` has no new FAIL on them; the only FAIL is the account profile row, `screen_account.gd`'s (S3-R18). `fit_settings.sh` prints `fit ok` for all twelve shots. In grayscale the title on its lit plate, the gold headings and the gold As lead; the cream switch rows stay bright, which the notes did not ask to change.
 
 ### What is still worse than before

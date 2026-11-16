@@ -23,6 +23,12 @@ const HEADING_POINTS := 22.0
 const SECTION_PAD := 12.0
 ## The title plate's side padding, in points.
 const HEAD_PAD := 16.0
+## The title and heading plates' top and bottom padding, in points: none, as
+## the display face's own line height leaves room over and under the words.
+## The hero title and the 22-point headings are taller than the slots they
+## replaced, and with the old padding they pushed the High contrast row off
+## the first screen at 100% in pt_BR and German (AD's objection J).
+const PLATE_TOP := 0.0
 ## The gear beside the title, in points, and how much larger it is at large
 ## text (key frame 05 at 200%).
 const MARK_POINTS := 28.0
@@ -173,7 +179,7 @@ func _layout() -> void:
 func _head() -> Control:
 	var plate := PanelContainer.new()
 	plate.name = "Head"
-	plate.add_theme_stylebox_override("panel", UI.clear_box(HEAD_PAD, 4))
+	plate.add_theme_stylebox_override("panel", UI.clear_box(HEAD_PAD, PLATE_TOP))
 	# The kit's lit feature card, its gold rim and its glow from the top left
 	# lifting the title's ground above the night's value, where the dark name
 	# plate sank into it (the gate's Hierarchy at 5fc97aac).
@@ -221,7 +227,7 @@ func _head() -> Control:
 func _section(key: String) -> Control:
 	var plate := PanelContainer.new()
 	plate.name = "SectionPlate"
-	plate.add_theme_stylebox_override("panel", UI.clear_box(SECTION_PAD, 2))
+	plate.add_theme_stylebox_override("panel", UI.clear_box(SECTION_PAD, PLATE_TOP))
 	UI.dress(plate, "plate_dark")
 	var l := KitPanels.section(Strings.t(key))
 	l.set_meta("points", HEADING_POINTS)
