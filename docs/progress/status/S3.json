@@ -8,13 +8,13 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-16T07:45:24Z",
   "lease_until": "2026-11-16T10:45:24Z",
-  "updated_at": "2026-11-16T07:45:24Z",
-  "expected_next_update_by": "2026-11-16T08:30:24Z",
+  "updated_at": "2026-11-16T07:52:00Z",
+  "expected_next_update_by": "2026-11-16T08:52:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "9e602fccafac7ffbb855e2049d8ad9db411805d2",
-    "next_step": "IQ-kit-docs claimed: read kit-spec.md against client/ui/, list missing components as requests to K1 through the lead.",
-    "at": "2026-11-16T07:45:24Z"
+    "next_step": "IQ-kit-docs: gap list in docs/progress/S3.md, requests S3-R22 to S3-R28 to K1 through the lead; pre-check on the notes commit, then ready.",
+    "at": "2026-11-16T07:52:00Z"
   },
   "precheck": null,
   "gate_request": null,
@@ -399,6 +399,112 @@
       "escalate_to": "lead",
       "state": "answered",
       "answer": "AD, 07:00Z: J stands as fixed at 9e602fcc; the High contrast row is on the first screen in pt_BR, de and hc pt_BR, the Hierarchy fixes kept; nothing new against board 5's full list; S3 may mark P2-S3-settings-2 ready at 9e602fcc with gate_request there (board-5.md, 'Re-check of objection J (S3-R21)')."
+    },
+    {
+      "id": "S3-R22",
+      "from": "S3",
+      "to": "lead",
+      "ask": "For K1: K30, the info popover (kit-spec section 4: 'none today'). No kit function opens one: a small E3 frame with a pointer, opened by a tap on a 48-point (i) control, closed by a tap. Section 3's L state needs it ('a tap opens an info popover saying why and how to unlock'), and the D state's short reason has nowhere to go but a label. The catalogue's K30 is a stand-in (an (i) icon_button over a glass panel).",
+      "files": [
+        "client/ui/kit_panels.gd",
+        "client/ui/kit_controls.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-16T07:49:00Z",
+      "due": "2026-11-16T19:49:00Z",
+      "default": "No popover: screens keep the reason in a label or the control's accessible name; the catalogue keeps K30's stand-in",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S3-R23",
+      "from": "S3",
+      "to": "lead",
+      "ask": "For K1: K34, the spinner, and the Ld state as kit calls (section 4: K34 'none today'; Ld on K01, K02, K11 and K43). KitSkin.spinner is the kit's insides and returns null while its skin is off; no public function draws a spinner with its reduced form (a static mark with 'Loading'), and no function puts a button, round action, text field or quest card into Ld (face held, label replaced by a spinner of its size, said aloud as loading, no layout shift). The L and A overlays are the same: only the catalogue's shot code applies them (ui_kit_catalogue.gd, the state overlays), so a screen cannot ask the kit for them.",
+      "files": [
+        "client/ui/kit_status.gd",
+        "client/ui/kit_controls.gd",
+        "client/ui/kit_skin.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-16T07:49:00Z",
+      "due": "2026-11-16T19:49:00Z",
+      "default": "Screens show no loading face (the action stays disabled while it runs) and draw lock and attention marks as they do today; the catalogue keeps its own overlays",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S3-R24",
+      "from": "S3",
+      "to": "lead",
+      "ask": "For K1: K35, the empty state, in the kit. Today it is ScreenParts.empty (client/scripts/screen_parts.gd, T10), outside client/ui, not in section 6.5's list, on code-drawn parts: icon, words and one action on the kit's materials.",
+      "files": [
+        "client/ui/kit_panels.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-16T07:49:00Z",
+      "due": "2026-11-16T19:49:00Z",
+      "default": "Screens keep calling ScreenParts.empty",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S3-R25",
+      "from": "S3",
+      "to": "lead",
+      "ask": "For K1: K40, the reward sequence (section 8.1: KitNav.celebrate 'Replaced' by K40). Motion.reward and the motion atlas (art/ui/motion: burst, coin, shine, sparkle, curves.json) exist and result_screen.gd uses Motion.reward, but KitNav.celebrate is still called (result_screen.gd line 110) and the catalogue's K40 is 'stand-in from today's parts until its motion sprites come'. Ask: one kit entry point for the full sequence (anticipation, burst, reveal, coin flight, counter roll) on the motion sprites, with its reduced form, and celebrate retired.",
+      "files": [
+        "client/ui/kit_nav.gd",
+        "client/ui/motion.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-16T07:49:00Z",
+      "due": "2026-11-16T19:49:00Z",
+      "default": "KitNav.celebrate stays beside Motion.reward; the catalogue keeps K40's stand-in",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S3-R26",
+      "from": "S3",
+      "to": "lead",
+      "ask": "For K1: K06, the slider, as a kit function (section 4: today RbTheme's slider styles). The slider skin is on (10 November) and KitSkin.stylebox serves the theme, but there is no KitControls call: screens build a raw HSlider, and the catalogue's K06 is a bare HSlider. Ask: KitControls.slider (track 9-slice, fill, knob; N P D RM; a spoken name and value).",
+      "files": [
+        "client/ui/kit_controls.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-16T07:49:00Z",
+      "due": "2026-11-16T19:49:00Z",
+      "default": "Screens keep a raw HSlider themed by RbTheme's slider styles",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S3-R27",
+      "from": "S3",
+      "to": "lead",
+      "ask": "For K1: K17's confirm and info variants and its ribbon title (section 4: 'dialog, confirm, info; E3 frame; a ribbon title (K19); one primary action'). KitPanels.dialog(host, title, words, actions) has one form: its title is a heading label over a rule, not the ribbon, and nothing marks one action as the primary. The catalogue shows only the dialog.",
+      "files": [
+        "client/ui/kit_panels.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-16T07:49:00Z",
+      "due": "2026-11-16T19:49:00Z",
+      "default": "Screens keep KitPanels.dialog as it is, the caller choosing the gold action as the primary",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S3-R28",
+      "from": "S3",
+      "to": "lead",
+      "ask": "For K1: section 8.1's clean-up. The proof's UiqArt, UiqHud, UiqMedal and UiqJuice are 'folded in, then deleted', but client/prototypes/ui_quality/uiq_{art,hud,medal,juice}.gd are still there and client/tests/shots/uiq_motion.gd and uiq_heist_hud.gd still call them; ScreenBox is 'dropped after S3's routing', but client/scripts/screen_box.gd stays and screen_bands.gd calls it. Ask: delete the prototypes and their shots, and route screen_bands.gd off ScreenBox, or say in section 8.1 why they stay.",
+      "files": [
+        "client/prototypes/ui_quality/",
+        "client/tests/shots/uiq_motion.gd",
+        "client/tests/shots/uiq_heist_hud.gd",
+        "client/scripts/screen_box.gd",
+        "client/scripts/screen_bands.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-16T07:49:00Z",
+      "due": "2026-11-16T19:49:00Z",
+      "default": "They stay as they are; nothing on a shipped screen depends on the prototypes",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
@@ -408,5 +514,5 @@
       "answer": "The key frame's pair already matches: art/ui/keyframes/05-settings.png and 05-settings.shot.json both show the Access tab (checked by eye at 1080x2340; every control in the record passes value-steps). The mismatch was elsewhere: the gate cut the candidate still, rendered by client/tests/shots/screen_meta.gd on the settings screen's opening Game tab, with the key frame's Access rectangles, because screen_meta.gd writes no record. Fixed in P2-S3-screenkit without touching the key frame: docs/art/shots/menu-screens/shot_record.gd renders the settings screen and writes the record from the same frame (TAB=game or TAB=access). P2-S3-screenkit's item 'settings at 100% text' shows the Game tab: the screen's opening tab and the one with the volume bars and row wells this task changed. Its still and record are docs/art/shots/menu-screens/after-settings-100-game.png and .shot.json (the still is pixel for pixel after-settings-100.png). P2-S3-settings' items should show the Access tab, as key frame 05 does: after-settings-100-access.png and .shot.json. Details in docs/art/tracks/menu-screens.md, 'The settings shot record (Lead-R1)'. No file outside the claim was needed."
     }
   ],
-  "next_step": "IQ-kit-docs claimed: read kit-spec.md against client/ui/, list missing components as requests to K1 through the lead."
+  "next_step": "IQ-kit-docs: gap list in docs/progress/S3.md, requests S3-R22 to S3-R28 to K1 through the lead; pre-check on the notes commit, then ready."
 }
