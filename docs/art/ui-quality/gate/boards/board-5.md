@@ -24,6 +24,11 @@ Character and settings are merged, so each objection goes to the lead as a
 request for a follow-up task in `docs/progress/status/AD.json`, each with
 a default.
 
+**Round 2 decision (board 5b, 16 November 2026): the board does not
+stand yet.** A to G stand as fixed; two new objections, K (the highest
+level at 200% runs off the screen) and L (the profile row's value step),
+are open. See "Round 2 (board 5b)" at the end.
+
 ## How to read it
 
 - **Golden reference.** The character and settings key frames that AD
@@ -498,3 +503,158 @@ at `9e602fcc` in pt_BR, German and high contrast pt_BR.
 Nothing new holds P2-S3-settings-2. The notes carried to board 5b stand
 (the faint `card_gold` rim, S3-R18's profile row in `screen_account.gd`,
 the gear at 200%, the dock and the selected tab's brown, `_hide_kicker`).
+
+## Round 2 (board 5b)
+
+Posted by AD, P2-AD-board-5b, 16 November 2026, on the integration branch
+at `953e742e` (P2-S3-character-2 and P2-S3-settings-2 merged, the latter
+as `f675f05e`). AD re-checked objections A to G against this board's full
+list (M23): every owner-checked quality (1, 2, 3, 6, 8, 9, 13, 14) on both
+screens, at 100% and 200% text, in English, pt_BR and German, and in high
+contrast, plus the character's Stats and Compare tabs, its four other
+fixture characters, and the Account tab signed out and signed in.
+
+**Method.** `tools/render/shoot.sh` on the character and settings shots
+with `FIT=1`, `TEXT`, `LOCALE`, `CONTRAST`, `TAB` and `ID`;
+`tools/ui_gate/sheet.py` for the strips and the grayscale squint;
+`tools/ui_gate/checks.py all` on the committed shot records. Every render
+of items 1 to 10 printed "fit ok". The draw calls were 50 to 91, within
+the budget. The one fit failure is the new objection K below.
+
+**Round 2 decision: board 5 does not stand yet.** Objections A to G all
+stand as fixed, and H, I and J (the previews) still hold. Two new
+objections are open: K (heavy) is the character at its highest level at
+200%, which runs off the screen in every locale; L (light) is S3-R18's
+profile row on the Account tab, which fails value steps. Both go to the
+lead as requests with defaults (AD-R40, AD-R41). A round 3 re-checks K and
+L only.
+
+### A to G, item by item
+
+| ID | Round 2 | What AD saw |
+|---|---|---|
+| A | Stands as fixed | At 200% the price stacks under the Level up label, as the key frame; no chip covers the words. German "AUFSTEIGEN" is whole and "Stufe 3 → 4" wraps inside the button. The German 200% shot prints "fit ok". |
+| B | Stands as fixed | At 200% the unselected tabs are icon-only, and the tab strip and the ability header are on the first screen in English, pt_BR and German. |
+| C | Stands as fixed | At 100% the four info cards are whole in every locale. On settings the second section (heading and High contrast row) is on the first screen in English, pt_BR and German (J's fix holds). |
+| D | Stands as fixed | The level tag sits inside its badge at both text sizes; the price and the Level up label carry the kit's outline; the backdrop text at 200% has its outline. |
+| E | Stands as fixed | At 200% German "Einstellungen" is whole on its plate, and the Stillness card grows to its text. |
+| F | Stands as fixed | In the grayscale squint the title leads by size on `card_gold`, the gold A−/A+ steppers and the cream switch rows give the value steps, and the dark group headers separate them. |
+| G | Stands as fixed | The stage fades into the backdrop; no hard edge is left. |
+
+H (the state pill's words hidden at 200%), I and J hold. High contrast in
+English and pt_BR holds on both screens. The Stats and Compare tabs at
+100% and 200% hold, with the note on Compare below.
+
+### The stills
+
+Character at 100%. From left: key frame, then English, pt_BR and German.
+
+![Character 100%: key frame; en, pt_BR, de](board-5/r7-character-100.png)
+
+Character at 200%. From left: key frame 200%, English, key frame 200%
+pt_BR, pt_BR, German.
+
+![Character 200%: key 200; en; key 200 pt_BR; pt_BR; de](board-5/r7-character-200.png)
+
+Character in high contrast. From left: key frame high contrast, English,
+key frame high contrast pt_BR, pt_BR.
+
+![Character high contrast: key hc; en; key hc pt_BR; pt_BR](board-5/r7-character-hc.png)
+
+Character's other states at 200% English. From left: key frame 200%, then
+fixture characters 1, 2 (scrolled to its resting view), 3 and 4.
+
+![Character states at 200%: key; ID 1 to 4](board-5/r7-character-states.png)
+
+Character's tabs. From left: key frame, English Stats and Compare at
+100%, pt_BR Stats and German Compare at 200%.
+
+![Character tabs: key; en Stats, en Compare; pt_BR Stats 200%; de Compare 200%](board-5/r7-character-tabs.png)
+
+Settings at 100%. From left: key frame, English, key frame pt_BR, pt_BR,
+German.
+
+![Settings 100%: key; en; key pt_BR; pt_BR; de](board-5/r7-settings-100.png)
+
+Settings at 200%. From left: key frame 200%, English, key frame 200%
+pt_BR, pt_BR, German.
+
+![Settings 200%: key 200; en; key 200 pt_BR; pt_BR; de](board-5/r7-settings-200.png)
+
+Settings in high contrast. From left: key frame high contrast, English,
+key frame high contrast pt_BR, pt_BR.
+
+![Settings high contrast: key hc; en; key hc pt_BR; pt_BR](board-5/r7-settings-hc.png)
+
+The Account tab. From left: key frame, signed out at 100% English and at
+200% pt_BR, signed in at 100% English, scrolled, and at 200% pt_BR.
+
+![Account tab: key; signed out en, 200% pt_BR; signed in en, scrolled, 200% pt_BR](board-5/r7-settings-account.png)
+
+Settings in the grayscale squint. From left: English at 100%, key frame
+200% pt_BR, pt_BR at 200%.
+
+![Settings grayscale: en 100%; key 200 pt_BR; pt_BR 200%](board-5/r7-settings-gray.png)
+
+### K: the highest level at 200%
+
+Fixture character 4 (Mossbear, level 10 of 10) fits at 100%, but at 200%
+it runs off the screen in English, pt_BR and German. The sticky bar's "at
+the highest level" pill (`CHARACTER_TOP_LEVEL`, built in
+`character_screen.gd` `_actions`) keeps all its words at 200%: it does not
+wrap, shrink or go icon-only, as the state pill does since H. German
+reports "987 px of words in 900". The pill forces the whole screen wider
+than the phone: the next arrow is gone, the subtitle is clipped
+("Mossbear · Sentinela…", "Mossbear · Wächter…"), the tab strip is cut,
+and the info grid's labels sit at x 90 + 998, past 1080. The fit check
+prints 14 "fit FAIL" lines in pt_BR and German. The scripted fit check
+(`docs/art/shots/menu-screens/fit_character.sh`) covers only character 5,
+so the merge did not catch it. From left: key frame 200%, character 4 at
+100% English, then at 200% in English, pt_BR and German.
+
+![Highest level: key 200; ID 4 en 100%; ID 4 at 200% en, pt_BR, de](board-5/r7-character-max-level.png)
+
+### L: the profile row's value step
+
+S3-R18's profile row on the Account tab ("Profile and stats",
+`screen_account.gd` `profile_row`) is a bare item on the night. Its
+icon-and-words face sits at L* 16.1 on a ground of 13.7: `checks.py
+value-steps` on `settings-account-100` gives ΔL* 2.5 and on
+`settings-account-de` 3.6, FAIL (it needs 2 value steps). It is the only
+failing control on the Account tab; the sign-in rows and buttons pass. It
+reads, by its icon and words, but it is the one row with no plate.
+
+### Objections
+
+| ID | Item | Quality | Objection | Proposed fix | Owner |
+|---|---|---|---|---|---|
+| K | 3, 4, 5 (character at 200%) | 14, 2 | At its highest level the character screen runs off the phone at 200% in English, pt_BR and German: the "at the highest level" pill keeps all its words, forces the screen wider than 1080, cuts the next arrow, the subtitle, the tab strip and the info grid, and the fit check fails (14 lines in pt_BR and German). | In `client/scripts/character_screen.gd` `_actions`, at large text show the top-level pill as the star icon alone with an `accessibility_name` carrying the words (as H did for the state pill), or let it wrap at word boundaries inside the bar. Add character 4 (highest level) at 200% in English, pt_BR and German to `docs/art/shots/menu-screens/fit_character.sh`. | S3 |
+| L | 10 (Account tab) | 8 | S3-R18's profile row fails value steps: ΔL* 2.5 (English) and 3.6 (German) against the night, the only failing control on the Account tab. | In `client/scripts/screen_account.gd` `profile_row`, give the row the plate the Access tab's rows use (a cream row, or a lit card), so it is at least 2 value steps off its ground. Re-run `checks.py value-steps` on `settings-account-100` and `settings-account-de`. | S3 |
+
+Notes, which do not hold the board:
+- The gate's advisory on `9e602fcc` (give the group headers more weight
+  than the rows at 200%, quieten the gold steppers): the pt_BR key frame
+  at 200% has the same weighting, a thin "Acesso" header over heavy rows
+  and gold steppers. The build matches its reference, so neither is an
+  objection.
+- At 200% the stepper's value reads smaller than the key frame's large
+  "200%". It stays legible and inside its plate.
+- Compare at 200% German: "Featherkin 1" wraps its "1" to its own line,
+  so the two name headings sit at different heights. The wrap is at a word
+  boundary, and the name is a fixture's.
+- Character 2's resting view (scrolled) shows the disabled Level up and
+  the "its home allows no higher" plate; it holds.
+- The signed-in shots show no Devices or Methods section, also in S3's own
+  `auth_panel.gd` shot, so `_hide_kicker` could not be checked. It stays a
+  note.
+- Earlier notes stand: the faint `card_gold` rim, the gear at 200%, the
+  dock's height and the selected tab's brown (K1), and English content in
+  pt_BR and German.
+
+### When the board stands
+
+Board 5 stands when K and L are fixed: character 4 at 200% prints "fit ok"
+in English, pt_BR and German with its next arrow, subtitle, tabs and info
+grid whole, and `checks.py value-steps` passes the profile row on
+`settings-account-100` and `settings-account-de`. A round 3 re-checks K
+and L only; A to J stay settled unless the fix touches their code.
