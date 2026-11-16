@@ -1,19 +1,12 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-16T19:42:00Z",
+  "updated_at": "2026-11-16T20:25:00Z",
   "expected_next_update_by": "2026-11-16T20:11:00Z",
   "cycle": 104,
-  "merging": {
-    "candidate_sha": "bb7e4d3328004c6a1ee5afbfd002ed77db76a027",
-    "task_ids": [
-      "P2-K1-guard-prereq"
-    ],
-    "started_at": "2026-11-16T19:42:00Z",
-    "expires_at": "2026-11-16T20:42:00Z"
-  },
+  "merging": null,
   "last_merged": {
-    "task_id": "P2-S3-account-4",
-    "sha": "6d9a4bf1"
+    "task_id": "P2-K1-guard-prereq",
+    "sha": "c0e0418b"
   },
   "acks": [
     "M15",

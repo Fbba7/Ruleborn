@@ -2,7 +2,7 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026. Phase 2 started on 12 November 2026 (lead cycle 70): P1-AD-board-1d let board 1 stand and phase 1's other exit criteria hold (report.md section 3.2); its first tasks are the flow findings (S1, S2) and board 1's note G (AIA-2), within the same cap of three. Since 12 November 2026, about 20:00Z, the cap is four UI builders by the owner's order (CLAUDE.md order 3; three while the seven-day bar reads allowed_warning).",
   "wave": "UI wave",
   "phase": 2,
-  "updated_at": "2026-11-16T19:42:00Z",
+  "updated_at": "2026-11-16T20:25:00Z",
   "updated_by": "lead (cycle 104)",
   "stop_at": "2026-11-17T21:00:00Z",
   "lease_hours": 3,
@@ -4780,7 +4780,7 @@
       "model": "Opus 5.5",
       "attempts": 0,
       "critical": false,
-      "state": "ready",
+      "state": "merged",
       "claim": {
         "agent": "K1",
         "branch": "claude/ui-bake",
@@ -4791,12 +4791,55 @@
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": "e49d3d2a",
-      "merged_sha": null,
-      "updated_at": "2026-11-16T19:42:00Z",
+      "merged_sha": "c0e0418b",
+      "updated_at": "2026-11-16T20:25:00Z",
       "updated_by": "lead (cycle 104)",
       "id": "P2-K1-guard-prereq",
       "title": "guard.sh checks its prerequisites first and fails fast, naming what is missing (M32, M19)",
       "exceptions": []
+    },
+    {
+      "role": "K1",
+      "assigned_to": "K1",
+      "files": [
+        "client/ui/kit_controls.gd",
+        "client/ui/kit_nav.gd",
+        "client/tests/ui_kit_tests.gd"
+      ],
+      "deps": [
+        "P2-K1-guard-prereq"
+      ],
+      "done_when": [
+        "S1-R15: KitControls.action2's words wrap between words inside the button's padding and the button grows to its lines, so at 200% text 'RAID AGAIN' and pt_BR 'ASSALTAR' stay inside the button",
+        "S1-R23: KitControls.big_action's minimum grows to its box's combined minimum plus its padding, so at 200% pt_BR the result's '3 s' replay button shows all its words",
+        "S3-R3: KitControls.upgrade grows and wraps its title at large text, so at 200% pt_BR 'SUBIR DE NÍVEL' and its price fit",
+        "S1-R32: KitNav.reward (and KitNav.celebrate through it) leaves the screen's sky plain under Settings.high_contrast, and the handoff says whether result_screen.gd can drop its local fix",
+        "at 100% text every button keeps its present size (the catalogue's shots unchanged at 100%, or the handoff names each change)",
+        "tests in client/tests/ui_kit_tests.gd: action2, big_action and upgrade at 200% text in pt_BR with their words inside the button's rect, and reward under high contrast leaving the sky's dress unchanged",
+        "bash tools/ui_bake/guard.sh",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 2,
+      "gate_items": [],
+      "tier": 2,
+      "phase": 2,
+      "model": "Opus 5.5",
+      "attempts": 0,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-16T20:25:00Z",
+      "updated_by": "lead (cycle 104)",
+      "id": "P2-K1-grow-1",
+      "title": "The kit's buttons grow and wrap at large text (S1-R15, S1-R23, S3-R3); the reward sky stays plain under high contrast (S1-R32)",
+      "exceptions": [
+        "client/tests/shots/ui_kit_catalogue.gd"
+      ]
     }
   ],
   "idle_queue": [

@@ -282,6 +282,21 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   Cycle 91: P2-K1-tabs-2 takes S2-R24 and S2-R26 (K1 started in cycle
   91, the fourth seat with S2, S3 and AD); the others still wait for a K1
   task, and each default stands at its due.
+- **S1-R32** (from S1, to K1 through the lead, 16 November 2026 16:53Z;
+  due 17 November 16:53Z; not blocking): `KitNav.reward(screen, ...)`
+  dresses the screen's Sky in `night_rays` whatever the mode, also under
+  `Settings.high_contrast`. Ask: `KitNav.reward` (and `KitNav.celebrate`
+  through it) leaves the sky plain under high contrast, or takes a flag to
+  skip the backdrop. Files: `client/ui/kit_nav.gd`,
+  `client/scripts/result_screen.gd`. Default: `result_screen.gd` keeps its
+  fix (after `KitNav.reward`, where the outcome does not celebrate, it
+  dresses the sky back in `night`), removed when the kit answers. Copied
+  in cycle 104.
+  Cycle 104: P2-K1-grow-1 takes S1-R32, S1-R15, S1-R23 and S3-R3 (the
+  kit's buttons grow and wrap at large text; the reward sky stays plain
+  under high contrast). The screens drop their local fixes in a later
+  task of their own. The others still wait for a K1 task, and each
+  default stands at its due.
 
 ### AIA
 
