@@ -890,6 +890,27 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   Copied in cycle 95. **Answered** by AD (07:00Z): J stands as fixed at
   9e602fcc; S3 marked P2-S3-settings-2 ready there, and it merged in
   cycle 96 (f675f05e).
+- **S1-R31** (from S1, 16 November 2026 10:17Z; due 17 November 10:17Z;
+  not blocking): preview of P2-S1-result-4 at 06635883 before the gate
+  (M10, M12). Home and the law pills on the kit's tertiary face, darker
+  than Raid in grayscale (result-3's advisory close point); the fold keeps
+  a label of up to three lines whole, so pt_BR 200% ends on the Renome
+  tile; the shot shows the screen's other states (confirming, refused,
+  testing, play), all fit ok at 200% in en, pt_BR and de (M26); draw calls
+  unchanged on the five goldens. The reward tiles keep their currency
+  icons with no character frame. Default: the gate runs on the pre-checked
+  head as it stands, and S1 marks ready on a pass. Copied in cycle 99.
+- **S3-R29** (from S3, 16 November 2026 09:43Z; due 11:43Z; blocking):
+  preview of P2-S3-character-3, board 5b's K and L only, at 0c4526a9 on
+  `claude/ui-screens-meta`. K: at large text the tray's top-level pill
+  takes the tray's width beside the way back and wraps between words,
+  accessibility_name carrying the words; fit_character.sh renders
+  character 4 at 200% in en, pt_BR and de, all fit ok. L: the profile row
+  on parchment, the switch rows' plate, its tap target edge to edge;
+  value-steps on settings-account-100 and -de pass (dL* 72.7 and 72.2).
+  Default: K and L stand as fixed; S3 marks P2-S3-character-3 ready at the
+  pre-checked sha with gate_request there, and AD's round 3 re-checks K
+  and L on the merge. Copied in cycle 99.
 
 ### S3
 
@@ -1585,6 +1606,22 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   seeded in the backlog so K1 keeps a seat (M25). R28's default stands
   for now: nothing on a shipped screen depends on the prototypes, and
   the clean-up crosses several owners' files.
+- **S3-R30** (from S3, 16 November 2026 10:38Z; due 12:38Z; blocking):
+  grant `client/scripts/auth_panel.gd` (owned by the lead, no task in
+  flight) to P2-S3-character-3. M26's wider fit_settings.sh (20 shots)
+  fails the account tab signed in at 200% text in en and de
+  (`docs/art/shots/menu-screens/settings-200-de-account-signed.png`).
+  Two causes in auth_panel.gd: it connects store.changed in _ready and
+  never reconnects after settings_screen.gd's _cue moves the list, so its
+  Devices and Methods sections never draw, in the app too; and the status
+  card puts the sign-out button beside its words. Fixes: reconnect in
+  _enter_tree once ready; past 125% text, the actions under the words.
+  Default: the lead adds auth_panel.gd to P2-S3-character-3's exceptions
+  and restarts S3, which makes the two fixes, gets fit_settings.sh 20 of 20
+  and fit_character.sh 50 of 50, pre-checks and marks ready. **Answered**
+  by the lead in cycle 99, granted as the default says: auth_panel.gd is
+  in P2-S3-character-3's `exceptions` (`owners.py claims`: disjoint), and
+  S3 is restarted.
 
 ## Done in cycle 50 (10 November 2026, by the lead)
 
