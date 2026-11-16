@@ -3,17 +3,17 @@
   "role": "AD",
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "P2-AD-board-3c",
-  "task_state": "ready",
-  "claimed_at": "2026-11-16T16:45:00Z",
-  "lease_until": "2026-11-16T19:45:00Z",
-  "updated_at": "2026-11-16T17:20:00Z",
-  "expected_next_update_by": "2026-11-17T17:20:00Z",
+  "agent_state": "active",
+  "task_id": "previews S2-R33, S1-R34",
+  "task_state": "working",
+  "claimed_at": "2026-11-16T23:35:00Z",
+  "lease_until": "2026-11-17T02:35:00Z",
+  "updated_at": "2026-11-16T23:35:00Z",
+  "expected_next_update_by": "2026-11-17T00:20:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "055840f7c59c5600ef0fb907fc2607ee69a9e9f7",
-    "next_step": "Board 3c is ready: H fixed, board 3 stands. Waiting for the lead to merge and assign the next task."
+    "next_step": "Preview S2-R33 (P2-S2-home-5 at eb40e8f4), then S1-R34 (P2-S1-heist-1 at ed766fe9)."
   },
   "precheck": {
     "sha": "055840f7c59c5600ef0fb907fc2607ee69a9e9f7",
@@ -22,7 +22,7 @@
     "summary": "All checks passed."
   },
   "gate_request": null,
-  "ready_sha": "055840f7c59c5600ef0fb907fc2607ee69a9e9f7",
+  "ready_sha": null,
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
     "M12",
@@ -690,6 +690,6 @@
       "at": "2026-11-16T12:10:00Z"
     }
   ],
-  "next_step": "Board 3c (only H) once P2-S2-home-4 merges. Board 5c ready at 58910501 (K and L fixed; M open as AD-R43).",
-  "last_update": "2026-11-16T14:41Z: P2-AD-board-5c ready at 58910501 (pre-check PASS 14:39:10Z, All checks passed.). K and L stand as fixed on main 570c4b5b; board 5 stands on them. New light objection M (signed-in leather sign-out buttons, dL* 16.1 to 17.5) to the lead as AD-R43, default a follow-up S3 task closed by checks.py value-steps. Waiting for board 3c (P2-S2-home-4)."
+  "next_step": "Preview S2-R33 (P2-S2-home-5 at eb40e8f4), then S1-R34 (P2-S1-heist-1 at ed766fe9).",
+  "last_update": "2026-11-16T23:35Z: cycle 107 start; P2-AD-board-3c merged; previewing S2-R33 then S1-R34."
 }
