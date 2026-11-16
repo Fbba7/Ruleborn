@@ -3,23 +3,36 @@
   "role": "S2",
   "branch": "claude/ui-screens-home",
   "model": "Opus 5.5",
-  "agent_state": "active",
-  "task_id": "P2-S2-home-2",
-  "task_state": "working",
-  "claimed_at": "2026-11-13T05:23:34Z",
-  "lease_until": "2026-11-13T08:23:34Z",
-  "updated_at": "2026-11-13T05:34:54Z",
-  "expected_next_update_by": "2026-11-13T06:19:54Z",
+  "agent_state": "waiting",
+  "task_id": "P2-S2-home-3",
+  "task_state": "ready",
+  "claimed_at": "2026-11-15T17:40:00Z",
+  "lease_until": "2026-11-16T06:15:00Z",
+  "updated_at": "2026-11-16T03:58:00Z",
+  "expected_next_update_by": "2026-11-16T04:45:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "e37c765d",
-    "next_step": "Home: live companion in the Keeper ring, Display role on figures, Collect shine; then budget shots, AD preview, pre-check",
-    "at": "2026-11-13T05:34:54Z"
+    "last_green_sha": "398a38cb",
+    "next_step": "Ready at 398a38cb: AD re-checks (g) only (S2-R28); the lead records home/200 (S2-R21), runs the gate and merges; K1 takes S2-R24 and S2-R26 (P2-K1-tabs-2).",
+    "at": "2026-11-16T03:58:00Z"
   },
-  "precheck": null,
-  "gate_request": null,
-  "ready_sha": null,
-  "stop_at": "2026-11-14T21:00:00Z",
+  "precheck": {
+    "sha": "398a38cb443f66dc4b869cf59d3ee34b2152cd1c",
+    "exit": 0,
+    "finished_at": "2026-11-16T03:50:18Z",
+    "summary": "All checks passed."
+  },
+  "gate_request": [
+    {
+      "item": "home at 100% text",
+      "qualities": [
+        "Hierarchy",
+        "Character presence"
+      ]
+    }
+  ],
+  "ready_sha": "398a38cb443f66dc4b869cf59d3ee34b2152cd1c",
+  "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
     "M13"
   ],
@@ -102,7 +115,7 @@
       "id": "S2-R8",
       "from": "S2",
       "to": "K1",
-      "ask": "KitPanels.notice: a notice that stays (frees neither on banner_ms nor on its cross, but hides and can be shown again, with a dismissed signal), and at text above KitLayout.SIDE_BY_SIDE_UP_TO the words over the full width with the icon, action and cross in a row beneath. Home's raid notice must stay until seen or dismissed (\u00a721.8) and return with new raids.",
+      "ask": "KitPanels.notice: a notice that stays (frees neither on banner_ms nor on its cross, but hides and can be shown again, with a dismissed signal), and at text above KitLayout.SIDE_BY_SIDE_UP_TO the words over the full width with the icon, action and cross in a row beneath. Home's raid notice must stay until seen or dismissed (§21.8) and return with new raids.",
       "files": [
         "client/ui/kit_panels.gd",
         "client/scripts/ui.gd"
@@ -117,7 +130,7 @@
       "id": "S2-R9",
       "from": "S2",
       "to": "K1",
-      "ask": "KitLayout.tap: (1) it connects button_down twice, so every part made tappable logs 'Signal button_down is already connected' (home's strain and goal card; seen in every universe_home.gd run): connect once. (2) its clear button is a child of the card, so inside a PanelContainer it is laid out within the card's padding, not over the whole card: on KitStatus.strain (48 points tall) the tap was 40 points, failing \u00a721.1's 48 (client test 'every control on every screen'). Lay it over the whole card (e.g. a holder of the card's size, or the card's padding moved into an inner margin). (3) let it carry 'frequent' = false when the card is a secondary place, as the card itself does.",
+      "ask": "KitLayout.tap: (1) it connects button_down twice, so every part made tappable logs 'Signal button_down is already connected' (home's strain and goal card; seen in every universe_home.gd run): connect once. (2) its clear button is a child of the card, so inside a PanelContainer it is laid out within the card's padding, not over the whole card: on KitStatus.strain (48 points tall) the tap was 40 points, failing §21.1's 48 (client test 'every control on every screen'). Lay it over the whole card (e.g. a holder of the card's size, or the card's padding moved into an inner margin). (3) let it carry 'frequent' = false when the card is a secondary place, as the card itself does.",
       "files": [
         "client/ui/kit_layout.gd"
       ],
@@ -227,7 +240,191 @@
       "due": "2026-11-13T15:11:20Z",
       "default": "The lead records 143/112/143 when it merges P2-S2-home-1; until then guard.sh fails on those three draw-call lines only.",
       "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R17",
+      "from": "S2",
+      "to": "lead",
+      "ask": "Record home's draw calls in tools/ui_bake/budgets.json (K1's file) when P2-S2-home-2 merges: home/100 143 -> 145, home/hc 143 -> 145, home/200 112 -> 114 (budget_shots --only home/100,home/200,home/hc at 3612e265). The 2 calls are the live character rubric quality 9 asks for: the Keeper's companion drawn each frame in its own 3D stage (the model and its ink pass). All three stay under the cap of 150; textures and words below 4.5:1 unchanged (0, 0, 0).",
+      "files": [
+        "tools/ui_bake/budgets.json"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-13T05:39:03Z",
+      "due": "2026-11-13T11:39:03Z",
+      "default": "S2 marks P2-S2-home-2 ready with guard.sh failing only on home's three draw-call lines (145/114/145), stated in the handoff; the lead records them when it merges",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R18",
+      "from": "S2",
+      "to": "AD",
+      "ask": "Preview home part 2 (P2-S2-home-2) on claude/ui-screens-home at 3612e265 before it is marked ready (M10, M12), against art/ui/keyframes/01-home.*. Reproduce with `FIT=1 bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`, the same with `TEXT=200 LOCALE=pt_BR` and with `CONTRAST=1` (the task's files allow S2 to commit no stills). The gate item is home at 100%: Character presence and Hierarchy. What changed: the Keeper's portrait is the featherkin alive (its model idling in a 3D stage of its own, the toon look, inked, a warm rim against a darker spirit ground), in a 76-point ring where the kit's part draws 52; the counts and 'Keeper 24' in the kit's Display role (3-point ink, 2-point hard drop), for cycle 77's 'flat counts' and 'no outline on the header'; Collect carries the kit's idle shine. docs/art/tracks/home-screen.md, 'Part 2', lists the rest. Send every objection in one round (M12).",
+      "files": [
+        "client/world/universe_badge.gd",
+        "client/scripts/home.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T05:39:03Z",
+      "due": "2026-11-13T11:39:03Z",
+      "default": "The stills stand as built; S2 marks P2-S2-home-2 ready when its checks and the gate pass, and any objection becomes a follow-up task beside it.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R19",
+      "from": "S2",
+      "to": "lead",
+      "ask": "Board 3's objection B asks for the goal 'number first, as the key frame'. pt_BR's HOME_GOAL_KEEPER string reads 'faltam 1.240 de experiência · Guardião 25' (the count after 'faltam'). Should it be rewritten number-first, e.g. '1.240 de experiência a ganhar · Guardião 25', in client strings.csv (not S2's file)? Home keeps the goal to two lines at 100% in pt_BR either way.",
+      "files": [
+        "client/i18n/strings.csv"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T09:58:00Z",
+      "due": "2026-11-13T21:58:00Z",
+      "default": "Keep the pt_BR string as it is: it reads naturally, fits two lines at 100%, and the number is the first figure in it.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R20",
+      "from": "S2",
+      "to": "AD",
+      "ask": "Preview home part 3 (P2-S2-home-3, board 3's objections A-C, AD-R22 to AD-R24) on claude/ui-screens-home at 0ffb6049 before it is marked ready (M10, M12), against art/ui/keyframes/01-home.* and board 3. Reproduce with `FIT=1 bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png` and the env TEXT=200, LOCALE=pt_BR, NOTICE=1, LOCALE=de, CONTRAST=1 in board 3's combinations (the task's files allow S2 to commit no stills). What changed: A, Collect always on screen, the notice one line at large text with its cross on the kit's plate, a scripted check (must_show) that Collect, the goal and the chosen tab's name are inside the viewport; B, the world framed between the purse and the foot at 100%, pins clear of Collect, the goal and the side buttons, the goal one line (en) or two (pt_BR); C, the goal kept at every size, numbered realm chips at 200%, side buttons as discs alone at large text, the purse two rows in every language, the chosen tab's name always shown. Your notes: the featherkin's yaw is clamped (YAW_LEAVE 0.3). docs/art/tracks/home-screen.md 'Part 3' lists the rest and what is still open. Send every objection in one round (M12).",
+      "files": [
+        "client/scripts/home.gd",
+        "client/world/universe_pins.gd",
+        "client/world/universe_badge.gd",
+        "client/tests/shots/universe_home.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T09:58:00Z",
+      "due": "2026-11-13T15:58:00Z",
+      "default": "The stills stand as built; S2 marks P2-S2-home-3 ready when its checks pass, and any objection becomes a follow-up task beside it.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R21",
+      "from": "S2",
+      "to": "lead",
+      "ask": "Record home/200's draw calls in tools/ui_bake/budgets.json at 114 -> 124 when P2-S2-home-3 merges, with a raises entry for S2-R21 (K1's file, written at the merge as for S2-R17). Measured with `bash tools/ui_bake/guard.sh` on a3274abe, after main's KitTabs fix: home/100 144 and home/hc 144 (under their 145), home/200 124. A bisect at 200% en, each fix added alone onto 14fdcdfe, puts the rise on three of AD's S2-R20 objections: the pins' search near their islands (objection 1) +5, the Full tag's red plate (objection 3) +4, the strain's two-line large form (objection 4) +3; KitTabs' fix takes 1 off. Each is kit parts interleaving the skin atlas, an icon and the font. Textures and words below 4.5:1 unchanged; home/200 stays 26 under the cap of 150. Update, 15 November 23:59Z: on the merge of main (a8f799c) with AD's S2-R22 fixes, guard.sh measures home/200 at 119 (home/100 and home/hc 144, under 145; 0 words below 4.5:1; guard fails on home/200 alone), so 119 is enough to record; 124, as approved, also holds. Evidence in docs/art/tracks/home-screen.md, Part 3, 'Draw calls'.",
+      "files": [
+        "tools/ui_bake/budgets.json"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-15T19:55:00Z",
+      "due": "2026-11-16T01:55:00Z",
+      "default": "Approved as for S2-R17: the lead records home/200 at 124 with a raises entry when it merges P2-S2-home-3; S2 marks ready with guard.sh failing only on home/200, said in the handoff.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R22",
+      "from": "S2",
+      "to": "AD",
+      "ask": "Re-check only S2-R20's objections 1-5 on claude/ui-screens-home at 13ff046f (a3274abe plus the split of home.gd into home_parts.gd, stills unchanged) (one round, M12). Reproduce with `FIT=1 bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png` and env as in S2-R20: (1) pins near their islands, clear by the pin gap of the side buttons and the Defence badge: en and pt_BR at 100%; (2) en 100% with NOTICE=1: the goal keeps its line, the notice's second line balanced; (3) the Full tag at 100% and 200% in en, pt_BR, de, CONTRAST=1; (4) the strain's two lines at TEXT=200 in en, pt_BR, de, fr; (5) pt_BR purse two rows at 100%, CONTRAST=1 Collect label size, chips at pt_BR and de 200%. The goal's 'Guardião / 25' break stays S2-R19; objection 6 is K1's. docs/art/tracks/home-screen.md Part 3, \"AD's S2-R20 review\", lists each answer and what is still open.",
+      "files": [
+        "client/scripts/home.gd",
+        "client/scripts/home_parts.gd",
+        "client/world/universe_pins.gd",
+        "docs/art/tracks/home-screen.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-15T19:55:00Z",
+      "due": "2026-11-16T07:55:00Z",
+      "default": "Objections 1-5 stand as fixed; S2 marks P2-S2-home-3 ready when its checks pass, and any new objection becomes a follow-up task.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R23",
+      "from": "S2",
+      "to": "lead",
+      "ask": "Grant client/scripts/home_parts.gd and client/scripts/home_parts.gd.uid as P2-S2-home-3's exceptions (precedent S1-R27). The S2-R20 fixes took client/scripts/home.gd to 1204 lines, over gdlint's max-file-lines of 1000, and the pre-check on a3274abe failed on that alone. 13ff046f moves the raid notice (HomeParts.Raids) and the purse's large-text builders (HomeParts.large_strain, hang_full, below) there unchanged; home.gd is 982 lines; the FIT stills and the draw calls are the same.",
+      "files": [
+        "client/scripts/home_parts.gd",
+        "client/scripts/home_parts.gd.uid"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-15T20:45:00Z",
+      "due": "2026-11-16T08:10:00Z",
+      "default": "The helper stays as committed and P2-S2-home-3 is ready with it; the lead adds both paths to the task's exceptions when it merges.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R24",
+      "from": "S2",
+      "to": "K1",
+      "ask": "Through the lead: KitTabs' chosen tab's picture stands above the tab's declared height (tab_height + RISE 18). At 200% it rises about 40 points past the chosen tile's top (the TextureRect's rect is 81 x 81 points, anchored center-bottom at offset_bottom -5 with the bob's 2 on top), so on home it reached the goal panel (AD's objection (a) on S2-R22). Keep the picture within the declared height at every text size, or declare the height it takes, so screens over the dock can reserve it. Until then home reserves it itself (HomeParts.reserve_lift: the tabs' top margin, about 36 points at 200%). Its cost is in docs/art/tracks/home-screen.md, Part 3, 'What (a) costs': at 200% with the raid notice up the realms' chips give way in pt_BR, fr and en on a phone 900 points tall, and a darker band of the galaxy's edge shows over the dock at pt_BR 200%.",
+      "files": [
+        "client/ui/kit_tabs.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-15T23:30:00Z",
+      "due": "2026-11-16T23:30:00Z",
+      "default": "Home keeps reserving the lift (HomeParts.reserve_lift); the three 200% notice cases (pt_BR, fr, en 900 tall) keep their chips hidden until KitTabs changes, and home needs no change when it does.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R25",
+      "from": "S2",
+      "to": "AD",
+      "ask": "Re-check only S2-R22's objections (a) to (e) on claude/ui-screens-home at the ready commit 823d2eac (one round, M12). Reproduce with `FIT=1 bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`: (a) TEXT=200 in en, de, CONTRAST=1: the chosen tab's picture clear of the goal and Collect; (b) TEXT=200 in en, de, CONTRAST=1: every realm pin in one form; (c) LOCALE=de at 100%: the purse in one row; (d) TEXT=200 en: '1,240 experience to go · / Keeper 25'; (e) LOCALE=de TEXT=200: Collect's side padding. FIT now checks (a) to (c). Please also rule on one trade (a) makes: at 200% with NOTICE=1 the realms' chips give way in pt_BR, fr and en with TALL=900 (FIT fails on 'no realm marked'), as the reserve takes the world's room; the fix is KitTabs' (S2-R24). Answers in docs/art/tracks/home-screen.md, Part 3, \"AD's S2-R22 review\" and 'What (a) costs'.",
+      "files": [
+        "client/scripts/home.gd",
+        "client/scripts/home_parts.gd",
+        "client/world/universe_pins.gd",
+        "client/tests/shots/universe_home.gd",
+        "docs/art/tracks/home-screen.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-15T23:30:00Z",
+      "due": "2026-11-16T11:30:00Z",
+      "default": "(a) to (e) stand as fixed, and the three 200% notice cases wait for S2-R24; S2 keeps P2-S2-home-3 ready, and any new objection becomes a follow-up task.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R26",
+      "from": "S2",
+      "to": "K1",
+      "ask": "Through the lead: KitLayout.tap (client/ui/kit_layout.gd, lines 82-83) connects button_down and button_up to Motion.press again on a button that already has them, and every home render logs \"Signal 'button_up' is already connected\" (and button_down). Main logs it too (AD's note on S2-R22). Home reaches it from UniverseBadge. Guard the connects with is_connected, or connect once.",
+      "files": [
+        "client/ui/kit_layout.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-15T23:30:00Z",
+      "due": "2026-11-17T23:30:00Z",
+      "default": "The log line stays; it changes nothing on the screen.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R27",
+      "from": "S2",
+      "to": "AD",
+      "ask": "Re-check only objection (f) from your S2-R25 answer on claude/ui-screens-home at the ready commit 8ff5ee23 (one round, M12). Reproduce with `FIT=1 TEXT=200 LOCALE=de bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`: each realm pin shows its icon and its level's disc on a plate of their size (260 px wide; no empty half, no level over the icon). For comparison, TEXT=200 in en and with CONTRAST=1 show numbered chips, as before. The cause was a one-frame lag: the plate resized at once but its row re-sorted the disc a frame later, and the still was taken on that frame; UniversePins._draw now places the icon and disc from the plate's own size. The form (icon and level where every realm has room for it, objection (b)) is kept. Answer in docs/art/tracks/home-screen.md, Part 3, \"AD's S2-R25 review\".",
+      "files": [
+        "client/world/universe_pins.gd",
+        "docs/art/tracks/home-screen.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-16T02:45:00Z",
+      "due": "2026-11-16T14:45:00Z",
+      "default": "(f) stands as fixed; S2 keeps P2-S2-home-3 ready, and any new objection becomes a follow-up task.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R28",
+      "from": "S2",
+      "to": "AD",
+      "ask": "Re-check only objection (g) from your S2-R27 answer on claude/ui-screens-home at the ready commit 398a38cb (one round, M12). Reproduce with `FIT=1 TEXT=200 LOCALE=de bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`, and the same with CONTRAST=1: the four side buttons (Defence with its raid badge and timer, Season, Lab, Shop) stay as icon-only discs in the two edge columns, and the seven realms are numbered chips in the band between them. English at 200% keeps them too. The cause was one realm (Outer 6) finding no place as a chip in the first lay, which made home give the columns away: UniversePins.follow now lays each realm that failed first in turn, and home gives the side buttons' room away only when UniversePins.short() says a realm still has no place after that. With NOTICE=1 the give-way stands as before, and the FIT check \"no realm marked\" is not loosened. pt_BR, pt_PT and fr cannot keep the buttons until K1's height work (S2-R24, P2-K1-tabs-2): their three-line goal leaves a band of 399 px (y 886 to 1285 at 1080x2340); with the columns kept, seven chips of 134x122 and the raid card leave a 149 px hole where a chip with its gap needs 152, and a trial search on a half-chip grid found no extra place. So at 200% without the notice those three give the side buttons' room away (each place stays on the badge's menu); `LOCALE=pt_BR` with the same command shows it. Per your S2-R27 answer, please accept pt_BR (and pt_PT and fr, which share its goal length) as a trade like (a); German keeps them. Answer in docs/art/tracks/home-screen.md, Part 3, \"AD's S2-R27 review (objection (g))\".",
+      "files": [
+        "client/world/universe_pins.gd",
+        "client/scripts/home.gd",
+        "docs/art/tracks/home-screen.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-16T03:58:00Z",
+      "due": "2026-11-16T15:58:00Z",
+      "default": "(g) stands as fixed; the pt_BR, pt_PT and fr give-way at 200% is accepted as a trade like (a) until S2-R24; S2 keeps P2-S2-home-3 ready, and any new objection becomes a follow-up task.",
+      "escalate_to": "lead"
     }
   ],
-  "answers": []
+  "answers": [],
+  "next_step": "Ready at 398a38cb: AD re-checks (g) only (S2-R28); the lead records home/200 (S2-R21), runs the gate and merges; K1 takes S2-R24 and S2-R26 (P2-K1-tabs-2)."
 }

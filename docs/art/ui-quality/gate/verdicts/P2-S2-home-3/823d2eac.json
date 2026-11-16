@@ -1,0 +1,36 @@
+[
+  {
+    "task_id": "P2-S2-home-3",
+    "sha": "823d2eac9fe3fe7a3b622d79912676fd06cb13ee",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-16T00:54:00Z",
+    "item": "home at 100% text",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes. The gold Collect 3.4k button above the tab bar is the largest light, saturated control and the eye lands on it first, in colour and in grayscale. The experience panel beside it is the same height but darker and information only, so it is not both larger and heavier (ruling v3). The cream island-label pills, the currency strip and the selected Islands tab are each about half its size or less and fall in behind it. All three put Collect at or above the pass anchor's Level up, which shares its screen with a full-width light Heist strip."
+  },
+  {
+    "task_id": "P2-S2-home-3",
+    "sha": "823d2eac9fe3fe7a3b622d79912676fd06cb13ee",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-16T00:54:00Z",
+    "item": "home at 100% text",
+    "quality": "Character presence",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes. The one interface character is the Keeper portrait top left, a cream cat with a wand in a gold ring, about 90 px in the 960 px still: larger and easier to read than the pass anchor's heist crew portraits (about 55 px, Hollow nearly a smudge). Face, eyes and dark outlines read against the purple backing in colour and grayscale; the fur has stepped soft toon shading with no photographic grain, sheen or gloss, and it is no flat sticker. The island figures are the world and were not counted. All three judged the look from the 960 px still; no full-resolution crop was supplied."
+  }
+]

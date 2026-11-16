@@ -4,28 +4,24 @@
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P2-AD-board-4",
-  "task_state": "claimed",
-  "claimed_at": "2026-11-13T11:30:00Z",
-  "lease_until": "2026-11-13T14:30:00Z",
-  "updated_at": "2026-11-13T11:55:00Z",
-  "expected_next_update_by": "2026-11-13T12:40:00Z",
+  "task_id": "P2-AD-board-5b",
+  "task_state": "working",
+  "claimed_at": "2026-11-16T07:47:00Z",
+  "lease_until": "2026-11-16T10:47:00Z",
+  "updated_at": "2026-11-16T09:20:00Z",
+  "expected_next_update_by": "2026-11-16T10:20:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "344353fe69367770f0bbec7fbcbf72bf8e6031ba",
-    "next_step": "board 4 posted (does not stand, objections A-E as AD-R26 to AD-R30); pre-check then ready"
+    "last_green_sha": "8b4b58273d862ac0223f7d2b02ae00afa2fd679c",
+    "next_step": "Pre-check the board 5b write-up, record it, then mark ready."
   },
-  "precheck": {
-    "sha": "4a48eef9b4fb9fa9164ead1f9a8f7f82d094149f",
-    "exit": 0,
-    "finished_at": "2026-11-13T09:31:47Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
   "ready_sha": null,
-  "stop_at": "2026-11-14T21:00:00Z",
+  "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
-    "M12"
+    "M12",
+    "M23"
   ],
   "requests": [
     {
@@ -385,6 +381,176 @@
       "due": "2026-11-15T11:55:00Z",
       "default": "fold it into the S1 follow-up task with AD-R27",
       "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R31",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 5 objection A: at 200% text the character's Level up button does not fit its words. English: the '200' price chip covers the label ('LEVEL UF') and the '4' of 'Level 3 → 4'. German: the label breaks mid-word ('AUFSTEIG / EN') and 'Stufe 3 → 4' spills below the button outside its panel; the shot prints 'fit FAIL'. Measure the label against the width left after the price chip; wrap at word boundaries only, shrink, or stack the price under the label as the key frame does; add the English and German 200% shots to the fit check. Details in board-5.md, items 3 and 4.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-5.md",
+        "client/scripts/character_screen.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-15T20:50:00Z",
+      "due": "2026-11-17T20:50:00Z",
+      "default": "the lead opens a follow-up task P2-S3-character-2 for S3 holding AD-R31 to AD-R34 and AD-R37",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R32",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 5 objection B: at 200% text the character's tabs and ability header fall below the first screen (pt_BR), or the tab strip shows two tabs with Compare cut off (English, German); the subtitle and level line take two or three lines. Show the unselected tabs icon-only at 200% as the key frame does, let the subtitle and level line shrink to one line, and keep the tabs and the ability header on the first screen in every locale. If kit_tabs.gd needs an icon-only form, that part is a request to K1. Details in board-5.md, items 3 and 4.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-5.md",
+        "client/scripts/character_screen.gd",
+        "client/scripts/kit_tabs.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-15T20:50:00Z",
+      "due": "2026-11-17T20:50:00Z",
+      "default": "the lead opens a follow-up task P2-S3-character-2 for S3 holding AD-R31 to AD-R34 and AD-R37; any kit_tabs.gd part goes to K1 as a request",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R33",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 5 objection C: at 100% text the first screen is cut short. Character: the fourth info card is cut mid-line in every locale (the stacked tab strip and the ability card's own tag line are taller than the key frame's). Settings: 'Motion: full' is below the fold in English, and the whole second section in pt_BR and German. Put the tab icons inline and the ability tag inline with its heading; tighten the settings spacing and header pills so both switch rows fit at 100% in every locale. Details in board-5.md, items 1, 2, 6 and 7.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-5.md",
+        "client/scripts/character_screen.gd",
+        "client/scripts/settings_screen.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-15T20:50:00Z",
+      "due": "2026-11-17T20:50:00Z",
+      "default": "the lead opens a follow-up task P2-S3-character-2 for S3 holding AD-R31 to AD-R34 and AD-R37; the settings half goes to P2-S3-settings-2",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R34",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 5 objection D: the character's level tag runs over the hexagon badge's top edge and is clipped or merges into it at 200%; the '200' price is a flat white figure; the Level up label has no outline; at 200% the subtitle and level line on the backdrop have no outline. Keep the tag inside the badge at every text size, give the price and the Level up label the kit's display treatment, and outline the backdrop text at 200% (at 100% they may stay plain, as the key frame). Details in board-5.md, items 1 to 4.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-5.md",
+        "client/scripts/character_screen.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-15T20:50:00Z",
+      "due": "2026-11-17T20:50:00Z",
+      "default": "the lead opens a follow-up task P2-S3-character-2 for S3 holding AD-R31 to AD-R34 and AD-R37",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R35",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 5 objection E: at 200% text in German the settings title breaks mid-word ('Einstellung / en') beside a tiny gear, and the Stillness card's text is cut at 'to guards and'. Wrap the title at word boundaries only or shrink it to fit; let the Stillness card grow to its text; add the German 200% settings shot to the fit check. Details in board-5.md, item 9.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-5.md",
+        "client/scripts/settings_screen.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-15T20:50:00Z",
+      "due": "2026-11-17T20:50:00Z",
+      "default": "the lead opens a follow-up task P2-S3-settings-2 for S3 holding the settings half of AD-R33, AD-R35 and AD-R36",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R36",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 5 objection F (light): on settings at 100% no plate leads in the grayscale squint; every cream plate has the same value and the gate passed hierarchy by one vote (ppffpf). Give the A−/A+ steppers the gold fill as the key frame does, and/or strengthen the group header pills. Details in board-5.md, item 6.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-5.md",
+        "client/scripts/settings_screen.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-15T20:50:00Z",
+      "due": "2026-11-17T20:50:00Z",
+      "default": "the lead opens a follow-up task P2-S3-settings-2 for S3 holding the settings half of AD-R33, AD-R35 and AD-R36",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R37",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 5 objection G (light): the character's stage behind the pedestal ends in a hard horizontal edge about a third of the way down, then the blue backdrop starts; the key frame's sky runs on. Fade the stage's bottom edge into the backdrop. Details in board-5.md, items 1 to 3.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-5.md",
+        "client/scripts/character_screen.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-15T20:50:00Z",
+      "due": "2026-11-17T20:50:00Z",
+      "default": "the lead opens a follow-up task P2-S3-character-2 for S3 holding AD-R31 to AD-R34 and AD-R37",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R38",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 3b objection H, kit half: at 200% text, the chosen tab's picture stands above the tab bar. Home then holds about 68 px (49 pt) over the bar's gold edge, so the realms' band is too short. The 200% pt_BR key frame keeps the chosen tab inside its plate. At the larger text sizes, keep the chosen tab's picture within the bar's height (the rise in kit_tabs.gd), and say in the handoff how much height home can drop from reserve_lift. Details in board-3.md, 'Round 2 (board 3b)'.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-3.md",
+        "client/ui/kit_tabs.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-16T05:55:00Z",
+      "due": "2026-11-18T05:55:00Z",
+      "default": "the lead opens P2-K1-tabs-3 for K1 holding AD-R38; P2-S2-home-4 depends on it",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R39",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 3b objection H, home half: once the chosen tab stands inside the bar at 200% (AD-R38), drop or shrink HomeParts.reserve_lift and give the height to the realms' band. At 200% the four side buttons (icon-only discs) and the realm chips must show in pt_BR, pt_PT and French, with and without the raid notice, and in English and German with the notice. Add these cases, plus English at 900 tall, to the fit check, so that a missing side button or 'no realm marked' fails it. Details in board-3.md, 'Round 2 (board 3b)'.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-3.md",
+        "client/scripts/home.gd",
+        "client/scripts/home_parts.gd",
+        "client/tests/shots/universe_home.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-16T05:55:00Z",
+      "due": "2026-11-18T05:55:00Z",
+      "default": "the lead opens P2-S2-home-4 for S2 holding AD-R39, depending on P2-K1-tabs-3; then P2-AD-board-3c re-checks only H",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R40",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 5b objection K: at its highest level (fixture character 4, level 10 of 10) the character screen runs off the phone at 200% in English, pt_BR and German. The sticky bar's 'at the highest level' pill (CHARACTER_TOP_LEVEL, character_screen.gd _actions) keeps all its words, forces the screen wider than 1080, cuts the next arrow, subtitle, tab strip and info grid, and the fit check fails (14 lines in pt_BR and German). Fix: at large text show the pill as the star icon alone with an accessibility_name carrying the words (as objection H did for the state pill), or wrap it at word boundaries inside the bar; add character 4 at 200% in en, pt_BR and de to fit_character.sh. Details in board-5.md, 'Round 2 (board 5b)'.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-5.md",
+        "client/scripts/character_screen.gd",
+        "docs/art/shots/menu-screens/fit_character.sh"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-16T09:20:00Z",
+      "due": "2026-11-18T09:20:00Z",
+      "default": "the lead opens a follow-up S3 task (P2-S3-character-3) holding AD-R40 and AD-R41; then a board 5 round 3 (P2-AD-board-5c) re-checks only K and L",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R41",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 5b objection L (light, quality 8): S3-R18's profile row on the Account tab ('Profile and stats', screen_account.gd profile_row) fails checks.py value-steps, ΔL* 2.5 on settings-account-100 and 3.6 on settings-account-de; it is the only failing control on the tab. Fix: give the row the plate the Access tab's rows use (a cream row or a lit card) so it is at least 2 value steps off the night, and re-run value-steps on both shots. Details in board-5.md, 'Round 2 (board 5b)'.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-5.md",
+        "client/scripts/screen_account.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-16T09:20:00Z",
+      "due": "2026-11-18T09:20:00Z",
+      "default": "folded into the same follow-up S3 task as AD-R40; board 5 round 3 re-checks it with K",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
@@ -412,6 +578,73 @@
       "request_id": "S2-R20",
       "answer": "AD's review of P2-S2-home-3 at c0b2bc49 on claude/ui-screens-home (the newer head 14fdcdfe only merges main's result files; the home code is unchanged). Renders: client/tests/shots/universe_home.gd, FIT=1, in en/pt_BR/de at 100%, at TEXT=200 (en, pt_BR, de), with NOTICE=1 (en 100%, pt_BR 200%, de 200%) and CONTRAST=1 (en, pt_BR), beside art/ui/keyframes/01-home*. Every render prints 'fit ok'. FIXED and standing from board 3: A (Collect and the goal stay on screen in every state; at pt_BR 200% with the notice it is one line '! 2 · Ver · x' above Collect, as the key frame); most of C (goal bar at every size, numbered chips and the chosen tab's name at 200%, side buttons as icon discs at 200%, all five dock labels at pt_BR 100%); the goal on one line in en 100% and two in pt_BR; all seven realms above the panels. OBJECTIONS, in order of weight (M12, all in this round): (1) Pins detached from their realms (from B's fix, UniversePins._settle_at). At 100% in en, pt_BR, de and high contrast, pins pushed clear of the side buttons stack in a centre column: Lantern Vale's and Tidehold's pins sit over the Heart island and hide its tower (their islands are left and right), the Crystalline pin sits on the Skyfield island, in pt_BR five pins form one column. The Defence badge '2' still abuts the Skyfield pin's left edge (en, pt_BR, de). Key frame 01-home: each pin over its own island, the Heart the large centrepiece. Fix: settle each pin within a short radius of its island's anchor (shrink or drop the name before moving it far), and keep a gap from the Defence badge. (2) The world shrinks with the notice up: at en 100% with NOTICE=1 the world is a thin band and five of seven pins lose their names (The Heart excepted); round 1 framed the realms well in this state. The notice line 'See how your defence / held' leaves 'held' alone on its line. Fix: the notice takes height from the goal/panels before the world, and its text balances its lines or fits one. (3) The 'Full' tag on Essence is dropped at pt_BR 100% ('Cheio'), de 100% and at 200% in every locale; only en 100% shows it. The key frames keep it (01-home 'Full', 01-home_text200_pt_BR 'Cheio'). Fix: keep the tag at every size and locale (stack it under the number if the row is short). (4) The strain chip at 200% en and pt_BR is small: '82% · Humming' on one line at about 100% size; the key frame 01-home_text200_pt_BR shows it large over two lines (de 200% already does this). Fix: the same two-line large form in every locale at 200%. (5) Minor: at pt_BR 100% the purse takes three rows (61,0 mil alone at full width in row 2); the pt_BR goal breaks 'Guardiao / 25' (S2-R19 already open); the high-contrast Collect label reads smaller than at 100%; at pt_BR and de 200% chips 2 and 6 (and 4/6) touch. (6) The dock's ISLANDS label still sits on the gold rim, and HEIST does too in high contrast: board 3's D, owner K1 (client/ui/kit_tabs.gd, P2-K1-tabs), not S2's. NOTES (not objections): the Defence timer, badges and locked Lantern Vale state lack fixture data; the companion's yaw clamp needs frames to verify. A re-check covers only what the fix changes.",
       "at": "2026-11-13T11:40:00Z"
+    },
+    {
+      "request_id": "S1-R29",
+      "answer": "AD's review of P2-S1-result-3 at d896f254 on claude/ui-screens-heist (code as at 5e844ac3), checked against board 4's full list (M23), not only A, B, D and E. Renders: client/tests/shots/screen_result.gd with SERVER=1 FIT=1 in en/pt_BR/de at 100% and 200%, CONTRAST=1 in en and pt_BR at 100% and en and de at 200%, the grayscale and colour-blindness sheets of en 100%, and the full, REDUCED=1 and TEXT=200 strips, alone and on a scratch merge with AIA's motion-3 head (f216de53), beside art/ui/keyframes/03-result*. Every still prints 'fit ok'; draw calls en 126/128/128 at 100%, 113/115/114 at 200%, HC 68/70/55/56, as your track says. MET: A (the three figures carry the home's Keeper finish: deep gold on the cream Starlight tile, cream on the dark tiles, heavy ink outline, hard drop, the same in high contrast; in grayscale the Starlight figure reads by its outline). B (at 200% the whole haul stands above the actions in en, pt_BR and de; de takes the hero one step down and keeps Sternenlicht, Essenz and Ruhm on the first screen). D (at 100% and 200% the coins land on the Starlight icon, above the number and beside it, the figure rolls +0, +83, +200, +375, +503, +508 as they land, and no frame has a coin on a rolling digit, alone and with AIA's curves; reduced: one coin, the figure set once). E (at 200% Home is the icon square in every language and the raid leads the bar). OBJECTION, one, from the re-check outside A to E (quality 13, the fold): F. At 200% in en, and in high contrast en 200%, the scroll stops a few points above the action bar in the middle of the line '✓ Re-simulated by the server: accepted', so only the tops of its letters show: a row of green ticks and dashes that reads as stray marks on the first screen (board-4/r2-F-fold-en200.png; the whole set in board-4/r2-result-200.png). It comes from E: the shorter bar lets one more line in. pt_BR and de 200% end on a whole line and are fine. The fix is yours to choose: a fade of about one line at the foot of the scroll under the bar, or a cut that never shows a part line (the bar's top or a whole line); the FIT check may assert no line ends within a cap-height of the bar. NOTES, not objections (carried from round 1 and the scratch merge): at 100% in pt_BR and de (and HC pt_BR) the crew card still goes under the action bar, which reads as a scroll and holds no first-screen fact; the fixture still has no idle crew, so the raid's second line shows only on Loud; with AIA's new curves the epic burst on this screen covers the kicker, the grade's first letter and the haul chip for about 130 to 200 ms and its sparkles cross the subline, and it clears before the first coin lands (board-4/r2-epic-burst-joint.png): I accept it for board 4b. S1-R28 (the draw-call records) is the lead's. So: fix F and the screen goes to board 4b as it stands; nothing else is asked.",
+      "at": "2026-11-15T20:32:00Z"
+    },
+    {
+      "request_id": "AIA-R26",
+      "answer": "AD's review of P2-AIA-motion-3's reward strips (art/ui/motion/strips/reward_*.png, art/ui/proof/motion_gray/*.png, art/ui/motion/clips/reward_*.gif) at f216de53, against board 4's motion qualities (4, 5, 7) and every round-1 note (M23), and on the real result screen through a scratch merge with S1's result-3 head (d896f254), full, reduced and at 200%. The strips STAND AS SHOT: no objection. MET: C/AD-R28 (the anticipation gathers on the prize: dust from about 270 ms, the ring and the sparkles drawn in from about 470 ms in epic, earlier and smaller in rare; the burst now spreads by tier, about the chest's size in common, wider in rare, about 2.5 times the chest in epic and in its high-contrast inked ring; the grayscale proofs read the gather and the burst in value). D/AD-R29 (in every tier the coins arc onto the counter's starglass icon and the figure rolls as each lands; no coin covers a digit; the reduced strip keeps one coin and one change of the figure). NOTES, not objections: the epic's first 250 ms or so reads as a short hold before the dust comes in, which I take as the beat before the gather; in your harness gold coins land on the pink starglass gem, while on the real screen they land on the gold Starlight star, so the mismatch stays in the harness; on the real screen the 2.8 epic burst covers the kicker, the grade's first letter and the haul chip for 130 to 200 ms and clears before the coins (board-4/r2-epic-burst-joint.png), accepted for board 4b. Mark the task ready when your checks pass.",
+      "at": "2026-11-15T20:32:00Z"
+    },
+    {
+      "request_id": "S2-R22",
+      "answer": "AD's re-check of S2-R20's objections 1-5 on claude/ui-screens-home at 13ff046f, checked against board 3's full list (M23). Renders: client/tests/shots/universe_home.gd with FIT=1 in en, pt_BR and de at 100% and 200%, fr at 200%, CONTRAST=1 in en, pt_BR and de at 100% and 200%, NOTICE=1 in en, pt_BR and de at 100% and 200%, beside art/ui/keyframes/01-home*. Every still prints 'fit ok'. OBJECTIONS 1-5 STAND AS FIXED: (1) en and pt_BR 100%: every pin sits by its own island, clear of the side buttons, with a gap from the Defence badge. (2) en 100% with NOTICE=1: all seven pins keep their names, the goal keeps its two lines as it has without the notice, and the notice breaks evenly ('See how your / defence held'). (3) The Full tag shows at 100% and 200% in en, pt_BR, de and high contrast (Full, Cheio, Voll; Plein in fr), under the amount at 200%. (4) The strain takes its two-line form at 200% in en, pt_BR, de and fr. (5) The pt_BR purse takes two rows at 100%; the high-contrast Collect label reads whole at 100% in en, pt_BR and de; the pt_BR and de chips at 200% keep their gaps and do not touch. NEW OBJECTIONS from the full list, for S2 to fix inside P2-S2-home-3 before its merge (M23), in order of weight: (a) quality 6 hierarchy, 200%, every language and high contrast: the chosen Islands tile's raised icon overlaps the bottom of the goal panel and the left end of its progress bar. Home leaves the tile's lift clear above the dock. If the lift reaches past the height the dock declares, that part is K1's, by request; the default is that Home reserves the lift. (b) quality 3 icons / 14 one idea, 200% en, de and high contrast: the realm markers mix two forms, icon and level chips for The Heart, Lantern Vale, Tidehold, Verdant and Emberreach, plain level numbers for Skyfield and Crystalline. pt_BR and fr show one form, as the key frame does. Use one form for every realm at a time. (c) quality 6 hierarchy, de 100% (and high contrast de 100%): the purse puts Essence ('61,0 Tsd.' with Voll) alone on a third, full-width row. It weighs more than the other two amounts and takes world space. Keep the three amounts in one row (shrink the amount as AMOUNT_LEAST does at large text), or keep that plate a third wide. (d) quality 2 display type, en 200% (and high contrast en 200%): the goal breaks '1,240 experience to / go · Keeper 25'. Break it as the key frame does ('1,240 experience to go · / Keeper 25'), with the even breaking the notice already uses. (e) Minor, quality 1 materials, de 200%: Collect's label '3,4 Tsd. einsammeln' runs to the slab's rounded ends with no side padding. Keep COLLECT_PAD at large text, or shrink the label. A re-check covers only what the fix changes, so send the new head and AD answers within the same cycle. Notes, not objections: 'Lantern Vale' and 'Humming' are untranslated in pt_BR and de (strings file); every render logs \"Signal 'button_up' is already connected to given callable 'GDScript::press'\", and S2 should say whether main logs it too; the pt_BR goal is not number-first (S2-R19 stands as answered). Default if S2 disputes (a): Home reserves the lift and AD re-checks.",
+      "at": "2026-11-15T22:16:00Z"
+    },
+    {
+      "request_id": "S1-R30",
+      "at": "2026-11-15T23:58:00Z",
+      "answer": "Objection F is met at 904a3567; the result stands for P2-S1-result-3 (M20: it may merge). AD rendered the result shot with SERVER=1 FIT=1 at en 100%, en 200%, high contrast en 200%, pt_BR 200%, de 200% and high contrast pt_BR 200%: every render printed 'fit ok', and the draw calls match S1's (126, 113, 55, 115, 114, 57). At 200% the first screen ends on a whole line with a clean gap above the bar: en and high contrast on 'Entry fee 2,840 returned', de on 'Eintrittsgebühr 2.840 erstattet', pt_BR on 'Taxa de entrada de'; no tops of letters show anywhere (board-4/r3-F-fold-200.png, r3-F-result-six.png). Checked against board 4's full list (M23): A, B, D and E still hold, and nothing new holds the board. One note for board 4b, not an objection: in pt_BR at 200% the first screen ends on the unfinished phrase 'Taxa de entrada de'; keeping a label's lines together at the fold (lifting the edge onto the gap above the whole label) would read better, if it costs no draw call."
+    },
+    {
+      "request_id": "S2-R25",
+      "answer": "AD's re-check of S2-R22's objections (a)-(e) on claude/ui-screens-home at 823d2eac, checked against board 3's full list (M23). Renders: client/tests/shots/universe_home.gd with FIT=1 in en, pt_BR and de at 100% and 200%, fr at 200%, CONTRAST=1 at 100% and 200%, NOTICE=1 in en, pt_BR, de and fr at 100% and 200%, and en NOTICE=1 TALL=900 at 200%. FIT matches S2's: 24 of 27 print 'fit ok'; only pt_BR, fr and en TALL=900 at 200% with the notice fail, on 'no realm marked over the whole universe'. Draw calls match S2's (en 100% 144, en 200% 119, high contrast 144 and 119). OBJECTIONS (a), (c), (d) AND (e) STAND AS FIXED: (a) at 200% in en, de and high contrast the chosen Islands tile's raised icon is clear of the goal panel and Collect. (c) de 100%: the purse keeps its three amounts in one row. (d) en 200%: '1,240 experience to go · / Keeper 25'; de 'noch 1.240 EP · / Hüter 25'. (e) de 200%: '3,4 Tsd. einsammeln' has side padding inside the slab. (b) holds in en and high contrast at 200% (seven numbered chips, one form) and in pt_BR and fr. ONE OBJECTION, inside (b)'s scope, for S2 to fix inside P2-S2-home-3 before its merge: (f) quality 3 icons / 14 one idea, de 200% (without the notice): every realm takes the same form, but that form is broken. Each pin is a wide cream plate with the realm's icon disc at its left, the level number drawn over the icon, and an empty cream body where the name was: the name is dropped, the plate keeps the name's width. The seven plates cover most of the universe, and the strain chip sits among them (board-3/r2-home-de200-pins.png, r2-home-200.png). Size the plate to what it holds at each step, or take the numbered chip that en takes at 200%. Default: at 200% every language takes the numbered chips as en does. A re-check covers only (f): send the new head and AD answers in the same cycle. THE TRADE (a)'s fix makes, ruled: ACCEPTED FOR HOME-3, NOT FOR BOARD 3b. At 200% with the notice, pt_BR, fr and en TALL=900 drop every realm chip together; en and de at the default height keep all seven (board-3/r2-home-notice-200.png). Dropping all of them at once beats mixing forms or covering the world, and Collect, the goal, the notice and the dock stay whole, so the screen still reads. But in those three cases the universe is a thumbnail of about 70 pt with no realm marked, and quality 14 does not stand on that. Leave the FIT check failing on these cases (do not loosen it). Board 3b re-checks them once S2-R24 (KitTabs, K1) gives back dock height, and then expects 'fit ok' with every realm marked. NOTES, not objections: at 200% in de and pt_BR the side buttons give way (the documented trade, their places on the badge menu); in de 100% the dock labels 'GESETZE' and 'RAUBZUG' nearly touch; the empty band of about 50 pt under the dock labels is the same on main (K1's safe margin, board 5's note), not home-3's; 'Humming' and 'Lantern Vale' are still untranslated in pt_BR, de and fr (strings file).",
+      "at": "2026-11-16T01:04:00Z"
+    },
+    {
+      "request_id": "S3-R15",
+      "answer": "AD's preview of the character screen's stills on claude/ui-screens-meta at 73afe675 (the screen's code as at 45ca3158), against board 5's objections A, B, C, D and G and its full list (M23). AD ran docs/art/shots/menu-screens/fit_character.sh: all eight shots print 'fit ok' (100% and 200% in en, pt_BR and de, high contrast in en and pt_BR), and AD's renders match the committed stills pixel for pixel. Viewed beside art/ui/keyframes/04-character*: the gate's three, the 100% shots in pt_BR and de, the 200% shots in en and de, high contrast pt_BR, the 200% pt_BR scroll, and Stats and Compare at 100% and 200% pt_BR. OBJECTIONS A, B, C, D AND G STAND AS FIXED: (A) at 200% Level up fits its words in every language: the display-face label whole ('Level up', 'Subir de nível', 'Aufsteigen'), the price chip clear of it, the level line broken only between words ('Level 3 / → 4', 'Stufe / 3 → 4'), as the key frame. (B) at 200% the open tab's word with two icons, the one-line subtitle and level line, and the ability header stand above the tray in en, pt_BR and de. (C) at 100% all four facts stand whole in en, pt_BR and de, with the tab icons and the ability tag inline. (D) the level tag sits inside the hexagon at both sizes; the price wears the kit's white numerals with their outline; the Level up label and the backdrop words wear the ink outline. (G) the stage's foot fades into the night with no edge (board-5/r2-character-100.png, r2-character-200.png). ONE NEW OBJECTION from the full list, for S3 to fix inside P2-S3-character-2 before its merge (M23): (H) quality 9 character presence, 200% in every language: B's fix shortened the stage, and the status chip now covers the character. In pt_BR 'trabalhando' runs across the stage's middle and hides the whole head (only the ears show), on the Heist, Stats and Compare tabs; in en ('working') and de ('arbeitet') it covers half the face. Round 1's 200% stills and the 200% key frames show the whole face between the count and status chips (board-5/r2-character-200-stage.png). Keep the face clear of every chip and arrow at 200%: keep the status chip in its corner (icon only at 200%, with the word in its accessible name, or the word moved to the subtitle line), or set the two chips on their own row and the character under them. Default: at 200% the status chip shows its icon only, its word in the accessible name, and the head sits between the arrows. A re-check covers only H: send the new head and AD answers in the same cycle. NOTES, not objections: at 200% the ability header's plate runs under the tray, its words above it; about 25 pt of K1's bottom margin (board 5's note, the tray about 65 pt off the foot against 40 pt) would close it, and board 5b looks again. At 100% the facts panel ends in a flat clip under the fourth row, where the key frame closes the panel; it reads as a scroll edge. High contrast keeps the royal blue backdrop (K1, C75, board 5's note stands). The content's words are in English in pt_BR and de (board 5's note stands). Stats and Compare read well at 100%; Compare marks the higher value green on both sides, and the figures carry the meaning without the colour.",
+      "at": "2026-11-16T01:11:00Z"
+    },
+    {
+      "request_id": "S3-R16",
+      "answer": "H stands as fixed at 6b7e6b42. AD rendered the five 200% shots (en, pt_BR, de, pt_BR TAB=1 and TAB=2) with FIT=1: fit ok, and all five match S3's stills pixel for pixel. At 200% the state is the icon alone and the whole head stands clear in every locale and tab; the words stay in the accessible name and tooltip. 100% and high contrast are unchanged. P2-S3-character-2 has no open AD objection and may merge. See board-5.md, 'Re-check of objection H (S3-R16)'.",
+      "at": "2026-11-16T01:59:00Z"
+    },
+    {
+      "request_id": "S2-R27",
+      "answer": "(f) stands as fixed at 8ff5ee23: with FIT=1 TEXT=200 LOCALE=de each realm pin is the realm's icon and its level's disc on a plate of their size, with no empty half and no level over the icon (fit ok, 118 calls); de 200 high contrast, pt_BR 200, en 200 and de 100 fit ok too. One new objection, (g), found on the full-list check (M23), holds P2-S2-home-3; it was already there at 823d2eac and AD missed it in S2-R25. At 200% without the notice, in pt_BR and German (and German high contrast), the four side buttons are gone: Defence with its raid badge and timer, Season, Lab and Shop. AD-R24 in home-3's done_when asks for them as icon-only discs at 200%, and both 200% key frames (01-home_text200, 01-home_text200_pt_BR) keep them at both edges with the realm chips between them; English at 200% keeps them. Fix: at 200% keep the four side buttons as icon-only discs in two edge columns in every locale, the realm chips in the band between them; in German take the numbered chips where the icon-form pins leave no room for the side columns. If pt_BR truly cannot keep them until K1's height work (S2-R24), say so in the re-check request and AD accepts pt_BR as a trade like (a), but German keeps them. Default: at 200% every locale takes numbered chips and the side buttons stay icon-only at the edges; with NOTICE=1 the current give-way stands until P2-K1-tabs-2 (board 3b re-checks it). A re-check covers only (g). See board-3.md, 'Re-check of objection (f) (S2-R27)'.",
+      "at": "2026-11-16T02:57:50Z"
+    },
+    {
+      "request_id": "S3-R17",
+      "answer": "C, E and F stand as fixed at 60560762. AD re-ran fit_settings.sh (all ten shots fit ok) and also rendered Game and Account at 100% in en and de, Account at 200% pt_BR and Game at 200% en (all fit ok). C: at 100% English shows both switch rows above the dock; pt_BR and de show the second heading and High contrast with Motion below the chevron, as the pt_BR key frame does (board 5's item 7 was wrong to say that key frame shows both rows). E: at 200% German reads 'Einstellungen' whole, the gear is larger, the Stillness card shows its whole law. F: both As are gold, as on key frames 05 and 05-settings_hc, and lead the Access tab, high contrast too. One new light objection, I, found on the full-list check (M23), holds P2-S3-settings-2: on the Account tab the group heading is a small gold caps label ('ACCOUNT', 'KONTO', 'CONTA'), where every other group heading on the screen (Access, Seeing and comfort, Sound, Play) is the header pill; give the Account group the same header pill in client/scripts/settings_screen.gd. Default: S3 makes that change, adds an Account 100% shot to fit_settings.sh, and a re-check covers only I. Notes carried, not holding: the gear at 200% is still smaller than the key frame's; the dock height (K1, ui.gd); the selected tab's brown (K1). See board-5.md, 'Preview of settings-2 (S3-R17)'.",
+      "at": "2026-11-16T03:02:34Z"
+    },
+    {
+      "request_id": "S3-R19",
+      "answer": "I stands as fixed at 25ed9fd9 (and at head 002b91db, no client file changed since): the Account group is headed by the header pill ('Account', 'Konto', 'Conta') like Access, Seeing and comfort, Sound and Play; the gold caps label is gone at 100%, 200% and in high contrast. fit_settings.sh's twelve shots fit ok; Account at 100% pt_BR, 200% pt_BR and en, and high contrast en fit ok too. Full-list check (M23): the only client change since 60560762 is settings_screen.gd. P2-S3-settings-2 has no open AD objection. Carried, not holding: _hide_kicker hides AuthPanel's first child, so if the signed-in or device layout ever opens with another node, that node would vanish (board 5b checks the signed-in tab); the gear at 200%, the dock height and the selected tab's brown (K1). board-5.md, 'Re-check of objection I (S3-R19)'.",
+      "at": "2026-11-16T03:53:41Z"
+    },
+    {
+      "request_id": "S2-R28",
+      "answer": "Answered ahead of filing: S2's handoff names 398a38cb as the (g) fix and the request as S2-R28. This answer holds for 398a38cb and for any later home-3 head whose client files do not differ from it. (g) stands as fixed: at 200% without the notice, German and German high contrast keep the four side buttons as icon-only discs in two edge columns (Defence with its raid badge and Lab on the left, Season and Shop on the right), with seven numbered chips between them, as English does (en and en high contrast unchanged). pt_BR, pt_PT and fr give the side buttons away at 200%, each kept on the badge's menu, because their three-line goal leaves 149 px where a chip needs 152. AD accepts this as the trade allowed for pt_BR, extended to pt_PT and fr for the same cause, until P2-K1-tabs-2 (S2-R24); board 3b re-checks them with (a)'s notice cases. FIT=1 fit ok on 200% de, de high contrast, en, en high contrast, pt_BR, fr and de with the notice, on 100% en and de, and on 100% pt_BR with the notice. Full-list check (M23): only home.gd and universe_pins.gd changed since 8ff5ee23, and 100% is unchanged in shape. P2-S2-home-3 has no open AD objection. board-3.md, 'Re-check of objection (g) (S2-R28)'.",
+      "at": "2026-11-16T04:00:52Z"
+    },
+    {
+      "request_id": "S3-R20",
+      "answer": "Preview of P2-S3-settings-2's Hierarchy fixes at 3854db00 (claude/ui-screens-meta), checked against board 5's full list (M23); only settings_screen.gd changed since 5fc97aac. The Hierarchy fixes stand: the hero-role title on card_gold leads in the grayscale squint at 100% and 200%, the 22-point gold stroked group headings outrank their rows, the Stillness sample on plate_dark no longer outweighs the title at 200% pt_BR, and the tab strip on seg_track_light sits a step under the cream cards. E, F and I stay fixed (200% de 'Einstellungen' whole, gold A steppers incl. high contrast, Account header pill). One new objection, J (C moved), holds settings-2: at 100% in pt_BR, German and high contrast pt_BR the taller title plate (+9 pt) and headings (+3 pt each) push the second section down about 15 pt, so the High contrast switch row has left the first screen and the 'Visão e conforto' / 'Sehen und Komfort' heading stands alone above the chevron; at 5fc97aac the row showed, as on the pt_BR key frame. Shots settings-pt_BR, -de, -hc-pt_BR list no switch row now (checks.py all: 6 results where 5fc97aac had 7). Fix (S3, settings_screen.gd): recover about 15 pt at 100% without undoing the Hierarchy fixes (title/heading plate vertical padding, TITLE_LEAD, HEADING_LEAD, group gaps; else the 20-point heading slot keeping gold and stroke), and show the High contrast row is listed again in those three shots. English 100% is unaffected. Notes for board 5b, not holding: card_gold's rim reads faintly; S3-R18's profile-row value-steps fail is in screen_account.gd; earlier notes stand. board-5.md, 'Preview of the Hierarchy fixes (S3-R20)'.",
+      "at": "2026-11-16T05:30:00Z"
+    },
+    {
+      "request_id": "S3-R21",
+      "answer": "J stands as fixed at 9e602fcc (claude/ui-screens-meta; d66e9521 merged with main). Only settings_screen.gd changed since the S3-R20 preview at 3854db00: PLATE_TOP 0 (no top/bottom padding on the title and heading plates). AD rendered the Access tab at 9e602fcc with FIT=1 at 100% pt_BR, de, en and high contrast pt_BR: all 'fit ok', each pixel-identical to S3's committed still (mean diff 0.0). The High contrast row is on the first screen again in pt_BR, de and hc pt_BR (switch-row 11 at y 622-674 pt of 845, under its heading, above the chevron, as on the pt_BR key frame); checks.py all passes on settings-pt_BR, -de, -hc-pt_BR and -100 (row 11 delta L* 67.2, 67.0, 75.0). English keeps both switch rows. The Hierarchy fixes are kept, and the plates still hold their words with room at 100%, at 200% de and on the Account tab. Against board 5's full list (M23) nothing new holds P2-S3-settings-2: S3 may mark it ready at 9e602fcc with the gate_request there; the lead may merge it with P2-AD-board-3b. Board 5b's notes stand. board-5.md, 'Re-check of objection J (S3-R21)'.",
+      "at": "2026-11-16T07:00:00Z"
     }
-  ]
+  ],
+  "next_step": "Pre-check, record, mark ready.",
+  "last_update": "2026-11-16T09:20:00Z"
 }

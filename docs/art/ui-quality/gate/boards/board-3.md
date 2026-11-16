@@ -18,6 +18,10 @@ already merged, so each objection goes to the lead as a request for a
 follow-up task in `docs/progress/status/AD.json`, each with a default. The
 same findings answer S2-R18 (the preview of home part 2).
 
+**Round 2 (board 3b, 16 November 2026): the board still does not stand.**
+A's core, B, C at 100% and D are fixed. One objection, H, is open. See
+["Round 2 (board 3b)"](#round-2-board-3b) at the end.
+
 ## How to read it
 
 - **Golden reference.** The home key frames that AD approved in place of
@@ -226,3 +230,198 @@ Notes carried to the next round, which do not hold the board:
 The board stands when objections A–D are fixed and re-shot, and AD has
 checked the new stills on this page. Under section 3.8 of the report, the
 board merges when AD lets it stand, with no 24-hour wait.
+
+## Preview of home-3 (S2-R25)
+
+AD re-checked S2-R22's objections (a) to (e) on `claude/ui-screens-home` at
+`823d2eac`, against this board's full list (M23). The full answer is S2-R25
+in `docs/progress/status/AD.json`. (a), (c), (d) and (e) stand as fixed. One
+objection, (f), holds P2-S2-home-3 until S2 fixes it: in German at 200%
+every realm pin is a wide, empty cream plate, with the level number drawn
+over the realm's icon.
+
+At 200% text: English, German, high contrast.
+
+![Home at 200%: en, de, high contrast](board-3/r2-home-200.png)
+
+German at 200%, the pins.
+
+![German 200% pins](board-3/r2-home-de200-pins.png)
+
+At 200% with the notice: en, de, pt_BR, fr, then en at 900 tall. AD
+accepts this for home-3: in pt_BR, fr and en at 900 the realm chips give
+way all together. It does not stand for board 3b, which re-checks these
+cases once S2-R24 (KitTabs) gives back dock height.
+
+![Home at 200% with the notice](board-3/r2-home-notice-200.png)
+
+German and English at 100%, the purse in one row:
+[`r2-home-100-purse.png`](board-3/r2-home-100-purse.png).
+
+## Re-check of objection (f) (S2-R27)
+
+AD re-checked objection (f) on `claude/ui-screens-home` at `8ff5ee23`, and
+the screen at 200% against this board's full list (M23). The full answer
+is S2-R27 in `docs/progress/status/AD.json`.
+
+**(f) stands as fixed.** With `FIT=1 TEXT=200 LOCALE=de`, each realm pin
+is the realm's icon and its level's disc on a plate of their size: no
+empty half, no level over the icon (fit ok, 118 calls). English at 200%
+keeps its seven numbered chips (fit ok, 119 calls).
+
+![German 200%, the pins at 8ff5ee23](board-3/r3-home-de200-f.png)
+
+**One objection, (g), holds P2-S2-home-3.** It was already there at
+`823d2eac`, and AD missed it then. At 200% text in pt_BR and German,
+without the notice, the four side buttons are gone: Defence with its raid
+badge and timer, Season, Lab and Shop. AD-R24 (in home-3's done_when) asks
+for them as icon-only discs at 200%. Both 200% key frames keep them at the
+edges, with the realm chips between them. English at 200% keeps them.
+
+From left: key frame 200% pt_BR, then the build at 200% in pt_BR, German
+and English.
+
+![200%: key frame pt_BR, build pt_BR, de, en](board-3/r3-home-200-sides.png)
+
+## Re-check of objection (g) (S2-R28)
+
+AD re-checked only objection (g) on `claude/ui-screens-home` at `398a38cb`,
+the commit S2's handoff names for (g). S2 then had its pre-check running
+and had not yet filed the request. The answer holds for `398a38cb` and for
+any later head of home-3 whose client files do not differ from it. Since
+`8ff5ee23` the only client changes are in `home.gd` and `universe_pins.gd`
+(M23). The full answer is S2-R28 in `docs/progress/status/AD.json`.
+
+AD rendered with `FIT=1`, and every shot printed "fit ok": 200% in German,
+German high contrast, English, English high contrast, pt_BR and French;
+200% in German with the notice; 100% in English and German; and 100% in
+pt_BR with the notice.
+
+**(g) stands as fixed in German, as the trade allows elsewhere.**
+
+- **German.** At 200% without the notice, German and German high contrast
+  keep the four side buttons as icon-only discs in two edge columns:
+  Defence with its raid badge, and Lab, on the left; Season and Shop on
+  the right. The realms take seven numbered chips between the columns,
+  which is what AD-R24 and both 200% key frames ask. German now matches
+  English, which keeps the same layout, in high contrast too.
+- **pt_BR, pt_PT and French.** These three still give the side buttons
+  away at 200%, and each one stays on the badge's menu. Their goal keeps
+  three lines, so the realms' band is about 100 px shorter than German's.
+  S2 measured the nearest miss: 149 px free where a chip needs 152. AD
+  accepts this as the trade the S2-R27 answer allowed for pt_BR. pt_PT
+  and French have the same cause, so the same trade covers them. It lasts
+  until P2-K1-tabs-2 (S2-R24) gives the tab its height back. Board 3b
+  re-checks all three, together with the notice cases of (a).
+- **With the notice up at 200%,** the side buttons give way in German too,
+  as the S2-R27 answer accepted until P2-K1-tabs-2.
+
+At 100% nothing has changed in shape. P2-S2-home-3 has no open AD
+objection.
+
+From left, at 200%: German, German high contrast, English, pt_BR, French,
+then German with the notice.
+
+![200%: de, de high contrast, en, pt_BR, fr, de with the notice](board-3/r4-home-200-g.png)
+
+Carried to board 3b, which do not hold home-3:
+
+- the three 200% locales without side buttons (above);
+- the (a) notice cases;
+- the darker band of the galaxy's plane at 200% in pt_BR (S2-R24).
+
+## Round 2 (board 3b)
+
+Posted by AD, P2-AD-board-3b, 16 November 2026, on the integration branch
+at `ee31b0d9`, with P2-S2-home-3 (`d6f0bad3`), P2-K1-tabs and
+P2-K1-tabs-2 (`000a7140`) merged. As M12 asks, only what the fixes changed
+is re-checked: objections A to D, and the items carried from the S2-R28
+re-check. Each is set beside key frame 01.
+
+AD rendered with `FIT=1` at 100% in English, pt_BR, pt_PT, French, German,
+high contrast and high-contrast pt_BR, and with the notice in English,
+pt_BR and German. At 200% AD rendered English, pt_BR, pt_PT, French,
+German, high contrast and high-contrast pt_BR, and with the notice in
+English, pt_BR, pt_PT, French and German, plus English at 900 pt tall.
+Every render printed "fit ok" except four notice cases at 200%: pt_BR,
+pt_PT, French, and English at 900 tall. Each of those printed "fit FAIL no
+realm marked over the whole universe".
+
+**Round 2 decision: the board does not stand.** B and D are fixed. A's
+hard defect is gone: Collect is on screen in every state. What is still
+open is one cause in two places, so it is a single objection, H, below.
+At 200%, home holds about 68 px over the tab bar for the chosen tab's
+raised tile. The key frame does not hold this space. Without it, the
+realms' band is too short in three places:
+
+- the side buttons in pt_BR, pt_PT and French;
+- the side buttons in every notice case;
+- the realm chips in four of the notice cases.
+
+### A to D
+
+| ID | Round 1 | Round 2 |
+|----|---------|---------|
+| A | At 200% pt_BR with the notice, Collect is gone. | **Fixed in its core.** Collect is on screen in every state rendered. The notice is now a one-line banner: the raid icon, "!2", See/Ver/Voir/Ansehen and a ✕ on a plate. **Still open (H):** with the notice up at 200%, the four side buttons go in every locale. In pt_BR, pt_PT and French, and in English at 900 tall, the world is a thumbnail with no realm chip. FIT fails there. |
+| B | At 100% the world is crowded: the Defence badge collides with Skyfield, and the goal runs into the realms. | **Fixed.** In English and pt_BR the world sits between the purse and the bottom panels. Verdant and Emberreach are clear of the goal and Collect. Defence's "2" is clear of the Skyfield pin (checked zoomed in). The goal is two lines beside Collect in English. In pt_BR it is one line under a full-width Collect. |
+| C | Content is dropped: the goal bar, the chips at 200%, the side buttons, and the dock labels in pt_BR. | **Fixed at 100%** (all five pt_BR dock labels and the goal bar are kept). **Fixed at 200%** in English, German and high contrast: numbered chips, icon-only side buttons in two edge columns, and the chosen tab's name. **Still open (H):** at 200% in pt_BR, pt_PT and French, the side buttons are still given away. That trade (S2-R28) was to last until P2-K1-tabs-2, and tabs-2 has now merged. |
+| D | The dock's labels run across the tiles' rims. | **Fixed.** The labels sit under the tiles at 100% and 200%. |
+
+### Objection
+
+| ID | Item | Quality | Objection | Proposed fix | Owner |
+|----|------|---------|-----------|--------------|-------|
+| H | Home at 200%: pt_BR, pt_PT and French, and every notice case | 8 content kept, 2 framing | The column holds about 68 px (49 pt) of empty space between the goal card and the tab bar's gold edge. In pt_BR at 200% without the notice, measured on the right half, the goal card ends at y 920 and the gold edge is at 991 (540×1170 render). It is there for the chosen tab's picture, which stands above the bar (`HomeParts.reserve_lift`). The 200% pt_BR key frame keeps the chosen tab inside its plate, and it uses that height for the side buttons. Because of this space, the realms' band misses the chips' 152 px by 3 px, so the side buttons go in pt_BR, pt_PT and French. With the notice banner up, the band also loses the side buttons in English and German, and loses every realm chip in pt_BR, pt_PT, French and short English. | At 200%, keep the chosen tab's picture inside the bar's height, as the key frame does (K1, in `kit_tabs.gd`'s rise for the larger text sizes). Then home drops or shrinks `reserve_lift` and gives the height to the realms' band (S2, in `home.gd` and `home_parts.gd`). The four side buttons and the realm chips must then show at 200% in pt_BR, pt_PT and French, with and without the notice. Add those cases to the fit check, so that "no realm marked" and a missing side button fail it. | K1, then S2 |
+
+The dock's foot is not part of H. Under the labels, the bar runs about
+108 px to the screen's edge. That is §21.1's 44-point safe area plus the
+20-point `tab_bar_lift` (8% of the frame), as the tokens set it. AD does
+not object to it.
+
+From left: key frame 200% pt_BR, then the build at 200% in pt_BR, pt_PT
+and French. The chips are back. The side buttons are not.
+
+![200%: key frame pt_BR, build pt_BR, pt_PT, fr](board-3/r5-home-200-pt.png)
+
+The 200% notice cases, from left: English, German, pt_BR, pt_PT, French,
+and English at 900 tall. Collect and the banner hold. The side buttons go
+in all six cases, and the chips go in the last four.
+
+![200% with the notice: en, de, pt_BR, pt_PT, fr, en 900 tall](board-3/r5-home-notice-200.png)
+
+What is fixed, from left: key frame 100%, then the build at 100% in
+English, pt_BR and high-contrast pt_BR (B, C at 100%, D).
+
+![100%: key frame, en, pt_BR, hc pt_BR](board-3/r5-home-100.png)
+
+At 200% in English, German and high contrast, from left: key frame 200%,
+then English, German and high contrast. These match the key frame's
+layout.
+
+![200%: key frame, en, de, hc](board-3/r5-home-200.png)
+
+The dock, from left: the key frame at 100%, the build at 100% pt_BR, and
+the build at 200% pt_BR with the notice.
+
+![The dock: key frame, pt_BR 100%, pt_BR 200% with the notice](board-3/r5-dock.png)
+
+### Notes carried
+
+- The fixture still has no notifications, no shield and no locked realm.
+  So the dock's count badges, the Defence timer "5 h 12 min" and Lantern
+  Vale's lock are still unchecked. Board 3c, or the first home shot with
+  that data, checks them.
+- The darker band of the galaxy plane at 200% in pt_BR (from S2-R28) is
+  the same 68 px gap as H. It goes when H is fixed.
+- The Heist tab is a raised capsule outline in the bar, where the key frame
+  has a gold disc. This is light, and it is K1's to weigh with H.
+- From round 1: the companion's yaw, the strain mark's cyan dot against
+  the key frame's pink bolt, and Collect's shine.
+
+### When the board stands
+
+When P2-K1-tabs-3 and P2-S2-home-4 (AD-R38 and AD-R39, or the tasks the
+lead opens in their place) are merged, AD re-checks only H, at 200% in
+pt_BR, pt_PT, French, English and German, with and without the notice,
+and in English at 900 tall. The board then stands if the side buttons and
+the realm chips show in every case and FIT prints "fit ok" for each.

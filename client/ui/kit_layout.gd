@@ -78,8 +78,17 @@ static func tap(panel: Control, pressed: Callable, spoken: String) -> Button:
 		box.visible = false
 	b.custom_minimum_size = Vector2.ZERO
 	b.set_anchors_preset(Control.PRESET_FULL_RECT)
-	# The card squashes and sinks as a button does (§21.8).
-	b.button_down.connect(Motion.press.bind(panel, true))
-	b.button_up.connect(Motion.press.bind(panel, false))
+	# The card squashes and sinks as a button does (§21.8), in place of the
+	# clear button's own press, which UI.action connected. Godot tells two
+	# connections of one signal apart by their method alone, not by what is
+	# bound to it, so the card's would be refused beside the button's
+	# ("already connected") and the card would never press (S2-R26): the
+	# button's is taken off first, and the card's made once.
+	for sig: Signal in [b.button_down, b.button_up]:
+		var down := sig == b.button_down
+		var mine := Motion.press.bind(panel, down)
+		if sig.is_connected(mine):
+			sig.disconnect(mine)
+		sig.connect(mine)
 	panel.add_child(b)
 	return b

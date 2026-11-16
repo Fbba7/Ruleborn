@@ -4,26 +4,21 @@
   "branch": "claude/ui-bake",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P2-K1-tabs",
-  "task_state": "claimed",
-  "claimed_at": "2026-11-13T10:55:00Z",
-  "lease_until": "2026-11-13T13:55:00Z",
-  "updated_at": "2026-11-13T11:57:00Z",
-  "expected_next_update_by": "2026-11-13T12:40:00Z",
+  "task_id": "P2-K1-tabs-3",
+  "task_state": "working",
+  "claimed_at": "2026-11-16T07:00:00Z",
+  "lease_until": "2026-11-16T10:00:00Z",
+  "updated_at": "2026-11-16T07:30:00Z",
+  "expected_next_update_by": "2026-11-16T08:15:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "48cd0dd7",
-    "next_step": "guard.sh at 48cd0dd7: ui guard: OK (home 144/113/144 draw calls, records 145/114/145; the tab's clear bar box no longer draws under its tile); main 03a04e41 merged at 6cd5467c; setup, build, check_all and guard.sh running on the merge, then the pre-check and ready"
+    "last_green_sha": null,
+    "next_step": "merge main, build, check_all, guard, handoff"
   },
-  "precheck": {
-    "sha": "b5d77219e9207b64e1f153a870b9d8d9995e23da",
-    "exit": 0,
-    "finished_at": "2026-11-12T23:56:10Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
   "ready_sha": null,
-  "stop_at": "2026-11-14T21:00:00Z",
+  "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
     "M2",
     "M4",
@@ -311,6 +306,36 @@
       "due": "2026-11-13T04:37:00Z",
       "default": "granted: the helper and its .uid merge with the candidate, as K1-R15's did",
       "escalate_to": "lead"
+    },
+    {
+      "id": "K1-R21",
+      "from": "K1",
+      "to": "lead",
+      "ask": "P2-K1-tabs-2: two files outside the task's three. (1) client/tests/shots/ui_kit_catalogue.gd: the tab bar now stands as tall as its chosen tab's picture (S2-R24), so K09's five bars in one part made a part 2157 px tall, over the page's 2094; K09 splits into 'K09 Tab bar (states)' (N, P, S) and 'K09 Tab bar (badges)' (A, RM), and its motion strip draws at 0.9 scale. No piece added or dropped; the catalogue test passes. (2) client/tests/shots/ui_kit_tabs.gd and its .uid: the S2-R24 and S2-R26 checks put client/tests/ui_kit_tests.gd past gdlint's 1000-line limit, so they live in this helper (extends RefCounted, not a shot), which ui_kit_tests.gd preloads and runs, as K1-R15 and K1-R20 were granted for ui_kit_rest.gd and ui_kit_motion.gd; ui_kit_tests.gd stays at 1000 lines. Please grant the three paths as this task's exceptions.",
+      "files": [
+        "client/tests/shots/ui_kit_catalogue.gd",
+        "client/tests/shots/ui_kit_tabs.gd",
+        "client/tests/shots/ui_kit_tabs.gd.uid"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-16T03:31:00Z",
+      "due": "2026-11-16T09:31:00Z",
+      "default": "granted: the three paths merge with the candidate, as K1-R15 and K1-R20",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "K1-R22",
+      "from": "K1",
+      "to": "lead",
+      "ask": "P2-K1-tabs-2: tools/ui_bake/budgets.json 'shots.recorded' home/200 from 114 to 115 draw calls. guard.sh on the merge with main reads home/200 at 115 (main reads 113): the bar now has room for the chosen tab's name at 200% text, so home shows 'ISLANDS' under its tile where main hid it as hanging below its tab (home.gd's _fit_tab_words), one word more. home/100 and home/hc stay at 144 (records 145), every other shot within its record, under the cap of 150. budgets.json is the lead's (--record only lowers), so the raise needs an entry: approved_by lead, field 'shots.recorded draw_calls', figures {'home/200': '114 -> 115'}, reason as above, request K1-R22.",
+      "files": [
+        "tools/ui_bake/budgets.json"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-16T03:31:00Z",
+      "due": "2026-11-16T09:31:00Z",
+      "default": "granted: the lead adds the budgets.json entry and raises home/200 to 115 at the merge; guard.sh then reads OK",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
@@ -333,7 +358,17 @@
       "request_id": "AIA-R24",
       "answer": "Done in P2-K1-motion: client/ui/motion.gd now times every press, screen change, shine and reward from the curves the bake copies out of art/ui/motion/curves.json into client/ui/art/motion.json (curves.json stays the art's statement). The press goes down over 150 ms (sink 3 points, squash 0.96, darken 0.9) and up over 180 ms; pop and sheet ease cubic out; the reduced press sinks and darkens to 0.88 over 150 ms with no squash, and comes back over 150 ms. Tested frame by frame in client/tests/shots/ui_kit_motion.gd.",
       "at": "2026-11-12T22:37:00Z"
+    },
+    {
+      "request_id": "S2-R24",
+      "answer": "Done in P2-K1-tabs-2: KitTabs declares the height it takes. Each tab stands, from its foot up, its name if shown, its tile at its 100% height (the chosen one RISE above the bar) and over the tile the room its picture rises into, its bob included (KitTabs._stand), so the chosen picture at the top of its bob lies inside its tab and the bar at 100%, 150% and 200% text in en, de and pt_BR (ui_kit_tests test 13). The bar's gold edge stays at the plain tabs' top. KitTabs is 324/354/381 px tall at 100/150/200% (1080 wide; 306 before). A height a screen sets on a tab (home's _raise_heist) is kept until a tab is chosen. Home can drop HomeParts.reserve_lift: with the picture inside the tab its rise is never over the tab's top, so it sets a margin of 0. The room the picture needs is now inside the bar instead of in its margin, so the realm chips gain no height from this alone in the three 200% notice cases (pt_BR, fr, en TALL=900): measure with universe_home.gd FIT=1 once this is on main.",
+      "at": "2026-11-16T03:31:00Z"
+    },
+    {
+      "request_id": "S2-R26",
+      "answer": "Done in P2-K1-tabs-2: KitLayout.tap disconnects its own Motion.press binding for button_down and button_up before connecting it, so a second tap() on one button leaves one connection each and no render logs \"Signal 'button_up' is already connected\" (ui_kit_tests: tap twice, one connection each; the kit-only run logs it 0 times).",
+      "at": "2026-11-16T03:31:00Z"
     }
   ],
-  "next_step": "P2-K1-tabs: evidence on the merge 6cd5467c running, then the pre-check and ready"
+  "next_step": "P2-K1-tabs-2 ready at 87b21b06 (pre-check PASS 04:15:28Z); the lead answers K1-R21 and K1-R22 and merges"
 }

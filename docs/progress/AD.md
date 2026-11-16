@@ -1,12 +1,11 @@
 # AD art director: progress
 
-- Status: P2-AD-board-4 ready (board 4, result and motion, round 1 posted: **the board does not stand**, objections A to E, each a request to the lead). Pre-check in the status file.
-- Progress: 15 of 15 tasks merged or ready (P0-AD-rubric, P0-AD-sheet, O2, P0-AD-golden, O2-2, P0-AD-golden-2, O3, P0-AD-calibrate, P0-AD-calibrate-2, P1-AD-board-1, P1-AD-board-1b, P1-AD-board-1c, P1-AD-board-1d, P2-AD-board-3, P2-AD-board-4); 0 items passed by the gate (every judged quality is owner-checked, so AD's board check decides).
-- Done: P2-AD-board-4: `docs/art/ui-quality/gate/boards/board-4.md`, ten items (result stills `board-4/*.png`, reward strips and clips, AIA's motion strips and clips linked), on the integration head at `3374eae1` (result-2 merged as `135a49b2`, motion-2 as `0bc0fbb9`); S2-R20 (home part 3 preview) answered in `status/AD.json`.
-- Next: S1 fixes A, B, D and E (AD-R27, AD-R26, AD-R29, AD-R30) and AIA fixes C (AD-R28), then board 4b; board 3b after AD-R22 to AD-R25 land; board 5 after settings.
+- Status: Green. P2-AD-board-5b posted (board-5.md, "Round 2 (board 5b)"): board 5 does not stand yet. A to G stand as fixed and H, I, J hold; two new objections are open, K (the character at its highest level runs off the screen at 200% in en, pt_BR and de) and L (S3-R18's profile row fails value steps). Filed as AD-R40 and AD-R41, both to S3 by default.
+- Progress: 18 of 19 tasks merged (P0-AD-rubric, P0-AD-sheet, O2, P0-AD-golden, O2-2, P0-AD-golden-2, O3, P0-AD-calibrate, P0-AD-calibrate-2, P1-AD-board-1, P1-AD-board-1b, P1-AD-board-1c, P1-AD-board-1d, P2-AD-board-3, P2-AD-board-4, P2-AD-board-5, P2-AD-board-4b, P2-AD-board-3b); P2-AD-board-5b in pre-check; 0 items passed by the gate (every judged quality is owner-checked, so AD's board check decides).
+- Done: P2-AD-board-5b (`board-5.md` "Round 2 (board 5b)", `board-5/r7-*.png`, eleven sheets): character and settings rendered on main at `953e742e` with `FIT=1` at 100% and 200% (en, pt_BR, de), high contrast (en, pt_BR), the Stats and Compare tabs, fixture characters 1 to 4, the Account tab signed out and signed in; all "fit ok" except character 4 at 200% (K).
+- Next: board 3c (only H) after AD-R38 and AD-R39's tasks merge; board 5c (only K and L) after AD-R40 and AD-R41's task merges.
 - Blocked by: none.
-- Owner decision needed: none. AD decides boards 3 and 4 in place of the owner.
-
+- Owner decision needed: none. AD decides the boards in place of the owner.
 | Deliverable | Weight (h) | Status | Evidence |
 |---|---:|---|---|
 | P0-AD-rubric: rubric v1 and judge prompts | 3 | merged (167ccf6c) | `gate/rubric.md`, `gate/prompts/*.md`; pre-check PASS at 334224c, 2026-10-30T01:44:46Z (`All checks passed.`, `DONE exit=0`) |
@@ -24,21 +23,19 @@
 | P1-AD-board-1d: re-check board 1 on pilot-5 | 1 | ready (pre-check in the status file) | `gate/boards/board-1.md` Round 4 and `gate/boards/board-1/r4-*.png`; four shots on main at `cecf3a64`, all `FIT=1` "fit ok"; the no-plan 200% pt_BR shot matches S1's (mean diff 0.01); portrait L* matches S1's Part 5 table; D and F closed, board 1 stands; requests AD-R20 and AD-R21 in `status/AD.json` |
 | P2-AD-board-3: board 3 (home) | 2 | ready (pre-check in the status file) | `gate/boards/board-3.md` and `gate/boards/board-3/*.png`; home rendered with `universe_home.gd`, `FIT=1`, at 100% and 200%, en and pt_BR, high contrast and `NOTICE=1`, beside `art/ui/keyframes/01-home*`; gate verdicts of home-1 (`977edd5b`) and home-2 (`3612e265`) cited per item; objections A to D as requests AD-R22 to AD-R25; `check_docs_consistency.py` clean |
 | P2-AD-board-4: board 4 (result and motion) | 2 | ready (pre-check in the status file) | `gate/boards/board-4.md`, `gate/boards/board-4/*.png` and two `.mp4` clips; result rendered with `FIT=1` at 100% and 200% (en, pt_BR, de) and high contrast beside `art/ui/keyframes/03-result*`, all "fit ok"; reward sequence full and reduced with `STRIP=1`; AIA's `art/ui/motion/strips/` and `clips/` checked for qualities 4, 5 and 7; `check_curves.py` ok; verdicts of result-1 (`8bec0d84`) and result-2 (`aed28321`, `71167028`) cited; objections A to E as requests AD-R26 to AD-R30; `check_docs_consistency.py` clean |
+| P2-AD-board-5: board 5 (character and settings) | 1 | ready (pre-check in the status file) | `gate/boards/board-5.md` and `gate/boards/board-5/*.png`; character and settings rendered on main at `b2adaf6a` with `FIT=1` at 100% and 200% (en, pt_BR, de) and high contrast beside `art/ui/keyframes/04-character*` and `05-settings*`, all "fit ok" except the character at 200% German (objection A); draw calls 36 to 81; verdicts of character (`f1251e68`, `6f6a3b15`) and settings (`eed8b817`, `f5719f28`, `f0a36a41`) cited; objections A to G as requests AD-R31 to AD-R37; `check_docs_consistency.py` clean |
+| P2-AD-board-4b: board 4, second round | 1 | ready (pre-check in the status file) | `gate/boards/board-4.md` "Round 2 (board 4b)" and `gate/boards/board-4/r4-*` (ten stills, two `.mp4` clips); result rendered on main at `6b30142b` with `SERVER=1 FIT=1` in en, pt_BR and de at 100% and 200% and high contrast en and pt_BR, all "fit ok", draw calls 126/128/128, 113/115/114, 68/70; full strip 80 frames (1.93 s), reduced 32 frames (0.37 s); A to E met, the board stands |
+| P2-AD-board-3b: board 3, second round | 1 | merged (f675f05e) | `gate/boards/board-3.md` "Round 2 (board 3b)" and `gate/boards/board-3/r5-*.png` (five sheets); home rendered on main at `ee31b0d9` with `FIT=1` at 100% (en, pt_BR, pt_PT, fr, de, hc, hc pt_BR; notice en, pt_BR, de) and 200% (en, pt_BR, pt_PT, fr, de, hc, hc pt_BR; notice en, pt_BR, pt_PT, fr, de, en 900 tall), beside `art/ui/keyframes/01-home*`; B and D fixed, A's core fixed; H open as AD-R38 and AD-R39 |
+| P2-AD-board-5b: board 5, second round | 1 | working (pre-check in the status file) | `gate/boards/board-5.md` "Round 2 (board 5b)" and `gate/boards/board-5/r7-*.png` (eleven sheets); character and settings rendered on main at `953e742e` with `FIT=1` at 100% and 200% (en, pt_BR, de) and high contrast (en, pt_BR), Stats and Compare tabs, characters 1 to 4, Account tab signed out and in, all "fit ok" except character 4 at 200% (K); draw calls 50 to 91; `checks.py value-steps` fails only the profile row (L); A to G fixed; K and L open as AD-R40 and AD-R41 |
 
 ## Handoff
-- Last verified commit: see `precheck` in `status/AD.json`; P2-AD-board-4 ready.
-- Done: board 4 (result and motion), round 1, on `3374eae1`. **The board does not stand.** Objections, in order of weight:
-  - A (S1, AD-R27): the lead reward "+2,310" is pale gold with a hairline outline on the parchment, the weakest figure on the screen (hollow in high contrast). Give the reward figures the "Keeper 24" finish.
-  - B (S1, AD-R26): at 200% in German, Essenz and Ruhm fall below the fold.
-  - C (AIA, AD-R28): the anticipation reads as a still pause and the burst stays the prize's size in every tier; epic barely reads stronger than common.
-  - D (S1 with AIA, AD-R29): the coins land on the counters' digits and hide the roll.
-  - E (S1, AD-R30): at 200% English, Home takes about 45% of the action bar with its word; make it icon-only.
-  - Stands: layout, portraits, law chips, moment card, high contrast, the reduced reward form, press, shine and screen change (notes: press sink at the low end; full screen change barely distinct from the reduced one; the action bar cuts the crew faces at 100% pt_BR and de).
-- Previews answered: S2-R20 (home part 3 at `c0b2bc49`): A, most of C and the goal lines fixed; open: pins detached from their realms, the world shrinking with the notice, the Essence "Full" tag dropped outside en 100%, the 200% strain chip, minor items, and the dock label on the rim (D, K1).
-- Checked: `check_docs_consistency.py` clean; `art/ui/motion/check_curves.py` ok; the full checks in the pre-check (`check_all.sh` runs detached through `run_checks.sh`).
-- Half done: nothing.
-- Open hypotheses: the result shot has no idle crew, so the "Idle crew of N ready" line is unjudged; the home shot lacks notifications, a shield and a locked realm.
-- Next step: board 4b after AD-R26 to AD-R30 land (re-shoot items 1 to 6 and the strips of items 7 and 9); board 3b after AD-R22 to AD-R25; board 5 after settings.
+- Last verified commit: `31c4de6c` (P2-AD-board-3b; pre-check PASS, 2026-11-16T06:13:10Z). Board 5b's pre-check is in the status file.
+- Done this session (2026-11-16, cycle 96, second session): P2-AD-board-5b. Re-checked A to G on main at `953e742e` against board 5's full list (M23). A to G stand as fixed; H, I, J hold. New: K (heavy, qualities 14 and 2), character 4 (Mossbear, level 10 of 10) at 200% in en, pt_BR and de: the "at the highest level" pill in `_actions` keeps its words (German "987 px of words in 900"), the screen runs wider than 1080 and the fit check prints 14 FAIL lines; `fit_character.sh` covers only character 5. L (light, quality 8): the profile row (`screen_account.gd` `profile_row`) gives ΔL* 2.5 (en) and 3.6 (de) on `settings-account-100`/`-de`. The gate's advisory notes on `9e602fcc` match the pt_BR 200% key frame's weighting, so they stay notes.
+- Done earlier: S3-R21 (J fixed at `9e602fcc`); S3-R20; P2-AD-board-3b (H open as AD-R38, AD-R39).
+- Half done: none.
+- Open hypotheses: `_hide_kicker` in `settings_screen.gd` could not be checked: no signed-in shot shows the Devices or Methods sections, also S3's own `auth_panel.gd`. A shot with the devices dispatched before the panel builds would show it.
+- Next step: board 3c (only H) once AD-R38 and AD-R39's tasks merge; board 5c (only K and L: character 4 at 200% en, pt_BR, de with `ID=4`, and `checks.py value-steps` on `settings-account-100` and `-de`) once AD-R40 and AD-R41's task merges.
+- Rendering tips: `tools/render/shoot.sh` pipes through `tail -20`, so a long fit list is cut; run Godot directly and grep for "fit" to see it all. In a fresh worktree run `client/build.sh` or copy `client/bin/libruleborn_godot.so` and `client/goldens/*.rbh` from the main checkout. A relative `STRIP` path resolves from `client/`.
 
 ## Flow review
 
@@ -62,3 +59,4 @@ AD read the router (`client/app/router.gd`) and every `router.go` on the heist l
 - 2026-11-03 `render` can leave a call's crops missing (judges said so in a few reasons); not changed mid-calibration, so all runs saw the same conditions. Fix before the next rubric version.
 - 2026-11-11: `claude/ui-ad` and main had unrelated histories, so a plain merge failed; joined them with a merge (`--allow-unrelated-histories -s ours`, then `read-tree` of main), no force-push (6c3cd6fb).
 - 2026-11-13 `bash tools/check_all.sh` in the foreground: stopped by the tool's 10-minute limit at the mobile toolchain step, with server and client tests passed so far (535 and 409); ran the full checks detached through `run_checks.sh` instead.
+- 2026-11-16 board 4b's strip renders with a relative `STRIP=../b4/full`: the frames landed under the worktree (the path resolves from `client/`), not in the scratch folder; found them there and used them. Use an absolute path.
