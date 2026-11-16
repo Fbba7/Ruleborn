@@ -278,3 +278,50 @@ From left: key frame 200% pt_BR, then the build at 200% in pt_BR, German
 and English.
 
 ![200%: key frame pt_BR, build pt_BR, de, en](board-3/r3-home-200-sides.png)
+
+## Re-check of objection (g) (S2-R28)
+
+AD re-checked only objection (g) on `claude/ui-screens-home` at `398a38cb`,
+the commit S2's handoff names for (g). S2 then had its pre-check running
+and had not yet filed the request. The answer holds for `398a38cb` and for
+any later head of home-3 whose client files do not differ from it. Since
+`8ff5ee23` the only client changes are in `home.gd` and `universe_pins.gd`
+(M23). The full answer is S2-R28 in `docs/progress/status/AD.json`.
+
+AD rendered with `FIT=1`, and every shot printed "fit ok": 200% in German,
+German high contrast, English, English high contrast, pt_BR and French;
+200% in German with the notice; 100% in English and German; and 100% in
+pt_BR with the notice.
+
+**(g) stands as fixed in German, as the trade allows elsewhere.**
+
+- **German.** At 200% without the notice, German and German high contrast
+  keep the four side buttons as icon-only discs in two edge columns:
+  Defence with its raid badge, and Lab, on the left; Season and Shop on
+  the right. The realms take seven numbered chips between the columns,
+  which is what AD-R24 and both 200% key frames ask. German now matches
+  English, which keeps the same layout, in high contrast too.
+- **pt_BR, pt_PT and French.** These three still give the side buttons
+  away at 200%, and each one stays on the badge's menu. Their goal keeps
+  three lines, so the realms' band is about 100 px shorter than German's.
+  S2 measured the nearest miss: 149 px free where a chip needs 152. AD
+  accepts this as the trade the S2-R27 answer allowed for pt_BR. pt_PT
+  and French have the same cause, so the same trade covers them. It lasts
+  until P2-K1-tabs-2 (S2-R24) gives the tab its height back. Board 3b
+  re-checks all three, together with the notice cases of (a).
+- **With the notice up at 200%,** the side buttons give way in German too,
+  as the S2-R27 answer accepted until P2-K1-tabs-2.
+
+At 100% nothing has changed in shape. P2-S2-home-3 has no open AD
+objection.
+
+From left, at 200%: German, German high contrast, English, pt_BR, French,
+then German with the notice.
+
+![200%: de, de high contrast, en, pt_BR, fr, de with the notice](board-3/r4-home-200-g.png)
+
+Carried to board 3b, which do not hold home-3:
+
+- the three 200% locales without side buttons (above);
+- the (a) notice cases;
+- the darker band of the galaxy's plane at 200% in pt_BR (S2-R24).

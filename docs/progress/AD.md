@@ -1,9 +1,9 @@
 # AD art director: progress
 
-- Status: Green. P2-AD-board-4b ready (board 4 stands). S2-R27 answered: (f) met on home-3, new objection (g) holds it. S3-R17 answered: C, E and F met on settings-2, new light objection I holds it. Boards 3b and 5b wait for their tasks to merge, so this session ends with agent_state done.
-- Progress: 17 of 17 tasks merged or ready (P0-AD-rubric, P0-AD-sheet, O2, P0-AD-golden, O2-2, P0-AD-golden-2, O3, P0-AD-calibrate, P0-AD-calibrate-2, P1-AD-board-1, P1-AD-board-1b, P1-AD-board-1c, P1-AD-board-1d, P2-AD-board-3, P2-AD-board-4, P2-AD-board-5, P2-AD-board-4b); 0 items passed by the gate (every judged quality is owner-checked, so AD's board check decides). P2-AD-board-3b and P2-AD-board-5b wait on their dependencies.
-- Done: S2-R27 (`board-3.md`, "Re-check of objection (f) (S2-R27)", `board-3/r3-home-*`): (f) met at `8ff5ee23`; (g) at 200% in pt_BR and German the four side buttons are gone, against AD-R24 and both 200% key frames. S3-R17 (`board-5.md`, "Preview of settings-2 (S3-R17)", `board-5/r3-settings-*`): C, E and F met at `60560762`; I, the Account tab's group heading is a gold caps label, not the header pill. Before: board 4b (A to E met on main at `6b30142b`); S3-R16 (H met at `6b7e6b42`).
-- Next: board 3b after P2-S2-home-3 and P2-K1-tabs-2 merge; board 5b after P2-S3-character-2 and P2-S3-settings-2 merge. Re-checks of (g) (S2) and I (S3) come as new requests.
+- Status: Green. P2-AD-board-4b merged (board 4 stands). S3-R19 answered: I met on settings-2 at `25ed9fd9`, so settings-2 has no open AD objection. S2-R28 answered ahead of filing: (g) met on home-3 at `398a38cb`. pt_BR, pt_PT and fr keep the side-button trade until P2-K1-tabs-2. Boards 3b and 5b wait for their tasks to merge, so this session ends with agent_state done.
+- Progress: 17 of 17 tasks merged (P0-AD-rubric, P0-AD-sheet, O2, P0-AD-golden, O2-2, P0-AD-golden-2, O3, P0-AD-calibrate, P0-AD-calibrate-2, P1-AD-board-1, P1-AD-board-1b, P1-AD-board-1c, P1-AD-board-1d, P2-AD-board-3, P2-AD-board-4, P2-AD-board-5, P2-AD-board-4b, merged in cycle 92); 0 items passed by the gate (every judged quality is owner-checked, so AD's board check decides). P2-AD-board-3b and P2-AD-board-5b wait on their dependencies.
+- Done: S3-R19 (`board-5.md`, "Re-check of objection I (S3-R19)", `board-5/r4-settings-account.png`): the Account group now has the header pill; twelve fit_settings shots fit ok. S2-R28 (`board-3.md`, "Re-check of objection (g) (S2-R28)", `board-3/r4-home-200-g.png`): German and German high contrast keep the four side discs at 200%, as English does; pt_BR, pt_PT and fr give them away, a trade accepted until P2-K1-tabs-2. Before: S2-R27 ((f) met, (g) raised), S3-R17 (C, E and F met, I raised), board 4b.
+- Next: board 3b after P2-S2-home-3 and P2-K1-tabs-2 merge (re-check pt_BR, pt_PT and fr side buttons at 200% and the (a) notice cases); board 5b after P2-S3-settings-2 merges (check the signed-in Account tab for `_hide_kicker`).
 - Blocked by: none.
 - Owner decision needed: none. AD decides the boards in place of the owner.
 | Deliverable | Weight (h) | Status | Evidence |
@@ -27,12 +27,14 @@
 | P2-AD-board-4b: board 4, second round | 1 | ready (pre-check in the status file) | `gate/boards/board-4.md` "Round 2 (board 4b)" and `gate/boards/board-4/r4-*` (ten stills, two `.mp4` clips); result rendered on main at `6b30142b` with `SERVER=1 FIT=1` in en, pt_BR and de at 100% and 200% and high contrast en and pt_BR, all "fit ok", draw calls 126/128/128, 113/115/114, 68/70; full strip 80 frames (1.93 s), reduced 32 frames (0.37 s); A to E met, the board stands |
 
 ## Handoff
-- Last verified commit: `0662a940` (pre-check PASS, 2026-11-16T02:37:34Z, `All checks passed.`, `DONE exit=0`); P2-AD-board-4b ready at that sha. This session changed only docs and evidence stills.
-- Done this session (2026-11-16, cycle 91): S3-R16 answered at 01:59Z (H met at `6b7e6b42`; note for board 5b: check that every state's icon reads in the small chip). Board 4b posted: A to E met on main, the board stands.
+- Last verified commit: `0662a940` (pre-check PASS, 2026-11-16T02:37:34Z, `All checks passed.`, `DONE exit=0`), P2-AD-board-4b, merged in cycle 92. This session (cycle 93) changed only docs and evidence stills, so no task pre-check was needed. `check_docs_consistency.py` passes.
+- Done this session (2026-11-16, cycle 93):
+  - S3-R19 answered at 03:53Z: I met at `25ed9fd9`, and at head `002b91db` with no client change.
+  - S2-R28 answered at about 04:05Z, before S2 filed it. It covers S2's (g) commit `398a38cb` and any later head whose client files are unchanged. If S2's head changes `home.gd` or `universe_pins.gd` after `398a38cb`, re-check (g) on that head.
 - Half done: none.
-- Open hypotheses: the result's fold rule (`ResultFit.part_line`) does not count the crew card's portrait rings as a cut at 100%, so pt_BR and de show a sliver of the card above the bar with "fit ok" (a note on board 4b, not an objection). Board 5 notes for K1: the ability header plate runs under the tray at 200% (bottom margin), high contrast keeps the blue night backdrop; for the lead: content words still in English; the facts panel ends in a flat clip at 100%.
-- Next step: board 3b when P2-S2-home-3 and P2-K1-tabs-2 merge ((f) and the KitTabs fold must be met); board 5b when P2-S3-character-2 and settings-2 merge (H met; check every state icon in the chip).
-- Rendering in a fresh worktree: copy `client/bin/libruleborn_godot.so` and `client/goldens/*.rbh` from the main checkout (when sim/ and client/ext have no diff), or run `client/build.sh`; without them the shot fails with "Identifier 'RulebornReplay' not declared". A relative `STRIP` path resolves from `client/`, so give it an absolute path.
+- Open hypotheses: `_hide_kicker` in `settings_screen.gd` hides AuthPanel's first child, whatever it is. Check the signed-in and device layouts on board 5b. The result's fold rule and board 5's K1 notes stand as before (see the S2-R27 handoff in git history).
+- Next step: board 3b when P2-S2-home-3 and P2-K1-tabs-2 merge; board 5b when P2-S3-settings-2 merges (H met; check every state icon in the chip).
+- Rendering in a fresh worktree: run `client/build.sh` in it, or copy `client/bin/libruleborn_godot.so` and `client/goldens/*.rbh` from the main checkout when `sim/` and `client/ext` have no diff. Without them the shot fails with "Identifier 'RulebornReplay' not declared". A relative `STRIP` path resolves from `client/`, so give it an absolute path.
 
 ## Flow review
 
