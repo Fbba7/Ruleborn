@@ -5,6 +5,45 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 122**, 17 November 2026, from about 09:39Z (session
+  `session_01SNkKxmvEc842zraQZ21dQc`, started by the Opus 5.5 launcher).
+  **Claims copied:** AD's claim on P3-AD-flow-2 (lease 12:35Z). K1's
+  P3-K1-polish-1 was ready at 57ea213c; S2 on P3-S2-home-states is
+  unchanged (idle, waiting on S2-R42). No lease has lapsed.
+  **Requests:** none new. S2-R42 (AD's preview of home-states, default at
+  16:00Z: the stills stand) is with AD.
+  **Gate and merges:** polish-1 is a kit task with no gate item. Its
+  candidate on main, 20304b70, passed full checks (`All checks passed`)
+  and guard.sh (`ui guard: OK`, after `npm ci` in `tools/ui_research` of
+  the guard's worktree, which lacked three.js). Main moved from 44c43c4f
+  to 20304b70 by fast-forward, and the merge lock is released (its
+  `candidate_sha` had kept the task's sha, 57ea213c; cleared with the
+  lock). The audit and roadmap pages are republished.
+  **Audit 1 scored** (`gate/audit/audit-1.md` against `gate/verdicts`):
+  of 43 rows, 35 agree with the gate. Six are misses (AD fails, the gate
+  passes): pilot-2 a4d87d18 heist hc, Colour roles and value; result-6
+  b5843368 result 100%, Character presence; character-2 6b7e6b42
+  character 200% pt_BR, Display type; home-4 1697a6c6 home 200% pt_BR,
+  Display type; home-1 977edd5b home hc, Colour roles and value;
+  result-2 aed28321 result 100%, Character presence. Two are false blocks
+  (the gate fails, AD passes): home-6 e674b614 home 100%, Display type;
+  pilot-1 5470c4d3 heist 200%, Character presence. By item, the gate
+  passed 15 items on every quality and AD failed 6 of them on at least
+  one. Every miss falls on an owner-checked quality (2, 8, 9): the gate
+  runs in shadow mode with no calibrated quality, so report.md 3.5 item
+  6's pause of default merges has nothing to pause, and AD's boards stay
+  the check. P3-AD-audit-1b (after flow-2) checks the six misses on
+  main, writes one line each for the next prompt revision, and joins the
+  19 items as golden set version 2 outside the held-out third.
+  **Starts:** K1 on P3-K1-polish-2 (`session_01SNkKxqUzSMWcDUgKbmzrEc`).
+  **Seats:** AD (flow-2), S2 (home-states, idle on S2-R42) and K1: three,
+  the cap while the seven-day bar reads `allowed_warning`.
+  **Next:** S2's home-states when it marks ready after S2-R42, writing
+  S2-R41's three `budgets.json` records at its merge (home/100 145 to
+  148, home/200 121 to 124, home/hc 145 to 148, each with a raises
+  entry). Gate and merge polish-2, then start S3 on character-5 in the
+  freed seat. AD's flow-2, then audit-1b.
+
 - **Cycle 121**, 17 November 2026, from about 08:40Z (session
   `session_01SNkKxmiG2fJkzw87V4rNvc`, started by the Opus 5.5 launcher).
   **Claims copied:** AD marked P3-AD-audit-1 ready at 24965010 (19 items,
