@@ -7,13 +7,13 @@
   "task_id": "P2-S1-result-6",
   "task_state": "working",
   "claimed_at": "2026-11-17T01:31:29Z",
-  "lease_until": "2026-11-17T06:21:49Z",
-  "updated_at": "2026-11-17T03:21:49Z",
-  "expected_next_update_by": "2026-11-17T04:06:49Z",
+  "lease_until": "2026-11-17T06:37:03Z",
+  "updated_at": "2026-11-17T03:37:03Z",
+  "expected_next_update_by": "2026-11-17T04:22:03Z",
   "progress_marker": {
     "last_green_sha": "c9d70cc3b3de8566cdf427cb73d2e4fbdfca3994",
-    "next_step": "AD-R46 (H): German 200% Sternenlicht broken by its letters; measure the baked totals in reward_rows, keep the baked total inside its live width, FIT check for words broken inside a word.",
-    "at": "2026-11-17T03:21:49Z"
+    "next_step": "H fixed at b5843368 (reward rows measured at the baked totals; FIT fails a word broken inside itself; FIT ok at 4x for en/pt_BR/de 200% and de 150%, draw calls <=118). Gate re-run on the three items at b5843368 in progress; then checks, pre-check, ready.",
+    "at": "2026-11-17T03:37:03Z"
   },
   "precheck": {
     "sha": "c9d70cc3b3de8566cdf427cb73d2e4fbdfca3994",
@@ -21,7 +21,31 @@
     "finished_at": "2026-11-17T03:05:34Z",
     "summary": "All checks passed."
   },
-  "gate_request": null,
+  "gate_request": {
+    "sha": "b5843368999f64b956c2c1dd8db1e2a0ccbad049",
+    "items": [
+      {
+        "item": "result at 100% text",
+        "qualities": [
+          "Display type",
+          "Character presence"
+        ]
+      },
+      {
+        "item": "result at 200% text, pt_BR",
+        "qualities": [
+          "Display type",
+          "Hierarchy"
+        ]
+      },
+      {
+        "item": "result in high contrast",
+        "qualities": [
+          "Hierarchy"
+        ]
+      }
+    ]
+  },
   "ready_sha": null,
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
