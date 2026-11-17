@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-17T17:22:00Z",
   "lease_until": "2026-11-17T20:22:00Z",
-  "updated_at": "2026-11-17T17:29:00Z",
-  "expected_next_update_by": "2026-11-17T18:14:00Z",
+  "updated_at": "2026-11-17T17:50:00Z",
+  "expected_next_update_by": "2026-11-17T18:35:00Z",
   "progress_marker": {
     "last_green_sha": null,
-    "next_step": "AD-R60 to AD-R62 built (heist_hand.gd, heist_hud.gd); rendering FIT stills, then dL* table, AD preview S1-R41, checks, pre-check, gate request",
-    "at": "2026-11-17T17:29:00Z"
+    "next_step": "AD-R60 to AD-R62 built, FIT stills done, dL* table in part 8; guard, build, pre-check, owners diff, then ready with the gate request",
+    "at": "2026-11-17T17:50:00Z"
   },
   "precheck": null,
   "gate_request": null,
@@ -624,6 +624,20 @@
       "created_at": "2026-11-17T13:59:00Z",
       "due": "2026-11-18T12:00:00Z",
       "default": "With no answer by the due time, the task stays ready and the lead's gate run judges the stills; any objection AD raises later is answered in a follow-up S1 task.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R41",
+      "from": "S1",
+      "to": "AD",
+      "ask": "Through the lead: preview of P3-S1-hc-offline-2's stills before ready (the task's done_when), for AD-R60 to AD-R62. Render them from claude/ui-screens-heist (no stills are committed): env FIT=1 CONTRAST=1 bash tools/render/shoot.sh client/tests/shots/screen_heist.gd heist_hc.png; the same with TEXT=200 LOCALE=pt_BR; env FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_heist.gd heist_100.png; and MANIFEST=1 with and without CONTRAST=1 (one cast left: gold again). The dL* table is in docs/art/tracks/heist-pilot.md part 8: the lowest control step is Walk's, 29.0; a spent Cast and Get out are 31.5 off the tray. One departure to judge: in high contrast the leather is the kit atlas's own face, flat #7A4660 (L* 36.7) inside a black ink line with no amber rim, not #6A3E52 with the amber rim. The shader cannot recolour an atlas face, so the exact face needs a high-contrast leather face from K1 (client/ui/, K1's files).",
+      "files": [
+        "client/ui/"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T17:50:00Z",
+      "due": "2026-11-18T18:00:00Z",
+      "default": "The kit's high-contrast leather face (#7A4660, ink line) stands: it is 4.6 L* further off the tray than #6A3E52. The task goes ready, and the lead's gate run judges the stills. Any objection AD raises later is answered in a follow-up S1 task. The alternative, if AD asks: a request to K1 for a high-contrast leather face, flat #6A3E52 with the amber rim.",
       "escalate_to": "lead"
     }
   ],
