@@ -1,0 +1,19 @@
+[
+  {
+    "task_id": "P3-S3-character-5",
+    "sha": "3053cf6d8fddacb5e9c4b6b05235eb99d3746e1e",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-17T18:20:00Z",
+    "item": "character at 200% text, pt_BR",
+    "quality": "Hierarchy",
+    "samples": [
+      "fail",
+      "fail",
+      "fail"
+    ],
+    "result": "fail",
+    "critique": "Unanimous, judged in both states the player sees (online and OFFLINE=1, both fit ok). Online, the gold 'Subir de nível' card leads as clearly as the pass anchor's Level up card. Offline, the roster's full-width cream notice across the top quarter is about 1.5 times the primary's area, lighter, with four lines of large bold prose, so in grayscale the eye lands on it before the primary: secondary prose at the main action's weight. This is AD-R64's finding: at large text the notice should take one line ('!' with ERR_OFFLINE), with the full sentence as its accessibility_name, and OFFLINE=1 TEXT=200 pt_BR and de should join the fit list. The S3 follow-up for AD-R63 and AD-R64 carries the fix."
+  }
+]
