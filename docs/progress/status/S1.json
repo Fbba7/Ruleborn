@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-17T01:31:29Z",
   "lease_until": "2026-11-17T08:25:26Z",
-  "updated_at": "2026-11-17T05:25:26Z",
-  "expected_next_update_by": "2026-11-17T06:10:26Z",
+  "updated_at": "2026-11-17T05:39:42Z",
+  "expected_next_update_by": "2026-11-17T06:24:42Z",
   "progress_marker": {
     "last_green_sha": "f669716105ae79a1fa6cad26be2966e8bc4b9257",
-    "next_step": "Resync (M47): main merged at 2aba7137 with main's b5843368 verdict and the four branch-only verdict files removed; owners.py passes. Next: setup, build, pre-check, guard, then ready.",
-    "at": "2026-11-17T05:25:26Z"
+    "next_step": "pre-check running on 32f97a08 (the resync merge); then record and ready",
+    "at": "2026-11-17T05:39:42Z"
   },
   "precheck": {
     "sha": "f669716105ae79a1fa6cad26be2966e8bc4b9257",
@@ -611,5 +611,9 @@
       "where": "docs/progress/lead.md, Now, cycle 112; docs/art/ui-quality/board-4.md, 'Preview of result-6 (S1-R35)'; docs/art/tracks/result-screen.md, 'AD's objection H, a reward word broken (AD-R46)'"
     }
   ],
-  "next_step": "pre-check on the resync merge, then ready"
+  "next_step": "pre-check on the resync merge, then ready",
+  "long_run": {
+    "log": "/tmp/check-32f97a08af3c97c2603c77dee995687b542f3683.log",
+    "expected_end": "2026-11-17T06:09:42Z"
+  }
 }
