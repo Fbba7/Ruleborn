@@ -1,9 +1,16 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-17T10:50:00Z",
+  "updated_at": "2026-11-17T11:19:03Z",
   "expected_next_update_by": "2026-11-17T13:50:00Z",
   "cycle": 123,
-  "merging": null,
+  "merging": {
+    "candidate_sha": "83f98e84",
+    "task_ids": [
+      "P3-AD-flow-2"
+    ],
+    "started_at": "2026-11-17T11:19:03Z",
+    "expires_at": "2026-11-17T12:19:03Z"
+  },
   "last_merged": {
     "task_id": "P3-K1-polish-1",
     "sha": "20304b70"
