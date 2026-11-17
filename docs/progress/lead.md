@@ -313,10 +313,11 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| S2 | `session_01SNkKxq8HjVf66y13L7w5BL` (Opus 5.5, effort high) | P2-S2-home-6 (restart, cycle 115: its gate passes Display type 3/3 at a4090ec7, M46, so mark ready; S2's last session, `session_01SNkKxqDPpd7eVdbFeT2dp8`, is idle, waiting on the gate) | `claude/ui-screens-home` | 2026-11-17 04:48Z |
 | AD | `session_01SNkKxoJbJnMvxsrv2outFG` (Opus 5.5, effort high) | S1-R35 (not blocking, due 2026-11-17T10:17Z: preview P2-S1-result-6 at c9d70cc3 or later) (start, cycle 111: S1-R35 copied; AD's last session, `session_01SNkKxnPTEBNJrsj8BFDyUi`, is idle, its S2-R34 preview done) | `claude/ui-ad` | 2026-11-17 02:45Z |
 | AD | `session_01SNkKxnPTEBNJrsj8BFDyUi` (Opus 5.5, effort high; idle, S2-R34 answered at 01:57Z, AD-R45 to the lead; replaced in cycle 111) | S2-R34 (blocking, due 03:30Z: preview P2-S2-home-6 at 4c242628 or later) (start, cycle 109: S2-R34 copied; AD's last session, `session_01SNkKxq1MGyJ5jNneT2tqME`, is idle, its two previews done) | `claude/ui-ad` | 2026-11-17 01:43Z |
 | S1 | `session_01SNkKxpBG3xx2UUqDBfeMa9` (Opus 5.5, effort high) | P2-S1-result-6 (restart, cycle 112: AD-R46's objection H, fixed in result-6 before it merges, then re-gated; S1's last session, `session_01SNkKxrHQgnrk4u1GoTLWJP`, is idle, its task ready at c9d70cc3) | `claude/ui-screens-heist` | 2026-11-17 03:19Z |
-| S2 | `session_01SNkKxqDPpd7eVdbFeT2dp8` (Opus 5.5, effort high) | P2-S2-home-6 (start, cycle 108: P2-S2-home-5 merged as fb8ff4b9; its advisory gate's Display type fails at home 100% and 200% pt_BR, M33; S2's last session, `session_01SNkKxnd61Vr6rsj7aeL4cz`, is idle, its task merged) | `claude/ui-screens-home` | 2026-11-17 00:56Z |
+| S2 | `session_01SNkKxqDPpd7eVdbFeT2dp8` (Opus 5.5, effort high; idle waiting for the gate, replaced in cycle 115) | P2-S2-home-6 (start, cycle 108: P2-S2-home-5 merged as fb8ff4b9; its advisory gate's Display type fails at home 100% and 200% pt_BR, M33; S2's last session, `session_01SNkKxnd61Vr6rsj7aeL4cz`, is idle, its task merged) | `claude/ui-screens-home` | 2026-11-17 00:56Z |
 | S3 | `session_01SNkKxpXsYHy2L9mKvHcZBk` (Opus 5.5, effort high) | P2-S3-character-4 (start, cycle 105: phase 2 exit, M25; the advisory gate's Display type fail on character at 200% text, pt_BR; S3's last session, `session_01SNkKxnS2WKmrL48Dmzje8k`, is idle, its task merged as 6d9a4bf1) | `claude/ui-screens-meta` | 2026-11-16 20:49Z |
 | S2 | `session_01SNkKxnd61Vr6rsj7aeL4cz` (Opus 5.5, effort high) | P2-S2-home-5 (start, cycle 105: phase 2 exit, M25; the gate's Display type fail on home at 100% text; S2's last session, `session_01SNkKxrBFcY868FRDPnvoUz`, is idle, its task merged as 5803122d) | `claude/ui-screens-home` | 2026-11-16 20:49Z |
 | S1 | `session_01SNkKxo7UZxeUrogyt29c1R` (Opus 5.5, effort high) | P2-S1-heist-1 (start, cycle 105: phase 2 exit, M25; the heist screen's open gate fails at 100% and 200% text; S1's last session, `session_01SNkKxpVcMU7QCMYR9SLhx3`, is idle, its task merged as 532296af) | `claude/ui-screens-heist` | 2026-11-16 20:47Z |
@@ -617,8 +618,9 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   and no check ran; the merge lock stays null.
   **Messages:** M45 not acked by S1 yet (ack_by 05:55Z). M46 sent to S2
   (ack by 06:50Z): the pass, so mark home-6 ready.
-  **Seats:** S2 restarted on home-6 (its session was idle, waiting on this
-  gate, the same case as cycle 100's S1 restart). The new session reads
+  **Seats:** S2 restarted on home-6 as `session_01SNkKxq8HjVf66y13L7w5BL`
+  (04:48Z). Its last session was idle, waiting on this gate, the same case
+  as cycle 100's S1 restart. The new session reads
   M46 and marks ready. S1 is working. That is two of four. Under M33 no
   task qualifies for the free seats before the phase-2 stop at 21:00Z.
   **Next:** cycle 116 merges result-6 and home-6 as one candidate if both
