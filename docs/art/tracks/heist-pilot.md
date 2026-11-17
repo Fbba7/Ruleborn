@@ -504,3 +504,5 @@ Each still was shot with `FIT=1`, all exit 0, "fit ok":
     env FIT=1 TEXT=200 [LOCALE=pt_BR|de] bash tools/render/shoot.sh client/tests/shots/screen_heist.gd heist_200_<locale>.png
 
 `heist_hc.png` is the still for the gate's "heist in high contrast" (Colour roles and value). The stills are not committed (this task's files hold no stills); the commands above render them from the ready commit.
+
+**The guard's draw calls.** guard.sh at `a4dcb52e` measures heist/hc at 123 against its record of 121; heist/100 and heist/200 keep their records. The two calls are the re-dressed plates: the card face differs from the leather face it replaces, and Pause's light plate with its inked icon breaks the batch that the dark plates share. Pause on the card would save one call but stand only 18 off the sky, under AD-R56's 20. The raise, 121 -> 123, is requested of the lead under M33 (S1-R39). It closes AD-R56's objection.
