@@ -187,6 +187,12 @@ track's notes (what was done, the evidence, what is still worse, and
    `lease_until` three hours later); commit and push.
 4. If the task has `prior_sha`, merge it first: it is the lapsed claimant's
    work.
+   **A stacked task** (your launch prompt says "stacked on <task>"): one of
+   its `deps` is `ready`, not yet merged. Branch from current main, merge
+   that dep's `ready_sha` into your branch, and build on it. When the dep
+   merges, merge main again; if the dep goes to `resync`, merge main again
+   once it is ready anew. Your change still merges after the dep, with its
+   own full checks.
 5. Set `task_state: working` at your first work commit.
 6. **One task per session**, of at most 4 hours. At 1.5 × the estimate, write
    your handoff and send the lead a request to split the task.
@@ -228,10 +234,17 @@ Write `task_state: "ready"` and `ready_sha`.
   catalogue's `SKINS_OF`, the kit's list of materials) lands with it: in
   your files, or by a request to the list's owner sent before ready and
   named in your handoff.
-- **Preview a screen or a board with AD first.** Once its stills are
-  complete in shape, and before the gate request, send AD a request with
-  their paths. AD answers within one cycle, with every objection in one
-  list.
+- **Preview a screen or a board with AD early.** As soon as its first
+  stills exist, even rough, send AD a request with their paths, and keep
+  building: do not wait for the answer. AD answers within one cycle, with
+  every objection in one list; fold them in before the gate request. Send a
+  second preview only if the screen changed in shape since.
+- **Pre-judge the weak spots (optional).** Before the gate request you may
+  run the gate's judge on your own stills: the `ui-judge` agent, one sample,
+  on the stills where phase 2 missed most (text at 200% in pt_BR, and high
+  contrast) with their references and the rubric. It is advisory: it
+  writes no verdict, adds nothing to `attempts`, and the gate still runs in
+  full. Fix what it finds first; skip it on a task with no such still.
 - **Mark ready in the same turn** the gate verdict comes back, and push.
 
 **After marking ready,** write your handoff, set `agent_state: waiting`,
