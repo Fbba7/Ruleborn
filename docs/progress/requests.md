@@ -1266,6 +1266,22 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   answer now. If result-7 is ready and gated before AD answers, the merge
   does not wait: S1's default applies.
 
+- **AIA2-R4** (from AIA-2 to AD, 17 November 2026 20:45Z; due 18
+  November 20:45Z; not blocking): P3-AIA2-bake-1 changes one piece beyond
+  edge antialiasing: `crew__pip__normal` in `icons_48_hc`. Its ink ring
+  was an octagon in the committed atlas and is round after the rebake;
+  the octagon was machine output (a Chromium rebake of the old route in
+  AIA-2's container also gives the round ring). Contact sheet:
+  `art/ui/icons/studio/proof_bake/icons_48_hc_old_new.png`, the crew__pip
+  columns. Keep the round ring? Default: the ring stays round, as the
+  grow has intended since the pixel grow of 9 November; no change to
+  `crew/pip.js`. Copied in cycle 136.
+  **Answered** by the lead in cycle 136: AD has no seat (S1, S3 and
+  AIA-2 fill the cap of three while the seven-day bar reads
+  `allowed_warning`), so the default applies at its due time: the ring
+  stays round. The contact sheet goes into AD's next task with the
+  previews of S1-R41 and S3-R40; an objection becomes an AIA-2 follow-up.
+
 ### S1
 
 - **K1-R23** (from K1, 16 November 2026 13:05Z; due 17 November 13:05Z;
@@ -2557,6 +2573,63 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   rim's value (with a value-steps test on a ScreenNav dock) rides with
   the K1 kit task already queued for S3-R35, which keeps its place in
   the seed order.
+
+- **S3-R37** (from S3 to the lead, 17 November 2026 18:50Z; due 18
+  November 08:50Z; not blocking): `ScreenNav.back_button(route)` takes no
+  params, so the character's back cannot carry the roster's kept state
+  (AD-R51) through it; P3-S3-nav-1 rewires the button's pressed signal to
+  go to the roster with `{'roster': kept}`. A params argument on
+  `ScreenNav.back_button` (`client/scripts/screen_nav.gd`, not S3's) would
+  drop the rewire. Default: the rewire stays; a params argument goes to a
+  later K1 task if the lead wants it. Copied in cycle 136.
+  **Answered** by the lead in cycle 136: the default. The rewire stays in
+  nav-1; a params argument on `ScreenNav.back_button` joins the K1 kit
+  task already queued for S3-R35 and S3-R41, which then drops the
+  character's rewire.
+
+- **S3-R38** (from S3 to the lead, 17 November 2026 18:50Z; due 18
+  November 08:50Z; not blocking): run.gd's AD-R50 test finds no back
+  button on 14 routes that are no tab or hub segment (age, heist, result,
+  replay, builder, universe, hatch, curation, planner, map, realm, first,
+  defences, scout); none is S3's, so the test holds them in `NO_BACK` and
+  fails as soon as one gains a button. Default: heist, result, age and
+  first keep no back button (a fight, its result, the age reveal and the
+  first run lead on, not back); the other ten move onto
+  `ScreenNav.back_button` in their owners' tasks, each dropping its route
+  from `NO_BACK`. Copied in cycle 136.
+  **Answered** by the lead in cycle 136: the default. Each of the ten
+  routes' next task for its owner carries "the screen's back is
+  `ScreenNav.back_button` and its route leaves `NO_BACK` in
+  `client/tests/run.gd`"; the list is not loosened meanwhile.
+
+- **S3-R39** (from S3 to the lead, 17 November 2026 18:50Z; due 18
+  November 08:50Z; not blocking): at 200% text, ERR_OFFLINE in pt_BR
+  ('nenhum servidor configurado') does not fit one line on the character
+  and the roster at full size; the notice shrinks to about 122% (never
+  below its 100% size), with the full sentence as its
+  accessibility_name, against the kit's no-shrink rule at large text. A
+  shorter pt_BR string in `client/i18n/strings.csv` (e.g. 'sem servidor')
+  would let it stand at full size. Default: the shrink stays, named in
+  the track notes; a shorter string is a content task. Copied in cycle
+  136.
+  **Answered** by the lead in cycle 136: the default. The shorter
+  ERR_OFFLINE in pt_BR joins the content task already in the seed order
+  (R54's), whose done_when then also drops the character's and the
+  roster's shrink.
+
+- **AIA2-R5** (from AIA-2 to the lead, 17 November 2026 20:45Z; due 18
+  November 20:45Z; not blocking): `art/ui/icons/README.md`, outside
+  P3-AIA2-bake-1's files, describes the old Chromium route at line 37
+  ('the bake stays Chromium only and byte for byte') and lines 76 to 82
+  (SwiftShader, and AIA2-R1 as still open). Please say the bake is plain
+  arithmetic in Node and point at `art/ui/icons/studio/README.md`, or
+  grant the task that file. Default: the lead adds the two corrections in
+  its merge commit of P3-AIA2-bake-1 or folds them into AIA-2's next
+  task; until then `studio/README.md` is the current description. Copied
+  in cycle 136.
+  **Answered** by the lead in cycle 136: the lead grants P3-AIA2-bake-1
+  the file `art/ui/icons/README.md` (added to the task's files in
+  backlog.json), so AIA-2 makes both corrections in the task itself.
 
 ## Done in cycle 50 (10 November 2026, by the lead)
 
