@@ -202,8 +202,9 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxoNbeTeKGGMsN9ry59` (cycle 115,
-17 November 2026 from about 04:38Z, started by the Opus 5.5 launcher). Cycle
+Latest lead cycle session: `session_01SNkKxqWFq56FsNSSyzA9pi` (cycle 116,
+17 November 2026 from about 05:10Z, started by the Opus 5.5 launcher). Cycle
+115's was `session_01SNkKxoNbeTeKGGMsN9ry59` (from 04:38Z). Cycle
 114's was `session_01SNkKxqWporDHiELckV82hr` (from 04:14Z). Cycle
 113's was `session_01SNkKxod4oGpNKzH7kz1EUJ` (from 03:40Z). Cycle
 112's was `session_01SNkKxnALgp923n1Xz8RyLi` (from 03:14Z). Cycle
@@ -599,6 +600,31 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 116**, 17 November 2026, from about 05:10Z (session
+  `session_01SNkKxqWFq56FsNSSyzA9pi`, started by the Opus 5.5 launcher).
+  **Claims copied:** S2 marked P2-S2-home-6 ready at a4090ec7 (seen
+  04:55:00Z), acking M46. S1 marked P2-S1-result-6 ready at f6697161 (seen
+  04:55:07Z, pre-check PASS), acking M45.
+  **Requests:** none new.
+  **Gate and merges:** the batch candidate (result-6 with home-6, M42)
+  hit an add/add conflict in
+  `docs/art/ui-quality/gate/verdicts/P2-S1-result-6/b5843368.json`, S1's
+  copy against the lead's verdict of cycle 113. The merge was aborted.
+  `owners.py diff` also flags four more files S1's branch adds in that
+  verdict folder, outside the task's files. **result-6 goes to resync**
+  (M47 to S1: merge main, take main's b5843368.json, git rm the four
+  files, re-run the pre-check, mark ready; the gate's pass carries over).
+  **home-6 merged alone:** candidate 22c81917 (merge lock from 05:16Z),
+  full checks since it differs from a4090ec7 outside `docs/progress`
+  (the lead's verdict files). check_all PASS (05:45Z) and guard.sh exit 0.
+  Merged onto main's bookkeeping head as d032b190, docs check OK. The
+  audit and roadmap pages did not change, so nothing is republished.
+  **Restarts:** S1, `session_01SNkKxpZ5ULnfUU5QKJPRM6`, for the resync of
+  M47. Its last session was idle.
+  **Seats:** S1 (result-6 in resync). S2 has no open task. Two of four.
+  **Next:** merge result-6 once it is ready again, and check M47's ack
+  (due 07:30Z). Under M33 nothing new is seeded before the phase-2 stop at
+  21:00Z.
 - **Cycle 115**, 17 November 2026, from about 04:38Z (session
   `session_01SNkKxoNbeTeKGGMsN9ry59`, started by the Opus 5.5 launcher).
   **Claims copied:** S1 works on P2-S1-result-6 (seen 04:22:35Z, lease to
@@ -647,38 +673,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   **Seats:** S1 and S2 working, two of four. Under M33 no task qualifies
   for the free seats before the phase-2 stop at 21:00Z.
   **Next:** cycle 115 merges result-6 when ready (as one candidate with
-  home-6 if both are ready, M42), gates home-6 on S2's `gate_request`
-  (100% text, Display type), checks M45's ack, and restarts S1 or S2 only
-  if its update time passes.
-
-- **Cycle 113**, 17 November 2026, from about 03:40Z (session
-  `session_01SNkKxod4oGpNKzH7kz1EUJ`, started by the Opus 5.5 launcher).
-  **Claims copied:** S1 works on P2-S1-result-6 (seen 03:43:39Z, lease to
-  06:43:39Z): AD-R46 (H) fixed, its own gate passed at b5843368,
-  `gate_request` there on the three items, main merged in at cb518273;
-  checks and pre-check next, then ready. S2 works on P2-S2-home-6 (seen
-  03:44Z, lease to 06:00Z): the counts drawn in `HomeParts.InkedRow` at
-  bac22476; the fit cases, guard and pre-check next, then `gate_request`.
-  **Requests:** none new.
-  **Gate and merges:** advisory gate on result-6 at b5843368 (rubric v3,
-  three samples each, pictures shuffled), verdict in
-  `docs/art/ui-quality/gate/verdicts/P2-S1-result-6/b5843368.json`: 100%
-  Display type and Character presence pass 3/3 (the task's gate items),
-  200% pt_BR Display type passes 3/3, high contrast Hierarchy passes 3/3,
-  200% pt_BR Hierarchy fails 3/3 (the prose and the 2:45 alarm line sit
-  larger than the reward numerals, and the three equal cream tiles let no
-  reward lead; the lead's own look agrees). The fail is outside the
-  task's gate items, so it does not hold result-6 back; it is logged as a
-  phase-3 follow-up for S1 (M33), noted under AD-R46 in `requests.md`.
-  Home-6 not gated (no `gate_request`). Nothing ready, so nothing merged
-  and no check ran; the merge lock stays null.
-  **Messages:** M44 acked by S1 (03:43:39Z). M45 sent to S1 (ack by
-  05:55Z): the gate result, mark ready once checks and pre-check pass,
-  the 200% Hierarchy fail logged for phase 3, closed inside result-6 only
-  if it adds no more than about 30 minutes.
-  **Seats:** S1 and S2 working, two of four. Under M33 no task qualifies
-  for the free seats before the phase-2 stop at 21:00Z.
-  **Next:** cycle 114 merges result-6 when ready (as one candidate with
   home-6 if both are ready, M42), gates home-6 on S2's `gate_request`
   (100% text, Display type), checks M45's ack, and restarts S1 or S2 only
   if its update time passes.
