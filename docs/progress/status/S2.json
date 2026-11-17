@@ -8,13 +8,13 @@
   "task_state": "working",
   "claimed_at": "2026-11-17T01:00:00Z",
   "lease_until": "2026-11-17T04:00:00Z",
-  "updated_at": "2026-11-17T01:12:00Z",
-  "expected_next_update_by": "2026-11-17T01:55:00Z",
+  "updated_at": "2026-11-17T01:18:00Z",
+  "expected_next_update_by": "2026-11-17T02:00:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "eb40e8f4",
-    "next_step": "Gold baked figures for every headline count (purse, renown, strain share at every size), baked figures shrink before going live, leather rim round 'Keeper 24's ink. Next: full FIT sweep (56 cases), checks, Part 6, AD preview request, pre-check.",
-    "at": "2026-11-17T01:12:00Z"
+    "next_step": "Build done at 4c242628 (gold baked figures for every headline count, baked shrink to 78%, rimmed title). Running M26's 57 fit cases; then guard, pre-check, gate request. S2-R34 (AD preview) sent.",
+    "at": "2026-11-17T01:18:00Z"
   },
   "precheck": null,
   "gate_request": null,
@@ -490,6 +490,22 @@
       "created_at": "2026-11-16T21:55:00Z",
       "due": "2026-11-17T01:55:00Z",
       "default": "The stills stand as previewed: the gate runs on the pre-checked commit, and any objection becomes a follow-up task.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R34",
+      "from": "S2",
+      "to": "AD",
+      "ask": "Preview P2-S2-home-6 (phase 2 exit, M25, M33: home-5's advisory Display type fails at eb40e8f4) on claude/ui-screens-home at 4c242628 or later, before it is marked ready (M10, M12, M23). Reproduce with `FIT=1 [TEXT=200] [LOCALE=<loc>] [CONTRAST=1] bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`: 100% en, 100% de, 100% pt_BR, high contrast, 200% pt_BR, 200% de. What changed: (1) every headline count (the purse's three counts, the renown '1,460', the strain share '82%') is in the kit's gold baked numerals (num_gold, T3), not num_white, whose pale gradient read as a flat fill on the dark plates; the share is baked at every text size, over the band's name. (2) The baked counts shrink to fit (never under 78%) instead of going live, so German ('142,0 Tsd.', 80%) and Portuguese ('142,0 mil', 88% at 100%) keep the one treatment. (3) 'Keeper 24' over the starfield has a band of the plates' leather rim round its ink outline (outline at least 13% of its size), so the outline reads all round and the rim's heavier foot is the drop. Please rule on the gold figures, the smaller German counts and the title's rim. Evidence in docs/art/tracks/home-screen.md, Part 6.",
+      "files": [
+        "client/scripts/home.gd",
+        "client/scripts/home_parts.gd",
+        "docs/art/tracks/home-screen.md"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-17T01:18:00Z",
+      "due": "2026-11-17T03:30:00Z",
+      "default": "The stills stand as previewed: S2 marks ready on the pre-checked commit, the gate runs, and any objection becomes a follow-up task.",
       "escalate_to": "lead"
     }
   ],
