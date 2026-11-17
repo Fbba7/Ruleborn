@@ -8,8 +8,8 @@
   "task_state": "working",
   "claimed_at": "2026-11-17T13:05:00Z",
   "lease_until": "2026-11-17T16:05:00Z",
-  "updated_at": "2026-11-17T13:06:37Z",
-  "expected_next_update_by": "2026-11-17T13:51:37Z",
+  "updated_at": "2026-11-17T13:27:00Z",
+  "expected_next_update_by": "2026-11-17T14:12:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": null,
@@ -449,5 +449,5 @@
       "at": "2026-11-17T08:15:00Z"
     }
   ],
-  "next_step": "P3-K1-tabs-1 claimed; main merged at 5c5f5ee"
+  "next_step": "P3-K1-tabs-1: fix and both tests committed (534dff23); the mount test fails on the old KitTabs (181 px over the tile's foot) and passes on the new; main merged as 6fcf88ba; next the catalogue compare, check_all, guard.sh, the pre-check and the handoff"
 }
