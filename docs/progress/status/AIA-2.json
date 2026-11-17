@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-17T20:10:00Z",
   "lease_until": "2026-11-17T23:10:00Z",
-  "updated_at": "2026-11-17T20:45:00Z",
-  "expected_next_update_by": "2026-11-17T21:30:00Z",
+  "updated_at": "2026-11-17T21:20:00Z",
+  "expected_next_update_by": "2026-11-17T22:05:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": null,
-    "next_step": "the --jitless proof run, then merge main, the setup line, client/build.sh, check_all.sh, guard.sh, the pre-check and owners.py diff"
+    "last_green_sha": "17520f56",
+    "next_step": "the pre-check on this commit (run_checks.sh start, wait, record) and owners.py diff P3-AIA2-bake-1, then ready_sha"
   },
   "precheck": null,
   "gate_request": null,
@@ -102,5 +102,5 @@
     }
   ],
   "answers": [],
-  "note": "P3-AIA2-bake-1 working: the icon bake draws in Node by plain arithmetic, with no browser; two runs and a vector-units-off run give the same bytes; icons_48 and icons_256 rebaked, check_icons all ok."
+  "note": "P3-AIA2-bake-1 working: the icon bake draws in Node by plain arithmetic, with no browser; two runs, a vector-units-off run and a --jitless run give the same bytes; on merge 17520f56 the setup line, build.sh, check_all.sh (PASS) and guard.sh (OK) pass in order."
 }
