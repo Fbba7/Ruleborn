@@ -2,8 +2,8 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026. Phase 2 started on 12 November 2026 (lead cycle 70): P1-AD-board-1d let board 1 stand and phase 1's other exit criteria hold (report.md section 3.2); its first tasks are the flow findings (S1, S2) and board 1's note G (AIA-2), within the same cap of three. Since 12 November 2026, about 20:00Z, the cap is four UI builders by the owner's order (CLAUDE.md order 3; three while the seven-day bar reads allowed_warning).",
   "wave": "UI wave",
   "phase": 2,
-  "updated_at": "2026-11-16T23:55:00Z",
-  "updated_by": "lead (cycle 105)",
+  "updated_at": "2026-11-17T01:42:00Z",
+  "updated_by": "lead (cycle 109)",
   "stop_at": "2026-11-17T21:00:00Z",
   "lease_hours": 3,
   "status_every_minutes": 45,
@@ -643,14 +643,20 @@
       "model": "Opus 5.5",
       "attempts": 0,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "working",
+      "claim": {
+        "agent": "S2",
+        "branch": "claude/ui-screens-home",
+        "claimed_at": "2026-11-17T01:00:00Z",
+        "seen_at": "2026-11-17T01:42:00Z",
+        "lease_until": "2026-11-17T04:00:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-17T01:00:00Z",
-      "updated_by": "lead (cycle 108)",
+      "updated_at": "2026-11-17T01:42:00Z",
+      "updated_by": "lead (cycle 109)",
       "id": "P2-S2-home-6",
       "title": "Home screen, part 6 (phase 2 exit, M25, M33): the advisory gate's Display type fails at home 100% text and 200% pt_BR (verdict at eb40e8f4) fixed",
       "exceptions": [
@@ -696,14 +702,20 @@
       "model": "Opus 5.5",
       "attempts": 0,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "claimed",
+      "claim": {
+        "agent": "S1",
+        "branch": "claude/ui-screens-heist",
+        "claimed_at": "2026-11-17T01:31:29Z",
+        "seen_at": "2026-11-17T01:42:00Z",
+        "lease_until": "2026-11-17T04:31:29Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-16T20:55:00Z",
-      "updated_by": "lead (cycle 105)",
+      "updated_at": "2026-11-17T01:42:00Z",
+      "updated_by": "lead (cycle 109)",
       "id": "P2-S1-result-6",
       "title": "Result screen, part 6 (phase 2 exit, M25): S1-R32's local fix dropped once P2-K1-grow-1 merges; the gate at 100% text re-run and its Display type fail fixed if it stands",
       "exceptions": []
@@ -1002,21 +1014,24 @@
       "to": "lead",
       "text": "Cycle 107's first check_all on candidate 714b24ed (P2-K1-grow-1) failed at the simulation build because the lead's fresh container had no wasm32-unknown-unknown target, as in cycles 54, 72 and 81, although M22 asks for the install as a cycle's first step. The overseer added the installs to the environment's setup script on 17 November 2026: every fresh container now runs rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios and pip install gdtoolkit 4 and playwright 1.63.0 before the session starts. Keep M22's setup line as a no-op check (it reports 'up to date' when the script ran) and still run bash client/build.sh in the candidate worktree. If a first check run still fails on a missing tool, write which one in the cycle's write-up, so the script can be fixed. Add M37 to your acks.",
       "sent_at": "2026-11-17T00:01:00Z",
-      "ack_by": "2026-11-17T02:01:00Z"
+      "ack_by": "2026-11-17T02:01:00Z",
+      "acked_at": "2026-11-17T01:42:00Z"
     },
     {
       "id": "M38",
       "to": "lead",
       "text": "From 17 November 2026 a cycle starts only when it has work, and reads less. Each cycle now starts with python3 tools/coord/cycle_needed.py (lead.md, Running a cycle, step 0) and, when it exits 3, writes nothing and ends: no branch moved, nothing ready or startable, no message, request, lease or late status waiting, and the heartbeat not due. So: at step 1 save `cycle_needed.py heads` to a file outside the repository; at step 7 set expected_next_update_by to updated_at + 3 hours (the heartbeat starts a cycle 20 minutes before it, and the watchdog still covers a stall), then after rebasing run python3 tools/coord/archive.py (merged tasks to backlog-archive.json, Now entries past the newest three to lead-archive.md; the pinned ones and the new Standing notes section stay) and, last, cycle_needed.py record <heads file>. owners.py diff finds archived tasks. See lead.md, Running a cycle, steps 0, 1 and 7. Add M38 to your acks.",
       "sent_at": "2026-11-17T01:30:00Z",
-      "ack_by": "2026-11-17T03:30:00Z"
+      "ack_by": "2026-11-17T03:30:00Z",
+      "acked_at": "2026-11-17T01:42:00Z"
     },
     {
       "id": "M39",
       "to": "lead",
       "text": "Two rules for seats from 17 November 2026 (agent-protocol.md, Taking work). Keeping the queue full: end every cycle with at least one startable task or idle entry per free seat; when product tasks run short, refill idle_queue with report 3.2's kinds, and once phase 2's exit is met or its stop_at (17 November 21:00Z) passes, seed phase 3 from S3-R32, the board objections, the audit findings and the open exceptions, keeping M33's rule until then. Stacked tasks: a task whose one unmerged dep is ready may start at once, 'stacked on <dep>' in its launch prompt; the agent merges the dep's ready_sha, the stacked task merges right after the dep with its own full checks (never M36's reuse), and owners.py diff runs against the main that holds the dep. Add M39 to your acks.",
       "sent_at": "2026-11-17T01:30:00Z",
-      "ack_by": "2026-11-17T03:30:00Z"
+      "ack_by": "2026-11-17T03:30:00Z",
+      "acked_at": "2026-11-17T01:42:00Z"
     },
     {
       "id": "M40",
