@@ -447,12 +447,15 @@ func _lay(mode: int) -> bool:
 		var s := view.camera.unproject_position(at)
 		node.set_meta("anchor", s)
 		if not p.get("front", false):
+			# A locked realm's plate keeps the side buttons' gutter (AD's note on
+			# S2-R36), in its full form and its short one.
+			var side := UI.px(Tokens.number("size", "safe_side_points")) if p.get("brief", false) else UI.px(4)
 			if p.get("brief", false):
 				_brief(node, false)
-			var spotted := _spot(node, s, taken, taken_by_screen, view.inset.x, node.size.y * FAR)
+			var spotted := _spot(node, s, taken, taken_by_screen, view.inset.x, node.size.y * FAR, side)
 			if not spotted and p.get("brief", false):
 				_brief(node, true)
-				spotted = _spot(node, s, taken, taken_by_screen, view.inset.x, node.size.y * FAR)
+				spotted = _spot(node, s, taken, taken_by_screen, view.inset.x, node.size.y * FAR, side)
 			node.visible = spotted
 			continue
 		# A realm's pin with its name where a place near its island is free,
@@ -477,12 +480,12 @@ func _lay(mode: int) -> bool:
 ## aside at half a step up or down, as a pin is wider than it is tall: a pin
 ## slides along its island's rim before it leaves it.
 static func _spot(node: Control, s: Vector2, taken: Array[Rect2], screen: Array[Rect2], ceiling: float,
-		reach: float) -> bool:
+		reach: float, side: float = UI.px(4)) -> bool:
 	var parent := node.get_parent() as Control
 	var dim := node.size
 	var gap := pin_gap()
-	var lo := Vector2(UI.px(4), ceiling + UI.px(2))
-	var hi := Vector2(parent.size.x - dim.x - UI.px(4), parent.size.y - dim.y)
+	var lo := Vector2(side, ceiling + UI.px(2))
+	var hi := Vector2(parent.size.x - dim.x - side, parent.size.y - dim.y)
 	if hi.x < lo.x or hi.y < lo.y:
 		return false
 	var centred := (s - dim / 2.0).round()
