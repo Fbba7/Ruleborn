@@ -10,12 +10,17 @@
 //
 // Every colour is a name in client/ui/tokens.json. An icon's module gets
 // this file's exports as its `S` argument.
-import * as THREE from 'three';
-import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+//
+// The studio runs in Node, not a browser (README.md, "Why the bake is plain
+// arithmetic"): three.js builds the scene, raster.js draws it.
+import fs from 'node:fs';
+import * as THREE from '../../../../tools/ui_research/node_modules/three/build/three.module.js';
+import { RoundedBoxGeometry } from '../../../../tools/ui_research/node_modules/three/examples/jsm/geometries/RoundedBoxGeometry.js';
+import { rasterize } from './raster.js';
 
 export { THREE, RoundedBoxGeometry };
 
-const TOKENS = await (await fetch('/client/ui/tokens.json')).json();
+const TOKENS = JSON.parse(fs.readFileSync(new URL('../../../../client/ui/tokens.json', import.meta.url), 'utf8'));
 
 // A colour token by name, following names that point at other names.
 export function tok(name) {
@@ -52,18 +57,9 @@ export const STUDIO = {
   gloss: { colour: 'cream', at: 0.955, soft: 0.012, strength: 0.9 },
 };
 
-let renderer = null;
+// The scene in the studio's camera as a w x h picture (picture.js).
 export function renderTo(scene, w, h = w) {
-  if (!renderer) {
-    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
-    renderer.setPixelRatio(1);
-    renderer.toneMapping = THREE.NoToneMapping;
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
-  }
-  renderer.setClearColor(new THREE.Color(tok('drop')), 0);
-  renderer.setSize(w, h);
-  renderer.render(scene, camera(w / h));
-  return renderer.domElement;
+  return rasterize(scene, camera(w / h), w, h);
 }
 
 export function camera(aspect = 1) {
@@ -73,6 +69,8 @@ export function camera(aspect = 1) {
   return c;
 }
 
+// The material as a GPU would run it. raster.js works the same light, line
+// for line, from the uniforms; the GLSL stays as its specification.
 const TOON_VERTEX = `
 uniform vec3 keyAt;
 varying vec3 vNormal;
