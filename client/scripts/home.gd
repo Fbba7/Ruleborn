@@ -138,9 +138,8 @@ func _ready() -> void:
 		App.services.router.go.call_deferred(&"age")
 		return
 	var column := UI.frame(self)
-	# Closer at large text (§20.8), where the world's room between the purse
-	# and the foot is what the realms' chips and the left edge stand in
-	# (board 3b's H).
+	# Closer at large text (§20.8), where the world's room between the purse and the foot
+	# is what the realms' chips and the left edge stand in (board 3b's H).
 	column.add_theme_constant_override("separation", UI.px(2 if Settings.text_scale >= 150 else 6))
 	world = UniverseView.behind(self, column)
 	world.next_chosen.connect(func() -> void: App.services.router.go(&"universe"))
@@ -323,10 +322,11 @@ func _side(holder: CenterContainer, badge: String) -> void:
 	var route: StringName = s[0]
 	var action := KitControls.round_action(s[1], Strings.t(s[2]), func() -> void: App.services.router.go(route), false,
 		UI.CONTROL_POINTS if Settings.text_scale >= 150 else SIDE_POINTS, badge, "sky")
-	# Large text (§20.8): the disc alone, its badge kept and its name still
-	# spoken; a word plate at 200% outgrows the edge and covers the islands.
+	# Large text (§20.8): the disc alone, badge kept, name still spoken (a word plate at 200% covers
+	# the islands); on the left the disc drops 4 pt, so its badge clears the purse's foot (S2-R42).
 	if Settings.text_scale >= 150 and action.get_child_count() > 1:
 		(action.get_child(1) as Control).visible = false
+		holder.custom_minimum_size.y = action.get_combined_minimum_size().y + UI.px(8) if badge != "" and s in LEFT else 0.0
 	_secondary(action)
 	holder.add_child(action)
 
