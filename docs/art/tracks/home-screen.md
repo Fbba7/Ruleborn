@@ -492,6 +492,21 @@ Board 3 carried a note through every round: the shot's fixture (`keyframe()` in 
 - **The locked plate shows no realm name.** The key frame's plate reads "Lantern Vale" over "Opens at Keeper 28", on a cream plate like the other pins. Home's locked plate is the map's (`client/world/universe_pins.gd`, not this task's file): a dark plate with the lock and the opening level. S2 asked for the name (S2-R38); the default is the plate as it is.
 - **At 200% text the locked plate hides.** Lantern Vale's island sits beside the left side buttons, and at 200% "Opens at Keeper 28" is about as wide as the free band there, so the plate finds no place within reach of the island's rim and is hidden (en, pt_BR and de alike; it shows at 100% and 150%). The realms' pins shrink to their level chips at that size, but the locked plate has no smaller form, so the locked realm then reads only as a dark, bare island, which is carried by colour alone. The plate is laid by `client/world/universe_pins.gd`, not this task's file, and home has no hook to place it. S2 asked for a short form, the lock and "28" on the same pill, taken before it hides (S2-R40); the default is the plate as it is.
 
+**Evidence.**
+
+- **Fit.** All 57 of M26's cases print "fit ok" with `FIT=1` on 4797b5c3, at 100%, 150% and 200% text, in en, pt_BR, pt_PT, fr and de, with and without the raid notice, in high contrast, at 900 and 960 tall, with the widest amounts, 99 raids, an empty home, and no or six outer realms.
+- **Clear of the pins and the side buttons** (board 3's objection B), seen in the stills at 100% and 200% (en, pt_BR, de) and in high contrast. The Crew tab's "4" sits on the tab's top right, inside the bar, under no pin. The Defence badge "2" keeps its place beside the Defence button, and the pins give it room as before. At 100% the locked plate sits left of the Heart, under the Lab button and clear of it, as in the key frame. In pt_BR its longer words ("Abre no Guardião 28") leave a gap of about 7 px below the Lab button's plate. In de at 150% ("Öffnet bei Hüter 28") it lies over the Heart's island but clear of the Heart's pin. At 200% it hides (above).
+- **Not by colour alone.** Every count is a number on its disc, with a dark outline in high contrast, and the tab's spoken name carries it (`KIT_TAB_BADGE`). The locked plate says its lock with the lock mark and the words, wherever it shows.
+- **Draw calls** (`budget_shots.py --only home/100,home/200,home/hc` on 4797b5c3):
+
+  | Shot | Before | Now | Record |
+  |---|---:|---:|---:|
+  | home/100 | 143 | 148 | 145 |
+  | home/200 | 118 | 121 | 121 |
+  | home/hc | 143 | 148 | 145 |
+
+  The Crew tab's badge costs 3: KitTabs' own badge, measured as 146 with six outer realms against 143 with the badge taken out. The locked plate, in place of a sixth realm's pin, costs 2 (148 against 146). Textures (4.7 MiB) and words below 4.5:1 (none) are unchanged, and home stays 2 under §21.3's cap of 150. S2 asked the lead to record 148 (S2-R41).
+
 ## Left for other tasks
 
 These widgets are no longer used by home, but they are outside this task's files:

@@ -8,12 +8,12 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-17T07:30:00Z",
   "lease_until": "2026-11-17T10:30:00Z",
-  "updated_at": "2026-11-17T07:40:00Z",
+  "updated_at": "2026-11-17T07:47:00Z",
   "expected_next_update_by": "2026-11-17T08:45:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "a4090ec7",
-    "next_step": "Built (4797b5c3): Lantern Vale locked and the Crew tab's idle count in keyframe(); no shield timer and no made-up counts (S2-R37, S2-R39). Running the 57 fit cases, then the budget shots, then merge main and the pre-check."
+    "next_step": "All 57 fit cases 'fit ok' on 4797b5c3; draw calls 148/121/148 against records 145/121/145 (S2-R41). Next: merge main, check_all, guard and the pre-check; then ready."
   },
   "precheck": null,
   "gate_request": null,
@@ -599,8 +599,22 @@
       "due": "2026-11-17T16:00:00Z",
       "default": "The plate stays as it is: at 200% text it hides where it finds no room, and the locked state shows at 100% and 150% only (home-screen.md Part 7 says so).",
       "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R41",
+      "from": "S2",
+      "to": "lead",
+      "ask": "Record home's draw calls in tools/ui_bake/budgets.json (K1's file, written at the merge as for S2-R17 and S2-R30) when P3-S2-home-states merges: home/100 145 -> 148, home/hc 145 -> 148; home/200 stays 121 (measured 121). Measured with `python3 tools/ui_bake/budget_shots.py --only home/100,home/200,home/hc` on 4797b5c3; textures (4.7 MiB) and words below 4.5:1 (0) unchanged; still 2 under §21.3's cap of 150. The 3 calls are the states the task adds to the fixture, which the records never saw: the Crew tab's count badge costs 3 (KitTabs' own badge, KitStatus.badge: 146 with OUTER=6 against 143 with the badge taken out), and Lantern Vale's locked plate, drawn instead of a sixth realm pin, costs 2 (148 against 146). At 200% the locked plate hides (S2-R40), so home/200 holds at 121. Home adds no drawing of its own; a cheaper badge (drawn in the tab row's batch) would be K1's.",
+      "files": [
+        "tools/ui_bake/budgets.json"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-17T07:47:00Z",
+      "due": "2026-11-17T14:30:00Z",
+      "default": "Approved as for S2-R17 and S2-R30: the lead records home/100 and home/hc at 148 with a raises entry when it merges P3-S2-home-states; S2 marks ready with guard.sh failing only on those two draw-call lines, said in the handoff.",
+      "escalate_to": "lead"
     }
   ],
   "answers": [],
-  "next_step": "Built (4797b5c3): Lantern Vale locked and the Crew tab's idle count in keyframe(); no shield timer and no made-up counts (S2-R37, S2-R39). Running the 57 fit cases, then the budget shots, then merge main and the pre-check."
+  "next_step": "All 57 fit cases 'fit ok' on 4797b5c3; draw calls 148/121/148 against records 145/121/145 (S2-R41). Next: merge main, check_all, guard and the pre-check; then ready."
 }
