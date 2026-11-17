@@ -200,15 +200,15 @@
         "agent": "K1",
         "branch": "claude/ui-bake",
         "claimed_at": "2026-11-17T10:20:00Z",
-        "seen_at": "2026-11-17T10:45:00Z",
-        "lease_until": "2026-11-17T13:37:00Z"
+        "seen_at": "2026-11-17T11:23:00Z",
+        "lease_until": "2026-11-17T16:40:00Z"
       },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-17T10:45:00Z",
-      "updated_by": "lead (cycle 123)",
+      "updated_at": "2026-11-17T11:23:00Z",
+      "updated_by": "lead (cycle 124)",
       "exceptions": [
         "client/tests/shots/ui_kit_polish.gd"
       ]
@@ -315,14 +315,20 @@
       "estimate_h": 2.0,
       "tier": 2,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "claimed",
+      "claim": {
+        "agent": "S2",
+        "branch": "claude/ui-screens-home",
+        "claimed_at": "2026-11-17T10:50:00Z",
+        "seen_at": "2026-11-17T11:23:00Z",
+        "lease_until": "2026-11-17T13:50:00Z"
+      },
       "prior_branch": "claude/ui-screens-home",
       "prior_sha": "0f3a7a687c9fdf9efb87647c33afb88361681ea5",
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-17T10:45:00Z",
-      "updated_by": "lead (cycle 123)",
+      "updated_at": "2026-11-17T11:23:00Z",
+      "updated_by": "lead (cycle 124)",
       "exceptions": []
     },
     {
