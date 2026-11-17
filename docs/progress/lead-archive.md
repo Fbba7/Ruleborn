@@ -5,6 +5,40 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 106**, 16 November 2026, from about 21:39Z (session
+  `session_01SNkKxotGbP1EXkMF8w5cpy`, started by the Opus 5.5 launcher).
+  **Claims copied:** S1's P2-S1-heist-1, S2's P2-S2-home-5 and S3's
+  P2-S3-character-4, all three working. K1's P2-K1-grow-1 claim was seen
+  at 21:50Z. It is not ready yet: its pre-check is running at 050be78b, on
+  the merge 4f10bc28.
+  **Requests:** four copied.
+  - S1-R33 (heist/200 and heist/hc draw-call budgets) is approved under
+    M33, because both calls close failed gate qualities. The lead writes
+    those records, with a raises entry, in the merge of heist-1.
+  - S3-R32 (rb_box's parchment panel not drawn when scrolled) is logged
+    for phase 3, about 1.5 h. No task is seeded under M33.
+  - S3-R31 (AD preview of character-4) waits for a seat, which it does not
+    have: all four are in use. Its default stands at its due, 23:08Z.
+  - S3-R33 ("main moved backward") is answered: origin's `main` is the
+    stray branch of 4 November, and the program's main contains f083c96c.
+  **Gate:** S2's gate request, the re-run on main f083c96c that home-5
+  asks for first, has its verdict in
+  `docs/art/ui-quality/gate/verdicts/P2-S2-home-5/f083c96c.json`.
+  - Display type at home 100% fails, 0 of 3. The purse's counts are flat
+    cream, and 'Keeper 24' sits over the sky without an outline. The fail
+    of 977edd5b stands, and S2's fix on its branch is the right one.
+  - Hierarchy at 100% passes 3 of 3, and so does Hierarchy in high
+    contrast.
+  - Character presence at 100% passes 3 of 3; it failed at 977edd5b.
+  - This run judged main as a baseline, so it adds nothing to home-5's
+    attempts.
+  **Merge:** none, because nothing was ready and the lock stayed null.
+  **Seats:** four of four (K1, S1, S2, S3), so AD is not started.
+  **Next:** cycle 107 merges grow-1, heist-1, home-5 and character-4 as
+  each becomes ready, with S1-R33's records in heist-1's merge. Once a
+  seat frees, it starts AD on the preview requests. Result-6 opens once
+  grow-1 and heist-1 have merged. BT-* and SV-B10 stay outside the UI wave.
+
 - **Cycle 105**, 16 November 2026, from about 20:38Z (session
   `session_01SNkKxpseg4mh8yx1YBk6dS`, started by the Opus 5.5 launcher).
   **Claims copied:** K1's P2-K1-grow-1 (claimed 20:25Z, seen 20:42Z).

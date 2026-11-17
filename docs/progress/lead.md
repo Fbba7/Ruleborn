@@ -202,8 +202,9 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxnyW6RtDjtVJivG3bg` (cycle 108,
-17 November 2026 from about 00:14Z, started by the Opus 5.5 launcher). Cycle
+Latest lead cycle session: `session_01SNkKxqA691fQupEvYwZ32N` (cycle 109,
+17 November 2026 from about 01:38Z, started by the Opus 5.5 launcher). Cycle
+108's was `session_01SNkKxnyW6RtDjtVJivG3bg` (from 00:14Z). Cycle
 107's was `session_01SNkKxoeFFAtKhms3FvN3zQ` (from 22:39Z on 16 November). Cycle
 106's was `session_01SNkKxotGbP1EXkMF8w5cpy` (from 21:39Z). Cycle
 105's was `session_01SNkKxpseg4mh8yx1YBk6dS` (from 20:38Z). Cycle
@@ -306,6 +307,7 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| AD | `session_01SNkKxnPTEBNJrsj8BFDyUi` (Opus 5.5, effort high) | S2-R34 (blocking, due 03:30Z: preview P2-S2-home-6 at 4c242628 or later) (start, cycle 109: S2-R34 copied; AD's last session, `session_01SNkKxq1MGyJ5jNneT2tqME`, is idle, its two previews done) | `claude/ui-ad` | 2026-11-17 01:43Z |
 | S1 | `session_01SNkKxrHQgnrk4u1GoTLWJP` (Opus 5.5, effort high) | P2-S1-result-6 (start, cycle 108: P2-S1-heist-1 merged as 79c1f353, so result-6's deps are all merged; S1's last session, `session_01SNkKxo7UZxeUrogyt29c1R`, is idle, its task merged) | `claude/ui-screens-heist` | 2026-11-17 01:27Z |
 | S2 | `session_01SNkKxqDPpd7eVdbFeT2dp8` (Opus 5.5, effort high) | P2-S2-home-6 (start, cycle 108: P2-S2-home-5 merged as fb8ff4b9; its advisory gate's Display type fails at home 100% and 200% pt_BR, M33; S2's last session, `session_01SNkKxnd61Vr6rsj7aeL4cz`, is idle, its task merged) | `claude/ui-screens-home` | 2026-11-17 00:56Z |
 | S3 | `session_01SNkKxpXsYHy2L9mKvHcZBk` (Opus 5.5, effort high) | P2-S3-character-4 (start, cycle 105: phase 2 exit, M25; the advisory gate's Display type fail on character at 200% text, pt_BR; S3's last session, `session_01SNkKxnS2WKmrL48Dmzje8k`, is idle, its task merged as 6d9a4bf1) | `claude/ui-screens-meta` | 2026-11-16 20:49Z |
@@ -314,7 +316,7 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 | K1 | `session_01SNkKxr27Br8FeRKiWvTJ1x` (Opus 5.5, effort high) | P2-K1-grow-1 (start, cycle 104: S1-R15, S1-R23, S3-R3 and S1-R32, the kit's buttons grow and wrap at large text and the reward sky stays plain under high contrast; K1's last session, `session_01SNkKxnzhmd9WDTWw6ChMw3`, is idle, its task merged as c0e0418b; idle, its task merged as d277dc25) | `claude/ui-bake` | 2026-11-16 20:22Z |
 | K1 | `session_01SNkKxnzhmd9WDTWw6ChMw3` (Opus 5.5, effort high; idle, its task merged as c0e0418b in cycle 104) | P2-K1-guard-prereq (start, cycle 103: M32, guard.sh checks its prerequisites first; K1's last session, `session_01SNkKxnx23zG9HV4wddwVrq`, is idle, its task merged as 26cbd842) | `claude/ui-bake` | 2026-11-16 17:52Z |
 | AD | `session_01SNkKxneJSddGy6BT3d1gxC` (Opus 5.5, effort high) | none: a duplicate of the row below, created by cycle 102 at 16:41Z, 33 seconds after cycle 101's, and archived at 16:42Z before it claimed anything | `claude/ui-ad` | 2026-11-16 16:41Z |
-| AD | `session_01SNkKxq1MGyJ5jNneT2tqME` (Opus 5.5, effort high) | previews S2-R33 (blocking: P2-S2-home-5, the purse's counts), then S1-R34 (P2-S1-heist-1's stills) (start, cycle 107: P2-K1-grow-1 merged as d277dc25 and freed K1's seat; AD's last session, `session_01SNkKxoVZrM6k7CuBbUpkM3`, is idle, its task done) | `claude/ui-ad` | 2026-11-16 23:29Z |
+| AD | `session_01SNkKxq1MGyJ5jNneT2tqME` (Opus 5.5, effort high; idle, S2-R33 and S1-R34 answered; replaced in cycle 109) | previews S2-R33 (blocking: P2-S2-home-5, the purse's counts), then S1-R34 (P2-S1-heist-1's stills) (start, cycle 107: P2-K1-grow-1 merged as d277dc25 and freed K1's seat; AD's last session, `session_01SNkKxoVZrM6k7CuBbUpkM3`, is idle, its task done) | `claude/ui-ad` | 2026-11-16 23:29Z |
 | AD | `session_01SNkKxoVZrM6k7CuBbUpkM3` (Opus 5.5, effort high) | P2-AD-board-3c, only H (restart, cycle 101: board 5c merged as 26cbd842 and home-4 as 5803122d; the session below ended done after board 5c) | `claude/ui-ad` | 2026-11-16 16:41Z |
 | S3 | `session_01SNkKxnS2WKmrL48Dmzje8k` (Opus 5.5, effort high; idle, its task merged as 6d9a4bf1) | P2-S3-account-4 (start, cycle 101: AD-R43, board 5c's objection M) | `claude/ui-screens-meta` | 2026-11-16 16:41Z |
 | S1 | `session_01SNkKxpVcMU7QCMYR9SLhx3` (Opus 5.5, effort high; idle, its task merged as 532296af) | P2-S1-result-5 (start, cycle 101: K1-R23, after P2-K1-kit-gaps-2 merged as 26cbd842) | `claude/ui-screens-heist` | 2026-11-16 16:41Z |
@@ -588,6 +590,29 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 109**, 17 November 2026, from about 01:38Z (session
+  `session_01SNkKxqA691fQupEvYwZ32N`, started by the Opus 5.5 launcher).
+  **Claims copied:** S2 works on P2-S2-home-6 (claimed 01:00Z, lease to
+  04:00Z, last green eb40e8f4, build at 4c242628). S1 claimed
+  P2-S1-result-6 at 01:31Z (lease to 04:31Z).
+  **Requests:** S2-R34 copied to AD's section (blocking, due 03:30Z:
+  preview home-6 at 4c242628 or later: gold baked numerals on every
+  headline count, the counts shrunk to fit in de and pt, a leather-rim
+  band round 'Keeper 24''s outline). AD started on it at 01:43Z
+  (`session_01SNkKxnPTEBNJrsj8BFDyUi`); AD's prompt now names S2-R34 and
+  M40. If AD has not answered by 03:30Z, S2-R34's default stands.
+  **Gate and merges:** nothing ready, so no gate ran and nothing merged;
+  the merge lock stays null. No check ran, so no missing tool to report
+  (M37).
+  **Messages:** M37, M38 and M39 acked.
+  **Seats:** S1, S2 and AD, three of four. The fourth stays free: M39
+  keeps the queue full, but under M33 no task qualifies before the
+  phase-2 stop at 21:00Z (no open objection, failed gate quality or
+  blocking check lacks a task). Phase 3's tasks are seeded once stop_at
+  passes.
+  **Next:** cycle 110 copies AD's answer to S2-R34, then gates and merges
+  home-6 and result-6 when ready.
+
 - **Cycle 108**, 17 November 2026, from about 00:14Z (session
   `session_01SNkKxnyW6RtDjtVJivG3bg`, started by the Opus 5.5 launcher).
   **Missing tool (M37):** the main checkout had no three.js under
@@ -664,40 +689,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   S2-R33, or once its default stands at 01:55Z. It merges heist-1 when
   ready, with S1-R33's records in its merge, and result-6 opens once
   heist-1 has merged. BT-* and SV-B10 stay outside the UI wave.
-
-- **Cycle 106**, 16 November 2026, from about 21:39Z (session
-  `session_01SNkKxotGbP1EXkMF8w5cpy`, started by the Opus 5.5 launcher).
-  **Claims copied:** S1's P2-S1-heist-1, S2's P2-S2-home-5 and S3's
-  P2-S3-character-4, all three working. K1's P2-K1-grow-1 claim was seen
-  at 21:50Z. It is not ready yet: its pre-check is running at 050be78b, on
-  the merge 4f10bc28.
-  **Requests:** four copied.
-  - S1-R33 (heist/200 and heist/hc draw-call budgets) is approved under
-    M33, because both calls close failed gate qualities. The lead writes
-    those records, with a raises entry, in the merge of heist-1.
-  - S3-R32 (rb_box's parchment panel not drawn when scrolled) is logged
-    for phase 3, about 1.5 h. No task is seeded under M33.
-  - S3-R31 (AD preview of character-4) waits for a seat, which it does not
-    have: all four are in use. Its default stands at its due, 23:08Z.
-  - S3-R33 ("main moved backward") is answered: origin's `main` is the
-    stray branch of 4 November, and the program's main contains f083c96c.
-  **Gate:** S2's gate request, the re-run on main f083c96c that home-5
-  asks for first, has its verdict in
-  `docs/art/ui-quality/gate/verdicts/P2-S2-home-5/f083c96c.json`.
-  - Display type at home 100% fails, 0 of 3. The purse's counts are flat
-    cream, and 'Keeper 24' sits over the sky without an outline. The fail
-    of 977edd5b stands, and S2's fix on its branch is the right one.
-  - Hierarchy at 100% passes 3 of 3, and so does Hierarchy in high
-    contrast.
-  - Character presence at 100% passes 3 of 3; it failed at 977edd5b.
-  - This run judged main as a baseline, so it adds nothing to home-5's
-    attempts.
-  **Merge:** none, because nothing was ready and the lock stayed null.
-  **Seats:** four of four (K1, S1, S2, S3), so AD is not started.
-  **Next:** cycle 107 merges grow-1, heist-1, home-5 and character-4 as
-  each becomes ready, with S1-R33's records in heist-1's merge. Once a
-  seat frees, it starts AD on the preview requests. Result-6 opens once
-  grow-1 and heist-1 have merged. BT-* and SV-B10 stay outside the UI wave.
 
 - **Stopped here**, 13 November 2026, about 13:20Z (the owner's "Stop
   cleanly"). Cycle 84 (session `session_01SNkKxpqF4gx3yYhsXenUGt`) took
