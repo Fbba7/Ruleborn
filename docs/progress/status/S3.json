@@ -8,18 +8,18 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-17T13:05:00Z",
   "lease_until": "2026-11-17T16:05:00Z",
-  "updated_at": "2026-11-17T13:31:00Z",
-  "expected_next_update_by": "2026-11-17T14:11:00Z",
+  "updated_at": "2026-11-17T14:13:00Z",
+  "expected_next_update_by": "2026-11-17T14:53:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "ee67dcea90dcaef929db2240127f1b87b13ad735",
-    "next_step": "code, track and handoff at aed2d06d (fit 50/50, check_screens OK, guard OK); main 6f3ec53c merged; pre-check running at aed2d06d; AD preview S3-R34 asked; then ready with gate_request",
-    "at": "2026-11-17T13:31:00Z"
+    "last_green_sha": "aed2d06d6c5260b066e47c225315c06df34bf303",
+    "next_step": "pre-check PASS at aed2d06d; main ef80c8bf (AD audit-1b, no client files) merged at b311dc17; setup line exit 0 there, build and guard running; then the pre-check on the merge; S3-R34 open (due 15:31Z)",
+    "at": "2026-11-17T14:13:00Z"
   },
   "precheck": {
-    "sha": "ee67dcea90dcaef929db2240127f1b87b13ad735",
+    "sha": "aed2d06d6c5260b066e47c225315c06df34bf303",
     "exit": 0,
-    "finished_at": "2026-11-16T22:28:41Z",
+    "finished_at": "2026-11-17T14:11:56Z",
     "summary": "All checks passed."
   },
   "gate_request": null,
