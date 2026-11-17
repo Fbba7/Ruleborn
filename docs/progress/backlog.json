@@ -70,7 +70,7 @@
       "estimate_h": 1.5,
       "tier": 2,
       "critical": false,
-      "state": "claimed",
+      "state": "merged",
       "claim": {
         "agent": "AD",
         "branch": "claude/ui-ad",
@@ -80,9 +80,9 @@
       },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null,
-      "updated_at": "2026-11-17T07:50:00Z",
+      "ready_sha": "24965010ad39e1f2fd20766476a5d1a316ec5a3e",
+      "merged_sha": "1abc52ba",
+      "updated_at": "2026-11-17T09:35:00Z",
       "updated_by": "lead (cycle 119)",
       "exceptions": []
     },
@@ -300,7 +300,7 @@
       "estimate_h": 1.5,
       "tier": 2,
       "critical": false,
-      "state": "claimed",
+      "state": "merged",
       "claim": {
         "agent": "S1",
         "branch": "claude/ui-screens-heist",
@@ -310,9 +310,9 @@
       },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null,
-      "updated_at": "2026-11-17T07:50:00Z",
+      "ready_sha": "55716273479b27992cdb57e8f5e5151921d31d6f",
+      "merged_sha": "1abc52ba",
+      "updated_at": "2026-11-17T09:35:00Z",
       "updated_by": "lead (cycle 119)",
       "exceptions": []
     },
