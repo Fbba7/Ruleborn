@@ -8,12 +8,12 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-17T01:31:29Z",
   "lease_until": "2026-11-17T04:31:29Z",
-  "updated_at": "2026-11-17T02:17:41Z",
-  "expected_next_update_by": "2026-11-17T03:02:41Z",
+  "updated_at": "2026-11-17T02:32:31Z",
+  "expected_next_update_by": "2026-11-17T03:17:31Z",
   "progress_marker": {
     "last_green_sha": "90c8b15ca6765cea2e9e4d749841582db74eef51",
-    "next_step": "At 24cc4d7c every reward total is in num_gold (gate split on mixed white/gold totals at 200% pt_BR); FIT=1 en100/en200/pt200/de200/hc/hc200 all fit ok; budget_shots result 88/96/27 within 91/99/27. Next: re-judge pt200 Display type and Hierarchy, hc Hierarchy, result at 100% on this sha; merge main; pre-check.",
-    "at": "2026-11-17T02:17:41Z"
+    "next_step": "At e4e78070 every gate quality passes 3/3 (result at 100% Display type and Character presence; pt200 Display type and Hierarchy; hc Hierarchy); FIT=1 en100/en200/pt200/de200/hc/hc200 all fit ok; budgets 88/96/27 within 91/99/27. Main merged at 6039219b; M11/M13 checks and the pre-check of c9d70cc3 running. Next: record the pre-check, set ready, gate_request.",
+    "at": "2026-11-17T02:32:31Z"
   },
   "precheck": null,
   "gate_request": null,
@@ -537,7 +537,7 @@
       "id": "S1-R35",
       "from": "S1",
       "to": "AD",
-      "ask": "AD preview for P2-S1-result-6 before ready (M10, M12, M23): the result screen on claude/ui-screens-heist at 24cc4d7c, rendered with 'env  SERVER=1 FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd OUT.png' (100% text), 'env TEXT=200 LOCALE=pt_BR SERVER=1 FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd OUT.png', 'env TEXT=200 LOCALE=de SERVER=1 FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd OUT.png' and 'env CONTRAST=1 SERVER=1 FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd OUT.png'. One departure from key frame 03 to look at: every reward total is now the kit's gold numerals (num_gold), not gold for Starlight and cream for the rest, because the gate's Display type rule gives numbers of one rank one treatment. Objections, if any, as a list S1 can answer in this task.",
+      "ask": "AD preview for P2-S1-result-6 before ready (M10, M12, M23): the result screen on claude/ui-screens-heist at c9d70cc3 (screen code as at e4e78070), rendered with 'env SERVER=1 FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd OUT.png' (100% text), 'env TEXT=200 LOCALE=pt_BR SERVER=1 FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd OUT.png', 'env TEXT=200 LOCALE=de SERVER=1 FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd OUT.png' and 'env CONTRAST=1 SERVER=1 FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd OUT.png'. Two departures from key frame 03 to look at: every reward total is the kit's gold numerals (num_gold), not gold for Starlight and cream for the rest, because the gate's Display type gives numbers of one rank one treatment; and all three reward tiles are on parchment, as the design's still 07, not Essence and Renown on glass, because the gold numerals' outline sank on the glass (gate 0/3 at 24cc4d7c, 3/3 at e4e78070). Objections, if any, as a list S1 can answer in this task.",
       "files": [
         "client/scripts/result_screen.gd",
         "client/scripts/result_fit.gd"
@@ -545,7 +545,7 @@
       "blocking": false,
       "created_at": "2026-11-17T02:17:41Z",
       "due": "2026-11-17T10:17:41Z",
-      "default": "If no answer by the due time, S1 sets ready with the gate passed and the render commands named in the handoff; AD's notes, when they come, are answered in a follow-up task.",
+      "default": "If no answer by the due time, the task stays ready with the gate passed and the render commands named in the handoff, as heist-1 did with S1-R34: the lead decides whether the merge waits for AD; AD's objections are answered in this task if it is still open, or in a follow-up task.",
       "escalate_to": "lead"
     }
   ],
@@ -571,5 +571,5 @@
       "where": "docs/progress/lead.md, Now, cycle 106"
     }
   ],
-  "next_step": "drop result_screen.gd local fixes the kit now covers (S1-R32, S1-R15, S1-R23)"
+  "next_step": "pre-check of c9d70cc3 and the checks on the merge 6039219b, then ready"
 }
