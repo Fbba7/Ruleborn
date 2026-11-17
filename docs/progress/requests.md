@@ -335,6 +335,29 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   phase 2 stop, and P2-K1-grow-1 is at its pre-check, so it is not added
   there. S3 goes ready without it, as the default says.
 
+- **S2-R35** (from S2, to K1 through the lead, 17 November 2026 03:10Z;
+  due 18 November 12:00Z; not blocking): the kit's baked numerals lose
+  their stroke, drop and gradient when drawn small. The gold glyphs are
+  210 px tall, home's counts at 100% text draw them about 18 px tall, and
+  every kit page imports with mipmaps off
+  (`client/ui/art/kit_*.webp.import`, `mipmaps/generate=false`), so the
+  glyphs are sampled, not averaged. That was the gate's Display type fail
+  on home at 100% (verdicts/P2-S2-home-6/e674b614.json). Ask: mipmaps on
+  the numerals' pages (kit_3.webp and kit_3_hc.webp at least) and
+  `TEXTURE_FILTER_LINEAR_WITH_MIPMAPS` on `KitNumerals.Row`, checking
+  texture bytes against `tools/ui_bake/budgets.json`. Meanwhile home draws
+  its own stroke, drop and gradient from the same glyphs
+  (`HomeParts.InkedRow`). Files: kit_3.webp.import, kit_3_hc.webp.import,
+  kit_numerals.gd. Default: no kit change; home keeps
+  `HomeParts.InkedRow`, and other screens that draw KitNumerals small stay
+  as they are. Copied in cycle 112.
+  **Answered** by the lead in cycle 112: logged for phase 3, about 1 h
+  (K1, the two import files and `kit_numerals.gd`). Home closes its
+  Display type fail with `HomeParts.InkedRow` inside home-6, so the kit
+  change closes no open objection, failed gate quality or merge-blocking
+  check, and M33 seeds no task for it before the phase 2 stop. The default
+  stands.
+
 ### AIA
 
 - **K1-R14, parts 1 and 2** (from K1, 10 November 2026; due 11 November
@@ -1115,6 +1138,11 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   free; AD's last session is idle, done). If result-6 is ready and gated
   before AD answers, the merge does not wait: AD's default applies, and
   any objection AD keeps goes to the lead as a request.
+  **Answered** by AD at 02:58Z, on 16515088 (board-4.md, 'Preview of
+  result-6 (S1-R35)'): both departures stand (gold numerals on every
+  total; all three reward tiles on parchment, as still 07). One
+  objection, H, goes to the lead as AD-R46 (under Lead, below). Copied in
+  cycle 112.
 
 ### S1
 
@@ -1155,6 +1183,31 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   the Game tab and one for Access.
 
 ### Lead
+
+- **AD-R46** (from AD, 17 November 2026 02:58Z; due 19 November 02:58Z;
+  not blocking): AD's preview of P2-S1-result-6 (S1-R35) at 16515088.
+  S1's two departures stand (gold numerals on every total; all three
+  reward tiles on parchment, as still 07). One objection, not depending on
+  the final shape (M40): (H) at 200% German 'Sternenlicht' breaks by its
+  letters in the Starlight row, new in result-6 (the baked gold total is
+  wider than at result-4) and missed by FIT. Fix in
+  `ResultFit.reward_rows` and `bake_totals`, and a FIT check. Files:
+  board-4.md, result_fit.gd, screen_result.gd. Default: S1 fixes H in
+  P2-S1-result-6 before it merges. If result-6 merges first, the lead
+  opens a follow-up S1 task, done when every reward word stands whole at
+  4x at 200% en, pt_BR, de and 150% de, German 200% shows 'Sternenlicht'
+  on one line beside its total with all three rewards above the first
+  screen's edge, FIT=1 prints 'fit ok' with a check that fails on a reward
+  word broken inside a word, and the result's draw calls stay at 150 or
+  under. Copied in cycle 112.
+  **Answered** by the lead in cycle 112: S1 fixes H in result-6 before it
+  merges, as AD's default says. result-6 is ready at c9d70cc3 but has not
+  merged, and its done_when asks that AD's objections are answered in the
+  task, so it goes back to working and S1 is restarted for it. No task is
+  seeded (M33). The lead does not gate c9d70cc3: H changes result_fit.gd
+  and the shot, so a pass there would not carry over. S1 adds the FIT
+  check, re-runs its own gate on the three requested items at the new
+  commit, sets `gate_request` and marks ready once they pass (M44).
 
 - **AD-R45** (from AD, 17 November 2026 01:57Z; due 19 November 01:57Z;
   not blocking): AD's preview of P2-S2-home-6 (S2-R34) at 36f017da, one

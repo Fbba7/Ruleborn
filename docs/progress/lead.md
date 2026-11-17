@@ -202,8 +202,9 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxp3QH4szJPdrskLbcc` (cycle 111,
-17 November 2026 from about 02:39Z, started by the Opus 5.5 launcher). Cycle
+Latest lead cycle session: `session_01SNkKxnALgp923n1Xz8RyLi` (cycle 112,
+17 November 2026 from about 03:14Z, started by the Opus 5.5 launcher). Cycle
+111's was `session_01SNkKxp3QH4szJPdrskLbcc` (from 02:39Z). Cycle
 110's was `session_01SNkKxqnwS161aj2Ndyfo94` (from 02:14Z). Cycle
 109's was `session_01SNkKxqA691fQupEvYwZ32N` (from 01:38Z). Cycle
 108's was `session_01SNkKxnyW6RtDjtVJivG3bg` (from 00:14Z). Cycle
@@ -311,7 +312,7 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 |---|---|---|---|---|
 | AD | `session_01SNkKxoJbJnMvxsrv2outFG` (Opus 5.5, effort high) | S1-R35 (not blocking, due 2026-11-17T10:17Z: preview P2-S1-result-6 at c9d70cc3 or later) (start, cycle 111: S1-R35 copied; AD's last session, `session_01SNkKxnPTEBNJrsj8BFDyUi`, is idle, its S2-R34 preview done) | `claude/ui-ad` | 2026-11-17 02:45Z |
 | AD | `session_01SNkKxnPTEBNJrsj8BFDyUi` (Opus 5.5, effort high; idle, S2-R34 answered at 01:57Z, AD-R45 to the lead; replaced in cycle 111) | S2-R34 (blocking, due 03:30Z: preview P2-S2-home-6 at 4c242628 or later) (start, cycle 109: S2-R34 copied; AD's last session, `session_01SNkKxq1MGyJ5jNneT2tqME`, is idle, its two previews done) | `claude/ui-ad` | 2026-11-17 01:43Z |
-| S1 | `session_01SNkKxrHQgnrk4u1GoTLWJP` (Opus 5.5, effort high) | P2-S1-result-6 (start, cycle 108: P2-S1-heist-1 merged as 79c1f353, so result-6's deps are all merged; S1's last session, `session_01SNkKxo7UZxeUrogyt29c1R`, is idle, its task merged) | `claude/ui-screens-heist` | 2026-11-17 01:27Z |
+| S1 | `session_01SNkKxpBG3xx2UUqDBfeMa9` (Opus 5.5, effort high) | P2-S1-result-6 (restart, cycle 112: AD-R46's objection H, fixed in result-6 before it merges, then re-gated; S1's last session, `session_01SNkKxrHQgnrk4u1GoTLWJP`, is idle, its task ready at c9d70cc3) | `claude/ui-screens-heist` | 2026-11-17 03:19Z |
 | S2 | `session_01SNkKxqDPpd7eVdbFeT2dp8` (Opus 5.5, effort high) | P2-S2-home-6 (start, cycle 108: P2-S2-home-5 merged as fb8ff4b9; its advisory gate's Display type fails at home 100% and 200% pt_BR, M33; S2's last session, `session_01SNkKxnd61Vr6rsj7aeL4cz`, is idle, its task merged) | `claude/ui-screens-home` | 2026-11-17 00:56Z |
 | S3 | `session_01SNkKxpXsYHy2L9mKvHcZBk` (Opus 5.5, effort high) | P2-S3-character-4 (start, cycle 105: phase 2 exit, M25; the advisory gate's Display type fail on character at 200% text, pt_BR; S3's last session, `session_01SNkKxnS2WKmrL48Dmzje8k`, is idle, its task merged as 6d9a4bf1) | `claude/ui-screens-meta` | 2026-11-16 20:49Z |
 | S2 | `session_01SNkKxnd61Vr6rsj7aeL4cz` (Opus 5.5, effort high) | P2-S2-home-5 (start, cycle 105: phase 2 exit, M25; the gate's Display type fail on home at 100% text; S2's last session, `session_01SNkKxrBFcY868FRDPnvoUz`, is idle, its task merged as 5803122d) | `claude/ui-screens-home` | 2026-11-16 20:49Z |
@@ -527,7 +528,7 @@ You are agent S1 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: S1            Role: maker (S1): the heist screens, the phase 1 pilot        Model: Opus 5.5, effort high
 Branch: claude/ui-screens-heist
 Owned files: only the files each S1 task lists in the backlog, docs/progress/S1.md, docs/progress/status/S1.json
-Tasks: P2-S1-result-6 (seeded in cycle 105, phase 2 exit, M25): K1's P2-K1-grow-1 merged as d277dc25 and P2-S1-heist-1 merged as 79c1f353 in cycle 108; merge main into your branch first. Drop result_screen.gd's screen-side fixes that grow-1's handoff says the kit now covers (S1-R32's reward sky under high contrast, S1-R15's action2 wrap, S1-R23's '3 s' replay button), naming each in your handoff; then re-run the gate on that commit for 'result at 100% text' (the latest verdict, P2-S1-result-1 at 8bec0d84, fails Display type) and, if it stands, ink-outline every word over the sky art and give the reward totals the display treatment, keeping 'result at 200% text, pt_BR' and high contrast passing and the FIT=1 runs at 200% text in en, pt_BR and de passing. The task's done_when in the backlog lists every point. AD previews your stills before ready (a request to AD through the lead). Build from the kit (docs/art/ui-quality/kit-spec.md); a kit change is a request to K1 through the lead.
+Tasks: P2-S1-result-6 (seeded in cycle 105, phase 2 exit, M25), back to working in cycle 112: it was ready at c9d70cc3, and AD's preview (S1-R35, answered at 16515088) lets both your departures stand (gold numerals on every total; all three reward tiles on parchment) but keeps one objection, AD-R46 (H): at 200% German 'Sternenlicht' breaks by its letters in the Starlight row (the baked gold total is wider than at result-4), and FIT missed it. Continue the task on your branch: fix H in ResultFit.reward_rows and bake_totals (board-4.md, 'Preview of result-6 (S1-R35)'), and add a FIT check that fails on a reward word broken inside a word. Done when every reward word stands whole at 4x at 200% en, pt_BR, de and 150% de, German 200% shows 'Sternenlicht' on one line beside its total with all three rewards above the first screen's edge, FIT=1 prints 'fit ok', and the result's draw calls stay at 150 or under. Then re-run your gate on the three requested items at the new commit, set gate_request, and mark ready only once they pass (M44; add M44 to your acks). The task's done_when in the backlog lists every other point; merge main into your branch first. Build from the kit (docs/art/ui-quality/kit-spec.md); a kit change is a request to K1 through the lead.
 STOP_AT: 2026-11-17T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 
@@ -593,6 +594,42 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 112**, 17 November 2026, from about 03:14Z (session
+  `session_01SNkKxnALgp923n1Xz8RyLi`, started by the Opus 5.5 launcher).
+  **Claims copied:** S2 works on P2-S2-home-6 (seen 03:13Z, lease to
+  06:00Z): AD-R45 (a) fixed by its fallback (the words after the counts
+  take no shadow), the counts' stroke, drop and gradient drawn in
+  `HomeParts.InkedRow`, draw calls 142/117/142; FIT sweep, guard and
+  pre-check next, then `gate_request` on 'home at 100% text', Display
+  type. S1 marked P2-S1-result-6 ready at c9d70cc3 (pre-check passed,
+  its own gate 3/3 at e4e78070, `gate_request` on the three items); the
+  lead sends it back to working (below).
+  **Requests:** AD answered S1-R35 at 02:58Z, on 16515088: both of S1's
+  departures stand, one objection, AD-R46 (H): at 200% German
+  'Sternenlicht' breaks by its letters in the Starlight row, missed by
+  FIT. Copied to Lead and answered: S1 fixes H in result-6 before it
+  merges (AD's default; result-6's done_when asks AD's objections
+  answered in the task), so result-6 goes back to working and nothing is
+  seeded (M33). S2-R35 (to K1: mipmaps on the numerals' pages, not
+  blocking, due 18 November 12:00Z) copied to K1 and answered: logged for
+  phase 3, about 1 h; home closes its fail with `HomeParts.InkedRow`, so
+  M33 seeds nothing and the default stands.
+  **Gate and merges:** the lead did not gate result-6 at c9d70cc3: H
+  changes `result_fit.gd` and the shot, so a pass there would not carry
+  over to the fixed commit. S1 re-gates at the new commit (M44). Nothing
+  ready, so nothing merged and no check ran; the merge lock stays null.
+  **Messages:** M43 acked by S2 (03:13Z). M44 is not acked by S1 yet; it
+  is in S1's restart prompt, and its ack_by is 03:55Z.
+  **Seats:** S1 restarted (`session_01SNkKxpBG3xx2UUqDBfeMa9`) and S2
+  working, two of four. AD is done (its session idle after S1-R35).
+  Under M33 no task qualifies for the free seats before the phase-2 stop
+  at 21:00Z.
+  **Next:** cycle 113 gates home-6 on S2's `gate_request` (100% text,
+  Display type) and result-6 on S1's new one, and merges both as one
+  candidate when both are ready (M42; one alone if the other is far off).
+  It checks M44's ack, and restarts S1 or S2 only if its update time
+  passes.
+
 - **Cycle 111**, 17 November 2026, from about 02:39Z (session
   `session_01SNkKxp3QH4szJPdrskLbcc`, started by the Opus 5.5 launcher).
   **Claims copied:** S2 works on P2-S2-home-6 (seen 02:21Z, lease to
@@ -653,29 +690,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   when both are ready (one alone if the other is still far off), checks
   M43 and M44 at 03:55Z, and restarts S1 or S2 only if its update time
   passes.
-
-- **Cycle 109**, 17 November 2026, from about 01:38Z (session
-  `session_01SNkKxqA691fQupEvYwZ32N`, started by the Opus 5.5 launcher).
-  **Claims copied:** S2 works on P2-S2-home-6 (claimed 01:00Z, lease to
-  04:00Z, last green eb40e8f4, build at 4c242628). S1 claimed
-  P2-S1-result-6 at 01:31Z (lease to 04:31Z).
-  **Requests:** S2-R34 copied to AD's section (blocking, due 03:30Z:
-  preview home-6 at 4c242628 or later: gold baked numerals on every
-  headline count, the counts shrunk to fit in de and pt, a leather-rim
-  band round 'Keeper 24''s outline). AD started on it at 01:43Z
-  (`session_01SNkKxnPTEBNJrsj8BFDyUi`); AD's prompt now names S2-R34 and
-  M40. If AD has not answered by 03:30Z, S2-R34's default stands.
-  **Gate and merges:** nothing ready, so no gate ran and nothing merged;
-  the merge lock stays null. No check ran, so no missing tool to report
-  (M37).
-  **Messages:** M37, M38 and M39 acked.
-  **Seats:** S1, S2 and AD, three of four. The fourth stays free: M39
-  keeps the queue full, but under M33 no task qualifies before the
-  phase-2 stop at 21:00Z (no open objection, failed gate quality or
-  blocking check lacks a task). Phase 3's tasks are seeded once stop_at
-  passes.
-  **Next:** cycle 110 copies AD's answer to S2-R34, then gates and merges
-  home-6 and result-6 when ready.
 
 - **Stopped here**, 13 November 2026, about 13:20Z (the owner's "Stop
   cleanly"). Cycle 84 (session `session_01SNkKxpqF4gx3yYhsXenUGt`) took
