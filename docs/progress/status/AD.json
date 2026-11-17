@@ -3,17 +3,17 @@
   "role": "AD",
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
-  "agent_state": "done",
-  "task_id": null,
-  "task_state": null,
-  "claimed_at": "2026-11-16T23:35:00Z",
-  "lease_until": null,
-  "updated_at": "2026-11-17T00:05:00Z",
-  "expected_next_update_by": null,
+  "agent_state": "active",
+  "task_id": "preview S2-R34",
+  "task_state": "working",
+  "claimed_at": "2026-11-17T01:50:00Z",
+  "lease_until": "2026-11-17T04:50:00Z",
+  "updated_at": "2026-11-17T01:50:00Z",
+  "expected_next_update_by": "2026-11-17T02:35:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "055840f7c59c5600ef0fb907fc2607ee69a9e9f7",
-    "next_step": "none"
+    "next_step": "Preview S2-R34 (P2-S2-home-6 at 36f017da on claude/ui-screens-home), answer before 03:30Z."
   },
   "precheck": {
     "sha": "055840f7c59c5600ef0fb907fc2607ee69a9e9f7",
@@ -26,7 +26,8 @@
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
     "M12",
-    "M23"
+    "M23",
+    "M40"
   ],
   "requests": [
     {
