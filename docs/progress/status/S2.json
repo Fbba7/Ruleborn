@@ -8,13 +8,13 @@
   "task_state": "working",
   "claimed_at": "2026-11-17T01:00:00Z",
   "lease_until": "2026-11-17T04:00:00Z",
-  "updated_at": "2026-11-17T01:18:00Z",
-  "expected_next_update_by": "2026-11-17T02:00:00Z",
+  "updated_at": "2026-11-17T01:52:00Z",
+  "expected_next_update_by": "2026-11-17T02:35:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "eb40e8f4",
-    "next_step": "Build done at 4c242628 (gold baked figures for every headline count, baked shrink to 78%, rimmed title). Running M26's 57 fit cases; then guard, pre-check, gate request. S2-R34 (AD preview) sent.",
-    "at": "2026-11-17T01:18:00Z"
+    "next_step": "Fit 57/57 'fit ok' and guard OK on 36f017da; the lead's branch e22cd91f merged as e674b614 (no home files touched); pre-check running on e674b614, then gate request.",
+    "at": "2026-11-17T01:52:00Z"
   },
   "precheck": null,
   "gate_request": null,
