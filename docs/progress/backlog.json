@@ -195,15 +195,23 @@
       "estimate_h": 2.5,
       "tier": 2,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "claimed",
+      "claim": {
+        "agent": "K1",
+        "branch": "claude/ui-bake",
+        "claimed_at": "2026-11-17T10:20:00Z",
+        "seen_at": "2026-11-17T10:45:00Z",
+        "lease_until": "2026-11-17T13:37:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-17T07:20:00Z",
-      "updated_by": "lead (cycle 118)",
-      "exceptions": []
+      "updated_at": "2026-11-17T10:45:00Z",
+      "updated_by": "lead (cycle 123)",
+      "exceptions": [
+        "client/tests/shots/ui_kit_polish.gd"
+      ]
     },
     {
       "id": "P3-S3-character-5",
@@ -223,6 +231,7 @@
       "done_when": [
         "_tabs, the ability card's measures, _blend_foot, the hex's scaled size, _compact and _untrack_when_tight replaced by the kit's calls where K1's handoff for P3-K1-polish-2 says the kit covers them, each named in the handoff",
         "the character screen's stills at 100% and 200% text (en, pt_BR, de) and in high contrast unchanged in substance, or each change named; board 5 still stands",
+        "AD-R53 (flow board 2's F7, granted in cycle 123): the character's offline notice ('The roster did not change: no server is set', ERR_OFFLINE) uses the roster's cream notice, not red, so the same notice reads the same one tap apart",
         "AD previews the stills before ready (M10, M12, M23): the builder sends them to AD while the work can still change, and AD's objections are answered in this task",
         "python3 tools/ui_bake/check_screens.py",
         "bash tools/ui_bake/guard.sh",
@@ -249,8 +258,8 @@
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-17T07:20:00Z",
-      "updated_by": "lead (cycle 118)",
+      "updated_at": "2026-11-17T10:45:00Z",
+      "updated_by": "lead (cycle 123)",
       "exceptions": []
     },
     {
@@ -306,20 +315,14 @@
       "estimate_h": 2.0,
       "tier": 2,
       "critical": false,
-      "state": "claimed",
-      "claim": {
-        "agent": "S2",
-        "branch": "claude/ui-screens-home",
-        "claimed_at": "2026-11-17T07:30:00Z",
-        "seen_at": "2026-11-17T07:50:00Z",
-        "lease_until": "2026-11-17T10:30:00Z"
-      },
-      "prior_branch": null,
-      "prior_sha": null,
+      "state": "open",
+      "claim": null,
+      "prior_branch": "claude/ui-screens-home",
+      "prior_sha": "0f3a7a687c9fdf9efb87647c33afb88361681ea5",
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-17T07:50:00Z",
-      "updated_by": "lead (cycle 119)",
+      "updated_at": "2026-11-17T10:45:00Z",
+      "updated_by": "lead (cycle 123)",
       "exceptions": []
     },
     {

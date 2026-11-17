@@ -202,8 +202,9 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxmvEc842zraQZ21dQc` (cycle 122,
-17 November 2026 from about 09:39Z, started by the Opus 5.5 launcher). Cycle
+Latest lead cycle session: `session_01SNkKxowru6g45cY8RLHmf5` (cycle 123,
+17 November 2026 from about 10:30Z, started by the Opus 5.5 launcher). Cycle
+122's was `session_01SNkKxmvEc842zraQZ21dQc` (from 09:39Z). Cycle
 121's was `session_01SNkKxmiG2fJkzw87V4rNvc` (from 08:40Z). Cycle
 120's was `session_01SNkKxnVWqySe65bs6CXACW` (from 08:05Z). Cycle
 119's was `session_01SNkKxqCqKwynFeQfEP4pR3` (from 07:40Z). Cycle
@@ -320,9 +321,10 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| S2 | `session_01SNkKxpWQyicTk71sUaQiab` (Opus 5.5, effort high) | P3-S2-home-states (restart, cycle 123: AD answered S2-R42 with no objection at e9285afd, so mark ready; the lease lapsed at 10:30Z and the task was set open with prior_branch `claude/ui-screens-home` at 0f3a7a68; S2's last session, `session_01SNkKxqc1c89EaatiimmQ4C`, is idle) | `claude/ui-screens-home` | 2026-11-17 10:45Z |
 | K1 | `session_01SNkKxqUzSMWcDUgKbmzrEc` (Opus 5.5, effort high) | P3-K1-polish-2 (start, cycle 122: P3-K1-polish-1 merged as 20304b70; K1's last session, `session_01SNkKxmdEQj6bHg2JvMnewm`, is idle, its task merged) | `claude/ui-bake` | 2026-11-17 10:14Z |
 | AD | `session_01SNkKxpbxrV1iLPXhx2VvJB` (Opus 5.5, effort high) | S2-R42 (preview P3-S2-home-states, not blocking, due 16:00Z), then P3-AD-flow-2 (start, cycle 121: P3-AD-audit-1 merged as 1abc52ba; AD's last session, `session_01SNkKxp1i52e65jWBFfqp4t`, is idle, its task merged) | `claude/ui-ad` | 2026-11-17 09:33Z |
-| S2 | `session_01SNkKxqc1c89EaatiimmQ4C` (Opus 5.5, effort high) | P3-S2-home-states (start, cycle 118: phase 3 seeded under M49; S2's last session, `session_01SNkKxq8HjVf66y13L7w5BL`, is idle, its task merged) | `claude/ui-screens-home` | 2026-11-17 07:25Z |
+| S2 | `session_01SNkKxqc1c89EaatiimmQ4C` (Opus 5.5, effort high; idle waiting on S2-R42, its lease lapsed at 10:30Z, replaced in cycle 123) | P3-S2-home-states (start, cycle 118: phase 3 seeded under M49; S2's last session, `session_01SNkKxq8HjVf66y13L7w5BL`, is idle, its task merged) | `claude/ui-screens-home` | 2026-11-17 07:25Z |
 | S1 | `session_01SNkKxqATU44HSCT5Am2dvc` (Opus 5.5, effort high), idle | P3-S1-result-7, merged as 1abc52ba in cycle 121 (start, cycle 118: phase 3 seeded under M49, the gate's Hierarchy fail at result 200% pt_BR; S1's last session, `session_01SNkKxpZ5ULnfUU5QKJPRM6`, is idle, its task merged as c6262802) | `claude/ui-screens-heist` | 2026-11-17 07:25Z |
 | K1 | `session_01SNkKxmdEQj6bHg2JvMnewm` (Opus 5.5, effort high), idle | P3-K1-polish-1, merged as 20304b70 in cycle 122 (start, cycle 118: phase 3 seeded under M49, S3-R32 and S2-R35; K1's last session, `session_01SNkKxr27Br8FeRKiWvTJ1x`, is idle, its task merged) | `claude/ui-bake` | 2026-11-17 07:25Z |
 | AD | `session_01SNkKxp1i52e65jWBFfqp4t` (Opus 5.5, effort high), idle | P3-AD-audit-1, merged as 1abc52ba in cycle 121 (start, cycle 118: phase 3 seeded under M49, the first blind audit, O6; AD's last session, `session_01SNkKxoJbJnMvxsrv2outFG`, is idle, its S1-R35 preview done) | `claude/ui-ad` | 2026-11-17 07:25Z |
@@ -612,6 +614,42 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 123**, 17 November 2026, from about 10:30Z (session
+  `session_01SNkKxowru6g45cY8RLHmf5`, started by the Opus 5.5 launcher).
+  **Claims copied:** K1's claim on P3-K1-polish-2 (claimed 10:20Z, lease
+  13:37Z; its pre-check at fe983cae is running). AD on P3-AD-flow-2 is
+  unchanged (lease 12:35Z, its pre-check running on 808e42cf). S2's last
+  session, `session_01SNkKxqc1c89EaatiimmQ4C`, went idle waiting on
+  S2-R42 and its lease lapsed at 10:30Z, so P3-S2-home-states was set
+  open with prior_branch `claude/ui-screens-home` at 0f3a7a68 (its
+  pre-check passed on 488c8b5a; guard fails only on S2-R41's three
+  lines). `owners.py claims` passes, and `owners.py diff` passes for
+  polish-2 at b00f4799 with K1-R26's path granted.
+  **Requests:** AD answered S2-R42 at 09:42Z: no objection at e9285afd,
+  S2 may mark ready (two notes, not holding: the Defence badge touches the
+  61.0k plate by 1 to 3 px at 200%; the pill sits 7 px from the '6' pin
+  at 200% pt_BR and de). K1-R26 (blocking, due 16:40Z) granted now:
+  `client/tests/shots/ui_kit_polish.gd` is one of P3-K1-polish-2's
+  exceptions. AD-R47 to AD-R55 (flow board 2's F1 to F9, not blocking,
+  due 19 November 10:08Z) accepted as their defaults: AD-R53 (the
+  character's offline notice in cream) joins P3-S3-character-5's
+  done_when now, AD-R55 rides with the next heist task, and the rest are
+  seeded as seats free: R47's kit task first (the chosen tab's picture
+  floats above its tile on every router-opened tab screen), then the
+  navigation task (R48, R50, R51), R49's parts after home-states, R52,
+  and R54's content task.
+  **Gate and merges:** none. Nothing is ready, no gate_request is open,
+  and the merge lock is free. Main stays at its cycle 122 head.
+  **Starts:** S2 restarted on P3-S2-home-states
+  (`session_01SNkKxpWQyicTk71sUaQiab`) to mark ready on AD's answer.
+  **Seats:** AD (flow-2), K1 (polish-2) and S2 (home-states): three, the
+  cap while the seven-day bar reads `allowed_warning`.
+  **Next:** merge home-states when S2 marks it ready, writing S2-R41's
+  three `budgets.json` records at its merge (home/100 145 to 148,
+  home/200 121 to 124, home/hc 145 to 148, each with a raises entry).
+  Gate and merge polish-2 when K1 marks it ready, then start S3 on
+  character-5 in the freed seat. Seed R47's kit task for K1 when a seat
+  frees after that. AD's flow-2, then audit-1b.
 - **Cycle 122**, 17 November 2026, from about 09:39Z (session
   `session_01SNkKxmvEc842zraQZ21dQc`, started by the Opus 5.5 launcher).
   **Claims copied:** AD's claim on P3-AD-flow-2 (lease 12:35Z). K1's
@@ -687,29 +725,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   and, after that, S3 on character-5. Score audit-1's misses against the
   gate's verdicts (its done_when). S2's home-states comes when it marks
   ready, writing S2-R41's three records at its merge.
-- **Cycle 120**, 17 November 2026, from about 08:05Z (session
-  `session_01SNkKxnVWqySe65bs6CXACW`, started by the Opus 5.5 launcher).
-  **Claims copied:** unchanged: AD on P3-AD-audit-1, K1 on
-  P3-K1-polish-1, S1 on P3-S1-result-7 and S2 on P3-S2-home-states. No
-  lease has lapsed, and `owners.py claims` passes.
-  **Requests:** K1-R25, S1-R36, S1-R37, S2-R41 and S2-R42 copied, with
-  AD's answer to S2-R36 (no objection at 5d25f9cb; two notes on the
-  plate's left gutter and the Defence badge at 200%). K1-R25 is granted
-  now, not at the merge: `client/tests/shots/ui_kit_polish.gd` and its
-  `.uid` are P3-K1-polish-1's exceptions, so `owners.py diff` passes and
-  K1 can mark ready (M51). S1-R37 (result/hc 27 to 28) and S2-R41 (home's
-  three draw-call records) are approved; `budgets.json` is in polish-1's
-  files, so the lead writes them at each task's merge with a raises entry.
-  S1-R36 and S2-R42, two previews, go to AD, whose blind labelling for
-  audit-1 is written (24965010). M50 acked by S2.
-  **Gate and merges:** none. Nothing is ready, and no gate request is
-  open.
-  **Starts:** none. Four builders run, each session working.
-  **Seats:** four of four. The seven-day bar reads `allowed_warning`, so
-  order 3's cap is three: no builder starts until fewer than three run.
-  **Next:** gate and merge what is marked ready. When K1's polish-1
-  merges, start K1 on polish-2 if fewer than three builders run; S3 on
-  character-5 after it, and P3-AD-flow-2 after the audit's merge.
 - **Stopped here**, 13 November 2026, about 13:20Z (the owner's "Stop
   cleanly"). Cycle 84 (session `session_01SNkKxpqF4gx3yYhsXenUGt`) took
   the merge lock for P2-AD-board-4 (candidate `842f09ab`, AD's ready

@@ -1209,6 +1209,14 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   **Answered** by the lead in cycle 120: routed to AD. AD's blind
   labelling for audit-1 is written (24965010), so the preview no longer
   colours the audit. Mind AD's S2-R36 note on the plate's left gutter.
+  **Answered** by AD at 09:42Z (copied in cycle 123): previewed at
+  e9285afd, all 8 cases fit ok, board 3's objection B holds in every case,
+  nothing by colour alone. "No objection at this commit; S2 may mark
+  ready." Two notes, not holding (M40): at 200% the Defence badge's top
+  overlaps the 61.0k plate's foot by 1 to 3 px; at 200% pt_BR and de the
+  pill sits about 7 px from the '6' pin. Write-up: board-3.md, "Preview of
+  home-states, second look (S2-R42)". S2's lease lapsed at 10:30Z while it
+  waited, so the lead restarts S2 in cycle 123 to mark ready.
 
 - **S1-R36** (from S1, to AD through the lead, 17 November 2026 07:50Z;
   due 15:50Z; not blocking): preview P3-S1-result-7 on
@@ -2229,6 +2237,66 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   **Answered** by the lead in cycle 120: approved, as the default says.
   `budgets.json` is in P3-K1-polish-1's files, so the lead writes the
   three records at home-states' merge.
+
+- **K1-R26** (from K1, 17 November 2026 10:40Z; due 16:40Z; blocking):
+  P3-K1-polish-2 touches one path outside its files,
+  `client/tests/shots/ui_kit_polish.gd`. `client/tests/ui_kit_tests.gd`
+  stands at gdlint's 1000 lines and already runs this helper in one line
+  (K1-R25), so the six new checks (S3-R9 to S3-R14) join the helper's run.
+  `owners.py diff` names the path until it joins the task's exceptions
+  (M48). Default: granted, as K1-R24 and K1-R25 were. Copied in cycle 123.
+  **Answered** by the lead in cycle 123: granted now. The path is one of
+  P3-K1-polish-2's exceptions in `backlog.json` (P3-K1-polish-1 has
+  merged, so no task in flight holds it), so K1 marks ready when its checks
+  pass.
+
+- **AD-R47 to AD-R55** (from AD, 17 November 2026 10:08Z; due 19 November
+  10:08Z; not blocking): flow board 2's findings F1 to F9 (P3-AD-flow-2,
+  against main 44c43c4f). Write-up and stills:
+  `docs/art/ui-quality/gate/boards/flow-2.md`. Copied in cycle 123.
+  - **AD-R47** (F1, kit, highest): on every screen the router opens, the
+    chosen tab's tile is blank and its picture floats about 180 px above
+    it (probably KitTabs.choose starting Motion.bob before layout).
+    Default: a lead-assigned kit task, with a mount test in
+    `client/tests/run.gd` that opens each tab route through router.go and
+    asserts the chosen picture lies inside its tile.
+  - **AD-R48** (F2): no system back; Android's back quits the app.
+    Default: one go-back handler at the router, quit_on_go_back off, each
+    route to its back route, home asks before quitting, with a test in
+    `client/tests/core_tests.gd`.
+  - **AD-R49** (F3): three tab-bar builders, three route tables, two label
+    rules. Default: every bar routes by Router.TABS (home's Heist the one
+    listed exception) and uses ScreenNav's label rule; home's part to S2,
+    the rest to a lead task, with a core test.
+  - **AD-R50** (F4): the character's back is a parchment '<' in the
+    level-up card, not ScreenNav.back_button. Default: use back_button,
+    with a run.gd mount test of every non-tab route's one back button.
+  - **AD-R51** (F5): the roster forgets its scroll and stage across the
+    character. Default: keep both in the store or the route args, with a
+    mount test.
+  - **AD-R52** (F6, M40): settings reopens on Game. Default: remember the
+    last tab for the session.
+  - **AD-R53** (F7): the offline notice is cream on the roster and red on
+    the character. Default: the cream notice, in the next task touching
+    either screen.
+  - **AD-R54** (F8): LAW_* keys are English in every locale of
+    `client/i18n/content.csv`. Default: a translation task for pt_BR,
+    pt_PT, de and fr, with a check that no content key's locale column
+    equals its en text unless listed as a proper name.
+  - **AD-R55** (F9): at 200% pt_BR a map marker draws over the heist loot
+    panel's first word. Default: the HUD draws above every map marker, in
+    the next heist task.
+  **Answered** by the lead in cycle 123: all nine accepted as their
+  defaults say. AD-R53 joins P3-S3-character-5's done_when now (its files
+  hold `character_screen.gd`; the roster's notice is already cream).
+  AD-R55 rides with the next heist task. The rest become tasks seeded when
+  a seat frees under the cap of three (CLAUDE.md order 3), in this order:
+  a K1 kit task for R47 (highest: every router-opened tab screen shows it),
+  a navigation task for R48, R50 and R51 (router.gd, character_screen.gd
+  after character-5, roster_screen.gd, run.gd, core_tests.gd), S2's and
+  the kit's parts of R49 after P3-S2-home-states merges, R52 with the next
+  settings task, and a content task for R54. Home's part of R49 does not
+  join home-states, which is ready to mark on AD's no objection.
 
 ## Done in cycle 50 (10 November 2026, by the lead)
 

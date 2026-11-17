@@ -1,8 +1,8 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-17T10:20:00Z",
-  "expected_next_update_by": "2026-11-17T13:20:00Z",
-  "cycle": 122,
+  "updated_at": "2026-11-17T10:50:00Z",
+  "expected_next_update_by": "2026-11-17T13:50:00Z",
+  "cycle": 123,
   "merging": null,
   "last_merged": {
     "task_id": "P3-K1-polish-1",
@@ -40,9 +40,9 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Cycle 123: merge P3-S2-home-states when S2 marks it ready after S2-R42 (AD's preview, default at 16:00Z: the stills stand), writing S2-R41's three tools/ui_bake/budgets.json records at its merge (home/100 145 to 148, home/200 121 to 124, home/hc 145 to 148, each with a raises entry). Gate and merge P3-K1-polish-2 when K1 marks it ready (session_01SNkKxqUzSMWcDUgKbmzrEc), then start S3 on P3-S3-character-5 in the freed seat, within the cap of three. AD's P3-AD-flow-2 when ready, then P3-AD-audit-1b opens for AD.",
+  "next_step": "Cycle 124: merge P3-S2-home-states when S2 marks it ready (restarted in cycle 123 as session_01SNkKxpWQyicTk71sUaQiab on AD's no objection to S2-R42), writing S2-R41's three tools/ui_bake/budgets.json records at its merge (home/100 145 to 148, home/200 121 to 124, home/hc 145 to 148, each with a raises entry). Gate and merge P3-K1-polish-2 when K1 marks it ready (session_01SNkKxqUzSMWcDUgKbmzrEc; K1-R26 granted), then start S3 on P3-S3-character-5 in the freed seat, within the cap of three. Seed AD-R47's kit task for K1 when a seat frees after that, then the navigation task (AD-R48, R50, R51). AD's P3-AD-flow-2 when ready, then P3-AD-audit-1b opens for AD.",
   "seen": {
-    "at": "2026-11-17T10:15:18Z",
+    "at": "2026-11-17T10:45:47Z",
     "heads": {
       "claude/3d-character-screens": "6053b249bee313648da3509142eeb2ba738bb62f",
       "claude/3d-characters": "35d6ae8f5b84a4d75636f68270848b0949c111f3",
@@ -60,17 +60,17 @@
       "claude/plan-v3": "57893713636b7753d0b790c5a9dc35c3b126770a",
       "claude/security-review": "dd1e90f06b512b25a74f3f3f73ace84b3969cce9",
       "claude/server-decisions": "502b63bbf1506801a7060547f6fb225adcbf8f51",
-      "claude/ui-ad": "cdbfd2fccf9988774ed2f38de4dda5fef7da4abc",
+      "claude/ui-ad": "1848c69896e81fe4f253e8bc50835f65b371a91f",
       "claude/ui-artist": "45c6366cb2e0f9dcb5aaa428d17c017576beff5d",
       "claude/ui-artist-icons": "a8b06f687a9fbb1048c426157f2336cda5f44202",
-      "claude/ui-bake": "b7c8dcbd07a95276b82deff075608de03d145928",
+      "claude/ui-bake": "b00f47993dad5dd04f89dced97734d130d7e807d",
       "claude/ui-gate-runs": "0e78b6ceace032f62427a1c8e89dd9ee6186a5c0",
       "claude/ui-kit": "17b900ebdc371f05244d4658850a77460f6090c0",
       "claude/ui-plan": "f1affcea749d007fe1a67931bd3c1f7359d98c44",
       "claude/ui-research": "f19d5d4e5eaffff8869da3b91124d111cf1259a6",
       "claude/ui-screens": "dceb6bfcbc6c5da4e261674fe9301e1854f0aa65",
       "claude/ui-screens-heist": "47db9364cf2a121d75ca10ccd19f79a6bcb1d478",
-      "claude/ui-screens-home": "6d7d6e885f34c271b7a325b711220111d4e73aa4",
+      "claude/ui-screens-home": "0f3a7a687c9fdf9efb87647c33afb88361681ea5",
       "claude/ui-screens-meta": "7d19eeda3a6d1b6f349f453f85365203604f4431",
       "lead/candidate-573416ab12761b92becf0c1d3d7d7bd03e9cf7d1": "573416ab12761b92becf0c1d3d7d7bd03e9cf7d1",
       "lead/candidate-714b24ed52f56133bccc18c82cc879938b53f296": "714b24ed52f56133bccc18c82cc879938b53f296",
@@ -81,7 +81,7 @@
     },
     "ready": {},
     "startable": [
-      "P3-K1-polish-2"
+      "P3-S2-home-states"
     ],
     "messages": [
       "M10",
