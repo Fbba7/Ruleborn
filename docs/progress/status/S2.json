@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-17T15:55:00Z",
   "lease_until": "2026-11-17T19:06:28Z",
-  "updated_at": "2026-11-17T16:06:28Z",
-  "expected_next_update_by": "2026-11-17T17:36:28Z",
+  "updated_at": "2026-11-17T16:22:30Z",
+  "expected_next_update_by": "2026-11-17T17:52:30Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "dff000c9",
-    "next_step": "Routing by Router.TABS (Islands, Heist excepted), the label rule, the green goal bar and the core test are in (690afb8b, dff000c9). Running all FIT=1 cases (M26's set plus 125%); then Part 8, main merged, checks, ready."
+    "next_step": "63 FIT cases on dff000c9: 61 ok; the two 125% de cases fail on the purse, the same on main (S2-R44). Part 8 written. Main merged (5dfa3703). Running guard.sh, check_all.sh, the pre-check; then ready once the gate passes."
   },
   "precheck": null,
   "gate_request": {
@@ -671,6 +671,21 @@
       "created_at": "2026-11-17T16:06:28Z",
       "due": "2026-11-17T19:06:28Z",
       "default": "If AD has not answered by the due time, the stills stand and S2 marks ready on its own checks; the gate judges them.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R44",
+      "from": "S2",
+      "to": "lead",
+      "ask": "For the lead to rule, no answer needed if the default suits. P3-S2-home-7 adds 125% text to home's FIT=1 runs (the tab names' rule turns at 125%). Two of those cases fail, and fail the same on main's code (53e18516), so this task did not cause them: at 125% in German the purse's three pills wrap to two rows (universe_home.gd's check holds the purse to one row below 150%, and home.gd's _fit_amounts lays a row of three below 150%), and with the raid notice the check also finds no realm marked over the whole universe. Reproduce: `FIT=1 TEXT=125 LOCALE=de [NOTICE=1] bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`. Neither is in this task's done_when; M26's cases (100%, 150%, 200%) all pass. Detail: docs/art/tracks/home-screen.md Part 8, 'Not this task's'.",
+      "files": [
+        "client/scripts/home.gd",
+        "client/tests/shots/universe_home.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T16:22:30Z",
+      "due": "2026-11-18T16:22:30Z",
+      "default": "S2 leaves both as they are, named in Part 8, and marks P3-S2-home-7 ready on its own checks; a later home task (or this one's follow-up) lets the purse take two rows from 125% in long locales and adds 125% to M26's cases.",
       "escalate_to": "lead"
     }
   ],

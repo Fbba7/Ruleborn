@@ -528,15 +528,30 @@ P3-K1-tabs-1 gave ScreenNav the bar's rules: it routes by `Router.TABS`, and the
 
 **Where a word still shrinks.**
 
-TAB_SHRINK
+Measured with a print in `_fit_tab_words` on dff000c9 (not committed), at 1080 wide, where 1 pt is 3 px; each case is the still `FIT=1 [TEXT=<t>] LOCALE=<loc> bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png` makes.
 
-**Not this task's: the purse at 125% in German.** PURSE_NOTE
+| Text | Locale | The other tabs' names | The chosen tab's word |
+|---|---|---|---|
+| 100% | en, fr | 13 pt (39 px), their own size | its own size |
+| 100% | pt_BR, pt_PT | shrink to 12 pt (36 px) | its own size |
+| 100% | de | shrink to 11 pt (33 px) | its own size |
+| 100% | high contrast (en) | 13 pt | its own size |
+| 125% | en | shrink to 13 pt (39 px, from 48) | its own size |
+| 125% | fr | shrink to 15 pt (45 px, from 48) | its own size |
+| 125% | pt_BR, pt_PT, de | icons alone: they would need 12 pt (pt) and 11.3 pt (de), under the 13 pt floor | its own size |
+| 200% | all five, and high contrast | icons alone (the rule) | shrinks by 1 to 2 px, under 1 pt, to keep inside its tab: en 85 to 84 px, pt_BR and pt_PT 90 to 88 (87 in a later layout pass), de 90 to 88 |
+
+At 200% the run's first layout passes, before the bar settles at its width, also print smaller sizes for the chosen word (en down to 51 px, de 66 px); the stills show the settled size.
+
+**Not this task's: the purse at 125% in German.** At 125% text in German the purse's three pills take two rows ("the purse in 2 rows at 100% text: { 419: "aether", 545: "essence" }"), and with the raid notice the fit check also finds "no realm marked over the whole universe". Both fail the same way on main's code (53e18516's tree, before this task), so this task did not cause them: M26's cases never ran at 125%, which this task adds to the fit runs for the tab names. The purse (`_fit_amounts`, a row of three below 150% text) is outside this task's done_when; S2 names it for the lead (S2-R44) rather than change it here.
 
 **AD's preview** (S2-R43): pending.
 
 **Evidence.**
 
-FIT_EVIDENCE
+- **Fit.** 63 cases with `FIT=1` on dff000c9: M26's set (100%, 150% and 200% text in en, pt_BR, pt_PT, fr and de, with and without the raid notice, high contrast, 900 and 960 tall, the widest amounts, 99 raids, an empty home, no or six outer realms) and, new, 125% in all five locales, 125% with the notice in en, pt_BR and de, and 125% in high contrast. 61 print "fit ok". All the task's own cases pass: 200% text in en, pt_BR and de, and high contrast at 100% and 200%. The two that fail are 125% in German, with and without the notice, on the purse, as above, and fail the same on main.
+- **The tabs' routes.** `core_tests.gd` passes, its new check included ("ok 13 - every tab has a route in Router.TABS, and home's tabs go where it says, Islands and the Heist excepted").
+- **The stills.** The chosen tab's word shows at every size and locale; the other names show at 100% and at 125% in en and fr, and icons stand alone at 200% and at 125% in pt_BR, pt_PT and de. The goal bar's "Progress" labels show, on the green fill, and Collect keeps its gold, in both looks.
 
 ## Left for other tasks
 
