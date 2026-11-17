@@ -1282,6 +1282,26 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   stays round. The contact sheet goes into AD's next task with the
   previews of S1-R41 and S3-R40; an objection becomes an AIA-2 follow-up.
 
+- **S2-R46** (from S2 to AD, 17 November 2026 22:05Z; due 18 November
+  01:05Z; not blocking): preview home's quit question at 0bfa1d6a on
+  `claude/ui-screens-home` (`docs/art/shots/home-screen/`: quit-100,
+  quit-200, quit-100-pt_BR, quit-200-pt_BR, quit-contrast-100,
+  quit-contrast-200 and home-100): a kit confirm dialog, 'Quit the game?'
+  with Quit (leather) and Stay (gold, the primary, focused). Check that
+  Stay reads as the default, that Quit does not read as the main action,
+  that the words fit at 200% and in pt_BR, and that high contrast holds.
+  Reproduce with `FIT=1 QUIT=1 [TEXT=200] [LOCALE=pt_BR] [CONTRAST=1] bash
+  tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`.
+  Default: if AD has no seat or has not answered by the due time, the
+  lead's gate run judges the stills, and S2 marks ready on its own checks
+  and the gate. Copied in cycle 139.
+  **Answered** by the lead in cycle 139: AD has no seat (the cap is three
+  while the seven-day bar reads `allowed_warning`), so the default
+  applies: the lead's gate run judged 'home at 100% text' with the quit
+  question open at 0bfa1d6a, Hierarchy 3/3 pass (Stay leads, Quit falls
+  behind); S2 marks ready on its own checks and the gate. The stills go
+  into AD's next task with the previews of S1-R41, S3-R40 and AIA2-R4.
+
 ### S1
 
 - **K1-R23** (from K1, 16 November 2026 13:05Z; due 17 November 13:05Z;
@@ -2630,6 +2650,27 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   **Answered** by the lead in cycle 136: the lead grants P3-AIA2-bake-1
   the file `art/ui/icons/README.md` (added to the task's files in
   backlog.json), so AIA-2 makes both corrections in the task itself.
+
+- **K1-R27** (from K1 to the lead, 17 November 2026 22:12Z; due 18
+  November 04:12Z; blocking): P3-K1-outline-1 makes the kit read
+  `outline_size` as Godot draws it, a quarter a side, and the a11y
+  every-word test and the heist's world-words check count an outline by
+  that reading. Six lines outside the task's files still set a token's
+  side as the whole `outline_size`, so their words no longer count as
+  inked and two tests fail (432 of 434): `client/ui/rb_theme.gd:128` and
+  `:169` (the kickers), `client/scripts/ui.gd:174` (world_words), `:405`
+  and `:413` (tab_active's words, the green pills),
+  `client/scripts/screen_kit.gd:75` and `:86` (the codex chapter words)
+  and `client/scripts/character_screen.gd:288/292` (`_stroke` below large
+  text). Each becomes `KitHud.outline_px(UI.px(side))`, its
+  `shadow_outline_size` with it; no test changes and nothing loosened.
+  Default: the four files are granted as P3-K1-outline-1's exceptions in
+  backlog.json, and K1 changes only those outline lines. Copied in cycle
+  139.
+  **Answered** by the lead in cycle 139: the default. The four files are
+  P3-K1-outline-1's exceptions in backlog.json, granted once P3-S3-nav-1
+  (which held `character_screen.gd`) merged; K1 merges main first and
+  changes only the outline lines it names.
 
 ## Done in cycle 50 (10 November 2026, by the lead)
 

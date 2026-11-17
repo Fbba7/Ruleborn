@@ -4,18 +4,16 @@
   "expected_next_update_by": "2026-11-18T00:50:00Z",
   "cycle": 138,
   "merging": {
-    "candidate_sha": "2dc57508ea994c435f02ffade35396cef61015f3",
+    "candidate_sha": "fbae695a8a7b4f380ae2cfcd2b35dbd8eb8d1dee",
     "task_ids": [
-      "P3-AIA2-bake-1",
-      "P3-S2-home-7",
-      "P3-S3-nav-1"
+      "P3-S1-hc-offline-2"
     ],
-    "started_at": "2026-11-17T22:30:00Z",
-    "expires_at": "2026-11-17T23:30:00Z"
+    "started_at": "2026-11-17T22:53:00Z",
+    "expires_at": "2026-11-17T23:53:00Z"
   },
   "last_merged": {
-    "task_id": "P3-S3-character-5",
-    "sha": "c848afc3"
+    "task_id": "P3-S3-nav-1",
+    "sha": "443a5cf5"
   },
   "acks": [
     "M15",
