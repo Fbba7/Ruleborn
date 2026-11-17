@@ -5,6 +5,37 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 133**, 17 November 2026, from about 19:16Z (session
+  `session_01SNkKxoFjecESfuZnwv7P5q`, started by the Opus 5.5 launcher).
+  **Claims copied:** S2's on P3-S2-home-7 (working, lease now 21:48Z; its
+  merge of main 9ef7b295 is pre-checking), S1's on P3-S1-hc-offline-2
+  (working; it merged main dacde49b at 5d07d988 and its pre-check runs)
+  and S3's on P3-S3-nav-1 (claimed; built, stills re-shot, checks next).
+  **Requests:** S2-R45, S3-R40 and S3-R41 copied and answered. S2-R45's
+  default applies (the lead's guard run on the candidate decides); the
+  fix, a bake that gives the same bytes on every machine and not a pixel
+  tolerance, joins the seed order. S3-R40 goes the way of S1-R41: AD has
+  no seat, so the character keeps the kit's icon back, S3 marks ready
+  with its gate request and the lead's gate run judges the stills.
+  S3-R41 (the kit back's leather face, one value step against the night)
+  rides with the K1 kit task for S3-R35.
+  **Gate:** none. No task is ready and there is no new gate_request.
+  **Merge:** none. The audit and roadmap pages are not republished.
+  **Restarts:** none. S1's session (`session_01SNkKxpSULfXqHgZQvrJKb4`)
+  pushed at 19:12Z and S2's (`session_01SNkKxnfpUVpuhWGguwhzhA`) at
+  19:00Z; both are idle waiting on a background pre-check, and S3's
+  (`session_01SNkKxqvCzT3bnuPzL5KvLH`) is running.
+  **Seats:** S3 (nav-1), S2 (home-7) and S1 (hc-offline-2): three, the
+  cap while the seven-day bar reads `allowed_warning`.
+  **Next:** merge home-7, hc-offline-2 and nav-1 as each is marked ready
+  (home-7 re-gated only if its ready sha changes the home stills). If S1
+  or S2 has not pushed by the next cycle's end of its pre-check window
+  (about 20:30Z), restart it. The seed order: AD-R48's navigation task
+  (after home-7), R52 with the next settings task, R54's content task,
+  the K1 kit task for S3-R35 and S3-R41, S2-R45's deterministic icon
+  bake, AD-R55 with the next heist task, and S2-R44's home follow-up.
+  AD's next task carries the previews of S1-R41 and S3-R40.
+
 - **Cycle 132**, 17 November 2026, from about 18:39Z (session
   `session_01SNkKxodysAxdoGSovguhgy`, started by the Opus 5.5 launcher).
   **Claims copied:** S1's on P3-S1-hc-offline-2 (working, seen 18:43Z,
