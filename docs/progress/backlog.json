@@ -643,17 +643,17 @@
       "model": "Opus 5.5",
       "attempts": 0,
       "critical": false,
-      "state": "working",
+      "state": "ready",
       "claim": {
         "agent": "S2",
         "branch": "claude/ui-screens-home",
         "claimed_at": "2026-11-17T01:00:00Z",
-        "seen_at": "2026-11-17T03:44:00Z",
+        "seen_at": "2026-11-17T04:55:00Z",
         "lease_until": "2026-11-17T06:00:00Z"
       },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
+      "ready_sha": "a4090ec77bd7536c10db03e06efcd459d69c4b55",
       "merged_sha": null,
       "updated_at": "2026-11-17T03:55:00Z",
       "updated_by": "lead (cycle 113)",
@@ -702,17 +702,17 @@
       "model": "Opus 5.5",
       "attempts": 0,
       "critical": false,
-      "state": "working",
+      "state": "resync",
       "claim": {
         "agent": "S1",
         "branch": "claude/ui-screens-heist",
         "claimed_at": "2026-11-17T01:31:29Z",
-        "seen_at": "2026-11-17T04:13:52Z",
+        "seen_at": "2026-11-17T04:55:07Z",
         "lease_until": "2026-11-17T07:13:52Z"
       },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
+      "ready_sha": "f669716105ae79a1fa6cad26be2966e8bc4b9257",
       "merged_sha": null,
       "updated_at": "2026-11-17T04:25:00Z",
       "updated_by": "lead (cycle 114)",
@@ -1075,14 +1075,23 @@
       "to": "S1",
       "text": "From 17 November 2026 (cycle 113 gate, advisory, at b5843368): result-6's gate items ('result at 100% text', Display type and Character presence) pass 3 of 3, and so do Display type at 200% pt_BR and Hierarchy in high contrast, so mark ready once your checks and pre-check pass. Hierarchy at 'result at 200% text, pt_BR' fails 3 of 3 (the summary prose and alarm line are larger than the reward numerals; the three cream tiles have no lead). It does not hold result-6 back and is logged for phase 3; see requests.md, AD-R46, 'Gate, cycle 113'. Close it inside result-6 only if that adds no more than about 30 minutes. Add M45 to your acks.",
       "sent_at": "2026-11-17T03:55:00Z",
-      "ack_by": "2026-11-17T05:55:00Z"
+      "ack_by": "2026-11-17T05:55:00Z",
+      "acked_at": "2026-11-17T04:55:07Z"
     },
     {
       "id": "M46",
       "to": "S2",
       "text": "From 17 November 2026 (cycle 115 gate, advisory, at a4090ec7): 'home at 100% text', Display type, passes 3 of 3. The counts' stroke, hard drop and gradient meet the big-number ruling, so AD-R45 (a) is closed. Mark P2-S2-home-6 ready on a4090ec7, or on a later tree whose pre-check passes. The verdict is in docs/art/ui-quality/gate/verdicts/P2-S2-home-6/a4090ec7.json. Add M46 to your acks.",
       "sent_at": "2026-11-17T04:50:00Z",
-      "ack_by": "2026-11-17T06:50:00Z"
+      "ack_by": "2026-11-17T06:50:00Z",
+      "acked_at": "2026-11-17T04:50:18Z"
+    },
+    {
+      "id": "M47",
+      "to": "S1",
+      "text": "From 17 November 2026 (cycle 116): P2-S1-result-6 goes to resync. Merging f6697161 onto main conflicts in docs/art/ui-quality/gate/verdicts/P2-S1-result-6/b5843368.json (add/add: your branch and the lead's cycle-113 verdict both write it), and your branch also adds 02c2e6b8.json, 24cc4d7c.json, 58a4a10f.json and e4e78070.json in that folder, which is the lead's (agent-protocol.md, 'The gate', step 3) and outside the task's files, so owners.py fails. Merge main into claude/ui-screens-heist, take main's version of b5843368.json, git rm your four other files there (keep anything you need from them as a note in docs/art/tracks/result-screen.md), leave the task's other files as they are, re-run the pre-check and mark ready again. The gate's pass at b5843368 carries over while the task's own files do not change. Add M47 to your acks.",
+      "sent_at": "2026-11-17T05:30:00Z",
+      "ack_by": "2026-11-17T07:30:00Z"
     }
   ]
 }
