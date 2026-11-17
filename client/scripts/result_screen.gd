@@ -289,14 +289,7 @@ func _moment_card() -> PanelContainer:
 	# Watching the moment is occasional, not one of the hand's frequent
 	# controls §21.1's thumb zone binds; it stays with its words.
 	watch.set_meta("frequent", false)
-	# The kit's size, grown to the icon and words (at 200% "3 s" clipped).
-	var inner := watch.get_child(0) as Control
-	var least := watch.custom_minimum_size
-	var grow := func() -> void:
-		var pad := Vector2(UI.px(12), UI.px(10))
-		watch.custom_minimum_size = least.max(inner.get_combined_minimum_size() + pad)
-	inner.minimum_size_changed.connect(grow)
-	grow.call()
+	# The kit grows it to its icon and words, so "3 s" shows at 200% (S1-R23).
 	moment.add_child(watch)
 	var words := VBoxContainer.new()
 	words.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -497,8 +490,9 @@ func start_reward() -> Tween:
 	if reward_tween == null:
 		_end_reward.call_deferred()
 		return null
-	# KitNav.reward dresses the sunburst too (as `_ready` did); where the
-	# outcome keeps the plain night, the night goes back (S1-R32).
+	# KitNav.reward dresses the sunburst too (as `_ready` did), except under
+	# high contrast (S1-R32); where the outcome keeps the plain night, the
+	# night goes back.
 	if not _celebrates(_verdict):
 		RbBox.dress(get_node("Sky") as Control, "night", 0)
 	_lift_reward()
@@ -507,11 +501,11 @@ func start_reward() -> Tween:
 
 
 ## A heist that paid turns the night to the sunburst; a foiled or refused one
-## keeps the plain night (§23.2: "Celebrate or learn"), and so does high
-## contrast, as key frame 03-result_hc: no rays behind the words (AD's S1-R24).
+## keeps the plain night (§23.2: "Celebrate or learn"). Under high contrast
+## the kit keeps it plain too, as key frame 03-result_hc: no rays behind the
+## words (AD's S1-R24; the kit's since S1-R32).
 func _celebrates(v: Dictionary) -> bool:
-	return v.get("ok", false) and str(v.get("grade", "")) in ["Clean", "Loud", "Partial"] \
-			and not Settings.high_contrast
+	return v.get("ok", false) and str(v.get("grade", "")) in ["Clean", "Loud", "Partial"]
 
 
 ## Motion's reward layer is `top_level`, so its z of 10 does not add to the
@@ -857,10 +851,10 @@ func _fit_laws() -> bool:
 	return true
 
 
-## The next raid's words wrapped, the button as tall as they are, when they
-## are wider than the room Home leaves it (large text, a long language); and
-## the raid above Home, the bar's width, when one of its words alone is
-## wider than that room. True when either changed.
+## The raid above Home, the bar's width, when one of its words alone is
+## wider than the room Home leaves it (large text, a long language); the
+## kit's action2 wraps its words between words and grows to them (S1-R15).
+## True when the bar changed.
 func _fit_raid() -> bool:
 	var again := _ending[0].find_child("Action", true, false) as Button
 	if again == null or again.has_meta("wrapped"):
@@ -868,48 +862,31 @@ func _fit_raid() -> bool:
 	var row := again.get_parent() as BoxContainer
 	if row == null:
 		return false
+	again.set_meta("wrapped", true)
 	# Less a margin of paper either side, so a long word does not meet the
 	# button's edge.
 	var pad := again.get_theme_stylebox("normal").get_minimum_size().x + UI.px(16)
-	# The rooms as the column will lay them out, the phone's width less its
-	# safe sides and the bar's padding, and that less Home's: measured rather
-	# than read from the layout, so the bar is fitted before its first frame
-	# and never shows unfitted.
-	var full := get_viewport_rect().size.x - 2.0 * UI.px(Tokens.number("size", "safe_side_points")) \
+	# The room as the column will lay it out, the phone's width less its
+	# safe sides, the bar's padding and Home's: measured rather than read
+	# from the layout, so the bar is fitted before its first frame and never
+	# shows unfitted.
+	var wide := get_viewport_rect().size.x - 2.0 * UI.px(Tokens.number("size", "safe_side_points")) \
 		- (row.get_parent() as Control).get_theme_stylebox("panel").get_minimum_size().x
-	var wide := full
+	var changed := false
 	for c: Control in row.get_children():
 		# Large text: Home as its icon on a square beside the raid, named
 		# aloud, in every language, as key frames 03-result_text200 and
 		# _pt_BR, so the raid leads the bar (board 4's objection E).
 		if c != again and c is Button and Settings.text_scale > 100:
 			ResultFit.home_square(c as Button)
+			changed = true
 		if c != again:
 			wide -= c.get_combined_minimum_size().x + row.get_theme_constant("separation")
-	var words := again.find_children("*", "Label", true, false)
-	var upright := not ResultFit.words_fit(words, wide - pad)
-	if upright:
+	if not ResultFit.words_fit(again.find_children("*", "Label", true, false), wide - pad):
 		row.vertical = true
 		row.move_child(again, 0)
-		wide = full
-	var lines := 0.0
-	var wraps := false
-	for l: Label in words:
-		var n := ResultFit.lines(l, wide - pad)
-		wraps = wraps or n > 1
-		lines += n * l.get_theme_font("font").get_height(l.get_theme_font_size("font_size"))
-	if not wraps and not upright:
-		return false
-	again.set_meta("wrapped", true)
-	for l: Label in words:
-		l.autowrap_mode = TextServer.AUTOWRAP_WORD
-	# The words' box (KitControls.action2's, over the whole button) in from
-	# either side, so they wrap within the room.
-	for v: Control in again.get_children():
-		v.offset_left = pad / 2.0
-		v.offset_right = -pad / 2.0
-	again.custom_minimum_size.y = maxf(again.custom_minimum_size.y, lines * 1.1 + UI.px(12))
-	return true
+		changed = true
+	return changed
 
 
 ## The verdict's line as the player reads it (F6): the check and what it

@@ -194,6 +194,11 @@ static func fit(screen: Control) -> Array[String]:
 			bad.append("%s %s: cut, %.0f px of words in %.0f" % [l.get_path(), l.text, words, at.size.x])
 		var p := l.get_parent()
 		while p != null and not p is PanelContainer:
+			# Words drawn inside a button lie inside it: the kit grows the
+			# button to them (S1-R15's raid, S1-R23's "3 s").
+			if p is Button and not (p as Control).get_global_rect().grow(1.0).encloses(at):
+				bad.append("%s %s: %s outside its button %s" % [l.get_path(), l.text, at,
+					(p as Control).get_global_rect()])
 			p = p.get_parent()
 		if p != null and not (p as Control).get_global_rect().grow(1.0).encloses(at):
 			bad.append("%s %s: %s outside its panel %s" % [l.get_path(), l.text, at, (p as Control).get_global_rect()])
