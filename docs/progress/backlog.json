@@ -1255,6 +1255,22 @@
       "sent_at": "2026-11-17T21:45:00Z",
       "ack_by": "2026-11-17T23:45:00Z",
       "acked_at": "2026-11-17T22:52:00Z"
+    },
+    {
+      "id": "M56",
+      "to": "lead",
+      "text": "From 17 November 2026 (report 111): the wait from ready to merged rated worse two reports in a row (2.1h, then 3.0h). P3-S2-home-7, P3-S3-nav-1 and P3-S1-hc-offline-2 sat ready 2.9 to 4.1 hours behind P3-AIA2-bake-1: the shared icons_256 bake was not the same on every machine, so the guard failed on every candidate from cycle 134 to cycle 136. Rule: a guard failure on a generated file the task does not change is an infra blocker. The lead seeds its fix to the file's owner as critical in that same cycle, ahead of new screen work; the fix proves a byte-identical rebake on a second machine before ready, and the held tasks are rebuilt and merged in one batch in the cycle the fix merges. Overdue lesson: M54 to AD (ack_by 18:22Z) is not in AD's acks on main or on claude/ui-ad; ask AD to ack it in its next turn. Add M56 to your acks.",
+      "sent_at": "2026-11-17T23:53:00Z",
+      "ack_by": "2026-11-18T01:53:00Z",
+      "acked_at": null
+    },
+    {
+      "id": "M57",
+      "to": "lead",
+      "text": "From 17 November 2026 (report 111): reserve hours used rated worse two reports in a row (23h, then 29.5h of 20h). Rule: before seeding R54, AD-R55 or S2-R44, the lead ranks the remaining requests against phase 3's exit criteria. Those the criteria do not need move to phase 4's list, and the revised reserve is written in lead.md, \"Now\". Add M57 to your acks.",
+      "sent_at": "2026-11-17T23:53:00Z",
+      "ack_by": "2026-11-18T01:53:00Z",
+      "acked_at": null
     }
   ]
 }
