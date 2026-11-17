@@ -147,7 +147,7 @@ static func write_record(screen: CharacterScreen, shot: String) -> void:
 					name = l.text
 			if name == "":
 				name = c.tooltip_text
-			if name == Strings.t("HOME_ROSTER"):
+			if c.get_meta("back", false):
 				kind = "back"
 		elif c is Label and (c as Label).get_theme_font_size("font_size") >= UI.text_px(20):
 			kind = "words"

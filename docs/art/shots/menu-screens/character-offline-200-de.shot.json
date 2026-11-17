@@ -1,0 +1,75 @@
+{
+ "controls": [
+  {
+   "name": "arrow 1: Vorheriger Charakter, Mossbear",
+   "rect": [
+    21.67,
+    178.39,
+    52.0,
+    52.0
+   ]
+  },
+  {
+   "name": "arrow 2: Nächster Charakter, Glass Golem",
+   "rect": [
+    313.44,
+    178.39,
+    52.0,
+    52.0
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "words 3: Skyskipper",
+   "rect": [
+    110.14,
+    222.44,
+    166.83,
+    47.67
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "words 4: Skyskipper · Träger",
+   "rect": [
+    37.56,
+    361.83,
+    312.0,
+    47.67
+   ]
+  },
+  {
+   "name": "row 5: Raubzug Werte Vergleich",
+   "rect": [
+    17.33,
+    547.44,
+    352.44,
+    64.64
+   ]
+  },
+  {
+   "name": "back 6: Zurück",
+   "rect": [
+    28.17,
+    672.75,
+    52.0,
+    52.0
+   ]
+  },
+  {
+   "name": "up 7: Skyskipper: Auf Stufe 4, 200 Essenz",
+   "rect": [
+    88.83,
+    630.5,
+    273.0,
+    136.5
+   ]
+  }
+ ],
+ "frame_pt": [
+  390.0,
+  845.0
+ ],
+ "image": "character-offline-200-de.png",
+ "text_scale": 2.0
+}

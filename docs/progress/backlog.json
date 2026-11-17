@@ -2,8 +2,8 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026. Phase 2 started on 12 November 2026 (lead cycle 70): P1-AD-board-1d let board 1 stand and phase 1's other exit criteria hold (report.md section 3.2); its first tasks are the flow findings (S1, S2) and board 1's note G (AIA-2), within the same cap of three. Since 12 November 2026, about 20:00Z, the cap is four UI builders by the owner's order (CLAUDE.md order 3; three while the seven-day bar reads allowed_warning). Phase 3 (polish and harden, report.md step 12) started on 17 November 2026 (lead cycle 118) under M49: every phase 2 task was merged by 06:55Z, the exit review ran in cycle 118 (boards 3, 4 and 5 stand, board 2 waits on the deferred icon batch 4 by D13 (c), the exceptions queue is empty, every screen passes the gate but result at 200% pt_BR, Hierarchy, which P3-S1-result-7 takes), and the first blind audit (O6) is carried into phase 3 as P3-AD-audit-1. Phase 3 draws from the 20-hour reserve; it exits when no board has an open objection, the second blind audit is done and the wave board (O7) stands.",
   "wave": "UI wave",
   "phase": 3,
-  "updated_at": "2026-11-17T21:25:00Z",
-  "updated_by": "lead",
+  "updated_at": "2026-11-17T22:52:00Z",
+  "updated_by": "lead (cycle 139)",
   "stop_at": "2026-11-18T21:00:00Z",
   "lease_hours": 3,
   "status_every_minutes": 45,
@@ -197,14 +197,14 @@
         }
       ],
       "id": "P3-S3-nav-1",
-      "merged_sha": null,
+      "merged_sha": "2dc57508",
       "model": "Opus 5.5",
       "phase": 3,
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": "5ac311f77e8d174c0ddc5f48cadabfbad25e994f",
       "role": "S3",
-      "state": "ready",
+      "state": "merged",
       "tier": 2,
       "title": "Character and roster, navigation and the offline notice: ScreenNav's back (AD-R50), the roster keeps its scroll and stage (AD-R51), the offline notice as info in one line at large text (AD-R63, AD-R64)",
       "updated_at": "2026-11-17T21:15:00Z",
@@ -363,7 +363,7 @@
       "estimate_h": 1.5,
       "tier": 2,
       "critical": false,
-      "state": "ready",
+      "state": "merged",
       "claim": {
         "agent": "S2",
         "branch": "claude/ui-screens-home",
@@ -374,7 +374,7 @@
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": "9ef7b2950c64c0ec80267425d050bacf9d8bd0a2",
-      "merged_sha": null,
+      "merged_sha": "9ec770d6",
       "updated_at": "2026-11-17T20:00:00Z",
       "updated_by": "lead (cycle 134)",
       "exceptions": []
@@ -382,7 +382,13 @@
     {
       "assigned_to": "S2",
       "attempts": 0,
-      "claim": null,
+      "claim": {
+        "agent": "S2",
+        "branch": "claude/ui-screens-home",
+        "claimed_at": "2026-11-17T21:25:00Z",
+        "seen_at": "2026-11-17T21:25:00Z",
+        "lease_until": "2026-11-18T00:25:00Z"
+      },
       "critical": false,
       "deps": [
         "P3-S2-home-7"
@@ -433,7 +439,7 @@
       "prior_sha": null,
       "ready_sha": null,
       "role": "S2",
-      "state": "open",
+      "state": "working",
       "tier": 2,
       "title": "One go-back for the app: Android's back and Escape go to the router, each route to its back route, home asks before quitting (AD-R48)",
       "updated_at": "2026-11-17T19:50:00Z",
@@ -486,7 +492,12 @@
       "merged_sha": null,
       "updated_at": "2026-11-17T21:25:00Z",
       "updated_by": "lead (cycle 137)",
-      "exceptions": []
+      "exceptions": [
+        "client/scripts/character_screen.gd",
+        "client/scripts/screen_kit.gd",
+        "client/scripts/ui.gd",
+        "client/ui/rb_theme.gd"
+      ]
     },
     {
       "assigned_to": "AIA-2",
@@ -522,14 +533,14 @@
       ],
       "gate_items": [],
       "id": "P3-AIA2-bake-1",
-      "merged_sha": null,
+      "merged_sha": "a957e73b",
       "model": "Opus 5.5",
       "phase": 3,
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
+      "ready_sha": "75798143c332d2674e426f160ebce9e798f670fe",
       "role": "AIA-2",
-      "state": "working",
+      "state": "merged",
       "tier": 2,
       "title": "An icon bake that gives the same bytes on every machine, so the guard's byte-for-byte rebake passes in any container (S2-R45)",
       "updated_at": "2026-11-17T20:00:00Z",
@@ -1323,7 +1334,7 @@
       "text": "From the overseer, 17 November 2026 21:45Z, on P3-AIA2-bake-1 (S2-R45): the cross-container proof the task asks for is in. At AIA-2's 75798143, `node art/ui/icons/studio/bake_icons.js icons_48 icons_256 --out <scratch>` in the overseer's container (Intel Xeon @ 2.10GHz with avx512f, the CPU class whose rebake failed in cycles 134 to 136; Node 22.23.4, AIA-2's is 22.23.5) gives all six files byte-identical to the committed client/ui/art/icons_48* and icons_256*. `owners.py diff P3-AIA2-bake-1 35036074 75798143` passes, the branch merges cleanly with 35036074, and main has not touched art/ui/icons, client/ui/art, tools/ui_bake or tools/ui_research since AIA-2's merge 17520f56. Your own guard run on the candidate still decides; this only says the fix is expected to pass. To save cycles: once AIA-2 gives ready_sha (status due 22:05Z), merge bake-1 and, in the same cycle, rebuild and guard home-7 (9ef7b295), nav-1 (5ac311f7) and hc-offline-2 (788eaaf4) back to back on each new main, merging each on a pass, rather than one a cycle. Add M55 to your acks.",
       "sent_at": "2026-11-17T21:45:00Z",
       "ack_by": "2026-11-17T23:45:00Z",
-      "acked_at": null
+      "acked_at": "2026-11-17T22:52:00Z"
     }
   ]
 }
