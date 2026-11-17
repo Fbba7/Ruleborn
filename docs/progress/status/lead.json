@@ -1,15 +1,16 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-17T14:50:00Z",
+  "updated_at": "2026-11-17T15:08:00Z",
   "expected_next_update_by": "2026-11-17T17:26:00Z",
   "cycle": 127,
   "merging": {
-    "candidate_sha": "pending (P3-S1-hc-offline-1 at a4ed000e onto 7c464532)",
+    "candidate_sha": "47646710066b022d21e31660bcfc2af93ab73cdb (P3-S1-hc-offline-1 at a4ed000e onto 7c464532, with S1-R39's records), then 54a11b265407f4e0fe300b8f9a480acfd6536f52 (P3-K1-tabs-1 at 22fae4b7 onto it)",
     "task_ids": [
-      "P3-S1-hc-offline-1"
+      "P3-S1-hc-offline-1",
+      "P3-K1-tabs-1"
     ],
     "started_at": "2026-11-17T14:50:00Z",
-    "expires_at": "2026-11-17T15:50:00Z"
+    "expires_at": "2026-11-17T16:50:00Z"
   },
   "last_merged": {
     "task_id": "P3-AD-audit-1b",
