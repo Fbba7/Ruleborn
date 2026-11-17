@@ -429,6 +429,8 @@ func _build_world(heist: Dictionary) -> void:
 		_peak = maxi(_peak, r.alarm())
 	_ticks = r.tick()
 	_crew_end = r.crew()
+	var v: Dictionary = heist["verdict"]
+	_haul = int(v.get("banked", 0)) if v.get("ok", false) else 0
 	# High contrast keeps the night plain: no island, nor its sky's moon and
 	# stars, behind the words (AD's S1-R24).
 	if Settings.high_contrast:
@@ -453,8 +455,7 @@ func _build_world(heist: Dictionary) -> void:
 		g.visible = false
 	# A heist that paid: the crew that got away celebrates on the island,
 	# where character models stand in for them.
-	var v0: Dictionary = heist["verdict"]
-	if v0.get("ok", false) and str(v0.get("grade", "")) in ["Clean", "Loud", "Partial"]:
+	if v.get("ok", false) and str(v.get("grade", "")) in ["Clean", "Loud", "Partial"]:
 		var crew := r.crew()
 		world_view._sync_skiff(0.0)
 		var aboard: Array[int] = []
@@ -478,8 +479,6 @@ func _build_world(heist: Dictionary) -> void:
 			world_view.pitch = WorldView.HEIST_PITCH
 			world_view.follow = aboard
 			world_view.set_zoom(1)
-	var v: Dictionary = heist["verdict"]
-	_haul = int(v.get("banked", 0)) if v.get("ok", false) else 0
 
 
 func _process(delta: float) -> void:
@@ -618,6 +617,7 @@ func _show_rewards(v: Dictionary) -> void:
 	reward_row.visible = paid
 	fee_label.visible = split and int(v.get("fee", 0)) > 0
 	if not split:
+		ResultFit.crew_offline(haul_tile, rest_card, rest_label, _crew_end, v.get("ok", false))
 		return
 	haul_tile.visible = false
 	counter = reward_row

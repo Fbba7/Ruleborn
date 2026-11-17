@@ -483,6 +483,24 @@ static func carrier(tile: PanelContainer, kinds: Array[String], points: float) -
 	layer.add_child(ring)
 
 
+## The crew that ran a heist no server has paid yet (AD-R57: the phone's own
+## check, a rehearsal, a play): the faces' card, which the server's answer
+## fills with the crew's rest, says who went, by role; and the haul's one
+## tile carries the lead's portrait, as Starlight's tile does in the split.
+static func crew_offline(haul: PanelContainer, card: PanelContainer, line: Label, crew: Array, ok: bool) -> void:
+	if not ok or crew.is_empty():
+		return
+	if haul.get_node_or_null("Carrier") == null:
+		carrier(haul, crew_kinds(crew), ResultScreen.CARRIER_POINTS)
+	var roles := PackedStringArray()
+	for m: Variant in crew:
+		if m is Dictionary and str((m as Dictionary).get("role", "")) != "":
+			roles.append(Strings.term("ROLE", str((m as Dictionary)["role"])))
+	line.text = " · ".join(roles)
+	line.visible = not roles.is_empty()
+	card.visible = line.visible
+
+
 ## Each total (a label of `totals`) in its finish of the kit's baked numerals, over
 ## its label, whose own glyphs are hidden: the label keeps its words, its
 ## place in the tile and its size, so a screen reader, the fitting and the
