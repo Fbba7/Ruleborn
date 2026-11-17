@@ -48,9 +48,9 @@ const GOAL_PAD_LARGE := 2.0
 const FOOT_GAP_LARGE := 3.0
 ## Collect's gold either side of its picture and words, in points together.
 const COLLECT_PAD := 16.0
-## The smallest the other tabs' names go, in points at 100% text, before they
-## give way to their icons alone (only up to ScreenNav.LABELS_UP_TO: past it
-## they are icons alone anyway).
+## The smallest the other tabs' names go, in points scaled by the text size but never
+## past their own 13 points at 100%, before they give way to their icons alone (only
+## up to ScreenNav.LABELS_UP_TO: past it they are icons alone anyway).
 const TAB_WORD_LEAST := 11.0
 ## The least share of its size strain's words take to keep the purse's fourth
 ## place at large text.
@@ -402,7 +402,7 @@ func _fit_tab_words() -> void:
 		var whole := HomeParts.tab_word(l, UI.text_px(13))
 		if whole > room:
 			at = minf(at, floorf(UI.text_px(13) * room / maxf(whole, 1.0)))
-	var others := Settings.text_scale <= ScreenNav.LABELS_UP_TO and at >= UI.text_px(TAB_WORD_LEAST)
+	var others := Settings.text_scale <= ScreenNav.LABELS_UP_TO and at >= minf(UI.text_px(TAB_WORD_LEAST), UI.px(13))
 	for key: String in words:
 		var l: Label = words[key]
 		var b := tabs.buttons[key] as Button
