@@ -414,9 +414,10 @@ static func figures(l: Label) -> void:
 	var line := RbTheme.role_font(FIGURE_ROLE).get_height(px)
 	(digits as KitNumerals.Row).height = floorf(line * FIGURE_LINE)
 	digits.size_flags_vertical = Control.SIZE_SHRINK_END
-	# One layer above the words: every baked row then draws in one call from
-	# the numerals' atlas page, not splitting the art's or the words' batches.
-	digits.z_index = UI.WORDS_Z + 1
+	# Two layers above the words, and the ink behind them one above: every
+	# baked row's fill, and every row's ink, then draws in one call from the
+	# numerals' atlas page, not splitting the art's or the words' batches.
+	digits.z_index = UI.WORDS_Z + 2
 	digits.update_minimum_size()
 	var box := HBoxContainer.new()
 	box.name = String(l.name) + "Figures"
@@ -518,22 +519,19 @@ static func amounts_fit(amounts: Array, held: Array[Control], room: float, least
 ## (P2-S2-home-6, the gate at e674b614: "flat gold fills, with no ink
 ## outline, no hard drop and no gradient" at 100%). The kit's glyphs are
 ## 210 pixels tall and draw here 18 to 40 high, from a page without
-## mipmaps, so their own thin stroke and drop thin out to nothing and their
-## gradient to a flat gold. From the same glyphs, in the same call, this row
-## draws a hard drop in the drop colour, then an ink stroke all round, both
-## from the glyphs' outlines and sized in screen pixels, then each glyph in
-## bands shaded from its cream top to a deeper amber foot.
+## mipmaps, so their own thin stroke and drop thin out to nothing; their
+## cream-to-gold gradient still shows. Behind the row, kit rows of the same
+## glyphs (`Under`) draw an ink stroke all round and the hard drop below it,
+## in `ink_line`, each set off by a few screen pixels. Every layer is
+## the kit's own row drawing the kit's glyphs, tinted and moved: home draws
+## nothing of its own (kit-spec.md section 6.5).
 class InkedRow:
 	extends KitNumerals.Row
 
-	## The stroke's width, the rule's 12% of the figures' size or more.
+	## The stroke's width, as a share of the figures' size.
 	const STROKE_SHARE := 0.08
 	## The drop below the stroke, as a share of the figures' size.
 	const DROP_SHARE := 0.1
-	## The tint at the glyphs' foot; their top keeps the art's own cream.
-	const FOOT := Color(0.93, 0.74, 0.5)
-	## The bands a glyph is shaded in, at most.
-	const BANDS := 16
 
 	## `row` as an inked row: its glyphs, slot and what a screen reader says.
 	static func of(row: KitNumerals.Row) -> InkedRow:
@@ -544,36 +542,48 @@ class InkedRow:
 		for key: StringName in row.get_meta_list():
 			out.set_meta(key, row.get_meta(key))
 		row.free()
+		var ring: Array[Vector2] = []
+		for i: int in 8:
+			ring.append(Vector2.from_angle(TAU * i / 8.0))
+		for i: int in [1, 2, 3]:
+			out.add_child(Under.new(ring[i], true))
+		for dir: Vector2 in ring:
+			out.add_child(Under.new(dir, false))
 		return out
 
-	func _draw() -> void:
-		var s := glyph_scale()
-		var x := (size.x - get_minimum_size().x) * 0.5
-		var bottom := (size.y + height) * 0.5
-		var glyphs: Array[Array] = []
-		for p: Dictionary in cells:
-			var w := float(p["w"]) * s
-			var h := float(p["h"]) * s
-			var advance := float(p.get("advance", p["w"])) * s
-			var at := Rect2(x + (advance - w) * 0.5, bottom - h, w, h)
-			glyphs.append([KitSkin.texture(p), at, Rect2(p["x"], p["y"], p["w"], p["h"])])
-			x += advance
-		var stroke := maxf(1.0, height * STROKE_SHARE)
-		var drop := Vector2(0.0, maxf(1.0, height * DROP_SHARE))
-		var ring: Array[Vector2] = []
-		for i in 8:
-			ring.append(Vector2.from_angle(TAU * i / 8.0) * stroke)
-		for under: Array in [[Tokens.color("drop"), drop], [Tokens.color("ink_line"), Vector2.ZERO]]:
-			for g: Array in glyphs:
-				for off: Vector2 in ring:
-					draw_texture_rect_region(g[0], Rect2(g[1].position + off + under[1], g[1].size), g[2], under[0])
-		for g: Array in glyphs:
-			var at: Rect2 = g[1]
-			var from: Rect2 = g[2]
-			var bands := clampi(ceili(at.size.y), 1, BANDS)
-			for i in bands:
-				var tint := Color.WHITE.lerp(FOOT, (i + 0.5) / bands)
-				draw_texture_rect_region(g[0],
-						Rect2(at.position.x, at.position.y + at.size.y * i / bands, at.size.x, at.size.y / bands),
-						Rect2(from.position.x, from.position.y + from.size.y * i / bands, from.size.x,
-								from.size.y / bands), tint)
+	## One layer behind the row: its glyphs, tinted, set off along `dir` by
+	## the stroke's width (and down by the drop, for a drop layer).
+	class Under:
+		extends KitNumerals.Row
+
+		var dir := Vector2.ZERO
+		var is_drop := false
+
+		func _init(along: Vector2, drop_layer: bool) -> void:
+			super()
+			dir = along
+			is_drop = drop_layer
+			show_behind_parent = true
+			# A layer below the row's (show_behind_parent within one layer
+			# would leave the ink in the row's batch). At z 0 the kit's stacking
+			# (UI._lift) would also raise a full-rect child over the row.
+			z_index = -1
+			mouse_filter = Control.MOUSE_FILTER_IGNORE
+			accessibility_name = ""
+			set_anchors_preset(Control.PRESET_FULL_RECT)
+			# One tint for the drop and the stroke: a change of tint between
+			# layers splits the batch (two calls a row; one tint costs one call in
+			# all), and `drop` (#0A0408) and `ink_line` (#1A0C14) read the same.
+			self_modulate = Tokens.color("ink_line")
+
+		func _draw() -> void:
+			var row := get_parent() as KitNumerals.Row
+			if row == null:
+				return
+			cells = row.cells
+			height = row.height
+			var off := dir * maxf(1.0, height * STROKE_SHARE)
+			if is_drop:
+				off.y += maxf(1.0, height * DROP_SHARE)
+			draw_set_transform(off)
+			super()
