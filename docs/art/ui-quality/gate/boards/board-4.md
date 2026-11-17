@@ -432,3 +432,116 @@ Hierarchy passes in both items, and nothing else holds.
 So S1's default ("the gate runs on 8753618a as it stands") does not
 hold. S1 fixes G inside P2-S1-result-4, then sends the gate request at
 the new head. AD-R42 tells the lead.
+
+## Preview of result-6 (S1-R35)
+
+AD previewed P2-S1-result-6 at 16515088 on `claude/ui-screens-heist` on
+17 November 2026. The screen code is as at e4e78070, and c9d70cc3 adds
+only notes and verdicts. The preview checks board 4's full list (M23)
+and S1's two departures from key frame 03. Each still was rendered with
+`SERVER=1 FIT=1 [TEXT=200] [LOCALE=<loc>] [CONTRAST=1] bash
+tools/render/shoot.sh client/tests/shots/screen_result.gd`.
+
+**All eight stills print "fit ok":**
+
+| Still | Draw calls |
+|---|---|
+| English 100% | 116 |
+| pt_BR 100% | 118 |
+| English 200% | 100 |
+| pt_BR 200% | 102 |
+| German 200% | 101 |
+| High contrast 100% | 58 |
+| High contrast pt_BR 100% | 60 |
+| High contrast 200% | 42 |
+
+### The two departures
+
+- **(1) Every reward total in the kit's gold numerals: stands.** The
+  totals are one rank, so they take one treatment. On parchment the ink
+  outline, the drop and the gold ramp read at 1× and at 4×. In high
+  contrast the tiles turn white and the outlined gold still holds.
+  "+2,310" stays the heaviest figure: its tile is wider (1.3) and carries
+  the crew's ring.
+- **(2) All three tiles on parchment, as design still 07: stands.** The
+  gate's record backs this. Gold totals on glass failed 0 of 3 at
+  24cc4d7c, and white totals on glass split. Still 07, the design's own
+  frame for this screen, puts all three rewards on parchment. Key frame
+  03's glass for Essence and Renown came before the gold totals.
+
+![100%: key frame 03, still 07, English, pt_BR](board-4/r6-1-result-100.png)
+
+![The three tiles at 100%, English](board-4/r6-5-tiles-100.png)
+
+![200%: pt_BR key frame, then pt_BR, German and English](board-4/r6-2-result-200.png)
+
+![High contrast: key frame, English, pt_BR, English 200%](board-4/r6-3-result-hc.png)
+
+### Objection H (fit, German 200%: "Sternenlicht" broken by its letters)
+
+At 200% in German the Starlight row reads "Sternenlich" with "t" alone
+on a second line. A word broken between its letters is the failure that
+`ResultFit.reward_rows` exists to prevent. Its own comment names this
+exact word: when a row will not fit, every tile goes back to the
+design's column "rather than break a word by its letters". FIT still
+prints "fit ok", because its checks look at the fold and the tiles'
+feet, not at how a word breaks.
+
+This is new in result-6. At result-4 (left, from r5-1) the same row held
+"+2.310 Sternenlicht" on one line. At e4e78070 (right) the gold total is
+drawn wider, with open spacing between its figures, and the word loses
+the room it needed. English ("Starlight") and pt_BR ("Luz-estelar") keep
+their rows.
+
+![German 200%: result-4 (left), result-6 (right)](board-4/r6-6-H-de200.png)
+
+**The fix (S1, `client/scripts/result_fit.gd`):**
+
+- `reward_rows` measures each row as it is drawn: the total's width
+  after `bake_totals` (the label's combined minimum size, its baked
+  row), not the live font's width for the same text.
+- Keep the row, which closed objection B: the three rewards stand above
+  the bar at 200% in German. The preferred route is to bring the baked
+  total back inside the width it had at result-4, so that "+2.310
+  Sternenlicht" fits one line again. The tiles' fallback to columns is a
+  last resort. If S1 takes it, all three rewards must still end above the
+  first screen's edge, as FIT already asserts.
+- Add to FIT: fail when a reward tile's word label breaks inside a word.
+- **Done when:**
+  - At 200% in en, pt_BR and de, and at 150% in de, every reward word
+    stands whole at 4×.
+  - German 200% shows "Sternenlicht" on one line beside its total.
+  - FIT=1 prints "fit ok", with the new check in place.
+  - The result's draw calls stay at 150 or under.
+
+H does not depend on the screen's final shape (M40): it is a fit defect
+of the rows at 200%, whichever finish the tiles take. If the final shape
+changes the tiles' margins or the totals' size, the same check applies.
+
+### Notes, which do not hold the board
+
+- **The squint at 100%.** In grayscale the three cream tiles are the
+  lightest mass (L\* about 93 to 94, against Raid again's 85.6). The
+  tiles are information, not controls, and Raid again stays the one
+  filled gold control and the strongest edge. Hierarchy passes in the
+  gate, so this stays a note.
+  ![Grayscale at 100%](board-4/r6-4-result-100-gray.png)
+- **Still 07's coloured edges.** Still 07 edges its three parchment
+  tiles in gold, green and pink. The kit has edged parchment only in sky
+  and pink (`reward_sky`, `reward_pink`), while `reward_gold` and
+  `reward_green` are button skins, as S1's notes found. A gold and a
+  green edged tile in the kit would let the screen match still 07.
+  That is a kit follow-up the lead may queue after phase 2. It does not
+  hold result-6, and dressing only Renown in pink now would be
+  inconsistent.
+- **The fee line at 200%, pt_BR and German.** It sits just below the
+  scroll's edge and comes up on scroll. This is objection F's cut
+  working as written.
+- **Carried from round 2 and S1-R31:** the crew card at the fold in
+  pt_BR at 100% (its rim and ring tops show above the bar, in high
+  contrast too). The other notes stand as listed under result-4.
+
+So S1's two departures stand, and one objection, H, is kept. S1 can fix
+H in P2-S1-result-6 before the task is merged. If the task merges
+first, H is the first item of a follow-up S1 task. AD-R46 tells the
+lead.

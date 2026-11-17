@@ -8,12 +8,12 @@
   "task_state": null,
   "claimed_at": "2026-11-17T01:50:00Z",
   "lease_until": null,
-  "updated_at": "2026-11-17T01:57:00Z",
+  "updated_at": "2026-11-17T02:58:18Z",
   "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "055840f7c59c5600ef0fb907fc2607ee69a9e9f7",
-    "next_step": "none: S2-R34 answered; AD-R45 open with the lead"
+    "next_step": "none: S1-R35 answered; AD-R46 open with the lead"
   },
   "precheck": {
     "sha": "055840f7c59c5600ef0fb907fc2607ee69a9e9f7",
@@ -618,6 +618,22 @@
       "due": "2026-11-19T01:57:00Z",
       "default": "S2 fixes (a) in P2-S2-home-6 before it marks ready. If S2 marks ready without it and the gate fails Display type, the lead opens a follow-up S2 task, done when the purse rows at 100% en, de, pt_BR and 200% de, pt_BR show no second copy of 'k', 'Tsd.' or 'mil' at 4x, those words take the figures' gold, FIT=1 prints 'fit ok' and home's draw calls stay at 150 or under. If the gate passes Display type, the objection becomes a note and nothing is seeded. No AD round needed.",
       "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R46",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 4, preview of P2-S1-result-6 (S1-R35) at 16515088: S1's two departures stand (gold numerals on every total; all three reward tiles on parchment, as still 07). One objection, not depending on the final shape (M40): (H) at 200% German 'Sternenlicht' breaks by its letters in the Starlight row, new in result-6 (the baked gold total is wider than at result-4) and missed by FIT. Fix in ResultFit.reward_rows and bake_totals, and a FIT check, in board-4.md, 'Preview of result-6 (S1-R35)'.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-4.md",
+        "client/scripts/result_fit.gd",
+        "client/tests/shots/screen_result.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T02:58:18Z",
+      "due": "2026-11-19T02:58:18Z",
+      "default": "S1 fixes H in P2-S1-result-6 before it merges. If result-6 merges first (the lead's cycle 111 rule: the merge does not wait for AD), the lead opens a follow-up S1 task, done when every reward word stands whole at 4x at 200% en, pt_BR, de and 150% de, German 200% shows 'Sternenlicht' on one line beside its total with all three rewards above the first screen's edge, FIT=1 prints 'fit ok' with a check that fails on a reward word broken inside a word, and the result's draw calls stay at 150 or under. No AD round needed.",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
@@ -735,8 +751,13 @@
       "request_id": "S2-R34",
       "at": "2026-11-17T01:57:00Z",
       "answer": "Preview of P2-S2-home-6 at 36f017da (still valid at ce03765a: home.gd, home_parts.gd and the kit's scripts unchanged). 11 renders (100% en, de, pt_BR, hc, hc pt_BR; 200% en, pt_BR, de, hc de, pt_BR with notice; 150% pt_BR) all print 'fit ok', every count baked. Rulings on S2's three questions: (1) the gold figures stand (Colour roles: a T3 type finish on dark plates, not a control, Collect still the only gold fill; Hierarchy: Collect is the one primary in the squint at 100% and 200%); (2) the smaller German (80%) and Portuguese (88%) counts stand: the three counts shrink together, one treatment and one size per screen; (3) the title's leather rim stands: an ink line plus the band, about 2 pt round, outlined all round. One objection, not depending on the screen's final shape (M40): (a) Display type: the live words after the baked figures ('k', 'Tsd.', 'mil') show a ghost copy of themselves set down below, because inked()'s plated branch sets shadow_offset_y = outline + drop with shadow_outline_size 0; and they are cream beside gold figures. Fix: in HomeParts.inked's plated branch, shadow_outline_size = outline and shadow_offset_y = drop; the After label in figures() takes Tokens.color('gold'). Expected cost up to +3 draw calls (home/100 about 146, home/200 about 121); if that passes 150, drop the shadow on those words (stroke only). Done when the purse rows at 100% en, de, pt_BR and 200% de, pt_BR show no second copy at 4x, the words are gold, FIT=1 prints 'fit ok' and draw calls stay at 150 or under. S2 can fix it in this task before ready; otherwise S2's default stands (ready on the pre-checked commit, gate runs) and AD-R45 carries the follow-up. Notes, not holding: the ink line inside the title's rim is about 1 px; at 200% en the counts are near Collect's word height. Write-up and stills: docs/art/ui-quality/gate/boards/board-3.md, 'Preview of home-6 (S2-R34)'."
+    },
+    {
+      "request_id": "S1-R35",
+      "at": "2026-11-17T02:58:18Z",
+      "answer": "Preview of P2-S1-result-6 at 16515088 (screen code as at e4e78070). 8 renders (100% en, pt_BR, hc, hc pt_BR; 200% en, pt_BR, de, hc) all print 'fit ok'; draw calls 42 to 118. Rulings on the two departures: (1) every reward total in the kit's gold numerals stands: one rank, one treatment; the outline, drop and gold ramp read on parchment at 1x and 4x and hold in high contrast; '+2,310' stays the heaviest figure (wider tile, crew ring); (2) all three tiles on parchment stands: it is still 07's own frame for this screen, and the gate's record (gold on glass 0/3 at 24cc4d7c, white on glass split) rules glass out. One objection, not depending on the screen's final shape (M40): (H) at 200% German the Starlight row breaks 'Sternenlicht' by its letters ('Sternenlich' / 't'), the very case ResultFit.reward_rows exists to prevent, while FIT says ok. New in result-6: at result-4 the row held '+2.310 Sternenlicht' on one line; the baked gold total is now drawn wider. Fix in result_fit.gd: reward_rows measures the total as drawn (the label's combined minimum size after bake_totals), not the live font's width; keep the row (objection B), preferably by bringing the baked total back inside result-4's width; columns only as a last resort, with every tile still above the first screen's edge; FIT fails when a reward word breaks inside a word. Done when every reward word stands whole at 4x at 200% en, pt_BR, de and 150% de, German 200% shows 'Sternenlicht' on one line beside its total, FIT=1 prints 'fit ok' and draw calls stay at 150 or under. S1 can fix H in this task before merge; otherwise AD-R46 carries the follow-up. Notes, not holding: the cream tiles are the lightest mass in the 100% squint (L* 93-94 against Raid again's 85.6) but are information, and Hierarchy passes; still 07's gold and green tile edges need kit materials (only reward_sky and reward_pink are edged parchment), a kit follow-up the lead may queue after phase 2; the fee line at 200% pt_BR and de sits under the scroll's edge (objection F's cut, as written); the crew card at the fold in pt_BR 100% carries over. Write-up and stills: docs/art/ui-quality/gate/boards/board-4.md, 'Preview of result-6 (S1-R35)'."
     }
   ],
-  "next_step": "none: S2-R34 answered; AD-R45 open with the lead",
-  "last_update": "S2-R34 answered: home-6's gold figures, smaller de/pt_BR counts and title rim stand; one objection (ghost echo and cream colour on the live words after the baked figures) S2 can fix in task; AD-R45 to the lead with a follow-up default. Done."
+  "next_step": "none: S1-R35 answered; AD-R46 open with the lead",
+  "last_update": "S1-R35 answered: result-6's two departures stand (gold numerals on every total; all three reward tiles on parchment, as still 07); one objection, H (German 200%: 'Sternenlicht' broken by its letters, new in result-6), S1 can fix in task; AD-R46 to the lead with a follow-up default. Done."
 }
