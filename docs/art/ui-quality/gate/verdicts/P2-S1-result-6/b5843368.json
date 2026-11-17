@@ -1,0 +1,87 @@
+[
+ {
+  "task_id": "P2-S1-result-6",
+  "sha": "b5843368999f64b956c2c1dd8db1e2a0ccbad049",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "advisory": true,
+  "at": "2026-11-17T03:50:00Z",
+  "item": "result at 100% text",
+  "quality": "Display type",
+  "samples": [
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "All three samples pass. Every word over the sunburst (HEIST COMPLETE, 'Clean', the subtitle, the 2:45 line, Entry fee and Re-simulated) carries an unbroken dark ink outline, and the three headline figures (+2,310, +805, +15) share one treatment (outline, hard drop, warm fill), where kf-result gives it only to 1,288. The judges had no crops, so the gradient fill was judged from the downscaled still."
+ },
+ {
+  "task_id": "P2-S1-result-6",
+  "sha": "b5843368999f64b956c2c1dd8db1e2a0ccbad049",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "advisory": true,
+  "at": "2026-11-17T03:50:00Z",
+  "item": "result at 100% text",
+  "quality": "Character presence",
+  "samples": [
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "All three samples pass. The three crew portraits in the strip above the action bar are two to three times the size of kf-result's, each reads as a figure with a face in its gold ring (the pale owl, the charcoal ember sprite, the brown otter), with soft toon shading and no photographic grain or sheen; the Starlight tile also carries a portrait badge, which the anchor lacks."
+ },
+ {
+  "task_id": "P2-S1-result-6",
+  "sha": "b5843368999f64b956c2c1dd8db1e2a0ccbad049",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "advisory": true,
+  "at": "2026-11-17T03:50:00Z",
+  "item": "result at 200% text, pt_BR",
+  "quality": "Display type",
+  "samples": [
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "All three samples pass. Every word over the sunburst (ASSALTO CONCLUÍDO, 'Limpo', the summary and 2:45 lines) has a dark outline that scales with the 200% text, and +2.310, +805 and +15 share one stroked gold treatment with a hard drop; no glyph is clipped. Weak point noted by all three: the digits of +2.310 are tight and their outlines touch, though no glyph is lost."
+ },
+ {
+  "task_id": "P2-S1-result-6",
+  "sha": "b5843368999f64b956c2c1dd8db1e2a0ccbad049",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "advisory": true,
+  "at": "2026-11-17T03:50:00Z",
+  "item": "result at 200% text, pt_BR",
+  "quality": "Hierarchy",
+  "samples": [
+   "fail",
+   "fail",
+   "fail"
+  ],
+  "result": "fail",
+  "critique": "All three samples fail on 'secondary content at the weight of the reward or the main action'. ASSALTAR DE NOVO still leads by size, but the summary prose ('Nenhum guarda alertado · todos saíram com saque', three lines) and the technical line ('2:45 · O alarme do reino chegou ao nível 5', two lines) are set in large light type, as big as the button's label and larger than the reward numerals, and light on dark, so they stay loud in grayscale. The three reward tiles are equally cream, so no single reward leads and the three read as one light block larger than the button. kf-result-text200 keeps its prose clearly below the hero number and the button, and makes only the Starlight tile light. The lead's own look at the still agrees. Ways out: cap the prose and technical lines below the reward numerals at 200% (or let them wrap smaller), and give the Starlight tile the lead over Essence and Renown (size, value or a darker plate for the other two), within AD's accepted parchment departure."
+ },
+ {
+  "task_id": "P2-S1-result-6",
+  "sha": "b5843368999f64b956c2c1dd8db1e2a0ccbad049",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "advisory": true,
+  "at": "2026-11-17T03:50:00Z",
+  "item": "result in high contrast",
+  "quality": "Hierarchy",
+  "samples": [
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "All three samples pass. The full-width gold RAID AGAIN at the foot is the one primary and outranks the darker purple Home more clearly than kf-result-hc's cream Home; the gold 3 s replay tile is under half its size; the white reward cards hold information, not actions, and are light by the mode's design (ruling v3). One judge notes the larger prose makes the screen busier."
+ }
+]

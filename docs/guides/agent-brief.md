@@ -245,6 +245,12 @@ Write `task_state: "ready"` and `ready_sha`.
   contrast) with their references and the rubric. It is advisory: it
   writes no verdict, adds nothing to `attempts`, and the gate still runs in
   full. Fix what it finds first; skip it on a task with no such still.
+- **Stay out of the gate's verdict folder (M48).** Never commit under
+  `docs/art/ui-quality/gate/verdicts/`: the gate and the lead write it on
+  main, and a builder's copy there conflicts at the merge. Before ready,
+  run `python3 tools/coord/owners.py diff <task_id> origin/claude/videogame-project-analysis-ewkkk2 <ready_sha>`;
+  it must pass, so every file your branch changes is in the task's
+  `files` or its `exceptions`.
 - **Mark ready in the same turn** the gate verdict comes back, and push.
 
 **After marking ready,** write your handoff, set `agent_state: waiting`,

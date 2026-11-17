@@ -282,6 +282,8 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   Cycle 91: P2-K1-tabs-2 takes S2-R24 and S2-R26 (K1 started in cycle
   91, the fourth seat with S2, S3 and AD); the others still wait for a K1
   task, and each default stands at its due.
+  Cycle 118: S3-R9 to S3-R14 seeded as P3-K1-polish-2 (phase 3, M49),
+  and P3-S3-character-5 drops character_screen.gd's local fixes after it.
 - **S1-R32** (from S1, to K1 through the lead, 16 November 2026 16:53Z;
   due 17 November 16:53Z; not blocking): `KitNav.reward(screen, ...)`
   dresses the screen's Sky in `night_rays` whatever the mode, also under
@@ -334,6 +336,31 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   quality or merge-blocking check, so M33 seeds no task for it before the
   phase 2 stop, and P2-K1-grow-1 is at its pre-check, so it is not added
   there. S3 goes ready without it, as the default says.
+  Cycle 118: seeded as P3-K1-polish-1 (phase 3, M49), with S2-R35.
+
+- **S2-R35** (from S2, to K1 through the lead, 17 November 2026 03:10Z;
+  due 18 November 12:00Z; not blocking): the kit's baked numerals lose
+  their stroke, drop and gradient when drawn small. The gold glyphs are
+  210 px tall, home's counts at 100% text draw them about 18 px tall, and
+  every kit page imports with mipmaps off
+  (`client/ui/art/kit_*.webp.import`, `mipmaps/generate=false`), so the
+  glyphs are sampled, not averaged. That was the gate's Display type fail
+  on home at 100% (verdicts/P2-S2-home-6/e674b614.json). Ask: mipmaps on
+  the numerals' pages (kit_3.webp and kit_3_hc.webp at least) and
+  `TEXTURE_FILTER_LINEAR_WITH_MIPMAPS` on `KitNumerals.Row`, checking
+  texture bytes against `tools/ui_bake/budgets.json`. Meanwhile home draws
+  its own stroke, drop and gradient from the same glyphs
+  (`HomeParts.InkedRow`). Files: kit_3.webp.import, kit_3_hc.webp.import,
+  kit_numerals.gd. Default: no kit change; home keeps
+  `HomeParts.InkedRow`, and other screens that draw KitNumerals small stay
+  as they are. Copied in cycle 112.
+  **Answered** by the lead in cycle 112: logged for phase 3, about 1 h
+  (K1, the two import files and `kit_numerals.gd`). Home closes its
+  Display type fail with `HomeParts.InkedRow` inside home-6, so the kit
+  change closes no open objection, failed gate quality or merge-blocking
+  check, and M33 seeds no task for it before the phase 2 stop. The default
+  stands.
+  Cycle 118: seeded as P3-K1-polish-1 (phase 3, M49), with S3-R32.
 
 ### AIA
 
@@ -1115,6 +1142,11 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   free; AD's last session is idle, done). If result-6 is ready and gated
   before AD answers, the merge does not wait: AD's default applies, and
   any objection AD keeps goes to the lead as a request.
+  **Answered** by AD at 02:58Z, on 16515088 (board-4.md, 'Preview of
+  result-6 (S1-R35)'): both departures stand (gold numerals on every
+  total; all three reward tiles on parchment, as still 07). One
+  objection, H, goes to the lead as AD-R46 (under Lead, below). Copied in
+  cycle 112.
 
 ### S1
 
@@ -1156,6 +1188,55 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
 
 ### Lead
 
+- **AD-R46** (from AD, 17 November 2026 02:58Z; due 19 November 02:58Z;
+  not blocking): AD's preview of P2-S1-result-6 (S1-R35) at 16515088.
+  S1's two departures stand (gold numerals on every total; all three
+  reward tiles on parchment, as still 07). One objection, not depending on
+  the final shape (M40): (H) at 200% German 'Sternenlicht' breaks by its
+  letters in the Starlight row, new in result-6 (the baked gold total is
+  wider than at result-4) and missed by FIT. Fix in
+  `ResultFit.reward_rows` and `bake_totals`, and a FIT check. Files:
+  board-4.md, result_fit.gd, screen_result.gd. Default: S1 fixes H in
+  P2-S1-result-6 before it merges. If result-6 merges first, the lead
+  opens a follow-up S1 task, done when every reward word stands whole at
+  4x at 200% en, pt_BR, de and 150% de, German 200% shows 'Sternenlicht'
+  on one line beside its total with all three rewards above the first
+  screen's edge, FIT=1 prints 'fit ok' with a check that fails on a reward
+  word broken inside a word, and the result's draw calls stay at 150 or
+  under. Copied in cycle 112.
+  **Answered** by the lead in cycle 112: S1 fixes H in result-6 before it
+  merges, as AD's default says. result-6 is ready at c9d70cc3 but has not
+  merged, and its done_when asks that AD's objections are answered in the
+  task, so it goes back to working and S1 is restarted for it. No task is
+  seeded (M33). The lead does not gate c9d70cc3: H changes result_fit.gd
+  and the shot, so a pass there would not carry over. S1 adds the FIT
+  check, re-runs its own gate on the three requested items at the new
+  commit, sets `gate_request` and marks ready once they pass (M44).
+  **Gate, cycle 113** (advisory, rubric v3, on S1's `gate_request` at
+  b5843368, before ready; docs/art/ui-quality/gate/verdicts/P2-S1-result-6/
+  b5843368.json): Hierarchy at result 200% text, pt_BR fails 3 of 3; the
+  four other item-qualities pass 3 of 3 (Display type and Character
+  presence at 100%, Display type at 200% pt_BR, Hierarchy in high
+  contrast). The judges name the 200% pt_BR summary prose ('Nenhum guarda
+  alertado · todos saíram com saque', three lines) and the 2:45 alarm line
+  (two lines): large light type, as big as the ASSALTAR DE NOVO label and
+  larger than the reward numerals, so secondary text carries the reward's
+  weight; and the three equally cream tiles, so no reward leads.
+  kf-result-text200 keeps its prose below the hero number and the button.
+  S1's own run at b5843368 passed this item. result-6's gate items in
+  backlog.json are only 'result at 100% text' (Display type, Character
+  presence), and both pass 3 of 3, so under M44 the fail does not hold
+  result-6 back: S1 marks ready once its checks and pre-check pass. The
+  200% pt_BR Hierarchy fail is logged for phase 3 (M33 seeds nothing
+  before 21:00Z): a follow-up S1 task, done when at 200% pt_BR the summary
+  prose and alarm line sit below the reward numerals, one reward tile
+  leads (within AD's accepted parchment departure) and the gate passes
+  'result at 200% text, pt_BR', Hierarchy. S1 may close it inside
+  result-6 instead if that adds no more than about 30 minutes.
+  Cycle 118: seeded as P3-S1-result-7 (phase 3, M49), with board 4's
+  carried notes (an idle crew in the fixture, the fold on the crew card's
+  header).
+
 - **AD-R45** (from AD, 17 November 2026 01:57Z; due 19 November 01:57Z;
   not blocking): AD's preview of P2-S2-home-6 (S2-R34) at 36f017da, one
   objection. (a) Display type: the live words after the baked figures
@@ -1180,6 +1261,29 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   they pass. So no task is seeded (M33). The lead gates home-6 on Display
   type at 100% and 200% pt_BR when it is ready, and AD's default applies
   to the result.
+  **Gate, cycle 111** (advisory, rubric v3, on S2's `gate_request` at
+  e674b614, before ready; docs/art/ui-quality/gate/verdicts/P2-S2-home-6/
+  e674b614.json): Display type at home 100% text fails 3 of 3; the five
+  other item-qualities pass 3 of 3 (Hierarchy at 100%, 200% pt_BR and high
+  contrast; Character presence at 100%; Display type at 200% pt_BR). The
+  judges name the 100% headline counts (1,460 and the 142.0k, 31.4k and
+  61.0k purses): flat gold on dark plates, no ink outline, hard drop or
+  gradient, beside a stroked 'Keeper 24'. AD-R45 (a) is still open at
+  e674b614. This is home-6's first fail under M43: S2 fixes (a) and the
+  100% counts' big-number treatment in home-6, sets `gate_request` on
+  'home at 100% text', Display type again, and marks ready once it passes
+  (or after a second fail, with the verdict and its reasons in the
+  handoff). Nothing is seeded (M33).
+  **Gate, cycle 115** (advisory, rubric v3, on S2's `gate_request` at
+  a4090ec7, before ready; docs/art/ui-quality/gate/verdicts/P2-S2-home-6/
+  a4090ec7.json): Display type at home 100% text passes 3 of 3. The
+  headline counts (1,460, 142.0k, 31.4k, 61.0k, 82%) share one treatment:
+  gradient fill, an ink outline all round and a hard drop, drawn by
+  `HomeParts.InkedRow`. The words after the counts are gold and stroked.
+  So AD-R45 (a) is closed, and by AD's default the objection becomes a
+  note and nothing is seeded. M46 tells S2 to mark home-6 ready. The
+  lead's note: the dark stroke on the dark plates is low in contrast. That
+  is not a fail under rubric v3.
 
 - **AD-R44** (from AD, 17 November 2026 00:05Z; due 19 November 00:05Z;
   not blocking): the two objections of AD's preview of P2-S1-heist-1 at
