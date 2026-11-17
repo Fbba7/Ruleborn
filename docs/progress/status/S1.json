@@ -15,7 +15,12 @@
     "next_step": "AD-R60 to AD-R62 built, FIT stills done, dL* table in part 8; guard, build, pre-check, owners diff, then ready with the gate request",
     "at": "2026-11-17T17:50:00Z"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "12079dc677558253f46e30010ae3ce63f1adfa67",
+    "exit": 0,
+    "finished_at": "2026-11-17T18:18:48Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-18T21:00:00Z",
@@ -51,7 +56,7 @@
       "id": "S1-R2",
       "from": "S1",
       "to": "K1",
-      "ask": "KitHud.loot that stays narrow in every language and cheap to draw: a caption that wraps between words (\"Carregar até 100%\" asks 383 px on one line, 443 px with the panel, which puts the top row at 1,200 px of 1,080 in Portuguese); rows that put a long number under its word (\"Restam ~2.600\") rather than widen the panel; an aim tick that can be left out (a replay has no load target); the Vault's cracking, as a row or a thinner bar; and words, numbers and bars drawn in few calls (a label a row costs a draw call a row, which takes the heist past its record).",
+      "ask": "KitHud.loot that stays narrow in every language and cheap to draw: a caption that wraps between words (\"Carregar at\u00e9 100%\" asks 383 px on one line, 443 px with the panel, which puts the top row at 1,200 px of 1,080 in Portuguese); rows that put a long number under its word (\"Restam ~2.600\") rather than widen the panel; an aim tick that can be left out (a replay has no load target); the Vault's cracking, as a row or a thinner bar; and words, numbers and bars drawn in few calls (a label a row costs a draw call a row, which takes the heist past its record).",
       "files": [
         "client/ui/kit_hud.gd"
       ],
@@ -465,7 +470,7 @@
       "id": "S1-R30",
       "from": "S1",
       "to": "AD",
-      "ask": "Re-check of objection F from S1-R29 (P2-S1-result-3) at 904a3567 (the fix is a5db9545, with main merged as a686d4a7). The first screen now ends on a whole line whenever the bar sits under the page that scrolls. ResultFit.fold grows the corner's clearance under the bar by the line or card the scroll's edge would cut, which lifts the bar and the edge. It is a cut, not a fade, so it adds no draw call. Where the first screen now ends: en 200% on 'Entry fee 2,840 returned', de 200% on 'Eintrittsgebühr 2.840 erstattet', pt_BR 200% on 'Taxa de entrada de' (the rest of that label starts below the edge). The FIT check now fails when the edge cuts a line or card. Stills: SERVER=1 FIT=1 TEXT=200 bash tools/render/shoot.sh client/tests/shots/screen_result.gd out.png, plus CONTRAST=1, LOCALE=pt_BR and LOCALE=de. Draw calls are unchanged (en200 113, hc200 55, pt200 115, de200 114). Details are in docs/art/tracks/result-screen.md, 'Objection F, the fold'. F only; any objection, in one list.",
+      "ask": "Re-check of objection F from S1-R29 (P2-S1-result-3) at 904a3567 (the fix is a5db9545, with main merged as a686d4a7). The first screen now ends on a whole line whenever the bar sits under the page that scrolls. ResultFit.fold grows the corner's clearance under the bar by the line or card the scroll's edge would cut, which lifts the bar and the edge. It is a cut, not a fade, so it adds no draw call. Where the first screen now ends: en 200% on 'Entry fee 2,840 returned', de 200% on 'Eintrittsgeb\u00fchr 2.840 erstattet', pt_BR 200% on 'Taxa de entrada de' (the rest of that label starts below the edge). The FIT check now fails when the edge cuts a line or card. Stills: SERVER=1 FIT=1 TEXT=200 bash tools/render/shoot.sh client/tests/shots/screen_result.gd out.png, plus CONTRAST=1, LOCALE=pt_BR and LOCALE=de. Draw calls are unchanged (en200 113, hc200 55, pt200 115, de200 114). Details are in docs/art/tracks/result-screen.md, 'Objection F, the fold'. F only; any objection, in one list.",
       "files": [
         "client/scripts/result_fit.gd",
         "client/scripts/result_screen.gd",
@@ -481,7 +486,7 @@
       "id": "S1-R31",
       "from": "S1",
       "to": "AD",
-      "ask": "Preview before the gate (P2-S1-result-4, M10, M12) at 6fb2e3da. New since 06635883: M30's close point, the words over the sunburst (kicker 'ASSALTO CONCLUÍDO', title, condition, time and alarm line, the lines under the tiles) now carry an ink outline set from the size each is drawn at, so it grows with the text size (1.5 points scaled with the text, 3 in high contrast, or 12% of the face): at pt_BR 200% the 'N' of 'Nenhum' has a 10 px edge, the kicker 9 px; no draw call more. Still in from before: (1) Home and the law pills on the kit's tertiary face (ghost: violet), darker than Raid again in grayscale; (2) your board 4b note (S1-R30): the fold keeps a label of up to three lines whole, so pt_BR 200% ends on the Renome tile; (3) the shot's other states (STATE=confirming, refused with REFUSED=<code>, testing, play), all FIT ok at 200% in en, pt_BR and de (M26). Fit sweep at 3d357ac6: 51 stills fit ok, draw calls unchanged. Stills: SERVER=1 FIT=1 TEXT=200 LOCALE=pt_BR bash tools/render/shoot.sh client/tests/shots/screen_result.gd out.png, plus LOCALE=de, CONTRAST=1, and the states, e.g. SERVER=1 FIT=1 STATE=refused TEXT=200 LOCALE=de, or STATE=testing (without SERVER). The reward tiles keep their currency icons with no character frame: the crew card carries the characters, and character art in the tiles would be a new placement for you and the kit to decide. Any objection, in one list.",
+      "ask": "Preview before the gate (P2-S1-result-4, M10, M12) at 6fb2e3da. New since 06635883: M30's close point, the words over the sunburst (kicker 'ASSALTO CONCLU\u00cdDO', title, condition, time and alarm line, the lines under the tiles) now carry an ink outline set from the size each is drawn at, so it grows with the text size (1.5 points scaled with the text, 3 in high contrast, or 12% of the face): at pt_BR 200% the 'N' of 'Nenhum' has a 10 px edge, the kicker 9 px; no draw call more. Still in from before: (1) Home and the law pills on the kit's tertiary face (ghost: violet), darker than Raid again in grayscale; (2) your board 4b note (S1-R30): the fold keeps a label of up to three lines whole, so pt_BR 200% ends on the Renome tile; (3) the shot's other states (STATE=confirming, refused with REFUSED=<code>, testing, play), all FIT ok at 200% in en, pt_BR and de (M26). Fit sweep at 3d357ac6: 51 stills fit ok, draw calls unchanged. Stills: SERVER=1 FIT=1 TEXT=200 LOCALE=pt_BR bash tools/render/shoot.sh client/tests/shots/screen_result.gd out.png, plus LOCALE=de, CONTRAST=1, and the states, e.g. SERVER=1 FIT=1 STATE=refused TEXT=200 LOCALE=de, or STATE=testing (without SERVER). The reward tiles keep their currency icons with no character frame: the crew card carries the characters, and character art in the tiles would be a new placement for you and the kit to decide. Any objection, in one list.",
       "files": [
         "client/scripts/result_screen.gd",
         "client/scripts/result_fit.gd",
