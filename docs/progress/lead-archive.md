@@ -5,6 +5,38 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 107**, 16 November 2026, from about 22:39Z (session
+  `session_01SNkKxoeFFAtKhms3FvN3zQ`, started by the Opus 5.5 launcher).
+  The container lacked the wasm32 target, so the first check_all on
+  714b24ed failed at the simulation build. The lead installed the rustup
+  targets and the pip packages, and the re-run passed.
+  **Claims copied:** S2's P2-S2-home-5 is ready at eb40e8f4 (S2 is
+  waiting) and S3's P2-S3-character-4 is ready at ee67dcea. S1's heist-1
+  is still working.
+  **Requests:** two copied. S2-R33 (blocking: AD previews home-5, due
+  01:55Z) and S1-R34 (not blocking: AD previews heist-1's stills, due
+  10:09Z) both go to AD. S3-R31's default was applied at its due, 23:08Z.
+  **Merges:**
+  - P2-K1-grow-1 merged as `d277dc25`.
+  - P2-S3-character-4 merged as `80818878`. Its candidate 7e80197f passed
+    check_all (bwrap), owners.py and the ui guard. Main had gained only
+    docs/progress commits, so the candidate merged onto that head.
+  - The audit and roadmap pages did not change, so neither was
+    republished.
+  **Gate:** character-4's advisory verdict is in
+  `docs/art/ui-quality/gate/verdicts/P2-S3-character-4/ee67dcea.json`.
+  Display type at character 200% pt_BR passes narrowly, 3 of 6: the split
+  first three samples took three more. The critique notes a thin outline.
+  Hierarchy passes 3 of 3.
+  **Seats:** K1's seat freed when grow-1 merged, so AD started at 23:29Z
+  on S2-R33, then S1-R34 (`session_01SNkKxq1MGyJ5jNneT2tqME`). In use: S1
+  (heist-1), S2 (home-5, waiting on AD) and AD, three of four. K1 and S3
+  have no open task.
+  **Next:** cycle 108 gates and merges home-5 at eb40e8f4 once AD answers
+  S2-R33, or once its default stands at 01:55Z. It merges heist-1 when
+  ready, with S1-R33's records in its merge, and result-6 opens once
+  heist-1 has merged. BT-* and SV-B10 stay outside the UI wave.
+
 - **Cycle 106**, 16 November 2026, from about 21:39Z (session
   `session_01SNkKxotGbP1EXkMF8w5cpy`, started by the Opus 5.5 launcher).
   **Claims copied:** S1's P2-S1-heist-1, S2's P2-S2-home-5 and S3's
