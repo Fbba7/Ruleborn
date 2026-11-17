@@ -7,13 +7,13 @@
   "task_id": "P2-S1-result-6",
   "task_state": "working",
   "claimed_at": "2026-11-17T01:31:29Z",
-  "lease_until": "2026-11-17T06:37:03Z",
-  "updated_at": "2026-11-17T03:37:03Z",
-  "expected_next_update_by": "2026-11-17T04:22:03Z",
+  "lease_until": "2026-11-17T06:43:39Z",
+  "updated_at": "2026-11-17T03:43:39Z",
+  "expected_next_update_by": "2026-11-17T04:28:39Z",
   "progress_marker": {
     "last_green_sha": "c9d70cc3b3de8566cdf427cb73d2e4fbdfca3994",
-    "next_step": "H fixed at b5843368 (reward rows measured at the baked totals; FIT fails a word broken inside itself; FIT ok at 4x for en/pt_BR/de 200% and de 150%, draw calls <=118). Gate re-run on the three items at b5843368 in progress; then checks, pre-check, ready.",
-    "at": "2026-11-17T03:37:03Z"
+    "next_step": "H fixed at b5843368; gate re-run at b5843368: all five checks pass (Character presence split 3-3, a pass on the next board). Main merged at cb518273; M11/M13 checks running; then commit the track, verdict and handoff, pre-check, ready.",
+    "at": "2026-11-17T03:43:39Z"
   },
   "precheck": {
     "sha": "c9d70cc3b3de8566cdf427cb73d2e4fbdfca3994",
@@ -600,7 +600,14 @@
       "at": "2026-11-16T21:39:00Z",
       "answer": "Approved under M33 (both calls close failed gate qualities). The lead writes heist/200 118 and heist/hc 121, with a raises entry, in the merge of heist-1.",
       "where": "docs/progress/lead.md, Now, cycle 106"
+    },
+    {
+      "request_id": "S1-R35",
+      "from": "AD",
+      "at": "2026-11-17T02:32:00Z",
+      "summary": "Both departures from key frame 03 stand (the kit's gold numerals on every reward total; all three reward tiles on parchment). One objection, AD-R46 (H): at 200% German 'Sternenlicht' broke by its letters in the Starlight row and FIT missed it. Answered in P2-S1-result-6 at b5843368: the reward rows are measured at the baked totals' width, and FIT fails a reward word broken inside itself.",
+      "where": "docs/progress/lead.md, Now, cycle 112; docs/art/ui-quality/board-4.md, 'Preview of result-6 (S1-R35)'; docs/art/tracks/result-screen.md, 'AD's objection H, a reward word broken (AD-R46)'"
     }
   ],
-  "next_step": "the lead's gate run and merge of c9d70cc3"
+  "next_step": "M11/M13 checks on cb518273, then the pre-check and ready"
 }

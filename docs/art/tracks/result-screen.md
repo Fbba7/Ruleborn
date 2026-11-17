@@ -306,11 +306,58 @@ The shot's FIT check now also fails words drawn outside their button.
 | **`e4e78070`** | 200% text, pt_BR | Hierarchy | 3/3 | **pass** |
 | **`e4e78070`** | High contrast | Hierarchy | 3/3 | **pass** |
 
+### AD's objection H, a reward word broken (AD-R46)
+
+AD's preview of `e4e78070` (S1-R35, board 4) kept one objection, H. At 200% German the Starlight row read "+2.310 Sternenlich / t": the word broke by its letters, and FIT passed it.
+
+**The cause.** `ResultFit.reward_rows` measured each row by its live labels before `bake_totals` laid the gold glyphs, and the baked row was let grow to the words' width plus the outline. In German at 200% the row came out a few pixels wider than measured, so the name's label lost room and broke inside "Sternenlicht".
+
+**The fix** (`b5843368`):
+
+- `result_screen.gd` bakes the totals at their final words before the rows are measured, so `reward_rows` sees the rows as drawn.
+- `reward_rows` measures each label at the wider of its minimum size and its words' width.
+- `bake_totals` keeps the baked row within the live words' width above 125% text (the outline allowance stays at 100%, which the gate passed). The label is never narrower than its hidden words, since the fitting and the reader still use them.
+- **FIT** now fails any wrapped label with a word wider than its room: "the word … breaks inside itself". On the old code at German 200% it fails "Sternenlicht"; on the new code it passes.
+
+| Still (`SERVER=1 FIT=1`, at `b5843368`) | FIT | Draw calls |
+|---|---|---|
+| en, 100% | ok | 116 |
+| en, 150% | ok | 101 |
+| en, 200% | ok | 100 |
+| pt_BR, 100% | ok | 118 |
+| pt_BR, 150% | ok | 103 |
+| pt_BR, 200% | ok | 102 |
+| de, 100% | ok | 118 |
+| de, 150% | ok | 101 |
+| de, 200% | ok | 101 |
+| High contrast, 100% | ok | 58 |
+| High contrast, 200% | ok | 42 |
+
+The draw calls are the shot test's own count, with the reward sequence still running, so they are not `budget_shots.py`'s figures. All are under the task's 150. At German 200%, "+2.310 Sternenlicht" stands on one line beside its total: the rows hold, without the column fallback, and all three rewards sit above the first screen's edge. Every reward word is whole at 4× in en, pt_BR and de at 200%, and in de at 150%. The 100%, pt_BR 200% and high-contrast stills are unchanged by eye.
+
+    SERVER=1 FIT=1 TEXT=150 LOCALE=de bash tools/render/shoot.sh client/tests/shots/screen_result.gd de150.png
+    SERVER=1 FIT=1 TEXT=200 LOCALE=de bash tools/render/shoot.sh client/tests/shots/screen_result.gd de200.png
+
+The other stills use the commands above, with `TEXT` and `LOCALE` set to match.
+
+**The gate at `b5843368`** (advisory, rubric 3; `verdicts/P2-S1-result-6/b5843368.json`):
+
+| Commit | Item | Quality | Samples | Result |
+|---|---|---|---|---|
+| **`b5843368`** | 100% text | Display type | 3/3 | **pass** |
+| **`b5843368`** | 100% text | Character presence | 3 pass, 3 fail | **pass** (split; on the next board) |
+| **`b5843368`** | 200% text, pt_BR | Display type | 3/3 | **pass** |
+| **`b5843368`** | 200% text, pt_BR | Hierarchy | 3/3 | **pass** |
+| **`b5843368`** | High contrast | Hierarchy | 3/3 | **pass** |
+
+Character presence split, and passes because a fail needs 4 or more fails of 6. The three fails each named one portrait: Ash's rock body with orange cracks, read as fine mottled grain (a physically based material under ruling v3). The three passes read the same body as matte and soft-shaded. The portraits are unchanged since `e4e78070`, which passed 3/3, so this is a close call on Ash's render, not on this fix. Ash's portrait comes from `client/world/fx_portrait.gd`, outside this task. If the next board finds the grain, the change belongs there.
+
 ### Tried and failed
 
 - **The kit's `reward_gold`, `reward_green` and `reward_pink` on the three tiles,** as the tokens' note "parchment edged in the reward's colour" reads. `reward_gold` and `reward_green` draw through the kit's `button_primary` and `success` skins: a solid gold bar and a solid green bar. The gold one rivals Raid again. Only `reward_pink` and `reward_sky` are edged parchment tiles.
 - **White totals on the glass tiles beside a gold one on parchment.** The gate split on Display type at pt_BR 200%: same rank, different treatment.
 - **Gold totals on the glass tiles.** The gate failed it 0/3: the dark outline and drop vanish on the dark ground.
+- **A baked row floored under its words** (the first H fix, r1): the gold row was kept narrower than the totals' text, so the hidden live label grew narrower than its words. FIT failed: "+805" drawn 224 px in 222. The label's minimum width is now the wider of its words and the baked row.
 
 # The reward sequence (P2-S1-result-2)
 

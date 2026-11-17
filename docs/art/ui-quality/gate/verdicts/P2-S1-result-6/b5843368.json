@@ -1,0 +1,90 @@
+[
+  {
+    "task_id": "P2-S1-result-6",
+    "sha": "b5843368999f64b956c2c1dd8db1e2a0ccbad049",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-17T03:40:33Z",
+    "item": "result at 100% text",
+    "quality": "Display type",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes. HEIST COMPLETE, Clean and the subline carry an even, unbroken dark outline over the rays; +2,310, +805 and +15 share one treatment (gold gradient, dark outline, hard drop). One sample noted the small time and entry-fee lines were not in the crops."
+  },
+  {
+    "task_id": "P2-S1-result-6",
+    "sha": "b5843368999f64b956c2c1dd8db1e2a0ccbad049",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-17T03:40:33Z",
+    "item": "result at 100% text",
+    "quality": "Character presence",
+    "samples": [
+      "pass",
+      "fail",
+      "fail",
+      "fail",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Split 3-3 over six samples: a pass under the rubric (4 or more fails of 6 fail), and it goes on the next board. Every sample found the lead framing the Starlight tile in a gold ring and three crew faces about 55 px apart, readable, the owl's and the otter's fur in soft toon shading. The three fails each name one portrait: Ash's dark rock body with orange cracks read as fine mottled grain, a physically based material under ruling v3; the three passes read the same body as matte, soft-shaded, with no photographic grain. The portraits are unchanged since e4e78070 (3/3 there); the fix touched only the reward rows."
+  },
+  {
+    "task_id": "P2-S1-result-6",
+    "sha": "b5843368999f64b956c2c1dd8db1e2a0ccbad049",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-17T03:40:33Z",
+    "item": "result at 200% text, pt_BR",
+    "quality": "Display type",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes. ASSALTO CONCLUÍDO and Limpo over the starburst carry a solid outline that grew with the 200% text; +2.310, +805 and +15 share one treatment: outline, hard drop, gold gradient. No glyph clipped."
+  },
+  {
+    "task_id": "P2-S1-result-6",
+    "sha": "b5843368999f64b956c2c1dd8db1e2a0ccbad049",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-17T03:40:33Z",
+    "item": "result at 200% text, pt_BR",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes. ASSALTAR DE NOVO is the largest, most saturated control at the foot and leads in grayscale; the cream reward tiles are smaller and hold no action; the 200% prose is regular weight with no box and does not take the lead (one sample called it near)."
+  },
+  {
+    "task_id": "P2-S1-result-6",
+    "sha": "b5843368999f64b956c2c1dd8db1e2a0ccbad049",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-17T03:40:33Z",
+    "item": "result in high contrast",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes. RAID AGAIN is the widest, lightest control at the foot; Home is smaller and darker; the gold 3 s replay is under half its size; the white reward tiles hold information only and are each smaller than the primary."
+  }
+]
