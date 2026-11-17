@@ -434,7 +434,7 @@ The gate's advisory verdict on home-5 (`verdicts/P2-S2-home-5/eb40e8f4.json`) fa
 
 **Evidence.**
 
-- **Fit (M26).** `FIT=1` prints "fit ok" in FIT_COUNT. The cases are Part 5's, plus the new Keeper at 100% and at 150% with the notice. That means the five languages at 100% and 200%, each with and without the notice; 900 and 960 points tall; high contrast in en and pt_BR at 100%, and in en, pt_BR and de at 200%; the widest amounts (`MOST=1`), with and without the notice, and with 99 raids; 150% in four languages; the new Keeper (`EMPTY=1`) with and without the Heart's neighbours and the notice. Each case is `FIT=1 <flags> bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`.
+- **Fit (M26).** `FIT=1` prints "fit ok" in all 57 cases on 4c242628, and every headline count in them is baked. The cases are Part 5's, plus the new Keeper at 100% and at 150% with the notice. That means the five languages at 100% and 200%, each with and without the notice; 900 and 960 points tall; high contrast in en and pt_BR at 100%, and in en, pt_BR and de at 200%; the widest amounts (`MOST=1`), with and without the notice, and with 99 raids; 150% in four languages; the new Keeper (`EMPTY=1`) with and without the Heart's neighbours and the notice. Each case is `FIT=1 <flags> bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`.
 - **Draw calls (§21.3).** `python3 tools/ui_bake/budget_shots.py --only home/100,home/200,home/hc`:
 
   | Shot | Recorded | home-5 (`eb40e8f4`) | This task |
