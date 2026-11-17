@@ -30,6 +30,8 @@ stay inside one segment. A pattern starting `!` removes paths from the ones
 before it: `["art/ui/**", "!art/ui/icons/**"]`.
 
 `--backlog <path>` reads another backlog than docs/progress/backlog.json.
+`diff` also finds a task that tools/coord/archive.py moved to
+docs/progress/backlog-archive.json.
 """
 
 import fnmatch
@@ -217,10 +219,13 @@ def load(path: pathlib.Path) -> dict:
 
 
 def _task(backlog: dict, task_id: str) -> dict:
-    for t in backlog.get("tasks", []) + backlog.get("idle_queue", []):
+    archive = BACKLOG.parent / "backlog-archive.json"
+    old = load(archive) if archive.exists() else {}
+    for t in (backlog.get("tasks", []) + backlog.get("idle_queue", [])
+              + old.get("tasks", []) + old.get("idle_queue", [])):
         if t.get("id") == task_id:
             return t
-    raise SystemExit(f"no task {task_id} in the backlog")
+    raise SystemExit(f"no task {task_id} in the backlog or its archive")
 
 
 def self_test() -> None:

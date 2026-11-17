@@ -189,6 +189,29 @@ session; the lead assigns more at its next cycle and starts a fresh
 session. Leases, `prior_sha` and the states work the same way as for a
 claim. The lead reassigns a task only after its lease lapses.
 
+**Keeping the queue full** (from 17 November 2026, so no seat waits a
+cycle for work). At the end of every cycle the backlog holds at least one
+task per free seat that an agent could start: `open`, its deps merged (or
+one dep `ready`, below), its files disjoint from the work in flight. When
+the product tasks run short, the lead refills `idle_queue` with the kinds
+section 3.2 of the UI report lists (an overflow sweep of a merged screen in
+pt_BR at 200%, fixes from the advisory gate notes, a docs or test gap in
+the agent's files). Once phase 2's exit is met, or its `stop_at` passes,
+the lead seeds phase 3's tasks from S3-R32, the board's objections, the
+audit's findings and the open exceptions, with the order M33 sets.
+
+**Stacked tasks.** A task whose one unmerged dep is `ready` need not wait
+for that dep to merge: the lead may start it "stacked on <dep>". The agent
+branches from main, merges the dep's `ready_sha` and builds on it (the
+brief's "Taking work", step 4). In the queue the stacked task goes right
+after its dep and never before: its candidate is taken from a main that
+holds the dep, `owners.py diff` runs against that main (so the dep's files
+do not count as the stacked task's), and both get their full checks (a
+stacked candidate never differs from its `ready_sha` only under
+`docs/progress/`, so the reuse in "The merge queue", step 4, never
+applies). If the dep goes to `resync`, the stacked task waits; once the dep
+is ready anew the agent merges main and the new `ready_sha`.
+
 **The claim protocol** is for later waves, where several agents share a
 role: the agent picks the first `open` task its role may take, writes the
 claim in its own status file, pushes and checks again; "earlier" is the
@@ -535,9 +558,17 @@ tasks fire into sessions that already exist:
 
 - **The launcher**, one long-lived session, takes the hourly scheduled task.
   Each firing it reads `status/lead.json` on main and checks the previous
-  cycle's session; if that is still working it skips this hour, otherwise
-  it creates a fresh session for one lead cycle. Each cycle is still a
-  fresh session, and no state lives in the launcher.
+  cycle's session; if that is still working it skips this hour. Otherwise
+  it creates a fresh session for one lead cycle.
+- **The quiet-hour skip.** Each lead cycle first runs
+  `python3 tools/coord/cycle_needed.py`. On exit 3 nothing changed since
+  the last cycle recorded what it saw (no branch moved, nothing ready or
+  startable, no message, request, lease or late status waits, and the
+  heartbeat is not due): the cycle writes nothing, pushes nothing and ends
+  its turn. On any other exit, a crash included, it runs in full. The state
+  the skip reads is `seen` in `status/lead.json`, never a session. A
+  launcher may run the same check before it creates the session; its
+  prompt can be changed only in its own conversation.
 - **The lead's cycle** creates every agent session the same way: a fresh
   session per task, with the agent's prompt and the roster's model, on
   start and on every restart in step 6. It records each session in
@@ -552,7 +583,9 @@ branch and in its handoff.
 
 **One cycle**, in order:
 
-1. `git fetch origin`; read every status file on the roster's branches.
+1. `git fetch origin`; save the branch heads
+   (`python3 tools/coord/cycle_needed.py heads` to a file outside the
+   repository); read every status file on the roster's branches.
 2. Record `seen_at` for each new status push; expire lapsed leases (set
    `open`, record `prior_branch` and `prior_sha` if the old branch has work);
    copy each agent's `task_state` into its task and its lease into `claim`;
@@ -566,8 +599,12 @@ branch and in its handoff.
    unacknowledged: a fresh session with the same prompt, created with the
    repository checked out and the roster's model (above), which reads its
    handoff. `send_later` is an optimisation, never the recovery plan.
-7. Raise the alerts below; refill the idle queue; write `status/lead.json`
-   and the lead's handoff; push.
+7. Raise the alerts below; keep the queue full ("Keeping the queue full");
+   write `status/lead.json` and the lead's handoff; run
+   `python3 tools/coord/archive.py` (merged tasks to
+   `backlog-archive.json`, old "Now" entries to `lead-archive.md`) and
+   `python3 tools/coord/cycle_needed.py record <heads file>`, last, so
+   `seen` holds what this cycle left; push.
 
 **The merge lock.** A cycle can run into the next one, because the
 candidate's checks take about 25 minutes and a resync or a red run adds a
@@ -597,7 +634,9 @@ The old claimant must not push further work for that task.
 created by the launcher, that starts from `status/lead.json` and the lead's handoff in
 `docs/progress/lead.md`, so no state lives only in one session.
 `status/lead.json` holds `agent` (`"lead"`), `updated_at`,
-`expected_next_update_by` (the next cycle + 15 minutes), `cycle` (a count),
+`expected_next_update_by` (`updated_at` + 3 hours: a quiet hour's cycle
+ends at once, and the heartbeat runs a full cycle 20 minutes before this),
+`cycle` (a count), `seen` (what the cycle saw, for the quiet-hour skip),
 `merging` (the lock above, or `null`), `last_merged` (`{"task_id", "sha"}`),
 `alerts` (open alert ids) and `next_step`. A second scheduled task, the
 **watchdog**, runs every two hours in its own session: if
