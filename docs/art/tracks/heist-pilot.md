@@ -506,3 +506,15 @@ Each still was shot with `FIT=1`, all exit 0, "fit ok":
 `heist_hc.png` is the still for the gate's "heist in high contrast" (Colour roles and value). The stills are not committed (this task's files hold no stills); the commands above render them from the ready commit.
 
 **The guard's draw calls.** guard.sh at `a4dcb52e` measures heist/hc at 123 against its record of 121; heist/100 and heist/200 keep their records. The two calls are the re-dressed plates: the card face differs from the leather face it replaces, and Pause's light plate with its inked icon breaks the batch that the dark plates share. Pause on the card would save one call but stand only 18 off the sky, under AD-R56's 20. The raise, 121 -> 123, is requested of the lead under M33 (S1-R39). It closes AD-R56's objection.
+
+## Part 8: one role per colour in high contrast (P3-S1-hc-offline-2, AD-R60 to AD-R62)
+
+AD's preview of part 7 (`docs/art/ui-quality/gate/boards/preview-1.md`, R-a to R-c) kept three faults: "No casts" in gold, Get out in the alarm's red, and the loot figures in gold. Gold says "act here", red is the alarm's alone, and figures are information.
+
+**What changed:**
+
+- **AD-R60, Cast with no casts left** (`client/scripts/heist_hand.gd`, `show_state` and `_dress_cast`). With every cast used, the cast control takes the kit's leather secondary plate through `UI.dress`. The wand stays at 0.4, the words take the plate's `text_on_leather`, and the control stays tappable. Its own look (gold, from `_dress_hand`) is kept on the control as meta `look` and comes back when a cast is left. In high contrast `hc_plates` leaves it on leather, never the card.
+- **AD-R61, Get out** (`hc_plates`). In high contrast Get out takes "leather", not "red". No fifth button style is added.
+- **AD-R62, the loot figures** (`client/scripts/heist_hud.gd`, `_build_loot`). Under `Tokens.high_contrast`, Room, Vault and "?" take `Tokens.color("cream")` (#FFF3CC) before they are baked. `KitHud.loot_fit` and the heist at 100% are unchanged.
+
+**The leather is the kit's high-contrast face, #7A4660, not #6A3E52.** The kit's atlas draws the leather plate in high contrast as a flat mauve, #7A4660 (L* 36.7), inside a black ink line. The amber rim is not drawn, and the shader cannot change a face the atlas draws (as with the card's line in part 7). AD's #6A3E52 (L* 32.1) was the token's first stop. The kit's face stands 4.6 further off the tray than that. An exact #6A3E52 with the amber rim needs a high-contrast leather face in the kit, K1's. S1-R41 offers it to AD, and its default keeps the kit's face.
