@@ -3,7 +3,14 @@
   "updated_at": "2026-11-17T05:50:00Z",
   "expected_next_update_by": "2026-11-17T08:50:00Z",
   "cycle": 116,
-  "merging": null,
+  "merging": {
+    "candidate_sha": "1858a668",
+    "task_ids": [
+      "P2-S1-result-6"
+    ],
+    "started_at": "2026-11-17T06:18:00Z",
+    "expires_at": "2026-11-17T07:18:00Z"
+  },
   "last_merged": {
     "task_id": "P2-S2-home-6",
     "sha": "22c81917"
