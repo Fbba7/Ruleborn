@@ -202,8 +202,9 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxnALgp923n1Xz8RyLi` (cycle 112,
-17 November 2026 from about 03:14Z, started by the Opus 5.5 launcher). Cycle
+Latest lead cycle session: `session_01SNkKxod4oGpNKzH7kz1EUJ` (cycle 113,
+17 November 2026 from about 03:40Z, started by the Opus 5.5 launcher). Cycle
+112's was `session_01SNkKxnALgp923n1Xz8RyLi` (from 03:14Z). Cycle
 111's was `session_01SNkKxp3QH4szJPdrskLbcc` (from 02:39Z). Cycle
 110's was `session_01SNkKxqnwS161aj2Ndyfo94` (from 02:14Z). Cycle
 109's was `session_01SNkKxqA691fQupEvYwZ32N` (from 01:38Z). Cycle
@@ -594,6 +595,38 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 113**, 17 November 2026, from about 03:40Z (session
+  `session_01SNkKxod4oGpNKzH7kz1EUJ`, started by the Opus 5.5 launcher).
+  **Claims copied:** S1 works on P2-S1-result-6 (seen 03:43:39Z, lease to
+  06:43:39Z): AD-R46 (H) fixed, its own gate passed at b5843368,
+  `gate_request` there on the three items, main merged in at cb518273;
+  checks and pre-check next, then ready. S2 works on P2-S2-home-6 (seen
+  03:44Z, lease to 06:00Z): the counts drawn in `HomeParts.InkedRow` at
+  bac22476; the fit cases, guard and pre-check next, then `gate_request`.
+  **Requests:** none new.
+  **Gate and merges:** advisory gate on result-6 at b5843368 (rubric v3,
+  three samples each, pictures shuffled), verdict in
+  `docs/art/ui-quality/gate/verdicts/P2-S1-result-6/b5843368.json`: 100%
+  Display type and Character presence pass 3/3 (the task's gate items),
+  200% pt_BR Display type passes 3/3, high contrast Hierarchy passes 3/3,
+  200% pt_BR Hierarchy fails 3/3 (the prose and the 2:45 alarm line sit
+  larger than the reward numerals, and the three equal cream tiles let no
+  reward lead; the lead's own look agrees). The fail is outside the
+  task's gate items, so it does not hold result-6 back; it is logged as a
+  phase-3 follow-up for S1 (M33), noted under AD-R46 in `requests.md`.
+  Home-6 not gated (no `gate_request`). Nothing ready, so nothing merged
+  and no check ran; the merge lock stays null.
+  **Messages:** M44 acked by S1 (03:43:39Z). M45 sent to S1 (ack by
+  05:55Z): the gate result, mark ready once checks and pre-check pass,
+  the 200% Hierarchy fail logged for phase 3, closed inside result-6 only
+  if it adds no more than about 30 minutes.
+  **Seats:** S1 and S2 working, two of four. Under M33 no task qualifies
+  for the free seats before the phase-2 stop at 21:00Z.
+  **Next:** cycle 114 merges result-6 when ready (as one candidate with
+  home-6 if both are ready, M42), gates home-6 on S2's `gate_request`
+  (100% text, Display type), checks M45's ack, and restarts S1 or S2 only
+  if its update time passes.
+
 - **Cycle 112**, 17 November 2026, from about 03:14Z (session
   `session_01SNkKxnALgp923n1Xz8RyLi`, started by the Opus 5.5 launcher).
   **Claims copied:** S2 works on P2-S2-home-6 (seen 03:13Z, lease to
@@ -662,34 +695,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   candidate when both are ready (M42; one alone if the other is far
   off), checks M43 and M44 at 03:55Z, and restarts S1 or S2 only if its
   update time passes.
-
-- **Cycle 110**, 17 November 2026, from about 02:14Z (session
-  `session_01SNkKxqnwS161aj2Ndyfo94`, started by the Opus 5.5 launcher).
-  **Claims copied:** S2 works on P2-S2-home-6 (seen 01:52Z, lease to
-  04:00Z; pre-check running on e674b614, main merged in, then its gate
-  request). S1 works on P2-S1-result-6 (seen 01:58Z, lease to 04:31Z;
-  the Starlight tile framed with the crew's face, the totals baked, the
-  helpers moved to result_fit.gd at f96569c0).
-  **Requests:** AD answered S2-R34 at 01:57Z: S2's three changes stand,
-  one objection kept and sent to the lead as AD-R45 (the live words
-  after the baked figures echo below themselves and are cream beside
-  gold). The lead copied both and answered AD-R45: S2 fixes it in home-6
-  before ready, as AD's default offers, so nothing is seeded (M33).
-  **Gate and merges:** nothing ready, so no gate ran and nothing merged;
-  the merge lock stays null. No check ran.
-  **Messages:** M42 acked. When home-6 and result-6 are both ready, the
-  lead builds one candidate from both and runs the full checks once; only
-  a failed batch is re-checked task by task. M43 (S2) and M44 (S1) are
-  due at 03:55Z.
-  **Seats:** S1 and S2 working, two of four. AD's session
-  (`session_01SNkKxnPTEBNJrsj8BFDyUi`) is idle, its preview done. Under
-  M33 no task qualifies before the phase-2 stop at 21:00Z: AD-R45 is
-  answered inside home-6, and no failed gate quality or blocking check
-  lacks a task. Phase 3's tasks are seeded once stop_at passes.
-  **Next:** cycle 111 gates and merges home-6 and result-6 as one batch
-  when both are ready (one alone if the other is still far off), checks
-  M43 and M44 at 03:55Z, and restarts S1 or S2 only if its update time
-  passes.
 
 - **Stopped here**, 13 November 2026, about 13:20Z (the owner's "Stop
   cleanly"). Cycle 84 (session `session_01SNkKxpqF4gx3yYhsXenUGt`) took

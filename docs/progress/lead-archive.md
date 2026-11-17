@@ -5,6 +5,34 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 110**, 17 November 2026, from about 02:14Z (session
+  `session_01SNkKxqnwS161aj2Ndyfo94`, started by the Opus 5.5 launcher).
+  **Claims copied:** S2 works on P2-S2-home-6 (seen 01:52Z, lease to
+  04:00Z; pre-check running on e674b614, main merged in, then its gate
+  request). S1 works on P2-S1-result-6 (seen 01:58Z, lease to 04:31Z;
+  the Starlight tile framed with the crew's face, the totals baked, the
+  helpers moved to result_fit.gd at f96569c0).
+  **Requests:** AD answered S2-R34 at 01:57Z: S2's three changes stand,
+  one objection kept and sent to the lead as AD-R45 (the live words
+  after the baked figures echo below themselves and are cream beside
+  gold). The lead copied both and answered AD-R45: S2 fixes it in home-6
+  before ready, as AD's default offers, so nothing is seeded (M33).
+  **Gate and merges:** nothing ready, so no gate ran and nothing merged;
+  the merge lock stays null. No check ran.
+  **Messages:** M42 acked. When home-6 and result-6 are both ready, the
+  lead builds one candidate from both and runs the full checks once; only
+  a failed batch is re-checked task by task. M43 (S2) and M44 (S1) are
+  due at 03:55Z.
+  **Seats:** S1 and S2 working, two of four. AD's session
+  (`session_01SNkKxnPTEBNJrsj8BFDyUi`) is idle, its preview done. Under
+  M33 no task qualifies before the phase-2 stop at 21:00Z: AD-R45 is
+  answered inside home-6, and no failed gate quality or blocking check
+  lacks a task. Phase 3's tasks are seeded once stop_at passes.
+  **Next:** cycle 111 gates and merges home-6 and result-6 as one batch
+  when both are ready (one alone if the other is still far off), checks
+  M43 and M44 at 03:55Z, and restarts S1 or S2 only if its update time
+  passes.
+
 - **Cycle 109**, 17 November 2026, from about 01:38Z (session
   `session_01SNkKxqA691fQupEvYwZ32N`, started by the Opus 5.5 launcher).
   **Claims copied:** S2 works on P2-S2-home-6 (claimed 01:00Z, lease to
