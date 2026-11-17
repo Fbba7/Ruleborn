@@ -4,16 +4,16 @@
   "branch": "claude/ui-bake",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P3-K1-polish-1",
-  "task_state": "claimed",
-  "claimed_at": "2026-11-17T07:25:00Z",
-  "lease_until": "2026-11-17T10:45:00Z",
-  "updated_at": "2026-11-17T08:15:00Z",
-  "expected_next_update_by": "2026-11-17T09:00:00Z",
+  "task_id": "P3-K1-tabs-1",
+  "task_state": "working",
+  "claimed_at": "2026-11-17T13:05:00Z",
+  "lease_until": "2026-11-17T16:05:00Z",
+  "updated_at": "2026-11-17T14:17:00Z",
+  "expected_next_update_by": "2026-11-17T15:02:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "050be78b",
-    "next_step": "main merged; setup line and build.sh pass on the merge; check_all.sh and guard.sh running, then the pre-check and owners.py diff"
+    "last_green_sha": "6fcf88ba",
+    "next_step": "pre-check on the handoff commit, owners.py diff, ready"
   },
   "precheck": null,
   "gate_request": null,
@@ -24,7 +24,8 @@
     "M4",
     "M5",
     "M8",
-    "M9"
+    "M9",
+    "M51"
   ],
   "requests": [
     {
@@ -378,7 +379,21 @@
       "blocking": true,
       "created_at": "2026-11-17T08:15:00Z",
       "due": "2026-11-17T14:15:00Z",
-      "default": "granted: the two paths join P3-K1-polish-1's exceptions at the merge",
+      "default": "Granted by the lead in cycle 120: the two paths are P3-K1-polish-1's exceptions in backlog.json",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "K1-R26",
+      "from": "K1",
+      "to": "lead",
+      "ask": "P3-K1-polish-2 touches one path outside its files: client/tests/shots/ui_kit_polish.gd. client/tests/ui_kit_tests.gd stands at gdlint's 1000 lines, and it already runs this helper in one line (K1-R25), so the six new checks (S3-R9 to S3-R14) join the helper's run and ui_kit_tests.gd stays at 1000. owners.py diff names this path until it joins P3-K1-polish-2's exceptions, so the task is marked ready once it does (M48).",
+      "files": [
+        "client/tests/shots/ui_kit_polish.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-17T10:40:00Z",
+      "due": "2026-11-17T16:40:00Z",
+      "default": "Granted, as K1-R24 and K1-R25 were: client/tests/shots/ui_kit_polish.gd is one of P3-K1-polish-2's exceptions in backlog.json",
       "escalate_to": "lead"
     }
   ],
@@ -434,5 +449,5 @@
       "at": "2026-11-17T08:15:00Z"
     }
   ],
-  "next_step": "main merged; setup line and build.sh pass on the merge; check_all.sh and guard.sh running, then the pre-check and owners.py diff"
+  "next_step": "P3-K1-tabs-1: on the merge 6fcf88ba check_all All checks passed (client 432 of 432, AD-R47 and AD-R59 tests pass) and guard.sh ui guard: OK; handoff written; next the pre-check, owners.py diff and ready"
 }

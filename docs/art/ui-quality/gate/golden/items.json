@@ -1,5 +1,5 @@
 {
- "version": 1,
+ "version": 2,
  "rubric_version": 1,
  "note": "Built by python3 tools/ui_gate/golden.py build; see README.md beside this file.",
  "items": [
@@ -1631,6 +1631,562 @@
    "why": "the gold Cast pulled toward the tray's dark leather: about one value step between control and ground, where the board asks for two",
    "image": "images/plant-kf-heist-cast-sunk.png",
    "third": 2
+  },
+  {
+   "id": "audit1-heist-hc-a4d87d18",
+   "class": "screen",
+   "title": "Audit 1: heist in high contrast, rendered at a4d87d18 (P1-S1-pilot-2)",
+   "source": "docs/art/ui-quality/gate/audit/audit-1/renders/audit1-heist-hc-a4d87d18.png",
+   "crop": null,
+   "size": [
+    540,
+    1170
+   ],
+   "qualities": [
+    6,
+    8
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "fail",
+   "borderline": false,
+   "why": "blind audit 1, AD label at P1-S1-pilot-2 a4d87d18; fails 8 (Colour roles and value): Colour roles: the mauve Get out and Walk faces sit only 5-6 L* off the grass and sky behind them (under the 20 an interactive control needs); only the ink outline separates them, and the high-contrast cards stay mauve rather than light on dark.",
+   "image": "images/audit1-heist-hc-a4d87d18.png",
+   "golden_version": 2,
+   "joined_from": "audit-1",
+   "shot": {
+    "commit": "a4d87d18",
+    "script": "client/tests/shots/screen_heist.gd",
+    "env": "FIT=1 CONTRAST=1 HC=1"
+   },
+   "third": 2
+  },
+  {
+   "id": "audit1-home-text200-977edd5b",
+   "class": "screen",
+   "title": "Audit 1: home at 200% text, pt_BR, rendered at 977edd5b (P2-S2-home-1)",
+   "source": "docs/art/ui-quality/gate/audit/audit-1/renders/audit1-home-text200-977edd5b.png",
+   "crop": null,
+   "size": [
+    540,
+    1170
+   ],
+   "qualities": [
+    2,
+    6
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "fail",
+   "borderline": false,
+   "why": "blind audit 1, AD label at P2-S2-home-1 977edd5b; fails 2 (Display type): Display type: 'Guardião 24' sits over the sky with no ink outline, and the currency counts are flat cream headline figures with no outline, hard drop or gradient fill.",
+   "image": "images/audit1-home-text200-977edd5b.png",
+   "golden_version": 2,
+   "joined_from": "audit-1",
+   "shot": {
+    "commit": "977edd5b",
+    "script": "client/tests/shots/universe_home.gd",
+    "env": "FIT=1 TEXT=200 LOCALE=pt_BR"
+   },
+   "third": 1
+  },
+  {
+   "id": "audit1-settings-text200-9e602fcc",
+   "class": "screen",
+   "title": "Audit 1: settings at 200% text, pt_BR, rendered at 9e602fcc (P2-S3-settings-2)",
+   "source": "docs/art/ui-quality/gate/audit/audit-1/renders/audit1-settings-text200-9e602fcc.png",
+   "crop": null,
+   "size": [
+    540,
+    1170
+   ],
+   "qualities": [
+    2,
+    6
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "pass",
+   "borderline": true,
+   "why": "blind audit 1, AD label at P2-S3-settings-2 9e602fcc; passes 2, 6: Display type: every word sits on a plate or card; the 200% figure is a headline figure with an ink outline, a hard drop and a gradient fill; nothing clipped or under 13 pt.",
+   "image": "images/audit1-settings-text200-9e602fcc.png",
+   "golden_version": 2,
+   "joined_from": "audit-1",
+   "shot": {
+    "commit": "9e602fccafac7ffbb855e2049d8ad9db411805d2",
+    "script": "client/tests/shots/screen_settings.gd",
+    "env": "FIT=1 TEXT=200 LOCALE=pt_BR"
+   },
+   "third": 1
+  },
+  {
+   "id": "audit1-result-b5843368",
+   "class": "screen",
+   "title": "Audit 1: result at 100% text, rendered at b5843368 (P2-S1-result-6)",
+   "source": "docs/art/ui-quality/gate/audit/audit-1/renders/audit1-result-b5843368.png",
+   "crop": null,
+   "size": [
+    540,
+    1170
+   ],
+   "qualities": [
+    2,
+    9
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "fail",
+   "borderline": false,
+   "why": "blind audit 1, AD label at P2-S1-result-6 b5843368; fails 9 (Character presence): Character presence: the reward card (+508 Loot) shows no character and no crew portrait is on screen; a reward with no character fails. Offline state (no SERVER=1), as AD labelled it; the gate shot the server state.",
+   "image": "images/audit1-result-b5843368.png",
+   "golden_version": 2,
+   "joined_from": "audit-1",
+   "shot": {
+    "commit": "b5843368999f64b956c2c1dd8db1e2a0ccbad049",
+    "script": "client/tests/shots/screen_result.gd",
+    "env": "FIT=1"
+   },
+   "third": 2
+  },
+  {
+   "id": "audit1-home-hc-e674b614",
+   "class": "screen",
+   "title": "Audit 1: home in high contrast, rendered at e674b614 (P2-S2-home-6)",
+   "source": "docs/art/ui-quality/gate/audit/audit-1/renders/audit1-home-hc-e674b614.png",
+   "crop": null,
+   "size": [
+    540,
+    1170
+   ],
+   "qualities": [
+    6
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "pass",
+   "borderline": false,
+   "why": "blind audit 1, AD label at P2-S2-home-6 e674b614; passes 6: Hierarchy: the gold Collect at the foot is the lightest control and leads; the XP panel is larger but dark, so it does not compete (v3).",
+   "image": "images/audit1-home-hc-e674b614.png",
+   "golden_version": 2,
+   "joined_from": "audit-1",
+   "shot": {
+    "commit": "e674b614a15302227eb9ee9d5d8ba7e9cac8ce14",
+    "script": "client/tests/shots/universe_home.gd",
+    "env": "FIT=1 CONTRAST=1 HC=1"
+   },
+   "third": 1
+  },
+  {
+   "id": "audit1-home-c9a89e5a",
+   "class": "screen",
+   "title": "Audit 1: home at 100% text, rendered at c9a89e5a (P2-S2-home-3)",
+   "source": "docs/art/ui-quality/gate/audit/audit-1/renders/audit1-home-c9a89e5a.png",
+   "crop": null,
+   "size": [
+    540,
+    1170
+   ],
+   "qualities": [
+    6,
+    9
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "pass",
+   "borderline": false,
+   "why": "blind audit 1, AD label at P2-S2-home-3 c9a89e5a; passes 6, 9: Hierarchy: the gold Collect at the foot leads in grayscale by size, place and weight; the tabs and info panel sit below it.",
+   "image": "images/audit1-home-c9a89e5a.png",
+   "golden_version": 2,
+   "joined_from": "audit-1",
+   "shot": {
+    "commit": "c9a89e5a4841f8f66fc9986560fbe455e61d2c58",
+    "script": "client/tests/shots/universe_home.gd",
+    "env": "FIT=1"
+   },
+   "third": 1
+  },
+  {
+   "id": "audit1-character-hc-f1251e68",
+   "class": "screen",
+   "title": "Audit 1: character in high contrast, rendered at f1251e68 (P2-S3-character)",
+   "source": "docs/art/ui-quality/gate/audit/audit-1/renders/audit1-character-hc-f1251e68.png",
+   "crop": null,
+   "size": [
+    540,
+    1170
+   ],
+   "qualities": [
+    6,
+    8
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "pass",
+   "borderline": false,
+   "why": "blind audit 1, AD label at P2-S3-character f1251e68; passes 6, 8: Hierarchy: Level up is the full-width foot control carrying the primary's label and leads; the white tabs are high-contrast cream cards that do not compete for lightness alone (v3).",
+   "image": "images/audit1-character-hc-f1251e68.png",
+   "golden_version": 2,
+   "joined_from": "audit-1",
+   "shot": {
+    "commit": "f1251e68",
+    "script": "client/tests/shots/screen_character.gd",
+    "env": "FIT=1 CONTRAST=1 HC=1"
+   },
+   "third": 2
+  },
+  {
+   "id": "audit1-character-text200-6b7e6b42",
+   "class": "screen",
+   "title": "Audit 1: character at 200% text, pt_BR, rendered at 6b7e6b42 (P2-S3-character-2)",
+   "source": "docs/art/ui-quality/gate/audit/audit-1/renders/audit1-character-text200-6b7e6b42.png",
+   "crop": null,
+   "size": [
+    540,
+    1170
+   ],
+   "qualities": [
+    2,
+    6
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "fail",
+   "borderline": false,
+   "why": "blind audit 1, AD label at P2-S3-character-2 6b7e6b42; fails 2 (Display type): Display type: at 200% 'Skyskipper · Carregador' and 'Nível 3 de 10' sit over the sky with a 1-2 pt outline on about 32 pt words, under the 12% stroke words over art need.",
+   "image": "images/audit1-character-text200-6b7e6b42.png",
+   "golden_version": 2,
+   "joined_from": "audit-1",
+   "shot": {
+    "commit": "6b7e6b42",
+    "script": "client/tests/shots/screen_character.gd",
+    "env": "FIT=1 TEXT=200 LOCALE=pt_BR"
+   },
+   "third": 1
+  },
+  {
+   "id": "audit1-home-text200-1697a6c6",
+   "class": "screen",
+   "title": "Audit 1: home at 200% text, pt_BR, rendered at 1697a6c6 (P2-S2-home-4)",
+   "source": "docs/art/ui-quality/gate/audit/audit-1/renders/audit1-home-text200-1697a6c6.png",
+   "crop": null,
+   "size": [
+    540,
+    1170
+   ],
+   "qualities": [
+    2,
+    6
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "fail",
+   "borderline": false,
+   "why": "blind audit 1, AD label at P2-S2-home-4 1697a6c6; fails 2 (Display type): Display type: 'Guardião 24' sits over the sky with no ink outline, and the currency counts are flat headline figures with no outline, hard drop or gradient fill.",
+   "image": "images/audit1-home-text200-1697a6c6.png",
+   "golden_version": 2,
+   "joined_from": "audit-1",
+   "shot": {
+    "commit": "1697a6c6675c22865eb28732ee50b410333a48de",
+    "script": "client/tests/shots/universe_home.gd",
+    "env": "FIT=1 TEXT=200 LOCALE=pt_BR"
+   },
+   "third": 2
+  },
+  {
+   "id": "audit1-home-hc-977edd5b",
+   "class": "screen",
+   "title": "Audit 1: home in high contrast, rendered at 977edd5b (P2-S2-home-1)",
+   "source": "docs/art/ui-quality/gate/audit/audit-1/renders/audit1-home-hc-977edd5b.png",
+   "crop": null,
+   "size": [
+    540,
+    1170
+   ],
+   "qualities": [
+    6,
+    8
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "fail",
+   "borderline": false,
+   "why": "blind audit 1, AD label at P2-S2-home-1 977edd5b; fails 8 (Colour roles and value): Colour roles: the XP bar is filled in the main-action gold (the key frame uses green), so gold takes a second role on a non-action.",
+   "image": "images/audit1-home-hc-977edd5b.png",
+   "golden_version": 2,
+   "joined_from": "audit-1",
+   "shot": {
+    "commit": "977edd5b",
+    "script": "client/tests/shots/universe_home.gd",
+    "env": "FIT=1 CONTRAST=1 HC=1"
+   },
+   "third": 1
+  },
+  {
+   "id": "audit1-settings-f0a36a41",
+   "class": "screen",
+   "title": "Audit 1: settings at 100% text, rendered at f0a36a41 (P2-S3-settings)",
+   "source": "docs/art/ui-quality/gate/audit/audit-1/renders/audit1-settings-f0a36a41.png",
+   "crop": null,
+   "size": [
+    540,
+    1170
+   ],
+   "qualities": [
+    2,
+    6
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "pass",
+   "borderline": true,
+   "why": "blind audit 1, AD label at P2-S3-settings f0a36a41; passes 2, 6: Display type: every word sits on a plate or card; the 100% figure has an ink outline, a hard drop and a gradient fill; nothing clipped or under 13 pt.",
+   "image": "images/audit1-settings-f0a36a41.png",
+   "golden_version": 2,
+   "joined_from": "audit-1",
+   "shot": {
+    "commit": "f0a36a41b6427d2f238c0d93679f11c7d9228f54",
+    "script": "client/tests/shots/screen_settings.gd",
+    "env": "FIT=1"
+   },
+   "third": 2
+  },
+  {
+   "id": "audit1-home-e674b614",
+   "class": "screen",
+   "title": "Audit 1: home at 100% text, rendered at e674b614 (P2-S2-home-6)",
+   "source": "docs/art/ui-quality/gate/audit/audit-1/renders/audit1-home-e674b614.png",
+   "crop": null,
+   "size": [
+    540,
+    1170
+   ],
+   "qualities": [
+    2,
+    6,
+    9
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "pass",
+   "borderline": false,
+   "why": "blind audit 1, AD label at P2-S2-home-6 e674b614; passes 2, 6, 9: Display type: 'Keeper 24' over the sky carries an ink outline of about 13% plus a rim band and drop; the currency counts are gradient-filled numerals with ink outline and drop (the outline reads weakly on the near-black plates, and the 'k' is cream, a minor inconsistency).",
+   "image": "images/audit1-home-e674b614.png",
+   "golden_version": 2,
+   "joined_from": "audit-1",
+   "shot": {
+    "commit": "e674b614a15302227eb9ee9d5d8ba7e9cac8ce14",
+    "script": "client/tests/shots/universe_home.gd",
+    "env": "FIT=1"
+   },
+   "third": 2
+  },
+  {
+   "id": "audit1-heist-text200-5470c4d3",
+   "class": "screen",
+   "title": "Audit 1: heist at 200% text, rendered at 5470c4d3 (P1-S1-pilot-1)",
+   "source": "docs/art/ui-quality/gate/audit/audit-1/renders/audit1-heist-text200-5470c4d3.png",
+   "crop": null,
+   "size": [
+    540,
+    1170
+   ],
+   "qualities": [
+    1,
+    2,
+    3,
+    6,
+    8,
+    9,
+    13,
+    14
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "fail",
+   "borderline": true,
+   "why": "blind audit 1, AD label at P1-S1-pilot-1 5470c4d3; fails 1 (Layered materials), 2 (Display type), 3 (Painted or rendered icons), 6 (Hierarchy), 8 (Colour roles and value): Layered materials: the large hint plate is one translucent dark fill with a hairline gold rim, no gloss band or lip, beside four-layer buttons and panels. Default three crew (no MANIFEST=1), as AD labelled it; the gate shot the five named crew.",
+   "image": "images/audit1-heist-text200-5470c4d3.png",
+   "golden_version": 2,
+   "joined_from": "audit-1",
+   "shot": {
+    "commit": "5470c4d3",
+    "script": "client/tests/shots/screen_heist.gd",
+    "env": "FIT=1 TEXT=200"
+   },
+   "third": 1
+  },
+  {
+   "id": "audit1-result-aed28321",
+   "class": "screen",
+   "title": "Audit 1: result at 100% text, rendered at aed28321 (P2-S1-result-2)",
+   "source": "docs/art/ui-quality/gate/audit/audit-1/renders/audit1-result-aed28321.png",
+   "crop": null,
+   "size": [
+    540,
+    1170
+   ],
+   "qualities": [
+    6,
+    9
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "fail",
+   "borderline": true,
+   "why": "blind audit 1, AD label at P2-S1-result-2 aed28321; fails 9 (Character presence): Character presence: the +508 Loot reward card shows a sparkle and no character, and no crew is on screen; a reward with no character fails. Offline state (no SERVER=1), as AD labelled it; the gate shot the server state.",
+   "image": "images/audit1-result-aed28321.png",
+   "golden_version": 2,
+   "joined_from": "audit-1",
+   "shot": {
+    "commit": "aed28321c02e67edf889d45075675bd1343335cd",
+    "script": "client/tests/shots/screen_result.gd",
+    "env": "FIT=1"
+   },
+   "third": 2
+  },
+  {
+   "id": "audit1-settings-hc-f5719f28",
+   "class": "screen",
+   "title": "Audit 1: settings in high contrast, rendered at f5719f28 (P2-S3-settings)",
+   "source": "docs/art/ui-quality/gate/audit/audit-1/renders/audit1-settings-hc-f5719f28.png",
+   "crop": null,
+   "size": [
+    540,
+    1170
+   ],
+   "qualities": [
+    6,
+    8
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "pass",
+   "borderline": true,
+   "why": "blind audit 1, AD label at P2-S3-settings f5719f28; passes 6, 8: Hierarchy (borderline): no primary on settings; the title plate leads by place and size; the white cards are the high-contrast design (v3); the group headers are thin; the gold 100% is a figure, not a button.",
+   "image": "images/audit1-settings-hc-f5719f28.png",
+   "golden_version": 2,
+   "joined_from": "audit-1",
+   "shot": {
+    "commit": "f5719f28cbf8c9d751eae45a887de86bab5c2b32",
+    "script": "client/tests/shots/screen_settings.gd",
+    "env": "FIT=1 CONTRAST=1 HC=1"
+   },
+   "third": 2
+  },
+  {
+   "id": "audit1-home-3612e265",
+   "class": "screen",
+   "title": "Audit 1: home at 100% text, rendered at 3612e265 (P2-S2-home-2)",
+   "source": "docs/art/ui-quality/gate/audit/audit-1/renders/audit1-home-3612e265.png",
+   "crop": null,
+   "size": [
+    540,
+    1170
+   ],
+   "qualities": [
+    6,
+    9
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "pass",
+   "borderline": false,
+   "why": "blind audit 1, AD label at P2-S2-home-2 3612e265; passes 6, 9: Hierarchy: the gold Collect leads in grayscale over the Islands and Heist tabs.",
+   "image": "images/audit1-home-3612e265.png",
+   "golden_version": 2,
+   "joined_from": "audit-1",
+   "shot": {
+    "commit": "3612e26564859e8df7c3ce1cd48dba118580d9da",
+    "script": "client/tests/shots/universe_home.gd",
+    "env": "FIT=1"
+   },
+   "third": 1
+  },
+  {
+   "id": "audit1-settings-5fc97aac",
+   "class": "screen",
+   "title": "Audit 1: settings at 100% text, rendered at 5fc97aac (P2-S3-settings-2)",
+   "source": "docs/art/ui-quality/gate/audit/audit-1/renders/audit1-settings-5fc97aac.png",
+   "crop": null,
+   "size": [
+    540,
+    1170
+   ],
+   "qualities": [
+    2,
+    6
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "fail",
+   "borderline": true,
+   "why": "blind audit 1, AD label at P2-S3-settings-2 5fc97aac; fails 6 (Hierarchy): Hierarchy (borderline): settings has no primary, and the gold-filled A value steppers are the most saturated marks on screen and, with the cream tab strip, outweigh the dark title plate; a gold value button louder than the title fails.",
+   "image": "images/audit1-settings-5fc97aac.png",
+   "golden_version": 2,
+   "joined_from": "audit-1",
+   "shot": {
+    "commit": "5fc97aacdb6a3fe479887d74bc9adae67e420b3b",
+    "script": "client/tests/shots/screen_settings.gd",
+    "env": "FIT=1"
+   },
+   "third": 1
+  },
+  {
+   "id": "audit1-home-a4090ec7",
+   "class": "screen",
+   "title": "Audit 1: home at 100% text, rendered at a4090ec7 (P2-S2-home-6)",
+   "source": "docs/art/ui-quality/gate/audit/audit-1/renders/audit1-home-a4090ec7.png",
+   "crop": null,
+   "size": [
+    540,
+    1170
+   ],
+   "qualities": [
+    2
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "pass",
+   "borderline": false,
+   "why": "blind audit 1, AD label at P2-S2-home-6 a4090ec7; passes 2: Display type: 'Keeper 24' over the sky carries a warm ink outline and drop; the currency counts are gold-gradient headline figures with ink outline and drop, the 'k' now matching; labels sit on plates.",
+   "image": "images/audit1-home-a4090ec7.png",
+   "golden_version": 2,
+   "joined_from": "audit-1",
+   "shot": {
+    "commit": "a4090ec77bd7536c10db03e06efcd459d69c4b55",
+    "script": "client/tests/shots/universe_home.gd",
+    "env": "FIT=1"
+   },
+   "third": 2
+  },
+  {
+   "id": "audit1-settings-hc-eed8b817",
+   "class": "screen",
+   "title": "Audit 1: settings in high contrast, rendered at eed8b817 (P2-S3-settings)",
+   "source": "docs/art/ui-quality/gate/audit/audit-1/renders/audit1-settings-hc-eed8b817.png",
+   "crop": null,
+   "size": [
+    540,
+    1170
+   ],
+   "qualities": [
+    6,
+    8
+   ],
+   "origin": "natural",
+   "plant": null,
+   "expected": "pass",
+   "borderline": true,
+   "why": "blind audit 1, AD label at P2-S3-settings eed8b817; passes 6, 8: Hierarchy (borderline): no primary on settings; the Settings title plate leads by place and size; the white tab strip and A steppers are high-contrast cream cards (v3), not gold; group headers are smaller than the title but no louder than the rows.",
+   "image": "images/audit1-settings-hc-eed8b817.png",
+   "golden_version": 2,
+   "joined_from": "audit-1",
+   "shot": {
+    "commit": "eed8b817fe6c01705c8e4eb5e2ee527e0229ef9f",
+    "script": "client/tests/shots/screen_settings.gd",
+    "env": "FIT=1 CONTRAST=1 HC=1"
+   },
+   "third": 1
   }
  ]
 }

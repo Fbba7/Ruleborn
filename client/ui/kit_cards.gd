@@ -551,14 +551,19 @@ static func dark_icon(icon: String) -> bool:
 ## (a school's name) the disc is lit from white to that school's light and
 ## the kicker is in its deep shade, as the design tells the four facts apart;
 ## the kicker's words say which fact it is, so the tone is never alone.
-static func fact(icon: String, kicker: String, words: String, tone := "") -> PanelContainer:
+## `compact` is key frame 04's tile (S3-R13), so four stand on the first
+## screen at 100% text: 6 points of padding, the disc beside the kicker, and
+## the words under both across the tile at 13 points in the body face; its
+## kicker loses its tracking when its longest word is wider than its room
+## (S3-R14, `untrack_when_tight`).
+static func fact(icon: String, kicker: String, words: String, tone := "", compact := false) -> PanelContainer:
 	var p := UI.panel("fact")
 	p.name = "Fact"
 	p.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", UI.px(8))
+	row.add_theme_constant_override("separation", UI.px(4 if compact else 8))
 	var disc := PanelContainer.new()
-	disc.add_theme_stylebox_override("panel", UI.clear_box(6, 6))
+	disc.add_theme_stylebox_override("panel", UI.clear_box(1.5 if compact else 6.0, 1.5 if compact else 6.0))
 	var lit := UI.dress(disc, "icon_disc")
 	if tone != "":
 		lit.tint(Color.WHITE, Tokens.color(tone + "_light"))
@@ -575,13 +580,24 @@ static func fact(icon: String, kicker: String, words: String, tone := "") -> Pan
 	k.add_theme_color_override("font_color", tone_ink(tone) if tone != "" else Tokens.color("parchment_text_2"))
 	k.set_meta("bold", true)
 	v.add_child(k)
-	var w := UI.label(words, 14, true)
-	w.theme_type_variation = "BodyBold"
+	var w := UI.label(words, 13.0 if compact else 14.0, true)
+	w.theme_type_variation = "" if compact else "BodyBold"
 	w.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	w.set_meta("bold", true)
-	v.add_child(w)
+	w.set_meta("bold", not compact)
 	row.add_child(v)
-	p.add_child(row)
+	if not compact:
+		v.add_child(w)
+		p.add_child(row)
+		return p
+	_pad(p, 6.0, 6.0)
+	v.alignment = BoxContainer.ALIGNMENT_CENTER
+	var stack := VBoxContainer.new()
+	stack.name = "Stack"
+	stack.add_theme_constant_override("separation", UI.px(2))
+	stack.add_child(row)
+	stack.add_child(w)
+	p.add_child(stack)
+	untrack_when_tight(k, v)
 	return p
 
 
@@ -663,14 +679,18 @@ static func tone_ink(school: String) -> Color:
 ## A character's ability (11-character.png): a plum card, the ability's
 ## icon on a square in its school's colours, a gold kicker ("Ability") with
 ## its tag ("Once a heist"), the name in Marcellus and the rule beneath it.
+## `measures` takes key frame 04's (S3-R10): the card's padding 8 points and
+## the icon's square 4, 8 points between the square and the words and 4
+## between the kicker and its tag, the kicker losing its tracking once it
+## and its tag together are wider than their line (S3-R14).
 static func ability(icon: String, school: String, kicker: String, tag: String, title: String,
-		rule: String) -> PanelContainer:
+		rule: String, measures := false) -> PanelContainer:
 	var p := UI.panel("ability")
 	p.name = "Ability"
 	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", UI.px(12))
+	row.add_theme_constant_override("separation", UI.px(8 if measures else 12))
 	var square := PanelContainer.new()
-	square.add_theme_stylebox_override("panel", UI.clear_box(10, 10))
+	square.add_theme_stylebox_override("panel", UI.clear_box(4 if measures else 10, 4 if measures else 10))
 	UI.dress(square, "window_" + school, 16)
 	square.add_child(Icons.view(icon, 40))
 	square.size_flags_vertical = Control.SIZE_SHRINK_CENTER
@@ -687,6 +707,10 @@ static func ability(icon: String, school: String, kicker: String, tag: String, t
 	head.add_child(k)
 	if tag != "":
 		head.add_child(KitStatus.tag(tag, true))
+	if measures:
+		_pad(p, 8.0, 8.0)
+		head.add_theme_constant_override("h_separation", UI.px(4))
+		untrack_when_tight(k, head, head.get_child(1) as Control if tag != "" else null, UI.px(4))
 	v.add_child(head)
 	var t := UI.label(title, 20, true)
 	t.theme_type_variation = "Heading"
@@ -699,6 +723,42 @@ static func ability(icon: String, school: String, kicker: String, tag: String, t
 	row.add_child(v)
 	p.add_child(row)
 	return p
+
+
+## Sets `kicker`, a card's kicker in tracked capitals, without its tracking
+## (as the kit's tags are) whenever its longest word, or, given `beside`, the
+## whole kicker, `gap` and `beside` after it, is wider than `room` (S3-R14):
+## German "EIGENSCHAFTEN" stands whole rather than breaking inside the word,
+## and Portuguese "HABILIDADE" keeps its tag on its line. Checked each time
+## `room` is resized.
+static func untrack_when_tight(kicker: Label, room: Control, beside: Control = null, gap := 0.0) -> void:
+	room.resized.connect(func() -> void:
+		if room.size.x <= 0.0:
+			return
+		kicker.theme_type_variation = "BodyBold" if kicker_need(kicker, beside, gap) > room.size.x else "Kicker")
+
+
+## The width `kicker` needs in its tracked capitals: its longest word, or,
+## given `beside`, the whole kicker, `gap` and `beside` after it.
+static func kicker_need(kicker: Label, beside: Control = null, gap := 0.0) -> float:
+	var size := kicker.get_theme_font_size("font_size")
+	var font := RbTheme.role_font("kicker")
+	if beside != null:
+		return font.get_string_size(kicker.text.to_upper(), HORIZONTAL_ALIGNMENT_LEFT, -1, size).x + gap \
+			+ beside.get_combined_minimum_size().x
+	var need := 0.0
+	for word: String in kicker.text.to_upper().split(" "):
+		need = maxf(need, font.get_string_size(word, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x)
+	return need
+
+
+## Sets the padding of `box`, a kit panel, to `side` and `top` points.
+static func _pad(box: PanelContainer, side: float, top: float) -> void:
+	var style := box.get_theme_stylebox("panel")
+	style.content_margin_left = UI.px(side)
+	style.content_margin_right = UI.px(side)
+	style.content_margin_top = UI.px(top)
+	style.content_margin_bottom = UI.px(top)
 
 
 ## A row of pips (a stat's level): gold up to `filled`, green for the next
