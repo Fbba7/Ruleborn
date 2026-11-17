@@ -452,6 +452,28 @@ The gate's advisory verdict on home-5 (`verdicts/P2-S2-home-5/eb40e8f4.json`) fa
 - **A count that falls back to live type no longer takes the name's leather rim.** The purse's labels start as "–", which has no figures, so `home_figure` took them for words over the art. They are now marked as counts on a plate (`plated`). No fit case below falls back to live type, so no still shows this.
 - **Part 4's and Part 3's open items stand.**
 
+### The gate at e674b614: Display type at 100%
+
+The gate's advisory verdict on home-6 (`verdicts/P2-S2-home-6/e674b614.json`) passed five of its six item-qualities, 3 of 3 samples each. Display type passed at 200% pt_BR and failed at 100%, 0 of 3. The judge's reason: at 100% the headline counts ("1,460" and the purse's "142.0k", "31.4k", "61.0k") were "flat gold fills on dark plates, with no ink outline, no hard drop and no gradient", while "Keeper 24" carried the stroked treatment. It named AD-R45 (a) as still open.
+
+**Why the counts went flat at 100%.** The kit's gold glyphs are 210 px tall, and at 100% text they draw about 18 px tall. The kit's atlas pages are imported without mipmaps, so a glyph drawn at under a tenth of its size is sampled, not averaged. Its thin baked stroke and drop fall between the samples, and its gradient flattens to one gold. At 200% the glyphs draw twice as large and keep their own treatment, which is why that still passed.
+
+**What changed.**
+
+- **The baked figures draw their own treatment in screen pixels** (`HomeParts.InkedRow`, a `KitNumerals.Row` that `figures` builds in place of the kit's). From the same glyphs, in the same call, the row draws three layers:
+  - a hard drop in `drop`, from the glyphs' outlines, set down by 10% of the figures' size;
+  - an ink stroke all round, in `ink_line`, 8% of their size and at least 1 px, which adds to the glyphs' own stroke;
+  - each glyph in up to 16 bands, shaded from the art's cream at the top to a deeper amber at the foot (`InkedRow.FOOT`), so the gradient survives at any size.
+
+  The figures' cells and widths are unchanged, so the fit is the same.
+- **AD-R45 (a): the live words on the plates** ("k", " mil", " Tsd."). Their shadow is now as wide as their outline and set down by the drop (`inked`, plated branch: `shadow_outline_size` = outline, `shadow_offset_y` = drop). Before, the shadow was the bare glyphs set down by the outline and the drop, which showed as a ghost of the letters below them. Those words are now in `gold`, like the figures before them, not cream.
+
+**The plates.** The plates' fill (`#180D1C` in the still) is within a step of `ink_line` (`#1A0C14`). An ink stroke alone cannot show on it, which is the judges' close call at 200%. On the figures, the stroke and drop layers take the glyphs' own tones under their tint, so they draw darker than the plate (`#020001` in the still), and the figures stand in a dark halo with a heavier foot. The live words' ink outline still matches the plate, and their drop shows below them.
+
+**A kit fix is better.** Mipmaps on the kit's pages (`kit_*.webp.import`) and a mipmap filter in `KitNumerals.Row` would keep every screen's baked numerals sharp at small sizes. That is K1's file, so S2 asked the lead for it (S2-R35). Until then, home draws its own treatment.
+
+**Evidence.** Stills at 100% in en, de and pt_BR, in high contrast, and at 200% in pt_BR and de. Every count shows the cream-to-amber gradient, the dark halo and the hard drop, and the words after it are gold. The fit and the draw calls are below once measured.
+
 ## Left for other tasks
 
 These widgets are no longer used by home, but they are outside this task's files:

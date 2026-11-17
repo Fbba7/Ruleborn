@@ -513,6 +513,22 @@
       "due": "2026-11-17T03:30:00Z",
       "default": "The stills stand as previewed: S2 marks ready on the pre-checked commit, the gate runs, and any objection becomes a follow-up task.",
       "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R35",
+      "from": "S2",
+      "to": "K1",
+      "ask": "For K1, through the lead (not blocking home-6). The kit's baked numerals lose their stroke, drop and gradient when drawn small: the gold glyphs are 210 px tall, home's counts at 100% text draw them about 18 px tall, and every kit page imports with mipmaps off (client/ui/art/kit_*.webp.import, mipmaps/generate=false), so a glyph at under a tenth of its size is sampled, not averaged. That was the gate's Display type fail on home at 100% (verdicts/P2-S2-home-6/e674b614.json: 'flat gold fills ... no ink outline, no hard drop and no gradient'). Ask: mipmaps on the numerals' pages (kit_3.webp and kit_3_hc.webp at least) and TEXTURE_FILTER_LINEAR_WITH_MIPMAPS on KitNumerals.Row, checking texture bytes against tools/ui_bake/budgets.json. Home draws its own stroke, drop and banded gradient from the same glyphs meanwhile (HomeParts.InkedRow, home-screen.md Part 6), which it can drop or keep once the kit's are sharp.",
+      "files": [
+        "client/ui/art/kit_3.webp.import",
+        "client/ui/art/kit_3_hc.webp.import",
+        "client/ui/kit_numerals.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T03:10:00Z",
+      "due": "2026-11-18T12:00:00Z",
+      "default": "No kit change: home keeps HomeParts.InkedRow; other screens that draw KitNumerals small stay as they are.",
+      "escalate_to": "lead"
     }
   ],
   "answers": [],
