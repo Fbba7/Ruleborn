@@ -3,7 +3,14 @@
   "updated_at": "2026-11-17T16:25:00Z",
   "expected_next_update_by": "2026-11-17T19:25:00Z",
   "cycle": 129,
-  "merging": null,
+  "merging": {
+    "candidate_sha": "f932cda7",
+    "task_ids": [
+      "P3-AD-preview-1"
+    ],
+    "started_at": "2026-11-17T16:42:00Z",
+    "expires_at": "2026-11-17T17:42:00Z"
+  },
   "last_merged": {
     "task_id": "P3-K1-tabs-1",
     "sha": "e3364018"
