@@ -381,7 +381,7 @@ static func bake_totals(totals: Dictionary) -> void:
 		if old != null:
 			l.remove_child(old)
 			old.queue_free()
-		l.self_modulate.a = 1.0
+		l.visible_characters = -1
 		l.custom_minimum_size = Vector2.ZERO
 		if l.text == "":
 			continue
@@ -409,4 +409,4 @@ static func bake_totals(totals: Dictionary) -> void:
 		l.add_child(row)
 		row.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 		l.custom_minimum_size = row.get_combined_minimum_size()
-		l.self_modulate.a = 0.0
+		l.visible_characters = 0
