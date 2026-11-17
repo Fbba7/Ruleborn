@@ -128,20 +128,14 @@
       "estimate_h": 1.5,
       "tier": 2,
       "critical": false,
-      "state": "working",
-      "claim": {
-        "agent": "K1",
-        "branch": "claude/ui-bake",
-        "claimed_at": "2026-11-17T13:05:00Z",
-        "seen_at": "2026-11-17T14:22:00Z",
-        "lease_until": "2026-11-17T16:05:00Z"
-      },
+      "state": "merged",
+      "claim": null,
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null,
-      "updated_at": "2026-11-17T14:22:00Z",
-      "updated_by": "lead (cycle 127)",
+      "ready_sha": "22fae4b7d9e878a65ce98a2b93762faa403c9217",
+      "merged_sha": "e3364018",
+      "updated_at": "2026-11-17T15:45:00Z",
+      "updated_by": "lead (cycle 128)",
       "exceptions": [
         "client/tests/run.gd"
       ]

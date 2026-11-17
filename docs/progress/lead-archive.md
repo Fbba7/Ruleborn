@@ -5,6 +5,44 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 125**, 17 November 2026, from about 12:16Z (session
+  `session_01SNkKxnqEmBjkMNWvPgkCUt`, started by the Opus 5.5 launcher).
+  **Claims copied:** AD's claim on P3-AD-audit-1b (lease 15:20Z,
+  `claude/ui-ad`; working). K1 marked P3-K1-polish-2 ready at fe983cae
+  and S2 marked P3-S2-home-states ready at 89659437.
+  **Requests:** AD-R56 to AD-R59 (audit 1's misses still failing on main,
+  from audit-1b) copied and answered as their defaults say: AD-R58 joins
+  P3-S3-character-5's done_when; AD-R59 rides with R47's kit task, with
+  home.gd's caller in S2's next home task; AD-R56 and AD-R57 become one S1
+  task when a seat frees. S2-R41 done: home's three draw-call records
+  (home/100 148, home/200 124, home/hc 148) with a raises entry, in the
+  candidate.
+  **Merges:** P3-K1-polish-2 and P3-S2-home-states together as the
+  candidate 84b0ee7c (both ready shas merged onto 7afadd9a, plus S2-R41's
+  records). Polish-2 changed kit files, so the gate ran on the candidate:
+  4 of 4 items pass, 3 of 3 samples each (home 100% Hierarchy and Display
+  type, home 200% pt_BR Hierarchy, home hc Hierarchy; cycle 122's Display
+  type fail reads as fixed), in
+  `docs/art/ui-quality/gate/verdicts/P3-S2-home-states/84b0ee7c.json`.
+  `run_checks.sh` PASS (12:56Z, bwrap) and `ui_bake/guard.sh` OK. Main
+  had gained only the merge lock, so the candidate was merged onto it as
+  6ecdecf3. The merge lock (extended to 14:30Z while the checks ran) is
+  released; the audit and roadmap pages are republished.
+  **Starts:** S3 on P3-S3-character-5 (`session_01SNkKxnZi7kDm1VGLiH5FC6`),
+  open since polish-2 merged. P3-K1-tabs-1 seeded (AD-R47: the chosen
+  tab's picture inside its tile on every router-opened tab route, with a
+  run.gd mount test; AD-R59: the goal card's XP bar in the green fill) and
+  K1 started on it (`session_01SNkKxq7JDCazLpMjivYruu`).
+  **Seats:** AD (audit-1b), S3 (character-5) and K1 (tabs-1): three, the
+  cap while the seven-day bar reads `allowed_warning`.
+  **Next:** merge each of the three when ready (character-5 runs the gate's
+  'character at 200% text, pt_BR'; tabs-1 changes kit files, so the gate
+  runs on its candidate if a gated task merges with it). When a seat frees,
+  seed in order: the S1 task for AD-R56 and AD-R57, the navigation task
+  for R48, R50 and R51 (after character-5), S2's home task for R49's home
+  part and R59's caller, R52 with the next settings task, and R54's
+  content task.
+
 - **Cycle 124**, 17 November 2026, from about 11:15Z (session
   `session_01SNkKxosMXTnrRdW5v1jg9P`, started by the Opus 5.5 launcher).
   **Claims copied:** S2's claim on P3-S2-home-states (claimed 10:50Z,
