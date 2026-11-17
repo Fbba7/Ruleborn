@@ -5,15 +5,15 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P3-S2-home-states",
-  "task_state": "working",
+  "task_state": "blocked",
   "claimed_at": "2026-11-17T07:30:00Z",
   "lease_until": "2026-11-17T10:30:00Z",
-  "updated_at": "2026-11-17T09:39:00Z",
-  "expected_next_update_by": "2026-11-17T10:19:00Z",
+  "updated_at": "2026-11-17T09:46:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "a4090ec7",
-    "next_step": "Pre-check PASS on 488c8b5a (09:39Z, recorded). owners.py diff and check_screens pass; guard fails only on the three S2-R41 lines (approved in cycle 120). check_all running on 488c8b5a. Then: AD's preview of e9285afd (S2-R42, due 16:00Z, default: the stills stand), and ready with gate_request."
+    "next_step": "Blocked on S2-R42 alone (AD's preview of e9285afd; due 16:00Z; default: the stills stand). Everything else is green on 488c8b5a: pre-check PASS (09:39Z, recorded), check_all PASS, check_screens OK, owners.py diff OK, 57 of 57 fit ok on e9285afd; guard fails only on the three S2-R41 lines (148/124/148, approved in cycle 120, the lead records them at merge). On restart: act on AD's notes if any; merge the integration branch (clean at 44c43c4f; only S1-R37's budgets.json entry touches a shared file); the setup line, bash client/build.sh, check_all, guard and the pre-check on the merge (run_checks.sh start, wait, record); owners.py diff at ready_sha; set gate_request (home at 100% text: Hierarchy, Display type; home at 200% text, pt_BR: Hierarchy; home in high contrast: Hierarchy), ready_sha and task_state ready; push."
   },
   "precheck": {
     "sha": "488c8b5a54e3a49a60f723436d20647395e8a0a2",
@@ -624,14 +624,14 @@
       "id": "S2-R42",
       "from": "S2",
       "to": "AD",
-      "ask": "For AD, through the lead, following S2-R36 (answered in cycle 119: AD previews the commit S2 names once the plate changes under S2-R38 and S2-R40). The commit to preview is now e9285afd on claude/ui-screens-home (ad6c25e7 plus your S2-R36 note 1: the plate keeps the 16 pt side gutter, now about 24 pt from the left edge at 100%). Since 4797b5c3 the locked plate reads 'Lantern Vale' over the lock and 'Opens at Keeper 28' on the map's dark pill, and at 200% text, where that finds no room, it shows the lock and '28' on the same pill instead of hiding. Check, as in S2-R36, at 100% and 200% text in en, pt_BR and de, and in high contrast: the Crew tab's '4', the Defence badge '2' and the plate clear of the pins and the side buttons (board 3's objection B), nothing by colour alone. Reproduce with `FIT=1 [TEXT=200] [LOCALE=<loc>] [CONTRAST=1] bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`. Detail: docs/art/tracks/home-screen.md Part 7.",
+      "ask": "For AD, through the lead, following S2-R36 (answered in cycle 119: AD previews the commit S2 names once the plate changes under S2-R38 and S2-R40). The commit to preview is now e9285afd on claude/ui-screens-home (ad6c25e7 plus your S2-R36 note 1: the plate keeps the 16 pt side gutter, now about 24 pt from the left edge at 100%). Since 4797b5c3 the locked plate reads 'Lantern Vale' over the lock and 'Opens at Keeper 28' on the map's dark pill, and at 200% text, where that finds no room, it shows the lock and '28' on the same pill instead of hiding. Check, as in S2-R36, at 100% and 200% text in en, pt_BR and de, and in high contrast: the Crew tab's '4', the Defence badge '2' and the plate clear of the pins and the side buttons (board 3's objection B), nothing by colour alone. Reproduce with `FIT=1 [TEXT=200] [LOCALE=<loc>] [CONTRAST=1] bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`. Detail: docs/art/tracks/home-screen.md Part 7. Now blocking (S2, 2026-11-17T09:46:00Z): AD's preview is in the task's done_when, and every other ready check passes on 488c8b5a, so S2 waits on this alone and ends its session as the protocol says. When AD answers, or at 16:00Z on the default, the lead restarts S2 to merge the integration branch, rerun the checks and mark ready.",
       "files": [
         "client/world/universe_pins.gd",
         "client/tests/shots/universe_home.gd",
         "client/scripts/home_parts.gd",
         "docs/art/tracks/home-screen.md"
       ],
-      "blocking": false,
+      "blocking": true,
       "created_at": "2026-11-17T07:52:00Z",
       "due": "2026-11-17T16:00:00Z",
       "default": "As S2-R36's: if AD has not answered by 16:00Z, the stills stand and S2 marks ready on its own checks; the gate judges them.",
@@ -639,5 +639,5 @@
     }
   ],
   "answers": [],
-  "next_step": "Pre-check PASS on 488c8b5a (09:39Z, recorded). owners.py diff and check_screens pass; guard fails only on the three S2-R41 lines (approved in cycle 120). check_all running on 488c8b5a. Then: AD's preview of e9285afd (S2-R42, due 16:00Z, default: the stills stand), and ready with gate_request."
+  "next_step": "Blocked on S2-R42 alone (AD's preview of e9285afd; due 16:00Z; default: the stills stand). Everything else is green on 488c8b5a: pre-check PASS (09:39Z, recorded), check_all PASS, check_screens OK, owners.py diff OK, 57 of 57 fit ok on e9285afd; guard fails only on the three S2-R41 lines (148/124/148, approved in cycle 120, the lead records them at merge). On restart: act on AD's notes if any; merge the integration branch (clean at 44c43c4f; only S1-R37's budgets.json entry touches a shared file); the setup line, bash client/build.sh, check_all, guard and the pre-check on the merge (run_checks.sh start, wait, record); owners.py diff at ready_sha; set gate_request (home at 100% text: Hierarchy, Display type; home at 200% text, pt_BR: Hierarchy; home in high contrast: Hierarchy), ready_sha and task_state ready; push."
 }
