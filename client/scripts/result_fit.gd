@@ -2,12 +2,15 @@ class_name ResultFit
 extends RefCounted
 ## How the result screen (`ResultScreen`) fits large text and long languages
 ## to the phone: the reward tiles as rows or columns, the multipliers' pill on
-## one line, Home as its icon, and the measures the raid bar is fitted by.
+## one line, Home as its icon, and the measures the raid bar is fitted by;
+## and the crew's faces and the baked totals the screen dresses its rewards in.
 ## A helper of its own so result_screen.gd stays within gdlint's file length.
 
 
 ## The most lines a label has that the fold keeps together (`part_line`).
 const KEEP := 3
+## The baked totals' line, of their face's (`Home.FIGURE_LINE`'s).
+const BAKED_LINE := 0.9
 
 
 ## The column a page's content has across a phone `width` wide: the width
@@ -313,3 +316,97 @@ static func part_line(scroll: ScrollContainer, bottom: float) -> float:
 		elif n is PanelContainer and shown < sliver:
 			part = maxf(part, shown)
 	return part
+
+
+## One crew member's face in the kit's ring, framed as the kit's avatars
+## frame theirs (KitSocial's), on the leather band, `points` across.
+static func face(picture: Texture2D, points: float) -> KitRing:
+	var ring := KitRing.new()
+	ring.name = "Face"
+	ring.picture = picture
+	ring.band = Tokens.color("gold")
+	ring.ground = Tokens.paint("#4A3A9A")
+	ring.zoom = 1.2
+	ring.focus = Vector2(0.5, 0.42)
+	ring.custom_minimum_size = Vector2.ONE * UI.px(points)
+	ring.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return ring
+
+
+## The kinds of crew `crew` (as it ended), in order, each with its
+## creature's art.
+static func crew_kinds(crew: Array) -> Array[String]:
+	var kinds: Array[String] = []
+	for m: Variant in crew:
+		var kind := str((m as Dictionary).get("kind", "")) if m is Dictionary else ""
+		# Played by role alone: the role's default kind, as the heist's
+		# portraits show it (FxPortrait, Cast.KIND).
+		if kind == "" and m is Dictionary and Cast.KIND.has(str((m as Dictionary).get("role", ""))):
+			kind = String(Cast.KIND[str((m as Dictionary)["role"])])
+		if kind != "" and CreatureModel.manifest().has(kind.replace("_", "")):
+			kinds.append(kind)
+	return kinds
+
+
+## At normal text, the crew's lead in the kit's ring on the Starlight tile's
+## upper corner, clear of its icon: the haul framed by who carried it. On a
+## layer of its own over the tile, so the tile's column keeps its children.
+## With large text the tiles are rows, and the crew stays on its card.
+static func carrier(tile: PanelContainer, kinds: Array[String], points: float) -> void:
+	if Settings.text_scale > KitLayout.SIDE_BY_SIDE_UP_TO or kinds.is_empty():
+		return
+	var layer := Control.new()
+	layer.name = "Carrier"
+	layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	tile.add_child(layer)
+	var ring := face(CreatureBust.of(kinds[0], "", Color(0, 0, 0, 0)), points)
+	ring.position = Vector2(-UI.px(8), -UI.px(6))
+	ring.size = ring.custom_minimum_size
+	layer.add_child(ring)
+
+
+## Each total (a label of `totals`) in its finish of the kit's baked numerals, over
+## its label, whose own glyphs are hidden: the label keeps its words, its
+## place in the tile and its size, so a screen reader, the fitting and the
+## reward's coins still find it. Drawn again when its words or size change;
+## while a glyph has no piece, the label shows itself.
+static func bake_totals(totals: Dictionary) -> void:
+	for l: Label in totals:
+		var px := l.get_theme_font_size("font_size")
+		var shown := "%s|%d" % [l.text, px]
+		if str(l.get_meta("baked", "")) == shown:
+			continue
+		l.set_meta("baked", shown)
+		var old := l.get_node_or_null("Baked")
+		if old != null:
+			l.remove_child(old)
+			old.queue_free()
+		l.self_modulate.a = 1.0
+		l.custom_minimum_size = Vector2.ZERO
+		if l.text == "":
+			continue
+		var digits := KitNumerals.make(l.text, str(totals[l]), "display_s", l.text)
+		if not digits is KitNumerals.Row:
+			digits.free()
+			continue
+		var row := digits as KitNumerals.Row
+		row.name = "Baked"
+		# The line's height, or less where the glyphs would be wider than the
+		# live words with their outline: the total keeps the room the
+		# fitting measured, so large text's rows stay one line deep.
+		var font := l.get_theme_font("font")
+		row.height = floorf(font.get_height(px) * BAKED_LINE)
+		row.update_minimum_size()
+		var room := font.get_string_size(l.text, HORIZONTAL_ALIGNMENT_LEFT, -1, px).x \
+			+ float(l.get_theme_constant("outline_size"))
+		var wide := row.get_combined_minimum_size().x
+		if wide > room:
+			row.height = floorf(row.height * room / wide)
+		# One layer above the words, as the home's figures: every baked row
+		# draws in one call from the numerals' page.
+		row.z_index = 1
+		row.update_minimum_size()
+		l.add_child(row)
+		row.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		l.custom_minimum_size = row.get_combined_minimum_size()
+		l.self_modulate.a = 0.0
