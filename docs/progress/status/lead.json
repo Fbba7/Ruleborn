@@ -1,16 +1,9 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-17T20:19:00Z",
-  "expected_next_update_by": "2026-11-17T23:05:00Z",
-  "cycle": 134,
-  "merging": {
-    "candidate_sha": null,
-    "task_ids": [
-      "P3-S2-home-7"
-    ],
-    "started_at": "2026-11-17T20:19:00Z",
-    "expires_at": "2026-11-17T21:19:00Z"
-  },
+  "updated_at": "2026-11-17T20:30:00Z",
+  "expected_next_update_by": "2026-11-17T23:30:00Z",
+  "cycle": 135,
+  "merging": null,
   "last_merged": {
     "task_id": "P3-S3-character-5",
     "sha": "c848afc3"
@@ -47,9 +40,9 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Cycle 135: rerun tools/ui_bake/guard.sh on P3-S2-home-7's candidate (ready at 9ef7b295; its gate verdict at c58d49c0 carries over) and merge on a pass; in cycle 134 the byte-for-byte rebake failed on icons_256.webp in a container whose tree equals main's bake (S2-R45), so if it fails again, hold home-7 ready until P3-AIA2-bake-1 merges. AIA-2 runs P3-AIA2-bake-1 (session_01SNkKxq35wocEhfyMwmzRAR, critical). Merge P3-S1-hc-offline-2 (session_01SNkKxpSULfXqHgZQvrJKb4) and P3-S3-nav-1 (session_01SNkKxqvCzT3bnuPzL5KvLH) as each is marked ready; the lead's gate run judges their stills (S1-R41, S3-R40). Seats: three (allowed_warning): S1, S3, AIA-2. In the first free seat start S2 on P3-S2-back-1 once home-7 is merged; then seed, in order: R52 with the next settings task, R54's content task, the K1 kit task for S3-R35 and S3-R41, AD-R55 with the next heist task, and S2-R44's home follow-up; AD's next task carries the previews of S1-R41 and S3-R40.",
+  "next_step": "Cycle 136: hold P3-S2-home-7 ready at 9ef7b295 (gate 12 of 12 at c58d49c0 carries over) until P3-AIA2-bake-1 merges; in cycles 134 and 135 the guard's byte-for-byte rebake failed on client/ui/art/icons_256.webp on two Intel Xeon (avx512f) containers whose bake inputs equal main's (S2-R45), and every other guard step passed. When bake-1 merges, have S2 merge main into home-7 (resync) or rebuild its candidate on the new main, rerun the guard and merge on a pass. AIA-2 runs P3-AIA2-bake-1 (session_01SNkKxq35wocEhfyMwmzRAR, critical, lease 23:10Z). Merge P3-S1-hc-offline-2 (session_01SNkKxpSULfXqHgZQvrJKb4, last push 19:59Z, lease 21:25Z) and P3-S3-nav-1 (session_01SNkKxqvCzT3bnuPzL5KvLH, last push 19:56Z, lease 21:30Z) as each is marked ready; the lead's gate run judges their stills (S1-R41, S3-R40). Both sessions were idle on a background pre-check at 20:27Z; restart either one whose lease passes without a push. Seats: three (allowed_warning): S1, S3, AIA-2. In the first free seat start S2 on P3-S2-back-1 once home-7 is merged; then seed, in order: R52 with the next settings task, R54's content task, the K1 kit task for S3-R35 and S3-R41, AD-R55 with the next heist task, and S2-R44's home follow-up; AD's next task carries the previews of S1-R41 and S3-R40.",
   "seen": {
-    "at": "2026-11-17T20:02:30Z",
+    "at": "2026-11-17T20:28:58Z",
     "heads": {
       "claude/3d-character-screens": "6053b249bee313648da3509142eeb2ba738bb62f",
       "claude/3d-characters": "35d6ae8f5b84a4d75636f68270848b0949c111f3",
@@ -69,16 +62,16 @@
       "claude/server-decisions": "502b63bbf1506801a7060547f6fb225adcbf8f51",
       "claude/ui-ad": "fc8a4bcff57545978e4b55d5c37e6d9aaa051eb1",
       "claude/ui-artist": "45c6366cb2e0f9dcb5aaa428d17c017576beff5d",
-      "claude/ui-artist-icons": "a8b06f687a9fbb1048c426157f2336cda5f44202",
+      "claude/ui-artist-icons": "a5aeb44adc411585a2043556881a91401ef36ddb",
       "claude/ui-bake": "26177616f694562b78f1d772040e9d301eb5dfad",
       "claude/ui-gate-runs": "0e78b6ceace032f62427a1c8e89dd9ee6186a5c0",
       "claude/ui-kit": "17b900ebdc371f05244d4658850a77460f6090c0",
       "claude/ui-plan": "f1affcea749d007fe1a67931bd3c1f7359d98c44",
       "claude/ui-research": "f19d5d4e5eaffff8869da3b91124d111cf1259a6",
       "claude/ui-screens": "dceb6bfcbc6c5da4e261674fe9301e1854f0aa65",
-      "claude/ui-screens-heist": "caed98245c2a021c5cdb5d05348344929ed398f8",
+      "claude/ui-screens-heist": "788eaaf4d5a46f9cde43ab603446e40b23665715",
       "claude/ui-screens-home": "f474ed5f4138dc1e176fcad4d0c796a34b22d015",
-      "claude/ui-screens-meta": "095e95b43f3f1cc6ffd98a43c920e9663eabe626",
+      "claude/ui-screens-meta": "5ac311f77e8d174c0ddc5f48cadabfbad25e994f",
       "lead/candidate-573416ab12761b92becf0c1d3d7d7bd03e9cf7d1": "573416ab12761b92becf0c1d3d7d7bd03e9cf7d1",
       "lead/candidate-714b24ed52f56133bccc18c82cc879938b53f296": "714b24ed52f56133bccc18c82cc879938b53f296",
       "lead/candidate-791aae3c187caf621ace022ed675004678dc0119": "791aae3c187caf621ace022ed675004678dc0119",
@@ -90,9 +83,7 @@
     "ready": {
       "P3-S2-home-7": "9ef7b2950c64c0ec80267425d050bacf9d8bd0a2"
     },
-    "startable": [
-      "P3-AIA2-bake-1"
-    ],
+    "startable": [],
     "messages": [
       "M10",
       "M3"
@@ -138,7 +129,8 @@
     ],
     "leases": [],
     "stale": [
-      "S1@2026-11-17T18:35:00Z"
+      "S1@2026-11-17T18:35:00Z",
+      "S1@2026-11-17T18:35:00Z+late"
     ]
   }
 }

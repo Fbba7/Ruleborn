@@ -5,6 +5,34 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 132**, 17 November 2026, from about 18:39Z (session
+  `session_01SNkKxodysAxdoGSovguhgy`, started by the Opus 5.5 launcher).
+  **Claims copied:** S1's on P3-S1-hc-offline-2 (working, seen 18:43Z,
+  lease 21:25Z) and S3's on P3-S3-nav-1 (claimed, seen 18:43Z, lease
+  21:30Z). S2's on P3-S2-home-7 is unchanged (lease 20:04Z).
+  **Requests:** S1-R41 copied and answered. AD has no seat, so, as for
+  S1-R40 and S3-R34, the lead's gate run judges hc-offline-2's stills, and
+  AD's preview goes into AD's next task. M54 is still not in AD's acks, so
+  S2-R43's default (no preview; the stills stand) applies at 19:06Z.
+  **Gate:** none. No task is ready and there is no new gate_request.
+  **Merge:** none. The audit and roadmap pages are not republished.
+  **Restarts:** S2's session (`session_01SNkKxqf3uqLW1HGZt6KLXF`) was idle
+  and disconnected from 17:32Z, past its 18:34Z update, with its gate
+  passing 12 of 12. S2 is restarted on home-7
+  (`session_01SNkKxnfpUVpuhWGguwhzhA`, 18:45Z) to merge main, rerun its
+  checks and pre-check (M11, M13) and mark ready. S1 is late (18:35Z)
+  but not restarted. Its last push (e3d75d53, 18:25Z) records a pre-check
+  PASS at 12079dc6 and checks rerunning on its merge 7d20f905, and its
+  session summary says it marks ready after that pre-check. If it has not
+  pushed by the next cycle, restart it.
+  **Seats:** S3 (nav-1), S2 (home-7) and S1 (hc-offline-2): three, the
+  cap while the seven-day bar reads `allowed_warning`.
+  **Next:** merge home-7, hc-offline-2 and nav-1 as each is marked ready
+  (home-7 re-gated only if its ready sha changes the home stills). The
+  seed order is unchanged: AD-R48's navigation task (after home-7), R52
+  with the next settings task, R54's content task, the K1 outline task for
+  S3-R35, AD-R55 with the next heist task, and S2-R44's home follow-up.
+
 - **Cycle 131**, 17 November 2026, from about 17:40Z (session
   `session_01SNkKxqumwkRG2bcMXAVVKV`, started by the Opus 5.5 launcher).
   **Claims copied:** S3's on P3-S3-character-5 (ready at 3053cf6d), S2's
