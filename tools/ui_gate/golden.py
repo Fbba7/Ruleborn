@@ -14,10 +14,15 @@ gate/golden/README.md).
     golden.py split
         Sets each item's "third" (1, 2 or 3; 3 is held out): the items sorted
         by class, label, borderline flag and origin, then dealt in turn, so
-        each third holds its share of each.
+        each third holds its share of each. Only version 1 items are dealt
+        into the held-out third; an item a later version joined
+        ("golden_version" 2 or more) is dealt into third 1 or 2, so the
+        held-out third stays the one measured before.
     golden.py check
         Checks items.json (ids, classes, qualities, sources, the share of
-        expected fails and borderline items, the thirds), that every image
+        expected fails and borderline items, the thirds: the held-out third
+        is about a third of the version 1 items and holds no later item),
+        that every image
         exists at the size its crop and size give, and that labels.md (and
         labels-blind.md, the held-out third) has exactly one row per item and
         quality, each label empty, pass, fail or n/a.
@@ -190,13 +195,21 @@ def labels(force=False):
         print(path)
 
 
+def version(it):
+    """The golden set version that joined the item (1 when not written)."""
+    return it.get("golden_version", 1)
+
+
 def split():
-    """Deal the items into thirds, stratified, and write items.json."""
+    """Deal the items into thirds, stratified, and write items.json. Version 1
+    items go into all three; later items only into thirds 1 and 2."""
     data = load()
-    order = sorted(data["items"], key=lambda it: (
-        it["class"], it["expected"], it["borderline"], it["origin"], it["id"]))
-    for n, it in enumerate(order):
-        it["third"] = n % 3 + 1
+    for first, deal in ((True, 3), (False, 2)):
+        order = sorted((it for it in data["items"] if (version(it) == 1) == first),
+                       key=lambda it: (it["class"], it["expected"], it["borderline"],
+                                       it["origin"], it["id"]))
+        for n, it in enumerate(order):
+            it["third"] = n % deal + 1
     ITEMS.write_text(json.dumps(data, indent=1, ensure_ascii=False) + "\n")
     for t in (1, 2, 3):
         print(f"third {t}: {sum(it['third'] == t for it in data['items'])} items")
@@ -259,6 +272,11 @@ def problems(data, label_text, images=True, blind_text=None):
                     bad.append(f"{iid}: image size differs from its crop")
         if it.get("third") not in (1, 2, 3):
             bad.append(f"{iid}: third must be 1, 2 or 3 (golden.py split)")
+        if not isinstance(version(it), int) or version(it) < 1:
+            bad.append(f"{iid}: golden_version must be a whole number from 1")
+        elif version(it) > 1 and it.get("third") == HELD_OUT:
+            bad.append(f"{iid}: joined in version {version(it)}, so it cannot be "
+                       "in the held-out third")
     n = len(ids)
     fails = sum(it["expected"] == "fail" for it in data["items"])
     border = sum(it["borderline"] for it in data["items"])
@@ -269,8 +287,10 @@ def problems(data, label_text, images=True, blind_text=None):
     if 4 * border < n:
         bad.append(f"{border} of {n} borderline; a quarter needed")
     held = [it for it in data["items"] if it.get("third") == HELD_OUT]
-    if n >= 30 and not (n // 3 <= len(held) <= n // 3 + 1):
-        bad.append(f"{len(held)} items held out; a third of {n} needed")
+    n1 = sum(version(it) == 1 for it in data["items"])
+    if n >= 30 and not (n1 // 3 <= len(held) <= n1 // 3 + 1):
+        bad.append(f"{len(held)} items held out; a third of the {n1} version 1 "
+                   "items needed")
     for what, test in (("an expected fail", lambda it: it["expected"] == "fail"),
                        ("a borderline item", lambda it: it["borderline"]),
                        ("a planted item", lambda it: it["origin"] == "planted")):
@@ -330,6 +350,21 @@ def self_test():
     assert any("30 or more" in b for b in bad)
     assert any("a third" in b for b in bad)
     assert any("'maybe'" in b for b in bad)
+    # A later item may not be held out, and the held-out share counts
+    # version 1 items only.
+    base = {"class": "icon", "qualities": [3], "expected": "fail",
+            "borderline": True, "origin": "planted",
+            "plant": {"kind": "flatten", "breaks": 3}, "source": "README.md"}
+    many = [dict(base, id=f"i{k}", image=f"images/i{k}.png",
+                 third=3 if k < 10 else 1) for k in range(30)]
+    many += [dict(base, id=f"j{k}", image=f"images/j{k}.png", golden_version=2,
+                  third=1 + k % 2) for k in range(12)]
+    form = "\n".join(f"| {it['id']} | 3. Painted or rendered icons | fail |  |"
+                     for it in many)
+    assert problems({"items": many}, form, images=False) == []
+    many[-1]["third"] = 3
+    bad = problems({"items": many}, form, images=False)
+    assert any("cannot be in the held-out third" in b for b in bad)
     card = Image.new("RGB", (60, 40), (30, 20, 60))
     ImageDraw.Draw(card).rectangle((20, 10, 39, 29), fill=(240, 200, 80))
     sunk = np.asarray(sink(card, [20, 10, 40, 30], 0.35)).astype(float)

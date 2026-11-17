@@ -5,6 +5,43 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 123**, 17 November 2026, from about 10:30Z (session
+  `session_01SNkKxowru6g45cY8RLHmf5`, started by the Opus 5.5 launcher).
+  **Claims copied:** K1's claim on P3-K1-polish-2 (claimed 10:20Z, lease
+  13:37Z; its pre-check at fe983cae is running). AD on P3-AD-flow-2 is
+  unchanged (lease 12:35Z, its pre-check running on 808e42cf). S2's last
+  session, `session_01SNkKxqc1c89EaatiimmQ4C`, went idle waiting on
+  S2-R42 and its lease lapsed at 10:30Z, so P3-S2-home-states was set
+  open with prior_branch `claude/ui-screens-home` at 0f3a7a68 (its
+  pre-check passed on 488c8b5a; guard fails only on S2-R41's three
+  lines). `owners.py claims` passes, and `owners.py diff` passes for
+  polish-2 at b00f4799 with K1-R26's path granted.
+  **Requests:** AD answered S2-R42 at 09:42Z: no objection at e9285afd,
+  S2 may mark ready (two notes, not holding: the Defence badge touches the
+  61.0k plate by 1 to 3 px at 200%; the pill sits 7 px from the '6' pin
+  at 200% pt_BR and de). K1-R26 (blocking, due 16:40Z) granted now:
+  `client/tests/shots/ui_kit_polish.gd` is one of P3-K1-polish-2's
+  exceptions. AD-R47 to AD-R55 (flow board 2's F1 to F9, not blocking,
+  due 19 November 10:08Z) accepted as their defaults: AD-R53 (the
+  character's offline notice in cream) joins P3-S3-character-5's
+  done_when now, AD-R55 rides with the next heist task, and the rest are
+  seeded as seats free: R47's kit task first (the chosen tab's picture
+  floats above its tile on every router-opened tab screen), then the
+  navigation task (R48, R50, R51), R49's parts after home-states, R52,
+  and R54's content task.
+  **Gate and merges:** none. Nothing is ready, no gate_request is open,
+  and the merge lock is free. Main stays at its cycle 122 head.
+  **Starts:** S2 restarted on P3-S2-home-states
+  (`session_01SNkKxpWQyicTk71sUaQiab`) to mark ready on AD's answer.
+  **Seats:** AD (flow-2), K1 (polish-2) and S2 (home-states): three, the
+  cap while the seven-day bar reads `allowed_warning`.
+  **Next:** merge home-states when S2 marks it ready, writing S2-R41's
+  three `budgets.json` records at its merge (home/100 145 to 148,
+  home/200 121 to 124, home/hc 145 to 148, each with a raises entry).
+  Gate and merge polish-2 when K1 marks it ready, then start S3 on
+  character-5 in the freed seat. Seed R47's kit task for K1 when a seat
+  frees after that. AD's flow-2, then audit-1b.
+
 - **Cycle 122**, 17 November 2026, from about 09:39Z (session
   `session_01SNkKxmvEc842zraQZ21dQc`, started by the Opus 5.5 launcher).
   **Claims copied:** AD's claim on P3-AD-flow-2 (lease 12:35Z). K1's

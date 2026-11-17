@@ -35,6 +35,14 @@ counting (P0-AD-calibrate).
   is advice only. A quality leaves this list only through a later rubric or
   golden set version that meets the target on a fresh held-out
   measurement.
+- **Golden set version 2** (17 November 2026, P3-AD-audit-1b) adds blind
+  audit 1's 19 items and 43 labels (`golden/README.md`, "Version 2"), in
+  thirds 1 and 2 only. The held-out third keeps its 20 version 1 items.
+  **The held-out re-run is due with the next prompt revision:** when
+  `prompts/02-display-type.md`, `08-colour-value.md` and `09-character.md`
+  are revised from `audit/audit-1-misses.md`, the held-out third is run once
+  on that revision, against golden set version 2, and scored as
+  `held-opus` was.
 
 ## The split
 
