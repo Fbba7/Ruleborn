@@ -58,6 +58,9 @@ var versus := 0
 ## The spend tapped once, by its key: the next tap on it spends.
 var confirm := ""
 var clock: Callable = func() -> int: return int(Time.get_unix_time_from_system() * 1000)
+## The roster as the player left it (its stage, filter and scroll), carried
+## in the route args and handed back to it by the back button (AD-R51).
+var roster := {}
 ## The last success the stage celebrated, so a refresh does not repeat it.
 var _cheered := ""
 
@@ -65,7 +68,9 @@ var _cheered := ""
 func _ready() -> void:
 	App.ready(self)
 	controller = App.services.roster_flow
-	id = int(App.services.store.get_slice(AppState.ROUTE)["params"].get("id", 0))
+	var params: Dictionary = App.services.store.get_slice(AppState.ROUTE)["params"]
+	id = int(params.get("id", 0))
+	roster = params.get("roster", {})
 	_build()
 	App.services.store.changed.connect(_on_changed)
 	_refresh()
@@ -115,10 +120,9 @@ func _build() -> void:
 	forms.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var bottom := HBoxContainer.new()
 	bottom.add_theme_constant_override("separation", UI.px(8))
-	# Back to the roster: the kit's round back button, named for a screen
-	# reader, in the lowest row as §21.1 keeps it.
-	bottom.add_child(KitControls.icon_button("generalui/back", Strings.t("HOME_ROSTER"),
-		func() -> void: App.services.router.go(&"roster"), "parchment", 56.0))
+	# Back to the roster: the kit's back button, as on every sub-screen
+	# (AD-R50), first in the lowest row as §21.1 keeps it.
+	bottom.add_child(_back())
 	actions = UI.row(-1.0, true)
 	actions.alignment = FlowContainer.ALIGNMENT_CENTER
 	actions.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -167,8 +171,9 @@ func _refresh() -> void:
 	var slice: Dictionary = App.services.store.get_slice(RosterState.ROSTER)
 	var words: Dictionary = App.services.store.get_slice(WorkshopState.WORKSHOP)["words"]
 	var c := RosterPresenter.character(slice, id, clock.call(), words)
+	RosterScreen.plain(status_label)
 	if c["error"] != "":
-		UI.set_status(status_label, "alarm", c["error"])
+		RosterScreen.failed(status_label, str(slice["error"]), c["error"])
 	elif c["missing"]:
 		UI.set_status(status_label, "alarm", Strings.t("CHARACTER_MISSING"))
 	elif c["said"] != "":
@@ -854,9 +859,23 @@ func _stand(kind: String, c: Dictionary, slice: Dictionary, words: Dictionary) -
 			var to: int = ids[posmod(at + step, ids.size())]
 			var b := KitControls.icon_button("hud/prev" if step < 0 else "hud/next",
 				Strings.t("CHARACTER_PREVIOUS" if step < 0 else "CHARACTER_NEXT", str(named.get(to, ""))),
-				func() -> void: App.services.router.go(&"character", {"id": to}), "gold_round", 48.0)
+				func() -> void: App.services.router.go(&"character", {"id": to, "roster": roster}), "gold_round",
+				48.0)
 			b.set_meta("item", "step:%d" % step)
 			StageHeroSkin.on_stage(top, b, Control.PRESET_CENTER_LEFT if step < 0 else Control.PRESET_CENTER_RIGHT)
+
+
+## ScreenNav's back button to the roster (AD-R50), handing the roster back
+## the stage, filter and scroll it was left with (AD-R51). ScreenNav's takes
+## no route args (S3-R37), so its last handler, the router's go to the
+## roster, is swapped for one that carries them; the kit's own handlers
+## before it (the tap's haptic) stay.
+func _back() -> Button:
+	var b := ScreenNav.back_button(&"roster")
+	var handlers := b.pressed.get_connections()
+	b.pressed.disconnect(handlers[-1]["callable"])
+	b.pressed.connect(func() -> void: App.services.router.go(&"roster", {"roster": roster}))
+	return b
 
 
 ## A spend's button on `kind`: the first tap shows the price to confirm; the

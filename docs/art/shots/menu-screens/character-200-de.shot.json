@@ -48,20 +48,20 @@
    ]
   },
   {
-   "name": "back 6: Aufstellung",
+   "name": "back 6: Zurück",
    "rect": [
     28.17,
-    668.42,
-    60.67,
-    60.67
+    672.75,
+    52.0,
+    52.0
    ]
   },
   {
    "name": "up 7: Skyskipper: Auf Stufe 4, 200 Essenz",
    "rect": [
-    97.5,
+    88.83,
     630.5,
-    264.33,
+    273.0,
     136.5
    ]
   }
