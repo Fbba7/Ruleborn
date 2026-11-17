@@ -18,16 +18,32 @@ signal rewarded
 const OUTCOME := {"Clean": ["RESULT_CONDITION_CLEAN", "1.0", "1.0"], "Loud": ["RESULT_CONDITION_LOUD", "0.7", "0.8"],
 	"Partial": ["RESULT_CONDITION_PARTIAL", "0.4", "0.5"], "Foiled": ["RESULT_CONDITION_FOILED", "0", "0"]}
 
-## Each reward and its material, as key frame 03: the Starlight haul on
-## parchment and wider, the other two on glass.
-const REWARDS := [["starlight", "parchment"], ["essence", "glass"], ["renown", "glass"]]
+## Each reward's tile: all three on the kit's parchment, as the design's
+## still 07 has them, so the three totals, one rank, show the one gold finish
+## with its ink outline and hard drop on a like ground (gate, Display type at
+## 200% text). The kit's `reward_gold` and `reward_green` are its gold and
+## green button faces, which would rival Raid again, so the plain parchment
+## stands for the edged tiles. Starlight's tile stays the wider one.
+const REWARDS := [["starlight", "parchment"], ["essence", "parchment"], ["renown", "parchment"]]
 ## How many of the crew's faces the rest card shows, apart and larger than
 ## key frame 03's stack (gate, Character presence), and how large, in points.
 const FACES := 3
 const FACE_POINTS := 52.0
+## The crew member on the Starlight tile's corner at normal text: the reward
+## framed with character art (report.md's Character presence).
+const CARRIER_POINTS := 34.0
 ## The outcome's medal beside its title, in points.
 const MEDAL_POINTS := 34.0
 const TITLE_POINTS := 40.0
+## With large text, the condition's prose and the alarm line under the
+## totals in points and weight (gate, Hierarchy at pt_BR 200%), and
+## Starlight's total LEAD times the others' (key frame 03-result_text200's
+## "1.288"): by size, as the kit has no darker parchment (kit-spec section 1)
+## and on its glass the gold totals sank (Display type, `24cc4d7c`).
+const PROSE_POINTS := 14.0
+const ALARM_POINTS := 13.0
+const PROSE_WEIGHT := 500
+const LEAD := 1.5
 ## The reward's tier (the kit Motion's) for each outcome that pays.
 const TIERS := {"Clean": "epic", "Loud": "rare", "Partial": "common"}
 ## The pause before the reward begins, in seconds.
@@ -86,6 +102,9 @@ var _ticks := 0
 var _peak := 0
 var _crew_end: Array = []
 var _clock := 0.0
+## The totals drawn in the kit's baked numerals, each with its finish
+## (`ResultFit.bake_totals`).
+var _totals: Dictionary = {}
 var _verdict := {}
 ## F6: the page that scrolls, and the actions with the corner's clearance
 ## that end it, or the bar at the phone's foot they move to (_fit_actions).
@@ -127,12 +146,16 @@ func _ready() -> void:
 	paid.add_child(haul_tile)
 	var tiles: Array = []
 	for r: Array in REWARDS:
-		var t := KitCards.reward("resources/" + str(r[0]), "", Strings.t("RESULT_" + str(r[0]).to_upper()), "gold")
+		var words := Strings.t("RESULT_" + str(r[0]).to_upper())
+		var t := KitCards.reward("resources/" + str(r[0]), "", words, "gold")
 		UI.dress(t, str(r[1]))
 		t.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		t.size_flags_stretch_ratio = 1.3 if r[0] == "starlight" else 1.0
 		reward_labels[str(r[0])] = t.get_child(0).get_child(1)
 		ResultFit.tile_row(t)
+		if r[0] == "starlight":
+			ResultFit.lead_stack(t)
+			ResultFit.carrier(t, ResultFit.crew_kinds(_crew_end), CARRIER_POINTS)
 		tiles.append(t)
 	# Side by side, as the design's; one above another with large text.
 	reward_row = KitLayout.columns(tiles, 8)
@@ -152,11 +175,18 @@ func _ready() -> void:
 	# The lines under the tiles stand on the night with no plate.
 	for l: Label in [fee_label, detail_label, check_label]:
 		ResultFit.ink(l)
+	# With large text Starlight's total leads by size, its icon with it.
+	ResultFit.lead_fit(reward_labels["starlight"], roundi(UI.text_px(24.0) * LEAD), UI.text_px(24.0), INF)
 	# The totals as the home's display figures: the lead deep gold, the
 	# others cream (key frame 03's "1,288", "+46" and "+12").
 	_display(haul_label, "starlight")
 	for k: String in reward_labels:
 		_display(reward_labels[k], "starlight" if k == "starlight" else "cream")
+	# All of them in the kit's baked gold numerals (T3): the totals are one
+	# rank, so they share one treatment (outline, hard drop and gradient).
+	_totals[haul_label] = "num_gold"
+	for k: String in reward_labels:
+		_totals[reward_labels[k]] = "num_gold"
 	# With large text the haul comes first, under the time line, and the
 	# moment after it (key frame 03-result_text200_pt_BR; AD's S1-R24): the
 	# first screen shows what the heist paid.
@@ -245,11 +275,21 @@ func _hero() -> VBoxContainer:
 	subline_label = UI.label("", 14, true)
 	subline_label.theme_type_variation = "Secondary"
 	hero.add_child(subline_label)
+	if Settings.text_scale > KitLayout.SIDE_BY_SIDE_UP_TO:
+		ResultFit.prose(_prose(), PROSE_WEIGHT)
 	# The hero's words stand on the sunburst, unplated: inked by their size.
 	for l: Label in [kicker_label, grade_label, condition_label, subline_label]:
 		ResultFit.ink(l)
 	grade_label.add_theme_color_override("font_shadow_color", Color.TRANSPARENT)  # Outline for drop.
 	return hero
+
+
+## The condition and the time line with their points: the kit hero's at
+## normal text, under the totals' with large text (PROSE_POINTS).
+func _prose() -> Array:
+	if Settings.text_scale > KitLayout.SIDE_BY_SIDE_UP_TO:
+		return [[condition_label, PROSE_POINTS], [subline_label, ALARM_POINTS]]
+	return [[condition_label, 16.0], [subline_label, 14.0]]
 
 
 ## A reward's total as the home's figures ("Keeper 24", `Home.home_figure`):
@@ -289,14 +329,7 @@ func _moment_card() -> PanelContainer:
 	# Watching the moment is occasional, not one of the hand's frequent
 	# controls §21.1's thumb zone binds; it stays with its words.
 	watch.set_meta("frequent", false)
-	# The kit's size, grown to the icon and words (at 200% "3 s" clipped).
-	var inner := watch.get_child(0) as Control
-	var least := watch.custom_minimum_size
-	var grow := func() -> void:
-		var pad := Vector2(UI.px(12), UI.px(10))
-		watch.custom_minimum_size = least.max(inner.get_combined_minimum_size() + pad)
-	inner.minimum_size_changed.connect(grow)
-	grow.call()
+	# The kit grows it to its icon and words, so "3 s" shows at 200% (S1-R23).
 	moment.add_child(watch)
 	var words := VBoxContainer.new()
 	words.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -335,17 +368,8 @@ func _rest_card() -> PanelContainer:
 	# The rings' own ink edges are the gaps (about 8 px between the gold
 	# bands at 960), so the rest line keeps two lines (AD's S1-R24).
 	faces.add_theme_constant_override("separation", 0)
-	for m: Variant in _crew_end:
-		if faces.get_child_count() >= FACES:
-			break
-		var kind := str((m as Dictionary).get("kind", "")) if m is Dictionary else ""
-		# Played by role alone: the role's default kind, as the heist's
-		# portraits show it (FxPortrait, Cast.KIND).
-		if kind == "" and m is Dictionary and Cast.KIND.has(str((m as Dictionary).get("role", ""))):
-			kind = String(Cast.KIND[str((m as Dictionary)["role"])])
-		if kind == "" or not CreatureModel.manifest().has(kind.replace("_", "")):
-			continue
-		faces.add_child(_face(CreatureBust.of(kind, "", Color(0, 0, 0, 0))))
+	for kind: String in ResultFit.crew_kinds(_crew_end).slice(0, FACES):
+		faces.add_child(ResultFit.face(CreatureBust.of(kind, "", Color(0, 0, 0, 0)), FACE_POINTS))
 	faces.visible = faces.get_child_count() > 0
 	row.add_child(faces)
 	rest_label = UI.label("", 13, true)
@@ -356,21 +380,6 @@ func _rest_card() -> PanelContainer:
 	row.add_child(rest_label)
 	card.add_child(row)
 	return card
-
-
-## One crew member's face in the kit's ring, framed as the kit's avatars
-## frame theirs (KitSocial's), on the leather band.
-func _face(picture: Texture2D) -> KitRing:
-	var ring := KitRing.new()
-	ring.name = "Face"
-	ring.picture = picture
-	ring.band = Tokens.color("gold")
-	ring.ground = Tokens.paint("#4A3A9A")
-	ring.zoom = 1.2
-	ring.focus = Vector2(0.5, 0.42)
-	ring.custom_minimum_size = Vector2.ONE * UI.px(FACE_POINTS)
-	ring.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	return ring
 
 
 ## The plain result's bar at the phone's foot (key frame 03): Home in the
@@ -475,6 +484,7 @@ func _build_world(heist: Dictionary) -> void:
 
 func _process(delta: float) -> void:
 	_clock += delta
+	ResultFit.bake_totals(_totals)
 	if world_view != null and not Settings.reduced_motion:
 		# A slow sway of the island, the diorama on its stand.
 		world_view.sway(sin(_clock * 0.25) * 0.5)
@@ -497,8 +507,9 @@ func start_reward() -> Tween:
 	if reward_tween == null:
 		_end_reward.call_deferred()
 		return null
-	# KitNav.reward dresses the sunburst too (as `_ready` did); where the
-	# outcome keeps the plain night, the night goes back (S1-R32).
+	# KitNav.reward dresses the sunburst too (as `_ready` did), except under
+	# high contrast (S1-R32); where the outcome keeps the plain night, the
+	# night goes back.
 	if not _celebrates(_verdict):
 		RbBox.dress(get_node("Sky") as Control, "night", 0)
 	_lift_reward()
@@ -507,11 +518,11 @@ func start_reward() -> Tween:
 
 
 ## A heist that paid turns the night to the sunburst; a foiled or refused one
-## keeps the plain night (§23.2: "Celebrate or learn"), and so does high
-## contrast, as key frame 03-result_hc: no rays behind the words (AD's S1-R24).
+## keeps the plain night (§23.2: "Celebrate or learn"). Under high contrast
+## the kit keeps it plain too, as key frame 03-result_hc: no rays behind the
+## words (AD's S1-R24; the kit's since S1-R32).
 func _celebrates(v: Dictionary) -> bool:
-	return v.get("ok", false) and str(v.get("grade", "")) in ["Clean", "Loud", "Partial"] \
-			and not Settings.high_contrast
+	return v.get("ok", false) and str(v.get("grade", "")) in ["Clean", "Loud", "Partial"]
 
 
 ## Motion's reward layer is `top_level`, so its z of 10 does not add to the
@@ -535,7 +546,7 @@ func _lift_reward() -> void:
 ## the Starlight number, else the haul's, so no coin hides the roll (AD's D).
 func _reward_mark() -> Control:
 	var number := (reward_labels["starlight"] as Label) if reward_row.visible else haul_label
-	return number.get_parent().get_child(0) as Control
+	return ResultFit.tile_of(number).get_child(0).get_child(0) as Control
 
 
 ## What the coins bring: the split's Starlight, else the haul, else 0.
@@ -613,6 +624,11 @@ func _show_rewards(v: Dictionary) -> void:
 	for kind: String in reward_labels:
 		(reward_labels[kind] as Label).set_meta("to", int(v.get(kind, 0)))
 	_count_rewards(1.0)
+	# The totals baked at their final words first, so the rows are measured
+	# as they are drawn (AD's objection H).
+	ResultFit.lead_fit(reward_labels["starlight"], roundi(UI.text_px(24.0) * LEAD), UI.text_px(24.0),
+		get_viewport_rect().size.x)
+	ResultFit.bake_totals(_totals)
 	ResultFit.reward_rows(reward_row, reward_labels, get_viewport_rect().size.x)
 	var fee := int(v["fee"])
 	var back := int(v.get("fee_returned", 0))
@@ -829,8 +845,8 @@ func _fit_actions() -> void:
 		await get_tree().process_frame
 	var page := _ending[0].get_parent() as Control
 	if Settings.text_scale > 100 and reward_row.visible and page == _foot:
-		ResultFit.hero_shrink([[kicker_label, 14.0], [grade_label, TITLE_POINTS], [condition_label, 16.0],
-			[subline_label, 14.0]], reward_labels.values(), _ending[0])
+		ResultFit.hero_shrink([[kicker_label, 14.0], [grade_label, TITLE_POINTS]] + _prose(),
+			reward_labels.values(), _ending[0])
 	if is_inside_tree() and page != _foot and page.get_combined_minimum_size().y > _scroll.size.y:
 		for c: Control in _ending:
 			c.reparent(_foot)
@@ -857,10 +873,10 @@ func _fit_laws() -> bool:
 	return true
 
 
-## The next raid's words wrapped, the button as tall as they are, when they
-## are wider than the room Home leaves it (large text, a long language); and
-## the raid above Home, the bar's width, when one of its words alone is
-## wider than that room. True when either changed.
+## The raid above Home, the bar's width, when one of its words alone is
+## wider than the room Home leaves it (large text, a long language); the
+## kit's action2 wraps its words between words and grows to them (S1-R15).
+## True when the bar changed.
 func _fit_raid() -> bool:
 	var again := _ending[0].find_child("Action", true, false) as Button
 	if again == null or again.has_meta("wrapped"):
@@ -868,48 +884,31 @@ func _fit_raid() -> bool:
 	var row := again.get_parent() as BoxContainer
 	if row == null:
 		return false
+	again.set_meta("wrapped", true)
 	# Less a margin of paper either side, so a long word does not meet the
 	# button's edge.
 	var pad := again.get_theme_stylebox("normal").get_minimum_size().x + UI.px(16)
-	# The rooms as the column will lay them out, the phone's width less its
-	# safe sides and the bar's padding, and that less Home's: measured rather
-	# than read from the layout, so the bar is fitted before its first frame
-	# and never shows unfitted.
-	var full := get_viewport_rect().size.x - 2.0 * UI.px(Tokens.number("size", "safe_side_points")) \
+	# The room as the column will lay it out, the phone's width less its
+	# safe sides, the bar's padding and Home's: measured rather than read
+	# from the layout, so the bar is fitted before its first frame and never
+	# shows unfitted.
+	var wide := get_viewport_rect().size.x - 2.0 * UI.px(Tokens.number("size", "safe_side_points")) \
 		- (row.get_parent() as Control).get_theme_stylebox("panel").get_minimum_size().x
-	var wide := full
+	var changed := false
 	for c: Control in row.get_children():
 		# Large text: Home as its icon on a square beside the raid, named
 		# aloud, in every language, as key frames 03-result_text200 and
 		# _pt_BR, so the raid leads the bar (board 4's objection E).
 		if c != again and c is Button and Settings.text_scale > 100:
 			ResultFit.home_square(c as Button)
+			changed = true
 		if c != again:
 			wide -= c.get_combined_minimum_size().x + row.get_theme_constant("separation")
-	var words := again.find_children("*", "Label", true, false)
-	var upright := not ResultFit.words_fit(words, wide - pad)
-	if upright:
+	if not ResultFit.words_fit(again.find_children("*", "Label", true, false), wide - pad):
 		row.vertical = true
 		row.move_child(again, 0)
-		wide = full
-	var lines := 0.0
-	var wraps := false
-	for l: Label in words:
-		var n := ResultFit.lines(l, wide - pad)
-		wraps = wraps or n > 1
-		lines += n * l.get_theme_font("font").get_height(l.get_theme_font_size("font_size"))
-	if not wraps and not upright:
-		return false
-	again.set_meta("wrapped", true)
-	for l: Label in words:
-		l.autowrap_mode = TextServer.AUTOWRAP_WORD
-	# The words' box (KitControls.action2's, over the whole button) in from
-	# either side, so they wrap within the room.
-	for v: Control in again.get_children():
-		v.offset_left = pad / 2.0
-		v.offset_right = -pad / 2.0
-	again.custom_minimum_size.y = maxf(again.custom_minimum_size.y, lines * 1.1 + UI.px(12))
-	return true
+		changed = true
+	return changed
 
 
 ## The verdict's line as the player reads it (F6): the check and what it

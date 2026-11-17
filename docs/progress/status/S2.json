@@ -4,29 +4,35 @@
   "branch": "claude/ui-screens-home",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P2-S2-home-4",
-  "task_state": "in_progress",
-  "claimed_at": "2026-11-16T09:35:00Z",
-  "lease_until": "2026-11-16T12:35:00Z",
-  "updated_at": "2026-11-16T11:28:00Z",
-  "expected_next_update_by": "2026-11-16T12:13:00Z",
+  "task_id": "P3-S2-home-states",
+  "task_state": "working",
+  "claimed_at": "2026-11-17T10:50:00Z",
+  "lease_until": "2026-11-17T13:50:00Z",
+  "updated_at": "2026-11-17T11:20:00Z",
+  "expected_next_update_by": "2026-11-17T12:05:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "ade915de",
-    "next_step": "P2-S2-home-4: pre-check PASS on fc48b017. Waiting on AD's preview (S2-R31, default 14:58Z) and the lead on S2-R30; then the gate request at fc48b017.",
-    "at": "2026-11-16T11:28:00Z"
+    "last_green_sha": "a4090ec7",
+    "next_step": "f0092fee: AD's note 1 fixed (Defence disc drops 4 pt at large text). Main merged (8ac36c59). Running: check_all and the large-text fit cases; then guard, check_screens, pre-check, owners.py diff, gate_request, ready."
   },
   "precheck": {
-    "sha": "fc48b017bf55351211b9180f22356a8970e9f658",
+    "sha": "488c8b5a54e3a49a60f723436d20647395e8a0a2",
     "exit": 0,
-    "finished_at": "2026-11-16T11:25:39Z",
+    "finished_at": "2026-11-17T09:39:03Z",
     "summary": "All checks passed."
   },
   "gate_request": null,
   "ready_sha": null,
-  "stop_at": "2026-11-17T21:00:00Z",
+  "stop_at": "2026-11-18T21:00:00Z",
   "acks": [
-    "M13"
+    "M13",
+    "M28",
+    "M26",
+    "M25",
+    "M33",
+    "M43",
+    "M46",
+    "M50"
   ],
   "requests": [
     {
@@ -462,8 +468,176 @@
       "due": "2026-11-16T14:58:00Z",
       "default": "The stills stand as previewed: S2 sends the gate request at the pre-checked commit, and any objection becomes a follow-up task.",
       "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R32",
+      "from": "S2",
+      "to": "lead",
+      "ask": "Seen while covering home's empty state (M26): client/i18n/strings.csv has WEAVING_BAND_0 to WEAVING_BAND_6 (Quiet, Steady, Humming, Brimming, Strained, Cracking, Breaking) in English in every column, pt_BR, pt_PT, de and fr included, so home's strain pill reads 'Quiet' and 'Humming' in every language. The lead owns the strings: please have them translated, or say they are names kept in English on purpose. Repro: `FIT=1 TEXT=200 LOCALE=pt_BR EMPTY=1 OUTER=0 NOTICE=1 bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`.",
+      "files": [
+        "client/i18n/strings.csv"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-16T11:33:00Z",
+      "due": "2026-11-17T19:33:00Z",
+      "default": "The seven band names stay in English in every language, as now; home does not change.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R33",
+      "from": "S2",
+      "to": "AD",
+      "ask": "Preview P2-S2-home-5 (phase 2 exit, M25: the purse's counts in the kit's display type) on claude/ui-screens-home at eb40e8f4, before the gate runs (M10, M12, M23). Reproduce with `FIT=1 [TEXT=200] [LOCALE=<loc>] [CONTRAST=1] bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`: 100% en, 100% de, high contrast, 200% en, 200% pt_BR, 150% pt_BR. What changed: the purse's counts, the renown and (at 150% and 200%) the strain card's share are in the kit's baked numerals (num_white, T3: gradient fill, thick ink stroke, hard drop) where the purse's row fits them at full size, with the words after them ('k', ' mil') in live type beside them; that is en and fr at 100% and 200% and every language at 150%. In de, pt_BR and pt_PT at 100% and 200% the amounts stay live, as the baked figures run a fifth wider and broke the purse into three rows. The keeper's name and every live word of the figures take a heavier T2: an ink outline half again as thick as display_s's, and a hard drop set below it. Full hangs 8 points higher at 100%. Please rule on the look of the baked figures beside the live words, and on the live counts in de and pt. Evidence and the 56 passing fit cases in docs/art/tracks/home-screen.md, Part 5.",
+      "files": [
+        "client/scripts/home.gd",
+        "client/scripts/home_parts.gd",
+        "docs/art/tracks/home-screen.md"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-16T21:55:00Z",
+      "due": "2026-11-17T01:55:00Z",
+      "default": "The stills stand as previewed: the gate runs on the pre-checked commit, and any objection becomes a follow-up task.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R34",
+      "from": "S2",
+      "to": "AD",
+      "ask": "Preview P2-S2-home-6 (phase 2 exit, M25, M33: home-5's advisory Display type fails at eb40e8f4) on claude/ui-screens-home at 4c242628 or later, before it is marked ready (M10, M12, M23). Reproduce with `FIT=1 [TEXT=200] [LOCALE=<loc>] [CONTRAST=1] bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`: 100% en, 100% de, 100% pt_BR, high contrast, 200% pt_BR, 200% de. What changed: (1) every headline count (the purse's three counts, the renown '1,460', the strain share '82%') is in the kit's gold baked numerals (num_gold, T3), not num_white, whose pale gradient read as a flat fill on the dark plates; the share is baked at every text size, over the band's name. (2) The baked counts shrink to fit (never under 78%) instead of going live, so German ('142,0 Tsd.', 80%) and Portuguese ('142,0 mil', 88% at 100%) keep the one treatment. (3) 'Keeper 24' over the starfield has a band of the plates' leather rim round its ink outline (outline at least 13% of its size), so the outline reads all round and the rim's heavier foot is the drop. Please rule on the gold figures, the smaller German counts and the title's rim. Evidence in docs/art/tracks/home-screen.md, Part 6.",
+      "files": [
+        "client/scripts/home.gd",
+        "client/scripts/home_parts.gd",
+        "docs/art/tracks/home-screen.md"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-17T01:18:00Z",
+      "due": "2026-11-17T03:30:00Z",
+      "default": "The stills stand as previewed: S2 marks ready on the pre-checked commit, the gate runs, and any objection becomes a follow-up task.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R35",
+      "from": "S2",
+      "to": "K1",
+      "ask": "For K1, through the lead (not blocking home-6). The kit's baked numerals lose their stroke, drop and gradient when drawn small: the gold glyphs are 210 px tall, home's counts at 100% text draw them about 18 px tall, and every kit page imports with mipmaps off (client/ui/art/kit_*.webp.import, mipmaps/generate=false), so a glyph at under a tenth of its size is sampled, not averaged. That was the gate's Display type fail on home at 100% (verdicts/P2-S2-home-6/e674b614.json: 'flat gold fills ... no ink outline, no hard drop and no gradient'). Ask: mipmaps on the numerals' pages (kit_3.webp and kit_3_hc.webp at least) and TEXTURE_FILTER_LINEAR_WITH_MIPMAPS on KitNumerals.Row, checking texture bytes against tools/ui_bake/budgets.json. Home draws its own stroke, drop and banded gradient from the same glyphs meanwhile (HomeParts.InkedRow, home-screen.md Part 6), which it can drop or keep once the kit's are sharp.",
+      "files": [
+        "client/ui/art/kit_3.webp.import",
+        "client/ui/art/kit_3_hc.webp.import",
+        "client/ui/kit_numerals.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T03:10:00Z",
+      "due": "2026-11-18T12:00:00Z",
+      "default": "No kit change: home keeps HomeParts.InkedRow; other screens that draw KitNumerals small stay as they are.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R36",
+      "from": "S2",
+      "to": "AD",
+      "ask": "For AD, through the lead. Preview P3-S2-home-states on claude/ui-screens-home at 4797b5c3 (the stills will be re-shot on the ready sha, same code), before it is marked ready (M10, M12, M23). New in the key frame's state: Lantern Vale locked (the map's plate 'Opens at Keeper 28', left of the Heart) and the Crew tab's idle count '4'; the Defence badge '2' as before. Check them clear of the pins and the side buttons (board 3's objection B) at 100% and 200% text in en, pt_BR and de, and in high contrast. Reproduce with `FIT=1 [TEXT=200] [LOCALE=<loc>] [CONTRAST=1] bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`. Why there is no shield timer and no counts on Laws, Heist, Friends and Shop: docs/art/tracks/home-screen.md Part 7.",
+      "files": [
+        "client/tests/shots/universe_home.gd",
+        "client/scripts/home.gd",
+        "client/scripts/home_parts.gd",
+        "docs/art/tracks/home-screen.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T07:40:00Z",
+      "due": "2026-11-17T16:00:00Z",
+      "default": "The stills stand as previewed: S2 marks the task ready on its own checks (all 57 fit cases 'fit ok', draw calls within the records), and the gate judges them.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R37",
+      "from": "S2",
+      "to": "lead",
+      "ask": "Confirm: no shield timer on home. The task asks for an active shield with the Defence timer '5 h 12 min' (the key frame 01-home shows it). The design document overrules the frame: its table of key-frame changes, row 'Home shield', says 'No timers on home; 12.3's protection said in words on the defence screen while it lasts; shields are never sold', and the home's rules say 'no timers on the home screen'. The design outranks the task, so S2 built no timer.",
+      "files": [
+        "client/scripts/home.gd",
+        "docs/art/tracks/home-screen.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T07:40:00Z",
+      "due": "2026-11-17T16:00:00Z",
+      "default": "No timer on home; the shield's protection is said in words on the defence screen (another task).",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R38",
+      "from": "S2",
+      "to": "lead",
+      "ask": "For the lead, who owns client/world/universe_pins.gd (no task in flight). The key frame's locked plate reads 'Lantern Vale' over 'Opens at Keeper 28' on a cream plate like the other pins; home's locked plate is the map's dark plate with the lock and the opening level only. Ask: a follow-up task (S2 or whoever holds the map) to give the locked plate the realm's name over the opening level, as the frame has it.",
+      "files": [
+        "client/world/universe_pins.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T07:40:00Z",
+      "due": "2026-11-17T16:00:00Z",
+      "default": "The plate stays as it is: the lock and 'Opens at Keeper 28', no realm name.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R39",
+      "from": "S2",
+      "to": "lead",
+      "ask": "Which store slice should give the counts on Laws, Heist, Friends and Shop (the key frame shows Laws 1, Heist 2, Friends 1, Shop 1, Season 3)? The store holds none: no unread laws, no ready heists, no friend requests, no counted shop offer, and the season track says only whether a reward can be claimed (Season shows '!'). S2 built the Crew tab's idle count (the design's idle-worker badge) and kept Defence's raid count; it made up no number.",
+      "files": [
+        "client/scripts/home.gd",
+        "client/scripts/home_parts.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T07:40:00Z",
+      "due": "2026-11-17T16:00:00Z",
+      "default": "Home shows only the counts the store holds (Defence raids, Season '!', Crew idle); each other count comes with the task that adds its source to the store.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R40",
+      "from": "S2",
+      "to": "lead",
+      "ask": "For the lead, who owns client/world/universe_pins.gd (no task in flight). At 200% text (en, pt_BR, de; FIT still 'fit ok') the locked realm's plate 'Opens at Keeper 28' finds no place within reach of Lantern Vale's rim (the island sits by the left side buttons, and the plate at 200% is about as wide as the free band) and is hidden, so the locked realm reads only as a dark, bare island: carried by colour alone, which the task forbids. The realms' pins shrink to their level chips there; the locked plate has no smaller form. Ask: a follow-up task on universe_pins.gd giving the locked plate a short form (the lock and '28' on the same dark pill) that it takes before it hides, as the realm pins do (`_shape`). Reproduce: `FIT=1 TEXT=200 [LOCALE=pt_BR|de] bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`.",
+      "files": [
+        "client/world/universe_pins.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T07:55:00Z",
+      "due": "2026-11-17T16:00:00Z",
+      "default": "The plate stays as it is: at 200% text it hides where it finds no room, and the locked state shows at 100% and 150% only (home-screen.md Part 7 says so).",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R41",
+      "from": "S2",
+      "to": "lead",
+      "ask": "Record home's draw calls in tools/ui_bake/budgets.json (K1's file, written at the merge as for S2-R17 and S2-R30) when P3-S2-home-states merges: home/100 145 -> 148, home/200 121 -> 124, home/hc 145 -> 148. Measured with `python3 tools/ui_bake/budget_shots.py --only home/100,home/200,home/hc` on e9285afd (unchanged from ad6c25e7); textures and words below 4.5:1 (0) pass their records; still 2 under §21.3's cap of 150. The calls are the states the task adds to the fixture, which the records never saw: the Crew tab's count badge costs 3 (KitTabs' own badge, KitStatus.badge: 146 with OUTER=6 against 143 with the badge taken out); Lantern Vale's locked plate, drawn instead of a sixth realm pin, costs 2 at 100% (148 against 146; its name, S2-R38, batches with its words); at 200% the plate used to hide and now shows its short form (S2-R40), 3 calls (124 against 121 on 4797b5c3). A cheaper badge (drawn in the tab row's batch) would be K1's.",
+      "files": [
+        "tools/ui_bake/budgets.json"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-17T07:47:00Z",
+      "due": "2026-11-17T14:30:00Z",
+      "default": "Approved as for S2-R17 and S2-R30: the lead records home/100 148, home/200 124 and home/hc 148 with a raises entry when it merges P3-S2-home-states; S2 marks ready with guard.sh failing only on those three draw-call lines, said in the handoff.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R42",
+      "from": "S2",
+      "to": "AD",
+      "ask": "For AD, through the lead, following S2-R36 (answered in cycle 119: AD previews the commit S2 names once the plate changes under S2-R38 and S2-R40). The commit to preview is now e9285afd on claude/ui-screens-home (ad6c25e7 plus your S2-R36 note 1: the plate keeps the 16 pt side gutter, now about 24 pt from the left edge at 100%). Since 4797b5c3 the locked plate reads 'Lantern Vale' over the lock and 'Opens at Keeper 28' on the map's dark pill, and at 200% text, where that finds no room, it shows the lock and '28' on the same pill instead of hiding. Check, as in S2-R36, at 100% and 200% text in en, pt_BR and de, and in high contrast: the Crew tab's '4', the Defence badge '2' and the plate clear of the pins and the side buttons (board 3's objection B), nothing by colour alone. Reproduce with `FIT=1 [TEXT=200] [LOCALE=<loc>] [CONTRAST=1] bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`. Detail: docs/art/tracks/home-screen.md Part 7. Now blocking (S2, 2026-11-17T09:46:00Z): AD's preview is in the task's done_when, and every other ready check passes on 488c8b5a, so S2 waits on this alone and ends its session as the protocol says. When AD answers, or at 16:00Z on the default, the lead restarts S2 to merge the integration branch, rerun the checks and mark ready.",
+      "files": [
+        "client/world/universe_pins.gd",
+        "client/tests/shots/universe_home.gd",
+        "client/scripts/home_parts.gd",
+        "docs/art/tracks/home-screen.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T07:52:00Z",
+      "due": "2026-11-17T16:00:00Z",
+      "default": "As S2-R36's: if AD has not answered by 16:00Z, the stills stand and S2 marks ready on its own checks; the gate judges them.",
+      "escalate_to": "lead"
     }
   ],
   "answers": [],
-  "next_step": "AD previews home-4 (S2-R31) and the lead answers S2-R30; then S2 runs the pre-check and sends the gate request (home at 200% text, pt_BR)."
+  "next_step": "Blocked on S2-R42 alone (AD's preview of e9285afd; due 16:00Z; default: the stills stand). Everything else is green on 488c8b5a: pre-check PASS (09:39Z, recorded), check_all PASS, check_screens OK, owners.py diff OK, 57 of 57 fit ok on e9285afd; guard fails only on the three S2-R41 lines (148/124/148, approved in cycle 120, the lead records them at merge). On restart: act on AD's notes if any; merge the integration branch (clean at 44c43c4f; only S1-R37's budgets.json entry touches a shared file); the setup line, bash client/build.sh, check_all, guard and the pre-check on the merge (run_checks.sh start, wait, record); owners.py diff at ready_sha; set gate_request (home at 100% text: Hierarchy, Display type; home at 200% text, pt_BR: Hierarchy; home in high contrast: Hierarchy), ready_sha and task_state ready; push."
 }

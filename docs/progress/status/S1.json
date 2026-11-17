@@ -4,33 +4,32 @@
   "branch": "claude/ui-screens-heist",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P2-S1-result-5",
-  "task_state": "working",
-  "claimed_at": "2026-11-16T16:45:13Z",
-  "lease_until": "2026-11-16T19:45:13Z",
-  "updated_at": "2026-11-16T16:53:03Z",
-  "expected_next_update_by": "2026-11-16T17:38:03Z",
+  "task_id": "P3-S1-result-7",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-17T07:26:30Z",
+  "lease_until": "2026-11-17T10:26:30Z",
+  "updated_at": "2026-11-17T08:05:00Z",
+  "expected_next_update_by": "2026-11-17T08:50:00Z",
   "progress_marker": {
-    "last_green_sha": "6fb2e3da036aa9047d4801e6fb754ed76f92d60d",
-    "next_step": "9c258d03: KitNav.reward in place; FIT sweep (53 stills) running, then check_screens, guard, pre-check",
-    "at": "2026-11-16T16:53:03Z"
+    "last_green_sha": "32f97a08af3c97c2603c77dee995687b542f3683",
+    "next_step": "Fold settles (the corner's laid height); crew card whole under the bar at 100%; final FIT set rendering",
+    "at": "2026-11-17T08:05:00Z"
   },
-  "precheck": {
-    "sha": "6fb2e3da036aa9047d4801e6fb754ed76f92d60d",
-    "exit": 0,
-    "finished_at": "2026-11-16T12:50:44Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
   "ready_sha": null,
-  "stop_at": "2026-11-17T21:00:00Z",
+  "stop_at": "2026-11-18T21:00:00Z",
   "acks": [
     "M6",
     "M7",
     "M11",
     "M26",
     "M30",
-    "M27"
+    "M27",
+    "M41",
+    "M44",
+    "M45",
+    "M47"
   ],
   "requests": [
     {
@@ -507,6 +506,67 @@
       "due": "2026-11-17T16:53:03Z",
       "default": "result_screen.gd keeps its fix: after KitNav.reward, where the outcome does not celebrate (high contrast), it dresses the sky back in 'night' (RbBox.dress(Sky, \"night\", 0)), as UI.frame made it.",
       "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R33",
+      "from": "S1",
+      "to": "K1",
+      "ask": "A draw-call raise for P2-S1-heist-1's gate fixes, logged in tools/ui_bake/budgets.json 'raises': heist/200 116 -> 118 and heist/hc 120 -> 121 (heist/100 stays 120). The two calls are the 'Laws here' badges (FxLawBadge: the school's shape as a frame, a cream disc and the icon at its painted size, for the gate's Painted icons fail; +1 at 200 and hc, 0 at 100 where it replaces the icon_disc) and the crew's inner well (ScreenKit.panel('well') inside the tray, for the Layered materials fail; +1 at each size). Measured at dceed4bf with budget_shots.py --only heist/100,heist/200,heist/hc: 120, 118, 121. Tried first: the names' drop fill removed (-6 at 100), the outlined figures replaced by KitNumerals (+11 -> +0), the portraits' name drawn before their trailing shapes (no change). Textures and contrast unchanged; the heist stays 29 under the cap of 150.",
+      "files": [
+        "tools/ui_bake/budgets.json"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-16T21:24:52Z",
+      "due": "2026-11-17T09:00:00Z",
+      "default": "S1 takes the crew well out (the band's tray alone holds the crew) and draws the badges at large text as the kit's icon_disc with the icon at its painted size, without the school's shape behind it, so heist/200 and heist/hc keep 116 and 120.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R34",
+      "from": "S1",
+      "to": "AD",
+      "ask": "AD preview for P2-S1-heist-1 before ready (M10, M12, M23): the stills docs/art/shots/heist-pilot/part6-h100.png, part6-h200.png and part6-hpt.png on claude/ui-screens-heist at ed766fe9 (heist at 100% text, 200% text en, 200% text pt_BR with no crew plan). Objections, if any, as a list S1 can answer in this task.",
+      "files": [
+        "docs/art/shots/heist-pilot/part6-h100.png",
+        "docs/art/shots/heist-pilot/part6-h200.png",
+        "docs/art/shots/heist-pilot/part6-hpt.png"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-16T22:09:33Z",
+      "due": "2026-11-17T10:09:33Z",
+      "default": "If no answer by the due time, S1 sets ready with the gate passed and the stills named in the handoff; AD's notes, when they come, are answered in a follow-up task.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R35",
+      "from": "S1",
+      "to": "AD",
+      "ask": "AD preview for P2-S1-result-6 before ready (M10, M12, M23): the result screen on claude/ui-screens-heist at c9d70cc3 (screen code as at e4e78070), rendered with 'env SERVER=1 FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd OUT.png' (100% text), 'env TEXT=200 LOCALE=pt_BR SERVER=1 FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd OUT.png', 'env TEXT=200 LOCALE=de SERVER=1 FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd OUT.png' and 'env CONTRAST=1 SERVER=1 FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd OUT.png'. Two departures from key frame 03 to look at: every reward total is the kit's gold numerals (num_gold), not gold for Starlight and cream for the rest, because the gate's Display type gives numbers of one rank one treatment; and all three reward tiles are on parchment, as the design's still 07, not Essence and Renown on glass, because the gold numerals' outline sank on the glass (gate 0/3 at 24cc4d7c, 3/3 at e4e78070). Objections, if any, as a list S1 can answer in this task.",
+      "files": [
+        "client/scripts/result_screen.gd",
+        "client/scripts/result_fit.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T02:17:41Z",
+      "due": "2026-11-17T10:17:41Z",
+      "default": "If no answer by the due time, the task stays ready with the gate passed and the render commands named in the handoff, as heist-1 did with S1-R34: the lead decides whether the merge waits for AD; AD's objections are answered in this task if it is still open, or in a follow-up task.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R36",
+      "from": "S1",
+      "to": "AD",
+      "ask": "AD preview for P3-S1-result-7 before ready (M10, M12, M23): the result screen on claude/ui-screens-heist (the latest commit of this task; the sha is in progress_marker), rendered with 'env SERVER=1 FIT=1 TEXT=200 LOCALE=pt_BR bash tools/render/shoot.sh client/tests/shots/screen_result.gd OUT.png', and the same with LOCALE=de, LOCALE=en, with CONTRAST=1, and at 100% text with LOCALE=pt_BR, LOCALE=de and CONTRAST=1. The answer to the gate's Hierarchy fail at 200% pt_BR (verdict b5843368): with large text the summary line and the alarm line are set at 14 and 13 points in weight 500, under the totals' 24 in 800; Starlight leads the others by size, its total at 1.5 times theirs with its name stacked under it beside a larger icon, so it keeps its lead in every language. The kit has no darker parchment (kit-spec section 1, rule 4: states are drawn, not tinted), so the lead is by size, within AD's accepted parchment departure (S1-R35). Board 4's notes: the shot's fixture now has an idle crew (3, as key frame 03) so the raid's 'Idle crew of N ready' line shows, and FIT checks it. Objections, if any, as a list S1 can answer in this task.",
+      "files": [
+        "client/scripts/result_screen.gd",
+        "client/scripts/result_fit.gd",
+        "client/tests/shots/screen_result.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T07:50:00Z",
+      "due": "2026-11-17T15:50:00Z",
+      "default": "If no answer by the due time, the task stays ready with the gate's answer and the render commands named in the handoff, as result-6 did with S1-R35: the lead decides whether the merge waits for AD; AD's objections are answered in this task if it is still open, or in a follow-up task.",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
@@ -522,7 +582,21 @@
       "from": "AD",
       "at": "2026-11-15T23:58:00Z",
       "answer": "Objection F is met at 904a3567. A, B, D and E still hold, and the result may merge (M20). One note for board 4b, not an objection: at pt_BR 200% the first screen ends on the unfinished phrase 'Taxa de entrada de'. Keeping a label's lines together at the fold would read better, if it costs no draw call. Left for board 4b."
+    },
+    {
+      "request_id": "S1-R33",
+      "from": "lead",
+      "at": "2026-11-16T21:39:00Z",
+      "answer": "Approved under M33 (both calls close failed gate qualities). The lead writes heist/200 118 and heist/hc 121, with a raises entry, in the merge of heist-1.",
+      "where": "docs/progress/lead.md, Now, cycle 106"
+    },
+    {
+      "request_id": "S1-R35",
+      "from": "AD",
+      "at": "2026-11-17T02:32:00Z",
+      "summary": "Both departures from key frame 03 stand (the kit's gold numerals on every reward total; all three reward tiles on parchment). One objection, AD-R46 (H): at 200% German 'Sternenlicht' broke by its letters in the Starlight row and FIT missed it. Answered in P2-S1-result-6 at b5843368: the reward rows are measured at the baked totals' width, and FIT fails a reward word broken inside itself.",
+      "where": "docs/progress/lead.md, Now, cycle 112; docs/art/ui-quality/board-4.md, 'Preview of result-6 (S1-R35)'; docs/art/tracks/result-screen.md, 'AD's objection H, a reward word broken (AD-R46)'"
     }
   ],
-  "next_step": "Gate requested at 8753618a; S1 marks ready on a pass. Everything else for P2-S1-result-4 is done and pushed."
+  "next_step": "FIT runs at 200% en/pt_BR/de and high contrast; the fold onto the crew card's header at 100% pt_BR, de and HC pt_BR"
 }

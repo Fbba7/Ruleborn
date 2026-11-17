@@ -11,6 +11,10 @@ extends SceneTree
 ## renderer's speed, each frame saved whole (full_NNN.png) and cut to the
 ## hero and the reward tiles (crop_NNN.png). REDUCED records its
 ## reduced-motion form.
+##
+## IDLE is how many of the crew stand idle at home (board 4: the raid's
+## "Idle crew of N ready" line shown and checked), 3 by default as key
+## frame 03's; IDLE=-1 loads no roster, and the line hides.
 
 ## A recorded frame's length, in seconds.
 const STEP := 1.0 / 30.0
@@ -58,6 +62,9 @@ func _go() -> void:
 	elif state == "play":
 		start = {"workshop": {"id": "shot", "token": "shot", "seed": "shot"}}
 	App.services.store.dispatch(&"heist_started", start)
+	var idle := int(OS.get_environment("IDLE")) if OS.get_environment("IDLE") != "" else 3
+	if idle >= 0:
+		App.services.store.dispatch(&"roster_loaded", {"view": roster(idle)})
 	var verdict := RulebornReplay.validate(replay, PackedByteArray())
 	if OS.get_environment("SERVER") != "":
 		# SERVER: the server's settle answer as HeistController.settled reads
@@ -192,8 +199,16 @@ static func fit(screen: Control) -> Array[String]:
 			bad.append("%s %s: %.0f px of words in %.0f" % [l.get_path(), l.text, words, at.size.x])
 		if l.clip_text and words > at.size.x + 1.0:
 			bad.append("%s %s: cut, %.0f px of words in %.0f" % [l.get_path(), l.text, words, at.size.x])
+		var broken := broken_word(l)
+		if broken != "":
+			bad.append("%s %s: the word %s breaks inside itself" % [l.get_path(), l.text, broken])
 		var p := l.get_parent()
 		while p != null and not p is PanelContainer:
+			# Words drawn inside a button lie inside it: the kit grows the
+			# button to them (S1-R15's raid, S1-R23's "3 s").
+			if p is Button and not (p as Control).get_global_rect().grow(1.0).encloses(at):
+				bad.append("%s %s: %s outside its button %s" % [l.get_path(), l.text, at,
+					(p as Control).get_global_rect()])
 			p = p.get_parent()
 		if p != null and not (p as Control).get_global_rect().grow(1.0).encloses(at):
 			bad.append("%s %s: %s outside its panel %s" % [l.get_path(), l.text, at, (p as Control).get_global_rect()])
@@ -230,10 +245,22 @@ static func fit(screen: Control) -> Array[String]:
 			if result._ending[0].get_parent() == result._scroll.get_parent():
 				top = minf(top, result._scroll.get_global_rect().end.y)
 		for kind: String in result.reward_labels:
-			var tile := (result.reward_labels[kind] as Label).get_parent().get_parent() as Control
+			var tile := ResultFit.tile_of(result.reward_labels[kind])
 			if tile.get_global_rect().end.y > top + 1.0:
 				bad.append("reward %s: ends at %.0f px, under the first screen's %.0f" % [kind,
 					tile.get_global_rect().end.y, top])
+	# The raid's line, when a roster is loaded: how many of the crew stand
+	# idle, shown on the button (board 4).
+	var idle := ResultScreen.idle_crew()
+	var again: Control = null
+	if not result._ending.is_empty():
+		again = (result._ending[0] as Control).find_child("Action", true, false) as Control
+	if idle >= 0 and again != null and again.is_visible_in_tree():
+		var line := Strings.t("RESULT_IDLE_CREW", idle)
+		var shown := again.find_children("*", "Label", true, false).filter(func(l: Label) -> bool:
+			return l.text == line and l.is_visible_in_tree())
+		if shown.is_empty():
+			bad.append("raid: the line %s is not shown" % line)
 	# With the bar under the page that scrolls, the first screen ends on a
 	# whole line, never the tops of a line's letters or a card's sliver
 	# (AD's objection F: "Re-simulated by the server" at 200% in English).
@@ -243,6 +270,35 @@ static func fit(screen: Control) -> Array[String]:
 		if part > 1.0:
 			bad.append("fold: the page ends %.0f px into a line or card above the bar" % part)
 	return bad
+
+
+## The character screens' roster (ShotData's) with `idle` of its crew idle
+## and the rest of the idle ones resting.
+static func roster(idle: int) -> Dictionary:
+	var view := ShotData.roster()
+	var n := 0
+	for c: Dictionary in view["characters"]:
+		if str(c["state"]) == "idle":
+			n += 1
+			if n > idle:
+				c["state"] = "resting"
+	return view
+
+
+## The first word of `l` that wraps between its letters: one wider than the
+## room the label's lines have (AD's objection H, German's "Sternenlicht" as
+## "Sternenlich" over "t" at 200%), or "" when each word stands whole.
+static func broken_word(l: Label) -> String:
+	if l.autowrap_mode == TextServer.AUTOWRAP_OFF or l.clip_text:
+		return ""
+	var room := l.size.x - l.get_theme_stylebox("normal").get_minimum_size().x
+	var font := l.get_theme_font("font")
+	var font_px := l.get_theme_font_size("font_size")
+	var text := l.text.to_upper() if l.uppercase else l.text
+	for word: String in text.replace("\n", " ").split(" ", false):
+		if font.get_string_size(word, HORIZONTAL_ALIGNMENT_LEFT, -1, font_px).x > room + 1.0:
+			return word
+	return ""
 
 
 ## The integrator's cast of character models, until the app sets one: each

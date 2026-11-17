@@ -266,7 +266,8 @@ tools/
   # the agent program
   run_checks.sh                   the full checks on a separate worktree of one commit, detached; start, wait, result, record
   check_ci.py                     .github/workflows/checks.yml runs on every push and pull request, pinned, with every check
-  coord/                          the program's coordination tools: owners.py checks a change stays inside its task's files
+  coord/                          the program's coordination tools: owners.py checks a change stays inside its task's files;
+                                  cycle_needed.py tells a lead cycle whether it has work; archive.py moves finished work out
   # models and analyses
   economy_model/                  the day-by-day model §24 references but omits
   heist_harness/                  §19.27's simulation harnesses, built in v3.0's plan

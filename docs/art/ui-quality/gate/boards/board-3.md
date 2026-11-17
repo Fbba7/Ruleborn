@@ -556,3 +556,388 @@ and high-contrast pt_BR, all without the notice.
   the Heist capsule against the key frame's gold disc; the companion's
   yaw; the strain mark's cyan dot; Collect's shine; and the tight chips
   over the world art with the notice up at 200%.
+
+## Preview of home-5 (S2-R33)
+
+AD previewed P2-S2-home-5 at `eb40e8f4` on `claude/ui-screens-home` on
+16 November 2026. The task puts the purse's counts in the kit's display
+type: baked figures (`HomeParts.figures`) where the purse row holds them
+at full size, live words in the heavier display role (`HomeParts.inked`)
+where it does not. Each case was rendered with
+`FIT=1 [TEXT=150|200] [LOCALE=<loc>] [CONTRAST=1] bash tools/render/shoot.sh client/tests/shots/universe_home.gd`.
+
+**All 7 cases print "fit ok":** English, German and high contrast at
+100%, English, pt_BR and German at 200%, and pt_BR at 150%.
+
+**Ruling: the stills stand, and no objection is kept.** S2's default
+holds: S2 sends the gate request at the pre-checked commit.
+
+- **Baked figures beside live words.** In English at 100% and 200% the
+  three counts and the renown are baked in the kit's numerals: white,
+  with the ink outline and the hard drop. They sit beside live words
+  ("Humming", "Full", "Collect 3.4k", the goal card) that keep their
+  own roles. This is the split the kit draws: a figure is a count, and
+  a word is a label. The baked counts no longer read as flat cream. That
+  answers the advisory judges' note from round 3. At 200% the baked
+  "82%" over the live "Humming" reads as one block, figure over word.
+- **Live counts in German and Portuguese.** At 100% and 200% in de and
+  pt_BR the counts stay live ("142,0 Tsd.", "142,0 mil") in the heavier
+  display role. They are bold, white, outlined and dropped, and at
+  phone size they carry the same weight as the baked figures. They pass
+  display type. The trade is right: baked, the purse breaks into three
+  rows at 200% pt_BR, and a third row costs the realms' band more than
+  the numerals gain.
+- **High contrast.** The counts keep their outline and drop, and the
+  plates take the light rims. Hierarchy holds: Collect stays the one gold
+  primary.
+
+From left: English, German and high contrast at 100%.
+
+![100%: en, de, high contrast](board-3/r8-home-100.png)
+
+From left: English, pt_BR and German at 200%, then pt_BR at 150%.
+
+![large text: en 200, pt_BR 200, pt_BR 150, de 200](board-3/r8-home-large.png)
+
+The purse at phone size, from top: English 100% (baked), German 100%
+(live), pt_BR 150% (baked figures, live "mil"), pt_BR 200% (live) and
+English 200% (baked).
+
+![purse rows: en 100, de 100, pt_BR 150, pt_BR 200, en 200](board-3/r8-home-purse.png)
+
+### Notes, not holding
+
+- In de and pt at 100% and 200%, one header carries two numeral faces:
+  the renown is baked ("1.460", tracked wide) and the counts are live
+  (tight, heavier). Both are in display treatment, so the header still
+  reads as one family. If the kit gains a narrower set of baked numerals
+  later, every language could bake. That is a kit question for a later
+  pass, not home's.
+- At pt_BR 150% the baked figures are tracked wide and the live "mil"
+  after them is tight ("6 1 , 0 mil"). It reads as one amount at phone
+  size. A later pass could tighten the baked tracking a step in that
+  case.
+- The "Full"/"Voll"/"Cheio" chip straddles the bottom edge of the water
+  plate at large text, and its top edge at 100%. It sits as a badge and
+  covers no figure.
+- The notes carried from round 3 still stand.
+
+## Preview of home-6 (S2-R34)
+
+AD previewed P2-S2-home-6 at `36f017da` on `claude/ui-screens-home` on
+17 November 2026. The branch's head is now `ce03765a`. The commits since then merge main
+and the lead's branch, and on the client they change only
+`heist_hud.gd` and `heist_screen.gd`. `home.gd`, `home_parts.gd` and the
+kit's scripts are the same, so these stills hold at the new head too.
+
+The task does three things:
+
+- It puts every headline count in the kit's gold baked numerals
+  (`num_gold`, T3): the purse's three counts, the renown "1,460" and the
+  strain share "82%".
+- It shrinks baked counts to fit, never under 78% (`BAKED_LEAST`), rather
+  than switching them to live type.
+- It sets a band of the plates' leather rim round the ink outline of
+  "Keeper 24".
+
+Each case was rendered with
+`FIT=1 [TEXT=150|200] [LOCALE=<loc>] [CONTRAST=1] [NOTICE=1] bash tools/render/shoot.sh client/tests/shots/universe_home.gd`.
+The stills were then read at full resolution, at 2× to 6×. The answer to
+home-5 has a lesson: that preview let the counts stand, and the judge
+then failed them.
+
+**All 11 cases print "fit ok":**
+
+- At 100%: English, German, pt_BR, high contrast and high contrast pt_BR.
+- At 200%: English, pt_BR, German, high contrast German and pt_BR with
+  the notice.
+- At 150%: pt_BR.
+
+Every count stays baked in every case. No count falls back to live type.
+
+**Ruling: S2's three changes stand, and one objection is kept.** The
+objection is (a): the live words after the baked figures ("k", "Tsd.",
+"mil"). It goes to the lead as AD-R45, and S2 can fix it in this task.
+
+### S2's three questions
+
+- **The gold figures (Colour roles, Hierarchy): they stand.**
+  - Rubric quality 8 reserves gold for main actions as fills, rings and
+    marks (§21.8). The gold of the T3 finish is a type finish that the
+    kit bakes for counts (kit-spec.md section 2.2, T3, and K24, the
+    proof's loot count), and every count sits on a dark plate. No count is a
+    control, and nothing gold reads as a button. Collect is still the
+    only gold fill on the screen.
+  - The gradient fill now shows at phone size, light at the top and
+    deeper at the foot. That answers home-5's advisory note that the
+    counts read as "flat pale fills".
+  - In the grayscale squint (§21.10), Collect is the one large light
+    block at 100%, and at 200% in every language.
+  - At 200% English, "1,460" is about as tall as Collect's words, but it
+    is words on a dark plate, while Collect's gold plate is about six
+    times its area. Hierarchy holds.
+- **The smaller German and Portuguese counts: they stand.**
+  - At 100%, the German counts are baked at 80% and the pt_BR counts at
+    88%. The three counts in a row shrink together, so each screen
+    draws one treatment and one size.
+  - The renown and the counts now share one numeral face in every
+    language. That closes home-5's note about two faces in one header.
+  - At 200% German and at high contrast German, the counts are still
+    baked and still clear.
+- **The title's rim: it stands.** "Keeper 24", "Hüter 24" and
+  "Guardião 24" now show a ring all round at phone size: an ink line,
+  then the leather band, against the night. They no longer read as a
+  drop alone.
+  - Measured on the 100% English still, across the K's stem and the
+    letters' tops: the ink line is about 1 px and the leather band about
+    2 px. The ring is about 3 px (about 2 pt), over the 1.5-point floor.
+  - The ink alone is thinner than the leather. See the notes.
+
+### Objection, not depending on the screen's final shape
+
+**(a) The words after the baked figures echo below themselves, and they
+are cream beside gold figures.** This is quality 2, display type: one
+consistent heavy treatment for the count.
+
+- **The echo.** On a plate, `HomeParts.inked` sets the label's shadow
+  down by the outline plus the drop (`shadow_offset_y = outline + drop`),
+  with no shadow outline. The shadow is the bare glyph, thinner than the
+  stroked letter above it. It shows as a second, darker copy of the
+  letter, set below it with a gap: a ghost "k" under "142.0k", and
+  "Tsd." and "mil" doubled.
+  - It shows in every case: 100% and 200% en, de and pt_BR, at 150%, and
+    in high contrast.
+  - The baked figures beside these words have a tight drop that hugs
+    their stroke, so the two halves of one count look made two ways.
+  - The same branch draws a count that falls back to live type, so a
+    fallback would echo too. No count falls back in these stills.
+- **The colour.** The figures are now gold and the words after them stay
+  `cream`, so "142.0" and "k" read as two colours in one amount.
+- **The fix, in `HomeParts.inked`'s plated branch and in `figures()`:**
+  - Give the shadow an outline as thick as the stroke
+    (`shadow_outline_size = outline`), and set it down by the drop only
+    (`shadow_offset_y = drop`). The drop is then the stroke's own foot,
+    as the baked figures draw theirs.
+  - Give the "After" label the figures' gold: `gold` (#E9B65C), the
+    middle stop of the gold finish's gradient.
+- **The cost.** In home-5, a shadow outline cost one draw call per
+  label (home-screen.md, Part 5). Three suffix labels take home/100 from
+  143 to about 146 and home/200 from 118 to about 121, both under §21.3's
+  cap of 150.
+- **If the cap is hit:** turn the shadow off on those words (no drop,
+  the stroke only). On the dark plate an echo is worse than no drop.
+- **Done when:** the purse rows at 100% en, de and pt_BR and at 200% de
+  and pt_BR show no second copy of "k", "Tsd." or "mil" at 4×, the words
+  after the figures are gold, `FIT=1` still prints "fit ok", and the
+  draw calls stay at 150 or under.
+
+**M40 (does it depend on the screen's final shape?):** No. The fix is in
+how the count's words are drawn, wherever the count sits. A later layout
+change does not undo it or replace it. None of S2's three changes depends
+on the final shape either: they are type treatments.
+
+### The rest of board 3's list
+
+These are unchanged from home-5 and are judged on these stills.
+
+- **Layered materials (1):** the plates, the leather rims and the dock
+  are as in home-5. No change.
+- **Display type (2):** passes, except for objection (a).
+  - The baked gold counts and "82%" have a gradient fill, an ink stroke
+    and a hard drop.
+  - The title is outlined all round.
+  - The live labels ("Humming", the chips, Collect, the goal card) keep
+    their roles.
+- **Painted icons (3):** the currency icons, the side buttons and the
+  dock are as in home-5. No change.
+- **Hierarchy (6):** passes. Collect, or the full-width "einsammeln" and
+  "Coletar" in de and pt_BR, is the one primary in the squint at 100% and
+  200%.
+- **Colour roles (8):** passes, as ruled above. Gold fills are only
+  Collect and the chosen tab. Red is only the alarm marks and the Full
+  chip.
+- **Light (9):** unchanged.
+- **One art-direction idea (13):** the gold numerals bring home's counts
+  into the kit's numeral family, which the heist's loot count shares. It
+  reads as one game.
+- **Character (14):** the keeper's portrait is unchanged. Home-5's judge
+  passed it 3 of 3.
+- **High contrast:** the plates take their light rims, and the gold
+  counts stay legible on black. Hierarchy holds.
+
+From left: English, German, pt_BR and high contrast at 100%.
+
+![100%: en, de, pt_BR, high contrast](board-3/r9-home-100.png)
+
+From left: English, pt_BR and German at 200%, then high contrast German
+at 200%.
+
+![200%: en, pt_BR, de, high contrast de](board-3/r9-home-large.png)
+
+The purse at 2×, from the top: English 100%, German 100%, pt_BR 200%,
+German 200% and high contrast German 200%. Look under each "k", "Tsd."
+and "mil" for the echo (objection a), and compare the cream words with
+the gold figures.
+
+![purse rows at 2×: echo under the words after the figures](board-3/r9-home-purse.png)
+
+"Keeper 24" at 6×: the cream letters, the ink line, then the leather band.
+
+![Keeper 24 at 6×: ink line and leather rim](board-3/r9-home-name.png)
+
+### Notes, not holding
+
+- **The ink line inside the title's rim is about 1 px on the
+  540-wide still.** The leather band does most of the outline's work.
+  The ring reads as an outline at phone size. If a judge reads the name
+  as "rimmed, not inked", thicken the ink stroke by one step before the
+  rim, and the rim follows it.
+- **At 200% English, the counts are close to Collect's words in height.**
+  Hierarchy holds by Collect's plate and value. If the counts grow
+  later, keep them at most the height of Collect's words.
+- **AD missed the echo in the home-5 preview.** The live "mil" at pt_BR
+  150% had it then. It is recorded in AD.md, "Tried and failed".
+- The notes carried from home-5 and round 3 still stand, except home-5's
+  note about two numeral faces, which this task closes.
+
+## Preview of home-states (S2-R36)
+
+AD previewed P3-S2-home-states at `5d25f9cb` on `claude/ui-screens-home`
+on 17 November 2026, after the blind labels of audit 1 were pushed. That
+commit holds the new state of `4797b5c3`: Lantern Vale locked, the plate
+"Opens at Keeper 28" left of the Heart, and the Crew tab's idle count
+"4". The Defence badge "2" is unchanged. It does not yet hold S2-R38 (the
+realm's name on the plate) or S2-R40 (a short form at 200%), which the
+lead granted in this task. **AD previews the commit S2 names for those
+before ready.**
+
+Each case was rendered with
+`FIT=1 [TEXT=200] [LOCALE=<loc>] [CONTRAST=1] bash tools/render/shoot.sh client/tests/shots/universe_home.gd`
+at 540×1170 (1 px per pt), and read at 1× and at 4×.
+
+**All 7 cases print "fit ok":** English, pt_BR and German at 100% and at
+200%, and high contrast at 100%.
+
+**Ruling: board 3's objection B holds in every case. AD has no objection
+at this commit.** Three notes follow; none holds the task.
+
+### The checks
+
+- **The Crew tab's "4"** sits on the top right of the Crew icon, clear of
+  the Heist and Friends tabs, in every case. In high contrast it is
+  outlined.
+- **The Defence badge "2"** is clear of the Defence button's art and of
+  the Skyfield pin in every case. At 100% it sits about 5 px left of the
+  Skyfield plate. At 200%, where the pins shrink to their numbers, it is
+  about 35 px from the "4" pin.
+- **The locked plate at 100%** is clear of the Lab button and of every
+  pin. In English it sits about 10 px below the Lab button. In pt_BR
+  ("Abre no Guardião 28") and German ("Öffnet bei Hüter 28") it sits about
+  7 px below the LAB label and runs over the Heart island's left rim,
+  which is art, not a control. The lock is gold on the dark plate, and
+  the words are cream. High contrast keeps the same layout.
+- **At 200%** the plate is hidden in English, pt_BR and German, as S2-R40
+  reports. Lantern Vale is then a dark island with no pin and no lock.
+  It differs from the lit islands by value as well as hue, but nothing
+  says "locked". S2-R40's short form (the lock and "28") is the fix, and
+  the lead granted it.
+
+### Notes, not holding
+
+- **The locked plate sits about 6 px from the screen's left edge at
+  100%,** inside the 16 pt side gutter that the side buttons keep. With
+  the realm's name added (S2-R38) the plate grows. Keep its left edge at
+  16 pt or more, or anchor it under the island rather than at the
+  screen's edge.
+- **At 200% the Defence badge's top edge touches the foot of the
+  61.0k plate above it** (English, pt_BR and German). It is clear of the
+  gauge's fill, so this is a crowding note. If S2 moves the badge, drop
+  it 2 to 4 pt.
+- **German at 200%:** "3,4 Tsd. einsammeln" fills Collect from edge to
+  edge, and its icon is dropped. It fits and reads.
+
+English at 100%:
+
+![home-states, English 100%](board-3/r10-home-100.png)
+
+English at 200%: the plate is hidden.
+
+![home-states, English 200%](board-3/r10-home-200.png)
+
+The locked plate at 4×, English 100%: about 6 px from the left edge.
+
+![locked plate at 4×](board-3/r10-home-plate.png)
+
+## Preview of home-states, second look (S2-R42)
+
+AD previewed P3-S2-home-states at `e9285afd` on
+`claude/ui-screens-home` on 17 November 2026. That commit holds S2-R38
+(the plate reads "Lantern Vale" over "Opens at Keeper 28"), S2-R40 (at
+200% the plate becomes the lock and "28" on one dark pill) and AD's note
+1 on S2-R36 (the plate keeps the side buttons' gutter).
+
+Each case was rendered with
+`FIT=1 [TEXT=200] [LOCALE=<loc>] [CONTRAST=1] bash tools/render/shoot.sh client/tests/shots/universe_home.gd`
+at 540×1170 (1 px per pt), and read at 1× and at 4×.
+
+**All 8 cases print "fit ok":** English, pt_BR and German at 100% and at
+200%, and high contrast at 100% and at 200%.
+
+**Ruling: board 3's objection B holds in every case. AD has no objection
+at this commit.** Two notes follow; neither holds the task, and neither
+depends on the screen's final shape.
+
+### The checks
+
+- **The Crew tab's "4"** sits on the top right of the Crew icon, clear of
+  the Heist and Friends tabs, in all 8 cases. At 200%, where the tab
+  labels drop, it sits on the tab bar's top rule and stays clear. In high
+  contrast it is outlined.
+- **The Defence badge "2"** is clear of the Defence button's art and of
+  the Skyfield pin in every case.
+- **The locked plate at 100%** now starts about 24 px from the left edge,
+  outside the 16 pt gutter: AD's note 1 is met. With the name added it is
+  taller and sits about 6 px below the LAB label (English, pt_BR "Abre no
+  Guardião 28", German "Öffnet bei Hüter 28"), clear of the Lab button
+  and of every pin. It runs over the Heart island's left rim, which is
+  art, not a control.
+- **The short form at 200%** shows the lock and "28" on one dark pill in
+  English, pt_BR, German and high contrast. It is clear of the Lab button
+  and of every pin: in English about 45 px right of the Lab button and
+  about 8 px below the "6" pin; in pt_BR and German, where the taller
+  experience card shrinks the map, about 10 px right of the Lab button
+  and about 7 px left of the "6" pin. Lantern Vale now says "locked" at
+  every text size, which closes note 3 on S2-R36.
+- **Nothing by colour alone.** The locked realm reads by the lock and the
+  words (or "28") as well as by the dark island; the Crew and Defence
+  counts are numerals; "Full" is a word. High contrast keeps the same
+  layout, with outlined badges and the plate's rim lighter.
+
+### Notes, not holding
+
+- **At 200% the Defence badge's top edge still overlaps the foot of the
+  61.0k plate above it by 1 to 3 px** (English, pt_BR, German, high
+  contrast). It stays clear of the gauge's fill. This is S2-R36's note 2,
+  unchanged: if S2 moves the badge, drop it 2 to 4 pt.
+- **At 200% in pt_BR and German the pill sits about 7 px from the "6"
+  pin.** It is clear, and the pin is the Heart's, not a neighbour's
+  count. If the map ever loses more height, anchor the pill under the
+  island rather than beside the Heart.
+
+English at 100%:
+
+![home-states at e9285afd, English 100%](board-3/r11-home-100.png)
+
+pt_BR at 200%: the short form on its pill.
+
+![home-states at e9285afd, pt_BR 200%](board-3/r11-home-200-pt.png)
+
+The locked plate at 4×, English 100%: about 24 px from the left edge,
+about 6 px below the LAB label.
+
+![locked plate at 4×](board-3/r11-home-plate.png)
+
+The short form at 4×, pt_BR 200%: clear of the Lab button and of the
+"6" pin; the Defence badge overlaps the plate's foot above.
+
+![short form at 4×](board-3/r11-home-pill.png)

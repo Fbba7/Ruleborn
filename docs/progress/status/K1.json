@@ -4,27 +4,28 @@
   "branch": "claude/ui-bake",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P2-K1-guard-prereq",
-  "task_state": "working",
-  "claimed_at": "2026-11-16T18:00:00Z",
-  "lease_until": "2026-11-16T21:00:00Z",
-  "updated_at": "2026-11-16T18:15:00Z",
-  "expected_next_update_by": "2026-11-16T19:00:00Z",
+  "task_id": "P3-K1-polish-2",
+  "task_state": "in_progress",
+  "claimed_at": "2026-11-17T10:20:00Z",
+  "lease_until": "2026-11-17T13:20:00Z",
+  "updated_at": "2026-11-17T10:40:00Z",
+  "expected_next_update_by": "2026-11-17T11:25:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "a81435a9",
-    "next_step": "prereq check written; waiting for client/build.sh, then --self-test, the full guard and the pre-check"
+    "last_green_sha": null,
+    "next_step": "read character_screen.gd local fixes for S3-R9 to S3-R14"
   },
   "precheck": null,
   "gate_request": null,
   "ready_sha": null,
-  "stop_at": "2026-11-17T21:00:00Z",
+  "stop_at": "2026-11-18T21:00:00Z",
   "acks": [
     "M2",
     "M4",
     "M5",
     "M8",
-    "M9"
+    "M9",
+    "M51"
   ],
   "requests": [
     {
@@ -350,6 +351,50 @@
       "due": "2026-11-17T13:05:00Z",
       "default": "No change: KitNav.celebrate stays as an alias of KitNav.reward and Motion.reward stays public, so the result screen draws exactly as today and nothing breaks",
       "escalate_to": "lead"
+    },
+    {
+      "id": "K1-R24",
+      "from": "K1",
+      "to": "lead",
+      "ask": "P2-K1-grow-1 touches two paths outside its files: client/tests/shots/ui_kit_grow.gd and its .uid. client/tests/ui_kit_tests.gd stands at gdlint's 1000 lines on main, so the new checks (action2, big_action and upgrade at 200% pt_BR and en with their words inside the button; reward and celebrate under high contrast leaving the sky's dress) live in this helper, as K1-R15's, K1-R20's and K1-R21's did; ui_kit_tests.gd calls it in one line, kept at 1000 by setting K33's and K34's one-skin entries of SKINS_OF on one line, as K23's and K24's are.",
+      "files": [
+        "client/tests/shots/ui_kit_grow.gd",
+        "client/tests/shots/ui_kit_grow.gd.uid"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-16T20:42:00Z",
+      "due": "2026-11-17T02:42:00Z",
+      "default": "Granted by the lead in cycle 105: the two paths join P2-K1-grow-1's exceptions at the merge",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "K1-R25",
+      "from": "K1",
+      "to": "lead",
+      "ask": "P3-K1-polish-1 touches two paths outside its files: client/tests/shots/ui_kit_polish.gd and its .uid. client/tests/ui_kit_tests.gd stands at gdlint's 1000 lines on main, so the new checks (a parchment panel scrolled more than half above its list still draws its face, S3-R32; a row of numbers filters with mipmaps and every page the numerals sit on is imported with them, S2-R35) live in this helper, as K1-R24's did; ui_kit_tests.gd calls it in one line, kept at 1000 by setting K29's and K31's entries of SKINS_OF on one line. owners.py diff names these two paths until they join the task's exceptions, so P3-K1-polish-1 is marked ready once they do (M48).",
+      "files": [
+        "client/tests/shots/ui_kit_polish.gd",
+        "client/tests/shots/ui_kit_polish.gd.uid"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-17T08:15:00Z",
+      "due": "2026-11-17T14:15:00Z",
+      "default": "Granted by the lead in cycle 120: the two paths are P3-K1-polish-1's exceptions in backlog.json",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "K1-R26",
+      "from": "K1",
+      "to": "lead",
+      "ask": "P3-K1-polish-2 touches one path outside its files: client/tests/shots/ui_kit_polish.gd. client/tests/ui_kit_tests.gd stands at gdlint's 1000 lines, and it already runs this helper in one line (K1-R25), so the six new checks (S3-R9 to S3-R14) join the helper's run and ui_kit_tests.gd stays at 1000. owners.py diff names this path until it joins P3-K1-polish-2's exceptions, so the task is marked ready once it does (M48).",
+      "files": [
+        "client/tests/shots/ui_kit_polish.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-17T10:40:00Z",
+      "due": "2026-11-17T16:40:00Z",
+      "default": "Granted, as K1-R24 and K1-R25 were: client/tests/shots/ui_kit_polish.gd is one of P3-K1-polish-2's exceptions in backlog.json",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
@@ -392,7 +437,17 @@
       "request_id": "S3-R25",
       "answer": "Done in P2-K1-kit-gaps-2: KitNav.reward(screen, prize, counter, from_value, to_value, tier, show) is K40's one entry point: the night sunburst backdrop, then Motion.reward's anticipation, burst, reveal, coin flight and counter roll on the motion sprites; reduced motion fades the prize in, lands one coin and sets the counter at once (tested). KitNav.celebrate stays only as a thin alias, KitNav.reward(screen). The catalogue's K40 now plays the real sequence in full and reduced strips. K1-R23 asks S1 to switch result_screen.gd's call; the layer is lifted as S1-R21 describes until that request is answered.",
       "at": "2026-11-16T13:05:00Z"
+    },
+    {
+      "request_id": "S3-R32",
+      "answer": "Done in P3-K1-polish-1: RbBox's face names the union of the rects it drew as its cull rect (RenderingServer.canvas_item_set_custom_rect), so a panel whose top has scrolled above the screen keeps drawing. TEXT=200 LOCALE=pt_BR TAB=1 SCROLL=99999 (and LOCALE=en) on screen_character.gd: the parchment now draws behind the four stat tiles and the note, down to its rim above the level-up dock. Tested (a parchment scrolled more than half above its list). character_screen.gd needs no change.",
+      "at": "2026-11-17T08:15:00Z"
+    },
+    {
+      "request_id": "S2-R35",
+      "answer": "Done in P3-K1-polish-1: kit_3.webp and kit_3_hc.webp import with mipmaps and KitNumerals.Row draws with TEXTURE_FILTER_LINEAR_WITH_MIPMAPS, so the glyphs are averaged when drawn small. kit_3's imported texture grows from 0.84 MB to 1.49 MB; guard.sh's byte figures do not count atlas pages, so every budget figure is unchanged and none was raised. Tested (Row's filter; every numeral page imports with mipmaps). home_parts.gd's InkedRow, which draws its own stroke and drop, can go once home's stills show the kit's own stroke.",
+      "at": "2026-11-17T08:15:00Z"
     }
   ],
-  "next_step": "ready at a81435a9 (pre-check PASS 14:20Z; no gate items); waiting for the merge queue; K1-R23 to S1 open (default: no change)"
+  "next_step": "ready at 57ea213c: the merge queue (no gate items). P3-K1-polish-2 is for a later session"
 }

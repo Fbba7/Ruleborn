@@ -357,6 +357,8 @@ func _refresh() -> void:
 	actions_node.visible = not choosing
 	actions_band.visible = not choosing
 	crew_node.visible = not choosing
+	if crew_node.get_parent() is PanelContainer:
+		(crew_node.get_parent() as Control).visible = not choosing
 	view.landing_marks = controller.shown_marks() if choosing else []
 	view.landing_pick = controller.shown_pick()
 	view.follow = [] if choosing else [controller.selected]
@@ -626,12 +628,23 @@ func _build() -> void:
 	else:
 		var flow := UI.row(8.0, true)
 		flow.alignment = FlowContainer.ALIGNMENT_BEGIN
+		# Rows close: a name's line box keeps its own room under it, and the
+		# next row's pips stand over their disc (M26: two-line names pushed
+		# the tray into the loot).
+		flow.add_theme_constant_override("v_separation", UI.px(3))
 		crew_row = flow
 	crew_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	crew_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	crew_row.size_flags_vertical = Control.SIZE_SHRINK_END
 	crew_node = crew_row
-	band.add_child(crew_row)
+	# The crew in the tray's inner well (layered: the plate's body, its
+	# frame, the well sunk in it), so the portraits sit in a pocket, not on
+	# the plate's face.
+	var well := ScreenKit.panel("well", crew_row, 12.0, 4.0)
+	well.name = "CrewWell"
+	well.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	well.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	band.add_child(well)
 	_build_crew()
 	hand = HeistHand.new(_get_out)
 	hand.host = self
@@ -661,9 +674,11 @@ func _build() -> void:
 			c.reparent(flow)
 		band.add_child(flow)
 		actions_node = flow
-	# The crew and the hand on one tray of dark glass (the design's), so the
-	# portraits and buttons keep their value step off the bright world.
-	var tray := FxSkin.panel("glass", 14.0, 5.0)
+	# The crew and the hand on one opaque tray, the kit's leather (the plum
+	# and gold frame the loot and alarm plates wear), so the portraits and
+	# buttons keep their value step off the bright world and the tray reads
+	# as a layered plate rather than a see-through scrim.
+	var tray := FxSkin.panel("leather", 14.0, 5.0)
 	tray.name = "Tray"
 	tray.add_child(band)
 	actions_band = tray
@@ -698,24 +713,30 @@ func _build() -> void:
 	add_child(speech)
 	if view.anchors != null:
 		view.anchors.speech_layer = speech
-		view.anchors.keep_off = _panel_rects.bind(speech)
+		view.anchors.keep_off = _panel_rects.bind(speech, 0)
+		view.anchors.keep_soft = _panel_rects.bind(speech, 1)
+		view.anchors.keep_clear = _panel_rects.bind(speech, 2)
 
 
 ## The rects of the panels a guard's bubble keeps off, in `layer`'s pixels:
-## the HUD's, the hint's and the tray.
-func _panel_rects(layer: Control) -> Array:
-	var out: Array = []
-	var panels: Array = [hud.clock_panel, hud.alarm_panel, hud.loot_panel, actions_band]
+## the HUD's and the hint's, which hold words (`which` 0); the tray's
+## content (1), which a bubble may rest on (anchors' keep_soft) where the world
+## shows no room between the loot and the tray (large text, M26's alarm),
+## drawn above it, rather than over the loot's last line; or every word and
+## portrait (2), which a bubble never covers (anchors' keep_clear).
+func _panel_rects(layer: Control, which: int) -> Array:
+	var tray_inside: Control = actions_band.get_child(0) if actions_band.get_child_count() > 0 else actions_band
+	if which == 1:
+		return FxAnchors.rects_of([tray_inside], layer)
+	if which == 2:
+		return FxAnchors.rects_of(crew_buttons, layer) + FxAnchors.words_in([hud, actions_band, hint_panel], layer)
+	var panels: Array = [hud.clock_panel, hud.alarm_panel, hud.loot_panel, hint_panel]
 	if hud.laws_box != null:
 		panels.append_array(hud.laws_box.get_children())
-	if hint_panel != null:
-		panels.append(hint_panel)
-	for c: Variant in panels:
-		var ctl := c as Control
-		if ctl != null and ctl.is_visible_in_tree() and ctl.size.x > 0.0:
-			var r := ctl.get_global_rect()
-			r.position -= layer.global_position
-			out.append(r)
+	# The panels' words, and the portraits with their names and tags, count
+	# twice: a bubble with no clear place covers a panel's frame before them.
+	var out := FxAnchors.rects_of(panels + crew_buttons + crew_buttons, layer)
+	out.append_array(FxAnchors.words_in([hud, hint_panel], layer))
 	return out
 
 
@@ -832,7 +853,7 @@ func _dress_hand() -> void:
 	var cast := _hand_order("heistcontrols/cast", Strings.t("HEIST_CAST"), hand._open_casts, "gold",
 		Vector2(92, 76), 34.0)
 	var go := _hand_order("heistcontrols/getout", Strings.t("HEIST_GET_OUT"), _get_out, "leather",
-		Vector2(66, 54), 24.0)
+		Vector2(66, 54), 32.0)
 	for pair: Array in [[hand.cast_button, cast], [hand.go_button, go]]:
 		var old: Button = pair[0]
 		var at := old.get_index()

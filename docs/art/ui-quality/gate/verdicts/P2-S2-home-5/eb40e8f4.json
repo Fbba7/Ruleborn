@@ -1,0 +1,104 @@
+[
+  {
+    "task_id": "P2-S2-home-5",
+    "sha": "eb40e8f42e1c012069dfec1c505f93fe3f26d6ca",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-17T00:35:00Z",
+    "item": "home at 100% text",
+    "quality": "Display type",
+    "samples": [
+      "fail",
+      "fail",
+      "fail"
+    ],
+    "result": "fail",
+    "critique": "Three fails, so the baseline fail at main f083c96c still stands at ready eb40e8f4, after S2-R33. All three read the header crop and saw 'Keeper 24' straight over the starfield with only a drop shadow to the lower right and no ink outline all round, and the purse's counts (142.0k, 31.4k, 61.0k) and the gem count 1,460 as flat light fills with no outline, no hard drop and no gradient: the 'plain flat headline figure' fail. The pass anchor's 2:18 timer and its words over art ('Laws here', the crew names) are stroked and dropped. AD's answer to S2-R33 (the baked kit numerals carry an outline and drop) is not what the judge sees at the still's scale. Fix: an ink outline all round 'Keeper 24' at least 1.5 pt wide, and one big-number treatment (outline, hard drop, gradient fill) on every headline count, the gems included, heavy enough to read at 100% text."
+  },
+  {
+    "task_id": "P2-S2-home-5",
+    "sha": "eb40e8f42e1c012069dfec1c505f93fe3f26d6ca",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-17T00:35:00Z",
+    "item": "home at 100% text",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes. In grayscale the gold Collect 3.4k button is the largest light control at the foot of the screen; the dark experience panel beside it holds no action, and the island pills and currency strip are smaller or darker. Collect leads at least as clearly as Level up on the pass anchor (kf-character-text200)."
+  },
+  {
+    "task_id": "P2-S2-home-5",
+    "sha": "eb40e8f42e1c012069dfec1c505f93fe3f26d6ca",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-17T00:35:00Z",
+    "item": "home at 100% text",
+    "quality": "Character presence",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes. The keeper portrait in the gold level ring is about 100 px at 960 wide, larger than the pass anchor's crew portraits (about 60 px); soft stepped fur shading, thin outlines, no gloss, metal or photographic grain, and its face and staff read clearly."
+  },
+  {
+    "task_id": "P2-S2-home-5",
+    "sha": "eb40e8f42e1c012069dfec1c505f93fe3f26d6ca",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-17T00:35:00Z",
+    "item": "home in high contrast",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes. Collect is the only large solid gold block and the lightest heavy shape in grayscale; the Islands tab and the level badge are half its size or less, and the experience panel is dark. A clearer single lead than the pass anchor's Level up card beside its cream Heist tab bar."
+  },
+  {
+    "task_id": "P2-S2-home-5",
+    "sha": "eb40e8f42e1c012069dfec1c505f93fe3f26d6ca",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-17T00:35:00Z",
+    "item": "home at 200% text, pt_BR",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes. The full-width 'Coletar 3,4 mil' slab is the largest light control and the eye lands on it first; the currency panels, the Vibrante panel and the XP card are dark and hold no action, and the red badges are small."
+  },
+  {
+    "task_id": "P2-S2-home-5",
+    "sha": "eb40e8f42e1c012069dfec1c505f93fe3f26d6ca",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-17T00:35:00Z",
+    "item": "home at 200% text, pt_BR",
+    "quality": "Display type",
+    "samples": [
+      "fail",
+      "fail",
+      "fail"
+    ],
+    "result": "fail",
+    "critique": "Three fails. The headline figures do not share one treatment: '142,0 mil', '31,4 mil' and '61,0 mil' are heavy cream with a dark edge and drop (but a flat fill), while the gem count '1.460' and '82%' are thin, widely spaced, flat pale lavender with no visible outline, hard drop or gradient, a number of the same rank in a plainer style. One sample also read 'Guardião 24' over the space art as dropped, not outlined all round. Fix: the gem count and the Vibrante percentage in the same big-number treatment as the purse's counts, and the keeper's name stroked all round."
+  }
+]

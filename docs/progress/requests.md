@@ -282,6 +282,8 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   Cycle 91: P2-K1-tabs-2 takes S2-R24 and S2-R26 (K1 started in cycle
   91, the fourth seat with S2, S3 and AD); the others still wait for a K1
   task, and each default stands at its due.
+  Cycle 118: S3-R9 to S3-R14 seeded as P3-K1-polish-2 (phase 3, M49),
+  and P3-S3-character-5 drops character_screen.gd's local fixes after it.
 - **S1-R32** (from S1, to K1 through the lead, 16 November 2026 16:53Z;
   due 17 November 16:53Z; not blocking): `KitNav.reward(screen, ...)`
   dresses the screen's Sky in `night_rays` whatever the mode, also under
@@ -297,6 +299,83 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   under high contrast). The screens drop their local fixes in a later
   task of their own. The others still wait for a K1 task, and each
   default stands at its due.
+
+- **S1-R33** (from S1, to K1 through the lead, 16 November 2026 21:24Z;
+  due 17 November 09:00Z; not blocking): record two draw-call raises for
+  P2-S1-heist-1's gate fixes in `tools/ui_bake/budgets.json`, with a
+  raises entry: heist/200 116 to 118 and heist/hc 120 to 121 (heist/100
+  stays 120). The calls are the 'Laws here' badges (FxLawBadge, the
+  school's shape as a frame behind a cream disc and the painted icon, for
+  the gate's Painted icons fail; +1 at 200 and hc) and the crew's inner
+  well (`ScreenKit.panel('well')` in the tray, for the Layered materials
+  fail; +1 at each size). Measured at dceed4bf with `budget_shots.py
+  --only heist/100,heist/200,heist/hc`: 120, 118, 121; S1 tried three
+  cheaper orders first. The heist stays 29 under the cap of 150. Default:
+  S1 drops the well and draws the badges without the school's shape, so
+  the records hold at 116 and 120. Copied in cycle 106.
+  **Answered** by the lead in cycle 106, approved: both calls close
+  failed gate qualities, so M33 allows them. As for S2-R30, the lead
+  writes heist/200 at 118 and heist/hc at 121 with a raises entry for
+  S1-R33 in the merge of P2-S1-heist-1; S1 marks ready with guard.sh
+  failing only on those two records, and says so in its handoff.
+- **S3-R32** (from S3, for K1 through the lead, 16 November 2026 21:08Z;
+  due 17 November 09:08Z; not blocking): on the character screen's Stats
+  tab at 200% text in en and pt_BR, scrolled to the end (SCROLL=1600 and
+  after), the parchment panel behind the stat tiles and their note
+  (`UI.panel('parchment')`, drawn by RbBox) is not drawn once its top
+  edge has scrolled above the screen, so the note's dark-brown words
+  stand on the night sky, unreadable. German's shorter page is not
+  affected; it shows on main without S3's change. Repro: `TEXT=200
+  LOCALE=pt_BR TAB=1 SCROLL=99999 bash tools/render/shoot.sh
+  client/tests/shots/screen_character.gd out.png`. Files:
+  `client/ui/rb_box.gd`, `client/scripts/character_screen.gd`. Default:
+  K1 takes it in P2-K1-grow-1 or a follow-up task; S3 leaves rb_box.gd
+  alone and P2-S3-character-4 goes ready without it. Copied in cycle 106.
+  **Answered** by the lead in cycle 106: logged for phase 3, about 1.5 h
+  (K1, `client/ui/rb_box.gd`). It closes no open objection, failed gate
+  quality or merge-blocking check, so M33 seeds no task for it before the
+  phase 2 stop, and P2-K1-grow-1 is at its pre-check, so it is not added
+  there. S3 goes ready without it, as the default says.
+  Cycle 118: seeded as P3-K1-polish-1 (phase 3, M49), with S2-R35.
+
+- **S2-R35** (from S2, to K1 through the lead, 17 November 2026 03:10Z;
+  due 18 November 12:00Z; not blocking): the kit's baked numerals lose
+  their stroke, drop and gradient when drawn small. The gold glyphs are
+  210 px tall, home's counts at 100% text draw them about 18 px tall, and
+  every kit page imports with mipmaps off
+  (`client/ui/art/kit_*.webp.import`, `mipmaps/generate=false`), so the
+  glyphs are sampled, not averaged. That was the gate's Display type fail
+  on home at 100% (verdicts/P2-S2-home-6/e674b614.json). Ask: mipmaps on
+  the numerals' pages (kit_3.webp and kit_3_hc.webp at least) and
+  `TEXTURE_FILTER_LINEAR_WITH_MIPMAPS` on `KitNumerals.Row`, checking
+  texture bytes against `tools/ui_bake/budgets.json`. Meanwhile home draws
+  its own stroke, drop and gradient from the same glyphs
+  (`HomeParts.InkedRow`). Files: kit_3.webp.import, kit_3_hc.webp.import,
+  kit_numerals.gd. Default: no kit change; home keeps
+  `HomeParts.InkedRow`, and other screens that draw KitNumerals small stay
+  as they are. Copied in cycle 112.
+  **Answered** by the lead in cycle 112: logged for phase 3, about 1 h
+  (K1, the two import files and `kit_numerals.gd`). Home closes its
+  Display type fail with `HomeParts.InkedRow` inside home-6, so the kit
+  change closes no open objection, failed gate quality or merge-blocking
+  check, and M33 seeds no task for it before the phase 2 stop. The default
+  stands.
+  Cycle 118: seeded as P3-K1-polish-1 (phase 3, M49), with S3-R32.
+
+- **S1-R37** (from S1, 17 November 2026 08:12Z; due 20:00Z; not
+  blocking): raise `tools/ui_bake/budgets.json` shots.recorded result/hc
+  draw_calls from 27 to 28. `guard.sh` at 55716273 fails one line only,
+  'FAIL result/hc: 28 draw calls, recorded 27'; the one call is board 4's
+  idle-crew line ('Idle crew of 3 ready') on the raid button, which
+  P3-S1-result-7 asks for. result/100 reads 89 (record 91) and result/200
+  95 (record 99), so those stay. Default: the lead approves the rise at
+  result-7's merge and records 28; if refused, a follow-up has the guard's
+  high-contrast shot load no roster and the record stays 27. Copied in
+  cycle 120.
+  **Answered** by the lead in cycle 120: approved. `budgets.json` is in
+  P3-K1-polish-1's files, so the lead records 28, with a raises entry, when
+  it merges result-7, as for S2-R17 and S2-R30. S1 marks ready with
+  `guard.sh` failing only on that line, said in its handoff.
 
 ### AIA
 
@@ -962,6 +1041,208 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   **Answered** by the lead in cycle 105, granted: both paths are in
   P2-K1-grow-1's exceptions in backlog.json now.
 
+- **S3-R31** (from S3, 16 November 2026 21:08Z; due 23:08Z; blocking):
+  preview P2-S3-character-4 at 8ca0058d on `claude/ui-screens-meta`, for
+  the gate's Display type fail on 'character at 200% text, pt_BR'
+  (verdict P2-S3-character-3/a6d5f2fb): the subtitle and the level line
+  on the starry backdrop wear an ink outline on every side (the greater
+  of 1.5 pt or 12% of the size; subtitle 21 px, level line 19), set again
+  after the words shrink to fit; HABILIDADE is stroked and dropped in ink
+  at large text; at 200%, scrolled to the end, every tab's last card ends
+  clear above the dock in en, pt_BR and de. 100% and high-contrast stills
+  are unchanged. Stills in `docs/art/shots/menu-screens/character-200-*`.
+  Every objection in one round, please. Default: the outline and the
+  stroke stand as fixed; S3 marks P2-S3-character-4 ready at the
+  pre-checked sha with gate_request there, and AD's next round re-checks
+  the stills on the merge. Copied in cycle 106.
+  **Answered** by the lead in cycle 106: all four seats are in use (K1,
+  S1, S2, S3), so AD is not started for it this cycle. If a seat frees
+  before 23:08Z the lead starts AD on the preview; otherwise the default
+  stands at its due, and the gate's re-run on the merge judges the stills.
+  **Default applied** by the lead at 23:08Z in cycle 107: no seat freed
+  before the due, so the outline and the stroke stand as fixed, and
+  P2-S3-character-4 is ready at ee67dcea with S3's gate_request there.
+
+- **S2-R33** (from S2, 16 November 2026 21:55Z; due 17 November 01:55Z;
+  blocking): preview P2-S2-home-5 (phase 2 exit, M25: the purse's counts
+  in the kit's display type) on `claude/ui-screens-home` at eb40e8f4,
+  before the gate runs (M10, M12, M23). Stills from
+  `FIT=1 [TEXT=200] [LOCALE=<loc>] [CONTRAST=1] bash tools/render/shoot.sh
+  client/tests/shots/universe_home.gd out.png`: 100% en, 100% de, high
+  contrast, 200% en, 200% pt_BR, 150% pt_BR. The purse's counts, the
+  renown and the strain card's share are in the kit's baked numerals where
+  the purse's row fits them at full size (en and fr at 100% and 200%,
+  every language at 150%); in de, pt_BR and pt_PT at 100% and 200% the
+  amounts stay live. The keeper's name and the live words take a heavier
+  T2. Rule on the baked figures beside the live words, and on the live
+  counts in de and pt. Evidence in `docs/art/tracks/home-screen.md`,
+  Part 5. Default: the stills stand as previewed: the gate runs on the
+  pre-checked commit, and any objection becomes a follow-up task. Copied
+  in cycle 107.
+  **Answered** by the lead in cycle 107: AD is started for it once
+  P2-K1-grow-1's merge frees K1's seat; if AD has not answered by the due,
+  the default stands and the lead runs the gate at eb40e8f4.
+  **Answered** by AD at 23:45Z: the stills stand and no objection is kept
+  (board-3.md, 'Preview of home-5 (S2-R33)'). Its notes, not holding: two
+  numeral faces in one header in de and pt; tracking at pt_BR 150%; the
+  Full chip on the water plate's edge. Copied in cycle 108. The lead
+  gates home-5 at eb40e8f4 in cycle 108.
+
+- **S1-R34** (from S1, 16 November 2026 22:09Z; due 17 November 10:09Z;
+  not blocking): preview P2-S1-heist-1 before ready (M10, M12, M23): the
+  stills `docs/art/shots/heist-pilot/part6-h100.png`, `part6-h200.png` and
+  `part6-hpt.png` on `claude/ui-screens-heist` at ed766fe9 (heist at 100%
+  text, 200% en, 200% pt_BR with no crew plan). Objections, if any, as a
+  list S1 can answer in this task. Default: if no answer by the due time,
+  S1 sets ready with the gate passed and the stills named in the handoff;
+  AD's notes, when they come, are answered in a follow-up task. Copied in
+  cycle 107.
+  **Answered** by the lead in cycle 107: AD takes it after S2-R33, in the
+  same session.
+  **Answered** by AD at 00:05Z (board-1.md, 'Preview of heist-1
+  (S1-R34)'). Two objections kept, which S1 can answer in heist-1; they
+  go to the lead as AD-R44 (under Lead, below). Copied in cycle 108.
+
+- **S2-R34** (from S2, 17 November 2026 01:18Z; due 03:30Z; blocking):
+  preview P2-S2-home-6 (phase 2 exit, M25, M33: home-5's advisory Display
+  type fails at eb40e8f4) on `claude/ui-screens-home` at 4c242628 or
+  later, before it is marked ready (M10, M12, M23). Stills from
+  `FIT=1 [TEXT=200] [LOCALE=<loc>] [CONTRAST=1] bash tools/render/shoot.sh
+  client/tests/shots/universe_home.gd out.png`: 100% en, 100% de, 100%
+  pt_BR, high contrast, 200% pt_BR, 200% de. What changed: (1) every
+  headline count (the purse's three counts, the renown '1,460', the strain
+  share '82%') is in the kit's gold baked numerals (num_gold, T3), not
+  num_white; the share is baked at every text size, over the band's name.
+  (2) The baked counts shrink to fit, never under 78%, instead of going
+  live, so German ('142,0 Tsd.', 80%) and Portuguese ('142,0 mil', 88% at
+  100%) keep the one treatment. (3) 'Keeper 24' over the starfield has a
+  band of the plates' leather rim round its ink outline. Rule on the gold
+  figures, the smaller German counts and the title's rim. Evidence in
+  `docs/art/tracks/home-screen.md`, Part 6. Files: home.gd, home_parts.gd,
+  home-screen.md. Default: the stills stand as previewed: S2 marks ready
+  on the pre-checked commit, the gate runs, and any objection becomes a
+  follow-up task. Copied in cycle 109.
+  **Answered** by the lead in cycle 109: AD is started for it (a seat is
+  free; AD's last session is idle, done); if AD has not answered by 03:30Z,
+  the default stands.
+  **Answered** by AD at 01:57Z, on 36f017da (still valid at ce03765a):
+  S2's three changes stand (the gold figures, the smaller de and pt_BR
+  counts, the title's leather rim). One objection, not depending on the
+  final shape (M40), goes to the lead as AD-R45 (under Lead, below): the
+  live words after the baked figures ('k', 'Tsd.', 'mil') show a ghost
+  copy set down below them and are cream beside gold figures. Notes, not
+  holding: the ink line inside the title's rim is about 1 px; at 200% en
+  the counts are near Collect's word height. Write-up in board-3.md,
+  'Preview of home-6 (S2-R34)'. Copied in cycle 110.
+
+- **S1-R35** (from S1, 17 November 2026 02:17Z; due 10:17Z; not
+  blocking): preview P2-S1-result-6 before it is marked ready (M10, M12,
+  M23): the result screen on `claude/ui-screens-heist` at c9d70cc3 (screen
+  code as at e4e78070). Stills from `env SERVER=1 FIT=1 [TEXT=200]
+  [LOCALE=<loc>] [CONTRAST=1] bash tools/render/shoot.sh
+  client/tests/shots/screen_result.gd OUT.png`: 100% text, 200% pt_BR,
+  200% de and high contrast. Two departures from key frame 03 to rule on:
+  (1) every reward total is the kit's gold numerals (num_gold), not gold
+  for Starlight and cream for the rest, because the gate's Display type
+  gives numbers of one rank one treatment; (2) all three reward tiles are
+  on parchment, as the design's still 07, not Essence and Renown on glass,
+  because the gold numerals' outline sank on the glass. Objections, if
+  any, as a list S1 can answer in this task. Files: result_screen.gd,
+  result_fit.gd. Default: if no answer by the due time, the task stays
+  ready with the gate passed and the render commands named in the
+  handoff, as heist-1 did with S1-R34; the lead decides whether the merge
+  waits for AD, and AD's objections are answered in this task if it is
+  still open, or in a follow-up task. Copied in cycle 111.
+  **Answered** by the lead in cycle 111: AD is started for it (a seat is
+  free; AD's last session is idle, done). If result-6 is ready and gated
+  before AD answers, the merge does not wait: AD's default applies, and
+  any objection AD keeps goes to the lead as a request.
+  **Answered** by AD at 02:58Z, on 16515088 (board-4.md, 'Preview of
+  result-6 (S1-R35)'): both departures stand (gold numerals on every
+  total; all three reward tiles on parchment, as still 07). One
+  objection, H, goes to the lead as AD-R46 (under Lead, below). Copied in
+  cycle 112.
+
+- **S2-R36** (from S2, to AD through the lead, 17 November 2026 07:40Z;
+  due 16:00Z; not blocking): preview P3-S2-home-states on
+  `claude/ui-screens-home` at 4797b5c3 before ready (M10, M12, M23).
+  The key frame's state is new: Lantern Vale locked (the plate 'Opens at
+  Keeper 28', left of the Heart) and the Crew tab's idle count '4'. The
+  Defence badge '2' is unchanged. Check them clear of the pins and the side
+  buttons (board 3's objection B) at 100% and 200% text in en, pt_BR and de,
+  and in high contrast. Reproduce with `FIT=1 [TEXT=200] [LOCALE=<loc>]
+  [CONTRAST=1] bash tools/render/shoot.sh client/tests/shots/universe_home.gd
+  out.png`. Default: the stills stand, and S2 marks ready on its own
+  checks. Copied in cycle 119.
+  **Answered** by the lead in cycle 119: routed to AD, who is on
+  P3-AD-audit-1. AD answers once its blind labelling for audit-1 is
+  written, so the preview cannot colour the audit. If AD has not answered
+  by 16:00Z, S2's default stands. The plate changes under S2-R38 and
+  S2-R40 (under Lead, below), so AD previews the stills of the commit S2
+  names then.
+  **Answered** by AD at 08:05Z, on 5d25f9cb (the state of 4797b5c3;
+  board-3.md, 'Preview of home-states (S2-R36)'): all 7 cases fit, and
+  board 3's objection B holds in each: the Crew tab's '4', the Defence
+  badge '2' and the locked plate are clear of the pins and the side
+  buttons. No objection. Notes, not holding: the plate sits about 6 px from
+  the left edge at 100%, inside the 16 pt gutter, so keep it at 16 pt or
+  more when it takes the realm's name; at 200% the Defence badge's top
+  touches the foot of the 61.0k plate (drop it 2 to 4 pt if it moves); and
+  the hidden plate at 200% is what S2-R40's short form fixes. AD previews
+  the commit S2 names for S2-R38 and S2-R40 before ready (S2-R42, below).
+  Copied in cycle 120.
+
+- **S2-R42** (from S2, to AD through the lead, 17 November 2026 07:52Z;
+  due 16:00Z; not blocking): following S2-R36, the commit to preview is
+  now ad6c25e7 on `claude/ui-screens-home`. The locked plate reads
+  'Lantern Vale' over the lock and 'Opens at Keeper 28' on the map's dark
+  pill, and at 200% text, where that finds no room, it shows the lock and
+  '28' on the same pill instead of hiding. Check, as in S2-R36, at 100% and
+  200% text in en, pt_BR and de, and in high contrast: the Crew tab's '4',
+  the Defence badge '2' and the plate clear of the pins and the side
+  buttons (board 3's objection B), nothing by colour alone. Reproduce with
+  `FIT=1 [TEXT=200] [LOCALE=<loc>] [CONTRAST=1] bash
+  tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`.
+  Detail: `docs/art/tracks/home-screen.md` Part 7. Default: as S2-R36's;
+  if AD has not answered by 16:00Z, the stills stand and S2 marks ready on
+  its own checks, and the gate judges them. Copied in cycle 120.
+  **Answered** by the lead in cycle 120: routed to AD. AD's blind
+  labelling for audit-1 is written (24965010), so the preview no longer
+  colours the audit. Mind AD's S2-R36 note on the plate's left gutter.
+  **Answered** by AD at 09:42Z (copied in cycle 123): previewed at
+  e9285afd, all 8 cases fit ok, board 3's objection B holds in every case,
+  nothing by colour alone. "No objection at this commit; S2 may mark
+  ready." Two notes, not holding (M40): at 200% the Defence badge's top
+  overlaps the 61.0k plate's foot by 1 to 3 px; at 200% pt_BR and de the
+  pill sits about 7 px from the '6' pin. Write-up: board-3.md, "Preview of
+  home-states, second look (S2-R42)". S2's lease lapsed at 10:30Z while it
+  waited, so the lead restarts S2 in cycle 123 to mark ready.
+
+- **S1-R36** (from S1, to AD through the lead, 17 November 2026 07:50Z;
+  due 15:50Z; not blocking): preview P3-S1-result-7 on
+  `claude/ui-screens-heist` before ready (M10, M12, M23), at the commit in
+  S1's progress_marker. Render with `env SERVER=1 FIT=1 TEXT=200
+  LOCALE=pt_BR bash tools/render/shoot.sh
+  client/tests/shots/screen_result.gd OUT.png`, the same with LOCALE=de,
+  LOCALE=en and CONTRAST=1, and at 100% text with LOCALE=pt_BR, LOCALE=de
+  and CONTRAST=1. It answers the gate's Hierarchy fail at 200% pt_BR
+  (verdict b5843368): at large text the summary and alarm lines are 14 and
+  13 pt in weight 500 under the totals' 24 in 800, and Starlight leads by
+  size (its total 1.5 times the others', its name stacked under it beside a
+  larger icon). The kit has no darker parchment (kit-spec section 1, rule
+  4), so the lead is by size, within AD's accepted parchment departure
+  (S1-R35). The shot's fixture now has an idle crew of 3, as key frame 03,
+  so the raid's 'Idle crew of N ready' line shows. Objections, if any, as
+  a list S1 can answer in this task. Default: if no answer by the due
+  time, the task stays ready with the gate's answer, as result-6 did with
+  S1-R35; the lead decides whether the merge waits for AD, and AD's
+  objections are answered in this task if it is still open, or in a
+  follow-up. Copied in cycle 120.
+  **Answered** by the lead in cycle 120: routed to AD, who is on
+  P3-AD-audit-1 with its blind labelling written (24965010), so AD can
+  answer now. If result-7 is ready and gated before AD answers, the merge
+  does not wait: S1's default applies.
+
 ### S1
 
 - **K1-R23** (from K1, 16 November 2026 13:05Z; due 17 November 13:05Z;
@@ -1001,6 +1282,130 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   the Game tab and one for Access.
 
 ### Lead
+
+- **AD-R46** (from AD, 17 November 2026 02:58Z; due 19 November 02:58Z;
+  not blocking): AD's preview of P2-S1-result-6 (S1-R35) at 16515088.
+  S1's two departures stand (gold numerals on every total; all three
+  reward tiles on parchment, as still 07). One objection, not depending on
+  the final shape (M40): (H) at 200% German 'Sternenlicht' breaks by its
+  letters in the Starlight row, new in result-6 (the baked gold total is
+  wider than at result-4) and missed by FIT. Fix in
+  `ResultFit.reward_rows` and `bake_totals`, and a FIT check. Files:
+  board-4.md, result_fit.gd, screen_result.gd. Default: S1 fixes H in
+  P2-S1-result-6 before it merges. If result-6 merges first, the lead
+  opens a follow-up S1 task, done when every reward word stands whole at
+  4x at 200% en, pt_BR, de and 150% de, German 200% shows 'Sternenlicht'
+  on one line beside its total with all three rewards above the first
+  screen's edge, FIT=1 prints 'fit ok' with a check that fails on a reward
+  word broken inside a word, and the result's draw calls stay at 150 or
+  under. Copied in cycle 112.
+  **Answered** by the lead in cycle 112: S1 fixes H in result-6 before it
+  merges, as AD's default says. result-6 is ready at c9d70cc3 but has not
+  merged, and its done_when asks that AD's objections are answered in the
+  task, so it goes back to working and S1 is restarted for it. No task is
+  seeded (M33). The lead does not gate c9d70cc3: H changes result_fit.gd
+  and the shot, so a pass there would not carry over. S1 adds the FIT
+  check, re-runs its own gate on the three requested items at the new
+  commit, sets `gate_request` and marks ready once they pass (M44).
+  **Gate, cycle 113** (advisory, rubric v3, on S1's `gate_request` at
+  b5843368, before ready; docs/art/ui-quality/gate/verdicts/P2-S1-result-6/
+  b5843368.json): Hierarchy at result 200% text, pt_BR fails 3 of 3; the
+  four other item-qualities pass 3 of 3 (Display type and Character
+  presence at 100%, Display type at 200% pt_BR, Hierarchy in high
+  contrast). The judges name the 200% pt_BR summary prose ('Nenhum guarda
+  alertado · todos saíram com saque', three lines) and the 2:45 alarm line
+  (two lines): large light type, as big as the ASSALTAR DE NOVO label and
+  larger than the reward numerals, so secondary text carries the reward's
+  weight; and the three equally cream tiles, so no reward leads.
+  kf-result-text200 keeps its prose below the hero number and the button.
+  S1's own run at b5843368 passed this item. result-6's gate items in
+  backlog.json are only 'result at 100% text' (Display type, Character
+  presence), and both pass 3 of 3, so under M44 the fail does not hold
+  result-6 back: S1 marks ready once its checks and pre-check pass. The
+  200% pt_BR Hierarchy fail is logged for phase 3 (M33 seeds nothing
+  before 21:00Z): a follow-up S1 task, done when at 200% pt_BR the summary
+  prose and alarm line sit below the reward numerals, one reward tile
+  leads (within AD's accepted parchment departure) and the gate passes
+  'result at 200% text, pt_BR', Hierarchy. S1 may close it inside
+  result-6 instead if that adds no more than about 30 minutes.
+  Cycle 118: seeded as P3-S1-result-7 (phase 3, M49), with board 4's
+  carried notes (an idle crew in the fixture, the fold on the crew card's
+  header).
+
+- **AD-R45** (from AD, 17 November 2026 01:57Z; due 19 November 01:57Z;
+  not blocking): AD's preview of P2-S2-home-6 (S2-R34) at 36f017da, one
+  objection. (a) Display type: the live words after the baked figures
+  ('k', 'Tsd.', 'mil') echo below themselves, because `HomeParts.inked`'s
+  plated branch sets `shadow_offset_y` = outline + drop with
+  `shadow_outline_size` 0, and they are cream beside gold figures. Fix: in
+  that branch, `shadow_outline_size` = outline and `shadow_offset_y` =
+  drop; the After label in `figures()` takes `Tokens.color('gold')`
+  (up to +3 draw calls; if home passes 150, drop the shadow on those words
+  and keep the stroke). Files: board-3.md, home_parts.gd. Default: S2
+  fixes (a) in P2-S2-home-6 before it marks ready. If S2 marks ready
+  without it and the gate fails Display type, the lead opens a follow-up
+  S2 task, done when the purse rows at 100% en, de, pt_BR and 200% de,
+  pt_BR show no second copy of 'k', 'Tsd.' or 'mil' at 4x, those words
+  take the figures' gold, FIT=1 prints 'fit ok' and home's draw calls stay
+  at 150 or under. If the gate passes Display type, the objection becomes
+  a note and nothing is seeded. Copied in cycle 110.
+  **Answered** by the lead in cycle 110: S2 fixes (a) in home-6 before it
+  marks ready, as AD offers. home-6's done_when already asks that AD's
+  objections are answered in the task, and M43 asks S2 to set
+  `gate_request` on home-6's Display type items and mark ready only once
+  they pass. So no task is seeded (M33). The lead gates home-6 on Display
+  type at 100% and 200% pt_BR when it is ready, and AD's default applies
+  to the result.
+  **Gate, cycle 111** (advisory, rubric v3, on S2's `gate_request` at
+  e674b614, before ready; docs/art/ui-quality/gate/verdicts/P2-S2-home-6/
+  e674b614.json): Display type at home 100% text fails 3 of 3; the five
+  other item-qualities pass 3 of 3 (Hierarchy at 100%, 200% pt_BR and high
+  contrast; Character presence at 100%; Display type at 200% pt_BR). The
+  judges name the 100% headline counts (1,460 and the 142.0k, 31.4k and
+  61.0k purses): flat gold on dark plates, no ink outline, hard drop or
+  gradient, beside a stroked 'Keeper 24'. AD-R45 (a) is still open at
+  e674b614. This is home-6's first fail under M43: S2 fixes (a) and the
+  100% counts' big-number treatment in home-6, sets `gate_request` on
+  'home at 100% text', Display type again, and marks ready once it passes
+  (or after a second fail, with the verdict and its reasons in the
+  handoff). Nothing is seeded (M33).
+  **Gate, cycle 115** (advisory, rubric v3, on S2's `gate_request` at
+  a4090ec7, before ready; docs/art/ui-quality/gate/verdicts/P2-S2-home-6/
+  a4090ec7.json): Display type at home 100% text passes 3 of 3. The
+  headline counts (1,460, 142.0k, 31.4k, 61.0k, 82%) share one treatment:
+  gradient fill, an ink outline all round and a hard drop, drawn by
+  `HomeParts.InkedRow`. The words after the counts are gold and stroked.
+  So AD-R45 (a) is closed, and by AD's default the objection becomes a
+  note and nothing is seeded. M46 tells S2 to mark home-6 ready. The
+  lead's note: the dark stroke on the dark plates is low in contrast. That
+  is not a fail under rubric v3.
+
+- **AD-R44** (from AD, 17 November 2026 00:05Z; due 19 November 00:05Z;
+  not blocking): the two objections of AD's preview of P2-S1-heist-1 at
+  ed766fe9 (S1-R34). (1) 200% pt_BR with no plan, Hierarchy: 'Lançar' is
+  no larger than the loot labels (cap height 61 px against 61 to 64 px),
+  the labels are higher in value, and the 508 figure and the 2:25 timer
+  stand larger. (2) 200% en, Layered materials: `_fit_hint` hides the
+  hint, and the Room panel has no inner well. Fixes are in board-1.md,
+  'Preview of heist-1 (S1-R34)'. Files: board-1.md, heist_screen.gd,
+  heist_hud.gd. Default: if S1 sets heist-1 ready without answering both
+  and the gate fails Hierarchy (pt_BR) or Layered materials (en 200%),
+  the lead opens a follow-up S1 task for them, done when the 200% pt_BR
+  loot labels sit at most 0.8 of Lançar's cap height in the muted label
+  role, the figures and the timer sit below Cast's weight, and the en
+  200% still shows the hint and a Room panel inner well. If the gate
+  passes those items, they become notes and nothing is seeded. Copied in
+  cycle 108.
+  **Answered** by the lead in cycle 108: S1 answers both in heist-1, as AD
+  offers. Both are already in heist-1's done_when: 'Lançar leads' at 200%
+  pt_BR, and the hint banner and the Room panel layered at 200% en. So
+  no task is seeded (M33). The lead gates heist-1 on those items when it
+  is ready, and AD's default applies to the result.
+  **Closed** by the lead in cycle 108: heist-1's advisory gate at
+  90c8b15c passes both items, Hierarchy at 200% pt_BR with no plan and
+  Layered materials at 200% en, 3 of 3 each
+  (`docs/art/ui-quality/gate/verdicts/P2-S1-heist-1/90c8b15c.json`).
+  By AD's default they become notes, and nothing is seeded.
 
 - **K1-R21** (from K1, 16 November 2026 03:31Z; due 09:31Z; not
   blocking): P2-K1-tabs-2 touches three files outside its three. (1)
@@ -1748,6 +2153,179 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   and L meanwhile. Copied in cycle 101. **Answered** by the lead in
   cycle 101, as the default says: P2-S3-account-4 seeded, open once
   P2-AD-board-5c merges.
+
+- **S3-R33** (from S3, 16 November 2026 21:10Z; due 23:10Z; not
+  blocking): "main on origin moved backward": at 21:09Z `refs/heads/main`
+  is 2455f3b5 (lead cycle 41, 4 November), 1163 commits behind f083c96c.
+  Default: S3 takes f083c96c as the main it last merged and marks ready
+  on its branch head. Copied in cycle 106.
+  **Answered** by the lead in cycle 106: no rewind. The branch named
+  `main` on origin is the stray one a lead push made by mistake on
+  4 November 2026 (owner-inbox, 2026-11-04 21:40Z) and has not moved
+  since. The program's main is `claude/videogame-project-analysis-ewkkk2`
+  (the protocol and every builder's prompt name it), at 2ab3a985 in
+  cycle 106, which contains f083c96c. Merge main by that name; S3's
+  default stands.
+
+- **S2-R37** (from S2, 17 November 2026 07:40Z; due 16:00Z; not
+  blocking): confirm that home has no shield timer. The task asks for the
+  Defence timer '5 h 12 min' that key frame 01-home shows, but
+  `docs/art/tracks/home-screen.md` says otherwise: in its table of key-frame
+  changes, row 'Home shield', "No timers on home", and in the home's rules,
+  "no timers on the home screen". Default: no timer on home. Copied in
+  cycle 119.
+  **Answered** by the lead in cycle 119: confirmed. The design outranks
+  the task, and P3-S2-home-states' done_when now says so (M50).
+
+- **S2-R38** (from S2, 17 November 2026 07:40Z; due 16:00Z; not
+  blocking): `client/world/universe_pins.gd` is the lead's file. In the key
+  frame, the locked plate reads 'Lantern Vale' over 'Opens at Keeper 28' on
+  a cream plate. Home's plate is dark and shows only the lock and the
+  opening level. S2 asks for a follow-up task to add the realm's name.
+  Default: the plate stays as it is. Copied in cycle 119.
+  **Answered** by the lead in cycle 119: granted in this task, not as a
+  follow-up. `universe_pins.gd` has no task in flight, so it joins
+  P3-S2-home-states' files, with a done_when line for S2-R38 and S2-R40
+  (M50; `owners.py claims` passes).
+
+- **S2-R39** (from S2, 17 November 2026 07:40Z; due 16:00Z; not
+  blocking): which store slice gives the counts on Laws, Heist, Friends and
+  Shop? The key frame shows them, but the store holds none of them. Default:
+  home shows only the counts the store holds (Defence raids, Season '!',
+  Crew idle), and each other count comes with the task that puts its source
+  in the store. Copied in cycle 119.
+  **Answered** by the lead in cycle 119: the default stands. No count is
+  made up. The task's done_when now names the counts the store holds (M50).
+
+- **S2-R40** (from S2, 17 November 2026 07:40Z; due 16:00Z; not
+  blocking): at 200% text (en, pt_BR, de) the locked plate finds no place
+  near Lantern Vale's rim and hides. The locked realm then reads by colour
+  alone, which the task forbids. S2 asks for a short form on
+  `universe_pins.gd` (the lock and '28' on the dark pill), taken before the
+  plate hides, as the realm pins' `_shape` does. Default: it stays hidden at
+  200%. Copied in cycle 119.
+  **Answered** by the lead in cycle 119: granted in this task, with
+  S2-R38 (above). The default would fail the task's own "nothing carried by
+  colour alone".
+
+- **K1-R25** (from K1, 17 November 2026 08:15Z; due 14:15Z; blocking):
+  P3-K1-polish-1 touches two paths outside its files,
+  `client/tests/shots/ui_kit_polish.gd` and its `.uid`.
+  `client/tests/ui_kit_tests.gd` stands at gdlint's 1000 lines on main, so
+  the new checks (S3-R32's scrolled parchment panel, S2-R35's mipmapped
+  numerals) live in this helper, as K1-R24's did, and ui_kit_tests.gd
+  calls it in one line. `owners.py diff` names the two paths until they
+  join the task's exceptions, so the task is marked ready once they do
+  (M48). Default: granted, the two paths join the exceptions at the merge.
+  Copied in cycle 120.
+  **Answered** by the lead in cycle 120: granted now, not at the merge.
+  The two paths are P3-K1-polish-1's exceptions in `backlog.json` (no task
+  in flight holds them; `owners.py claims` passes), so K1 marks ready when
+  its checks pass (M51).
+
+- **S2-R41** (from S2, 17 November 2026 07:47Z; due 14:30Z; blocking):
+  when P3-S2-home-states merges, record home's draw calls in
+  `tools/ui_bake/budgets.json`: home/100 145 to 148, home/200 121 to 124,
+  home/hc 145 to 148, measured with `python3 tools/ui_bake/budget_shots.py
+  --only home/100,home/200,home/hc` on ad6c25e7, still 2 under §21.3's cap
+  of 150. The calls are the states the task adds: the Crew tab's count
+  badge (3), Lantern Vale's locked plate with its name (2 at 100%), and the
+  plate's short form at 200% (3, where it used to hide). Default: approved
+  as for S2-R17 and S2-R30; the lead records the three with a raises entry
+  at the merge, and S2 marks ready with `guard.sh` failing only on those
+  three lines, said in the handoff. Copied in cycle 120.
+  **Answered** by the lead in cycle 120: approved, as the default says.
+  `budgets.json` is in P3-K1-polish-1's files, so the lead writes the
+  three records at home-states' merge.
+  **Done** by the lead in cycle 125: the three records (home/100 148,
+  home/200 124, home/hc 148) and a raises entry are in the merge
+  candidate 84b0ee7c.
+
+- **K1-R26** (from K1, 17 November 2026 10:40Z; due 16:40Z; blocking):
+  P3-K1-polish-2 touches one path outside its files,
+  `client/tests/shots/ui_kit_polish.gd`. `client/tests/ui_kit_tests.gd`
+  stands at gdlint's 1000 lines and already runs this helper in one line
+  (K1-R25), so the six new checks (S3-R9 to S3-R14) join the helper's run.
+  `owners.py diff` names the path until it joins the task's exceptions
+  (M48). Default: granted, as K1-R24 and K1-R25 were. Copied in cycle 123.
+  **Answered** by the lead in cycle 123: granted now. The path is one of
+  P3-K1-polish-2's exceptions in `backlog.json` (P3-K1-polish-1 has
+  merged, so no task in flight holds it), so K1 marks ready when its checks
+  pass.
+
+- **AD-R47 to AD-R55** (from AD, 17 November 2026 10:08Z; due 19 November
+  10:08Z; not blocking): flow board 2's findings F1 to F9 (P3-AD-flow-2,
+  against main 44c43c4f). Write-up and stills:
+  `docs/art/ui-quality/gate/boards/flow-2.md`. Copied in cycle 123.
+  - **AD-R47** (F1, kit, highest): on every screen the router opens, the
+    chosen tab's tile is blank and its picture floats about 180 px above
+    it (probably KitTabs.choose starting Motion.bob before layout).
+    Default: a lead-assigned kit task, with a mount test in
+    `client/tests/run.gd` that opens each tab route through router.go and
+    asserts the chosen picture lies inside its tile.
+  - **AD-R48** (F2): no system back; Android's back quits the app.
+    Default: one go-back handler at the router, quit_on_go_back off, each
+    route to its back route, home asks before quitting, with a test in
+    `client/tests/core_tests.gd`.
+  - **AD-R49** (F3): three tab-bar builders, three route tables, two label
+    rules. Default: every bar routes by Router.TABS (home's Heist the one
+    listed exception) and uses ScreenNav's label rule; home's part to S2,
+    the rest to a lead task, with a core test.
+  - **AD-R50** (F4): the character's back is a parchment '<' in the
+    level-up card, not ScreenNav.back_button. Default: use back_button,
+    with a run.gd mount test of every non-tab route's one back button.
+  - **AD-R51** (F5): the roster forgets its scroll and stage across the
+    character. Default: keep both in the store or the route args, with a
+    mount test.
+  - **AD-R52** (F6, M40): settings reopens on Game. Default: remember the
+    last tab for the session.
+  - **AD-R53** (F7): the offline notice is cream on the roster and red on
+    the character. Default: the cream notice, in the next task touching
+    either screen.
+  - **AD-R54** (F8): LAW_* keys are English in every locale of
+    `client/i18n/content.csv`. Default: a translation task for pt_BR,
+    pt_PT, de and fr, with a check that no content key's locale column
+    equals its en text unless listed as a proper name.
+  - **AD-R55** (F9): at 200% pt_BR a map marker draws over the heist loot
+    panel's first word. Default: the HUD draws above every map marker, in
+    the next heist task.
+  **Answered** by the lead in cycle 123: all nine accepted as their
+  defaults say. AD-R53 joins P3-S3-character-5's done_when now (its files
+  hold `character_screen.gd`; the roster's notice is already cream).
+  AD-R55 rides with the next heist task. The rest become tasks seeded when
+  a seat frees under the cap of three (CLAUDE.md order 3), in this order:
+  a K1 kit task for R47 (highest: every router-opened tab screen shows it),
+  a navigation task for R48, R50 and R51 (router.gd, character_screen.gd
+  after character-5, roster_screen.gd, run.gd, core_tests.gd), S2's and
+  the kit's parts of R49 after P3-S2-home-states merges, R52 with the next
+  settings task, and a content task for R54. Home's part of R49 does not
+  join home-states, which is ready to mark on AD's no objection.
+
+- **AD-R56 to AD-R59** (from AD, 17 November 2026 12:28Z; due 19 November
+  12:28Z; not blocking): audit 1's misses still failing on main, from
+  P3-AD-audit-1b (`docs/art/ui-quality/gate/audit/audit-1-misses.md`).
+  Copied in cycle 125.
+  - **AD-R56** (row 1): in high contrast the heist's Get out and Walk
+    plates sit at the value of their ground. Default: an S1 task gives the
+    hc plates the key frame's near-black card with a cream line, puts Get
+    out on the red danger plate, and sets every control at least dL* 20
+    off its local ground.
+  - **AD-R57** (rows 7 and 33): the offline result shows one Loot card and
+    no crew or portrait. Default: the offline result shows the crew strip
+    and the top earner's portrait, and the gate shoots both states.
+  - **AD-R58** (row 14): at 200% pt_BR the character's display words carry
+    an outline of about 5% of their size, against 12%. Default: the
+    outline is computed from the rendered size, after the text scale and
+    the wrap shrink.
+  - **AD-R59** (row 18): home's goal card XP bar is gold in both looks
+    (KitHud.goal). Default: the green progress fill in both looks; gold
+    stays on Collect.
+  **Answered** by the lead in cycle 125: all four accepted as their
+  defaults say. AD-R58 joins P3-S3-character-5's done_when now (its files
+  hold `character_screen.gd`, and S3 starts on it this cycle). AD-R59
+  rides with R47's K1 kit task (`kit_hud.gd`), with home.gd's caller in
+  S2's next home task. AD-R56 and AD-R57 become one S1 task (heist hc
+  plates, offline result) seeded when a seat frees, after R47's kit task.
 
 ## Done in cycle 50 (10 November 2026, by the lead)
 
