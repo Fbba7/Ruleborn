@@ -3,17 +3,17 @@
   "role": "AD",
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "P3-AD-audit-1",
-  "task_state": "ready",
-  "claimed_at": "2026-11-17T07:30:00Z",
-  "lease_until": "2026-11-17T10:30:00Z",
-  "updated_at": "2026-11-17T08:45:00Z",
-  "expected_next_update_by": "2026-11-17T09:30:00Z",
+  "agent_state": "active",
+  "task_id": "P3-AD-flow-2",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-17T09:35:00Z",
+  "lease_until": "2026-11-17T12:35:00Z",
+  "updated_at": "2026-11-17T09:35:00Z",
+  "expected_next_update_by": "2026-11-17T10:20:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "24965010ad39e1f2fd20766476a5d1a316ec5a3e",
-    "next_step": "P3-AD-audit-1 ready at 24965010 for the lead to score. Next session: P3-AD-flow-2; preview S2's commit for S2-R38 and S2-R40 when named."
+    "next_step": "S2-R42 preview of home-states at e9285afd first, then walk the flows on main 501089f for P3-AD-flow-2."
   },
   "precheck": {
     "sha": "24965010ad39e1f2fd20766476a5d1a316ec5a3e",
@@ -22,7 +22,7 @@
     "summary": "All checks passed."
   },
   "gate_request": null,
-  "ready_sha": "24965010ad39e1f2fd20766476a5d1a316ec5a3e",
+  "ready_sha": null,
   "stop_at": "2026-11-18T21:00:00Z",
   "acks": [
     "M12",
