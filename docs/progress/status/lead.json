@@ -1,8 +1,8 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-17T08:30:00Z",
-  "expected_next_update_by": "2026-11-17T11:30:00Z",
-  "cycle": 120,
+  "updated_at": "2026-11-17T09:40:00Z",
+  "expected_next_update_by": "2026-11-17T12:40:00Z",
+  "cycle": 121,
   "merging": null,
   "last_merged": {
     "task_id": "P3-S1-result-7",
@@ -40,9 +40,9 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Cycle 120 copied K1-R25, S1-R36, S1-R37, S2-R41 and S2-R42 and AD's answer to S2-R36 (no objection). K1-R25 is granted now: ui_kit_polish.gd and its .uid are P3-K1-polish-1's exceptions, so K1 can mark ready (M51). S1-R37 and S2-R41's draw-call records are approved and written by the lead at each task's merge, since budgets.json is in polish-1's files. S1-R36 and S2-R42 go to AD. No gate and no merge; the four builders run. The seven-day bar reads allowed_warning, so order 3's cap is three. Next: gate and merge what is marked ready. When P3-K1-polish-1 merges and the seats allow, start K1 on P3-K1-polish-2, then S3 on P3-S3-character-5. P3-AD-flow-2 follows the audit's merge.",
+  "next_step": "Cycle 122: gate and merge P3-K1-polish-1 (K1 marked it ready at 57ea213c after cycle 121's heads; main moved to 1abc52ba, so build a candidate and run full checks plus guard.sh; merge-tree is clean). Then start K1 on P3-K1-polish-2 within the cap of three (the seven-day bar reads allowed_warning), and S3 on P3-S3-character-5 after polish-2. Score P3-AD-audit-1's misses against the gate's verdicts (its done_when). AD works on S2-R42 (due 16:00Z) and P3-AD-flow-2; S2 works on P3-S2-home-states, writing S2-R41's three records at its merge.",
   "seen": {
-    "at": "2026-11-17T08:19:25Z",
+    "at": "2026-11-17T09:34:43Z",
     "heads": {
       "claude/3d-character-screens": "6053b249bee313648da3509142eeb2ba738bb62f",
       "claude/3d-characters": "35d6ae8f5b84a4d75636f68270848b0949c111f3",
@@ -60,7 +60,7 @@
       "claude/plan-v3": "57893713636b7753d0b790c5a9dc35c3b126770a",
       "claude/security-review": "dd1e90f06b512b25a74f3f3f73ace84b3969cce9",
       "claude/server-decisions": "502b63bbf1506801a7060547f6fb225adcbf8f51",
-      "claude/ui-ad": "d9b96293615dd7307a61314da2510eb91b962a86",
+      "claude/ui-ad": "49f7e18a195a3cc455519a454b76c93328ac4304",
       "claude/ui-artist": "45c6366cb2e0f9dcb5aaa428d17c017576beff5d",
       "claude/ui-artist-icons": "a8b06f687a9fbb1048c426157f2336cda5f44202",
       "claude/ui-bake": "84f1d91bf83495a96aed59a383339f4c20f3b643",
@@ -69,7 +69,7 @@
       "claude/ui-plan": "f1affcea749d007fe1a67931bd3c1f7359d98c44",
       "claude/ui-research": "f19d5d4e5eaffff8869da3b91124d111cf1259a6",
       "claude/ui-screens": "dceb6bfcbc6c5da4e261674fe9301e1854f0aa65",
-      "claude/ui-screens-heist": "28b3079eb500a8b5f58bac70c137c1b11124b75a",
+      "claude/ui-screens-heist": "47db9364cf2a121d75ca10ccd19f79a6bcb1d478",
       "claude/ui-screens-home": "779a5205c06de8e2f9f85b09d3e687df88cc32f1",
       "claude/ui-screens-meta": "7d19eeda3a6d1b6f349f453f85365203604f4431",
       "lead/candidate-573416ab12761b92becf0c1d3d7d7bd03e9cf7d1": "573416ab12761b92becf0c1d3d7d7bd03e9cf7d1",
@@ -80,7 +80,9 @@
       "main": "2455f3b5392587009f9b8f7ff57f7b26b01566d1"
     },
     "ready": {},
-    "startable": [],
+    "startable": [
+      "P3-AD-flow-2"
+    ],
     "messages": [
       "M10",
       "M3"

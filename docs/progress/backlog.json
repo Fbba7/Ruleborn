@@ -263,60 +263,6 @@
       "exceptions": []
     },
     {
-      "id": "P3-S1-result-7",
-      "title": "Result screen, part 7: the gate's fail at 200% pt_BR, Hierarchy (P2-S1-result-6 at b5843368), and board 4's carried notes (idle crew in the fixture, the fold on the crew card's header)",
-      "phase": 3,
-      "role": "S1",
-      "model": "Opus 5.5",
-      "assigned_to": "S1",
-      "files": [
-        "client/scripts/result_screen.gd",
-        "client/scripts/result_fit.gd",
-        "client/tests/shots/screen_result.gd",
-        "docs/art/tracks/result-screen.md"
-      ],
-      "deps": [],
-      "done_when": [
-        "at 200% text in pt_BR the summary prose and the alarm line sit below the reward numerals in size and weight, and one reward tile leads (within AD's accepted parchment departure)",
-        "board 4's notes: the shot's fixture has an idle crew, so the 'Idle crew of N ready' line shows and is checked; at 100% in pt_BR and German and in high contrast pt_BR the action bar's fold falls on the crew card's header, not across its faces, where the layout allows (else the handoff says why)",
-        "'result at 100% text' and 'result in high contrast' still passing; FIT=1 runs of client/tests/shots/screen_result.gd at 200% text in en, pt_BR and de and in high contrast all passing, each run listed in the handoff",
-        "AD previews the stills before ready (M10, M12, M23): the builder sends them to AD while the work can still change, and AD's objections are answered in this task",
-        "python3 tools/ui_bake/check_screens.py",
-        "bash tools/ui_bake/guard.sh",
-        "gate: Screen",
-        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
-        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed under docs/art/ui-quality/gate/verdicts/ or outside the task's files (M48)",
-        "bash tools/check_all.sh"
-      ],
-      "gate_items": [
-        {
-          "item": "result at 200% text, pt_BR",
-          "qualities": [
-            "Hierarchy"
-          ]
-        }
-      ],
-      "attempts": 0,
-      "estimate_h": 1.5,
-      "tier": 2,
-      "critical": false,
-      "state": "merged",
-      "claim": {
-        "agent": "S1",
-        "branch": "claude/ui-screens-heist",
-        "claimed_at": "2026-11-17T07:26:30Z",
-        "seen_at": "2026-11-17T07:50:00Z",
-        "lease_until": "2026-11-17T10:26:30Z"
-      },
-      "prior_branch": null,
-      "prior_sha": null,
-      "ready_sha": "55716273479b27992cdb57e8f5e5151921d31d6f",
-      "merged_sha": "1abc52ba",
-      "updated_at": "2026-11-17T09:35:00Z",
-      "updated_by": "lead (cycle 119)",
-      "exceptions": []
-    },
-    {
       "id": "P3-S2-home-states",
       "title": "Home's unchecked states (board 3's carried note): notifications, a shield and a locked realm in the shot's fixture, so the dock badges, the Defence timer and Lantern Vale's lock are seen and fixed",
       "phase": 3,

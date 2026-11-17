@@ -5,6 +5,36 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 118**, 17 November 2026, from about 07:14Z (session
+  `session_01SNkKxpjRpZTfmY8CdqhAf9`, started by the Opus 5.5 launcher).
+  **Claims copied:** none; no builder session was running.
+  **Requests:** none new.
+  **Phase 2 closed under M49:** every phase-2 task is merged before its
+  stop_at (21:00Z), so the exit review ran now. Boards 3, 4 and 5 stand;
+  board 2 stays deferred under D13 (c); the exceptions queue is empty;
+  every screen item passes the gate except result at 200% text, pt_BR,
+  Hierarchy, carried as P3-S1-result-7. O6, the first blind audit, is
+  carried into phase 3 as P3-AD-audit-1, its form at
+  `docs/art/ui-quality/gate/audit/audit-1.md` (43 rows over 19 items).
+  M48 and M49 acked at 07:20Z.
+  **Phase 3 seeded** (stop_at 2026-11-18T21:00:00Z, commit f1828e4e):
+  P3-AD-audit-1, P3-AD-flow-2, P3-K1-polish-1, P3-K1-polish-2,
+  P3-S3-character-5, P3-S1-result-7 and P3-S2-home-states, each with the
+  M48 `owners.py diff` line in its done_when. M48 is in the brief
+  (`docs/guides/agent-brief.md`) and in each prompt; `tools/run_checks.sh`
+  is unchanged, since it does not know the task ID.
+  **Gate and merges:** none.
+  **Starts:** AD on P3-AD-audit-1, K1 on P3-K1-polish-1, S1 on
+  P3-S1-result-7 and S2 on P3-S2-home-states, all on Opus 5.5 at effort
+  high (07:25Z). Every agent's last session was idle with its task
+  merged.
+  **Seats:** four of four (AD, K1, S1, S2). S3 waits on
+  P3-K1-polish-2.
+  **Next:** copy the four claims; route S1's and S2's preview requests to
+  AD, which AD answers between audit rows without opening the audit's
+  verdicts; when K1's polish-1 merges, start K1 on polish-2, then S3 on
+  character-5 after it.
+
 - **Cycle 117**, 17 November 2026, from about 06:15Z (session
   `session_01SNkKxqbBzHeQrccHM7ZD6p`, started by the Opus 5.5 launcher).
   **Claims copied:** S1 marked P2-S1-result-6 ready again at 32f97a08
