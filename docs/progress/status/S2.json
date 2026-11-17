@@ -3,26 +3,49 @@
   "role": "S2",
   "branch": "claude/ui-screens-home",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P3-S2-home-states",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-17T10:50:00Z",
   "lease_until": "2026-11-17T13:50:00Z",
-  "updated_at": "2026-11-17T11:20:00Z",
-  "expected_next_update_by": "2026-11-17T12:05:00Z",
+  "updated_at": "2026-11-17T12:12:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "a4090ec7",
-    "next_step": "f0092fee: AD's note 1 fixed (Defence disc drops 4 pt at large text). Main merged (8ac36c59). Running: check_all and the large-text fit cases; then guard, check_screens, pre-check, owners.py diff, gate_request, ready."
+    "last_green_sha": "89659437",
+    "next_step": "Ready at 89659437: pre-check PASS, check_all PASS, check_screens OK, owners.py diff OK, 58 of 58 fit cases ok; guard.sh fails only on S2-R41's three draw-call lines. AD's S2-R42 note 1 tried and reverted (the drop hides the left edge with the notice at 200% in fr), note 2 left. Waiting on the gate; no new task."
   },
   "precheck": {
-    "sha": "488c8b5a54e3a49a60f723436d20647395e8a0a2",
+    "sha": "89659437afa647a16500a767400b25b855f2af19",
     "exit": 0,
-    "finished_at": "2026-11-17T09:39:03Z",
+    "finished_at": "2026-11-17T12:08:45Z",
     "summary": "All checks passed."
   },
-  "gate_request": null,
-  "ready_sha": null,
+  "gate_request": {
+    "sha": "89659437afa647a16500a767400b25b855f2af19",
+    "items": [
+      {
+        "item": "home at 100% text",
+        "qualities": [
+          "Hierarchy",
+          "Display type"
+        ]
+      },
+      {
+        "item": "home at 200% text, pt_BR",
+        "qualities": [
+          "Hierarchy"
+        ]
+      },
+      {
+        "item": "home in high contrast",
+        "qualities": [
+          "Hierarchy"
+        ]
+      }
+    ]
+  },
+  "ready_sha": "89659437afa647a16500a767400b25b855f2af19",
   "stop_at": "2026-11-18T21:00:00Z",
   "acks": [
     "M13",
@@ -635,9 +658,10 @@
       "created_at": "2026-11-17T07:52:00Z",
       "due": "2026-11-17T16:00:00Z",
       "default": "As S2-R36's: if AD has not answered by 16:00Z, the stills stand and S2 marks ready on its own checks; the gate judges them.",
-      "escalate_to": "lead"
+      "escalate_to": "lead",
+      "answered": "AD previewed e9285afd (board-3.md, second look): no objection. Note 1 tried (f0092fee) and reverted (09f0f119), as the taller holder hides the left edge at 200% with the notice in pt_BR, pt_PT and fr; note 2 left. home-screen.md, \"AD's preview, second look\"."
     }
   ],
   "answers": [],
-  "next_step": "Blocked on S2-R42 alone (AD's preview of e9285afd; due 16:00Z; default: the stills stand). Everything else is green on 488c8b5a: pre-check PASS (09:39Z, recorded), check_all PASS, check_screens OK, owners.py diff OK, 57 of 57 fit ok on e9285afd; guard fails only on the three S2-R41 lines (148/124/148, approved in cycle 120, the lead records them at merge). On restart: act on AD's notes if any; merge the integration branch (clean at 44c43c4f; only S1-R37's budgets.json entry touches a shared file); the setup line, bash client/build.sh, check_all, guard and the pre-check on the merge (run_checks.sh start, wait, record); owners.py diff at ready_sha; set gate_request (home at 100% text: Hierarchy, Display type; home at 200% text, pt_BR: Hierarchy; home in high contrast: Hierarchy), ready_sha and task_state ready; push."
+  "next_step": "Ready at 89659437: pre-check PASS, check_all PASS, check_screens OK, owners.py diff OK, 58 of 58 fit cases ok; guard.sh fails only on S2-R41's three draw-call lines. AD's S2-R42 note 1 tried and reverted (the drop hides the left edge with the notice at 200% in fr), note 2 left. Waiting on the gate; no new task."
 }
