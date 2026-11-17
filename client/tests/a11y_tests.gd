@@ -89,10 +89,10 @@ func _kit_backgrounds(n: Node) -> Array[Color]:
 
 ## §21.8: "Words with an ink outline all round, at least 1.5 points or 12% of
 ## their size wide, are measured against the outline". The outline's colour,
-## or a transparent colour when the words have none that counts.
+## or a transparent colour when the words have none that counts. Godot draws
+## a quarter of `outline_size` on each side (KitHud.ink_side, S3-R35).
 func _outline(c: Control, points: float) -> Color:
-	var width := c.get_theme_constant("outline_size") / UI.PX_PER_POINT
-	if width >= maxf(1.5, 0.12 * points):
+	if KitHud.ink_counts(c.get_theme_constant("outline_size"), points):
 		return c.get_theme_color("font_outline_color")
 	return Color(0, 0, 0, 0)
 
