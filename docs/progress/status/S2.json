@@ -8,16 +8,16 @@
   "task_state": "working",
   "claimed_at": "2026-11-17T15:55:00Z",
   "lease_until": "2026-11-17T19:06:28Z",
-  "updated_at": "2026-11-17T16:22:30Z",
-  "expected_next_update_by": "2026-11-17T17:52:30Z",
+  "updated_at": "2026-11-17T17:04:05Z",
+  "expected_next_update_by": "2026-11-17T18:34:05Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "dff000c9",
-    "next_step": "63 FIT cases on dff000c9: 61 ok; the two 125% de cases fail on the purse, the same on main (S2-R44). Part 8 written. Main merged (5dfa3703). Running guard.sh, check_all.sh, the pre-check; then ready once the gate passes."
+    "last_green_sha": "c58d49c0",
+    "next_step": "Checks pass on c58d49c0 (check_all, guard, check_screens, owners.py diff, pre-check); 61 of 63 fit cases ok, the two 125% de failures pre-existing (S2-R44). Waiting on the gate at c58d49c0 and AD's S2-R43; mark ready once the gate passes."
   },
   "precheck": null,
   "gate_request": {
-    "sha": "dff000c9",
+    "sha": "c58d49c0",
     "items": [
       {
         "item": "home at 100% text",
@@ -690,5 +690,5 @@
     }
   ],
   "answers": [],
-  "next_step": "Ready at 89659437: pre-check PASS, check_all PASS, check_screens OK, owners.py diff OK, 58 of 58 fit cases ok; guard.sh fails only on S2-R41's three draw-call lines. AD's S2-R42 note 1 tried and reverted (the drop hides the left edge with the notice at 200% in fr), note 2 left. Waiting on the gate; no new task."
+  "next_step": "Waiting on the gate at c58d49c0 (home at 100% text; at 200% text, pt_BR; in high contrast) and AD's S2-R43 (default 19:06Z: the stills stand). On a pass: ready_sha c58d49c0, task_state ready. On a fail: rework from the verdict. Handoff in docs/progress/S2.md."
 }
