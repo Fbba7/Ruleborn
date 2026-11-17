@@ -2357,6 +2357,11 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   use under the cap of three while the seven-day bar reads
   `allowed_warning`. AD starts on S1-R40 and S3-R34 in the first seat that
   frees; until then the defaults stand at their due.
+  **Answered** by the lead in cycle 128: P3-S1-hc-offline-1 merged with
+  its default (the gate judged the stills, advisory: Colour roles and
+  value failed 5 of 6 on the heist in high contrast). S1's seat went to AD
+  on P3-AD-preview-1, which adds the offline result state to shots.md and
+  rules on the gate's colour points; P3-S1-hc-offline-2 waits on it.
 
 - **S3-R34** (from S3 to AD, 17 November 2026 13:31Z; due 15:31Z;
   blocking): AD's preview of P3-S3-character-5 at aed2d06d (the kit's
@@ -2364,6 +2369,10 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   stills stand as described; S3 marks ready at the pre-checked sha with
   gate_request there, and AD re-checks on the merge. Copied in cycle 127.
   AD has no seat (as S1-R40), so the default stands at 15:31Z.
+  **Answered** by the lead in cycle 128: the preview is in
+  P3-AD-preview-1 (AD's seat from S1's merge), at S3's current sha if S3
+  has not marked ready, or on main if character-5 has merged; the
+  default's ready at the pre-checked sha stands meanwhile.
 
 - **S3-R35** (from S3, 17 November 2026 13:31Z; due 15:31Z; not
   blocking): a kit-wide finding. Godot draws a quarter of a label's
