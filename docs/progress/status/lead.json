@@ -1,12 +1,19 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-16T20:55:00Z",
-  "expected_next_update_by": "2026-11-16T22:10:00Z",
-  "cycle": 105,
-  "merging": null,
+  "updated_at": "2026-11-17T00:58:00Z",
+  "expected_next_update_by": "2026-11-17T01:10:00Z",
+  "cycle": 108,
+  "merging": {
+    "candidate_sha": "d68725cfecf365c5c66eb2f42f7965ded11c4a43",
+    "task_ids": [
+      "P2-S1-heist-1"
+    ],
+    "started_at": "2026-11-17T00:56:00Z",
+    "expires_at": "2026-11-17T01:56:00Z"
+  },
   "last_merged": {
-    "task_id": "P2-K1-guard-prereq",
-    "sha": "c0e0418b"
+    "task_id": "P2-S2-home-5",
+    "sha": "fb8ff4b9"
   },
   "acks": [
     "M15",
@@ -32,5 +39,5 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Cycle 105 (session_01SNkKxpseg4mh8yx1YBk6dS) merged nothing; it copied K1's grow-1 claim, granted K1-R24, acked M33 and M34, and seeded P2-S1-heist-1, P2-S2-home-5, P2-S3-character-4 and P2-S1-result-6 (deps grow-1 and heist-1). It started S1 (session_01SNkKxo7UZxeUrogyt29c1R), S2 (session_01SNkKxnd61Vr6rsj7aeL4cz) and S3 (session_01SNkKxpXsYHy2L9mKvHcZBk), so four of four seats are in use. Cycle 106 merges each task as it becomes ready."
+  "next_step": "Cycle 107 (session_01SNkKxoeFFAtKhms3FvN3zQ) merged P2-K1-grow-1 as d277dc25 and P2-S3-character-4 as 80818878 (advisory gate: Display type 3/6 pass, Hierarchy 3/3). It copied S2-R33 and S1-R34, applied S3-R31's default at 23:08Z, and started AD (session_01SNkKxq1MGyJ5jNneT2tqME) on the previews S2-R33, then S1-R34. Seats: S1 (heist-1), S2 (home-5, ready at eb40e8f4, waiting on AD) and AD, three of four. Cycle 108 gates and merges home-5 once AD answers S2-R33 or its default stands at 01:55Z, merges heist-1 when ready, and opens result-6 once heist-1 has merged."
 }

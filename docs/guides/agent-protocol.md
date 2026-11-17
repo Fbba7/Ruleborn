@@ -442,16 +442,32 @@ ready").
 4. Otherwise run the full checks and the wave's guards on the candidate. If
    they pass, fast-forward main to the candidate. If they fail, set `resync`
    and attach the failure lines.
+   **Reusing the builder's checks** (the owner's decision of 16 November
+   2026, to speed up the queue). The lead skips its own `check_all.sh` when
+   the task's `precheck` has `exit` 0 at `sha` equal to `ready_sha`, and the
+   candidate differs from `ready_sha` only under `docs/progress/`:
+   `git diff --quiet <ready_sha> <candidate> -- . ':(exclude)docs/progress'`.
+   It skips the guard on the same terms when the builder's status or
+   handoff records `ui guard: OK` at that `ready_sha`; otherwise it runs
+   only the guard. It still runs `python3 tools/check_docs_consistency.py`
+   on the candidate, records "checks reused from the pre-check at
+   `<ready_sha>`" in the cycle's write-up, and runs `check_all.sh` on main
+   after the merge under `nohup setsid`: if main fails, it reverts the merge
+   at once and sets the task to `resync`. A batch, or a candidate whose
+   diff with `ready_sha` touches anything outside `docs/progress/`, gets
+   the full checks as before.
 5. The gate's verdict carries over if the merge changed none of the task's
    `files` and none of the contract's files. Otherwise the gate re-runs on
    the candidate before main moves.
 
-Main moves only to a candidate that passed on the integrator's side.
+Main moves only to a candidate that passed on the integrator's side, or
+whose checks were reused from the builder's pre-check under step 4.
 
 **Main is protected by rule** (decision D-14). Platform branch protection is
 not available from the agents' tools, so nothing configures it. Only the lead
 or the coordinator moves main, through this queue, after `check_all.sh`
-passes on the candidate; every other agent pushes only to its own branch.
+passes on the candidate (or on the same tree, by the builder's pre-check,
+as step 4 allows); every other agent pushes only to its own branch.
 GitHub runs `.github/workflows/checks.yml` on every push and pull request
 (SEC-28): the server's and the simulation's tests, the documents check, the
 ownership self-test and the runner's containment with a real bubblewrap. It

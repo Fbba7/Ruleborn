@@ -2,7 +2,7 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026. Phase 2 started on 12 November 2026 (lead cycle 70): P1-AD-board-1d let board 1 stand and phase 1's other exit criteria hold (report.md section 3.2); its first tasks are the flow findings (S1, S2) and board 1's note G (AIA-2), within the same cap of three. Since 12 November 2026, about 20:00Z, the cap is four UI builders by the owner's order (CLAUDE.md order 3; three while the seven-day bar reads allowed_warning).",
   "wave": "UI wave",
   "phase": 2,
-  "updated_at": "2026-11-16T20:55:00Z",
+  "updated_at": "2026-11-16T23:55:00Z",
   "updated_by": "lead (cycle 105)",
   "stop_at": "2026-11-17T21:00:00Z",
   "lease_hours": 3,
@@ -4827,20 +4827,20 @@
       "model": "Opus 5.5",
       "attempts": 0,
       "critical": false,
-      "state": "claimed",
+      "state": "merged",
       "claim": {
         "agent": "K1",
         "branch": "claude/ui-bake",
         "claimed_at": "2026-11-16T20:25:00Z",
-        "seen_at": "2026-11-16T20:42:00Z",
+        "seen_at": "2026-11-16T21:57:00Z",
         "lease_until": "2026-11-16T23:25:00Z"
       },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null,
-      "updated_at": "2026-11-16T20:55:00Z",
-      "updated_by": "lead (cycle 105)",
+      "ready_sha": "050be78b0605938ccc9a49a2cf985f80a64f07ea",
+      "merged_sha": "d277dc25",
+      "updated_at": "2026-11-16T23:24:00Z",
+      "updated_by": "lead (cycle 107)",
       "id": "P2-K1-grow-1",
       "title": "The kit's buttons grow and wrap at large text (S1-R15, S1-R23, S3-R3); the reward sky stays plain under high contrast (S1-R32)",
       "exceptions": [
@@ -4906,18 +4906,25 @@
       "model": "Opus 5.5",
       "attempts": 0,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "ready",
+      "claim": {
+        "agent": "S1",
+        "branch": "claude/ui-screens-heist",
+        "claimed_at": "2026-11-16T20:51:41Z",
+        "seen_at": "2026-11-17T00:58:00Z",
+        "lease_until": "2026-11-17T01:09:33Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
+      "ready_sha": "90c8b15ca6765cea2e9e4d749841582db74eef51",
       "merged_sha": null,
-      "updated_at": "2026-11-16T20:55:00Z",
-      "updated_by": "lead (cycle 105)",
+      "updated_at": "2026-11-17T00:58:00Z",
+      "updated_by": "lead (cycle 108)",
       "id": "P2-S1-heist-1",
       "title": "Heist screen, phase 2 exit (M25): the gate's open fails at 100% and 200% text re-run on current main and fixed",
       "exceptions": [
-        "docs/art/shots/heist-pilot/**"
+        "docs/art/shots/heist-pilot/**",
+        "client/world/fx_law_badge.gd.uid"
       ]
     },
     {
@@ -4963,16 +4970,89 @@
       "model": "Opus 5.5",
       "attempts": 0,
       "critical": false,
+      "state": "merged",
+      "claim": {
+        "agent": "S2",
+        "branch": "claude/ui-screens-home",
+        "claimed_at": "2026-11-16T21:00:00Z",
+        "seen_at": "2026-11-16T22:31:00Z",
+        "lease_until": "2026-11-17T00:00:00Z"
+      },
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "eb40e8f42e1c012069dfec1c505f93fe3f26d6ca",
+      "merged_sha": "fb8ff4b9",
+      "updated_at": "2026-11-17T00:58:00Z",
+      "updated_by": "lead (cycle 108)",
+      "id": "P2-S2-home-5",
+      "title": "Home screen, part 5 (phase 2 exit, M25): the gate at 100% text re-run on current main; the Display type fail (currency counts, header) fixed if it stands",
+      "exceptions": [
+        "client/scripts/home_parts.gd.uid"
+      ]
+    },
+    {
+      "role": "S2",
+      "assigned_to": "S2",
+      "files": [
+        "client/scripts/home.gd",
+        "client/scripts/home_parts.gd",
+        "client/tests/shots/universe_home.gd",
+        "docs/art/tracks/home-screen.md"
+      ],
+      "deps": [
+        "P2-S2-home-5"
+      ],
+      "done_when": [
+        "home at 100% text, Display type (verdict docs/art/ui-quality/gate/verdicts/P2-S2-home-5/eb40e8f4.json): 'Keeper 24' over the starfield ink-outlined all round (at least 1.5 pt), not a drop alone, and every headline count (the purse's counts and the gem count) in one big-number treatment (ink outline, hard drop, gradient fill) heavy enough to read at the still's scale",
+        "home at 200% text, pt_BR, Display type: the gem count and the Vibrante percentage in the same big-number treatment as the purse's counts, and 'Guardião 24' stroked all round",
+        "'home at 100% text' Hierarchy and Character presence, 'home in high contrast' and 'home at 200% text, pt_BR' Hierarchy still passing",
+        "M26: the home screen's scripted fit check 'fit ok' on every fixture state at 200% text in en, pt_BR and de",
+        "AD previews the stills before ready (M10, M12, M23): the builder sends them to AD while the work can still change, and AD's objections are answered in this task",
+        "python3 tools/ui_bake/check_screens.py",
+        "bash tools/ui_bake/guard.sh",
+        "gate: Screen",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 1,
+      "gate_items": [
+        {
+          "item": "home at 100% text",
+          "qualities": [
+            "Display type",
+            "Hierarchy",
+            "Character presence"
+          ]
+        },
+        {
+          "item": "home at 200% text, pt_BR",
+          "qualities": [
+            "Display type",
+            "Hierarchy"
+          ]
+        },
+        {
+          "item": "home in high contrast",
+          "qualities": [
+            "Hierarchy"
+          ]
+        }
+      ],
+      "tier": 2,
+      "phase": 2,
+      "model": "Opus 5.5",
+      "attempts": 0,
+      "critical": false,
       "state": "open",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-16T20:55:00Z",
-      "updated_by": "lead (cycle 105)",
-      "id": "P2-S2-home-5",
-      "title": "Home screen, part 5 (phase 2 exit, M25): the gate at 100% text re-run on current main; the Display type fail (currency counts, header) fixed if it stands",
+      "updated_at": "2026-11-17T01:00:00Z",
+      "updated_by": "lead (cycle 108)",
+      "id": "P2-S2-home-6",
+      "title": "Home screen, part 6 (phase 2 exit, M25, M33): the advisory gate's Display type fails at home 100% text and 200% pt_BR (verdict at eb40e8f4) fixed",
       "exceptions": [
         "client/scripts/home_parts.gd.uid"
       ]
@@ -5014,14 +5094,20 @@
       "model": "Opus 5.5",
       "attempts": 0,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "merged",
+      "claim": {
+        "agent": "S3",
+        "branch": "claude/ui-screens-meta",
+        "claimed_at": "2026-11-16T20:55:00Z",
+        "seen_at": "2026-11-16T22:32:00Z",
+        "lease_until": "2026-11-16T23:55:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null,
-      "updated_at": "2026-11-16T20:55:00Z",
-      "updated_by": "lead (cycle 105)",
+      "ready_sha": "ee67dcea90dcaef929db2240127f1b87b13ad735",
+      "merged_sha": "80818878",
+      "updated_at": "2026-11-16T23:55:00Z",
+      "updated_by": "lead (cycle 107)",
       "id": "P2-S3-character-4",
       "title": "Character screen, part 4 (phase 2 exit, M25): the Display type fail at 200% text, pt_BR (P2-S3-character-3's advisory verdict) fixed",
       "exceptions": [
@@ -5396,6 +5482,27 @@
       "sent_at": "2026-11-16T20:45:00Z",
       "ack_by": "2026-11-16T22:45:00Z",
       "acked_at": "2026-11-16T21:00:00Z"
+    },
+    {
+      "id": "M35",
+      "to": "lead",
+      "text": "Lesson from the UI report, at the owner's request to speed the program up without losing work (16 Nov). Evidence: P2-K1-grow-1 was ready at 21:55Z, just after cycle 106 read the branches; it waited 48 minutes for cycle 107 and merged at 23:21Z, and K1's seat has stood empty since 21:55Z; from about 17:40Z to 20:49Z only 0 or 1 of 4 seats worked (report entries 93 to 98). Rules: (1) a seat frees when its task is ready, not when it merges; in each cycle, start the next task for every free seat (steps 2 and 6) before taking the merge queue (step 5), and while a candidate's check_all and guard run under nohup setsid, fill seats and copy requests instead of waiting; (2) keep one seeded open task per agent whose deps do not wait on a task in flight, so refilling a seat never waits on seeding; (3) the launcher now also fires at :13 (trig_0155PATecuM4Cm5NGsEsbkX1, recorded in lead.md), so a cycle can start every half hour; a cycle that finds nothing to do ends quickly. Put rule (1) into agent-protocol.md's \"One cycle\". The cap of four and every check stay as they are. Add M35 to your acks.",
+      "sent_at": "2026-11-16T23:45:00Z",
+      "ack_by": "2026-11-17T01:45:00Z"
+    },
+    {
+      "id": "M36",
+      "to": "lead",
+      "text": "The owner's decision of 16 November 2026 (\"yes, reuse checks\", in the overseer session's chat): the merge queue may reuse the builder's checks. When a task's precheck has exit 0 at sha equal to ready_sha, and the candidate differs from ready_sha only under docs/progress/ (git diff --quiet <ready_sha> <candidate> -- . ':(exclude)docs/progress'), skip your own check_all.sh; skip the guard too when the builder's status or handoff records 'ui guard: OK' at that ready_sha, otherwise run only the guard. Still run check_docs_consistency.py on the candidate, write 'checks reused from the pre-check at <ready_sha>' in the cycle's write-up, and run check_all.sh on main after the merge under nohup setsid; if main fails, revert the merge at once and set the task to resync. Batches and candidates that differ outside docs/progress/ get the full checks as before. The rule is now in agent-protocol.md, 'The merge queue', step 4, and D-14's row in agent-program.md. Add M36 to your acks.",
+      "sent_at": "2026-11-16T23:52:00Z",
+      "ack_by": "2026-11-17T01:52:00Z"
+    },
+    {
+      "id": "M37",
+      "to": "lead",
+      "text": "Cycle 107's first check_all on candidate 714b24ed (P2-K1-grow-1) failed at the simulation build because the lead's fresh container had no wasm32-unknown-unknown target, as in cycles 54, 72 and 81, although M22 asks for the install as a cycle's first step. The overseer added the installs to the environment's setup script on 17 November 2026: every fresh container now runs rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios and pip install gdtoolkit 4 and playwright 1.63.0 before the session starts. Keep M22's setup line as a no-op check (it reports 'up to date' when the script ran) and still run bash client/build.sh in the candidate worktree. If a first check run still fails on a missing tool, write which one in the cycle's write-up, so the script can be fixed. Add M37 to your acks.",
+      "sent_at": "2026-11-17T00:01:00Z",
+      "ack_by": "2026-11-17T02:01:00Z"
     }
   ]
 }

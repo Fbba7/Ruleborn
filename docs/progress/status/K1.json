@@ -4,16 +4,16 @@
   "branch": "claude/ui-bake",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P2-K1-guard-prereq",
+  "task_id": "P2-K1-grow-1",
   "task_state": "working",
-  "claimed_at": "2026-11-16T18:00:00Z",
-  "lease_until": "2026-11-16T21:00:00Z",
-  "updated_at": "2026-11-16T18:15:00Z",
-  "expected_next_update_by": "2026-11-16T19:00:00Z",
+  "claimed_at": "2026-11-16T20:25:00Z",
+  "lease_until": "2026-11-16T23:25:00Z",
+  "updated_at": "2026-11-16T20:52:00Z",
+  "expected_next_update_by": "2026-11-16T21:37:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "a81435a9",
-    "next_step": "prereq check written; waiting for client/build.sh, then --self-test, the full guard and the pre-check"
+    "last_green_sha": "55e4e77c",
+    "next_step": "main merged as 4f10bc28; the setup line, build.sh, check_all and guard.sh on the merge are running, then the pre-check and the handoff"
   },
   "precheck": null,
   "gate_request": null,
@@ -350,6 +350,21 @@
       "due": "2026-11-17T13:05:00Z",
       "default": "No change: KitNav.celebrate stays as an alias of KitNav.reward and Motion.reward stays public, so the result screen draws exactly as today and nothing breaks",
       "escalate_to": "lead"
+    },
+    {
+      "id": "K1-R24",
+      "from": "K1",
+      "to": "lead",
+      "ask": "P2-K1-grow-1 touches two paths outside its files: client/tests/shots/ui_kit_grow.gd and its .uid. client/tests/ui_kit_tests.gd stands at gdlint's 1000 lines on main, so the new checks (action2, big_action and upgrade at 200% pt_BR and en with their words inside the button; reward and celebrate under high contrast leaving the sky's dress) live in this helper, as K1-R15's, K1-R20's and K1-R21's did; ui_kit_tests.gd calls it in one line, kept at 1000 by setting K33's and K34's one-skin entries of SKINS_OF on one line, as K23's and K24's are.",
+      "files": [
+        "client/tests/shots/ui_kit_grow.gd",
+        "client/tests/shots/ui_kit_grow.gd.uid"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-16T20:42:00Z",
+      "due": "2026-11-17T02:42:00Z",
+      "default": "Granted by the lead in cycle 105: the two paths join P2-K1-grow-1's exceptions at the merge",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
@@ -394,5 +409,5 @@
       "at": "2026-11-16T13:05:00Z"
     }
   ],
-  "next_step": "ready at a81435a9 (pre-check PASS 14:20Z; no gate items); waiting for the merge queue; K1-R23 to S1 open (default: no change)"
+  "next_step": "main merged as 4f10bc28; the setup line, build.sh, check_all and guard.sh on the merge are running, then the pre-check and the handoff"
 }
