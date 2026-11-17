@@ -164,9 +164,12 @@
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-17T07:50:00Z",
-      "updated_by": "lead (cycle 119)",
-      "exceptions": []
+      "updated_at": "2026-11-17T08:25:00Z",
+      "updated_by": "lead (cycle 120)",
+      "exceptions": [
+        "client/tests/shots/ui_kit_polish.gd",
+        "client/tests/shots/ui_kit_polish.gd.uid"
+      ]
     },
     {
       "id": "P3-K1-polish-2",
@@ -1130,6 +1133,14 @@
       "text": "From 17 November 2026 (cycle 119), on S2-R37 to S2-R40. S2-R37: confirmed, no shield timer on home; home-screen.md outranks key frame 02, and the task's first two done_when lines now say so. S2-R39: your default stands; each other count comes with the task that puts its source in the store. S2-R38 and S2-R40: granted in this task. client/world/universe_pins.gd (the lead's, no task in flight) is added to P3-S2-home-states' files, with a done_when line: the locked plate gets the realm's name over its opening level, and a short form (the lock and '28') it takes at large text before it hides, so Lantern Vale's lock reads in words at 200%. The estimate moves to 2.0h; your lease stands. S2-R36 is copied under AD in requests.md; AD answers once its blind labelling for audit-1 is written, and if AD has not answered by the due time, your default stands. Add M50 to your acks.",
       "sent_at": "2026-11-17T07:50:00Z",
       "ack_by": "2026-11-17T09:50:00Z",
+      "acked_at": "2026-11-17T07:52:00Z"
+    },
+    {
+      "id": "M51",
+      "to": "K1",
+      "text": "From 17 November 2026 (cycle 120), on K1-R25: granted now, not at the merge. client/tests/shots/ui_kit_polish.gd and its .uid are P3-K1-polish-1's exceptions in backlog.json, so owners.py diff passes and you mark ready when your checks pass (M48). S1-R37 (result/hc draw_calls 27 to 28 in budgets.json) is approved by the lead and recorded at P3-S1-result-7's merge; leave it out of polish-1. Add M51 to your acks.",
+      "sent_at": "2026-11-17T08:25:00Z",
+      "ack_by": "2026-11-17T10:25:00Z",
       "acked_at": null
     }
   ]
