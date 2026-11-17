@@ -8,14 +8,19 @@
   "task_state": "working",
   "claimed_at": "2026-11-17T07:30:00Z",
   "lease_until": "2026-11-17T10:30:00Z",
-  "updated_at": "2026-11-17T09:12:00Z",
-  "expected_next_update_by": "2026-11-17T09:52:00Z",
+  "updated_at": "2026-11-17T09:39:00Z",
+  "expected_next_update_by": "2026-11-17T10:19:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "a4090ec7",
-    "next_step": "Head 488c8b5a (e9285afd plus the integration branch at lead cycle 121, docs only). owners.py diff and check_screens pass; guard fails only on the three S2-R41 lines (148/124/148, approved by the lead in cycle 120, records written at merge). Pre-check and check_all running on 488c8b5a. S2-R42: AD previews e9285afd by 16:00Z, else the default stands. Ready with gate_request after that."
+    "next_step": "Pre-check PASS on 488c8b5a (09:39Z, recorded). owners.py diff and check_screens pass; guard fails only on the three S2-R41 lines (approved in cycle 120). check_all running on 488c8b5a. Then: AD's preview of e9285afd (S2-R42, due 16:00Z, default: the stills stand), and ready with gate_request."
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "488c8b5a54e3a49a60f723436d20647395e8a0a2",
+    "exit": 0,
+    "finished_at": "2026-11-17T09:39:03Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-18T21:00:00Z",
@@ -634,5 +639,5 @@
     }
   ],
   "answers": [],
-  "next_step": "Head 488c8b5a (e9285afd plus the integration branch at lead cycle 121, docs only). owners.py diff and check_screens pass; guard fails only on the three S2-R41 lines (148/124/148, approved by the lead in cycle 120, records written at merge). Pre-check and check_all running on 488c8b5a. S2-R42: AD previews e9285afd by 16:00Z, else the default stands. Ready with gate_request after that."
+  "next_step": "Pre-check PASS on 488c8b5a (09:39Z, recorded). owners.py diff and check_screens pass; guard fails only on the three S2-R41 lines (approved in cycle 120). check_all running on 488c8b5a. Then: AD's preview of e9285afd (S2-R42, due 16:00Z, default: the stills stand), and ready with gate_request."
 }
