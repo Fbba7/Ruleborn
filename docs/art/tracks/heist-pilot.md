@@ -462,3 +462,45 @@ Textures and word contrast are unchanged. No word is below 4.5:1. `check_screens
 - **The bubble can rest on a panel** when the world has no room for it (200% text): on the tray's empty right side, on the loot panel's empty lower right, or (pt_BR, longest names) on the loot panel's top edge, further from its guard. It stays off every word, portrait and tag, but it covers the frame.
 - **The law badge is smaller at 100% text** (22 points, from 32) so the laws column fits §21.1's frame. The icon inside is about 10 points.
 - **Long names at 200% text shrink** to fit their third of the row, on two lines. They fit, but they read smaller than the short names beside them.
+
+## Part 7: the heist's plates in high contrast (P3-S1-hc-offline-1, AD-R56)
+
+**AD-R56.** In high contrast the kit's leather plates rendered as a flat mauve at about the world's own value: Walk's face read L* 36.7 on a ground of 48.2. Key frame high contrast puts the heist's plates on the near-black card (#140C2A) with a light line, Get out on the red danger plate.
+
+**What changed** (`client/scripts/heist_hand.gd`, `HC_LEATHER` and `hc_plates`). In high contrast, at the end of each refresh, the hand walks the HUD's controls (never the world's own view) and re-dresses them through the kit's `UI.dress`:
+
+- every `leather`, `plate_leather`, `glass` and `tag_dark` plate takes the kit's `card` look, the near-black card;
+- Get out takes `red`, the kit's danger plate;
+- Pause takes `parchment`, the clock's light plate (white in high contrast), with its icon inked (`FxSkin.INK_LINE`) so it reads on the light face;
+- every other look (Cast's gold, the crew's well) stays as the kit dresses it.
+
+**The line is lavender, not cream.** The card's high-contrast line is drawn by the kit's atlas face, in lavender #B8A8D8 (L* about 72), and the shader's line colour cannot change a line the atlas draws. A cream line needs a high-contrast card face in the kit: request S1-R38 to K1 through the lead. Its default keeps the lavender line, which stands 52 to 56 L* off the sky.
+
+### The controls' value steps (AD-R56)
+
+Each control's face against the ground right around it, measured as L* on the high-contrast still at 100% text (`heist_hc.png` below), point samples on the face and on the ground beside it:
+
+| Control | Face L* | Ground | Ground L* | dL* |
+|---|---:|---|---:|---:|
+| Pause (light plate) | 100 | night sky | 23.3 | 76.7 |
+| Walk (card) | 5.2 | sky and world, left | 34.9 | 29.7 |
+| Walk (card) | 5.2 | grass | 51 to 56 | 46 or more |
+| The hint's plate (card) | 5.2 | grass | 51.1 | 45.9 |
+| Cast (gold) | 80.5 | the tray (card) | 5.2 | 75.3 |
+| Cast (gold) | 80.5 | the crew's well | 0 | 80.5 |
+| Get out (red) | 30.4 | the tray (card) | 5.2 | 25.2 |
+| Get out (red) | 30.4 | the crew's well | 0 | 30.4 |
+
+Every control is 20 or more off its ground; the lowest is Get out on the tray, 25.2. The crew's portraits sit in the black well (L* 0), lit by their own discs. At 200% text in pt_BR the order changes: Pause sits in the crew's well (100 on 0), and Get out ("Fugir", red) and Cast ("Lançar", gold) stand on the tray as above.
+
+**Display plates, not controls.** Bloom's law chip, the alarm and the loot are card faces (5.2) on a sky of 15.8 to 19.0: by their faces only 11 to 14 apart. They are read by their lavender line (L* about 72, 52 to 56 off the sky) and by their light words, and none of them is pressed. They are named here so AD can judge them; the cream line of S1-R38 would raise the line further.
+
+### Evidence
+
+Each still was shot with `FIT=1`, all exit 0, "fit ok":
+
+    env FIT=1 CONTRAST=1 bash tools/render/shoot.sh client/tests/shots/screen_heist.gd heist_hc.png
+    env FIT=1 CONTRAST=1 TEXT=200 LOCALE=pt_BR bash tools/render/shoot.sh client/tests/shots/screen_heist.gd heist_hc_200_pt_BR.png
+    env FIT=1 TEXT=200 [LOCALE=pt_BR|de] bash tools/render/shoot.sh client/tests/shots/screen_heist.gd heist_200_<locale>.png
+
+`heist_hc.png` is the still for the gate's "heist in high contrast" (Colour roles and value). The stills are not committed (this task's files hold no stills); the commands above render them from the ready commit.
