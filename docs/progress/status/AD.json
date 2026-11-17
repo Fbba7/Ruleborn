@@ -3,26 +3,21 @@
   "role": "AD",
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "P3-AD-flow-2",
-  "task_state": "ready",
-  "claimed_at": "2026-11-17T09:35:00Z",
-  "lease_until": "2026-11-17T12:35:00Z",
-  "updated_at": "2026-11-17T10:44:05Z",
-  "expected_next_update_by": "2026-11-17T11:29:05Z",
+  "agent_state": "active",
+  "task_id": "P3-AD-audit-1b",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-17T12:20:00Z",
+  "lease_until": "2026-11-17T15:20:00Z",
+  "updated_at": "2026-11-17T12:20:00Z",
+  "expected_next_update_by": "2026-11-17T13:05:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "24965010ad39e1f2fd20766476a5d1a316ec5a3e",
-    "next_step": "P3-AD-flow-2: flow-2.md written, AD-R47 to AD-R55 filed; committing, then pre-check and ready."
+    "last_green_sha": "808e42cf710668864502025b276f3afc7b182c05",
+    "next_step": "P3-AD-audit-1b: render the six misses on main and the 19 audit items at their commits."
   },
-  "precheck": {
-    "sha": "808e42cf710668864502025b276f3afc7b182c05",
-    "exit": 0,
-    "finished_at": "2026-11-17T10:43:39Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
-  "ready_sha": "808e42cf710668864502025b276f3afc7b182c05",
+  "ready_sha": null,
   "stop_at": "2026-11-18T21:00:00Z",
   "acks": [
     "M12",
