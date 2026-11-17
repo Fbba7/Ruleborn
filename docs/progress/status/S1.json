@@ -3,17 +3,17 @@
   "role": "S1",
   "branch": "claude/ui-screens-heist",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
+  "agent_state": "active",
   "task_id": "P2-S1-result-6",
-  "task_state": "ready",
+  "task_state": "working",
   "claimed_at": "2026-11-17T01:31:29Z",
-  "lease_until": "2026-11-17T07:55:07Z",
-  "updated_at": "2026-11-17T04:55:07Z",
-  "expected_next_update_by": "2026-11-17T05:55:07Z",
+  "lease_until": "2026-11-17T08:25:26Z",
+  "updated_at": "2026-11-17T05:25:26Z",
+  "expected_next_update_by": "2026-11-17T06:10:26Z",
   "progress_marker": {
     "last_green_sha": "f669716105ae79a1fa6cad26be2966e8bc4b9257",
-    "next_step": "Ready at f6697161: H (AD-R46) fixed at b5843368, the gate passes on the three items, the M11/M13 checks and the pre-check pass. M45's Hierarchy fail at 200% pt_BR (the lead's cycle 113 gate) is left for phase 3: closing it means a type and tile change plus a fresh gate, checks and pre-check, well over 30 minutes.",
-    "at": "2026-11-17T04:55:07Z"
+    "next_step": "Resync (M47): main merged at 2aba7137 with main's b5843368 verdict and the four branch-only verdict files removed; owners.py passes. Next: setup, build, pre-check, guard, then ready.",
+    "at": "2026-11-17T05:25:26Z"
   },
   "precheck": {
     "sha": "f669716105ae79a1fa6cad26be2966e8bc4b9257",
@@ -46,7 +46,7 @@
       }
     ]
   },
-  "ready_sha": "f669716105ae79a1fa6cad26be2966e8bc4b9257",
+  "ready_sha": null,
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
     "M6",
@@ -57,7 +57,8 @@
     "M27",
     "M41",
     "M44",
-    "M45"
+    "M45",
+    "M47"
   ],
   "requests": [
     {
@@ -610,5 +611,5 @@
       "where": "docs/progress/lead.md, Now, cycle 112; docs/art/ui-quality/board-4.md, 'Preview of result-6 (S1-R35)'; docs/art/tracks/result-screen.md, 'AD's objection H, a reward word broken (AD-R46)'"
     }
   ],
-  "next_step": "the lead's gate run and merge of f6697161"
+  "next_step": "pre-check on the resync merge, then ready"
 }
