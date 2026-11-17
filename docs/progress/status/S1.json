@@ -8,12 +8,12 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-17T13:30:00Z",
   "lease_until": "2026-11-17T16:30:00Z",
-  "updated_at": "2026-11-17T14:20:00Z",
-  "expected_next_update_by": "2026-11-17T15:05:00Z",
+  "updated_at": "2026-11-17T13:59:00Z",
+  "expected_next_update_by": "2026-11-17T14:44:00Z",
   "progress_marker": {
     "last_green_sha": null,
     "next_step": "Track docs and handoff written; S1-R39 (budget raises) and S1-R40 (AD preview) filed; next check_screens, pre-check, owners diff, gate request, main merge (M11, M13)",
-    "at": "2026-11-17T14:20:00Z"
+    "at": "2026-11-17T13:59:00Z"
   },
   "precheck": null,
   "gate_request": null,
@@ -606,8 +606,8 @@
         "tools/ui_bake/budgets.json"
       ],
       "blocking": false,
-      "created_at": "2026-11-17T14:20:00Z",
-      "due": "2026-11-18T14:20:00Z",
+      "created_at": "2026-11-17T13:59:00Z",
+      "due": "2026-11-18T13:59:00Z",
       "default": "The lead approves the three raises at the merge of P3-S1-hc-offline-1 (they close AD-R56 and AD-R57) and records them with a raises entry. If refused, a follow-up S1 task shows the offline crew by role with no faces (result/100 about 92, result/hc about 33) and keeps Pause on the card (heist/hc 122), at the cost of AD-R57's portraits and AD-R56's 20 dL* on Pause.",
       "escalate_to": "lead"
     },
@@ -620,7 +620,7 @@
         "docs/art/ui-quality/gate/shots.md"
       ],
       "blocking": false,
-      "created_at": "2026-11-17T14:20:00Z",
+      "created_at": "2026-11-17T13:59:00Z",
       "due": "2026-11-18T12:00:00Z",
       "default": "With no answer by the due time, the task stays ready and the lead's gate run judges the stills; any objection AD raises later is answered in a follow-up S1 task.",
       "escalate_to": "lead"
