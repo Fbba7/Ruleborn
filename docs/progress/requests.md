@@ -1122,6 +1122,11 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   pt_BR, and the hint banner and the Room panel layered at 200% en. So
   no task is seeded (M33). The lead gates heist-1 on those items when it
   is ready, and AD's default applies to the result.
+  **Closed** by the lead in cycle 108: heist-1's advisory gate at
+  90c8b15c passes both items, Hierarchy at 200% pt_BR with no plan and
+  Layered materials at 200% en, 3 of 3 each
+  (`docs/art/ui-quality/gate/verdicts/P2-S1-heist-1/90c8b15c.json`).
+  By AD's default they become notes, and nothing is seeded.
 
 - **K1-R21** (from K1, 16 November 2026 03:31Z; due 09:31Z; not
   blocking): P2-K1-tabs-2 touches three files outside its three. (1)
