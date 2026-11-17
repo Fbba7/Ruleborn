@@ -88,6 +88,16 @@
       },
       "reason": "S1-R33: P2-S1-heist-1's gate fixes. The 'Laws here' badges (FxLawBadge: the school's shape as a frame behind a cream disc and the painted icon, for the gate's Painted icons fail; +1 at 200 and hc) and the crew tray's inner well (ScreenKit.panel('well'), for the Layered materials fail; +1 at each size). Measured at dceed4bf with budget_shots.py --only heist/100,heist/200,heist/hc: 120, 118, 121, after three cheaper draw orders. Textures and words below 4.5:1 unchanged; heist/100 stays at 120; the heist stays 29 under the cap of 150.",
       "request": "S1-R33"
+    },
+    {
+      "approved_by": "lead, cycle 121 (S1-R37)",
+      "date": "2026-11-17",
+      "field": "shots.recorded draw_calls",
+      "figures": {
+        "result/hc": "27 -> 28"
+      },
+      "reason": "S1-R37: P3-S1-result-7's idle crew line on the raid button ('Idle crew of 3 ready', board 4's notes), which the guard's high-contrast shot now draws because client/tests/shots/screen_result.gd loads a roster with 3 idle. guard.sh at 55716273 failed only 'result/hc: 28 draw calls, recorded 27'. result/100 (89, record 91) and result/200 (95, record 99) keep their records; textures and words below 4.5:1 unchanged.",
+      "request": "S1-R37"
     }
   ],
   "screens": {
@@ -391,7 +401,7 @@
         "words_below": 0
       },
       "result/hc": {
-        "draw_calls": 27,
+        "draw_calls": 28,
         "texture_bytes": 580608,
         "words_below": 0
       },
