@@ -8,12 +8,12 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-17T07:26:30Z",
   "lease_until": "2026-11-17T10:26:30Z",
-  "updated_at": "2026-11-17T07:50:00Z",
-  "expected_next_update_by": "2026-11-17T08:35:00Z",
+  "updated_at": "2026-11-17T08:05:00Z",
+  "expected_next_update_by": "2026-11-17T08:50:00Z",
   "progress_marker": {
     "last_green_sha": "32f97a08af3c97c2603c77dee995687b542f3683",
-    "next_step": "Hierarchy fix built (prose under the totals; Starlight's lead stacked); idle crew in the fixture; FIT runs and the fold at 100% next",
-    "at": "2026-11-17T07:50:00Z"
+    "next_step": "Fold settles (the corner's laid height); crew card whole under the bar at 100%; final FIT set rendering",
+    "at": "2026-11-17T08:05:00Z"
   },
   "precheck": null,
   "gate_request": null,

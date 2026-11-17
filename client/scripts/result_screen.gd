@@ -35,13 +35,11 @@ const CARRIER_POINTS := 34.0
 ## The outcome's medal beside its title, in points.
 const MEDAL_POINTS := 34.0
 const TITLE_POINTS := 40.0
-## With large text (above `KitLayout.SIDE_BY_SIDE_UP_TO`), the condition's
-## prose and the time and alarm line in points and weight, set under the
-## reward totals (gate, Hierarchy at pt_BR 200%: as large as the totals and
-## light on the night, they stayed loud), and Starlight's total that many
-## times the others', so one reward leads (key frame 03-result_text200's
-## "1.288"). The kit has no darker parchment for the other two (its states
-## are drawn, not tinted, kit-spec section 1), so the lead is by size.
+## With large text, the condition's prose and the alarm line under the
+## totals in points and weight (gate, Hierarchy at pt_BR 200%), and
+## Starlight's total LEAD times the others' (key frame 03-result_text200's
+## "1.288"): by size, as the kit has no darker parchment (kit-spec section 1)
+## and on its glass the gold totals sank (Display type, `24cc4d7c`).
 const PROSE_POINTS := 14.0
 const ALARM_POINTS := 13.0
 const PROSE_WEIGHT := 500
@@ -177,12 +175,8 @@ func _ready() -> void:
 	# The lines under the tiles stand on the night with no plate.
 	for l: Label in [fee_label, detail_label, check_label]:
 		ResultFit.ink(l)
-	# With large text Starlight's total leads the others by size, its icon
-	# with it (LEAD).
-	if Settings.text_scale > KitLayout.SIDE_BY_SIDE_UP_TO:
-		var lead := reward_labels["starlight"] as Label
-		lead.add_theme_font_size_override("font_size", roundi(UI.text_px(24.0) * LEAD))
-		(ResultFit.tile_of(lead).get_child(0).get_child(0) as Control).custom_minimum_size = Vector2.ONE * UI.px(26.0 * LEAD)
+	# With large text Starlight's total leads by size, its icon with it.
+	ResultFit.lead_fit(reward_labels["starlight"], roundi(UI.text_px(24.0) * LEAD), UI.text_px(24.0), INF)
 	# The totals as the home's display figures: the lead deep gold, the
 	# others cream (key frame 03's "1,288", "+46" and "+12").
 	_display(haul_label, "starlight")
@@ -282,12 +276,7 @@ func _hero() -> VBoxContainer:
 	subline_label.theme_type_variation = "Secondary"
 	hero.add_child(subline_label)
 	if Settings.text_scale > KitLayout.SIDE_BY_SIDE_UP_TO:
-		for pair: Array in _prose():
-			var l := pair[0] as Label
-			l.add_theme_font_override("font", Tokens.font("ui", PROSE_WEIGHT))
-			l.add_theme_font_size_override("font_size", UI.text_px(float(pair[1])))
-			l.set_meta("points", float(pair[1]))
-			l.set_meta("bold", false)
+		ResultFit.prose(_prose(), PROSE_WEIGHT)
 	# The hero's words stand on the sunburst, unplated: inked by their size.
 	for l: Label in [kicker_label, grade_label, condition_label, subline_label]:
 		ResultFit.ink(l)

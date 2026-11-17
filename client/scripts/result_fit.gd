@@ -163,6 +163,19 @@ static func lead_fit(l: Label, top: int, base: int, width: float) -> void:
 		px = maxi(base, px - maxi(1, roundi(px * 0.04)))
 
 
+## Large text: the hero's prose (`pairs`, each a label and its points) set
+## at those points in a lighter `weight`, under the reward totals (the
+## gate's Hierarchy fail at pt_BR 200%, P2-S1-result-6), its points kept for
+## `hero_shrink`.
+static func prose(pairs: Array, weight: int) -> void:
+	for pair: Array in pairs:
+		var l := pair[0] as Label
+		l.add_theme_font_override("font", Tokens.font("ui", weight))
+		l.add_theme_font_size_override("font_size", UI.text_px(float(pair[1])))
+		l.set_meta("points", float(pair[1]))
+		l.set_meta("bold", false)
+
+
 ## A reward tile back from a row to the design's column: its icon, its
 ## number and its name centred one above another (KitCards.reward's).
 static func tile_column(tile: PanelContainer) -> void:
@@ -355,7 +368,10 @@ static func fold(scroll: ScrollContainer, bar: Control, corner: Control) -> void
 	if not scroll.is_inside_tree():
 		return
 	var clearance := float(corner.get_meta("clearance"))
-	var bottom := scroll.get_global_rect().end.y + corner.custom_minimum_size.y - clearance
+	# The corner as laid, not as asked: a fitting queued before the last one
+	# set its height measures before the layout has taken it, and would read
+	# the old edge with the new cut, and undo it.
+	var bottom := scroll.get_global_rect().end.y + corner.size.y - clearance
 	var cut := 0.0
 	for i in 4:
 		var part := part_line(scroll, bottom - cut)
@@ -367,9 +383,9 @@ static func fold(scroll: ScrollContainer, bar: Control, corner: Control) -> void
 
 ## How far above `bottom` the line or card it cuts starts, in the page that
 ## `scroll` holds: a label's line shown above its baseline only, or a card
-## shown by less than a line of body text; a label of up to KEEP lines shown
-## by its first lines only counts whole. Zero when `bottom` falls between
-## lines, or under a line's baseline.
+## shown by less than a line of body text, or by a face's ring cut; a label
+## of up to KEEP lines shown by its first lines only counts whole. Zero when
+## `bottom` falls between lines, or under a line's baseline.
 static func part_line(scroll: ScrollContainer, bottom: float) -> float:
 	var page := scroll.get_child(0) as Control
 	var sliver := float(UI.text_px(UI.TEXT_POINTS))
@@ -404,6 +420,19 @@ static func part_line(scroll: ScrollContainer, bottom: float) -> float:
 				part = maxf(part, shown + top)
 		elif n is PanelContainer and shown < sliver:
 			part = maxf(part, shown)
+		# A face's ring cut goes under the edge with its card whole, from the
+		# top of the card's drawn box, which reaches past its rect (board 4's
+		# note on P2-S1-result-6: at 100% the card's rim and the rings' tops
+		# showed over the bar).
+		elif n is KitRing:
+			var card := n.get_parent() as Control
+			while card != page and not card is PanelContainer:
+				card = card.get_parent() as Control
+			var top := minf(r.position.y, card.get_global_rect().position.y)
+			var box := RbBox.of(card)
+			if box != null:
+				top = minf(top, box.get_global_rect().position.y + box.quad().position.y)
+			part = maxf(part, ceilf(bottom - top))
 	return part
 
 
