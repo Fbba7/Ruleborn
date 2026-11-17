@@ -8,12 +8,12 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-17T07:25:00Z",
   "lease_until": "2026-11-17T10:45:00Z",
-  "updated_at": "2026-11-17T08:15:00Z",
-  "expected_next_update_by": "2026-11-17T09:00:00Z",
+  "updated_at": "2026-11-17T08:58:00Z",
+  "expected_next_update_by": "2026-11-17T09:43:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "050be78b",
-    "next_step": "main merged; setup line and build.sh pass on the merge; check_all.sh and guard.sh running, then the pre-check and owners.py diff"
+    "next_step": "pre-check running at 57ea213c (check_all and guard.sh pass on the merge 850abe31); ready once K1-R25 adds the helper's two paths to the task's exceptions (M48)"
   },
   "precheck": null,
   "gate_request": null,
@@ -434,5 +434,5 @@
       "at": "2026-11-17T08:15:00Z"
     }
   ],
-  "next_step": "main merged; setup line and build.sh pass on the merge; check_all.sh and guard.sh running, then the pre-check and owners.py diff"
+  "next_step": "pre-check running at 57ea213c (check_all and guard.sh pass on the merge 850abe31); ready once K1-R25 adds the helper's two paths to the task's exceptions (M48)"
 }
