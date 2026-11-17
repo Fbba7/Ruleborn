@@ -3,17 +3,17 @@
   "role": "K1",
   "branch": "claude/ui-bake",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
+  "agent_state": "active",
   "task_id": "P3-K1-outline-1",
-  "task_state": "blocked",
+  "task_state": "working",
   "claimed_at": "2026-11-17T21:10:20Z",
-  "lease_until": "2026-11-18T00:10:20Z",
-  "updated_at": "2026-11-17T22:12:49Z",
-  "expected_next_update_by": "2026-11-17T22:57:25Z",
+  "lease_until": "2026-11-18T02:00:00Z",
+  "updated_at": "2026-11-17T23:00:00Z",
+  "expected_next_update_by": "2026-11-17T23:45:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": null,
-    "next_step": "P3-K1-outline-1 blocked on K1-R27: S3-R37 done; S3-R35 outline rule in KitHud (its test fails on the old reading); S3-R41 back face lifted (2.4 standard, 1.45 high contrast) with its a11y test; 432 of 434 client tests, the two left fail on six outline lines outside K1's files (K1-R27)"
+    "next_step": "K1-R27 granted (cycle 139): main merged; the six outline lines go through KitHud.stroke_px; client tests, guard, check_all and the pre-check next"
   },
   "precheck": null,
   "gate_request": null,
@@ -411,7 +411,8 @@
       "created_at": "2026-11-17T22:12:25Z",
       "due": "2026-11-18T04:12:25Z",
       "default": "Granted: the four files are P3-K1-outline-1's exceptions in backlog.json, and K1 changes only those outline lines (character_screen.gd's _stroke and _outline_px included); the changed shots (kickers, tab_active, green pills, codex chapters, world words, Level up) are named in the handoff",
-      "escalate_to": "lead"
+      "escalate_to": "lead",
+      "status": "answered: granted, cycle 139"
     }
   ],
   "answers": [
@@ -466,5 +467,5 @@
       "at": "2026-11-17T08:15:00Z"
     }
   ],
-  "next_step": "P3-K1-outline-1 blocked on K1-R27: S3-R37 done; S3-R35 outline rule in KitHud (its test fails on the old reading); S3-R41 back face lifted (2.4 standard, 1.45 high contrast) with its a11y test; 432 of 434 client tests, the two left fail on six outline lines outside K1's files (K1-R27)"
+  "next_step": "K1-R27 granted (cycle 139): main merged; the six outline lines go through KitHud.stroke_px; client tests, guard, check_all and the pre-check next"
 }

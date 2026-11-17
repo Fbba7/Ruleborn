@@ -700,7 +700,17 @@ static func ink_px(points: float) -> int:
 ## character screen's large text does (S3-R35). It was the least a side
 ## itself, which drew about a quarter of it.
 static func outline_px(font_px: float) -> int:
-	var side := maxf(UI.px(OUTLINE_POINTS), font_px * OUTLINE_SHARE)
+	return side_px(maxf(UI.px(OUTLINE_POINTS), font_px * OUTLINE_SHARE))
+
+
+## The `outline_size` that draws `side_points` of ink on each side of the
+## words: four times the side, with the soft edge's pixels added (S3-R35).
+## For an outline a material or a type role names by its side (K1-R27).
+static func stroke_px(side_points: float) -> int:
+	return side_px(side_points * UI.PX_PER_POINT)
+
+
+static func side_px(side: float) -> int:
 	return ceili((side + OUTLINE_EDGE_PX) * OUTLINE_PER_SIDE)
 
 
