@@ -867,3 +867,77 @@ English at 200%: the plate is hidden.
 The locked plate at 4×, English 100%: about 6 px from the left edge.
 
 ![locked plate at 4×](board-3/r10-home-plate.png)
+
+## Preview of home-states, second look (S2-R42)
+
+AD previewed P3-S2-home-states at `e9285afd` on
+`claude/ui-screens-home` on 17 November 2026. That commit holds S2-R38
+(the plate reads "Lantern Vale" over "Opens at Keeper 28"), S2-R40 (at
+200% the plate becomes the lock and "28" on one dark pill) and AD's note
+1 on S2-R36 (the plate keeps the side buttons' gutter).
+
+Each case was rendered with
+`FIT=1 [TEXT=200] [LOCALE=<loc>] [CONTRAST=1] bash tools/render/shoot.sh client/tests/shots/universe_home.gd`
+at 540×1170 (1 px per pt), and read at 1× and at 4×.
+
+**All 8 cases print "fit ok":** English, pt_BR and German at 100% and at
+200%, and high contrast at 100% and at 200%.
+
+**Ruling: board 3's objection B holds in every case. AD has no objection
+at this commit.** Two notes follow; neither holds the task, and neither
+depends on the screen's final shape.
+
+### The checks
+
+- **The Crew tab's "4"** sits on the top right of the Crew icon, clear of
+  the Heist and Friends tabs, in all 8 cases. At 200%, where the tab
+  labels drop, it sits on the tab bar's top rule and stays clear. In high
+  contrast it is outlined.
+- **The Defence badge "2"** is clear of the Defence button's art and of
+  the Skyfield pin in every case.
+- **The locked plate at 100%** now starts about 24 px from the left edge,
+  outside the 16 pt gutter: AD's note 1 is met. With the name added it is
+  taller and sits about 6 px below the LAB label (English, pt_BR "Abre no
+  Guardião 28", German "Öffnet bei Hüter 28"), clear of the Lab button
+  and of every pin. It runs over the Heart island's left rim, which is
+  art, not a control.
+- **The short form at 200%** shows the lock and "28" on one dark pill in
+  English, pt_BR, German and high contrast. It is clear of the Lab button
+  and of every pin: in English about 45 px right of the Lab button and
+  about 8 px below the "6" pin; in pt_BR and German, where the taller
+  experience card shrinks the map, about 10 px right of the Lab button
+  and about 7 px left of the "6" pin. Lantern Vale now says "locked" at
+  every text size, which closes note 3 on S2-R36.
+- **Nothing by colour alone.** The locked realm reads by the lock and the
+  words (or "28") as well as by the dark island; the Crew and Defence
+  counts are numerals; "Full" is a word. High contrast keeps the same
+  layout, with outlined badges and the plate's rim lighter.
+
+### Notes, not holding
+
+- **At 200% the Defence badge's top edge still overlaps the foot of the
+  61.0k plate above it by 1 to 3 px** (English, pt_BR, German, high
+  contrast). It stays clear of the gauge's fill. This is S2-R36's note 2,
+  unchanged: if S2 moves the badge, drop it 2 to 4 pt.
+- **At 200% in pt_BR and German the pill sits about 7 px from the "6"
+  pin.** It is clear, and the pin is the Heart's, not a neighbour's
+  count. If the map ever loses more height, anchor the pill under the
+  island rather than beside the Heart.
+
+English at 100%:
+
+![home-states at e9285afd, English 100%](board-3/r11-home-100.png)
+
+pt_BR at 200%: the short form on its pill.
+
+![home-states at e9285afd, pt_BR 200%](board-3/r11-home-200-pt.png)
+
+The locked plate at 4×, English 100%: about 24 px from the left edge,
+about 6 px below the LAB label.
+
+![locked plate at 4×](board-3/r11-home-plate.png)
+
+The short form at 4×, pt_BR 200%: clear of the Lab button and of the
+"6" pin; the Defence badge overlaps the plate's foot above.
+
+![short form at 4×](board-3/r11-home-pill.png)
