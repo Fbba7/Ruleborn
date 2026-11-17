@@ -5,15 +5,15 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P3-K1-polish-2",
-  "task_state": "in_progress",
+  "task_state": "working",
   "claimed_at": "2026-11-17T10:20:00Z",
-  "lease_until": "2026-11-17T13:20:00Z",
-  "updated_at": "2026-11-17T10:40:00Z",
-  "expected_next_update_by": "2026-11-17T11:25:00Z",
+  "lease_until": "2026-11-17T13:37:00Z",
+  "updated_at": "2026-11-17T10:37:00Z",
+  "expected_next_update_by": "2026-11-17T11:22:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": null,
-    "next_step": "read character_screen.gd local fixes for S3-R9 to S3-R14"
+    "last_green_sha": "fe983cae",
+    "next_step": "pre-check at fe983cae running; then record it, fill the handoff, and wait on K1-R26 (owners.py diff names client/tests/shots/ui_kit_polish.gd until it is granted)"
   },
   "precheck": null,
   "gate_request": null,
@@ -449,5 +449,5 @@
       "at": "2026-11-17T08:15:00Z"
     }
   ],
-  "next_step": "ready at 57ea213c: the merge queue (no gate items). P3-K1-polish-2 is for a later session"
+  "next_step": "pre-check at fe983cae running; then record it, fill the handoff, and wait on K1-R26 (owners.py diff names client/tests/shots/ui_kit_polish.gd until it is granted)"
 }
