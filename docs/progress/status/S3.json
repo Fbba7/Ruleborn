@@ -4,31 +4,21 @@
   "branch": "claude/ui-screens-meta",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P3-S3-nav-1",
-  "task_state": "ready",
-  "claimed_at": "2026-11-17T18:30:00Z",
-  "lease_until": "2026-11-17T21:30:00Z",
-  "updated_at": "2026-11-17T20:36:00Z",
-  "expected_next_update_by": "2026-11-17T21:30:00Z",
+  "task_id": "P3-S3-settings-3",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-17T23:00:17Z",
+  "lease_until": "2026-11-18T02:00:17Z",
+  "updated_at": "2026-11-17T23:00:17Z",
+  "expected_next_update_by": "2026-11-17T23:45:17Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "5ac311f77e8d174c0ddc5f48cadabfbad25e994f",
-    "next_step": "Ready at 5ac311f7 (pre-check PASS 20:30:18Z, recorded); S3-R40 and S3-R41 answered by the lead in cycle 133 (defaults apply). Waiting for the lead's gate and merge.",
-    "at": "2026-11-17T20:36:00Z"
+    "next_step": "Claimed P3-S3-settings-3 (AD-R52): remember settings tab for the session; mount test in run.gd.",
+    "at": "2026-11-17T23:00:17Z"
   },
-  "precheck": {
-    "sha": "5ac311f77e8d174c0ddc5f48cadabfbad25e994f",
-    "exit": 0,
-    "finished_at": "2026-11-17T20:30:18Z",
-    "summary": "All checks passed."
-  },
-  "gate_request": {
-    "item": "character at 200% text, pt_BR",
-    "qualities": [
-      "Hierarchy"
-    ]
-  },
-  "ready_sha": "5ac311f77e8d174c0ddc5f48cadabfbad25e994f",
+  "precheck": null,
+  "gate_request": null,
+  "ready_sha": null,
   "stop_at": "2026-11-18T21:00:00Z",
   "acks": [
     "M26",
@@ -89,7 +79,7 @@
       "id": "S3-R3",
       "from": "S3",
       "to": "lead",
-      "ask": "For K1: KitControls.upgrade should grow and wrap its title at large text. At 200% text in pt_BR, 'SUBIR DE NÍVEL' and its price do not fit the kit's fixed height, so character_screen.gd's _fit_upgrade lets the button grow and the title wrap on the screen's side (see docs/art/shots/menu-screens/character-200-pt_BR.png). Every screen with an upgrade button would need the same.",
+      "ask": "For K1: KitControls.upgrade should grow and wrap its title at large text. At 200% text in pt_BR, 'SUBIR DE N\u00cdVEL' and its price do not fit the kit's fixed height, so character_screen.gd's _fit_upgrade lets the button grow and the title wrap on the screen's side (see docs/art/shots/menu-screens/character-200-pt_BR.png). Every screen with an upgrade button would need the same.",
       "files": [
         "client/ui/kit_controls.gd"
       ],
@@ -169,7 +159,7 @@
       "default": "the stills stand as rendered, and S3 requests the gate on them",
       "escalate_to": "lead",
       "state": "answered",
-      "answer": "AD's six objections (status/AD.json, 08:26Z) are answered in docs/art/tracks/menu-screens.md Part 3, 'AD's preview (S3-R7), and the answers'. (1) The title is 1.3x the body text at large text, and (2) each heading is on a dark plate, both in 917886c4. (3) The ground ramp stands: §21.2's linear night, chosen in C75 (A), drawn by ui.gd. A change is the owner's decision first, then K1's work. (4) The sample holds the whole law at every size, and the list's window ends on a whole row's edge with the kit's chevron below while more rows lie below (no fade: screens draw no chrome, see S3-R8). (5) At 100% Stillness is on two lines, and the window ends under High contrast with the cue. (6) '100%' is 24 points against the 28-point title. For AD to re-check what changed: settings-100, -200-pt_BR and -hc at the next gate_request's sha."
+      "answer": "AD's six objections (status/AD.json, 08:26Z) are answered in docs/art/tracks/menu-screens.md Part 3, 'AD's preview (S3-R7), and the answers'. (1) The title is 1.3x the body text at large text, and (2) each heading is on a dark plate, both in 917886c4. (3) The ground ramp stands: \u00a721.2's linear night, chosen in C75 (A), drawn by ui.gd. A change is the owner's decision first, then K1's work. (4) The sample holds the whole law at every size, and the list's window ends on a whole row's edge with the kit's chevron below while more rows lie below (no fade: screens draw no chrome, see S3-R8). (5) At 100% Stillness is on two lines, and the window ends under High contrast with the cue. (6) '100%' is 24 points against the 28-point title. For AD to re-check what changed: settings-100, -200-pt_BR and -hc at the next gate_request's sha."
     },
     {
       "id": "S3-R8",
@@ -346,7 +336,7 @@
       "id": "S3-R18",
       "from": "S3",
       "to": "lead",
-      "ask": "On the settings screen's account tab, the profile row ('Profile and stats', ScreenAccount.profile_row in client/scripts/screen_account.gd) fails checks.py's value-steps: its dark violet card stands 3 ΔL* off the night ground (0.3 value steps of the 2 needed), in en and de (docs/art/shots/menu-screens/settings-account-100.shot.json, settings-account-de.shot.json). screen_account.gd is not P2-S3-settings-2's file, and the row is unchanged since before board 5. The account tab is not one of the task's gate items.",
+      "ask": "On the settings screen's account tab, the profile row ('Profile and stats', ScreenAccount.profile_row in client/scripts/screen_account.gd) fails checks.py's value-steps: its dark violet card stands 3 \u0394L* off the night ground (0.3 value steps of the 2 needed), in en and de (docs/art/shots/menu-screens/settings-account-100.shot.json, settings-account-de.shot.json). screen_account.gd is not P2-S3-settings-2's file, and the row is unchanged since before board 5. The account tab is not one of the task's gate items.",
       "files": [
         "client/scripts/screen_account.gd"
       ],
@@ -578,7 +568,7 @@
       "id": "S3-R31",
       "from": "S3",
       "to": "AD",
-      "ask": "Preview of P2-S3-character-4 at 8ca0058d on claude/ui-screens-meta: the gate's display-type fail on 'character at 200% text, pt_BR' (verdict P2-S3-character-3/a6d5f2fb). (1) The subtitle and the level line on the starry backdrop now wear an ink outline on every side, each side the greater of 1.5 pt or 12% of the size (was 12% in all, about 6% a side, which the 2-point drop outweighed): subtitle outline_size 21 px (was 11), level line 19 (was 9); set again after the words shrink to fit. (2) HABILIDADE, the ability card's kicker, is stroked and dropped in ink as 'Subir de nível' is, at large text only. (3) At 200%, scrolled to the end, every tab's last card ends clear above the dock in en, pt_BR and de. 100% and high-contrast stills are pixel for pixel as before. Track Part 2, 'The gate's display-type check at a6d5f2fb'. Please give every objection in this one round.",
+      "ask": "Preview of P2-S3-character-4 at 8ca0058d on claude/ui-screens-meta: the gate's display-type fail on 'character at 200% text, pt_BR' (verdict P2-S3-character-3/a6d5f2fb). (1) The subtitle and the level line on the starry backdrop now wear an ink outline on every side, each side the greater of 1.5 pt or 12% of the size (was 12% in all, about 6% a side, which the 2-point drop outweighed): subtitle outline_size 21 px (was 11), level line 19 (was 9); set again after the words shrink to fit. (2) HABILIDADE, the ability card's kicker, is stroked and dropped in ink as 'Subir de n\u00edvel' is, at large text only. (3) At 200%, scrolled to the end, every tab's last card ends clear above the dock in en, pt_BR and de. 100% and high-contrast stills are pixel for pixel as before. Track Part 2, 'The gate's display-type check at a6d5f2fb'. Please give every objection in this one round.",
       "files": [
         "client/scripts/character_screen.gd",
         "docs/art/shots/menu-screens/character-200-pt_BR.png",
@@ -646,7 +636,7 @@
       "id": "S3-R35",
       "from": "S3",
       "to": "lead",
-      "ask": "For K1 and the lead, a finding, not this task's to fix: Godot draws a quarter of a label's outline_size outward on each side (measured in the renderer the stills use, at 540 and 1080 wide). Code that sets outline_size to §21.8's least a side therefore draws about a quarter of it: KitHud._ink (client/ui/kit_hud.gd, 1.5 pt or 12% plus half a point, about 3% a side), and kit_panels.gd's inventory count (20% of the size, about 5% a side). The contrast check reads outline_size the same way: _outline in client/tests/a11y_tests.gd and _counts in client/tests/shots/ui_kit_heist.gd count an outline as all round once outline_size reaches the least a side. The character screen now sets four times the least a side plus the soft edge (character_screen.gd _outline_px). Track Part 2, P3-S3-character-5, 'A kit-wide finding'.",
+      "ask": "For K1 and the lead, a finding, not this task's to fix: Godot draws a quarter of a label's outline_size outward on each side (measured in the renderer the stills use, at 540 and 1080 wide). Code that sets outline_size to \u00a721.8's least a side therefore draws about a quarter of it: KitHud._ink (client/ui/kit_hud.gd, 1.5 pt or 12% plus half a point, about 3% a side), and kit_panels.gd's inventory count (20% of the size, about 5% a side). The contrast check reads outline_size the same way: _outline in client/tests/a11y_tests.gd and _counts in client/tests/shots/ui_kit_heist.gd count an outline as all round once outline_size reaches the least a side. The character screen now sets four times the least a side plus the soft edge (character_screen.gd _outline_px). Track Part 2, P3-S3-character-5, 'A kit-wide finding'.",
       "files": [
         "client/ui/kit_hud.gd",
         "client/ui/kit_panels.gd",
@@ -722,7 +712,7 @@
       "id": "S3-R40",
       "from": "S3",
       "to": "AD",
-      "ask": "Preview of P3-S3-nav-1 on claude/ui-screens-meta (the sha is in ready_sha once set; main merged). (1) AD-R50: the character's back is now ScreenNav.back_button, the kit's icon button (KitNav.back: the maroon leather face with the gold rim, 52pt, named Back / Voltar / Zurück), in place of the 56pt cream chevron named Roster; it routes to the roster with the roster's state. Level up's x moves 97.5 to 88.83 and its width 264.33 to 273. Every character still changed only there. A run.gd mount test proves every non-tab route has exactly one back to its back route (10 routes tested, 14 listed in NO_BACK with a reason each, S3-R38). (2) F4 of flow board 2 reads as if settings wore ScreenNav.back_button; it does not: settings has its own parchment labelled '« Back' (settings_screen.gd). Question: should the character keep the kit's icon back, as law, profile, share, shop, social, track, weaving and workshop do (this build), or wear the labelled parchment back? (3) AD-R51: the roster keeps its scroll and its chosen character across a visit (mount test, failing under a mutation). (4) AD-R63 and AD-R64: ERR_OFFLINE is info (info ink, the i mark) on both screens; at 200% text it takes one line with the full sentence as its accessibility_name. New stills: character-offline-200-de, roster-offline, roster-offline-200-pt_BR, roster-offline-200-de. (5) The back's leather face reads L* 23.7 on the night's 13.6 (delta 10.1, one value step where two are asked) in standard contrast; high contrast passes. That is the kit's icon button on every ScreenNav dock, asked of K1 in S3-R41, not loosened here. Render with FIT=1 RECORD=1 <env> bash tools/render/shoot.sh client/tests/shots/screen_character.gd <still> (TEXT=200, LOCALE=, HC=1, TAB=1|2, ID=4, OFFLINE=1), and screen_roster.gd for the roster. Track Part 2, the P3-S3-nav-1 section. Please give every objection in this one round.",
+      "ask": "Preview of P3-S3-nav-1 on claude/ui-screens-meta (the sha is in ready_sha once set; main merged). (1) AD-R50: the character's back is now ScreenNav.back_button, the kit's icon button (KitNav.back: the maroon leather face with the gold rim, 52pt, named Back / Voltar / Zur\u00fcck), in place of the 56pt cream chevron named Roster; it routes to the roster with the roster's state. Level up's x moves 97.5 to 88.83 and its width 264.33 to 273. Every character still changed only there. A run.gd mount test proves every non-tab route has exactly one back to its back route (10 routes tested, 14 listed in NO_BACK with a reason each, S3-R38). (2) F4 of flow board 2 reads as if settings wore ScreenNav.back_button; it does not: settings has its own parchment labelled '\u00ab Back' (settings_screen.gd). Question: should the character keep the kit's icon back, as law, profile, share, shop, social, track, weaving and workshop do (this build), or wear the labelled parchment back? (3) AD-R51: the roster keeps its scroll and its chosen character across a visit (mount test, failing under a mutation). (4) AD-R63 and AD-R64: ERR_OFFLINE is info (info ink, the i mark) on both screens; at 200% text it takes one line with the full sentence as its accessibility_name. New stills: character-offline-200-de, roster-offline, roster-offline-200-pt_BR, roster-offline-200-de. (5) The back's leather face reads L* 23.7 on the night's 13.6 (delta 10.1, one value step where two are asked) in standard contrast; high contrast passes. That is the kit's icon button on every ScreenNav dock, asked of K1 in S3-R41, not loosened here. Render with FIT=1 RECORD=1 <env> bash tools/render/shoot.sh client/tests/shots/screen_character.gd <still> (TEXT=200, LOCALE=, HC=1, TAB=1|2, ID=4, OFFLINE=1), and screen_roster.gd for the roster. Track Part 2, the P3-S3-nav-1 section. Please give every objection in this one round.",
       "files": [
         "client/scripts/character_screen.gd",
         "client/scripts/roster_screen.gd",
