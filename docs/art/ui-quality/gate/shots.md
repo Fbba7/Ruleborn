@@ -57,6 +57,18 @@ of their setting; "result at 200% text, pt_BR" adds `TEXT=200 LOCALE=pt_BR` to
 both. Add `FIT=1` to every run: a still whose run does not print "fit ok" is
 not judged. `tools/ui_bake/guard.sh`'s budget shots use the offline state.
 
+**High contrast's variable differs by script.** `screen_result.gd` and
+`screen_heist.gd` read `CONTRAST=1`; the character's script and the other
+screen scripts (`screen_character.gd`, `screen_roster.gd`, `screen_first.gd`,
+`screen_forms.gd`, `screen_hatch.gd`, `screen_settings.gd` and the rest) read
+`HC=1`. A script ignores the other name, so a still rendered with it is the
+100% still: check the script's `OS.get_environment` lines before a run.
+
+**The character screen offline** (`screen_character.gd`, P3-S3-character-5)
+shows the roster's cream notice above its scroll. Its stills add `OFFLINE=1`
+to the item's settings: `OFFLINE=1`, `OFFLINE=1 HC=1` and
+`OFFLINE=1 TEXT=200 LOCALE=pt_BR` (board `boards/preview-1.md`).
+
 ## The image checks
 
 `python3 tools/ui_gate/checks.py <check> <shot.json>`, with `<check>` one of

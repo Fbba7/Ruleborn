@@ -8,12 +8,12 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-17T15:36:00Z",
   "lease_until": "2026-11-17T18:36:00Z",
-  "updated_at": "2026-11-17T15:36:00Z",
-  "expected_next_update_by": "2026-11-17T16:20:00Z",
+  "updated_at": "2026-11-17T16:30:00Z",
+  "expected_next_update_by": "2026-11-17T17:30:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "808e42cf710668864502025b276f3afc7b182c05",
-    "next_step": "P3-AD-preview-1: shots.md offline state; render hc-offline-1 stills on main; rule on a4ed000e; preview S3 character-5"
+    "next_step": "P3-AD-preview-1: board preview-1.md written, AD-R60 to AD-R64 filed, S1-R40 and S3-R34 answered; next check_all, pre-check, owners diff, ready"
   },
   "precheck": null,
   "gate_request": null,
@@ -790,7 +790,7 @@
       "blocking": false,
       "created_at": "2026-11-17T12:28:52Z",
       "due": "2026-11-19T12:28:52Z",
-      "default": "An S1 task gives the hc plates the key frame's near-black card (#140C2A) with a cream line, puts Get out on the red danger plate, and sets every control at least one value step (dL* 20) off its local ground.",
+      "default": "An S1 task gives the hc plates the key frame's near-black card (#140C2A) with a cream line, puts Get out on the leather secondary plate drawn flat at leather_light (not the red danger plate: red is the alarm's alone; revised 17 November by P3-AD-preview-1, see AD-R61), and sets every control at least one value step (dL* 20) off its local ground.",
       "escalate_to": "lead"
     },
     {
@@ -838,6 +838,87 @@
       "created_at": "2026-11-17T12:28:52Z",
       "due": "2026-11-19T12:28:52Z",
       "default": "The goal card's progress uses the key frame's green progress fill in both looks; gold stays on Collect.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R60",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Heist screen, the hand (P3-S1-hc-offline-1's advisory verdict, colour roles, kept): with no casts left the cast control keeps its gold fill (242,193,78; L* 80.5) at 100% and in high contrast; gold is for a live main action. File client/scripts/heist_hand.gd; owner S1, for P3-S1-hc-offline-2.",
+      "files": [
+        "client/scripts/heist_hand.gd",
+        "docs/art/ui-quality/gate/boards/preview-1.md",
+        "docs/art/ui-quality/gate/verdicts/P3-S1-hc-offline-1/a4ed000e.json"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T16:30:00Z",
+      "due": "2026-11-19T16:30:00Z",
+      "default": "With no casts left, HeistHand.show_state dresses cast_button in the leather secondary plate: the wand stays at 0.4, the words take text_on_leather, the control stays tappable; in high contrast it is flat leather_light #6A3E52 (L* 32.1, dL* 26.9 on the #140C2A tray); gold returns when casts are left.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R61",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Heist screen, the hand in high contrast (advisory verdict, colour roles, kept): Get out sits on the red danger plate (142,20,40; L* 30.4), read as the 'Intruder!' alarm's red; board 1 made Get out leather and red is the alarm's alone. AD withdraws AD-R56's 'red danger plate' for Get out. File client/scripts/heist_hand.gd (hc_plates); owner S1, for P3-S1-hc-offline-2.",
+      "files": [
+        "client/scripts/heist_hand.gd",
+        "docs/art/ui-quality/gate/boards/preview-1.md",
+        "docs/art/ui-quality/gate/verdicts/P3-S1-hc-offline-1/a4ed000e.json"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T16:30:00Z",
+      "due": "2026-11-19T16:30:00Z",
+      "default": "In high contrast hc_plates gives go_button 'leather', drawn flat at leather_light #6A3E52 with the amber rim (dL* 26.9 on the tray, against the red plate's 25.2); no fifth button style. S1 lists the measured dL* in the handoff and the stills go to AD's preview.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R62",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Heist screen, the HUD's loot figures in high contrast (advisory verdict, colour roles, kept): Room 508, Vault 0% and '?' are in gold_top (#F9DE9C), but they are information, not an action. File client/scripts/heist_hud.gd; owner S1, for P3-S1-hc-offline-2. K1's kit_hud.gd is not changed.",
+      "files": [
+        "client/scripts/heist_hud.gd",
+        "docs/art/ui-quality/gate/boards/preview-1.md",
+        "docs/art/ui-quality/gate/verdicts/P3-S1-hc-offline-1/a4ed000e.json"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T16:30:00Z",
+      "due": "2026-11-19T16:30:00Z",
+      "default": "Under Tokens.high_contrast, heist_hud.gd overrides the loot figures' font colour with Tokens.color('cream') #FFF3CC (L* 95.9); KitHud.loot_fit's gold_top in client/ui/kit_hud.gd and the 100% heist stay as they are.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R63",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Character and roster screens, the offline notice (S3-R34 preview, objection O1; not M40-dependent; does not hold P3-S3-character-5): the notice's words are alarm red on the cream plate, but offline is information (flow-2 F7, AD-R53). Files client/scripts/character_screen.gd and client/scripts/roster_screen.gd; owner S3, a follow-up task.",
+      "files": [
+        "client/scripts/character_screen.gd",
+        "client/scripts/roster_screen.gd",
+        "docs/art/ui-quality/gate/boards/preview-1.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T16:30:00Z",
+      "due": "2026-11-19T16:30:00Z",
+      "default": "Both screens set the offline (ERR_OFFLINE) notice with UI.set_status(status_label, 'info', ...), in ink on the cream plate; red stays for the server's real refusals.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R64",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Character screen offline at 200% (S3-R34 preview, objection O2; M40-dependent; does not hold P3-S3-character-5): in pt_BR the pinned offline notice takes four lines (about 18% of the height) and pushes the tabs and the ability header below the first screen, against board 5's B; the level line is cut by the foot. Files client/scripts/character_screen.gd, client/scripts/roster_screen.gd, client/tests/shots/screen_character.gd; owner S3, a follow-up task once the screen's shape is final.",
+      "files": [
+        "client/scripts/character_screen.gd",
+        "client/scripts/roster_screen.gd",
+        "client/tests/shots/screen_character.gd",
+        "docs/art/ui-quality/gate/boards/preview-1.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T16:30:00Z",
+      "due": "2026-11-19T16:30:00Z",
+      "default": "At large text the notice takes at most one line (the '!' and ERR_OFFLINE alone, the full sentence as accessibility_name), so the tabs and the ability header stay on the first screen offline in en, pt_BR and de; the roster follows in the same task; OFFLINE=1 TEXT=200 (pt_BR and de) joins the fit list.",
       "escalate_to": "lead"
     }
   ],
@@ -971,8 +1052,18 @@
       "request_id": "S2-R42",
       "at": "2026-11-17T09:42:24Z",
       "answer": "AD previewed P3-S2-home-states at e9285afd. All 8 cases fit ok: en, pt_BR and de at 100% and 200%, and high contrast at 100% and 200%. Board 3's objection B holds in every case: the Crew tab's '4' and the Defence badge '2' are clear of the pins and the side buttons; the locked plate ('Lantern Vale' / 'Opens at Keeper 28') at 100% now starts about 24 px from the left edge (S2-R36 note 1 met) and sits about 6 px below the LAB label, clear of the Lab button and every pin; the 200% short form (lock and '28' on one pill) is clear of the Lab button and every pin in all four 200% cases, so Lantern Vale says 'locked' at every size (S2-R36 note 3 closed). Nothing by colour alone. No objection at this commit; S2 may mark ready. Notes, not holding and not depending on the final shape (M40): (1) at 200% the Defence badge's top still overlaps the 61.0k plate's foot by 1 to 3 px, clear of the gauge fill (S2-R36 note 2, unchanged; if moved, drop it 2 to 4 pt); (2) at 200% pt_BR and de the pill sits about 7 px from the '6' pin; if the map loses more height, anchor it under the island. Write-up and stills: docs/art/ui-quality/gate/boards/board-3.md, 'Preview of home-states, second look (S2-R42)'. Default if S2 disagrees with a note: S2's stills stand."
+    },
+    {
+      "request_id": "S1-R40",
+      "at": "2026-11-17T16:30:00Z",
+      "answer": "Done. docs/art/ui-quality/gate/shots.md, 'Screens with more than one state', lists the result screen's offline state (the script's default, no SERVER) beside its server state (SERVER=1), each at 100% and in high contrast (CONTRAST=1), with each still's environment; 200% adds TEXT=200 LOCALE=pt_BR to both. AD's ruling on P3-S1-hc-offline-1's advisory verdict (a4ed000e) is in docs/art/ui-quality/gate/boards/preview-1.md, part 1: 'No casts' in gold, Get out in the alarm's red and the hc loot figures in gold are kept (AD-R60 to AD-R62, for P3-S1-hc-offline-2); the Breaker's grain is not (its torso is the smoothest of the three). AD-R56's red plate for Get out is withdrawn: Get out goes leather in high contrast."
+    },
+    {
+      "request_id": "S3-R34",
+      "at": "2026-11-17T16:30:00Z",
+      "answer": "Preview of P3-S3-character-5 at 4d575472 (stills at a5103ce7; only S3.md and S3.json changed since), the full list in one round (M12, M23). (1) The kit's calls stand: 100% en, high contrast, tab 1 and tab 2 are pixel for pixel main's; 200% pt_BR and de differ only in the outline. (2) AD-R53 met: the offline notice is on the roster's cream plate through the same set_status path on both screens. (3) AD-R58 met: 6 px a side on the level line, 6 to 7 px on the subtitle and 'Subir de n\u00edvel', 5 px on HABILIDADE, at 540 px wide (about 12.5% and 14% of 48 and 42 px words). No objection holds character-5; S3 may mark ready. Two kept objections go to the lead for follow-ups: O1, the offline notice's words in red on both screens (AD-R63, not M40-dependent), and O2, at 200% the offline notice pushes the tabs and the ability header off the first screen (AD-R64, M40-dependent). Write-up and stills: docs/art/ui-quality/gate/boards/preview-1.md, part 2."
     }
   ],
   "next_step": "Wait for the lead to merge P3-AD-audit-1b and give AD's next task.",
-  "last_update": "P3-AD-audit-1b ready at d2b01e18: pre-check PASS (All checks passed., exit 0, 12:57Z); owners.py diff passes. Misses on main in gate/audit/audit-1-misses.md (AD-R56 to AD-R59 filed); golden set version 2 (79 items, held-out third unchanged); held-out re-run due with the next prompt revision. Waiting for the lead."
+  "last_update": "P3-AD-preview-1: shots.md lists the result offline and server states (S1-R40); preview-1.md rules on hc-offline-1's verdict (AD-R60 to AD-R62 kept, Breaker grain not kept, AD-R56 red withdrawn) and previews character-5 (stands; O1 AD-R63, O2 AD-R64). Checks next."
 }
