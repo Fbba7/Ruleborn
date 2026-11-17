@@ -3,33 +3,29 @@
   "role": "K1",
   "branch": "claude/ui-bake",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "P3-K1-polish-1",
-  "task_state": "ready",
-  "claimed_at": "2026-11-17T07:25:00Z",
-  "lease_until": "2026-11-17T10:45:00Z",
-  "updated_at": "2026-11-17T09:31:00Z",
-  "expected_next_update_by": null,
+  "agent_state": "active",
+  "task_id": "P3-K1-polish-2",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-17T10:20:00Z",
+  "lease_until": "2026-11-17T13:20:00Z",
+  "updated_at": "2026-11-17T10:20:00Z",
+  "expected_next_update_by": "2026-11-17T11:05:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "57ea213c",
-    "next_step": "ready: the merge queue"
+    "last_green_sha": null,
+    "next_step": "read character_screen.gd local fixes for S3-R9 to S3-R14"
   },
-  "precheck": {
-    "sha": "57ea213c67792580dbc71ed8fd86785ad007fa95",
-    "exit": 0,
-    "finished_at": "2026-11-17T09:28:39Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
-  "ready_sha": "57ea213c",
+  "ready_sha": null,
   "stop_at": "2026-11-18T21:00:00Z",
   "acks": [
     "M2",
     "M4",
     "M5",
     "M8",
-    "M9"
+    "M9",
+    "M51"
   ],
   "requests": [
     {
