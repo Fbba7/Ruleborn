@@ -8,13 +8,13 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-17T13:05:00Z",
   "lease_until": "2026-11-17T16:05:00Z",
-  "updated_at": "2026-11-17T13:12:00Z",
-  "expected_next_update_by": "2026-11-17T13:55:00Z",
+  "updated_at": "2026-11-17T13:18:00Z",
+  "expected_next_update_by": "2026-11-17T14:00:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "ee67dcea90dcaef929db2240127f1b87b13ad735",
-    "next_step": "kit calls in place of the local fixes (tabs, ability, foot blend, hex, compact, untrack); AD-R53 cream notice; AD-R58 outline at 4x the per-side width; rendering the after stills to compare",
-    "at": "2026-11-17T13:12:00Z"
+    "next_step": "kit calls in place and AD-R58 measured (subtitle 6 px on 48, level 6 on 42 in the still); main 851e0c7a merged; next: full stills, checks, menu-screens.md, AD preview request, precheck",
+    "at": "2026-11-17T13:18:00Z"
   },
   "precheck": {
     "sha": "ee67dcea90dcaef929db2240127f1b87b13ad735",
