@@ -1,10 +1,10 @@
 {
-  "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026. Phase 2 started on 12 November 2026 (lead cycle 70): P1-AD-board-1d let board 1 stand and phase 1's other exit criteria hold (report.md section 3.2); its first tasks are the flow findings (S1, S2) and board 1's note G (AIA-2), within the same cap of three. Since 12 November 2026, about 20:00Z, the cap is four UI builders by the owner's order (CLAUDE.md order 3; three while the seven-day bar reads allowed_warning).",
+  "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026. Phase 2 started on 12 November 2026 (lead cycle 70): P1-AD-board-1d let board 1 stand and phase 1's other exit criteria hold (report.md section 3.2); its first tasks are the flow findings (S1, S2) and board 1's note G (AIA-2), within the same cap of three. Since 12 November 2026, about 20:00Z, the cap is four UI builders by the owner's order (CLAUDE.md order 3; three while the seven-day bar reads allowed_warning). Phase 3 (polish and harden, report.md step 12) started on 17 November 2026 (lead cycle 118) under M49: every phase 2 task was merged by 06:55Z, the exit review ran in cycle 118 (boards 3, 4 and 5 stand, board 2 waits on the deferred icon batch 4 by D13 (c), the exceptions queue is empty, every screen passes the gate but result at 200% pt_BR, Hierarchy, which P3-S1-result-7 takes), and the first blind audit (O6) is carried into phase 3 as P3-AD-audit-1. Phase 3 draws from the 20-hour reserve; it exits when no board has an open objection, the second blind audit is done and the wave board (O7) stands.",
   "wave": "UI wave",
-  "phase": 2,
-  "updated_at": "2026-11-17T03:55:00Z",
-  "updated_by": "lead (cycle 113)",
-  "stop_at": "2026-11-17T21:00:00Z",
+  "phase": 3,
+  "updated_at": "2026-11-17T07:20:00Z",
+  "updated_by": "lead (cycle 118)",
+  "stop_at": "2026-11-18T21:00:00Z",
   "lease_hours": 3,
   "status_every_minutes": 45,
   "check_minutes": 25,
@@ -46,6 +46,316 @@
   },
   "strings_owner": "lead",
   "tasks": [
+    {
+      "id": "P3-AD-audit-1",
+      "title": "The first blind audit (O6, phase 2's exit carried into phase 3): AD labels the 19 items of gate/audit/audit-1.md without the gate's verdicts",
+      "phase": 3,
+      "role": "AD",
+      "model": "Opus 5.5",
+      "assigned_to": "AD",
+      "files": [
+        "docs/art/ui-quality/gate/**",
+        "!docs/art/ui-quality/gate/verdicts/**",
+        "tools/ui_gate/**"
+      ],
+      "deps": [],
+      "done_when": [
+        "a fresh AD session, which opens no file under docs/art/ui-quality/gate/verdicts/, no verdict line of a board, no 'Gate' paragraph of docs/progress/requests.md and no lead note on these items until every row is labelled",
+        "every one of audit-1.md's 43 rows labelled pass, fail or n/a with a one-line critique, each item rendered at its commit as the form's header says (git worktree, bash tools/render/shoot.sh, the screen's shot script)",
+        "the form committed with the labels and the time spent; the lead scores the misses against the verdicts in the cycle after the merge",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 1.5,
+      "tier": 2,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-17T07:20:00Z",
+      "updated_by": "lead (cycle 118)",
+      "exceptions": []
+    },
+    {
+      "id": "P3-AD-flow-2",
+      "title": "Phase 2's flow review (report.md 3.3, AD's flow reviews): AD walks the end-to-end flows across heist, result, home, character and settings on the integrated build",
+      "phase": 3,
+      "role": "AD",
+      "model": "Opus 5.5",
+      "assigned_to": "AD",
+      "files": [
+        "docs/art/ui-quality/gate/**",
+        "!docs/art/ui-quality/gate/verdicts/**",
+        "tools/ui_gate/**"
+      ],
+      "deps": [
+        "P3-AD-audit-1"
+      ],
+      "done_when": [
+        "gate/boards/flow-2.md: the flows heist to result to home, home to character and back, home to settings and back, each at 100% and 200% text (pt_BR) and in high contrast, on main's build at the task's start; navigation, drift from the kit and a screen's state carried across a move checked",
+        "each finding has a number, the screen and file it lives in, and a named owner, and goes to the lead as a request in AD's status file; navigation findings name the scripted test that would catch them",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 1.0,
+      "tier": 2,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-17T07:20:00Z",
+      "updated_by": "lead (cycle 118)",
+      "exceptions": []
+    },
+    {
+      "id": "P3-K1-polish-1",
+      "title": "The kit's parchment drawn when scrolled (S3-R32) and its numerals mipmapped (S2-R35)",
+      "phase": 3,
+      "role": "K1",
+      "model": "Opus 5.5",
+      "assigned_to": "K1",
+      "files": [
+        "client/ui/rb_box.gd",
+        "client/ui/kit_numerals.gd",
+        "client/ui/art/kit_3.webp.import",
+        "client/ui/art/kit_3_hc.webp.import",
+        "client/tests/ui_kit_tests.gd",
+        "tools/ui_bake/budgets.json"
+      ],
+      "deps": [],
+      "done_when": [
+        "S3-R32: RbBox keeps drawing its panel while its top edge is scrolled above the screen, so at 200% text in en and pt_BR the character screen's Stats tab scrolled to the end (TEXT=200 LOCALE=pt_BR TAB=1 SCROLL=99999 bash tools/render/shoot.sh client/tests/shots/screen_character.gd out.png) shows the parchment behind the stat tiles and their note; the still named in the handoff",
+        "S2-R35: mipmaps on kit_3.webp and kit_3_hc.webp and TEXTURE_FILTER_LINEAR_WITH_MIPMAPS on KitNumerals.Row, so the gold numerals keep their stroke, drop and gradient drawn about 18 px tall; texture bytes within tools/ui_bake/budgets.json (a budget raised only with the measured figure in the handoff)",
+        "tests in client/tests/ui_kit_tests.gd: an RbBox panel scrolled half above its parent still draws, and KitNumerals.Row's filter uses mipmaps",
+        "at 100% text the catalogue's shots unchanged, or the handoff names each change",
+        "bash tools/ui_bake/guard.sh",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed under docs/art/ui-quality/gate/verdicts/ or outside the task's files (M48)",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 2.5,
+      "tier": 2,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-17T07:20:00Z",
+      "updated_by": "lead (cycle 118)",
+      "exceptions": []
+    },
+    {
+      "id": "P3-K1-polish-2",
+      "title": "Board 5's kit features, which character_screen.gd does locally today (S3-R9 to S3-R14): segmented options, the ability card's measures, the compact fact, kickers that untrack, the hex that grows with text, the stage's foot fade",
+      "phase": 3,
+      "role": "K1",
+      "model": "Opus 5.5",
+      "assigned_to": "K1",
+      "files": [
+        "client/ui/kit_nav.gd",
+        "client/ui/kit_cards.gd",
+        "client/ui/kit_hex.gd",
+        "client/world/stage_hero.gd",
+        "client/tests/ui_kit_tests.gd"
+      ],
+      "deps": [],
+      "done_when": [
+        "S3-R9: KitNav.segmented takes [words, icon] options in key frame 04's two forms: icon beside the words at 100%, the chosen option in words and the others icon-only at large text",
+        "S3-R10: KitCards.ability at key frame 04's measures, padding 4/8 and gaps 4/8",
+        "S3-R11: StageHero fades its foot into the menus' night where the stage ends, not NIGHT_FOOT",
+        "S3-R12: KitHex.make grows with the text size, so LV, NV and ST stay inside at 200%",
+        "S3-R13 and S3-R14: a compact KitCards.fact (the disc beside the kicker, the words under both at 13 points), and card kickers drop their tracking when the longest word, or kicker and tag, is wider than the room",
+        "each feature off by default or equal to today's look, so the screens that do not ask for it are unchanged at 100% (the catalogue's shots unchanged, or the handoff names each change); the handoff says, per request, what character_screen.gd can drop",
+        "tests in client/tests/ui_kit_tests.gd for each of the six",
+        "bash tools/ui_bake/guard.sh",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed under docs/art/ui-quality/gate/verdicts/ or outside the task's files (M48)",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 2.5,
+      "tier": 2,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-17T07:20:00Z",
+      "updated_by": "lead (cycle 118)",
+      "exceptions": []
+    },
+    {
+      "id": "P3-S3-character-5",
+      "title": "Character screen, part 5: the local fixes for S3-R9 to S3-R14 dropped where P3-K1-polish-2's kit features cover them",
+      "phase": 3,
+      "role": "S3",
+      "model": "Opus 5.5",
+      "assigned_to": "S3",
+      "files": [
+        "client/scripts/character_screen.gd",
+        "client/tests/shots/screen_character.gd",
+        "docs/art/tracks/menu-screens.md"
+      ],
+      "deps": [
+        "P3-K1-polish-2"
+      ],
+      "done_when": [
+        "_tabs, the ability card's measures, _blend_foot, the hex's scaled size, _compact and _untrack_when_tight replaced by the kit's calls where K1's handoff for P3-K1-polish-2 says the kit covers them, each named in the handoff",
+        "the character screen's stills at 100% and 200% text (en, pt_BR, de) and in high contrast unchanged in substance, or each change named; board 5 still stands",
+        "AD previews the stills before ready (M10, M12, M23): the builder sends them to AD while the work can still change, and AD's objections are answered in this task",
+        "python3 tools/ui_bake/check_screens.py",
+        "bash tools/ui_bake/guard.sh",
+        "gate: Screen",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed under docs/art/ui-quality/gate/verdicts/ or outside the task's files (M48)",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [
+        {
+          "item": "character at 200% text, pt_BR",
+          "qualities": [
+            "Hierarchy"
+          ]
+        }
+      ],
+      "attempts": 0,
+      "estimate_h": 1.0,
+      "tier": 2,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-17T07:20:00Z",
+      "updated_by": "lead (cycle 118)",
+      "exceptions": []
+    },
+    {
+      "id": "P3-S1-result-7",
+      "title": "Result screen, part 7: the gate's fail at 200% pt_BR, Hierarchy (P2-S1-result-6 at b5843368), and board 4's carried notes (idle crew in the fixture, the fold on the crew card's header)",
+      "phase": 3,
+      "role": "S1",
+      "model": "Opus 5.5",
+      "assigned_to": "S1",
+      "files": [
+        "client/scripts/result_screen.gd",
+        "client/scripts/result_fit.gd",
+        "client/tests/shots/screen_result.gd",
+        "docs/art/tracks/result-screen.md"
+      ],
+      "deps": [],
+      "done_when": [
+        "at 200% text in pt_BR the summary prose and the alarm line sit below the reward numerals in size and weight, and one reward tile leads (within AD's accepted parchment departure)",
+        "board 4's notes: the shot's fixture has an idle crew, so the 'Idle crew of N ready' line shows and is checked; at 100% in pt_BR and German and in high contrast pt_BR the action bar's fold falls on the crew card's header, not across its faces, where the layout allows (else the handoff says why)",
+        "'result at 100% text' and 'result in high contrast' still passing; FIT=1 runs of client/tests/shots/screen_result.gd at 200% text in en, pt_BR and de and in high contrast all passing, each run listed in the handoff",
+        "AD previews the stills before ready (M10, M12, M23): the builder sends them to AD while the work can still change, and AD's objections are answered in this task",
+        "python3 tools/ui_bake/check_screens.py",
+        "bash tools/ui_bake/guard.sh",
+        "gate: Screen",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed under docs/art/ui-quality/gate/verdicts/ or outside the task's files (M48)",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [
+        {
+          "item": "result at 200% text, pt_BR",
+          "qualities": [
+            "Hierarchy"
+          ]
+        }
+      ],
+      "attempts": 0,
+      "estimate_h": 1.5,
+      "tier": 2,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-17T07:20:00Z",
+      "updated_by": "lead (cycle 118)",
+      "exceptions": []
+    },
+    {
+      "id": "P3-S2-home-states",
+      "title": "Home's unchecked states (board 3's carried note): notifications, a shield and a locked realm in the shot's fixture, so the dock badges, the Defence timer and Lantern Vale's lock are seen and fixed",
+      "phase": 3,
+      "role": "S2",
+      "model": "Opus 5.5",
+      "assigned_to": "S2",
+      "files": [
+        "client/scripts/home.gd",
+        "client/scripts/home_parts.gd",
+        "client/tests/shots/universe_home.gd",
+        "docs/art/tracks/home-screen.md"
+      ],
+      "deps": [],
+      "done_when": [
+        "keyframe() in client/tests/shots/universe_home.gd gives the dock count badges, an active shield (the Defence timer '5 h 12 min') and Lantern Vale locked ('Opens at Keeper 28'), as key frame 02 shows",
+        "at 100% and 200% text (en, pt_BR, de) and in high contrast the badges, the timer and the lock read clearly, clear of the pins and the side buttons (board 3's objection B), and nothing carried by colour alone; what breaks is fixed in home.gd or home_parts.gd",
+        "'home at 100% text', 'home at 200% text, pt_BR' and 'home in high contrast' passing on the new stills",
+        "AD previews the stills before ready (M10, M12, M23): the builder sends them to AD while the work can still change, and AD's objections are answered in this task",
+        "python3 tools/ui_bake/check_screens.py",
+        "bash tools/ui_bake/guard.sh",
+        "gate: Screen",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed under docs/art/ui-quality/gate/verdicts/ or outside the task's files (M48)",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [
+        {
+          "item": "home at 100% text",
+          "qualities": [
+            "Hierarchy",
+            "Display type"
+          ]
+        },
+        {
+          "item": "home at 200% text, pt_BR",
+          "qualities": [
+            "Hierarchy"
+          ]
+        },
+        {
+          "item": "home in high contrast",
+          "qualities": [
+            "Hierarchy"
+          ]
+        }
+      ],
+      "attempts": 0,
+      "estimate_h": 1.5,
+      "tier": 2,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-17T07:20:00Z",
+      "updated_by": "lead (cycle 118)",
+      "exceptions": []
+    },
     {
       "id": "SV-B10",
       "title": "B10 the client's certificate pin on the production certificate's authority, never the leaf: waits for the production host (owner-decisions.md); unassigned until it exists",
@@ -778,7 +1088,7 @@
       "text": "From 17 November 2026 (overseer, cycle 116's batch): the candidate for P2-S2-home-6 and P2-S1-result-6 failed its first attempt because S1's branch had committed files in the lead's verdict folder (a copy of docs/art/ui-quality/gate/verdicts/P2-S1-result-6/b5843368.json and four more), outside the task's files. The merge stopped on an add/add conflict, and result 6 lost 2.0h to the resync (M47). Rule: builders never commit under docs/art/ui-quality/gate/verdicts/; the gate's verdicts are the lead's. The pre-check runs `python3 tools/coord/owners.py diff <task> <main> <ready_sha>`, so a file outside the task's list fails before the task is marked ready, not at the merge. Add the rule to agent-brief.md and the check to the pre-check. Add M48 to your acks.",
       "sent_at": "2026-11-17T07:15:00Z",
       "ack_by": "2026-11-17T09:15:00Z",
-      "acked_at": null
+      "acked_at": "2026-11-17T07:20:00Z"
     },
     {
       "id": "M49",
@@ -786,7 +1096,7 @@
       "text": "From 17 November 2026 (overseer): Builders at once rated worse two reports in a row (1 of 4 at 05:46, 0 of 4 at 06:57). Every phase 2 task merged at 06:55, 14 hours before stop_at (21:00Z), and M33's limit on seeding leaves all four seats idle until then. Rule: when every task of a phase is merged before its stop_at, the phase closes then. Move stop_at to now, run the phase's exit review, and seed the next phase's first tasks in the same cycle, within the cap of four. M33's limit was meant to stop scope creep inside a running phase, not to keep seats idle after it ends; this rule replaces it for that case. Add M49 to your acks.",
       "sent_at": "2026-11-17T07:15:00Z",
       "ack_by": "2026-11-17T09:15:00Z",
-      "acked_at": null
+      "acked_at": "2026-11-17T07:20:00Z"
     }
   ]
 }
