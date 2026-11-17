@@ -18,9 +18,13 @@ signal rewarded
 const OUTCOME := {"Clean": ["RESULT_CONDITION_CLEAN", "1.0", "1.0"], "Loud": ["RESULT_CONDITION_LOUD", "0.7", "0.8"],
 	"Partial": ["RESULT_CONDITION_PARTIAL", "0.4", "0.5"], "Foiled": ["RESULT_CONDITION_FOILED", "0", "0"]}
 
-## Each reward and its material, as key frame 03: the Starlight haul on
-## parchment and wider, the other two on glass.
-const REWARDS := [["starlight", "parchment"], ["essence", "glass"], ["renown", "glass"]]
+## Each reward's tile: all three on the kit's parchment, as the design's
+## still 07 has them, so the three totals, one rank, show the one gold finish
+## with its ink outline and hard drop on a like ground (gate, Display type at
+## 200% text). The kit's `reward_gold` and `reward_green` are its gold and
+## green button faces, which would rival Raid again, so the plain parchment
+## stands for the edged tiles. Starlight's tile stays the wider one.
+const REWARDS := [["starlight", "parchment"], ["essence", "parchment"], ["renown", "parchment"]]
 ## How many of the crew's faces the rest card shows, apart and larger than
 ## key frame 03's stack (gate, Character presence), and how large, in points.
 const FACES := 3
@@ -133,7 +137,8 @@ func _ready() -> void:
 	paid.add_child(haul_tile)
 	var tiles: Array = []
 	for r: Array in REWARDS:
-		var t := KitCards.reward("resources/" + str(r[0]), "", Strings.t("RESULT_" + str(r[0]).to_upper()), "gold")
+		var words := Strings.t("RESULT_" + str(r[0]).to_upper())
+		var t := KitCards.reward("resources/" + str(r[0]), "", words, "gold")
 		UI.dress(t, str(r[1]))
 		t.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		t.size_flags_stretch_ratio = 1.3 if r[0] == "starlight" else 1.0
