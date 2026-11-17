@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-17T13:05:00Z",
   "lease_until": "2026-11-17T16:05:00Z",
-  "updated_at": "2026-11-17T14:17:00Z",
-  "expected_next_update_by": "2026-11-17T15:02:00Z",
+  "updated_at": "2026-11-17T14:27:00Z",
+  "expected_next_update_by": "2026-11-17T15:12:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "6fcf88ba",
-    "next_step": "pre-check on the handoff commit, owners.py diff, ready"
+    "last_green_sha": "a9cca25f",
+    "next_step": "pre-check PASS on 22fae4b7, then ready"
   },
   "precheck": null,
   "gate_request": null,
@@ -449,5 +449,5 @@
       "at": "2026-11-17T08:15:00Z"
     }
   ],
-  "next_step": "P3-K1-tabs-1: on the merge 6fcf88ba check_all All checks passed (client 432 of 432, AD-R47 and AD-R59 tests pass) and guard.sh ui guard: OK; handoff written; next the pre-check, owners.py diff and ready"
+  "next_step": "P3-K1-tabs-1: main ef80c8bf merged as a9cca25f; setup line, build.sh and guard.sh (ui guard: OK) pass on it; owners.py diff passes at 22fae4b7; pre-check (check_all, bwrap) running on 22fae4b7; then ready"
 }
