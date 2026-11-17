@@ -35,6 +35,15 @@ const CARRIER_POINTS := 34.0
 ## The outcome's medal beside its title, in points.
 const MEDAL_POINTS := 34.0
 const TITLE_POINTS := 40.0
+## With large text, the condition's prose and the alarm line under the
+## totals in points and weight (gate, Hierarchy at pt_BR 200%), and
+## Starlight's total LEAD times the others' (key frame 03-result_text200's
+## "1.288"): by size, as the kit has no darker parchment (kit-spec section 1)
+## and on its glass the gold totals sank (Display type, `24cc4d7c`).
+const PROSE_POINTS := 14.0
+const ALARM_POINTS := 13.0
+const PROSE_WEIGHT := 500
+const LEAD := 1.5
 ## The reward's tier (the kit Motion's) for each outcome that pays.
 const TIERS := {"Clean": "epic", "Loud": "rare", "Partial": "common"}
 ## The pause before the reward begins, in seconds.
@@ -145,6 +154,7 @@ func _ready() -> void:
 		reward_labels[str(r[0])] = t.get_child(0).get_child(1)
 		ResultFit.tile_row(t)
 		if r[0] == "starlight":
+			ResultFit.lead_stack(t)
 			ResultFit.carrier(t, ResultFit.crew_kinds(_crew_end), CARRIER_POINTS)
 		tiles.append(t)
 	# Side by side, as the design's; one above another with large text.
@@ -165,6 +175,8 @@ func _ready() -> void:
 	# The lines under the tiles stand on the night with no plate.
 	for l: Label in [fee_label, detail_label, check_label]:
 		ResultFit.ink(l)
+	# With large text Starlight's total leads by size, its icon with it.
+	ResultFit.lead_fit(reward_labels["starlight"], roundi(UI.text_px(24.0) * LEAD), UI.text_px(24.0), INF)
 	# The totals as the home's display figures: the lead deep gold, the
 	# others cream (key frame 03's "1,288", "+46" and "+12").
 	_display(haul_label, "starlight")
@@ -263,11 +275,21 @@ func _hero() -> VBoxContainer:
 	subline_label = UI.label("", 14, true)
 	subline_label.theme_type_variation = "Secondary"
 	hero.add_child(subline_label)
+	if Settings.text_scale > KitLayout.SIDE_BY_SIDE_UP_TO:
+		ResultFit.prose(_prose(), PROSE_WEIGHT)
 	# The hero's words stand on the sunburst, unplated: inked by their size.
 	for l: Label in [kicker_label, grade_label, condition_label, subline_label]:
 		ResultFit.ink(l)
 	grade_label.add_theme_color_override("font_shadow_color", Color.TRANSPARENT)  # Outline for drop.
 	return hero
+
+
+## The condition and the time line with their points: the kit hero's at
+## normal text, under the totals' with large text (PROSE_POINTS).
+func _prose() -> Array:
+	if Settings.text_scale > KitLayout.SIDE_BY_SIDE_UP_TO:
+		return [[condition_label, PROSE_POINTS], [subline_label, ALARM_POINTS]]
+	return [[condition_label, 16.0], [subline_label, 14.0]]
 
 
 ## A reward's total as the home's figures ("Keeper 24", `Home.home_figure`):
@@ -524,7 +546,7 @@ func _lift_reward() -> void:
 ## the Starlight number, else the haul's, so no coin hides the roll (AD's D).
 func _reward_mark() -> Control:
 	var number := (reward_labels["starlight"] as Label) if reward_row.visible else haul_label
-	return number.get_parent().get_child(0) as Control
+	return ResultFit.tile_of(number).get_child(0).get_child(0) as Control
 
 
 ## What the coins bring: the split's Starlight, else the haul, else 0.
@@ -604,6 +626,8 @@ func _show_rewards(v: Dictionary) -> void:
 	_count_rewards(1.0)
 	# The totals baked at their final words first, so the rows are measured
 	# as they are drawn (AD's objection H).
+	ResultFit.lead_fit(reward_labels["starlight"], roundi(UI.text_px(24.0) * LEAD), UI.text_px(24.0),
+		get_viewport_rect().size.x)
 	ResultFit.bake_totals(_totals)
 	ResultFit.reward_rows(reward_row, reward_labels, get_viewport_rect().size.x)
 	var fee := int(v["fee"])
@@ -821,8 +845,8 @@ func _fit_actions() -> void:
 		await get_tree().process_frame
 	var page := _ending[0].get_parent() as Control
 	if Settings.text_scale > 100 and reward_row.visible and page == _foot:
-		ResultFit.hero_shrink([[kicker_label, 14.0], [grade_label, TITLE_POINTS], [condition_label, 16.0],
-			[subline_label, 14.0]], reward_labels.values(), _ending[0])
+		ResultFit.hero_shrink([[kicker_label, 14.0], [grade_label, TITLE_POINTS]] + _prose(),
+			reward_labels.values(), _ending[0])
 	if is_inside_tree() and page != _foot and page.get_combined_minimum_size().y > _scroll.size.y:
 		for c: Control in _ending:
 			c.reparent(_foot)
