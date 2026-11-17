@@ -8,8 +8,8 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-17T21:25:00Z",
   "lease_until": "2026-11-18T00:25:00Z",
-  "updated_at": "2026-11-17T21:25:00Z",
-  "expected_next_update_by": "2026-11-17T22:10:00Z",
+  "updated_at": "2026-11-17T21:41:00Z",
+  "expected_next_update_by": "2026-11-17T22:25:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "9ef7b295",
@@ -108,7 +108,7 @@
       "id": "S2-R8",
       "from": "S2",
       "to": "K1",
-      "ask": "KitPanels.notice: a notice that stays (frees neither on banner_ms nor on its cross, but hides and can be shown again, with a dismissed signal), and at text above KitLayout.SIDE_BY_SIDE_UP_TO the words over the full width with the icon, action and cross in a row beneath. Home's raid notice must stay until seen or dismissed (§21.8) and return with new raids.",
+      "ask": "KitPanels.notice: a notice that stays (frees neither on banner_ms nor on its cross, but hides and can be shown again, with a dismissed signal), and at text above KitLayout.SIDE_BY_SIDE_UP_TO the words over the full width with the icon, action and cross in a row beneath. Home's raid notice must stay until seen or dismissed (\u00a721.8) and return with new raids.",
       "files": [
         "client/ui/kit_panels.gd",
         "client/scripts/ui.gd"
@@ -123,7 +123,7 @@
       "id": "S2-R9",
       "from": "S2",
       "to": "K1",
-      "ask": "KitLayout.tap: (1) it connects button_down twice, so every part made tappable logs 'Signal button_down is already connected' (home's strain and goal card; seen in every universe_home.gd run): connect once. (2) its clear button is a child of the card, so inside a PanelContainer it is laid out within the card's padding, not over the whole card: on KitStatus.strain (48 points tall) the tap was 40 points, failing §21.1's 48 (client test 'every control on every screen'). Lay it over the whole card (e.g. a holder of the card's size, or the card's padding moved into an inner margin). (3) let it carry 'frequent' = false when the card is a secondary place, as the card itself does.",
+      "ask": "KitLayout.tap: (1) it connects button_down twice, so every part made tappable logs 'Signal button_down is already connected' (home's strain and goal card; seen in every universe_home.gd run): connect once. (2) its clear button is a child of the card, so inside a PanelContainer it is laid out within the card's padding, not over the whole card: on KitStatus.strain (48 points tall) the tap was 40 points, failing \u00a721.1's 48 (client test 'every control on every screen'). Lay it over the whole card (e.g. a holder of the card's size, or the card's padding moved into an inner margin). (3) let it carry 'frequent' = false when the card is a secondary place, as the card itself does.",
       "files": [
         "client/ui/kit_layout.gd"
       ],
@@ -267,7 +267,7 @@
       "id": "S2-R19",
       "from": "S2",
       "to": "lead",
-      "ask": "Board 3's objection B asks for the goal 'number first, as the key frame'. pt_BR's HOME_GOAL_KEEPER string reads 'faltam 1.240 de experiência · Guardião 25' (the count after 'faltam'). Should it be rewritten number-first, e.g. '1.240 de experiência a ganhar · Guardião 25', in client strings.csv (not S2's file)? Home keeps the goal to two lines at 100% in pt_BR either way.",
+      "ask": "Board 3's objection B asks for the goal 'number first, as the key frame'. pt_BR's HOME_GOAL_KEEPER string reads 'faltam 1.240 de experi\u00eancia \u00b7 Guardi\u00e3o 25' (the count after 'faltam'). Should it be rewritten number-first, e.g. '1.240 de experi\u00eancia a ganhar \u00b7 Guardi\u00e3o 25', in client strings.csv (not S2's file)? Home keeps the goal to two lines at 100% in pt_BR either way.",
       "files": [
         "client/i18n/strings.csv"
       ],
@@ -312,7 +312,7 @@
       "id": "S2-R22",
       "from": "S2",
       "to": "AD",
-      "ask": "Re-check only S2-R20's objections 1-5 on claude/ui-screens-home at 13ff046f (a3274abe plus the split of home.gd into home_parts.gd, stills unchanged) (one round, M12). Reproduce with `FIT=1 bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png` and env as in S2-R20: (1) pins near their islands, clear by the pin gap of the side buttons and the Defence badge: en and pt_BR at 100%; (2) en 100% with NOTICE=1: the goal keeps its line, the notice's second line balanced; (3) the Full tag at 100% and 200% in en, pt_BR, de, CONTRAST=1; (4) the strain's two lines at TEXT=200 in en, pt_BR, de, fr; (5) pt_BR purse two rows at 100%, CONTRAST=1 Collect label size, chips at pt_BR and de 200%. The goal's 'Guardião / 25' break stays S2-R19; objection 6 is K1's. docs/art/tracks/home-screen.md Part 3, \"AD's S2-R20 review\", lists each answer and what is still open.",
+      "ask": "Re-check only S2-R20's objections 1-5 on claude/ui-screens-home at 13ff046f (a3274abe plus the split of home.gd into home_parts.gd, stills unchanged) (one round, M12). Reproduce with `FIT=1 bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png` and env as in S2-R20: (1) pins near their islands, clear by the pin gap of the side buttons and the Defence badge: en and pt_BR at 100%; (2) en 100% with NOTICE=1: the goal keeps its line, the notice's second line balanced; (3) the Full tag at 100% and 200% in en, pt_BR, de, CONTRAST=1; (4) the strain's two lines at TEXT=200 in en, pt_BR, de, fr; (5) pt_BR purse two rows at 100%, CONTRAST=1 Collect label size, chips at pt_BR and de 200%. The goal's 'Guardi\u00e3o / 25' break stays S2-R19; objection 6 is K1's. docs/art/tracks/home-screen.md Part 3, \"AD's S2-R20 review\", lists each answer and what is still open.",
       "files": [
         "client/scripts/home.gd",
         "client/scripts/home_parts.gd",
@@ -358,7 +358,7 @@
       "id": "S2-R25",
       "from": "S2",
       "to": "AD",
-      "ask": "Re-check only S2-R22's objections (a) to (e) on claude/ui-screens-home at the ready commit 823d2eac (one round, M12). Reproduce with `FIT=1 bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`: (a) TEXT=200 in en, de, CONTRAST=1: the chosen tab's picture clear of the goal and Collect; (b) TEXT=200 in en, de, CONTRAST=1: every realm pin in one form; (c) LOCALE=de at 100%: the purse in one row; (d) TEXT=200 en: '1,240 experience to go · / Keeper 25'; (e) LOCALE=de TEXT=200: Collect's side padding. FIT now checks (a) to (c). Please also rule on one trade (a) makes: at 200% with NOTICE=1 the realms' chips give way in pt_BR, fr and en with TALL=900 (FIT fails on 'no realm marked'), as the reserve takes the world's room; the fix is KitTabs' (S2-R24). Answers in docs/art/tracks/home-screen.md, Part 3, \"AD's S2-R22 review\" and 'What (a) costs'.",
+      "ask": "Re-check only S2-R22's objections (a) to (e) on claude/ui-screens-home at the ready commit 823d2eac (one round, M12). Reproduce with `FIT=1 bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`: (a) TEXT=200 in en, de, CONTRAST=1: the chosen tab's picture clear of the goal and Collect; (b) TEXT=200 in en, de, CONTRAST=1: every realm pin in one form; (c) LOCALE=de at 100%: the purse in one row; (d) TEXT=200 en: '1,240 experience to go \u00b7 / Keeper 25'; (e) LOCALE=de TEXT=200: Collect's side padding. FIT now checks (a) to (c). Please also rule on one trade (a) makes: at 200% with NOTICE=1 the realms' chips give way in pt_BR, fr and en with TALL=900 (FIT fails on 'no realm marked'), as the reserve takes the world's room; the fix is KitTabs' (S2-R24). Answers in docs/art/tracks/home-screen.md, Part 3, \"AD's S2-R22 review\" and 'What (a) costs'.",
       "files": [
         "client/scripts/home.gd",
         "client/scripts/home_parts.gd",
@@ -605,7 +605,7 @@
       "id": "S2-R41",
       "from": "S2",
       "to": "lead",
-      "ask": "Record home's draw calls in tools/ui_bake/budgets.json (K1's file, written at the merge as for S2-R17 and S2-R30) when P3-S2-home-states merges: home/100 145 -> 148, home/200 121 -> 124, home/hc 145 -> 148. Measured with `python3 tools/ui_bake/budget_shots.py --only home/100,home/200,home/hc` on e9285afd (unchanged from ad6c25e7); textures and words below 4.5:1 (0) pass their records; still 2 under §21.3's cap of 150. The calls are the states the task adds to the fixture, which the records never saw: the Crew tab's count badge costs 3 (KitTabs' own badge, KitStatus.badge: 146 with OUTER=6 against 143 with the badge taken out); Lantern Vale's locked plate, drawn instead of a sixth realm pin, costs 2 at 100% (148 against 146; its name, S2-R38, batches with its words); at 200% the plate used to hide and now shows its short form (S2-R40), 3 calls (124 against 121 on 4797b5c3). A cheaper badge (drawn in the tab row's batch) would be K1's.",
+      "ask": "Record home's draw calls in tools/ui_bake/budgets.json (K1's file, written at the merge as for S2-R17 and S2-R30) when P3-S2-home-states merges: home/100 145 -> 148, home/200 121 -> 124, home/hc 145 -> 148. Measured with `python3 tools/ui_bake/budget_shots.py --only home/100,home/200,home/hc` on e9285afd (unchanged from ad6c25e7); textures and words below 4.5:1 (0) pass their records; still 2 under \u00a721.3's cap of 150. The calls are the states the task adds to the fixture, which the records never saw: the Crew tab's count badge costs 3 (KitTabs' own badge, KitStatus.badge: 146 with OUTER=6 against 143 with the badge taken out); Lantern Vale's locked plate, drawn instead of a sixth realm pin, costs 2 at 100% (148 against 146; its name, S2-R38, batches with its words); at 200% the plate used to hide and now shows its short form (S2-R40), 3 calls (124 against 121 on 4797b5c3). A cheaper badge (drawn in the tab row's batch) would be K1's.",
       "files": [
         "tools/ui_bake/budgets.json"
       ],
