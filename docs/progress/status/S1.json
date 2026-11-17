@@ -8,8 +8,8 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-16T20:51:41Z",
   "lease_until": "2026-11-17T01:09:33Z",
-  "updated_at": "2026-11-16T23:50:38Z",
-  "expected_next_update_by": "2026-11-17T00:35:38Z",
+  "updated_at": "2026-11-17T00:21:26Z",
+  "expected_next_update_by": "2026-11-17T01:01:26Z",
   "progress_marker": {
     "last_green_sha": "8d2488cb5ff09f939c62cec641d6bb2a34bbc39b",
     "next_step": "fix the en long bubble, commit, pre-check",
@@ -561,5 +561,5 @@
       "where": "docs/progress/lead.md, Now, cycle 106"
     }
   ],
-  "next_step": "Fixes committed (b8419c69, 9378b82d); M26 sweep 33 of 33 fit ok on 9378b82d; gate stills re-shot at 90c8b15c; guard fails only on S1-R33's two approved records. Pre-check of 90c8b15c running (started 23:17Z); on pass: handoff, gate request, ready."
+  "next_step": "Pre-check of 90c8b15c re-started at 23:53Z after a container restart killed the first run; on pass: handoff, gate request, ready."
 }
