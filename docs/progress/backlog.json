@@ -47,57 +47,6 @@
   "strings_owner": "lead",
   "tasks": [
     {
-      "id": "P3-K1-polish-2",
-      "title": "Board 5's kit features, which character_screen.gd does locally today (S3-R9 to S3-R14): segmented options, the ability card's measures, the compact fact, kickers that untrack, the hex that grows with text, the stage's foot fade",
-      "phase": 3,
-      "role": "K1",
-      "model": "Opus 5.5",
-      "assigned_to": "K1",
-      "files": [
-        "client/ui/kit_nav.gd",
-        "client/ui/kit_cards.gd",
-        "client/ui/kit_hex.gd",
-        "client/world/stage_hero.gd",
-        "client/tests/ui_kit_tests.gd"
-      ],
-      "deps": [],
-      "done_when": [
-        "S3-R9: KitNav.segmented takes [words, icon] options in key frame 04's two forms: icon beside the words at 100%, the chosen option in words and the others icon-only at large text",
-        "S3-R10: KitCards.ability at key frame 04's measures, padding 4/8 and gaps 4/8",
-        "S3-R11: StageHero fades its foot into the menus' night where the stage ends, not NIGHT_FOOT",
-        "S3-R12: KitHex.make grows with the text size, so LV, NV and ST stay inside at 200%",
-        "S3-R13 and S3-R14: a compact KitCards.fact (the disc beside the kicker, the words under both at 13 points), and card kickers drop their tracking when the longest word, or kicker and tag, is wider than the room",
-        "each feature off by default or equal to today's look, so the screens that do not ask for it are unchanged at 100% (the catalogue's shots unchanged, or the handoff names each change); the handoff says, per request, what character_screen.gd can drop",
-        "tests in client/tests/ui_kit_tests.gd for each of the six",
-        "bash tools/ui_bake/guard.sh",
-        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
-        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed under docs/art/ui-quality/gate/verdicts/ or outside the task's files (M48)",
-        "bash tools/check_all.sh"
-      ],
-      "gate_items": [],
-      "attempts": 0,
-      "estimate_h": 2.5,
-      "tier": 2,
-      "critical": false,
-      "state": "merged",
-      "claim": {
-        "agent": "K1",
-        "branch": "claude/ui-bake",
-        "claimed_at": "2026-11-17T10:20:00Z",
-        "seen_at": "2026-11-17T11:23:00Z",
-        "lease_until": "2026-11-17T16:40:00Z"
-      },
-      "prior_branch": null,
-      "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": "6ecdecf3",
-      "updated_at": "2026-11-17T12:58:00Z",
-      "updated_by": "lead (cycle 125)",
-      "exceptions": [
-        "client/tests/shots/ui_kit_polish.gd"
-      ]
-    },
-    {
       "id": "P3-K1-tabs-1",
       "title": "The chosen tab's picture inside its tile on every router-opened screen (AD-R47, flow board 2's F1), and the goal card's XP bar in the green progress fill (AD-R59)",
       "phase": 3,
