@@ -1,12 +1,19 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-17T13:56:00Z",
-  "expected_next_update_by": "2026-11-17T16:56:00Z",
-  "cycle": 126,
-  "merging": null,
+  "updated_at": "2026-11-17T16:25:00Z",
+  "expected_next_update_by": "2026-11-17T19:25:00Z",
+  "cycle": 129,
+  "merging": {
+    "candidate_sha": "f932cda7",
+    "task_ids": [
+      "P3-AD-preview-1"
+    ],
+    "started_at": "2026-11-17T16:42:00Z",
+    "expires_at": "2026-11-17T17:42:00Z"
+  },
   "last_merged": {
-    "task_id": "P3-AD-audit-1b",
-    "sha": "06d96d05"
+    "task_id": "P3-K1-tabs-1",
+    "sha": "e3364018"
   },
   "acks": [
     "M15",
@@ -40,9 +47,9 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Cycle 127: merge P3-S3-character-5 when S3 marks it ready (session_01SNkKxnZi7kDm1VGLiH5FC6, lease 16:05Z; gate item 'character at 200% text, pt_BR', Hierarchy). Merge P3-K1-tabs-1 when K1 marks it ready (session_01SNkKxq7JDCazLpMjivYruu, lease 16:05Z; AD-R47 and AD-R59; it changes kit files, so the gate runs on its candidate if a gated task merges with it). Merge P3-S1-hc-offline-1 when S1 marks it ready (started in cycle 126 as session_01SNkKxpfWQzuYCK1pQhn9Wy; AD-R56 and AD-R57; gate items 'heist in high contrast' and 'result at 100% text'; AD previews its stills first, and AD adds the offline result to gate/shots.md when S1 asks). When a seat frees, within the cap of three while the seven-day bar reads allowed_warning, seed in order: the navigation task for AD-R48, R50 and R51 (after character-5), S2's home task for R49's home part and R59's caller, R52 with the next settings task, and R54's content task; AD's next task (the shots.md entry for the offline result, golden set v2 follow-ups) when AD's seat is wanted.",
+  "next_step": "Cycle 130: merge P3-S3-character-5 when S3 marks it ready (session_01SNkKxnZi7kDm1VGLiH5FC6; gate item 'character at 200% text, pt_BR', Hierarchy; S3-R36's menu-screens stills are its exception). Merge P3-AD-preview-1 when AD marks it ready (session_01SNkKxoHAV28mTbRdZouhPY; M54 asks it to preview S2-R43 if it can); it opens P3-S1-hc-offline-2, whose done_when now carries AD-R60 to AD-R62. Merge P3-S2-home-7 when S2 marks it ready (session_01SNkKxqf3uqLW1HGZt6KLXF; gate items home at 100% text, home at 200% text pt_BR, home in high contrast; S2-R43's default stands at 19:06Z). Seats: S3, AD, S2, the cap of three while the seven-day bar reads allowed_warning. In the next free seat start S1 on P3-S1-hc-offline-2 once its dep merges; then seed in order: the navigation task for AD-R48, R50 and R51 with AD-R63 and AD-R64's S3 follow-up (after character-5), R52 with the next settings task, R54's content task, the K1 outline task for S3-R35, and AD-R55 with the next heist task.",
   "seen": {
-    "at": "2026-11-17T13:53:33Z",
+    "at": "2026-11-17T16:22:31Z",
     "heads": {
       "claude/3d-character-screens": "6053b249bee313648da3509142eeb2ba738bb62f",
       "claude/3d-characters": "35d6ae8f5b84a4d75636f68270848b0949c111f3",
@@ -60,31 +67,28 @@
       "claude/plan-v3": "57893713636b7753d0b790c5a9dc35c3b126770a",
       "claude/security-review": "dd1e90f06b512b25a74f3f3f73ace84b3969cce9",
       "claude/server-decisions": "502b63bbf1506801a7060547f6fb225adcbf8f51",
-      "claude/ui-ad": "1d2e1bd14c639b33679a0d0bc082bc50bf5f633a",
+      "claude/ui-ad": "885fae508787b78733a3104049c6de78c4c3ae13",
       "claude/ui-artist": "45c6366cb2e0f9dcb5aaa428d17c017576beff5d",
       "claude/ui-artist-icons": "a8b06f687a9fbb1048c426157f2336cda5f44202",
-      "claude/ui-bake": "72cb9be46ff7dfedf51e3011c197be22959d0808",
+      "claude/ui-bake": "26177616f694562b78f1d772040e9d301eb5dfad",
       "claude/ui-gate-runs": "0e78b6ceace032f62427a1c8e89dd9ee6186a5c0",
       "claude/ui-kit": "17b900ebdc371f05244d4658850a77460f6090c0",
       "claude/ui-plan": "f1affcea749d007fe1a67931bd3c1f7359d98c44",
       "claude/ui-research": "f19d5d4e5eaffff8869da3b91124d111cf1259a6",
       "claude/ui-screens": "dceb6bfcbc6c5da4e261674fe9301e1854f0aa65",
-      "claude/ui-screens-heist": "47db9364cf2a121d75ca10ccd19f79a6bcb1d478",
-      "claude/ui-screens-home": "60a262adfab5455bfa60f570f1d1d4e9fb0602a2",
-      "claude/ui-screens-meta": "b7092b7c108cdcdeb8163df99972ce4771df50d4",
+      "claude/ui-screens-heist": "a665c85840e933717076aae4d1af3d8f91a1de51",
+      "claude/ui-screens-home": "5dfa3703b33a9369f2803b69315bbd7c4f79b8dc",
+      "claude/ui-screens-meta": "3053cf6d8fddacb5e9c4b6b05235eb99d3746e1e",
       "lead/candidate-573416ab12761b92becf0c1d3d7d7bd03e9cf7d1": "573416ab12761b92becf0c1d3d7d7bd03e9cf7d1",
       "lead/candidate-714b24ed52f56133bccc18c82cc879938b53f296": "714b24ed52f56133bccc18c82cc879938b53f296",
+      "lead/candidate-791aae3c187caf621ace022ed675004678dc0119": "791aae3c187caf621ace022ed675004678dc0119",
       "lead/candidate-7e80197fdda972e3e4d71458cb06790f856da509": "7e80197fdda972e3e4d71458cb06790f856da509",
       "lead/candidate-bb7e4d3328004c6a1ee5afbfd002ed77db76a027": "bb7e4d3328004c6a1ee5afbfd002ed77db76a027",
       "lead/candidate-d756142555c04e567a54cc5367cc5b85edd99a7e": "d756142555c04e567a54cc5367cc5b85edd99a7e",
       "main": "2455f3b5392587009f9b8f7ff57f7b26b01566d1"
     },
     "ready": {},
-    "startable": [
-      "P3-K1-tabs-1",
-      "P3-S1-hc-offline-1",
-      "P3-S3-character-5"
-    ],
+    "startable": [],
     "messages": [
       "M10",
       "M3"

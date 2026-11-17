@@ -5,6 +5,100 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 126**, 17 November 2026, from about 13:19Z (session
+  `session_01SNkKxn49cnTinuA9di25Qn`, started by the Opus 5.5 launcher).
+  **Claims copied:** S3's claim on P3-S3-character-5 and K1's on
+  P3-K1-tabs-1 (both claimed 13:05Z, lease 16:05Z; working). AD marked
+  P3-AD-audit-1b ready at d2b01e18 (golden set v2, 79 items; audit 1's
+  six misses and two false blocks judged).
+  **Requests:** none new; every open request in the status files is
+  already in requests.md.
+  **Merges:** P3-AD-audit-1b as the candidate 791aae3c (d2b01e18 on
+  851e0c7a). No gate items. `run_checks.sh` PASS (13:52Z, bwrap) and
+  `ui_bake/guard.sh` OK (the first guard run stopped at its prerequisite
+  check, three.js missing from the worktree's `tools/ui_research`; rerun
+  with it linked); `owners.py diff` passed. Main had gained only this
+  cycle's bookkeeping, so d2b01e18 was merged onto it as 06d96d05 with
+  only the documentation check re-run. The merge lock is released; the
+  audit and roadmap pages are republished.
+  **Starts:** P3-S1-hc-offline-1 seeded (AD-R56: the heist's hc plates on
+  the near-black card with a cream line, Get out on the red danger plate,
+  every control dL* 20 off its ground; AD-R57: the offline result's crew
+  strip and top earner's portrait, shot in both states) and S1 started on
+  it in AD's freed seat (`session_01SNkKxpfWQzuYCK1pQhn9Wy`).
+  **Seats:** S3 (character-5), K1 (tabs-1) and S1 (hc-offline-1): three,
+  the cap while the seven-day bar reads `allowed_warning`.
+  **Next:** merge each of the three when ready. When a seat frees, seed in
+  order: the navigation task for R48, R50 and R51 (after character-5),
+  S2's home task for R49's home part and R59's caller, R52 with the next
+  settings task, and R54's content task.
+
+- **Cycle 125**, 17 November 2026, from about 12:16Z (session
+  `session_01SNkKxnqEmBjkMNWvPgkCUt`, started by the Opus 5.5 launcher).
+  **Claims copied:** AD's claim on P3-AD-audit-1b (lease 15:20Z,
+  `claude/ui-ad`; working). K1 marked P3-K1-polish-2 ready at fe983cae
+  and S2 marked P3-S2-home-states ready at 89659437.
+  **Requests:** AD-R56 to AD-R59 (audit 1's misses still failing on main,
+  from audit-1b) copied and answered as their defaults say: AD-R58 joins
+  P3-S3-character-5's done_when; AD-R59 rides with R47's kit task, with
+  home.gd's caller in S2's next home task; AD-R56 and AD-R57 become one S1
+  task when a seat frees. S2-R41 done: home's three draw-call records
+  (home/100 148, home/200 124, home/hc 148) with a raises entry, in the
+  candidate.
+  **Merges:** P3-K1-polish-2 and P3-S2-home-states together as the
+  candidate 84b0ee7c (both ready shas merged onto 7afadd9a, plus S2-R41's
+  records). Polish-2 changed kit files, so the gate ran on the candidate:
+  4 of 4 items pass, 3 of 3 samples each (home 100% Hierarchy and Display
+  type, home 200% pt_BR Hierarchy, home hc Hierarchy; cycle 122's Display
+  type fail reads as fixed), in
+  `docs/art/ui-quality/gate/verdicts/P3-S2-home-states/84b0ee7c.json`.
+  `run_checks.sh` PASS (12:56Z, bwrap) and `ui_bake/guard.sh` OK. Main
+  had gained only the merge lock, so the candidate was merged onto it as
+  6ecdecf3. The merge lock (extended to 14:30Z while the checks ran) is
+  released; the audit and roadmap pages are republished.
+  **Starts:** S3 on P3-S3-character-5 (`session_01SNkKxnZi7kDm1VGLiH5FC6`),
+  open since polish-2 merged. P3-K1-tabs-1 seeded (AD-R47: the chosen
+  tab's picture inside its tile on every router-opened tab route, with a
+  run.gd mount test; AD-R59: the goal card's XP bar in the green fill) and
+  K1 started on it (`session_01SNkKxq7JDCazLpMjivYruu`).
+  **Seats:** AD (audit-1b), S3 (character-5) and K1 (tabs-1): three, the
+  cap while the seven-day bar reads `allowed_warning`.
+  **Next:** merge each of the three when ready (character-5 runs the gate's
+  'character at 200% text, pt_BR'; tabs-1 changes kit files, so the gate
+  runs on its candidate if a gated task merges with it). When a seat frees,
+  seed in order: the S1 task for AD-R56 and AD-R57, the navigation task
+  for R48, R50 and R51 (after character-5), S2's home task for R49's home
+  part and R59's caller, R52 with the next settings task, and R54's
+  content task.
+
+- **Cycle 124**, 17 November 2026, from about 11:15Z (session
+  `session_01SNkKxosMXTnrRdW5v1jg9P`, started by the Opus 5.5 launcher).
+  **Claims copied:** S2's claim on P3-S2-home-states (claimed 10:50Z,
+  lease 13:50Z, `claude/ui-screens-home`; its restarted session is still
+  working) and K1's lease on P3-K1-polish-2, moved to 16:40Z.
+  **Requests:** none new. AD-R8 to AD-R10 (board 1, 11 November) still
+  sit in AD's status file; they were handled in phase 1 and are not
+  copied again.
+  **Merges:** P3-AD-flow-2 (ready at 808e42cf). AD's branch predates
+  polish-1's merge, so the candidate 83f98e84 (taken on 1a913623) ran in
+  full: `run_checks.sh` PASS (12:04Z, bwrap) and `ui_bake/guard.sh` OK;
+  `owners.py diff` passed. Main had gained only this cycle's bookkeeping,
+  so the candidate was merged onto it as 744390e1 with only the
+  documentation check re-run. The merge lock is released; the audit and
+  roadmap pages are republished.
+  **Starts:** K1 restarted on polish-2
+  (`session_01SNkKxrLmMHwDeCQXXnnsfn`) to mark ready now that K1-R26 is
+  granted. AD started on P3-AD-audit-1b
+  (`session_01SNkKxnp8XMcnrw7r4cd79s`), open since flow-2 merged.
+  **Seats:** AD (audit-1b), K1 (polish-2) and S2 (home-states): three, the
+  cap while the seven-day bar reads `allowed_warning`.
+  **Next:** merge home-states when S2 marks it ready, writing S2-R41's
+  three `budgets.json` records at its merge (home/100 145 to 148,
+  home/200 121 to 124, home/hc 145 to 148, each with a raises entry).
+  Gate and merge polish-2 when K1 marks it ready, then start S3 on
+  character-5 in the freed seat. Seed R47's kit task for K1 when a seat
+  frees after that. AD's audit-1b when ready.
+
 - **Cycle 123**, 17 November 2026, from about 10:30Z (session
   `session_01SNkKxowru6g45cY8RLHmf5`, started by the Opus 5.5 launcher).
   **Claims copied:** K1's claim on P3-K1-polish-2 (claimed 10:20Z, lease

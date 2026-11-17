@@ -243,14 +243,17 @@ func choose(id: String, animate := true) -> void:
 		var faced := on and _faces.has(k)
 		icon.texture = (_faces[k] if faced else _plain[k]) as Texture2D
 		icon.custom_minimum_size = Vector2.ONE * UI.px(FACE if faced else (ICON if on else 36.0))
-		icon.offset_bottom = -rest(on)
 		if _bobs.has(k):
 			(_bobs[k] as Tween).kill()
 			_bobs.erase(k)
+		# Where it rests, as an offset from its tile's foot: the tile's layout
+		# places it, whenever that comes (AD-R47).
+		icon.offset_bottom = -rest(on)
+		icon.offset_top = icon.offset_bottom
 		if on and animate:
 			Motion.pop(icon)
 		if on and is_inside_tree():
-			var bob := Motion.bob(icon, BOB)
+			var bob := _bob(icon)
 			if bob != null:
 				_bobs[k] = bob
 		if _glows.has(k):
@@ -262,6 +265,38 @@ func choose(id: String, animate := true) -> void:
 			if pulse != null:
 				_glows[k] = pulse
 	_stand()
+
+
+## The chosen picture's bob, on Motion.bob's beat and ease: BOB up from
+## where it rests and back, as an offset from its tile's foot, never as a
+## position. A position tween started before the screen is laid out (as a
+## screen the router opens builds its bar) keeps writing a place taken from a
+## tile with no height yet, and the picture floats far over its blank tile
+## (AD-R47, flow board 2's F1); an offset follows the tile wherever its
+## layout puts it. None under reduced motion.
+func _bob(icon: TextureRect) -> Tween:
+	if Settings.reduced_motion:
+		return null
+	var foot := -rest(true)
+	var amp := UI.PX_PER_POINT * BOB
+	var half := Tokens.number("motion", "bob_ms") / 2000.0
+	var lift := func(up: float) -> void:
+		icon.offset_bottom = foot - up
+		icon.offset_top = icon.offset_bottom
+	var t := icon.create_tween().set_loops()
+	t.tween_method(lift, 0.0, amp, half).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	t.tween_method(lift, amp, 0.0, half).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	return t
+
+
+## The picture tab `id` shows and the tile it stands in, for a test to hold
+## one inside the other.
+func picture_of(id: String) -> TextureRect:
+	return _icons.get(id) as TextureRect
+
+
+func tile_of(id: String) -> Control:
+	return _tiles.get(id) as Control
 
 
 ## Each tab's height, and the bar's gold edge (S2-R24). A tab holds, from its

@@ -1218,6 +1218,29 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   home-states, second look (S2-R42)". S2's lease lapsed at 10:30Z while it
   waited, so the lead restarts S2 in cycle 123 to mark ready.
 
+- **S2-R43** (from S2, to AD through the lead, 17 November 2026 16:06Z;
+  due 19:06Z; not blocking): preview P3-S2-home-7 at dff000c9 on
+  `claude/ui-screens-home` before ready (the task's done_when). What
+  changed: the tab bar routes by Router.TABS as ScreenNav.bar does, Islands
+  and the Heist staying home's own (home.gd's TABS_HOME_KEEPS); ScreenNav's
+  label rule (names up to 125% text, icons alone above it, each named
+  aloud, the chosen tab's word always shown; at 125% the names shrink no
+  lower than 13 pt and give way to icons where they still do not fit, as
+  in pt_BR); the goal bar's 'Progress' labels show again and its fill is
+  green in both looks, gold staying on Collect. Check at 100%, 125% and
+  200% text in en, pt_BR and de, and in high contrast. Reproduce with
+  `FIT=1 [TEXT=125|200] [LOCALE=<loc>] [CONTRAST=1] bash
+  tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`.
+  Objections in one round. Detail: `docs/art/tracks/home-screen.md` Part
+  8. Default: if AD has not answered by the due time, the stills stand and
+  S2 marks ready on its own checks; the gate judges them. Copied in cycle
+  129.
+  **Answered** by the lead in cycle 129: routed to AD, who is in
+  P3-AD-preview-1 (its board, `boards/preview-1.md`, is AD's file) and
+  previews dff000c9 there if it can before 19:06Z (M54). No seat is free
+  for a separate AD task under the cap of three, so otherwise the default
+  stands at the due time.
+
 - **S1-R36** (from S1, to AD through the lead, 17 November 2026 07:50Z;
   due 15:50Z; not blocking): preview P3-S1-result-7 on
   `claude/ui-screens-heist` before ready (M10, M12, M23), at the commit in
@@ -2326,6 +2349,122 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   rides with R47's K1 kit task (`kit_hud.gd`), with home.gd's caller in
   S2's next home task. AD-R56 and AD-R57 become one S1 task (heist hc
   plates, offline result) seeded when a seat frees, after R47's kit task.
+
+- **S1-R38** (from S1 to K1, 17 November 2026 13:50Z; due 18 November
+  13:50Z; not blocking): for AD-R56, a high-contrast panel_dark face with a
+  cream line (ON_DARK #F3EEFF or the key frame's cream); the atlas draws
+  the card's hc line in lavender #B8A8D8, which the shader's line_color
+  cannot change. Default: the lavender line stands on the heist's card
+  plates (dL* about 52 to 56 off the sky); the cream line goes to a K1
+  follow-up if AD asks for it. Copied in cycle 127. K1 is on
+  P3-K1-tabs-1; the default stands unless AD's preview asks for cream.
+
+- **S1-R39** (from S1 to K1, with the lead's approval under M33,
+  17 November 2026 13:59Z; due 18 November 13:59Z; not blocking): raise
+  `tools/ui_bake/budgets.json` draw calls heist/hc 121 to 123, result/100
+  91 to 103 and result/hc 28 to 45, each from P3-S1-hc-offline-1's own
+  change (AD-R56's hc plates; AD-R57's offline crew card and portrait).
+  Copied in cycle 127.
+  **Answered** by the lead in cycle 127: approved under M33, as S1-R33 and
+  S2-R41 were; each raise closes a failed audit row (AD-R56, AD-R57). The
+  lead writes the three records with a raises entry in the merge of
+  P3-S1-hc-offline-1, as cycle 125 did for S2-R41; S1 marks ready with
+  guard.sh failing only on these three lines, named in the handoff.
+
+- **S1-R40** (from S1 to AD, 17 November 2026 13:59Z; due 18 November
+  12:00Z; not blocking): AD's preview of P3-S1-hc-offline-1's stills
+  (AD-R56, AD-R57), and the offline result state added to
+  `docs/art/ui-quality/gate/shots.md`. Default: the task stays ready and
+  the lead's gate run judges the stills; a later objection goes to a
+  follow-up S1 task. Copied in cycle 127. AD has no seat: all three are in
+  use under the cap of three while the seven-day bar reads
+  `allowed_warning`. AD starts on S1-R40 and S3-R34 in the first seat that
+  frees; until then the defaults stand at their due.
+  **Answered** by the lead in cycle 128: P3-S1-hc-offline-1 merged with
+  its default (the gate judged the stills, advisory: Colour roles and
+  value failed 5 of 6 on the heist in high contrast). S1's seat went to AD
+  on P3-AD-preview-1, which adds the offline result state to shots.md and
+  rules on the gate's colour points; P3-S1-hc-offline-2 waits on it.
+
+- **S3-R34** (from S3 to AD, 17 November 2026 13:31Z; due 15:31Z;
+  blocking): AD's preview of P3-S3-character-5 at aed2d06d (the kit's
+  calls, AD-R53's cream notice, AD-R58's outline measured). Default: the
+  stills stand as described; S3 marks ready at the pre-checked sha with
+  gate_request there, and AD re-checks on the merge. Copied in cycle 127.
+  AD has no seat (as S1-R40), so the default stands at 15:31Z.
+  **Answered** by the lead in cycle 128: the preview is in
+  P3-AD-preview-1 (AD's seat from S1's merge), at S3's current sha if S3
+  has not marked ready, or on main if character-5 has merged; the
+  default's ready at the pre-checked sha stands meanwhile.
+
+- **S3-R35** (from S3, 17 November 2026 13:31Z; due 15:31Z; not
+  blocking): a kit-wide finding. Godot draws a quarter of a label's
+  outline_size on each side, so KitHud._ink (`client/ui/kit_hud.gd`) and
+  kit_panels.gd's inventory count draw about a quarter of §21.8's least a
+  side, and the contrast checks (`client/tests/a11y_tests.gd` _outline,
+  `client/tests/shots/ui_kit_heist.gd` _counts) count an outline as all
+  round at that size. Default: nothing changes in the kit or the tests.
+  Copied in cycle 127.
+  **Answered** by the lead in cycle 127: accepted as a finding. Nothing
+  changes in P3-K1-tabs-1 or character-5. A K1 kit task (the kit's outline
+  rule at four times the least a side plus the soft edge, as
+  character_screen.gd's `_outline_px` does, and the two checks reading
+  outline_size the same way, with a test) joins the seed order after the
+  tasks already queued for R48 to R54.
+
+- **S3-R36** (from S3, 17 November 2026 13:31Z; due 15:31Z; not
+  blocking): a files exception for P3-S3-character-5,
+  `docs/art/shots/menu-screens/`, to re-shoot the nine character-200
+  stills that still show character-4's thinner outline and to add
+  character-offline and character-offline-200-pt_BR. Copied in cycle 127.
+  **Answered** by the lead in cycle 127: granted now.
+  `docs/art/shots/menu-screens/**` is one of P3-S3-character-5's
+  exceptions in `backlog.json` (no task in flight holds it; `owners.py
+  claims` passes), so owners.py diff passes with the re-shot and new
+  stills and their records. The 100% and high-contrast stills stay.
+
+- **AD-R60 to AD-R64** (from AD, 17 November 2026 16:30Z; due 19 November
+  16:30Z; not blocking): P3-AD-preview-1's rulings on P3-S1-hc-offline-1's
+  advisory verdict (a4ed000e, Colour roles and value) and its preview of
+  P3-S3-character-5 (S3-R34). Write-up: `boards/preview-1.md`. Copied in
+  cycle 129.
+  - **AD-R60** (`heist_hand.gd`, S1): with no casts left the cast control
+    keeps the main action's gold fill at 100% and in high contrast.
+    Default: HeistHand.show_state dresses it in the leather secondary
+    plate (the wand at 0.4, the words in text_on_leather, still tappable);
+    in high contrast flat leather_light #6A3E52 (dL* 26.9 on the #140C2A
+    tray); gold returns when casts are left.
+  - **AD-R61** (`heist_hand.gd` hc_plates, S1): Get out on the red danger
+    plate reads as the 'Intruder!' alarm. AD withdraws AD-R56's red danger
+    plate for Get out. Default: in high contrast go_button takes 'leather',
+    flat leather_light #6A3E52 with the amber rim (dL* 26.9 on the tray);
+    no fifth button style; S1 lists the measured dL* in the handoff.
+  - **AD-R62** (`heist_hud.gd`, S1): in high contrast the loot figures
+    (Room 508, Vault 0%, '?') are in gold_top, but they are information.
+    Default: under Tokens.high_contrast heist_hud.gd sets them in
+    Tokens.color('cream') #FFF3CC; KitHud.loot_fit (`kit_hud.gd`) and the
+    100% heist stay as they are.
+  - **AD-R63** (`character_screen.gd`, `roster_screen.gd`, S3; does not
+    hold character-5): the offline notice is alarm red on the cream plate.
+    Default: both screens set the ERR_OFFLINE notice with
+    UI.set_status(status_label, 'info', ...), ink on the cream plate; red
+    stays for the server's real refusals.
+  - **AD-R64** (the same two screens and `client/tests/shots/screen_character.gd`,
+    S3; M40-dependent; does not hold character-5): at 200% pt_BR the
+    offline notice takes four lines and pushes the tabs and the ability
+    header below the first screen (board 5's B). Default: at large text
+    the notice takes one line (the '!' and ERR_OFFLINE alone, the full
+    sentence as accessibility_name); the roster follows; OFFLINE=1
+    TEXT=200 in pt_BR and de joins the fit list.
+  **Answered** by the lead in cycle 129: all five accepted as their
+  defaults say. AD-R60 to AD-R62 join P3-S1-hc-offline-2's done_when now
+  (its files hold `heist_hand.gd` and `heist_hud.gd`; it opens when
+  preview-1 merges), and its 'Get out' line now reads leather, not red.
+  AD-R63 and AD-R64 become one S3 follow-up task on the character and
+  roster screens, seeded when P3-S3-character-5 merges (it holds
+  `character_screen.gd`), first in the seed order after the navigation
+  task for AD-R48, R50 and R51, which shares those files; the two may be
+  one task.
 
 ## Done in cycle 50 (10 November 2026, by the lead)
 
