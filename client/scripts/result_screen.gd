@@ -165,11 +165,11 @@ func _ready() -> void:
 	_display(haul_label, "starlight")
 	for k: String in reward_labels:
 		_display(reward_labels[k], "starlight" if k == "starlight" else "cream")
-	# All of them in the kit's baked numerals (T3), the Starlight gold and
-	# the others white, so the four totals share one treatment.
+	# All of them in the kit's baked gold numerals (T3): the totals are one
+	# rank, so they share one treatment (outline, hard drop and gradient).
 	_totals[haul_label] = "num_gold"
 	for k: String in reward_labels:
-		_totals[reward_labels[k]] = "num_gold" if k == "starlight" else "num_white"
+		_totals[reward_labels[k]] = "num_gold"
 	# With large text the haul comes first, under the time line, and the
 	# moment after it (key frame 03-result_text200_pt_BR; AD's S1-R24): the
 	# first screen shows what the heist paid.
