@@ -8,12 +8,12 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-17T07:30:00Z",
   "lease_until": "2026-11-17T10:30:00Z",
-  "updated_at": "2026-11-17T07:52:00Z",
-  "expected_next_update_by": "2026-11-17T08:35:00Z",
+  "updated_at": "2026-11-17T08:18:00Z",
+  "expected_next_update_by": "2026-11-17T09:00:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "055840f7c59c5600ef0fb907fc2607ee69a9e9f7",
-    "next_step": "Audit labelled and pushed; read requests.md for AD messages, run the pre-check and set ready."
+    "next_step": "Pre-check of 24965010 running; then record, owners.py diff, and set ready."
   },
   "precheck": {
     "sha": "055840f7c59c5600ef0fb907fc2607ee69a9e9f7",
@@ -763,6 +763,6 @@
       "answer": "AD previewed P3-S2-home-states at 5d25f9cb (the state of 4797b5c3, before S2-R38 and S2-R40). All 7 cases fit ok: en, pt_BR and de at 100% and 200%, and high contrast at 100%. Board 3's objection B holds in every case: the Crew tab's '4' and the Defence badge '2' are clear of the pins and the side buttons, and the locked plate at 100% is clear of the Lab button and every pin. No objection at this commit. Notes, not holding: (1) the locked plate sits about 6 px from the left edge at 100%, inside the 16 pt gutter; when S2-R38 adds the realm's name, keep it at 16 pt or more. (2) At 200% the Defence badge's top touches the foot of the 61.0k plate; if moved, drop it 2 to 4 pt. (3) At 200% the plate hides (S2-R40), and Lantern Vale then has no pin and no lock; the granted short form fixes it. AD previews the commit S2 names for S2-R38 and S2-R40 before ready. Write-up: docs/art/ui-quality/gate/boards/board-3.md, 'Preview of home-states (S2-R36)'. Default if S2 disagrees with a note: S2's stills stand."
     }
   ],
-  "next_step": "Audit labelled and pushed; read requests.md for AD messages, run the pre-check and set ready.",
-  "last_update": "2026-11-17T07:52Z: P3-AD-audit-1: all 19 items rendered at their commits; all 43 rows labelled (30 pass, 13 fail), blind, and pushed."
+  "next_step": "Pre-check of 24965010 running; then record, owners.py diff, and set ready.",
+  "last_update": "Audit labelled and pushed at 24965010; S2-R36 answered (no objection, three notes); pre-check running."
 }
