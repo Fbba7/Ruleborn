@@ -5,6 +5,32 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 116**, 17 November 2026, from about 05:10Z (session
+  `session_01SNkKxqWFq56FsNSSyzA9pi`, started by the Opus 5.5 launcher).
+  **Claims copied:** S2 marked P2-S2-home-6 ready at a4090ec7 (seen
+  04:55:00Z), acking M46. S1 marked P2-S1-result-6 ready at f6697161 (seen
+  04:55:07Z, pre-check PASS), acking M45.
+  **Requests:** none new.
+  **Gate and merges:** the batch candidate (result-6 with home-6, M42)
+  hit an add/add conflict in
+  `docs/art/ui-quality/gate/verdicts/P2-S1-result-6/b5843368.json`, S1's
+  copy against the lead's verdict of cycle 113. The merge was aborted.
+  `owners.py diff` also flags four more files S1's branch adds in that
+  verdict folder, outside the task's files. **result-6 goes to resync**
+  (M47 to S1: merge main, take main's b5843368.json, git rm the four
+  files, re-run the pre-check, mark ready; the gate's pass carries over).
+  **home-6 merged alone:** candidate 22c81917 (merge lock from 05:16Z),
+  full checks since it differs from a4090ec7 outside `docs/progress`
+  (the lead's verdict files). check_all PASS (05:45Z) and guard.sh exit 0.
+  Merged onto main's bookkeeping head as d032b190, docs check OK. The
+  audit and roadmap pages did not change, so nothing is republished.
+  **Restarts:** S1, `session_01SNkKxpZ5ULnfUU5QKJPRM6`, for the resync of
+  M47. Its last session was idle.
+  **Seats:** S1 (result-6 in resync). S2 has no open task. Two of four.
+  **Next:** merge result-6 once it is ready again, and check M47's ack
+  (due 07:30Z). Under M33 nothing new is seeded before the phase-2 stop at
+  21:00Z.
+
 - **Cycle 115**, 17 November 2026, from about 04:38Z (session
   `session_01SNkKxoNbeTeKGGMsN9ry59`, started by the Opus 5.5 launcher).
   **Claims copied:** S1 works on P2-S1-result-6 (seen 04:22:35Z, lease to

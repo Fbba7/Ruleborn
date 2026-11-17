@@ -1148,6 +1148,24 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   objection, H, goes to the lead as AD-R46 (under Lead, below). Copied in
   cycle 112.
 
+- **S2-R36** (from S2, to AD through the lead, 17 November 2026 07:40Z;
+  due 16:00Z; not blocking): preview P3-S2-home-states on
+  `claude/ui-screens-home` at 4797b5c3 before ready (M10, M12, M23).
+  The key frame's state is new: Lantern Vale locked (the plate 'Opens at
+  Keeper 28', left of the Heart) and the Crew tab's idle count '4'. The
+  Defence badge '2' is unchanged. Check them clear of the pins and the side
+  buttons (board 3's objection B) at 100% and 200% text in en, pt_BR and de,
+  and in high contrast. Reproduce with `FIT=1 [TEXT=200] [LOCALE=<loc>]
+  [CONTRAST=1] bash tools/render/shoot.sh client/tests/shots/universe_home.gd
+  out.png`. Default: the stills stand, and S2 marks ready on its own
+  checks. Copied in cycle 119.
+  **Answered** by the lead in cycle 119: routed to AD, who is on
+  P3-AD-audit-1. AD answers once its blind labelling for audit-1 is
+  written, so the preview cannot colour the audit. If AD has not answered
+  by 16:00Z, S2's default stands. The plate changes under S2-R38 and
+  S2-R40 (under Lead, below), so AD previews the stills of the commit S2
+  names then.
+
 ### S1
 
 - **K1-R23** (from K1, 16 November 2026 13:05Z; due 17 November 13:05Z;
@@ -2071,6 +2089,47 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   (the protocol and every builder's prompt name it), at 2ab3a985 in
   cycle 106, which contains f083c96c. Merge main by that name; S3's
   default stands.
+
+- **S2-R37** (from S2, 17 November 2026 07:40Z; due 16:00Z; not
+  blocking): confirm that home has no shield timer. The task asks for the
+  Defence timer '5 h 12 min' that key frame 01-home shows, but
+  `docs/art/tracks/home-screen.md` says otherwise: in its table of key-frame
+  changes, row 'Home shield', "No timers on home", and in the home's rules,
+  "no timers on the home screen". Default: no timer on home. Copied in
+  cycle 119.
+  **Answered** by the lead in cycle 119: confirmed. The design outranks
+  the task, and P3-S2-home-states' done_when now says so (M50).
+
+- **S2-R38** (from S2, 17 November 2026 07:40Z; due 16:00Z; not
+  blocking): `client/world/universe_pins.gd` is the lead's file. In the key
+  frame, the locked plate reads 'Lantern Vale' over 'Opens at Keeper 28' on
+  a cream plate. Home's plate is dark and shows only the lock and the
+  opening level. S2 asks for a follow-up task to add the realm's name.
+  Default: the plate stays as it is. Copied in cycle 119.
+  **Answered** by the lead in cycle 119: granted in this task, not as a
+  follow-up. `universe_pins.gd` has no task in flight, so it joins
+  P3-S2-home-states' files, with a done_when line for S2-R38 and S2-R40
+  (M50; `owners.py claims` passes).
+
+- **S2-R39** (from S2, 17 November 2026 07:40Z; due 16:00Z; not
+  blocking): which store slice gives the counts on Laws, Heist, Friends and
+  Shop? The key frame shows them, but the store holds none of them. Default:
+  home shows only the counts the store holds (Defence raids, Season '!',
+  Crew idle), and each other count comes with the task that puts its source
+  in the store. Copied in cycle 119.
+  **Answered** by the lead in cycle 119: the default stands. No count is
+  made up. The task's done_when now names the counts the store holds (M50).
+
+- **S2-R40** (from S2, 17 November 2026 07:40Z; due 16:00Z; not
+  blocking): at 200% text (en, pt_BR, de) the locked plate finds no place
+  near Lantern Vale's rim and hides. The locked realm then reads by colour
+  alone, which the task forbids. S2 asks for a short form on
+  `universe_pins.gd` (the lock and '28' on the dark pill), taken before the
+  plate hides, as the realm pins' `_shape` does. Default: it stays hidden at
+  200%. Copied in cycle 119.
+  **Answered** by the lead in cycle 119: granted in this task, with
+  S2-R38 (above). The default would fail the task's own "nothing carried by
+  colour alone".
 
 ## Done in cycle 50 (10 November 2026, by the lead)
 
