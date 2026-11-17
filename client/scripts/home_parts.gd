@@ -13,12 +13,20 @@ const GOAL_LEAST := 0.85
 ## How far Full hangs above its pill's edge at 100%, beyond half its plate:
 ## clear of the baked figures' tops, which stand on the amount's cap height.
 const FULL_LIFT := 8.0
-## Home's figures: the kit's white baked numerals in the small display
+## Home's figures: the kit's gold baked numerals in the small display
 ## role's slot (kit-spec.md section 2.2, T3), and its words' T2 drawn half
-## again as heavy as the role's theme (`inked`).
-const FIGURE_FINISH := "num_white"
+## again as heavy as the role's theme (`inked`). Gold, not white: the white
+## finish's pale gradient and thinner stroke read as a flat light fill on the
+## dark plates at the still's scale (P2-S2-home-6), where the gold's cream to
+## amber reads as the gradient it is, as the pass anchor's counts do.
+const FIGURE_FINISH := "num_gold"
 const FIGURE_ROLE := "display_s"
 const INK_HEAVIER := 1.5
+## The live words' outline, at least this share of their size (the rubric's
+## 12%, with a little to spare for rounding).
+const OUTLINE_SHARE := 0.13
+## The leather rim round the ink of words over the starfield, in points.
+const RIM := 2.5
 ## The baked figures' share of the role's line: their cells hold the glyph's
 ## stroke and drop round its body, so at the full line the figures stand
 ## taller and higher than the live words beside them (the "k") and meet the
@@ -326,19 +334,35 @@ class Raids:
 ## T2 on `l` where the role's theme draws it too lightly to see: the role's
 ## outline is 2 points and its drop 1.5 with no outline of its own, so the
 ## stroke covers the drop (P2-S2-home-5: the purse's counts read flat cream).
-## The outline here is half again as thick, and the drop is the glyph's own
-## shadow set down by the outline and the role's drop, so it shows below the
-## stroke. A shadow with an outline of its own would draw it in one more call
-## per label, which takes home over §21.3's 150.
-static func inked(l: Label) -> void:
+## The outline here is half again as thick, and never under OUTLINE_SHARE of
+## the words' size, so it holds at large text too. On a plate (`over_art`
+## false) the drop is the glyph's own shadow set down by the outline and the
+## role's drop, so it shows below the stroke, as the baked figures beside it
+## have theirs (a shadow as wide as the stroke costs a draw call a label:
+## home/100 148, over its record of 145). Over the starfield (`over_art`) the ink alone merges into the
+## night behind it (P2-S2-home-6: "Keeper 24" read as dropped, not outlined),
+## so the shadow is a band of the plates' leather rim round the stroke, set
+## down by a third of its width (never less than the rim itself would show
+## above the letters): the ink then stands out all round against the rim,
+## and the rim's heavier foot is the drop. That shadow's outline costs
+## one more call, for the one name over the art.
+static func inked(l: Label, over_art := false) -> void:
 	var t := Tokens.type_role(FIGURE_ROLE)
-	var outline := UI.px(float(t["outline"]) * INK_HEAVIER)
+	var px := l.get_theme_font_size("font_size")
+	var outline := maxi(UI.px(float(t["outline"]) * INK_HEAVIER), ceili(px * OUTLINE_SHARE))
+	var drop := maxi(1, UI.px(float(t["drop"]) * INK_HEAVIER))
 	l.add_theme_color_override("font_color", Tokens.color("cream"))
 	l.add_theme_color_override("font_outline_color", Tokens.color("ink_line"))
 	l.add_theme_constant_override("outline_size", outline)
-	l.add_theme_color_override("font_shadow_color", Tokens.color("drop"))
 	l.add_theme_constant_override("shadow_offset_x", 0)
-	l.add_theme_constant_override("shadow_offset_y", outline + maxi(1, UI.px(float(t["drop"]) * INK_HEAVIER)))
+	if over_art:
+		var rim := maxi(3, UI.px(RIM))
+		l.add_theme_color_override("font_shadow_color", Tokens.color("leather_rim"))
+		l.add_theme_constant_override("shadow_offset_y", maxi(1, rim / 3))
+		l.add_theme_constant_override("shadow_outline_size", outline + rim)
+		return
+	l.add_theme_color_override("font_shadow_color", Tokens.color("drop"))
+	l.add_theme_constant_override("shadow_offset_y", outline + drop)
 	l.add_theme_constant_override("shadow_outline_size", 0)
 
 
@@ -362,7 +386,7 @@ static func figures_cut(text: String) -> PackedStringArray:
 
 ## `l`'s figures in the kit's baked numerals (T3: a gradient fill, a thick
 ## ink stroke and a hard drop), in a row that takes the label's place beside
-## it, the words after them ("k", " mil") in live T2 type at the label's
+## it, the words after them ("k", " mil") in live gold T2 type at the label's
 ## size. Called again when the label's words or size change; while the
 ## numerals' skin is off, or a figure has no glyph, the label shows itself.
 ## The hidden label keeps its words, so a screen reader and `Home._fit_amounts`
@@ -382,16 +406,18 @@ static func figures(l: Label) -> void:
 	var cut := figures_cut(l.text)
 	if cut[0] == "" or l.get_parent() == null or l.get_meta("live", false):
 		return
-	var digits := KitNumerals.make(cut[0], FIGURE_FINISH, FIGURE_ROLE, l.text)
-	if not digits is KitNumerals.Row:
-		digits.free()
+	var made := KitNumerals.make(cut[0], FIGURE_FINISH, FIGURE_ROLE, l.text)
+	if not made is KitNumerals.Row:
+		made.free()
 		return
+	var digits := InkedRow.of(made as KitNumerals.Row)
 	var line := RbTheme.role_font(FIGURE_ROLE).get_height(px)
 	(digits as KitNumerals.Row).height = floorf(line * FIGURE_LINE)
 	digits.size_flags_vertical = Control.SIZE_SHRINK_END
-	# One layer above the words: every baked row then draws in one call from
-	# the numerals' atlas page, not splitting the art's or the words' batches.
-	digits.z_index = UI.WORDS_Z + 1
+	# Two layers above the words, and the ink behind them one above: every
+	# baked row's fill, and every row's ink, then draws in one call from the
+	# numerals' atlas page, not splitting the art's or the words' batches.
+	digits.z_index = UI.WORDS_Z + 2
 	digits.update_minimum_size()
 	var box := HBoxContainer.new()
 	box.name = String(l.name) + "Figures"
@@ -412,6 +438,11 @@ static func figures(l: Label) -> void:
 		after.add_theme_font_size_override("font_size", px)
 		after.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		inked(after)
+		# AD-R45 (a): the words take the figures' gold and their stroke, and no
+		# shadow, which showed as a second copy of them below (the figures'
+		# drop beside them is enough; a stroke-wide shadow costs 3 calls).
+		after.add_theme_color_override("font_color", Tokens.color("gold"))
+		after.add_theme_color_override("font_shadow_color", Color.TRANSPARENT)
 		box.add_child(after)
 	box.set_meta("shown", shown)
 	l.add_sibling(box)
@@ -465,3 +496,94 @@ static func amounts_over(amounts: Array, held: Array[Control], room: float, bake
 				else l.get_theme_font("font").get_string_size(l.text, HORIZONTAL_ALIGNMENT_LEFT, -1, full).x
 		rest += held[i].get_combined_minimum_size().x - shown_as(l).get_combined_minimum_size().x
 	return Vector2(words, words + rest - room)
+
+
+## The share of their full size the row's amounts take against `room`, and
+## whether they are baked (x, y): baked, a little smaller where the row does
+## not fit at full size, never under `least_baked`, so every headline count
+## keeps the one baked treatment (P2-S2-home-6); live only where even that
+## does not fit, then a little smaller too, never under `least_live`.
+static func amounts_fit(amounts: Array, held: Array[Control], room: float, least_baked: float,
+		least_live: float) -> Vector2:
+	for baked: bool in [true, false]:
+		var fit := amounts_over(amounts, held, room, baked)
+		if fit.y <= 0.5:
+			return Vector2(1.0, 1.0 if baked else 0.0)
+		var shrunk := (fit.x - fit.y - 1.0) / maxf(fit.x, 1.0)
+		if shrunk >= (least_baked if baked else least_live):
+			return Vector2(shrunk, 1.0 if baked else 0.0)
+	return Vector2(1.0, 0.0)
+
+
+## The figures' row with T3's treatment held at every text size
+## (P2-S2-home-6, the gate at e674b614: "flat gold fills, with no ink
+## outline, no hard drop and no gradient" at 100%). The kit's glyphs are
+## 210 pixels tall and draw here 18 to 40 high, from a page without
+## mipmaps, so their own thin stroke and drop thin out to nothing; their
+## cream-to-gold gradient still shows. Behind the row, kit rows of the same
+## glyphs (`Under`) draw an ink stroke all round and the hard drop below it,
+## in `ink_line`, each set off by a few screen pixels. Every layer is
+## the kit's own row drawing the kit's glyphs, tinted and moved: home draws
+## nothing of its own (kit-spec.md section 6.5).
+class InkedRow:
+	extends KitNumerals.Row
+
+	## The stroke's width, as a share of the figures' size.
+	const STROKE_SHARE := 0.08
+	## The drop below the stroke, as a share of the figures' size.
+	const DROP_SHARE := 0.1
+
+	## `row` as an inked row: its glyphs, slot and what a screen reader says.
+	static func of(row: KitNumerals.Row) -> InkedRow:
+		var out := InkedRow.new()
+		out.cells = row.cells
+		out.height = row.height
+		out.accessibility_name = row.accessibility_name
+		for key: StringName in row.get_meta_list():
+			out.set_meta(key, row.get_meta(key))
+		row.free()
+		var ring: Array[Vector2] = []
+		for i: int in 8:
+			ring.append(Vector2.from_angle(TAU * i / 8.0))
+		for i: int in [1, 2, 3]:
+			out.add_child(Under.new(ring[i], true))
+		for dir: Vector2 in ring:
+			out.add_child(Under.new(dir, false))
+		return out
+
+	## One layer behind the row: its glyphs, tinted, set off along `dir` by
+	## the stroke's width (and down by the drop, for a drop layer).
+	class Under:
+		extends KitNumerals.Row
+
+		var dir := Vector2.ZERO
+		var is_drop := false
+
+		func _init(along: Vector2, drop_layer: bool) -> void:
+			super()
+			dir = along
+			is_drop = drop_layer
+			show_behind_parent = true
+			# A layer below the row's (show_behind_parent within one layer
+			# would leave the ink in the row's batch). At z 0 the kit's stacking
+			# (UI._lift) would also raise a full-rect child over the row.
+			z_index = -1
+			mouse_filter = Control.MOUSE_FILTER_IGNORE
+			accessibility_name = ""
+			set_anchors_preset(Control.PRESET_FULL_RECT)
+			# One tint for the drop and the stroke: a change of tint between
+			# layers splits the batch (two calls a row; one tint costs one call in
+			# all), and `drop` (#0A0408) and `ink_line` (#1A0C14) read the same.
+			self_modulate = Tokens.color("ink_line")
+
+		func _draw() -> void:
+			var row := get_parent() as KitNumerals.Row
+			if row == null:
+				return
+			cells = row.cells
+			height = row.height
+			var off := dir * maxf(1.0, height * STROKE_SHARE)
+			if is_drop:
+				off.y += maxf(1.0, height * DROP_SHARE)
+			draw_set_transform(off)
+			super()

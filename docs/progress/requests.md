@@ -282,6 +282,8 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   Cycle 91: P2-K1-tabs-2 takes S2-R24 and S2-R26 (K1 started in cycle
   91, the fourth seat with S2, S3 and AD); the others still wait for a K1
   task, and each default stands at its due.
+  Cycle 118: S3-R9 to S3-R14 seeded as P3-K1-polish-2 (phase 3, M49),
+  and P3-S3-character-5 drops character_screen.gd's local fixes after it.
 - **S1-R32** (from S1, to K1 through the lead, 16 November 2026 16:53Z;
   due 17 November 16:53Z; not blocking): `KitNav.reward(screen, ...)`
   dresses the screen's Sky in `night_rays` whatever the mode, also under
@@ -334,6 +336,7 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   quality or merge-blocking check, so M33 seeds no task for it before the
   phase 2 stop, and P2-K1-grow-1 is at its pre-check, so it is not added
   there. S3 goes ready without it, as the default says.
+  Cycle 118: seeded as P3-K1-polish-1 (phase 3, M49), with S2-R35.
 
 - **S2-R35** (from S2, to K1 through the lead, 17 November 2026 03:10Z;
   due 18 November 12:00Z; not blocking): the kit's baked numerals lose
@@ -357,6 +360,7 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   change closes no open objection, failed gate quality or merge-blocking
   check, and M33 seeds no task for it before the phase 2 stop. The default
   stands.
+  Cycle 118: seeded as P3-K1-polish-1 (phase 3, M49), with S3-R32.
 
 ### AIA
 
@@ -1229,6 +1233,9 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   leads (within AD's accepted parchment departure) and the gate passes
   'result at 200% text, pt_BR', Hierarchy. S1 may close it inside
   result-6 instead if that adds no more than about 30 minutes.
+  Cycle 118: seeded as P3-S1-result-7 (phase 3, M49), with board 4's
+  carried notes (an idle crew in the fixture, the fold on the crew card's
+  header).
 
 - **AD-R45** (from AD, 17 November 2026 01:57Z; due 19 November 01:57Z;
   not blocking): AD's preview of P2-S2-home-6 (S2-R34) at 36f017da, one
