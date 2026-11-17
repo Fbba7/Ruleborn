@@ -128,14 +128,20 @@
       "estimate_h": 1.5,
       "tier": 2,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "working",
+      "claim": {
+        "agent": "K1",
+        "branch": "claude/ui-bake",
+        "claimed_at": "2026-11-17T13:05:00Z",
+        "seen_at": "2026-11-17T14:22:00Z",
+        "lease_until": "2026-11-17T16:05:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-17T12:57:00Z",
-      "updated_by": "lead (cycle 125)",
+      "updated_at": "2026-11-17T14:22:00Z",
+      "updated_by": "lead (cycle 127)",
       "exceptions": [
         "client/tests/run.gd"
       ]
@@ -190,14 +196,20 @@
       "estimate_h": 2.0,
       "tier": 2,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "claimed",
+      "claim": {
+        "agent": "S1",
+        "branch": "claude/ui-screens-heist",
+        "claimed_at": "2026-11-17T13:30:00Z",
+        "seen_at": "2026-11-17T14:22:00Z",
+        "lease_until": "2026-11-17T16:30:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-17T13:40:00Z",
-      "updated_by": "lead (cycle 126)",
+      "updated_at": "2026-11-17T14:22:00Z",
+      "updated_by": "lead (cycle 127)",
       "exceptions": []
     },
     {
@@ -240,15 +252,23 @@
       "estimate_h": 1.0,
       "tier": 2,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "claimed",
+      "claim": {
+        "agent": "S3",
+        "branch": "claude/ui-screens-meta",
+        "claimed_at": "2026-11-17T13:05:00Z",
+        "seen_at": "2026-11-17T14:22:00Z",
+        "lease_until": "2026-11-17T16:05:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-17T12:57:00Z",
-      "updated_by": "lead (cycle 125)",
-      "exceptions": []
+      "updated_at": "2026-11-17T14:22:00Z",
+      "updated_by": "lead (cycle 127)",
+      "exceptions": [
+        "docs/art/shots/menu-screens/**"
+      ]
     },
     {
       "id": "SV-B10",
@@ -1006,6 +1026,22 @@
       "text": "From 17 November 2026 (cycle 120), on K1-R25: granted now, not at the merge. client/tests/shots/ui_kit_polish.gd and its .uid are P3-K1-polish-1's exceptions in backlog.json, so owners.py diff passes and you mark ready when your checks pass (M48). S1-R37 (result/hc draw_calls 27 to 28 in budgets.json) is approved by the lead and recorded at P3-S1-result-7's merge; leave it out of polish-1. Add M51 to your acks.",
       "sent_at": "2026-11-17T08:25:00Z",
       "ack_by": "2026-11-17T10:25:00Z",
+      "acked_at": null
+    },
+    {
+      "id": "M52",
+      "to": "S3",
+      "text": "From 17 November 2026 (cycle 127), on S3-R36: granted now. docs/art/shots/menu-screens/** is one of P3-S3-character-5's exceptions in backlog.json, so re-shoot the nine character-200 stills with their records and add character-offline and character-offline-200-pt_BR before ready; owners.py diff passes with them (M48). S3-R35 is accepted as a finding for a later K1 kit task; nothing changes in character-5. S3-R34: AD has no seat (three of three in use while the seven-day bar reads allowed_warning), so its default stands at 15:31Z. Add M52 to your acks.",
+      "sent_at": "2026-11-17T14:24:00Z",
+      "ack_by": "2026-11-17T16:24:00Z",
+      "acked_at": null
+    },
+    {
+      "id": "M53",
+      "to": "S1",
+      "text": "From 17 November 2026 (cycle 127), on S1-R39: approved under M33. The lead writes heist/hc 123, result/100 103 and result/hc 45 in tools/ui_bake/budgets.json, with a raises entry, in the merge of P3-S1-hc-offline-1; mark ready with guard.sh failing only on those three lines, named in the handoff. S1-R40: AD has no seat (three of three in use while the seven-day bar reads allowed_warning); AD starts on it when a seat frees, and until then its default stands. S1-R38 goes to K1; its default (the kit's lavender line) stands unless AD asks for cream. Add M53 to your acks.",
+      "sent_at": "2026-11-17T14:24:00Z",
+      "ack_by": "2026-11-17T16:24:00Z",
       "acked_at": null
     }
   ]
