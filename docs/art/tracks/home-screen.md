@@ -510,9 +510,9 @@ Board 3 carried a note through every round: the shot's fixture (`keyframe()` in 
 
 ### AD's preview, second look (S2-R42)
 
-AD previewed e9285afd and had no objection: all 8 cases fit, board 3's objection B holds in each, nothing by colour alone (`docs/art/ui-quality/gate/boards/board-3.md`, "Preview of home-states, second look (S2-R42)"). Two notes did not hold the task:
+AD previewed e9285afd and had no objection: all 8 cases fit, board 3's objection B holds in each, nothing by colour alone (`docs/art/ui-quality/gate/boards/board-3.md`, "Preview of home-states, second look (S2-R42)"). Two notes did not hold the task; neither is acted on:
 
-- **At 200% the Defence badge's top overlapped the 61.0k plate's foot by 1 to 3 px.** Fixed, as AD suggested: at large text the left edge's disc, when it carries a badge, stands in a holder 8 pt taller than itself, so the disc and its badge drop 4 pt (`home.gd`, `_side`). The badge now clears the plate's foot in en, pt_BR, de and high contrast at 200%. The Lab button below moves down with it; nothing else changes, and 100% text is untouched. `home.gd` stays at gdlint's 1000 lines (two comments were joined).
+- **At 200% the Defence badge's top overlapped the 61.0k plate's foot by 1 to 3 px.** Left as it is, AD's default. The drop AD suggested was tried: at large text the left edge's disc, when it carries a badge, stood in a holder taller than itself (`home.gd`, `_side`). With 8 pt, the extra height makes `_fit_edges` hide the whole left edge at 200% with the notice in pt_BR, pt_PT and fr (`fit FAIL side button defences hidden`, the same for lab). With 6 pt and 4 pt, pt_BR and pt_PT fit again but fr still loses the edge. A 1 to 3 px touch on a plate's foot costs less than losing Defence and Lab, so the drop was reverted (09f0f119). If the band gains height later, a 4 pt drop that applies only when the band has room is the way back.
 - **At 200% in pt_BR and de the short form sits about 7 px from the Heart's "6" pin.** Left as it is: it is clear, and the pin is the Heart's own. AD's advice, should the map lose more height, is to anchor the pill under the island instead of beside the Heart.
 
 ## Left for other tasks
