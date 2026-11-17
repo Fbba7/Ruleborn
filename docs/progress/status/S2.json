@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-17T07:30:00Z",
   "lease_until": "2026-11-17T10:30:00Z",
-  "updated_at": "2026-11-17T09:03:00Z",
-  "expected_next_update_by": "2026-11-17T09:45:00Z",
+  "updated_at": "2026-11-17T09:12:00Z",
+  "expected_next_update_by": "2026-11-17T09:52:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "a4090ec7",
-    "next_step": "e9285afd: the locked plate keeps the 16 pt side gutter (AD's S2-R36 note 1); 57 of 57 fit ok, draw calls 148/124/148 unchanged. Pre-check and guard running on the head; S2-R42 asks AD to preview e9285afd (due 16:00Z, default: the stills stand). Ready (with gate_request) once the pre-check passes and AD has previewed, or at 16:00Z on the default."
+    "next_step": "Head 488c8b5a (e9285afd plus the integration branch at lead cycle 121, docs only). owners.py diff and check_screens pass; guard fails only on the three S2-R41 lines (148/124/148, approved by the lead in cycle 120, records written at merge). Pre-check and check_all running on 488c8b5a. S2-R42: AD previews e9285afd by 16:00Z, else the default stands. Ready with gate_request after that."
   },
   "precheck": null,
   "gate_request": null,
@@ -634,5 +634,5 @@
     }
   ],
   "answers": [],
-  "next_step": "e9285afd: the locked plate keeps the 16 pt side gutter (AD's S2-R36 note 1); 57 of 57 fit ok, draw calls 148/124/148 unchanged. Pre-check and guard running on the head; S2-R42 asks AD to preview e9285afd (due 16:00Z, default: the stills stand). Ready (with gate_request) once the pre-check passes and AD has previewed, or at 16:00Z on the default."
+  "next_step": "Head 488c8b5a (e9285afd plus the integration branch at lead cycle 121, docs only). owners.py diff and check_screens pass; guard fails only on the three S2-R41 lines (148/124/148, approved by the lead in cycle 120, records written at merge). Pre-check and check_all running on 488c8b5a. S2-R42: AD previews e9285afd by 16:00Z, else the default stands. Ready with gate_request after that."
 }
