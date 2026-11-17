@@ -4,30 +4,31 @@
   "branch": "claude/ui-screens-meta",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P2-S3-character-4",
-  "task_state": "working",
-  "claimed_at": "2026-11-16T20:55:00Z",
-  "lease_until": "2026-11-16T23:55:00Z",
-  "updated_at": "2026-11-16T21:36:00Z",
-  "expected_next_update_by": "2026-11-16T22:20:00Z",
+  "task_id": "P3-S3-character-5",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-17T13:05:00Z",
+  "lease_until": "2026-11-17T16:05:00Z",
+  "updated_at": "2026-11-17T16:18:00Z",
+  "expected_next_update_by": "2026-11-17T17:03:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "635c33ee50e1dc54bdbce7b5e0795a66ecf8c976",
-    "next_step": "fit_character.sh 50 of 50, check_screens OK, guard OK; merge checks (setup, build, check_all, guard) running at 05d76363; then pre-check, gate request, ready",
-    "at": "2026-11-16T21:36:00Z"
+    "last_green_sha": "ea3bde530f63e5ba5ccc33701f4f305a76d5ea5a",
+    "next_step": "main 53e18516 (P3-K1-tabs-1) merged at 0025ff4d; 100% and hc stills re-shot (main kit change only); setup, build and guard exit 0 on the merge; pre-check on the handoff commit, then ready with gate_request",
+    "at": "2026-11-17T16:18:00Z"
   },
   "precheck": {
-    "sha": "635c33ee50e1dc54bdbce7b5e0795a66ecf8c976",
+    "sha": "ea3bde530f63e5ba5ccc33701f4f305a76d5ea5a",
     "exit": 0,
-    "finished_at": "2026-11-16T18:09:25Z",
+    "finished_at": "2026-11-17T14:56:25Z",
     "summary": "All checks passed."
   },
   "gate_request": null,
   "ready_sha": null,
-  "stop_at": "2026-11-17T21:00:00Z",
+  "stop_at": "2026-11-18T21:00:00Z",
   "acks": [
     "M26",
-    "M29"
+    "M29",
+    "M52"
   ],
   "requests": [
     {
@@ -83,7 +84,7 @@
       "id": "S3-R3",
       "from": "S3",
       "to": "lead",
-      "ask": "For K1: KitControls.upgrade should grow and wrap its title at large text. At 200% text in pt_BR, 'SUBIR DE NÍVEL' and its price do not fit the kit's fixed height, so character_screen.gd's _fit_upgrade lets the button grow and the title wrap on the screen's side (see docs/art/shots/menu-screens/character-200-pt_BR.png). Every screen with an upgrade button would need the same.",
+      "ask": "For K1: KitControls.upgrade should grow and wrap its title at large text. At 200% text in pt_BR, 'SUBIR DE N\u00cdVEL' and its price do not fit the kit's fixed height, so character_screen.gd's _fit_upgrade lets the button grow and the title wrap on the screen's side (see docs/art/shots/menu-screens/character-200-pt_BR.png). Every screen with an upgrade button would need the same.",
       "files": [
         "client/ui/kit_controls.gd"
       ],
@@ -163,7 +164,7 @@
       "default": "the stills stand as rendered, and S3 requests the gate on them",
       "escalate_to": "lead",
       "state": "answered",
-      "answer": "AD's six objections (status/AD.json, 08:26Z) are answered in docs/art/tracks/menu-screens.md Part 3, 'AD's preview (S3-R7), and the answers'. (1) The title is 1.3x the body text at large text, and (2) each heading is on a dark plate, both in 917886c4. (3) The ground ramp stands: §21.2's linear night, chosen in C75 (A), drawn by ui.gd. A change is the owner's decision first, then K1's work. (4) The sample holds the whole law at every size, and the list's window ends on a whole row's edge with the kit's chevron below while more rows lie below (no fade: screens draw no chrome, see S3-R8). (5) At 100% Stillness is on two lines, and the window ends under High contrast with the cue. (6) '100%' is 24 points against the 28-point title. For AD to re-check what changed: settings-100, -200-pt_BR and -hc at the next gate_request's sha."
+      "answer": "AD's six objections (status/AD.json, 08:26Z) are answered in docs/art/tracks/menu-screens.md Part 3, 'AD's preview (S3-R7), and the answers'. (1) The title is 1.3x the body text at large text, and (2) each heading is on a dark plate, both in 917886c4. (3) The ground ramp stands: \u00a721.2's linear night, chosen in C75 (A), drawn by ui.gd. A change is the owner's decision first, then K1's work. (4) The sample holds the whole law at every size, and the list's window ends on a whole row's edge with the kit's chevron below while more rows lie below (no fade: screens draw no chrome, see S3-R8). (5) At 100% Stillness is on two lines, and the window ends under High contrast with the cue. (6) '100%' is 24 points against the 28-point title. For AD to re-check what changed: settings-100, -200-pt_BR and -hc at the next gate_request's sha."
     },
     {
       "id": "S3-R8",
@@ -340,7 +341,7 @@
       "id": "S3-R18",
       "from": "S3",
       "to": "lead",
-      "ask": "On the settings screen's account tab, the profile row ('Profile and stats', ScreenAccount.profile_row in client/scripts/screen_account.gd) fails checks.py's value-steps: its dark violet card stands 3 ΔL* off the night ground (0.3 value steps of the 2 needed), in en and de (docs/art/shots/menu-screens/settings-account-100.shot.json, settings-account-de.shot.json). screen_account.gd is not P2-S3-settings-2's file, and the row is unchanged since before board 5. The account tab is not one of the task's gate items.",
+      "ask": "On the settings screen's account tab, the profile row ('Profile and stats', ScreenAccount.profile_row in client/scripts/screen_account.gd) fails checks.py's value-steps: its dark violet card stands 3 \u0394L* off the night ground (0.3 value steps of the 2 needed), in en and de (docs/art/shots/menu-screens/settings-account-100.shot.json, settings-account-de.shot.json). screen_account.gd is not P2-S3-settings-2's file, and the row is unchanged since before board 5. The account tab is not one of the task's gate items.",
       "files": [
         "client/scripts/screen_account.gd"
       ],
@@ -572,7 +573,7 @@
       "id": "S3-R31",
       "from": "S3",
       "to": "AD",
-      "ask": "Preview of P2-S3-character-4 at 8ca0058d on claude/ui-screens-meta: the gate's display-type fail on 'character at 200% text, pt_BR' (verdict P2-S3-character-3/a6d5f2fb). (1) The subtitle and the level line on the starry backdrop now wear an ink outline on every side, each side the greater of 1.5 pt or 12% of the size (was 12% in all, about 6% a side, which the 2-point drop outweighed): subtitle outline_size 21 px (was 11), level line 19 (was 9); set again after the words shrink to fit. (2) HABILIDADE, the ability card's kicker, is stroked and dropped in ink as 'Subir de nível' is, at large text only. (3) At 200%, scrolled to the end, every tab's last card ends clear above the dock in en, pt_BR and de. 100% and high-contrast stills are pixel for pixel as before. Track Part 2, 'The gate's display-type check at a6d5f2fb'. Please give every objection in this one round.",
+      "ask": "Preview of P2-S3-character-4 at 8ca0058d on claude/ui-screens-meta: the gate's display-type fail on 'character at 200% text, pt_BR' (verdict P2-S3-character-3/a6d5f2fb). (1) The subtitle and the level line on the starry backdrop now wear an ink outline on every side, each side the greater of 1.5 pt or 12% of the size (was 12% in all, about 6% a side, which the 2-point drop outweighed): subtitle outline_size 21 px (was 11), level line 19 (was 9); set again after the words shrink to fit. (2) HABILIDADE, the ability card's kicker, is stroked and dropped in ink as 'Subir de n\u00edvel' is, at large text only. (3) At 200%, scrolled to the end, every tab's last card ends clear above the dock in en, pt_BR and de. 100% and high-contrast stills are pixel for pixel as before. Track Part 2, 'The gate's display-type check at a6d5f2fb'. Please give every objection in this one round.",
       "files": [
         "client/scripts/character_screen.gd",
         "docs/art/shots/menu-screens/character-200-pt_BR.png",
@@ -588,7 +589,10 @@
       "created_at": "2026-11-16T21:08:00Z",
       "due": "2026-11-16T23:08:00Z",
       "default": "The outline and the stroke stand as fixed; S3 marks P2-S3-character-4 ready at the pre-checked sha with gate_request there, and AD's next round re-checks the stills on the merge",
-      "escalate_to": "lead"
+      "escalate_to": "lead",
+      "state": "default applied",
+      "default_applied_at": "2026-11-16T23:10:00Z",
+      "note": "No answer from AD by the due (23:08Z; claude/ui-ad unchanged at c7a04d48 since 22:32Z): the outline and the stroke stand as fixed, ready at the pre-checked sha ee67dcea; AD's next round re-checks the stills on the merge."
     },
     {
       "id": "S3-R32",
@@ -616,6 +620,53 @@
       "due": "2026-11-16T23:10:00Z",
       "default": "S3 takes f083c96c as the main it last merged, runs the merge checks on its branch head, and marks P2-S3-character-4 ready there; the lead merges onto whatever main it restores",
       "escalate_to": "overseer"
+    },
+    {
+      "id": "S3-R34",
+      "from": "S3",
+      "to": "AD",
+      "ask": "Preview of P3-S3-character-5 at aed2d06d on claude/ui-screens-meta (main 6f3ec53c merged). (1) The kit's calls replace the screen's local fixes (tabs, ability measures, stage foot blend, hex size, compact facts, untracking): at 100% text in en, pt_BR and de, on all three tabs, and in high contrast (en, pt_BR), the stills are pixel for pixel as before. (2) AD-R53: the offline notice stands on the roster's cream plate (StageHeroSkin.plate) with its words in alarm red, as flow board 2's F7; it was glass with a red fill. New shots: OFFLINE=1 LOCALE=en, and OFFLINE=1 TEXT=200 LOCALE=pt_BR. (3) AD-R58: Godot draws a quarter of outline_size on each side, not half, so character-4's outline was about 6% a side (audit 1 read 5%). At 200% the subtitle and the level line now measure 6 still pixels a side on words 48 and 42 pixels tall (12.5% and 14%; en and de 6 to 7), against 2 to 3 before; the headline on the stage art, the HABILIDADE kicker and Level up's title carry the same rule. Board 5's layout is unchanged; every shot fits. Render with FIT=1 RECORD=1 <env> bash tools/render/shoot.sh client/tests/shots/screen_character.gd <still> (TEXT=200, LOCALE=, HC=1, TAB=1|2, ID=4, OFFLINE=1). Track Part 2, 'The kit's calls, the cream notice and the outline measured (P3-S3-character-5)'. Please give every objection in this one round.",
+      "files": [
+        "client/scripts/character_screen.gd",
+        "client/tests/shots/screen_character.gd",
+        "docs/art/tracks/menu-screens.md"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-17T13:31:00Z",
+      "due": "2026-11-17T15:31:00Z",
+      "default": "The stills stand as described; S3 marks P3-S3-character-5 ready at the pre-checked sha with gate_request there, and AD re-checks on the merge",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S3-R35",
+      "from": "S3",
+      "to": "lead",
+      "ask": "For K1 and the lead, a finding, not this task's to fix: Godot draws a quarter of a label's outline_size outward on each side (measured in the renderer the stills use, at 540 and 1080 wide). Code that sets outline_size to \u00a721.8's least a side therefore draws about a quarter of it: KitHud._ink (client/ui/kit_hud.gd, 1.5 pt or 12% plus half a point, about 3% a side), and kit_panels.gd's inventory count (20% of the size, about 5% a side). The contrast check reads outline_size the same way: _outline in client/tests/a11y_tests.gd and _counts in client/tests/shots/ui_kit_heist.gd count an outline as all round once outline_size reaches the least a side. The character screen now sets four times the least a side plus the soft edge (character_screen.gd _outline_px). Track Part 2, P3-S3-character-5, 'A kit-wide finding'.",
+      "files": [
+        "client/ui/kit_hud.gd",
+        "client/ui/kit_panels.gd",
+        "client/tests/a11y_tests.gd",
+        "client/tests/shots/ui_kit_heist.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T13:31:00Z",
+      "due": "2026-11-17T15:31:00Z",
+      "default": "Nothing changes in the kit or the tests; the character screen keeps its own outline rule",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S3-R36",
+      "from": "S3",
+      "to": "lead",
+      "ask": "A files exception for P3-S3-character-5: its files do not include docs/art/shots/menu-screens/, so the committed character-200 stills (character-200-{pt_BR,en,de}, -{en,pt_BR,de}-4, -pt_BR-stats, -pt_BR-compare, -pt_BR-scrolled) still show character-4's thinner outline, and there is no offline still. With the exception S3 re-shoots those nine and adds character-offline and character-offline-200-pt_BR (stills and records); the 100% and high-contrast stills are byte-identical and stay.",
+      "files": [
+        "docs/art/shots/menu-screens/"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T13:31:00Z",
+      "due": "2026-11-17T15:31:00Z",
+      "default": "The committed stills stay as they are; the track names which differ and how to render them, and the next character task re-shoots them",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
@@ -624,6 +675,5 @@
       "at": "2026-11-12T23:40:00Z",
       "answer": "The key frame's pair already matches: art/ui/keyframes/05-settings.png and 05-settings.shot.json both show the Access tab (checked by eye at 1080x2340; every control in the record passes value-steps). The mismatch was elsewhere: the gate cut the candidate still, rendered by client/tests/shots/screen_meta.gd on the settings screen's opening Game tab, with the key frame's Access rectangles, because screen_meta.gd writes no record. Fixed in P2-S3-screenkit without touching the key frame: docs/art/shots/menu-screens/shot_record.gd renders the settings screen and writes the record from the same frame (TAB=game or TAB=access). P2-S3-screenkit's item 'settings at 100% text' shows the Game tab: the screen's opening tab and the one with the volume bars and row wells this task changed. Its still and record are docs/art/shots/menu-screens/after-settings-100-game.png and .shot.json (the still is pixel for pixel after-settings-100.png). P2-S3-settings' items should show the Access tab, as key frame 05 does: after-settings-100-access.png and .shot.json. Details in docs/art/tracks/menu-screens.md, 'The settings shot record (Lead-R1)'. No file outside the claim was needed."
     }
-  ],
-  "next_step": "fit_character.sh, check_screens.py, guard.sh; requests S3-R31 (AD preview) and S3-R32 (parchment on scroll); merge main; checks; gate request"
+  ]
 }
