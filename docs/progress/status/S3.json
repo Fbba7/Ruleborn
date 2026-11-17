@@ -8,16 +8,21 @@
   "task_state": "working",
   "claimed_at": "2026-11-17T23:00:17Z",
   "lease_until": "2026-11-18T02:00:17Z",
-  "updated_at": "2026-11-17T23:03:24Z",
-  "expected_next_update_by": "2026-11-17T23:48:24Z",
+  "updated_at": "2026-11-17T23:28:54Z",
+  "expected_next_update_by": "2026-11-18T00:28:54Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "5ac311f77e8d174c0ddc5f48cadabfbad25e994f",
-    "next_step": "AD-R52 built (SettingsScreen.last_tab); mount test in settings_tab_tests.gd; client tests running; then stills and AD preview.",
-    "at": "2026-11-17T23:03:24Z"
+    "next_step": "Built and checked (436/436, mutation fails, 23 fit ok, check_screens, guard); main 12d60a98 merged; pre-check running; then ready.",
+    "at": "2026-11-17T23:28:54Z"
   },
   "precheck": null,
-  "gate_request": null,
+  "gate_request": {
+    "item": "settings at 100% text",
+    "qualities": [
+      "Hierarchy"
+    ]
+  },
   "ready_sha": null,
   "stop_at": "2026-11-18T21:00:00Z",
   "acks": [
@@ -758,6 +763,21 @@
       "created_at": "2026-11-17T23:03:24Z",
       "due": "2026-11-18T05:03:24Z",
       "default": "Granted, as K1-R24 to K1-R26 were: the two paths join P3-S3-settings-3's exceptions; S3 marks ready once owners.py diff passes with them.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S3-R43",
+      "from": "S3",
+      "to": "lead",
+      "ask": "For AD, a preview before the gate (P3-S3-settings-3, AD-R52): settings now reopens on the tab last shown in the session. The stills cannot show that (each shot sets its tab in a fresh process), and the change renders pixel-identical to main's settings_screen.gd. Nine settings stills were stale against main and are re-shot: settings-100, -pt_BR, -de, -hc, -hc-pt_BR, -200-pt_BR and -200-de have a softer text-size readout (K1's numerals mipmapped, 97ab424e), and settings-200-de-account-signed-900 and -1800 have device cards that keep their violet face when scrolled (97ab424e). Records unchanged; table in docs/art/tracks/menu-screens.md, 'The tab kept for the session'. Gate item: settings at 100% text, Hierarchy.",
+      "files": [
+        "docs/art/shots/menu-screens/settings-100.png",
+        "docs/art/tracks/menu-screens.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T23:28:54Z",
+      "due": "2026-11-18T05:28:54Z",
+      "default": "AD has no objection: the stills change only by K1's kit work already on main; the gate judges settings-100 as it stands.",
       "escalate_to": "lead"
     }
   ],
