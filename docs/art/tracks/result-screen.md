@@ -11,7 +11,7 @@ Before, the screen drew its own surfaces: `FxSkin` plates, `RbBox`, `StyleBoxFla
 | The night, and the sunburst behind a heist that paid | The kit's frame, and `KitNav.celebrate` when the heist paid. A foiled or refused heist keeps the plain night. |
 | Kicker, medal, title, condition, multipliers, length and peak | `KitNav.hero`, with the title at 40 points as the key frame's Marcellus (the kit hero uses 52). The medal sits beside the title, and the multipliers go on `KitStatus.set_pill`. |
 | The moment | `UI.panel("card")` holding `KitControls.big_action` in gold with the replay's length, beside when and what happened. With large text they stand one above the other. |
-| Starlight, Essence, Renown | `KitCards.reward` tiles. Starlight is on parchment and wider; the other two are on glass. They sit in `KitLayout.columns`, and stack one above another with large text. |
+| Starlight, Essence, Renown | `KitCards.reward` tiles, all three on parchment as in the design's still 07 (P2-S1-result-6). Starlight is wider, with the crew's lead in a ring on its corner. The totals are baked in the kit's `num_gold` numerals. They sit in `KitLayout.columns`, and stack one above another with large text. |
 | Study one law you crossed | `UI.panel("card")`. The laws are `UI.action` buttons in the kit's tertiary face (`ghost`: violet on the dark card) in `KitLayout.columns`, with the heading font and `UI.clear_box(6, 4)`. They fall to a two-column `KitLayout.grid` when a word will not fit (`_fit_laws`). |
 | The crew home | `UI.panel("glass")`. Three faces overlap in `KitRing`s, framed as `KitSocial`'s avatars, beside how long the crew rests. |
 | Home and Raid again | `UI.panel("glass")`, as the key frame's `result-bottom glass`. Inside are `UI.action` in the kit's tertiary face (`ghost`: violet on glass) with the `hud/home` icon, and `KitControls.action2` wide in gold (red when foiled) with the idle crew line. |
@@ -252,6 +252,112 @@ The fit sweep, `FIT=1` on `client/tests/shots/screen_result.gd`, 56 stills, ever
 | Workshop play | 88 | 88 | 88 |
 
 At 100%: plain 91 (pt_BR, de 93), high contrast 27 (pt_BR, de 29), reduced motion 90. de 200% refused with `removed_from_constellation`: 87. Each row matches the earlier sweep where that sweep shot the same state.
+
+## The kit's fixes dropped, the gold totals and the crew's face (P2-S1-result-6)
+
+**The screen-side fixes the kit now covers are gone** (`02c2e6b8`):
+
+- **S1-R23:** the '3 s' replay button's grow closure. `KitControls.big_action` grows on its own.
+- **S1-R15:** `_fit_raid`'s wrap and height. `KitControls.action2` wraps and grows. The Home square and the upright row at 200% stay.
+- **S1-R32:** `_celebrates`' high-contrast clause. `KitNav.reward` and `KitNav.celebrate` keep the sky plain under high contrast. The re-dress to `night` stays for outcomes that do not celebrate.
+
+The shot's FIT check now also fails words drawn outside their button.
+
+**Character presence at 100% (`02c2e6b8`: 4-2 fail).** The crew's lead now stands in a ring on the Starlight tile's corner (`ResultFit.carrier`), as the carrier in key frame 03. At 100% the three faces on the rest card are apart and larger: `FACES` 3 at `FACE_POINTS` 52 (`32a87041`, `58a4a10f`).
+
+**The reward totals take the display treatment.** `ResultFit.bake_totals` lays each total as `KitNumerals` glyphs, in the kit's `num_gold` finish: an ink outline, a hard drop and a gold gradient. The live label stays for its accessible name and its size, with `visible_characters = 0` so its own glyphs are not drawn. Hiding them by alpha still drew them; skipping them saves 14 draw calls at every setting (`f96569c0`). If a glyph is missing, `KitNumerals.make` hands back a live label.
+
+- **One finish for one rank** (`24cc4d7c`). The haul and the three rewards are all `num_gold`. At pt_BR 200% the gate split on white totals reading flatter than the gold one of the same rank.
+- **Every reward tile on parchment** (`e4e78070`). The gate's Display type at pt_BR 200% then failed 0/3: on the two glass tiles, the gold numerals' ink outline and drop sank into the dark ground, so +805 and +15 read flat and spread beside +2.310. The design's still 07 has all three tiles on parchment, so now the screen does too. The kit's `reward_gold` and `reward_green` are its gold and green *button* faces (tried, below), so plain parchment stands in for the coloured edges. This departs from key frame 03, where Essence and Renown sit on glass. AD was asked to preview it (S1-R35).
+
+| Still (`SERVER=1 FIT=1`, at `e4e78070`) | FIT |
+|---|---|
+| en, 100% | ok |
+| en, 200% | ok |
+| pt_BR, 200% | ok |
+| de, 200% | ok |
+| High contrast, 100% | ok |
+| High contrast, 200% | ok |
+
+    SERVER=1 FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd en100.png
+    SERVER=1 FIT=1 TEXT=200 bash tools/render/shoot.sh client/tests/shots/screen_result.gd en200.png
+    SERVER=1 FIT=1 TEXT=200 LOCALE=pt_BR bash tools/render/shoot.sh client/tests/shots/screen_result.gd pt200.png
+    SERVER=1 FIT=1 TEXT=200 LOCALE=de bash tools/render/shoot.sh client/tests/shots/screen_result.gd de200.png
+    SERVER=1 FIT=1 CONTRAST=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd hc.png
+    SERVER=1 FIT=1 CONTRAST=1 TEXT=200 bash tools/render/shoot.sh client/tests/shots/screen_result.gd hc200.png
+
+**Budgets.** `budget_shots.py`: result/100 88 (record 91), result/200 96 (99), result/hc 27 (27). Contrast: 0 words below 4.5:1 in each. The lead could record the two lower figures.
+
+**The gate (advisory, rubric 3).** Each run had three samples, plus three more on a split. The lead's verdict at `b5843368` is in `docs/art/ui-quality/gate/verdicts/P2-S1-result-6/`. The folder is the lead's, so the earlier runs' verdict files (`02c2e6b8`, `58a4a10f`, `24cc4d7c`, `e4e78070`) were removed from this branch in the resync (M47); their samples and results are kept in the table below, and the files themselves stay in this branch's history before the merge of main.
+
+| Commit | Item | Quality | Samples | Result |
+|---|---|---|---|---|
+| `02c2e6b8` | 100% text | Display type | 4 pass, 2 fail | pass |
+| `02c2e6b8` | 100% text | Character presence | 2 pass, 4 fail | fail |
+| `58a4a10f` | 100% text | Display type | 3/3 | pass |
+| `58a4a10f` | 100% text | Character presence | 3/3 | pass |
+| `24cc4d7c` | 100% text | Display type, Character presence | 3/3 each | pass |
+| `24cc4d7c` | 200% text, pt_BR | Hierarchy | 3/3 | pass |
+| `24cc4d7c` | High contrast | Hierarchy | 3/3 | pass |
+| `24cc4d7c` | 200% text, pt_BR | Display type | 0/3 | fail |
+| **`e4e78070`** | 100% text | Display type | 3/3 | **pass** |
+| **`e4e78070`** | 100% text | Character presence | 3/3 | **pass** |
+| **`e4e78070`** | 200% text, pt_BR | Display type | 3/3 | **pass** |
+| **`e4e78070`** | 200% text, pt_BR | Hierarchy | 3/3 | **pass** |
+| **`e4e78070`** | High contrast | Hierarchy | 3/3 | **pass** |
+
+### AD's objection H, a reward word broken (AD-R46)
+
+AD's preview of `e4e78070` (S1-R35, board 4) kept one objection, H. At 200% German the Starlight row read "+2.310 Sternenlich / t": the word broke by its letters, and FIT passed it.
+
+**The cause.** `ResultFit.reward_rows` measured each row by its live labels before `bake_totals` laid the gold glyphs, and the baked row was let grow to the words' width plus the outline. In German at 200% the row came out a few pixels wider than measured, so the name's label lost room and broke inside "Sternenlicht".
+
+**The fix** (`b5843368`):
+
+- `result_screen.gd` bakes the totals at their final words before the rows are measured, so `reward_rows` sees the rows as drawn.
+- `reward_rows` measures each label at the wider of its minimum size and its words' width.
+- `bake_totals` keeps the baked row within the live words' width above 125% text (the outline allowance stays at 100%, which the gate passed). The label is never narrower than its hidden words, since the fitting and the reader still use them.
+- **FIT** now fails any wrapped label with a word wider than its room: "the word … breaks inside itself". On the old code at German 200% it fails "Sternenlicht"; on the new code it passes.
+
+| Still (`SERVER=1 FIT=1`, at `b5843368`) | FIT | Draw calls |
+|---|---|---|
+| en, 100% | ok | 116 |
+| en, 150% | ok | 101 |
+| en, 200% | ok | 100 |
+| pt_BR, 100% | ok | 118 |
+| pt_BR, 150% | ok | 103 |
+| pt_BR, 200% | ok | 102 |
+| de, 100% | ok | 118 |
+| de, 150% | ok | 101 |
+| de, 200% | ok | 101 |
+| High contrast, 100% | ok | 58 |
+| High contrast, 200% | ok | 42 |
+
+The draw calls are the shot test's own count, with the reward sequence still running, so they are not `budget_shots.py`'s figures. All are under the task's 150. At German 200%, "+2.310 Sternenlicht" stands on one line beside its total: the rows hold, without the column fallback, and all three rewards sit above the first screen's edge. Every reward word is whole at 4× in en, pt_BR and de at 200%, and in de at 150%. The 100%, pt_BR 200% and high-contrast stills are unchanged by eye.
+
+    SERVER=1 FIT=1 TEXT=150 LOCALE=de bash tools/render/shoot.sh client/tests/shots/screen_result.gd de150.png
+    SERVER=1 FIT=1 TEXT=200 LOCALE=de bash tools/render/shoot.sh client/tests/shots/screen_result.gd de200.png
+
+The other stills use the commands above, with `TEXT` and `LOCALE` set to match.
+
+**The gate at `b5843368`** (advisory, rubric 3; `verdicts/P2-S1-result-6/b5843368.json`):
+
+| Commit | Item | Quality | Samples | Result |
+|---|---|---|---|---|
+| **`b5843368`** | 100% text | Display type | 3/3 | **pass** |
+| **`b5843368`** | 100% text | Character presence | 3 pass, 3 fail | **pass** (split; on the next board) |
+| **`b5843368`** | 200% text, pt_BR | Display type | 3/3 | **pass** |
+| **`b5843368`** | 200% text, pt_BR | Hierarchy | 3/3 | **pass** |
+| **`b5843368`** | High contrast | Hierarchy | 3/3 | **pass** |
+
+Character presence split, and passes because a fail needs 4 or more fails of 6. The three fails each named one portrait: Ash's rock body with orange cracks, read as fine mottled grain (a physically based material under ruling v3). The three passes read the same body as matte and soft-shaded. The portraits are unchanged since `e4e78070`, which passed 3/3, so this is a close call on Ash's render, not on this fix. Ash's portrait comes from `client/world/fx_portrait.gd`, outside this task. If the next board finds the grain, the change belongs there.
+
+### Tried and failed
+
+- **The kit's `reward_gold`, `reward_green` and `reward_pink` on the three tiles,** as the tokens' note "parchment edged in the reward's colour" reads. `reward_gold` and `reward_green` draw through the kit's `button_primary` and `success` skins: a solid gold bar and a solid green bar. The gold one rivals Raid again. Only `reward_pink` and `reward_sky` are edged parchment tiles.
+- **White totals on the glass tiles beside a gold one on parchment.** The gate split on Display type at pt_BR 200%: same rank, different treatment.
+- **Gold totals on the glass tiles.** The gate failed it 0/3: the dark outline and drop vanish on the dark ground.
+- **A baked row floored under its words** (the first H fix, r1): the gold row was kept narrower than the totals' text, so the hidden live label grew narrower than its words. FIT failed: "+805" drawn 224 px in 222. The label's minimum width is now the wider of its words and the baked row.
 
 # The reward sequence (P2-S1-result-2)
 

@@ -282,6 +282,8 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   Cycle 91: P2-K1-tabs-2 takes S2-R24 and S2-R26 (K1 started in cycle
   91, the fourth seat with S2, S3 and AD); the others still wait for a K1
   task, and each default stands at its due.
+  Cycle 118: S3-R9 to S3-R14 seeded as P3-K1-polish-2 (phase 3, M49),
+  and P3-S3-character-5 drops character_screen.gd's local fixes after it.
 - **S1-R32** (from S1, to K1 through the lead, 16 November 2026 16:53Z;
   due 17 November 16:53Z; not blocking): `KitNav.reward(screen, ...)`
   dresses the screen's Sky in `night_rays` whatever the mode, also under
@@ -334,6 +336,7 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   quality or merge-blocking check, so M33 seeds no task for it before the
   phase 2 stop, and P2-K1-grow-1 is at its pre-check, so it is not added
   there. S3 goes ready without it, as the default says.
+  Cycle 118: seeded as P3-K1-polish-1 (phase 3, M49), with S2-R35.
 
 - **S2-R35** (from S2, to K1 through the lead, 17 November 2026 03:10Z;
   due 18 November 12:00Z; not blocking): the kit's baked numerals lose
@@ -357,6 +360,7 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   change closes no open objection, failed gate quality or merge-blocking
   check, and M33 seeds no task for it before the phase 2 stop. The default
   stands.
+  Cycle 118: seeded as P3-K1-polish-1 (phase 3, M49), with S3-R32.
 
 ### AIA
 
@@ -1208,6 +1212,30 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   and the shot, so a pass there would not carry over. S1 adds the FIT
   check, re-runs its own gate on the three requested items at the new
   commit, sets `gate_request` and marks ready once they pass (M44).
+  **Gate, cycle 113** (advisory, rubric v3, on S1's `gate_request` at
+  b5843368, before ready; docs/art/ui-quality/gate/verdicts/P2-S1-result-6/
+  b5843368.json): Hierarchy at result 200% text, pt_BR fails 3 of 3; the
+  four other item-qualities pass 3 of 3 (Display type and Character
+  presence at 100%, Display type at 200% pt_BR, Hierarchy in high
+  contrast). The judges name the 200% pt_BR summary prose ('Nenhum guarda
+  alertado · todos saíram com saque', three lines) and the 2:45 alarm line
+  (two lines): large light type, as big as the ASSALTAR DE NOVO label and
+  larger than the reward numerals, so secondary text carries the reward's
+  weight; and the three equally cream tiles, so no reward leads.
+  kf-result-text200 keeps its prose below the hero number and the button.
+  S1's own run at b5843368 passed this item. result-6's gate items in
+  backlog.json are only 'result at 100% text' (Display type, Character
+  presence), and both pass 3 of 3, so under M44 the fail does not hold
+  result-6 back: S1 marks ready once its checks and pre-check pass. The
+  200% pt_BR Hierarchy fail is logged for phase 3 (M33 seeds nothing
+  before 21:00Z): a follow-up S1 task, done when at 200% pt_BR the summary
+  prose and alarm line sit below the reward numerals, one reward tile
+  leads (within AD's accepted parchment departure) and the gate passes
+  'result at 200% text, pt_BR', Hierarchy. S1 may close it inside
+  result-6 instead if that adds no more than about 30 minutes.
+  Cycle 118: seeded as P3-S1-result-7 (phase 3, M49), with board 4's
+  carried notes (an idle crew in the fixture, the fold on the crew card's
+  header).
 
 - **AD-R45** (from AD, 17 November 2026 01:57Z; due 19 November 01:57Z;
   not blocking): AD's preview of P2-S2-home-6 (S2-R34) at 36f017da, one
@@ -1246,6 +1274,16 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   'home at 100% text', Display type again, and marks ready once it passes
   (or after a second fail, with the verdict and its reasons in the
   handoff). Nothing is seeded (M33).
+  **Gate, cycle 115** (advisory, rubric v3, on S2's `gate_request` at
+  a4090ec7, before ready; docs/art/ui-quality/gate/verdicts/P2-S2-home-6/
+  a4090ec7.json): Display type at home 100% text passes 3 of 3. The
+  headline counts (1,460, 142.0k, 31.4k, 61.0k, 82%) share one treatment:
+  gradient fill, an ink outline all round and a hard drop, drawn by
+  `HomeParts.InkedRow`. The words after the counts are gold and stroked.
+  So AD-R45 (a) is closed, and by AD's default the objection becomes a
+  note and nothing is seeded. M46 tells S2 to mark home-6 ready. The
+  lead's note: the dark stroke on the dark plates is low in contrast. That
+  is not a fail under rubric v3.
 
 - **AD-R44** (from AD, 17 November 2026 00:05Z; due 19 November 00:05Z;
   not blocking): the two objections of AD's preview of P2-S1-heist-1 at
