@@ -196,20 +196,14 @@
       "estimate_h": 2.0,
       "tier": 2,
       "critical": false,
-      "state": "claimed",
-      "claim": {
-        "agent": "S1",
-        "branch": "claude/ui-screens-heist",
-        "claimed_at": "2026-11-17T13:30:00Z",
-        "seen_at": "2026-11-17T14:22:00Z",
-        "lease_until": "2026-11-17T16:30:00Z"
-      },
+      "state": "merged",
+      "claim": null,
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null,
-      "updated_at": "2026-11-17T14:22:00Z",
-      "updated_by": "lead (cycle 127)",
+      "ready_sha": "a4ed000edfcef3cde3ce3a926eb656efffcc2528",
+      "merged_sha": "7d0501d9",
+      "updated_at": "2026-11-17T15:35:00Z",
+      "updated_by": "lead (cycle 128)",
       "exceptions": []
     },
     {
@@ -257,7 +251,7 @@
         "agent": "S3",
         "branch": "claude/ui-screens-meta",
         "claimed_at": "2026-11-17T13:05:00Z",
-        "seen_at": "2026-11-17T14:22:00Z",
+        "seen_at": "2026-11-17T14:59:00Z",
         "lease_until": "2026-11-17T16:05:00Z"
       },
       "prior_branch": null,
@@ -269,6 +263,157 @@
       "exceptions": [
         "docs/art/shots/menu-screens/**"
       ]
+    },
+    {
+      "id": "P3-AD-preview-1",
+      "title": "S1-R40 and S3-R34: P3-S1-hc-offline-1's merged stills and the gate's Colour roles fail looked at, P3-S3-character-5's stills previewed, and the offline result state in the gate's shot list",
+      "phase": 3,
+      "role": "AD",
+      "model": "Opus 5.5",
+      "assigned_to": "AD",
+      "files": [
+        "docs/art/ui-quality/gate/**",
+        "!docs/art/ui-quality/gate/verdicts/**",
+        "tools/ui_gate/**"
+      ],
+      "deps": [
+        "P3-S1-hc-offline-1"
+      ],
+      "done_when": [
+        "S1-R40: docs/art/ui-quality/gate/shots.md lists the result screen's offline state (screen_result.gd's default) beside its server state (SERVER=1), with the environment each still needs, as P3-S1-hc-offline-1's handoff says",
+        "P3-S1-hc-offline-1's stills rendered again on main's build at the task's start (heist in high contrast; result at 100% text, offline and server) and looked at against the advisory gate verdict docs/art/ui-quality/gate/verdicts/P3-S1-hc-offline-1/a4ed000e.json: Colour roles and value failed 5 of 6 (main-action gold fill on the disabled 'No casts' control; gold on the stats values; 'Get out' in the same red as the 'Intruder!' alarm), Character presence passed 4 of 6 (two samples saw photographic grain on the Breaker's rock body). AD rules on each point, and on whether 'Get out' keeps AD-R56's red danger plate or takes its own exit colour. Every fault AD keeps goes to the lead as a request with a default, naming the screen, the file and its owner, for P3-S1-hc-offline-2 (S1's follow-up, which waits on this task) or for the Breaker's owner",
+        "S3-R34: P3-S3-character-5's stills previewed at S3's current sha (the kit's calls, AD-R53's cream notice, AD-R58's outline measured) if S3 has not marked ready, or re-checked on main if it has merged; every objection in one round (M12, M23), each kept one going to the lead as a request with a default",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 1.5,
+      "tier": 2,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-17T15:35:00Z",
+      "updated_by": "lead (cycle 128)",
+      "exceptions": []
+    },
+    {
+      "id": "P3-S1-hc-offline-2",
+      "title": "Heist in high contrast: one role per colour (the gate's Colour roles and value fail, 5 of 6, at a4ed000e) as AD rules in P3-AD-preview-1",
+      "phase": 3,
+      "role": "S1",
+      "model": "Opus 5.5",
+      "assigned_to": "S1",
+      "files": [
+        "client/scripts/heist_hand.gd",
+        "client/scripts/heist_hud.gd",
+        "client/tests/shots/screen_heist.gd",
+        "docs/art/tracks/heist-pilot.md"
+      ],
+      "deps": [
+        "P3-AD-preview-1"
+      ],
+      "done_when": [
+        "the gate's advisory Colour roles and value fail at a4ed000e (docs/art/ui-quality/gate/verdicts/P3-S1-hc-offline-1/a4ed000e.json) answered as AD rules in P3-AD-preview-1: in high contrast a cast control with no casts left takes the inert plate rather than the main-action gold fill, the stats values take the text ink rather than gold, and 'Get out' takes the colour AD rules on; each control still at least dL* 20 off its local ground (AD-R56), each pair's dL* listed in the handoff",
+        "'heist at 100% text', 'heist at 200% text, pt_BR' and 'heist in high contrast' still passing; FIT=1 runs of the heist shot at 200% text in en, pt_BR and de and in high contrast all passing, each run listed in the handoff",
+        "AD previews the stills before ready (M10, M12, M23): the builder sends them to AD while the work can still change, and AD's objections are answered in this task",
+        "python3 tools/ui_bake/check_screens.py",
+        "bash tools/ui_bake/guard.sh",
+        "gate: Screen",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed under docs/art/ui-quality/gate/verdicts/ or outside the task's files (M48)",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [
+        {
+          "item": "heist in high contrast",
+          "qualities": [
+            "Colour roles and value"
+          ]
+        }
+      ],
+      "attempts": 0,
+      "estimate_h": 1.5,
+      "tier": 2,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-17T15:35:00Z",
+      "updated_by": "lead (cycle 128)",
+      "exceptions": []
+    },
+    {
+      "id": "P3-S2-home-7",
+      "title": "Home's tab bar by the router's tab table and ScreenNav's label rule (AD-R49's home part), and the goal card's bar on the kit's green (AD-R59's caller)",
+      "phase": 3,
+      "role": "S2",
+      "model": "Opus 5.5",
+      "assigned_to": "S2",
+      "files": [
+        "client/scripts/home.gd",
+        "client/scripts/home_parts.gd",
+        "client/tests/shots/universe_home.gd",
+        "client/tests/core_tests.gd",
+        "docs/art/tracks/home-screen.md"
+      ],
+      "deps": [
+        "P3-K1-tabs-1"
+      ],
+      "done_when": [
+        "AD-R49 (flow board 2's F3), home's part: home.gd drops its own TAB_ROUTES and routes Laws, Crew and Friends by Router.TABS (client/app/router.gd), as ScreenNav.bar does; the Heist is the one listed exception (home starts a heist rather than opening the Observatory) and Islands stays on home; both exceptions named in one place in home.gd with the reason",
+        "AD-R49's label rule: the tabs not chosen show their names up to ScreenNav.LABELS_UP_TO (125% text) and their icons alone above it, each named aloud, the chosen tab's word always shown, as ScreenNav.bar does; where home's own fitting (_fit_tab_words) still has to shrink a word below that size in some locale, it stays and the handoff names the locale and the still",
+        "a check in client/tests/core_tests.gd that every tab id in KitTabs.TABS has a route in Router.TABS and that home's route for each tab is Router.TABS' own, the Heist and Islands excepted as home.gd lists them",
+        "AD-R59's caller (P3-K1-tabs-1's handoff in docs/progress/K1.md): _show_goal drops the loop that hides the Progress labels, since KitHud.goal with an empty count hides them itself, and the comment above it says the bar is the kit's green progress fill, gold staying on Collect; the goal card's bar green in both looks on the stills",
+        "'home at 100% text', 'home at 200% text, pt_BR' and 'home in high contrast' passing on the new stills; FIT=1 runs of the home shot at 200% text in en, pt_BR and de and in high contrast all passing, each run listed in the handoff",
+        "AD previews the stills before ready (M10, M12, M23): the builder sends them to AD while the work can still change, and AD's objections are answered in this task",
+        "python3 tools/ui_bake/check_screens.py",
+        "bash tools/ui_bake/guard.sh",
+        "gate: Screen",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed under docs/art/ui-quality/gate/verdicts/ or outside the task's files (M48)",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [
+        {
+          "item": "home at 100% text",
+          "qualities": [
+            "Hierarchy",
+            "Display type"
+          ]
+        },
+        {
+          "item": "home at 200% text, pt_BR",
+          "qualities": [
+            "Hierarchy"
+          ]
+        },
+        {
+          "item": "home in high contrast",
+          "qualities": [
+            "Hierarchy"
+          ]
+        }
+      ],
+      "attempts": 0,
+      "estimate_h": 1.5,
+      "tier": 2,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-17T15:35:00Z",
+      "updated_by": "lead (cycle 128)",
+      "exceptions": []
     },
     {
       "id": "SV-B10",

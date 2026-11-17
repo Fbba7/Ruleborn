@@ -20,6 +20,10 @@ signal put_away
 
 const SAGE_KIND := 13
 const CAST_KIND := 14
+## The leather looks high contrast re-dresses (AD-R56): the kit's flat mauve
+## sat at the value of the world behind it (Walk's face L* 36.7 on a ground
+## of 48.2), so the heist's plates take the key frame's near-black card.
+const HC_LEATHER := ["leather", "plate_leather", "glass", "tag_dark"]
 
 var sage_button: Button
 var cast_button: Button
@@ -110,6 +114,38 @@ func show_state(sage: Dictionary, casts: Array, tick: int) -> void:
 	else:
 		cast_button.text = said
 	FxSkin.redraw(sage_button)
+	if Tokens.high_contrast and host != null:
+		var own := {go_button: "red"}
+		var pause: Variant = host.get("pause_button")
+		if pause is Control:
+			own[pause] = "parchment"
+		hc_plates(host, own)
+
+
+## In high contrast, the heist's plates under `root` as the key frame draws
+## them (02-heist_hc.png): the near-black card (high contrast's #140C2A)
+## inside the kit's light line, so every control stands well off its ground
+## (AD-R56). `own` gives some controls their own look: Get out the red
+## danger plate, and Pause, which stands on the night sky (L* about 23,
+## where the card's face would part by only 18), the clock's light plate
+## with its icon inked. The world's own view is not walked. Called on each
+## refresh, as the HUD swaps its plates.
+static func hc_plates(root: Node, own: Dictionary) -> void:
+	for c: Node in root.get_children():
+		if c is SubViewportContainer or c is SubViewport or c is Node3D:
+			continue
+		var box := RbBox.of(c) if c is Control else null
+		if box != null:
+			var want: String = own.get(c, "card" if box.look in HC_LEATHER else box.look)
+			if want != box.look:
+				UI.dress(c as Control, want, box.radius_points)
+				if Tokens.material(want)["family"] == "light":
+					# The icon is drawn in the light ink of dark plates; on a
+					# light plate it is inked instead.
+					for d: Node in c.get_children():
+						if d is FxDraw:
+							(d as Control).modulate = FxSkin.INK_LINE
+		hc_plates(c, own)
 
 
 func _process(_delta: float) -> void:
