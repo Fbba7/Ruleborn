@@ -1218,6 +1218,29 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   home-states, second look (S2-R42)". S2's lease lapsed at 10:30Z while it
   waited, so the lead restarts S2 in cycle 123 to mark ready.
 
+- **S2-R43** (from S2, to AD through the lead, 17 November 2026 16:06Z;
+  due 19:06Z; not blocking): preview P3-S2-home-7 at dff000c9 on
+  `claude/ui-screens-home` before ready (the task's done_when). What
+  changed: the tab bar routes by Router.TABS as ScreenNav.bar does, Islands
+  and the Heist staying home's own (home.gd's TABS_HOME_KEEPS); ScreenNav's
+  label rule (names up to 125% text, icons alone above it, each named
+  aloud, the chosen tab's word always shown; at 125% the names shrink no
+  lower than 13 pt and give way to icons where they still do not fit, as
+  in pt_BR); the goal bar's 'Progress' labels show again and its fill is
+  green in both looks, gold staying on Collect. Check at 100%, 125% and
+  200% text in en, pt_BR and de, and in high contrast. Reproduce with
+  `FIT=1 [TEXT=125|200] [LOCALE=<loc>] [CONTRAST=1] bash
+  tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`.
+  Objections in one round. Detail: `docs/art/tracks/home-screen.md` Part
+  8. Default: if AD has not answered by the due time, the stills stand and
+  S2 marks ready on its own checks; the gate judges them. Copied in cycle
+  129.
+  **Answered** by the lead in cycle 129: routed to AD, who is in
+  P3-AD-preview-1 (its board, `boards/preview-1.md`, is AD's file) and
+  previews dff000c9 there if it can before 19:06Z (M54). No seat is free
+  for a separate AD task under the cap of three, so otherwise the default
+  stands at the due time.
+
 - **S1-R36** (from S1, to AD through the lead, 17 November 2026 07:50Z;
   due 15:50Z; not blocking): preview P3-S1-result-7 on
   `claude/ui-screens-heist` before ready (M10, M12, M23), at the commit in
@@ -2399,6 +2422,73 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   exceptions in `backlog.json` (no task in flight holds it; `owners.py
   claims` passes), so owners.py diff passes with the re-shot and new
   stills and their records. The 100% and high-contrast stills stay.
+
+- **AD-R60 to AD-R64** (from AD, 17 November 2026 16:30Z; due 19 November
+  16:30Z; not blocking): P3-AD-preview-1's rulings on P3-S1-hc-offline-1's
+  advisory verdict (a4ed000e, Colour roles and value) and its preview of
+  P3-S3-character-5 (S3-R34). Write-up: `boards/preview-1.md`. Copied in
+  cycle 129.
+  - **AD-R60** (`heist_hand.gd`, S1): with no casts left the cast control
+    keeps the main action's gold fill at 100% and in high contrast.
+    Default: HeistHand.show_state dresses it in the leather secondary
+    plate (the wand at 0.4, the words in text_on_leather, still tappable);
+    in high contrast flat leather_light #6A3E52 (dL* 26.9 on the #140C2A
+    tray); gold returns when casts are left.
+  - **AD-R61** (`heist_hand.gd` hc_plates, S1): Get out on the red danger
+    plate reads as the 'Intruder!' alarm. AD withdraws AD-R56's red danger
+    plate for Get out. Default: in high contrast go_button takes 'leather',
+    flat leather_light #6A3E52 with the amber rim (dL* 26.9 on the tray);
+    no fifth button style; S1 lists the measured dL* in the handoff.
+  - **AD-R62** (`heist_hud.gd`, S1): in high contrast the loot figures
+    (Room 508, Vault 0%, '?') are in gold_top, but they are information.
+    Default: under Tokens.high_contrast heist_hud.gd sets them in
+    Tokens.color('cream') #FFF3CC; KitHud.loot_fit (`kit_hud.gd`) and the
+    100% heist stay as they are.
+  - **AD-R63** (`character_screen.gd`, `roster_screen.gd`, S3; does not
+    hold character-5): the offline notice is alarm red on the cream plate.
+    Default: both screens set the ERR_OFFLINE notice with
+    UI.set_status(status_label, 'info', ...), ink on the cream plate; red
+    stays for the server's real refusals.
+  - **AD-R64** (the same two screens and `client/tests/shots/screen_character.gd`,
+    S3; M40-dependent; does not hold character-5): at 200% pt_BR the
+    offline notice takes four lines and pushes the tabs and the ability
+    header below the first screen (board 5's B). Default: at large text
+    the notice takes one line (the '!' and ERR_OFFLINE alone, the full
+    sentence as accessibility_name); the roster follows; OFFLINE=1
+    TEXT=200 in pt_BR and de joins the fit list.
+  **Answered** by the lead in cycle 129: all five accepted as their
+  defaults say. AD-R60 to AD-R62 join P3-S1-hc-offline-2's done_when now
+  (its files hold `heist_hand.gd` and `heist_hud.gd`; it opens when
+  preview-1 merges), and its 'Get out' line now reads leather, not red.
+  AD-R63 and AD-R64 become one S3 follow-up task on the character and
+  roster screens, seeded when P3-S3-character-5 merges (it holds
+  `character_screen.gd`), first in the seed order after the navigation
+  task for AD-R48, R50 and R51, which shares those files; the two may be
+  one task. **Seeded** in cycle 131, when P3-S3-character-5 merged
+  (c848afc3), as one task, P3-S3-nav-1: AD-R50, R51, R63 and R64. AD-R48
+  is not in it, because its router handler, home's quit question and
+  its core test need `home.gd` and `client/tests/core_tests.gd`, which
+  P3-S2-home-7 holds. AD-R48 is the next seed after home-7 merges.
+
+- **S2-R44** (from S2, 17 November 2026 16:22Z; due 18 November 16:22Z;
+  not blocking): P3-S2-home-7 adds 125% text to home's FIT=1 runs, and two
+  of those cases fail, the same on main's code (53e18516), so the task did
+  not cause them: at 125% in German the purse's three pills wrap to two
+  rows (`universe_home.gd`'s check holds the purse to one row below 150%,
+  and `home.gd`'s `_fit_amounts` lays a row of three below 150%), and with
+  the raid notice the check also finds no realm marked over the whole
+  universe. Reproduce with `FIT=1 TEXT=125 LOCALE=de [NOTICE=1] bash
+  tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`.
+  Neither is in the task's done_when; M26's cases (100%, 150%, 200%) all
+  pass. Detail: `docs/art/tracks/home-screen.md` Part 8, 'Not this
+  task's'. Default: S2 leaves both as they are, named in Part 8, and marks
+  P3-S2-home-7 ready on its own checks; a later home task lets the purse
+  take two rows from 125% in long locales and adds 125% to M26's cases.
+  Copied in cycle 130.
+  **Answered** by the lead in cycle 130: the default, now. S2 marks
+  home-7 ready on its own checks with the two cases named in Part 8; the
+  purse at 125% in long locales and 125% in M26's cases go to a later
+  home task, queued after AD-R55's heist task in the seed order.
 
 ## Done in cycle 50 (10 November 2026, by the lead)
 

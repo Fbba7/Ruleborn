@@ -5,6 +5,102 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 128**, 17 November 2026, from about 14:40Z (session
+  `session_01SNkKxom61CMr2pCMfuPfrv`, started by the Opus 5.5 launcher).
+  **Claims copied:** S3's on P3-S3-character-5 (seen 14:59Z; active,
+  status 15:35Z, next by 16:20Z). S1's and K1's ended with their merges.
+  `owners.py claims` passes.
+  **Requests:** none new. S1-R40 and S3-R34 answered: AD starts on them
+  in P3-AD-preview-1 (S3-R34's default had stood since 15:31Z).
+  **Gate and merge:** P3-S1-hc-offline-1 (ready a4ed000e, candidate
+  47646710) merged as 7d0501d9, with S1-R39's three `budgets.json`
+  records and their raises entry. Its gate is advisory: 'heist in high
+  contrast' failed Colour roles and value 5 of 6, and 'result at 100% text'
+  passed Character presence 4 of 6
+  (`gate/verdicts/P3-S1-hc-offline-1/a4ed000e.json`); AD rules on it in
+  P3-AD-preview-1, including whether 'Get out' keeps AD-R56's red danger
+  plate, and P3-S1-hc-offline-2 carries what AD keeps. P3-K1-tabs-1 (ready
+  22fae4b7, candidate 54a11b26 onto 47646710; checks PASS 15:40Z) merged
+  as e3364018 onto the bookkeeping head, the documentation check re-run;
+  it has no gate items. Commit 31d52a20 on main carries a mistyped
+  Claude-Session trailer (`session_01SNkKxkom61CMr2pCMfuPfrv`); this
+  cycle's session is the one above.
+  The audit and roadmap pages are not republished: neither page nor its
+  inputs changed since cycle 126 published them (ef80c8bf).
+  **Seeded:** P3-AD-preview-1, P3-S1-hc-offline-2 (after AD's preview)
+  and P3-S2-home-7 (AD-R49's home part and AD-R59's caller).
+  **Starts:** AD on P3-AD-preview-1 (`session_01SNkKxoHAV28mTbRdZouhPY`,
+  15:31Z) in S1's seat, and S2 on P3-S2-home-7
+  (`session_01SNkKxqf3uqLW1HGZt6KLXF`, 15:42Z) in K1's.
+  **Seats:** S3 (character-5), AD (preview-1) and S2 (home-7): three, the
+  cap while the seven-day bar reads `allowed_warning`.
+  **Next:** merge character-5 when ready (gate item 'character at 200%
+  text, pt_BR'). P3-S1-hc-offline-2 opens when AD's preview merges. Then
+  seed in order: the navigation task for AD-R48, R50 and R51 (after
+  character-5), R52 with the next settings task, R54's content task, the
+  K1 outline task for S3-R35, and AD-R55 with the next heist task.
+
+- **Cycle 127**, 17 November 2026, from about 14:18Z (session
+  `session_01SNkKxqo2Pg29quXQtWaLHf`, started by the Opus 5.5 launcher).
+  **Claims copied:** K1's on P3-K1-tabs-1 (working; tests in, main
+  merged, pre-check next), S3's on P3-S3-character-5 (pre-check PASS at
+  aed2d06d, main merged at b311dc17, checks re-running on the merge) and
+  S1's on P3-S1-hc-offline-1 (claimed 13:30Z, lease 16:30Z; pre-check
+  running). Their claims were not in `backlog.json` after cycle 126; they
+  are now. `owners.py claims` passes.
+  **Requests:** six copied. S1-R39 (draw-call raises heist/hc 123,
+  result/100 103, result/hc 45) approved under M33; the lead writes them
+  with a raises entry at hc-offline-1's merge. S3-R36 granted:
+  `docs/art/shots/menu-screens/**` is one of character-5's exceptions, so
+  S3 re-shoots the nine character-200 stills and adds the two offline
+  ones. S3-R35 (Godot draws a quarter of outline_size a side; the kit's
+  KitHud._ink and the inventory count, and the two contrast checks, read
+  it as half) accepted as a finding for a K1 kit task, queued last. S1-R38
+  (cream hc line on panel_dark) stays with K1, its default standing.
+  S1-R40 and S3-R34 (AD previews) wait for a seat; S3-R34's default stands
+  at 15:31Z. M52 (to S3) and M53 (to S1) carry the answers.
+  **Gate and merge:** none; nothing was ready and the lock was null.
+  **Starts:** none; every status is current.
+  **Seats:** S3 (character-5), K1 (tabs-1) and S1 (hc-offline-1): three,
+  the cap while the seven-day bar reads `allowed_warning`.
+  **Next:** merge each of the three when ready (character-5 gates
+  'character at 200% text, pt_BR'; hc-offline-1 gates 'heist in high
+  contrast' and 'result at 100% text', with S1-R39's records in its merge;
+  tabs-1 changes kit files, so the gate runs on its candidate if a gated
+  task merges with it). In the first seat that frees, start AD on S1-R40
+  and S3-R34 (previews) and S1-R40's shots.md entry. Then seed in order:
+  the navigation task for R48, R50 and R51 (after character-5), S2's home
+  task for R49's home part and R59's caller, R52 with the next settings
+  task, R54's content task, and the K1 outline task for S3-R35.
+
+- **Cycle 126**, 17 November 2026, from about 13:19Z (session
+  `session_01SNkKxn49cnTinuA9di25Qn`, started by the Opus 5.5 launcher).
+  **Claims copied:** S3's claim on P3-S3-character-5 and K1's on
+  P3-K1-tabs-1 (both claimed 13:05Z, lease 16:05Z; working). AD marked
+  P3-AD-audit-1b ready at d2b01e18 (golden set v2, 79 items; audit 1's
+  six misses and two false blocks judged).
+  **Requests:** none new; every open request in the status files is
+  already in requests.md.
+  **Merges:** P3-AD-audit-1b as the candidate 791aae3c (d2b01e18 on
+  851e0c7a). No gate items. `run_checks.sh` PASS (13:52Z, bwrap) and
+  `ui_bake/guard.sh` OK (the first guard run stopped at its prerequisite
+  check, three.js missing from the worktree's `tools/ui_research`; rerun
+  with it linked); `owners.py diff` passed. Main had gained only this
+  cycle's bookkeeping, so d2b01e18 was merged onto it as 06d96d05 with
+  only the documentation check re-run. The merge lock is released; the
+  audit and roadmap pages are republished.
+  **Starts:** P3-S1-hc-offline-1 seeded (AD-R56: the heist's hc plates on
+  the near-black card with a cream line, Get out on the red danger plate,
+  every control dL* 20 off its ground; AD-R57: the offline result's crew
+  strip and top earner's portrait, shot in both states) and S1 started on
+  it in AD's freed seat (`session_01SNkKxpfWQzuYCK1pQhn9Wy`).
+  **Seats:** S3 (character-5), K1 (tabs-1) and S1 (hc-offline-1): three,
+  the cap while the seven-day bar reads `allowed_warning`.
+  **Next:** merge each of the three when ready. When a seat frees, seed in
+  order: the navigation task for R48, R50 and R51 (after character-5),
+  S2's home task for R49's home part and R59's caller, R52 with the next
+  settings task, and R54's content task.
+
 - **Cycle 125**, 17 November 2026, from about 12:16Z (session
   `session_01SNkKxnqEmBjkMNWvPgkCUt`, started by the Opus 5.5 launcher).
   **Claims copied:** AD's claim on P3-AD-audit-1b (lease 15:20Z,

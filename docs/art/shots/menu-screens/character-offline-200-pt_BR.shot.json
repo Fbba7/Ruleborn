@@ -1,0 +1,66 @@
+{
+ "controls": [
+  {
+   "interactive": false,
+   "name": "words 1: ! O plantel não mudou: nenhum servidor configurado",
+   "rect": [
+    28.17,
+    10.83,
+    333.67,
+    193.92
+   ]
+  },
+  {
+   "name": "arrow 2: Personagem anterior, Mossbear",
+   "rect": [
+    21.67,
+    335.11,
+    52.0,
+    52.0
+   ]
+  },
+  {
+   "name": "arrow 3: Próximo personagem, Glass Golem",
+   "rect": [
+    313.44,
+    335.11,
+    52.0,
+    52.0
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "words 4: Skyskipper",
+   "rect": [
+    110.14,
+    379.17,
+    166.83,
+    47.67
+   ]
+  },
+  {
+   "name": "back 5: Plantel",
+   "rect": [
+    28.17,
+    668.42,
+    60.67,
+    60.67
+   ]
+  },
+  {
+   "name": "up 6: Skyskipper: Subir ao nível 4, 200 de Essência",
+   "rect": [
+    97.5,
+    630.5,
+    264.33,
+    136.5
+   ]
+  }
+ ],
+ "frame_pt": [
+  390.0,
+  845.0
+ ],
+ "image": "character-offline-200-pt_BR.png",
+ "text_scale": 2.0
+}
