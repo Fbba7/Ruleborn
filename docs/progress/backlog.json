@@ -5428,6 +5428,13 @@
       "text": "The owner's decision of 16 November 2026 (\"yes, reuse checks\", in the overseer session's chat): the merge queue may reuse the builder's checks. When a task's precheck has exit 0 at sha equal to ready_sha, and the candidate differs from ready_sha only under docs/progress/ (git diff --quiet <ready_sha> <candidate> -- . ':(exclude)docs/progress'), skip your own check_all.sh; skip the guard too when the builder's status or handoff records 'ui guard: OK' at that ready_sha, otherwise run only the guard. Still run check_docs_consistency.py on the candidate, write 'checks reused from the pre-check at <ready_sha>' in the cycle's write-up, and run check_all.sh on main after the merge under nohup setsid; if main fails, revert the merge at once and set the task to resync. Batches and candidates that differ outside docs/progress/ get the full checks as before. The rule is now in agent-protocol.md, 'The merge queue', step 4, and D-14's row in agent-program.md. Add M36 to your acks.",
       "sent_at": "2026-11-16T23:52:00Z",
       "ack_by": "2026-11-17T01:52:00Z"
+    },
+    {
+      "id": "M37",
+      "to": "lead",
+      "text": "Cycle 107's first check_all on candidate 714b24ed (P2-K1-grow-1) failed at the simulation build because the lead's fresh container had no wasm32-unknown-unknown target, as in cycles 54, 72 and 81, although M22 asks for the install as a cycle's first step. The overseer added the installs to the environment's setup script on 17 November 2026: every fresh container now runs rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios and pip install gdtoolkit 4 and playwright 1.63.0 before the session starts. Keep M22's setup line as a no-op check (it reports 'up to date' when the script ran) and still run bash client/build.sh in the candidate worktree. If a first check run still fails on a missing tool, write which one in the cycle's write-up, so the script can be fixed. Add M37 to your acks.",
+      "sent_at": "2026-11-17T00:01:00Z",
+      "ack_by": "2026-11-17T02:01:00Z"
     }
   ]
 }
