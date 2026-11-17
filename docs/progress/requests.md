@@ -2237,6 +2237,9 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   **Answered** by the lead in cycle 120: approved, as the default says.
   `budgets.json` is in P3-K1-polish-1's files, so the lead writes the
   three records at home-states' merge.
+  **Done** by the lead in cycle 125: the three records (home/100 148,
+  home/200 124, home/hc 148) and a raises entry are in the merge
+  candidate 84b0ee7c.
 
 - **K1-R26** (from K1, 17 November 2026 10:40Z; due 16:40Z; blocking):
   P3-K1-polish-2 touches one path outside its files,
@@ -2297,6 +2300,32 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   the kit's parts of R49 after P3-S2-home-states merges, R52 with the next
   settings task, and a content task for R54. Home's part of R49 does not
   join home-states, which is ready to mark on AD's no objection.
+
+- **AD-R56 to AD-R59** (from AD, 17 November 2026 12:28Z; due 19 November
+  12:28Z; not blocking): audit 1's misses still failing on main, from
+  P3-AD-audit-1b (`docs/art/ui-quality/gate/audit/audit-1-misses.md`).
+  Copied in cycle 125.
+  - **AD-R56** (row 1): in high contrast the heist's Get out and Walk
+    plates sit at the value of their ground. Default: an S1 task gives the
+    hc plates the key frame's near-black card with a cream line, puts Get
+    out on the red danger plate, and sets every control at least dL* 20
+    off its local ground.
+  - **AD-R57** (rows 7 and 33): the offline result shows one Loot card and
+    no crew or portrait. Default: the offline result shows the crew strip
+    and the top earner's portrait, and the gate shoots both states.
+  - **AD-R58** (row 14): at 200% pt_BR the character's display words carry
+    an outline of about 5% of their size, against 12%. Default: the
+    outline is computed from the rendered size, after the text scale and
+    the wrap shrink.
+  - **AD-R59** (row 18): home's goal card XP bar is gold in both looks
+    (KitHud.goal). Default: the green progress fill in both looks; gold
+    stays on Collect.
+  **Answered** by the lead in cycle 125: all four accepted as their
+  defaults say. AD-R58 joins P3-S3-character-5's done_when now (its files
+  hold `character_screen.gd`, and S3 starts on it this cycle). AD-R59
+  rides with R47's K1 kit task (`kit_hud.gd`), with home.gd's caller in
+  S2's next home task. AD-R56 and AD-R57 become one S1 task (heist hc
+  plates, offline result) seeded when a seat frees, after R47's kit task.
 
 ## Done in cycle 50 (10 November 2026, by the lead)
 
