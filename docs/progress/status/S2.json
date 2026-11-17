@@ -7,14 +7,14 @@
   "task_id": "P2-S2-home-6",
   "task_state": "working",
   "claimed_at": "2026-11-17T01:00:00Z",
-  "lease_until": "2026-11-17T04:00:00Z",
-  "updated_at": "2026-11-17T02:23:00Z",
-  "expected_next_update_by": "2026-11-17T03:05:00Z",
+  "lease_until": "2026-11-17T06:00:00Z",
+  "updated_at": "2026-11-17T02:59:00Z",
+  "expected_next_update_by": "2026-11-17T03:44:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "e674b614",
-    "next_step": "Pre-check PASS on e674b614 (02:21Z); gate requested on it. Waiting for the lead's verdict and AD's preview (S2-R34, due 03:30Z); on the verdict, mark ready.",
-    "at": "2026-11-17T02:23:00Z"
+    "next_step": "Gate at e674b614: 5 of 6 item-qualities pass; 'home at 100% text', Display type fails 3/3 (AD-R45 (a)). First fail under M43. Fixing: the plated live words' shadow (outline-wide, drop-deep) and gold 'After' word, and the 100% baked counts' stroke, drop and gradient (the kit page is sampled without mipmaps at ~12% scale). Then fit sweep, checks, pre-check, gate_request on 'home at 100% text' again.",
+    "at": "2026-11-17T02:59:00Z"
   },
   "precheck": {
     "sha": "e674b614a15302227eb9ee9d5d8ba7e9cac8ce14",
@@ -22,32 +22,7 @@
     "finished_at": "2026-11-17T02:21:09Z",
     "summary": "All checks passed."
   },
-  "gate_request": {
-    "sha": "e674b614a15302227eb9ee9d5d8ba7e9cac8ce14",
-    "items": [
-      {
-        "item": "home at 100% text",
-        "qualities": [
-          "Display type",
-          "Hierarchy",
-          "Character presence"
-        ]
-      },
-      {
-        "item": "home at 200% text, pt_BR",
-        "qualities": [
-          "Display type",
-          "Hierarchy"
-        ]
-      },
-      {
-        "item": "home in high contrast",
-        "qualities": [
-          "Hierarchy"
-        ]
-      }
-    ]
-  },
+  "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
@@ -55,7 +30,8 @@
     "M28",
     "M26",
     "M25",
-    "M33"
+    "M33",
+    "M43"
   ],
   "requests": [
     {
@@ -540,5 +516,5 @@
     }
   ],
   "answers": [],
-  "next_step": "Wait for the gate's verdict on e674b614 and S2-R34; mark ready in the turn the verdict arrives."
+  "next_step": "Gate at e674b614: 5 of 6 item-qualities pass; 'home at 100% text', Display type fails 3/3 (AD-R45 (a)). First fail under M43. Fixing: the plated live words' shadow (outline-wide, drop-deep) and gold 'After' word, and the 100% baked counts' stroke, drop and gradient (the kit page is sampled without mipmaps at ~12% scale). Then fit sweep, checks, pre-check, gate_request on 'home at 100% text' again."
 }
