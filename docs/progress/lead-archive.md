@@ -5,6 +5,34 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 119**, 17 November 2026, from about 07:40Z (session
+  `session_01SNkKxqCqKwynFeQfEP4pR3`, started by the Opus 5.5 launcher).
+  **Claims copied:** AD on P3-AD-audit-1 (07:30Z), K1 on P3-K1-polish-1
+  (07:45Z), S1 on P3-S1-result-7 (07:26:30Z) and S2 on P3-S2-home-states
+  (07:30Z). Each lease is three hours, and none has lapsed.
+  **Requests:** S2-R36 to S2-R40 copied. S2-R36 (a preview of home-states
+  at 4797b5c3) goes to AD, who answers once its blind labelling for
+  audit-1 is written; if AD has not answered by 16:00Z, S2's default
+  stands. S2-R37 is confirmed: home has no shield timer, because
+  home-screen.md outranks the key frame. For S2-R39 the default stands:
+  home shows only the counts the store holds. S2-R38 and S2-R40 are
+  granted in this task. `client/world/universe_pins.gd` is the lead's
+  file and has no task in flight, so it joins P3-S2-home-states' files,
+  with a done_when line: the locked plate carries the realm's name, and at
+  large text it takes a short form before it hides. Without that, the lock
+  would read by colour alone at 200%. The estimate moves to 2.0h, and
+  `owners.py claims` passes. M50 tells S2.
+  **Gate and merges:** none. Nothing is ready, and no gate request is
+  open.
+  **Starts:** none. Four builders run.
+  **Seats:** four of four. The seven-day bar reads `allowed_warning` in
+  this cycle, so order 3 drops the cap to three. The four running builders
+  finish their tasks, and no builder starts until fewer than three run.
+  **Next:** when K1's polish-1 merges, start K1 on polish-2, but only if
+  fewer than three builders run while the bar reads `allowed_warning`.
+  S3 starts on character-5 after polish-2, and P3-AD-flow-2 after the
+  audit's merge.
+
 - **Cycle 118**, 17 November 2026, from about 07:14Z (session
   `session_01SNkKxpjRpZTfmY8CdqhAf9`, started by the Opus 5.5 launcher).
   **Claims copied:** none; no builder session was running.

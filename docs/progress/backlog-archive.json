@@ -4833,6 +4833,56 @@
       "updated_at": "2026-11-17T09:35:00Z",
       "updated_by": "lead (cycle 119)",
       "exceptions": []
+    },
+    {
+      "id": "P3-K1-polish-1",
+      "title": "The kit's parchment drawn when scrolled (S3-R32) and its numerals mipmapped (S2-R35)",
+      "phase": 3,
+      "role": "K1",
+      "model": "Opus 5.5",
+      "assigned_to": "K1",
+      "files": [
+        "client/ui/rb_box.gd",
+        "client/ui/kit_numerals.gd",
+        "client/ui/art/kit_3.webp.import",
+        "client/ui/art/kit_3_hc.webp.import",
+        "client/tests/ui_kit_tests.gd",
+        "tools/ui_bake/budgets.json"
+      ],
+      "deps": [],
+      "done_when": [
+        "S3-R32: RbBox keeps drawing its panel while its top edge is scrolled above the screen, so at 200% text in en and pt_BR the character screen's Stats tab scrolled to the end (TEXT=200 LOCALE=pt_BR TAB=1 SCROLL=99999 bash tools/render/shoot.sh client/tests/shots/screen_character.gd out.png) shows the parchment behind the stat tiles and their note; the still named in the handoff",
+        "S2-R35: mipmaps on kit_3.webp and kit_3_hc.webp and TEXTURE_FILTER_LINEAR_WITH_MIPMAPS on KitNumerals.Row, so the gold numerals keep their stroke, drop and gradient drawn about 18 px tall; texture bytes within tools/ui_bake/budgets.json (a budget raised only with the measured figure in the handoff)",
+        "tests in client/tests/ui_kit_tests.gd: an RbBox panel scrolled half above its parent still draws, and KitNumerals.Row's filter uses mipmaps",
+        "at 100% text the catalogue's shots unchanged, or the handoff names each change",
+        "bash tools/ui_bake/guard.sh",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed under docs/art/ui-quality/gate/verdicts/ or outside the task's files (M48)",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 2.5,
+      "tier": 2,
+      "critical": false,
+      "state": "merged",
+      "claim": {
+        "agent": "K1",
+        "branch": "claude/ui-bake",
+        "claimed_at": "2026-11-17T07:45:00Z",
+        "seen_at": "2026-11-17T07:50:00Z",
+        "lease_until": "2026-11-17T10:45:00Z"
+      },
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "57ea213c",
+      "merged_sha": "20304b70",
+      "updated_at": "2026-11-17T10:20:00Z",
+      "updated_by": "lead (cycle 122)",
+      "exceptions": [
+        "client/tests/shots/ui_kit_polish.gd",
+        "client/tests/shots/ui_kit_polish.gd.uid"
+      ]
     }
   ],
   "idle_queue": [
