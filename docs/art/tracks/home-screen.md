@@ -475,6 +475,46 @@ The gate's advisory verdict on home-6 (`verdicts/P2-S2-home-6/e674b614.json`) pa
 
 **Evidence.** Stills at 100% in en and de and at 200% in en. Every count shows the cream-to-gold gradient, the ink stroke all round and the hard drop, and the words after it are gold. Draw calls on home (`budget_shots.py`): 143 at 100%, 118 at 200% and 143 in high contrast (records 145, 121, 145; the same as before the task). `check_screens.py` OK. FIT=1 in M26's 57 cases on bac22476: all "fit ok".
 
+## Part 7: the states the fixture lacked (P3-S2-home-states)
+
+Board 3 carried a note through every round: the shot's fixture (`keyframe()` in `client/tests/shots/universe_home.gd`) had no notifications, no shield and no locked realm. So the dock's count badges, the Defence timer "5 h 12 min" and Lantern Vale's "Opens at Keeper 28" were never seen. This part adds what the design allows of them, and checks them.
+
+**What changed.**
+
+- **Lantern Vale is locked in the key frame's state.** `keyframe()` loads the sample universe with five outer realms open (`UniverseSample.view(5)`), so the sixth, Lantern Vale, is the next to open, blocked until Keeper 28. The map then draws its locked plate left of the Heart, where the key frame has it. When `OUTER` is given, the fixture keeps that count, so the cases that set it are unchanged.
+- **The locked plate names its realm, and has a short form** (`client/world/universe_pins.gd`, granted to this task in cycle 119 under S2-R38 and S2-R40). It reads "Lantern Vale" over the lock and "Opens at Keeper 28" ("Abre no Guardião 28", "Öffnet bei Hüter 28"), as key frame 02 has it, on the map's dark pill (the done_when keeps it dark). Where that finds no place within reach of the island's rim, it takes the lock and "28" on the same pill before it hides, as the realm pins shrink to their level chips (`_shape`). That happens at 200% text, where the full plate is about as wide as the free band beside the left side buttons. So the locked realm reads in words at every size, never as a dark island alone. A Spire-locked realm takes the same two forms with the Spire's level. The plate's spoken name is the realm's name and its words. In both forms it keeps the side buttons' gutter (`safe_side_points`, 16 pt) from the screen's edges, after AD's preview of 4797b5c3 (S2-R36, note 1) found it about 4 pt from the left edge.
+- **The Crew tab counts the idle crew** (`HomeParts.tab_badges`, from the roster's slice). The design's tutorial gives home "an idle-worker badge" once every producer is staffed (minutes 5 to 7). `keyframe()` adds two idle characters to the sample's four (two working, two idle), so four of the six are idle and the Crew tab shows "4", as in the key frame. The count is the kit's badge (`KitTabs.make`), a number on red, so it is not carried by colour alone, and its name is spoken (`KIT_TAB_BADGE`).
+- **The Defence badge** still counts the raids not yet seen ("2"), as before.
+
+**What is not built, and why.**
+
+- **No shield timer on home.** The key frame shows "5 h 12 min" under the Defence button. The design document overrules that frame: its table of key-frame changes names "Home shield" and says "No timers on home; 12.3's protection said in words on the defence screen while it lasts; shields are never sold" (12.3, 18.8, 22.1), and the home's rules say "no timers on the home screen". The design outranks the task and the key frame, so home shows no timer. The lead confirmed it in cycle 119 (S2-R37), and the task's done_when now says so.
+- **No counts on Laws, Heist, Friends or Shop, and Season keeps its "!".** The key frame shows Laws 1, Heist 2, Friends 1, Shop 1 and Season 3. The store holds no count for any of them: no unread laws, no ready heists, no friend requests, no shop offer counted, and the season track says only whether a reward can be claimed, which the Season button shows as "!". Making up a count would show the player a number that means nothing. The lead kept that in cycle 119 (S2-R39): home shows only the counts the store holds, and each other count comes with the task that puts its source in the store.
+
+**AD's preview** (S2-R36, at 5d25f9cb, the state of 4797b5c3; board-3.md, "Preview of home-states"): no objection, three notes. (1) The plate sat inside the 16 pt gutter: fixed, as above. (2) At 200% the Defence badge's top touches the foot of the 61.0k plate, clear of the gauge's fill; AD asked for a drop of 2 to 4 pt only if the badge moves. It does not move in this task: the badge is the side button's, laid by `home.gd`, which is at gdlint's 1000 lines, and AD's default lets the stills stand. (3) The plate hid at 200%: fixed by the short form. AD previews the plate's new forms (S2-R42) before ready.
+
+**Evidence.**
+
+- **Fit.** All 57 of M26's cases print "fit ok" with `FIT=1` on e9285afd, at 100%, 150% and 200% text, in en, pt_BR, pt_PT, fr and de, with and without the raid notice, in high contrast, at 900 and 960 tall, with the widest amounts, 99 raids, an empty home, and no or six outer realms. (On 4797b5c3, before the plate's name and short form, and on ad6c25e7, before the gutter, all 57 passed too.)
+- **Clear of the pins and the side buttons** (board 3's objection B), seen in the stills at 100% and 200% (en, pt_BR, de) and in high contrast. The Crew tab's "4" sits on the tab's top right, inside the bar, under no pin. The Defence badge "2" keeps its place beside the Defence button, and the pins give it room as before. At 100% the locked plate, now two lines, sits left of the Heart, 24 pt from the left edge, below the Lab button and clear of it, and over the Heart's island but clear of the Heart's pin (en, pt_BR and de, whose "Öffnet bei Hüter 28" is the widest). At 200% the short form "28" sits beside the Lab button, clear of it and of the realms' chips (en, pt_BR, de and high contrast).
+- **Not by colour alone.** Every count is a number on its disc, with a dark outline in high contrast, and the tab's spoken name carries it (`KIT_TAB_BADGE`). The locked plate says its lock with the lock mark and words at every size: the realm's name and its opening level at 100% and 150%, the lock and "28" at 200%.
+- **Draw calls** (`budget_shots.py --only home/100,home/200,home/hc` on e9285afd):
+
+  | Shot | Before | Now | Record |
+  |---|---:|---:|---:|
+  | home/100 | 143 | 148 | 145 |
+  | home/200 | 118 | 124 | 121 |
+  | home/hc | 143 | 148 | 145 |
+
+  The Crew tab's badge costs 3: KitTabs' own badge, measured as 146 with six outer realms against 143 with the badge taken out. The locked plate, in place of a sixth realm's pin, costs 2 at 100% (148 against 146); its name batches with its words and costs nothing. At 200% the plate used to hide and now shows its short form, which costs 3 (124 against 121 on 4797b5c3). Textures and words below 4.5:1 (none) pass their records in all three shots, and home stays under §21.3's cap of 150 (2 under at 100%). S2 asked the lead to record 148, 124 and 148 (S2-R41).
+
+### AD's preview, second look (S2-R42)
+
+AD previewed e9285afd and had no objection: all 8 cases fit, board 3's objection B holds in each, nothing by colour alone (`docs/art/ui-quality/gate/boards/board-3.md`, "Preview of home-states, second look (S2-R42)"). Two notes did not hold the task; neither is acted on:
+
+- **At 200% the Defence badge's top overlapped the 61.0k plate's foot by 1 to 3 px.** Left as it is, AD's default. The drop AD suggested was tried: at large text the left edge's disc, when it carries a badge, stood in a holder taller than itself (`home.gd`, `_side`). With 8 pt, the extra height makes `_fit_edges` hide the whole left edge at 200% with the notice in pt_BR, pt_PT and fr (`fit FAIL side button defences hidden`, the same for lab). With 6 pt and 4 pt, pt_BR and pt_PT fit again but fr still loses the edge. A 1 to 3 px touch on a plate's foot costs less than losing Defence and Lab, so the drop was reverted (09f0f119). If the band gains height later, a 4 pt drop that applies only when the band has room is the way back.
+- **At 200% in pt_BR and de the short form sits about 7 px from the Heart's "6" pin.** Left as it is: it is clear, and the pin is the Heart's own. AD's advice, should the map lose more height, is to anchor the pill under the island instead of beside the Heart.
+
 ## Left for other tasks
 
 These widgets are no longer used by home, but they are outside this task's files:

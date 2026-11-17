@@ -51,8 +51,7 @@ const SKINS_OF := {
 	"K27": ["badge__box", "badge__dot"],
 	"K28": ["success__box", "tag__box", "tag__tag_violet", "tag__tag_warn", "tag__tag", "tag__island_label",
 		"panel_dark__plate"],
-	"K29": ["success__box", "success__banner_success"],
-	"K31": ["num_timer", "num_timer_red"],
+	"K29": ["success__box", "success__banner_success"], "K31": ["num_timer", "num_timer_red"],
 	"K33": ["panel_glass__box"], "K34": ["spinner__ring"],
 	"K38": ["disc__level_disc", "num_white"],
 	"K39": ["tile__reward_sky", "tile__reward_pink"],
@@ -96,6 +95,7 @@ func run() -> void:
 	_icons()
 	await _tab_words()
 	await _small_disc()
+	await preload("res://tests/shots/ui_kit_polish.gd").run(tree, check)
 	await _pieces()
 	_skins()
 	await _switch()

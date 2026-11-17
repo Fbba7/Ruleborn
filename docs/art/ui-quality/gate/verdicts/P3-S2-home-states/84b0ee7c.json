@@ -1,0 +1,70 @@
+[
+ {
+  "task_id": "P3-S2-home-states",
+  "sha": "84b0ee7ca9435ea2a880c7453e1c9f25be3482d5",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "advisory": true,
+  "at": "2026-11-17T12:30:00Z",
+  "item": "home at 100% text",
+  "quality": "Hierarchy",
+  "samples": [
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "All three samples pass. In grayscale the gold Collect 3.4k button is the lightest, most saturated large block and leads. The experience panel beside it is about the same size but dark and holds no action, so it falls behind (the v3 ruling), and the island pills, currency strip and selected Islands tab are smaller or darker. Its lead is at least as clear as the pass anchor's Level up card, which shares the eye with the gold HEIST tab."
+ },
+ {
+  "task_id": "P3-S2-home-states",
+  "sha": "84b0ee7ca9435ea2a880c7453e1c9f25be3482d5",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "advisory": true,
+  "at": "2026-11-17T12:30:00Z",
+  "item": "home at 100% text",
+  "quality": "Display type",
+  "samples": [
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "All three samples pass; this was cycle 122's fail at e674b614. 'Keeper 24', the one header over art, has a full dark ink outline. The headline counts (1,460, 142.0k, 31.4k, 61.0k, 82%) now share one treatment: light-to-gold fill, dark outline and a drop. Map, nav and button labels sit on plates. AD-R45 (a), the 100% path's flat plated counts, reads as fixed at 84b0ee7c."
+ },
+ {
+  "task_id": "P3-S2-home-states",
+  "sha": "84b0ee7ca9435ea2a880c7453e1c9f25be3482d5",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "advisory": true,
+  "at": "2026-11-17T12:30:00Z",
+  "item": "home at 200% text, pt_BR",
+  "quality": "Hierarchy",
+  "samples": [
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "All three samples pass. The full-width gold 'Coletar 3,4 mil' bar is the largest light shape and the eye lands on it first. The currency panels, the 82% card and the XP prose panel are dark and fall in behind, and the red energy badge and Heist tab are small. The lead is at least as clear as the pass anchor's Level up card."
+ },
+ {
+  "task_id": "P3-S2-home-states",
+  "sha": "84b0ee7ca9435ea2a880c7453e1c9f25be3482d5",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "advisory": true,
+  "at": "2026-11-17T12:30:00Z",
+  "item": "home in high contrast",
+  "quality": "Hierarchy",
+  "samples": [
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "All three samples pass. In grayscale Collect 3.4k is the brightest, heaviest control. The dark experience panel beside it, the currency strip, the island labels and the selected Islands tab all fall in behind it. One clear lead, at least as clear as the pass anchor's and unlike the fail anchor's split Cast and Get out pair."
+ }
+]

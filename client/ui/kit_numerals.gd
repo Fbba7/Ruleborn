@@ -71,6 +71,9 @@ class Row:
 		mouse_filter = Control.MOUSE_FILTER_IGNORE
 		size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 		size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		# The glyphs are baked 210 px tall and drawn a tenth of that: averaged
+		# from the page's mipmaps, their stroke, drop and gradient survive.
+		texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 
 	## Pixels on screen per pixel of a glyph: the tallest glyph fills the slot.
 	func glyph_scale() -> float:

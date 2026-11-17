@@ -587,3 +587,14 @@ class InkedRow:
 				off.y += maxf(1.0, height * DROP_SHARE)
 			draw_set_transform(off)
 			super()
+
+
+## The dock's counts from the roster's slice: the idle-worker badge (the
+## design's minutes 5 to 7), the crew with no work, on the Crew tab. The other
+## tabs carry no count until the store holds one for them.
+static func tab_badges(roster: Dictionary) -> Dictionary:
+	var idle := 0
+	for c: Dictionary in roster.get("view", {}).get("characters", []):
+		if str(c.get("state", "")) == "idle":
+			idle += 1
+	return {"crew": idle} if idle > 0 else {}
