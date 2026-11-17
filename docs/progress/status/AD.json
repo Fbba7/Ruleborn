@@ -8,12 +8,12 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-17T07:30:00Z",
   "lease_until": "2026-11-17T10:30:00Z",
-  "updated_at": "2026-11-17T07:30:00Z",
-  "expected_next_update_by": "2026-11-17T08:15:00Z",
+  "updated_at": "2026-11-17T07:52:00Z",
+  "expected_next_update_by": "2026-11-17T08:35:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "055840f7c59c5600ef0fb907fc2607ee69a9e9f7",
-    "next_step": "Render the 19 items of audit-1.md at their commits and label the 43 rows, blind."
+    "next_step": "Audit labelled and pushed; read requests.md for AD messages, run the pre-check and set ready."
   },
   "precheck": {
     "sha": "055840f7c59c5600ef0fb907fc2607ee69a9e9f7",
@@ -758,6 +758,6 @@
       "answer": "Preview of P2-S1-result-6 at 16515088 (screen code as at e4e78070). 8 renders (100% en, pt_BR, hc, hc pt_BR; 200% en, pt_BR, de, hc) all print 'fit ok'; draw calls 42 to 118. Rulings on the two departures: (1) every reward total in the kit's gold numerals stands: one rank, one treatment; the outline, drop and gold ramp read on parchment at 1x and 4x and hold in high contrast; '+2,310' stays the heaviest figure (wider tile, crew ring); (2) all three tiles on parchment stands: it is still 07's own frame for this screen, and the gate's record (gold on glass 0/3 at 24cc4d7c, white on glass split) rules glass out. One objection, not depending on the screen's final shape (M40): (H) at 200% German the Starlight row breaks 'Sternenlicht' by its letters ('Sternenlich' / 't'), the very case ResultFit.reward_rows exists to prevent, while FIT says ok. New in result-6: at result-4 the row held '+2.310 Sternenlicht' on one line; the baked gold total is now drawn wider. Fix in result_fit.gd: reward_rows measures the total as drawn (the label's combined minimum size after bake_totals), not the live font's width; keep the row (objection B), preferably by bringing the baked total back inside result-4's width; columns only as a last resort, with every tile still above the first screen's edge; FIT fails when a reward word breaks inside a word. Done when every reward word stands whole at 4x at 200% en, pt_BR, de and 150% de, German 200% shows 'Sternenlicht' on one line beside its total, FIT=1 prints 'fit ok' and draw calls stay at 150 or under. S1 can fix H in this task before merge; otherwise AD-R46 carries the follow-up. Notes, not holding: the cream tiles are the lightest mass in the 100% squint (L* 93-94 against Raid again's 85.6) but are information, and Hierarchy passes; still 07's gold and green tile edges need kit materials (only reward_sky and reward_pink are edged parchment), a kit follow-up the lead may queue after phase 2; the fee line at 200% pt_BR and de sits under the scroll's edge (objection F's cut, as written); the crew card at the fold in pt_BR 100% carries over. Write-up and stills: docs/art/ui-quality/gate/boards/board-4.md, 'Preview of result-6 (S1-R35)'."
     }
   ],
-  "next_step": "Render the 19 items of audit-1.md at their commits and label the 43 rows, blind.",
-  "last_update": "2026-11-17T07:30Z: P3-AD-audit-1 claimed (cycle 118). Blind: no verdicts, board verdict lines, requests.md Gate paragraphs or lead notes opened."
+  "next_step": "Audit labelled and pushed; read requests.md for AD messages, run the pre-check and set ready.",
+  "last_update": "2026-11-17T07:52Z: P3-AD-audit-1: all 19 items rendered at their commits; all 43 rows labelled (30 pass, 13 fail), blind, and pushed."
 }
