@@ -472,7 +472,7 @@ The gate's advisory verdict on home-6 (`verdicts/P2-S2-home-6/e674b614.json`) pa
 
 **A kit fix is better.** Mipmaps on the kit's pages (`kit_*.webp.import`) and a mipmap filter in `KitNumerals.Row` would keep every screen's baked numerals sharp at small sizes. That is K1's file, so S2 asked the lead for it (S2-R35). Until then, home draws its own treatment.
 
-**Evidence.** Stills at 100% in en, de and pt_BR, in high contrast, and at 200% in pt_BR and de. Every count shows the cream-to-amber gradient, the dark halo and the hard drop, and the words after it are gold. Draw calls on home (`budget_shots.py`): 142 at 100%, 117 at 200% and 142 in high contrast (records 145, 121, 145; 143, 118 and 143 before). InkedRow costs nothing: its layers are rect commands on the same texture in the same canvas item. FIT=1 in M26's 57 cases: being run on this commit.
+**Evidence.** Stills at 100% in en, de and pt_BR, in high contrast, and at 200% in pt_BR and de. Every count shows the cream-to-amber gradient, the dark halo and the hard drop, and the words after it are gold. Draw calls on home (`budget_shots.py`): 142 at 100%, 117 at 200% and 142 in high contrast (records 145, 121, 145; 143, 118 and 143 before). InkedRow costs nothing: its layers are rect commands on the same texture in the same canvas item. FIT=1 in M26's 57 cases on 10f93e8a: all "fit ok".
 
 ## Left for other tasks
 
