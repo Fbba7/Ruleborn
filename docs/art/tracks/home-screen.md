@@ -508,6 +508,13 @@ Board 3 carried a note through every round: the shot's fixture (`keyframe()` in 
 
   The Crew tab's badge costs 3: KitTabs' own badge, measured as 146 with six outer realms against 143 with the badge taken out. The locked plate, in place of a sixth realm's pin, costs 2 at 100% (148 against 146); its name batches with its words and costs nothing. At 200% the plate used to hide and now shows its short form, which costs 3 (124 against 121 on 4797b5c3). Textures and words below 4.5:1 (none) pass their records in all three shots, and home stays under §21.3's cap of 150 (2 under at 100%). S2 asked the lead to record 148, 124 and 148 (S2-R41).
 
+### AD's preview, second look (S2-R42)
+
+AD previewed e9285afd and had no objection: all 8 cases fit, board 3's objection B holds in each, nothing by colour alone (`docs/art/ui-quality/gate/boards/board-3.md`, "Preview of home-states, second look (S2-R42)"). Two notes did not hold the task:
+
+- **At 200% the Defence badge's top overlapped the 61.0k plate's foot by 1 to 3 px.** Fixed, as AD suggested: at large text the left edge's disc, when it carries a badge, stands in a holder 8 pt taller than itself, so the disc and its badge drop 4 pt (`home.gd`, `_side`). The badge now clears the plate's foot in en, pt_BR, de and high contrast at 200%. The Lab button below moves down with it; nothing else changes, and 100% text is untouched. `home.gd` stays at gdlint's 1000 lines (two comments were joined).
+- **At 200% in pt_BR and de the short form sits about 7 px from the Heart's "6" pin.** Left as it is: it is clear, and the pin is the Heart's own. AD's advice, should the map lose more height, is to anchor the pill under the island instead of beside the Heart.
+
 ## Left for other tasks
 
 These widgets are no longer used by home, but they are outside this task's files:

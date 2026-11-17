@@ -5,15 +5,15 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P3-S2-home-states",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-17T10:50:00Z",
   "lease_until": "2026-11-17T13:50:00Z",
-  "updated_at": "2026-11-17T10:50:00Z",
-  "expected_next_update_by": "2026-11-17T11:35:00Z",
+  "updated_at": "2026-11-17T11:20:00Z",
+  "expected_next_update_by": "2026-11-17T12:05:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "a4090ec7",
-    "next_step": "Reclaimed in cycle 123 (prior_sha 0f3a7a68). AD answered S2-R42: no objection at e9285afd, two notes not holding. Next: weigh note 1 (Defence badge 1-3 px over the 61.0k plate at 200%), merge main, setup, build, check_all, guard, pre-check, owners.py diff, gate_request, ready."
+    "next_step": "f0092fee: AD's note 1 fixed (Defence disc drops 4 pt at large text). Main merged (8ac36c59). Running: check_all and the large-text fit cases; then guard, check_screens, pre-check, owners.py diff, gate_request, ready."
   },
   "precheck": {
     "sha": "488c8b5a54e3a49a60f723436d20647395e8a0a2",
