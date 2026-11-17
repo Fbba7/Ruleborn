@@ -8,12 +8,12 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-17T01:31:29Z",
   "lease_until": "2026-11-17T04:31:29Z",
-  "updated_at": "2026-11-17T01:31:29Z",
-  "expected_next_update_by": "2026-11-17T02:16:29Z",
+  "updated_at": "2026-11-17T01:47:07Z",
+  "expected_next_update_by": "2026-11-17T02:32:07Z",
   "progress_marker": {
     "last_green_sha": "90c8b15ca6765cea2e9e4d749841582db74eef51",
-    "next_step": "drop result_screen.gd local fixes the kit now covers (S1-R32, S1-R15, S1-R23)",
-    "at": "2026-11-17T01:31:29Z"
+    "next_step": "gate at 02c2e6b8 (100% text): Display type pass 4-2, Character presence fail 4-2; framing the reward with crew art and baking the totals as T3 numerals",
+    "at": "2026-11-17T01:47:07Z"
   },
   "precheck": null,
   "gate_request": null,
