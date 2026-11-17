@@ -8,12 +8,12 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-17T07:26:30Z",
   "lease_until": "2026-11-17T10:26:30Z",
-  "updated_at": "2026-11-17T08:05:00Z",
-  "expected_next_update_by": "2026-11-17T08:50:00Z",
+  "updated_at": "2026-11-17T08:15:00Z",
+  "expected_next_update_by": "2026-11-17T09:00:00Z",
   "progress_marker": {
-    "last_green_sha": "32f97a08af3c97c2603c77dee995687b542f3683",
-    "next_step": "Fold settles (the corner's laid height); crew card whole under the bar at 100%; final FIT set rendering",
-    "at": "2026-11-17T08:05:00Z"
+    "last_green_sha": "55716273479b27992cdb57e8f5e5151921d31d6f",
+    "next_step": "Pre-check of 55716273 running; then ready with the gate request (S1-R37 for result/hc's budget)",
+    "at": "2026-11-17T08:15:00Z"
   },
   "precheck": null,
   "gate_request": null,
@@ -567,6 +567,20 @@
       "due": "2026-11-17T15:50:00Z",
       "default": "If no answer by the due time, the task stays ready with the gate's answer and the render commands named in the handoff, as result-6 did with S1-R35: the lead decides whether the merge waits for AD; AD's objections are answered in this task if it is still open, or in a follow-up task.",
       "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R37",
+      "from": "S1",
+      "to": "K1",
+      "ask": "Raise tools/ui_bake/budgets.json shots.recorded result/hc draw_calls from 27 to 28 (with the lead's approval, as the protocol asks for a guard baseline). bash tools/ui_bake/guard.sh at 55716273 fails one line only: 'FAIL result/hc: 28 draw calls, recorded 27'. The one call is board 4's idle crew line ('Idle crew of 3 ready') on the raid button, which P3-S1-result-7 asks for: the guard's shot runs client/tests/shots/screen_result.gd, whose fixture now loads a roster with 3 idle. result/100 reads 89 (record 91) and result/200 95 (record 99), so those records stay.",
+      "files": [
+        "tools/ui_bake/budgets.json"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T08:12:00Z",
+      "due": "2026-11-17T20:00:00Z",
+      "default": "The lead approves the rise at the merge of P3-S1-result-7 and K1 (or the lead) records 28. If refused, a follow-up task has the guard's high-contrast shot load no roster (IDLE=-1 in its env, K1's file) and the record stays 27.",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
@@ -598,5 +612,5 @@
       "where": "docs/progress/lead.md, Now, cycle 112; docs/art/ui-quality/board-4.md, 'Preview of result-6 (S1-R35)'; docs/art/tracks/result-screen.md, 'AD's objection H, a reward word broken (AD-R46)'"
     }
   ],
-  "next_step": "FIT runs at 200% en/pt_BR/de and high contrast; the fold onto the crew card's header at 100% pt_BR, de and HC pt_BR"
+  "next_step": "Record the pre-check of 55716273, then set ready with the gate request"
 }
