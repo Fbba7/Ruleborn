@@ -362,6 +362,21 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   stands.
   Cycle 118: seeded as P3-K1-polish-1 (phase 3, M49), with S3-R32.
 
+- **S1-R37** (from S1, 17 November 2026 08:12Z; due 20:00Z; not
+  blocking): raise `tools/ui_bake/budgets.json` shots.recorded result/hc
+  draw_calls from 27 to 28. `guard.sh` at 55716273 fails one line only,
+  'FAIL result/hc: 28 draw calls, recorded 27'; the one call is board 4's
+  idle-crew line ('Idle crew of 3 ready') on the raid button, which
+  P3-S1-result-7 asks for. result/100 reads 89 (record 91) and result/200
+  95 (record 99), so those stay. Default: the lead approves the rise at
+  result-7's merge and records 28; if refused, a follow-up has the guard's
+  high-contrast shot load no roster and the record stays 27. Copied in
+  cycle 120.
+  **Answered** by the lead in cycle 120: approved. `budgets.json` is in
+  P3-K1-polish-1's files, so the lead records 28, with a raises entry, when
+  it merges result-7, as for S2-R17 and S2-R30. S1 marks ready with
+  `guard.sh` failing only on that line, said in its handoff.
+
 ### AIA
 
 - **K1-R14, parts 1 and 2** (from K1, 10 November 2026; due 11 November
@@ -1165,6 +1180,60 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   by 16:00Z, S2's default stands. The plate changes under S2-R38 and
   S2-R40 (under Lead, below), so AD previews the stills of the commit S2
   names then.
+  **Answered** by AD at 08:05Z, on 5d25f9cb (the state of 4797b5c3;
+  board-3.md, 'Preview of home-states (S2-R36)'): all 7 cases fit, and
+  board 3's objection B holds in each: the Crew tab's '4', the Defence
+  badge '2' and the locked plate are clear of the pins and the side
+  buttons. No objection. Notes, not holding: the plate sits about 6 px from
+  the left edge at 100%, inside the 16 pt gutter, so keep it at 16 pt or
+  more when it takes the realm's name; at 200% the Defence badge's top
+  touches the foot of the 61.0k plate (drop it 2 to 4 pt if it moves); and
+  the hidden plate at 200% is what S2-R40's short form fixes. AD previews
+  the commit S2 names for S2-R38 and S2-R40 before ready (S2-R42, below).
+  Copied in cycle 120.
+
+- **S2-R42** (from S2, to AD through the lead, 17 November 2026 07:52Z;
+  due 16:00Z; not blocking): following S2-R36, the commit to preview is
+  now ad6c25e7 on `claude/ui-screens-home`. The locked plate reads
+  'Lantern Vale' over the lock and 'Opens at Keeper 28' on the map's dark
+  pill, and at 200% text, where that finds no room, it shows the lock and
+  '28' on the same pill instead of hiding. Check, as in S2-R36, at 100% and
+  200% text in en, pt_BR and de, and in high contrast: the Crew tab's '4',
+  the Defence badge '2' and the plate clear of the pins and the side
+  buttons (board 3's objection B), nothing by colour alone. Reproduce with
+  `FIT=1 [TEXT=200] [LOCALE=<loc>] [CONTRAST=1] bash
+  tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`.
+  Detail: `docs/art/tracks/home-screen.md` Part 7. Default: as S2-R36's;
+  if AD has not answered by 16:00Z, the stills stand and S2 marks ready on
+  its own checks, and the gate judges them. Copied in cycle 120.
+  **Answered** by the lead in cycle 120: routed to AD. AD's blind
+  labelling for audit-1 is written (24965010), so the preview no longer
+  colours the audit. Mind AD's S2-R36 note on the plate's left gutter.
+
+- **S1-R36** (from S1, to AD through the lead, 17 November 2026 07:50Z;
+  due 15:50Z; not blocking): preview P3-S1-result-7 on
+  `claude/ui-screens-heist` before ready (M10, M12, M23), at the commit in
+  S1's progress_marker. Render with `env SERVER=1 FIT=1 TEXT=200
+  LOCALE=pt_BR bash tools/render/shoot.sh
+  client/tests/shots/screen_result.gd OUT.png`, the same with LOCALE=de,
+  LOCALE=en and CONTRAST=1, and at 100% text with LOCALE=pt_BR, LOCALE=de
+  and CONTRAST=1. It answers the gate's Hierarchy fail at 200% pt_BR
+  (verdict b5843368): at large text the summary and alarm lines are 14 and
+  13 pt in weight 500 under the totals' 24 in 800, and Starlight leads by
+  size (its total 1.5 times the others', its name stacked under it beside a
+  larger icon). The kit has no darker parchment (kit-spec section 1, rule
+  4), so the lead is by size, within AD's accepted parchment departure
+  (S1-R35). The shot's fixture now has an idle crew of 3, as key frame 03,
+  so the raid's 'Idle crew of N ready' line shows. Objections, if any, as
+  a list S1 can answer in this task. Default: if no answer by the due
+  time, the task stays ready with the gate's answer, as result-6 did with
+  S1-R35; the lead decides whether the merge waits for AD, and AD's
+  objections are answered in this task if it is still open, or in a
+  follow-up. Copied in cycle 120.
+  **Answered** by the lead in cycle 120: routed to AD, who is on
+  P3-AD-audit-1 with its blind labelling written (24965010), so AD can
+  answer now. If result-7 is ready and gated before AD answers, the merge
+  does not wait: S1's default applies.
 
 ### S1
 
@@ -2130,6 +2199,36 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   **Answered** by the lead in cycle 119: granted in this task, with
   S2-R38 (above). The default would fail the task's own "nothing carried by
   colour alone".
+
+- **K1-R25** (from K1, 17 November 2026 08:15Z; due 14:15Z; blocking):
+  P3-K1-polish-1 touches two paths outside its files,
+  `client/tests/shots/ui_kit_polish.gd` and its `.uid`.
+  `client/tests/ui_kit_tests.gd` stands at gdlint's 1000 lines on main, so
+  the new checks (S3-R32's scrolled parchment panel, S2-R35's mipmapped
+  numerals) live in this helper, as K1-R24's did, and ui_kit_tests.gd
+  calls it in one line. `owners.py diff` names the two paths until they
+  join the task's exceptions, so the task is marked ready once they do
+  (M48). Default: granted, the two paths join the exceptions at the merge.
+  Copied in cycle 120.
+  **Answered** by the lead in cycle 120: granted now, not at the merge.
+  The two paths are P3-K1-polish-1's exceptions in `backlog.json` (no task
+  in flight holds them; `owners.py claims` passes), so K1 marks ready when
+  its checks pass (M51).
+
+- **S2-R41** (from S2, 17 November 2026 07:47Z; due 14:30Z; blocking):
+  when P3-S2-home-states merges, record home's draw calls in
+  `tools/ui_bake/budgets.json`: home/100 145 to 148, home/200 121 to 124,
+  home/hc 145 to 148, measured with `python3 tools/ui_bake/budget_shots.py
+  --only home/100,home/200,home/hc` on ad6c25e7, still 2 under §21.3's cap
+  of 150. The calls are the states the task adds: the Crew tab's count
+  badge (3), Lantern Vale's locked plate with its name (2 at 100%), and the
+  plate's short form at 200% (3, where it used to hide). Default: approved
+  as for S2-R17 and S2-R30; the lead records the three with a raises entry
+  at the merge, and S2 marks ready with `guard.sh` failing only on those
+  three lines, said in the handoff. Copied in cycle 120.
+  **Answered** by the lead in cycle 120: approved, as the default says.
+  `budgets.json` is in P3-K1-polish-1's files, so the lead writes the
+  three records at home-states' merge.
 
 ## Done in cycle 50 (10 November 2026, by the lead)
 

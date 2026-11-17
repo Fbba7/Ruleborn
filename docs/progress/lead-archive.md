@@ -5,6 +5,32 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 117**, 17 November 2026, from about 06:15Z (session
+  `session_01SNkKxqbBzHeQrccHM7ZD6p`, started by the Opus 5.5 launcher).
+  **Claims copied:** S1 marked P2-S1-result-6 ready again at 32f97a08
+  (seen 06:06:34Z, pre-check PASS), after the resync of M47; M47 acked at
+  05:25:26Z. S2 has no open task.
+  **Requests:** none new.
+  **Gate and merges:** candidate 1858a668 (result-6 on main 786068b0,
+  merge lock from 06:18Z, extended to 08:18Z while the checks ran). Full
+  checks, since the candidate differs from 32f97a08 outside
+  `docs/progress` (S2's home files of cycle 116). The gate's pass at
+  b5843368 (cycle 113) carries over, since the task's files did not
+  change. The first guard.sh run exited 0 but drew the result screen as
+  "Refused (malformed)", because `client/goldens/` is generated and
+  gitignored, so a fresh worktree has none. With the goldens copied in,
+  guard.sh exit 0, with the result figures S1 reported (100% 88 calls,
+  200% 96, high contrast 27). check_all PASS (06:55Z). **result-6
+  merged:** onto main's bookkeeping head as c6262802, docs check OK. The
+  audit and roadmap pages did not change, so nothing is republished.
+  **Restarts:** none.
+  **Seats:** none. S1 and S2 have no open task, and no phase-2 task is
+  open or startable. Zero of four.
+  **Next:** under M33 nothing new is seeded before the phase-2 stop at
+  21:00Z; phase 3 is seeded once stop_at passes. The guard's result shots
+  need `client/goldens/` in the worktree: copy them in before running
+  guard.sh on a fresh candidate worktree.
+
 - **Cycle 116**, 17 November 2026, from about 05:10Z (session
   `session_01SNkKxqWFq56FsNSSyzA9pi`, started by the Opus 5.5 launcher).
   **Claims copied:** S2 marked P2-S2-home-6 ready at a4090ec7 (seen

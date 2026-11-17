@@ -202,8 +202,9 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxqCqKwynFeQfEP4pR3` (cycle 119,
-17 November 2026 from about 07:40Z, started by the Opus 5.5 launcher). Cycle
+Latest lead cycle session: `session_01SNkKxnVWqySe65bs6CXACW` (cycle 120,
+17 November 2026 from about 08:05Z, started by the Opus 5.5 launcher). Cycle
+119's was `session_01SNkKxqCqKwynFeQfEP4pR3` (from 07:40Z). Cycle
 118's was `session_01SNkKxpjRpZTfmY8CdqhAf9` (from 07:14Z). Cycle
 117's was `session_01SNkKxqbBzHeQrccHM7ZD6p` (from 06:15Z). Cycle
 116's was `session_01SNkKxqWFq56FsNSSyzA9pi` (from 05:10Z). Cycle
@@ -607,6 +608,29 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 120**, 17 November 2026, from about 08:05Z (session
+  `session_01SNkKxnVWqySe65bs6CXACW`, started by the Opus 5.5 launcher).
+  **Claims copied:** unchanged: AD on P3-AD-audit-1, K1 on
+  P3-K1-polish-1, S1 on P3-S1-result-7 and S2 on P3-S2-home-states. No
+  lease has lapsed, and `owners.py claims` passes.
+  **Requests:** K1-R25, S1-R36, S1-R37, S2-R41 and S2-R42 copied, with
+  AD's answer to S2-R36 (no objection at 5d25f9cb; two notes on the
+  plate's left gutter and the Defence badge at 200%). K1-R25 is granted
+  now, not at the merge: `client/tests/shots/ui_kit_polish.gd` and its
+  `.uid` are P3-K1-polish-1's exceptions, so `owners.py diff` passes and
+  K1 can mark ready (M51). S1-R37 (result/hc 27 to 28) and S2-R41 (home's
+  three draw-call records) are approved; `budgets.json` is in polish-1's
+  files, so the lead writes them at each task's merge with a raises entry.
+  S1-R36 and S2-R42, two previews, go to AD, whose blind labelling for
+  audit-1 is written (24965010). M50 acked by S2.
+  **Gate and merges:** none. Nothing is ready, and no gate request is
+  open.
+  **Starts:** none. Four builders run, each session working.
+  **Seats:** four of four. The seven-day bar reads `allowed_warning`, so
+  order 3's cap is three: no builder starts until fewer than three run.
+  **Next:** gate and merge what is marked ready. When K1's polish-1
+  merges, start K1 on polish-2 if fewer than three builders run; S3 on
+  character-5 after it, and P3-AD-flow-2 after the audit's merge.
 - **Cycle 119**, 17 November 2026, from about 07:40Z (session
   `session_01SNkKxqCqKwynFeQfEP4pR3`, started by the Opus 5.5 launcher).
   **Claims copied:** AD on P3-AD-audit-1 (07:30Z), K1 on P3-K1-polish-1
@@ -663,31 +687,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   AD, which AD answers between audit rows without opening the audit's
   verdicts; when K1's polish-1 merges, start K1 on polish-2, then S3 on
   character-5 after it.
-- **Cycle 117**, 17 November 2026, from about 06:15Z (session
-  `session_01SNkKxqbBzHeQrccHM7ZD6p`, started by the Opus 5.5 launcher).
-  **Claims copied:** S1 marked P2-S1-result-6 ready again at 32f97a08
-  (seen 06:06:34Z, pre-check PASS), after the resync of M47; M47 acked at
-  05:25:26Z. S2 has no open task.
-  **Requests:** none new.
-  **Gate and merges:** candidate 1858a668 (result-6 on main 786068b0,
-  merge lock from 06:18Z, extended to 08:18Z while the checks ran). Full
-  checks, since the candidate differs from 32f97a08 outside
-  `docs/progress` (S2's home files of cycle 116). The gate's pass at
-  b5843368 (cycle 113) carries over, since the task's files did not
-  change. The first guard.sh run exited 0 but drew the result screen as
-  "Refused (malformed)", because `client/goldens/` is generated and
-  gitignored, so a fresh worktree has none. With the goldens copied in,
-  guard.sh exit 0, with the result figures S1 reported (100% 88 calls,
-  200% 96, high contrast 27). check_all PASS (06:55Z). **result-6
-  merged:** onto main's bookkeeping head as c6262802, docs check OK. The
-  audit and roadmap pages did not change, so nothing is republished.
-  **Restarts:** none.
-  **Seats:** none. S1 and S2 have no open task, and no phase-2 task is
-  open or startable. Zero of four.
-  **Next:** under M33 nothing new is seeded before the phase-2 stop at
-  21:00Z; phase 3 is seeded once stop_at passes. The guard's result shots
-  need `client/goldens/` in the worktree: copy them in before running
-  guard.sh on a fresh candidate worktree.
 - **Stopped here**, 13 November 2026, about 13:20Z (the owner's "Stop
   cleanly"). Cycle 84 (session `session_01SNkKxpqF4gx3yYhsXenUGt`) took
   the merge lock for P2-AD-board-4 (candidate `842f09ab`, AD's ready
