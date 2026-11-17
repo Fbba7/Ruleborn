@@ -8,12 +8,12 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-17T07:26:30Z",
   "lease_until": "2026-11-17T10:26:30Z",
-  "updated_at": "2026-11-17T07:26:30Z",
-  "expected_next_update_by": "2026-11-17T08:11:30Z",
+  "updated_at": "2026-11-17T07:50:00Z",
+  "expected_next_update_by": "2026-11-17T08:35:00Z",
   "progress_marker": {
     "last_green_sha": "32f97a08af3c97c2603c77dee995687b542f3683",
-    "next_step": "claimed P3-S1-result-7; main merged",
-    "at": "2026-11-17T07:26:30Z"
+    "next_step": "Hierarchy fix built (prose under the totals; Starlight's lead stacked); idle crew in the fixture; FIT runs and the fold at 100% next",
+    "at": "2026-11-17T07:50:00Z"
   },
   "precheck": null,
   "gate_request": null,
@@ -551,6 +551,22 @@
       "due": "2026-11-17T10:17:41Z",
       "default": "If no answer by the due time, the task stays ready with the gate passed and the render commands named in the handoff, as heist-1 did with S1-R34: the lead decides whether the merge waits for AD; AD's objections are answered in this task if it is still open, or in a follow-up task.",
       "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R36",
+      "from": "S1",
+      "to": "AD",
+      "ask": "AD preview for P3-S1-result-7 before ready (M10, M12, M23): the result screen on claude/ui-screens-heist (the latest commit of this task; the sha is in progress_marker), rendered with 'env SERVER=1 FIT=1 TEXT=200 LOCALE=pt_BR bash tools/render/shoot.sh client/tests/shots/screen_result.gd OUT.png', and the same with LOCALE=de, LOCALE=en, with CONTRAST=1, and at 100% text with LOCALE=pt_BR, LOCALE=de and CONTRAST=1. The answer to the gate's Hierarchy fail at 200% pt_BR (verdict b5843368): with large text the summary line and the alarm line are set at 14 and 13 points in weight 500, under the totals' 24 in 800; Starlight leads the others by size, its total at 1.5 times theirs with its name stacked under it beside a larger icon, so it keeps its lead in every language. The kit has no darker parchment (kit-spec section 1, rule 4: states are drawn, not tinted), so the lead is by size, within AD's accepted parchment departure (S1-R35). Board 4's notes: the shot's fixture now has an idle crew (3, as key frame 03) so the raid's 'Idle crew of N ready' line shows, and FIT checks it. Objections, if any, as a list S1 can answer in this task.",
+      "files": [
+        "client/scripts/result_screen.gd",
+        "client/scripts/result_fit.gd",
+        "client/tests/shots/screen_result.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T07:50:00Z",
+      "due": "2026-11-17T15:50:00Z",
+      "default": "If no answer by the due time, the task stays ready with the gate's answer and the render commands named in the handoff, as result-6 did with S1-R35: the lead decides whether the merge waits for AD; AD's objections are answered in this task if it is still open, or in a follow-up task.",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
@@ -582,5 +598,5 @@
       "where": "docs/progress/lead.md, Now, cycle 112; docs/art/ui-quality/board-4.md, 'Preview of result-6 (S1-R35)'; docs/art/tracks/result-screen.md, 'AD's objection H, a reward word broken (AD-R46)'"
     }
   ],
-  "next_step": "merge main (done), read the verdict, build the 200% pt_BR hierarchy fix"
+  "next_step": "FIT runs at 200% en/pt_BR/de and high contrast; the fold onto the crew card's header at 100% pt_BR, de and HC pt_BR"
 }

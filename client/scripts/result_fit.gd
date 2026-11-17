@@ -64,22 +64,109 @@ static func reward_rows(rows: BoxContainer, labels: Dictionary, width: float) ->
 	var room := column(width) - 2.0 * UI.px(10) - 2.0
 	var fits := true
 	for kind: String in labels:
-		var row := (labels[kind] as Label).get_parent() as BoxContainer
-		var wide := float(UI.px(26)) + 2.0 * row.get_theme_constant("separation")
-		for l: Label in [row.get_child(1), row.get_child(2)]:
-			wide += maxf(l.get_combined_minimum_size().x, l.get_theme_font("font").get_string_size(
-				l.text, HORIZONTAL_ALIGNMENT_LEFT, -1, l.get_theme_font_size("font_size")).x)
-		fits = fits and wide <= room
+		fits = fits and row_wide(tile_of(labels[kind]).get_child(0) as BoxContainer) <= room
 	if fits:
 		return
 	rows.add_theme_constant_override("separation", UI.px(8))
 	for kind: String in labels:
-		tile_column((labels[kind] as Label).get_parent().get_parent() as PanelContainer)
+		tile_column(tile_of(labels[kind]))
+
+
+## A reward row's width as drawn: its icon, its number and its name side by
+## side, each word at least its own width; a lead's stack (`lead_stack`) as
+## wide as its wider line.
+static func row_wide(row: BoxContainer) -> float:
+	var stack := row.get_child(1) as VBoxContainer
+	var words: Array = stack.get_children() if stack != null else [row.get_child(1), row.get_child(2)]
+	var gaps := 1 if stack != null else 2
+	var side := 0.0
+	var widest := 0.0
+	for l: Label in words:
+		var w := maxf(l.get_combined_minimum_size().x, l.get_theme_font("font").get_string_size(
+			l.text, HORIZONTAL_ALIGNMENT_LEFT, -1, l.get_theme_font_size("font_size")).x)
+		side += w
+		widest = maxf(widest, w)
+	return (row.get_child(0) as Control).custom_minimum_size.x + gaps * row.get_theme_constant("separation") \
+		+ (widest if stack != null else side)
+
+
+## The reward tile a total (`l`) stands in, a row, a column or a lead's stack.
+static func tile_of(l: Control) -> PanelContainer:
+	var p := l.get_parent()
+	while p != null and not p is PanelContainer:
+		p = p.get_parent()
+	return p as PanelContainer
+
+
+## Large text: the leading tile (Starlight's, a row from `tile_row`) with its
+## name under its number, beside its icon, so the number leads at its full
+## size whatever the name's length (German's "Sternenlicht"): the gate's
+## Hierarchy fail at pt_BR 200% (P2-S1-result-6), where a lead beside its
+## name had to shrink back to the others' size. The tile stays the number's
+## nearest panel (`tile_of`).
+static func lead_stack(tile: PanelContainer) -> void:
+	if Settings.text_scale <= KitLayout.SIDE_BY_SIDE_UP_TO:
+		return
+	var row := tile.get_child(0) as HBoxContainer
+	var stack := VBoxContainer.new()
+	stack.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	stack.add_theme_constant_override("separation", 0)
+	stack.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	stack.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	var number := row.get_child(1) as Control
+	var words := row.get_child(2) as Control
+	number.set_meta(&"lead_flags", number.size_flags_horizontal)
+	for c: Control in [number, words]:
+		row.remove_child(c)
+		stack.add_child(c)
+	# The number at its own width from the left; the name as wide as the
+	# stack, or a wrapping label would be laid at no width, a letter a line.
+	number.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	words.size_flags_horizontal = Control.SIZE_FILL
+	row.add_child(stack)
+
+
+## A lead's stack back to a row: its number and name side by side again.
+static func unstack(tile: PanelContainer) -> void:
+	var row := tile.get_child(0) as HBoxContainer
+	var stack := row.get_child(1) as VBoxContainer
+	if stack == null:
+		return
+	for c: Control in stack.get_children():
+		stack.remove_child(c)
+		row.add_child(c)
+		c.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	var number := row.get_child(2) as Control
+	number.size_flags_horizontal = number.get_meta(&"lead_flags", Control.SIZE_FILL)
+	(row.get_child(3) as Control).size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.remove_child(stack)
+	stack.queue_free()
+
+
+## Large text: the leading total (`l`, Starlight's) at its lead size, `top`
+## pixels, or the least step down from it (to `base`, the others' size) that
+## keeps its row within a phone `width` wide, so the lead never sends every
+## tile back to a column (the gate's Hierarchy fail, P2-S1-result-6). Its
+## icon follows its size. Measured from the live words, as `reward_rows`.
+static func lead_fit(l: Label, top: int, base: int, width: float) -> void:
+	if Settings.text_scale <= KitLayout.SIDE_BY_SIDE_UP_TO:
+		return
+	var row := tile_of(l).get_child(0) as BoxContainer
+	var icon := row.get_child(0) as Control
+	var room := column(width) - 2.0 * UI.px(10) - 2.0
+	var px := top
+	while true:
+		l.add_theme_font_size_override("font_size", px)
+		icon.custom_minimum_size = Vector2.ONE * roundf(UI.px(26) * float(px) / float(base))
+		if px <= base or row_wide(row) <= room:
+			return
+		px = maxi(base, px - maxi(1, roundi(px * 0.04)))
 
 
 ## A reward tile back from a row to the design's column: its icon, its
 ## number and its name centred one above another (KitCards.reward's).
 static func tile_column(tile: PanelContainer) -> void:
+	unstack(tile)
 	var row := tile.get_child(0) as HBoxContainer
 	var col := VBoxContainer.new()
 	col.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -158,7 +245,7 @@ static func hero_shrink(words: Array, numbers: Array, bar: Control) -> void:
 	var over := float(UI.px(6) + bar.get_parent().get_theme_constant("separation")) - bar.get_global_rect().position.y
 	var foot := 0.0
 	for l: Label in numbers:
-		foot = maxf(foot, (l.get_parent().get_parent() as Control).get_global_rect().end.y)
+		foot = maxf(foot, tile_of(l).get_global_rect().end.y)
 	over += foot
 	if over <= 0.0:
 		return
