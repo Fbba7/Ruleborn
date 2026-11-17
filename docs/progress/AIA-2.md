@@ -1,9 +1,9 @@
 # AIA-2 icon maker: progress
 
-- Status: Yellow (P3-AIA2-bake-1: the icon bake draws in Node by plain arithmetic, with no browser; two runs, a run with V8's vector units off and a `--jitless` run give the same bytes; on merge 17520f56 `check_all.sh` and `guard.sh` pass; pre-check next).
-- Progress: 6 of 7 tasks merged (P1-AIA2-toon-route at 9b2bde70, P1-AIA2-icons-1a at 8ce107c9, P1-AIA2-icons-1b at 90f72fd7, P1-AIA2-icons-2a at 027379a2, P1-AIA2-icons-2b at d30530ee, P2-AIA2-busts at fb07a2ce); P3-AIA2-bake-1 is working.
+- Status: Yellow (P3-AIA2-bake-1: the icon bake draws in Node by plain arithmetic, with no browser; two runs, a run with V8's vector units off and a `--jitless` run give the same bytes; on merge 17520f56 `check_all.sh` and `guard.sh` pass; pre-check PASS on 75798143; ready).
+- Progress: 6 of 7 tasks merged, the seventh ready (P1-AIA2-toon-route at 9b2bde70, P1-AIA2-icons-1a at 8ce107c9, P1-AIA2-icons-1b at 90f72fd7, P1-AIA2-icons-2a at 027379a2, P1-AIA2-icons-2b at d30530ee, P2-AIA2-busts at fb07a2ce); P3-AIA2-bake-1 is ready at 75798143.
 - Done: the toon route, icon batches 1a, 1b, 2a and 2b, the two painted busts; the machine-independent bake and the rebaked `icons_48` and `icons_256`.
-- Next: the pre-check and `owners.py diff`, then ready. Batches 3 and 4 are deferred (D13 (c)).
+- Next: the lead's merge and its `guard.sh` run in another container. Batches 3 and 4 are deferred (D13 (c)).
 - Blocked by: none. AIA2-R4 (non-blocking) asks AD about Pip's high-contrast ring; AIA2-R5 (non-blocking) asks the lead to correct two lines of `art/ui/icons/README.md`.
 - Owner decision needed: none.
 
@@ -15,7 +15,7 @@
 | P1-AIA2-icons-2a: eight heist-status and HUD icons in `icons_48` | 4 | Merged at 027379a2 | gate 12 of 12 at 6a382d97 (advisory); pre-check PASS on ac4809ed |
 | P1-AIA2-icons-2b: the six reward icons in `icons_48`, five of them in `icons_256` | 3 | Merged at d30530ee | gate advisory, four passes (lead cycle 48); check_all PASS on candidate 4058367a |
 | P2-AIA2-busts: Bramble and Hollow painted flat at the source (board 1's note G, AD-R20) | 2 | Merged at fb07a2ce | `guard.sh` OK; heist draw calls within their records; AIA2-R3 done in fad94652 |
-| P3-AIA2-bake-1: the icon bake gives the same bytes on every machine; `icons_48` and `icons_256` rebaked | 2 | Working | two runs, a vector-units-off run and a `--jitless` run byte-identical; `check_icons.py` all ok; on merge 17520f56 `check_all.sh` PASS and `guard.sh` OK; contact sheets in `art/ui/icons/studio/proof_bake/` |
+| P3-AIA2-bake-1: the icon bake gives the same bytes on every machine; `icons_48` and `icons_256` rebaked | 2 | Ready at 75798143 | pre-check PASS on 75798143; `owners.py diff` ok; two runs, a vector-units-off run and a `--jitless` run byte-identical; `check_icons.py` all ok; on merge 17520f56 `check_all.sh` PASS and `guard.sh` OK; contact sheets in `art/ui/icons/studio/proof_bake/` |
 
 ## Handoff
 
@@ -69,8 +69,8 @@ None.
 
 ### Next step
 
-1. Done on merge 17520f56 (main into the branch), in order: the setup line (exit 0, 9 s), `bash client/build.sh` (exit 0, 6 s), `bash tools/check_all.sh` ("All checks passed.", 2166 s), `bash tools/ui_bake/guard.sh` ("ui guard: OK", 415 s, the icon families' rebake byte for byte included). Then the pre-check (`run_checks.sh start`, `wait`, `record`) and `owners.py diff P3-AIA2-bake-1` on the commit that records this.
-2. `ready_sha`, then the lead's `guard.sh` in its own container.
+1. Done on merge 17520f56 (main into the branch), in order: the setup line (exit 0, 9 s), `bash client/build.sh` (exit 0, 6 s), `bash tools/check_all.sh` ("All checks passed.", 2166 s), `bash tools/ui_bake/guard.sh` ("ui guard: OK", 415 s, the icon families' rebake byte for byte included). Then the pre-check (`run_checks.sh start`, `wait`, `record`) and `owners.py diff P3-AIA2-bake-1` on 75798143: pre-check PASS ("All checks passed.", 21:51Z); `owners.py diff P3-AIA2-bake-1` says every changed path is inside its files.
+2. Ready at 75798143. The lead's `guard.sh` in its own container is the third proof; if it fails there, the diff of the two atlases names the step that depends on the machine (keep the PNGs with `KEEP_PNG=<dir>`).
 
 ## Tried and failed
 

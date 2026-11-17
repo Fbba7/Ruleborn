@@ -3,21 +3,26 @@
   "role": "AIA-2",
   "branch": "claude/ui-artist-icons",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P3-AIA2-bake-1",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-17T20:10:00Z",
   "lease_until": "2026-11-17T23:10:00Z",
-  "updated_at": "2026-11-17T21:20:00Z",
-  "expected_next_update_by": "2026-11-17T22:05:00Z",
+  "updated_at": "2026-11-17T21:53:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "17520f56",
-    "next_step": "the pre-check on this commit (run_checks.sh start, wait, record) and owners.py diff P3-AIA2-bake-1, then ready_sha"
+    "last_green_sha": "75798143c332d2674e426f160ebce9e798f670fe",
+    "next_step": "the lead merges 75798143 and runs guard.sh in its own container (the third proof); AIA2-R4 and AIA2-R5 stay open, non-blocking"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "75798143c332d2674e426f160ebce9e798f670fe",
+    "exit": 0,
+    "finished_at": "2026-11-17T21:51:20Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "75798143c332d2674e426f160ebce9e798f670fe",
   "stop_at": "2026-11-18T21:00:00Z",
   "acks": [
     "M14"
@@ -102,5 +107,5 @@
     }
   ],
   "answers": [],
-  "note": "P3-AIA2-bake-1 working: the icon bake draws in Node by plain arithmetic, with no browser; two runs, a vector-units-off run and a --jitless run give the same bytes; on merge 17520f56 the setup line, build.sh, check_all.sh (PASS) and guard.sh (OK) pass in order."
+  "note": "P3-AIA2-bake-1 ready at 75798143: the icon bake draws in Node by plain arithmetic, with no browser; two runs, a vector-units-off run and a --jitless run give the same bytes; check_all PASS and guard OK on merge 17520f56; pre-check PASS on 75798143; owners.py diff ok."
 }
