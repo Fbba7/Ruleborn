@@ -3,21 +3,50 @@
   "role": "S1",
   "branch": "claude/ui-screens-heist",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P2-S1-result-6",
-  "task_state": "claimed",
+  "task_state": "ready",
   "claimed_at": "2026-11-17T01:31:29Z",
   "lease_until": "2026-11-17T04:31:29Z",
-  "updated_at": "2026-11-17T02:32:31Z",
-  "expected_next_update_by": "2026-11-17T03:17:31Z",
+  "updated_at": "2026-11-17T03:10:05Z",
+  "expected_next_update_by": "2026-11-17T03:55:05Z",
   "progress_marker": {
-    "last_green_sha": "90c8b15ca6765cea2e9e4d749841582db74eef51",
-    "next_step": "At e4e78070 every gate quality passes 3/3 (result at 100% Display type and Character presence; pt200 Display type and Hierarchy; hc Hierarchy); FIT=1 en100/en200/pt200/de200/hc/hc200 all fit ok; budgets 88/96/27 within 91/99/27. Main merged at 6039219b; M11/M13 checks and the pre-check of c9d70cc3 running. Next: record the pre-check, set ready, gate_request.",
-    "at": "2026-11-17T02:32:31Z"
+    "last_green_sha": "c9d70cc3b3de8566cdf427cb73d2e4fbdfca3994",
+    "next_step": "Ready at c9d70cc3: pre-check PASS, every gate quality 3/3 at e4e78070, FIT ok in en100/en200/pt200/de200/hc/hc200, merge 6039219b checked (setup, build, check_all, guard, check_screens, keyframes all exit 0). Next: the lead's gate run and merge; S1-R35 (AD preview) non-blocking.",
+    "at": "2026-11-17T03:10:05Z"
   },
-  "precheck": null,
-  "gate_request": null,
-  "ready_sha": null,
+  "precheck": {
+    "sha": "c9d70cc3b3de8566cdf427cb73d2e4fbdfca3994",
+    "exit": 0,
+    "finished_at": "2026-11-17T03:05:34Z",
+    "summary": "All checks passed."
+  },
+  "gate_request": {
+    "sha": "c9d70cc3b3de8566cdf427cb73d2e4fbdfca3994",
+    "items": [
+      {
+        "item": "result at 100% text",
+        "qualities": [
+          "Display type",
+          "Character presence"
+        ]
+      },
+      {
+        "item": "result at 200% text, pt_BR",
+        "qualities": [
+          "Display type",
+          "Hierarchy"
+        ]
+      },
+      {
+        "item": "result in high contrast",
+        "qualities": [
+          "Hierarchy"
+        ]
+      }
+    ]
+  },
+  "ready_sha": "c9d70cc3b3de8566cdf427cb73d2e4fbdfca3994",
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
     "M6",
@@ -571,5 +600,5 @@
       "where": "docs/progress/lead.md, Now, cycle 106"
     }
   ],
-  "next_step": "pre-check of c9d70cc3 and the checks on the merge 6039219b, then ready"
+  "next_step": "the lead's gate run and merge of c9d70cc3"
 }
