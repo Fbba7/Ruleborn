@@ -3,22 +3,22 @@
   "role": "S1",
   "branch": "claude/ui-screens-heist",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P2-S1-result-6",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-17T01:31:29Z",
   "lease_until": "2026-11-17T08:25:26Z",
-  "updated_at": "2026-11-17T05:39:42Z",
-  "expected_next_update_by": "2026-11-17T06:24:42Z",
+  "updated_at": "2026-11-17T06:06:34Z",
+  "expected_next_update_by": "2026-11-17T06:51:34Z",
   "progress_marker": {
-    "last_green_sha": "f669716105ae79a1fa6cad26be2966e8bc4b9257",
-    "next_step": "pre-check running on 32f97a08 (the resync merge); then record and ready",
-    "at": "2026-11-17T05:39:42Z"
+    "last_green_sha": "32f97a08af3c97c2603c77dee995687b542f3683",
+    "next_step": "Ready again at 32f97a08 after the resync (M47): main merged, main's b5843368 verdict taken, the four branch-only verdict files removed, owners.py passes, screen code unchanged since b5843368 so the gate's pass carries over; pre-check PASS.",
+    "at": "2026-11-17T06:06:34Z"
   },
   "precheck": {
-    "sha": "f669716105ae79a1fa6cad26be2966e8bc4b9257",
+    "sha": "32f97a08af3c97c2603c77dee995687b542f3683",
     "exit": 0,
-    "finished_at": "2026-11-17T04:54:20Z",
+    "finished_at": "2026-11-17T06:05:55Z",
     "summary": "All checks passed."
   },
   "gate_request": {
@@ -46,7 +46,7 @@
       }
     ]
   },
-  "ready_sha": null,
+  "ready_sha": "32f97a08af3c97c2603c77dee995687b542f3683",
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
     "M6",
@@ -611,9 +611,5 @@
       "where": "docs/progress/lead.md, Now, cycle 112; docs/art/ui-quality/board-4.md, 'Preview of result-6 (S1-R35)'; docs/art/tracks/result-screen.md, 'AD's objection H, a reward word broken (AD-R46)'"
     }
   ],
-  "next_step": "pre-check on the resync merge, then ready",
-  "long_run": {
-    "log": "/tmp/check-32f97a08af3c97c2603c77dee995687b542f3683.log",
-    "expected_end": "2026-11-17T06:09:42Z"
-  }
+  "next_step": "the lead's merge of 32f97a08"
 }
