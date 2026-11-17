@@ -83,7 +83,7 @@ static func text(words: String, points: float, role := "words", material := "car
 ## a fill: at 1.5 points or more they are measured against the outline.
 static func inked(l: Label, points := OUTLINE_POINTS) -> Label:
 	l.add_theme_color_override("font_outline_color", INK)
-	l.add_theme_constant_override("outline_size", KitHud.stroke_px(points))
+	l.add_theme_constant_override("outline_size", KitHud.stroke_px(points * 2.0))
 	return l
 
 
