@@ -5,15 +5,15 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P3-K1-outline-1",
-  "task_state": "working",
+  "task_state": "blocked",
   "claimed_at": "2026-11-17T21:10:20Z",
   "lease_until": "2026-11-18T00:10:20Z",
-  "updated_at": "2026-11-17T22:09:22Z",
-  "expected_next_update_by": "2026-11-17T22:54:22Z",
+  "updated_at": "2026-11-17T22:12:25Z",
+  "expected_next_update_by": "2026-11-17T22:57:25Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": null,
-    "next_step": "P3-K1-outline-1: S3-R37 done; S3-R35 outline rule in KitHud with ink_counts; S3-R41 measured (back face 24.9 on night 27.5 on every dock screen, 13.6 on the character): choosing the scoped lift"
+    "next_step": "P3-K1-outline-1 blocked on K1-R27: S3-R37 done; S3-R35 outline rule in KitHud (its test fails on the old reading); S3-R41 back face lifted (2.4 standard, 1.45 high contrast) with its a11y test; 432 of 434 client tests, the two left fail on six outline lines outside K1's files (K1-R27)"
   },
   "precheck": null,
   "gate_request": null,
@@ -395,6 +395,23 @@
       "due": "2026-11-17T16:40:00Z",
       "default": "Granted, as K1-R24 and K1-R25 were: client/tests/shots/ui_kit_polish.gd is one of P3-K1-polish-2's exceptions in backlog.json",
       "escalate_to": "lead"
+    },
+    {
+      "id": "K1-R27",
+      "from": "K1",
+      "to": "lead",
+      "ask": "P3-K1-outline-1 (S3-R35) makes the kit read outline_size as Godot draws it, a quarter a side, and the a11y every-word test and the heist's world-words check now count an outline by that reading. Six lines outside the task's files still set a token's side as the whole outline_size, so their words no longer count as inked and those two tests fail (432 of 434): client/ui/rb_theme.gd:128 and :169 (the kickers, 'TERRAIN EDITOR' 4.97:1 on #2c3aa8); client/scripts/ui.gd:174 (world_words, the heist check), :405 and :413 (tab_active's words, 'All · 5' 4.49:1 on #6a5af0; the green pills 'Hush', '−15%'); client/scripts/screen_kit.gd:75 and :86 (the codex chapter words, 'Motion' 1.67:1); client/scripts/character_screen.gd:288/292 (_stroke below large text, 'Level up' 1.19:1 on #f9de9c). Each becomes KitHud.outline_px(UI.px(side)), its shadow_outline_size with it; no test changes and nothing loosened. character_screen.gd is P3-S3-nav-1's (ready, unclaimed).",
+      "files": [
+        "client/ui/rb_theme.gd",
+        "client/scripts/ui.gd",
+        "client/scripts/screen_kit.gd",
+        "client/scripts/character_screen.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-17T22:12:25Z",
+      "due": "2026-11-18T04:12:25Z",
+      "default": "Granted: the four files are P3-K1-outline-1's exceptions in backlog.json, and K1 changes only those outline lines (character_screen.gd's _stroke and _outline_px included); the changed shots (kickers, tab_active, green pills, codex chapters, world words, Level up) are named in the handoff",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
@@ -449,5 +466,5 @@
       "at": "2026-11-17T08:15:00Z"
     }
   ],
-  "next_step": "P3-K1-outline-1: S3-R37 done; S3-R35 outline rule in KitHud (tests fail on the old reading); S3-R41 back face lifted (2.4 standard, 1.45 high contrast) with its a11y test; 432 of 434 client tests: the two left fail on outline sites outside K1's files, request to the lead next"
+  "next_step": "P3-K1-outline-1 blocked on K1-R27: S3-R37 done; S3-R35 outline rule in KitHud (its test fails on the old reading); S3-R41 back face lifted (2.4 standard, 1.45 high contrast) with its a11y test; 432 of 434 client tests, the two left fail on six outline lines outside K1's files (K1-R27)"
 }
