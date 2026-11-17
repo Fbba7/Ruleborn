@@ -8,13 +8,13 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-17T13:05:00Z",
   "lease_until": "2026-11-17T16:05:00Z",
-  "updated_at": "2026-11-17T15:35:00Z",
-  "expected_next_update_by": "2026-11-17T16:20:00Z",
+  "updated_at": "2026-11-17T16:18:00Z",
+  "expected_next_update_by": "2026-11-17T17:03:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "ea3bde530f63e5ba5ccc33701f4f305a76d5ea5a",
-    "next_step": "stills re-shot at b17b84c7 (M52); S3-R34 answered by the lead in cycle 128 (default ready stands; AD previews at the current sha in P3-AD-preview-1); main ab85a72a merged at a5103ce7; setup, build and guard running on it, then the pre-check and ready with gate_request",
-    "at": "2026-11-17T15:35:00Z"
+    "next_step": "main 53e18516 (P3-K1-tabs-1) merged at 0025ff4d; 100% and hc stills re-shot (main kit change only); setup, build and guard exit 0 on the merge; pre-check on the handoff commit, then ready with gate_request",
+    "at": "2026-11-17T16:18:00Z"
   },
   "precheck": {
     "sha": "ea3bde530f63e5ba5ccc33701f4f305a76d5ea5a",
