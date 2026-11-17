@@ -8,13 +8,13 @@
   "task_state": "working",
   "claimed_at": "2026-11-17T01:00:00Z",
   "lease_until": "2026-11-17T06:00:00Z",
-  "updated_at": "2026-11-17T02:59:00Z",
-  "expected_next_update_by": "2026-11-17T03:44:00Z",
+  "updated_at": "2026-11-17T03:13:00Z",
+  "expected_next_update_by": "2026-11-17T03:58:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "e674b614",
-    "next_step": "Gate at e674b614: 5 of 6 item-qualities pass; 'home at 100% text', Display type fails 3/3 (AD-R45 (a)). First fail under M43. Fixing: the plated live words' shadow (outline-wide, drop-deep) and gold 'After' word, and the 100% baked counts' stroke, drop and gradient (the kit page is sampled without mipmaps at ~12% scale). Then fit sweep, checks, pre-check, gate_request on 'home at 100% text' again.",
-    "at": "2026-11-17T02:59:00Z"
+    "next_step": "Gate at e674b614: 'home at 100% text', Display type failed 3/3 (first fail under M43). Fixed: HomeParts.InkedRow draws the counts' drop, ink stroke and gradient in screen pixels (kit pages have no mipmaps; S2-R35 to K1); AD-R45 (a): the words after the figures are gold and stroked with no shadow (AD's outline-wide shadow cost +3 calls over home's records; AD's fallback). Draw calls 142/117/142. Now: FIT sweep (57) and guard, then pre-check, then gate_request on 'home at 100% text' (Display type).",
+    "at": "2026-11-17T03:13:00Z"
   },
   "precheck": {
     "sha": "e674b614a15302227eb9ee9d5d8ba7e9cac8ce14",
@@ -532,5 +532,5 @@
     }
   ],
   "answers": [],
-  "next_step": "Gate at e674b614: 5 of 6 item-qualities pass; 'home at 100% text', Display type fails 3/3 (AD-R45 (a)). First fail under M43. Fixing: the plated live words' shadow (outline-wide, drop-deep) and gold 'After' word, and the 100% baked counts' stroke, drop and gradient (the kit page is sampled without mipmaps at ~12% scale). Then fit sweep, checks, pre-check, gate_request on 'home at 100% text' again."
+  "next_step": "Gate at e674b614: 'home at 100% text', Display type failed 3/3 (first fail under M43). Fixed: HomeParts.InkedRow draws the counts' drop, ink stroke and gradient in screen pixels (kit pages have no mipmaps; S2-R35 to K1); AD-R45 (a): the words after the figures are gold and stroked with no shadow (AD's outline-wide shadow cost +3 calls over home's records; AD's fallback). Draw calls 142/117/142. Now: FIT sweep (57) and guard, then pre-check, then gate_request on 'home at 100% text' (Display type)."
 }

@@ -338,8 +338,8 @@ class Raids:
 ## the words' size, so it holds at large text too. On a plate (`over_art`
 ## false) the drop is the glyph's own shadow set down by the outline and the
 ## role's drop, so it shows below the stroke, as the baked figures beside it
-## have theirs: the shadow is as wide as the stroke, so it is the stroked
-## words' drop, not a ghost of their bodies (AD-R45 (a)). Over the starfield (`over_art`) the ink alone merges into the
+## have theirs (a shadow as wide as the stroke costs a draw call a label:
+## home/100 148, over its record of 145). Over the starfield (`over_art`) the ink alone merges into the
 ## night behind it (P2-S2-home-6: "Keeper 24" read as dropped, not outlined),
 ## so the shadow is a band of the plates' leather rim round the stroke, set
 ## down by a third of its width (never less than the rim itself would show
@@ -362,8 +362,8 @@ static func inked(l: Label, over_art := false) -> void:
 		l.add_theme_constant_override("shadow_outline_size", outline + rim)
 		return
 	l.add_theme_color_override("font_shadow_color", Tokens.color("drop"))
-	l.add_theme_constant_override("shadow_offset_y", drop)
-	l.add_theme_constant_override("shadow_outline_size", outline)
+	l.add_theme_constant_override("shadow_offset_y", outline + drop)
+	l.add_theme_constant_override("shadow_outline_size", 0)
 
 
 ## `text` cut where the baked numerals end: [the figures, the words after
@@ -437,7 +437,11 @@ static func figures(l: Label) -> void:
 		after.add_theme_font_size_override("font_size", px)
 		after.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		inked(after)
+		# AD-R45 (a): the words take the figures' gold and their stroke, and no
+		# shadow, which showed as a second copy of them below (the figures'
+		# drop beside them is enough; a stroke-wide shadow costs 3 calls).
 		after.add_theme_color_override("font_color", Tokens.color("gold"))
+		after.add_theme_color_override("font_shadow_color", Color.TRANSPARENT)
 		box.add_child(after)
 	box.set_meta("shown", shown)
 	l.add_sibling(box)
