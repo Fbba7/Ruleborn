@@ -17,6 +17,10 @@ const SCREENS := ["home", "heist_screen", "result_screen", "replay_screen", "set
 	"codex", "harmony", "observatory", "scout", "lab", "defences", "law", "profile", "planner", "map", "realm", "share",
 	"first", "curation"]
 
+## The tab routes whose screen shows no tab bar: the Observatory is an
+## overlay, its top bar's back arrow going home (OverlayTop).
+const WITHOUT_TABS := [&"observatory"]
+
 var _n := 0
 var _failed := 0
 
@@ -187,8 +191,8 @@ func _tab_routes() -> void:
 			var bars: Array[KitTabs] = []
 			for screen: Node in shown:
 				bars.append_array(_bars(screen))
-			if bars.is_empty():
-				misses.append("%s at %d%%: no tab bar" % [tab, look[0]])
+			if bars.is_empty() != (Router.TABS[tab] in WITHOUT_TABS):
+				misses.append("%s at %d%%: %s tab bar" % [tab, look[0], "a" if bars else "no"])
 			for bar: KitTabs in bars:
 				var miss := _out_of_tile(bar)
 				if miss != "":
