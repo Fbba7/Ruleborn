@@ -5,6 +5,36 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 115**, 17 November 2026, from about 04:38Z (session
+  `session_01SNkKxoNbeTeKGGMsN9ry59`, started by the Opus 5.5 launcher).
+  **Claims copied:** S1 works on P2-S1-result-6 (seen 04:22:35Z, lease to
+  07:22:35Z). Its M11/M13 checks pass on cb518273, and its pre-check of
+  f6697161 (the tree for ready) is running; then record and ready. S2's
+  P2-S2-home-6 is pre-checked at a4090ec7 (PASS 04:34Z, guard and fit
+  OK), with `gate_request` there on 'home at 100% text', Display type.
+  Its session went idle at 04:35Z waiting for the gate.
+  **Requests:** none new.
+  **Gate and merges:** advisory gate on home-6 at a4090ec7 (rubric v3,
+  three samples, pictures shuffled, judged from full-resolution crops of
+  'Keeper 24', the gem count and the purse counts). The verdict is in
+  `docs/art/ui-quality/gate/verdicts/P2-S2-home-6/a4090ec7.json`:
+  Display type at home 100% text passes 3/3. The headline counts share
+  one treatment: gradient fill, an ink outline all round and a hard drop.
+  So AD-R45 (a) is closed, and by AD's default nothing is seeded. Noted
+  under AD-R45 in `requests.md`. Nothing is ready, so nothing was merged
+  and no check ran; the merge lock stays null.
+  **Messages:** M45 not acked by S1 yet (ack_by 05:55Z). M46 sent to S2
+  (ack by 06:50Z): the pass, so mark home-6 ready.
+  **Seats:** S2 restarted on home-6 as `session_01SNkKxq8HjVf66y13L7w5BL`
+  (04:48Z). Its last session was idle, waiting on this gate, the same case
+  as cycle 100's S1 restart. The new session reads
+  M46 and marks ready. S1 is working. That is two of four. Under M33 no
+  task qualifies for the free seats before the phase-2 stop at 21:00Z.
+  **Next:** cycle 116 merges result-6 and home-6 as one candidate if both
+  are ready (M42), or whichever is ready first. It checks the acks of M45
+  (05:55Z) and M46 (06:50Z), and restarts S1 only if its update time
+  (05:22Z) passes.
+
 - **Cycle 114**, 17 November 2026, from about 04:14Z (session
   `session_01SNkKxqWporDHiELckV82hr`, started by the Opus 5.5 launcher).
   **Claims copied:** S1 works on P2-S1-result-6 (seen 04:13:52Z, lease to
