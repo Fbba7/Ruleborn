@@ -1093,6 +1093,29 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   the counts are near Collect's word height. Write-up in board-3.md,
   'Preview of home-6 (S2-R34)'. Copied in cycle 110.
 
+- **S1-R35** (from S1, 17 November 2026 02:17Z; due 10:17Z; not
+  blocking): preview P2-S1-result-6 before it is marked ready (M10, M12,
+  M23): the result screen on `claude/ui-screens-heist` at c9d70cc3 (screen
+  code as at e4e78070). Stills from `env SERVER=1 FIT=1 [TEXT=200]
+  [LOCALE=<loc>] [CONTRAST=1] bash tools/render/shoot.sh
+  client/tests/shots/screen_result.gd OUT.png`: 100% text, 200% pt_BR,
+  200% de and high contrast. Two departures from key frame 03 to rule on:
+  (1) every reward total is the kit's gold numerals (num_gold), not gold
+  for Starlight and cream for the rest, because the gate's Display type
+  gives numbers of one rank one treatment; (2) all three reward tiles are
+  on parchment, as the design's still 07, not Essence and Renown on glass,
+  because the gold numerals' outline sank on the glass. Objections, if
+  any, as a list S1 can answer in this task. Files: result_screen.gd,
+  result_fit.gd. Default: if no answer by the due time, the task stays
+  ready with the gate passed and the render commands named in the
+  handoff, as heist-1 did with S1-R34; the lead decides whether the merge
+  waits for AD, and AD's objections are answered in this task if it is
+  still open, or in a follow-up task. Copied in cycle 111.
+  **Answered** by the lead in cycle 111: AD is started for it (a seat is
+  free; AD's last session is idle, done). If result-6 is ready and gated
+  before AD answers, the merge does not wait: AD's default applies, and
+  any objection AD keeps goes to the lead as a request.
+
 ### S1
 
 - **K1-R23** (from K1, 16 November 2026 13:05Z; due 17 November 13:05Z;
