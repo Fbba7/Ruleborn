@@ -1,9 +1,16 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-17T14:26:00Z",
+  "updated_at": "2026-11-17T14:50:00Z",
   "expected_next_update_by": "2026-11-17T17:26:00Z",
   "cycle": 127,
-  "merging": null,
+  "merging": {
+    "candidate_sha": "pending (P3-S1-hc-offline-1 at a4ed000e onto 7c464532)",
+    "task_ids": [
+      "P3-S1-hc-offline-1"
+    ],
+    "started_at": "2026-11-17T14:50:00Z",
+    "expires_at": "2026-11-17T15:50:00Z"
+  },
   "last_merged": {
     "task_id": "P3-AD-audit-1b",
     "sha": "06d96d05"
