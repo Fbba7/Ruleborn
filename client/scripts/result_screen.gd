@@ -25,6 +25,11 @@ const REWARDS := [["starlight", "parchment"], ["essence", "glass"], ["renown", "
 ## key frame 03's stack (gate, Character presence), and how large, in points.
 const FACES := 3
 const FACE_POINTS := 52.0
+## The crew member on the Starlight tile's corner at normal text: the reward
+## framed with character art (report.md's Character presence).
+const CARRIER_POINTS := 34.0
+## The baked totals' line, of their face's (`Home.FIGURE_LINE`'s).
+const TOTAL_LINE := 0.9
 ## The outcome's medal beside its title, in points.
 const MEDAL_POINTS := 34.0
 const TITLE_POINTS := 40.0
@@ -86,6 +91,9 @@ var _ticks := 0
 var _peak := 0
 var _crew_end: Array = []
 var _clock := 0.0
+## The totals drawn in the kit's baked numerals, each with its finish
+## (`_sync_totals`).
+var _totals: Dictionary = {}
 var _verdict := {}
 ## F6: the page that scrolls, and the actions with the corner's clearance
 ## that end it, or the bar at the phone's foot they move to (_fit_actions).
@@ -133,6 +141,8 @@ func _ready() -> void:
 		t.size_flags_stretch_ratio = 1.3 if r[0] == "starlight" else 1.0
 		reward_labels[str(r[0])] = t.get_child(0).get_child(1)
 		ResultFit.tile_row(t)
+		if r[0] == "starlight":
+			_carrier(t)
 		tiles.append(t)
 	# Side by side, as the design's; one above another with large text.
 	reward_row = KitLayout.columns(tiles, 8)
@@ -157,6 +167,11 @@ func _ready() -> void:
 	_display(haul_label, "starlight")
 	for k: String in reward_labels:
 		_display(reward_labels[k], "starlight" if k == "starlight" else "cream")
+	# All of them in the kit's baked numerals (T3), the Starlight gold and
+	# the others white, so the four totals share one treatment.
+	_totals[haul_label] = "num_gold"
+	for k: String in reward_labels:
+		_totals[reward_labels[k]] = "num_gold" if k == "starlight" else "num_white"
 	# With large text the haul comes first, under the time line, and the
 	# moment after it (key frame 03-result_text200_pt_BR; AD's S1-R24): the
 	# first screen shows what the heist paid.
@@ -328,16 +343,7 @@ func _rest_card() -> PanelContainer:
 	# The rings' own ink edges are the gaps (about 8 px between the gold
 	# bands at 960), so the rest line keeps two lines (AD's S1-R24).
 	faces.add_theme_constant_override("separation", 0)
-	for m: Variant in _crew_end:
-		if faces.get_child_count() >= FACES:
-			break
-		var kind := str((m as Dictionary).get("kind", "")) if m is Dictionary else ""
-		# Played by role alone: the role's default kind, as the heist's
-		# portraits show it (FxPortrait, Cast.KIND).
-		if kind == "" and m is Dictionary and Cast.KIND.has(str((m as Dictionary).get("role", ""))):
-			kind = String(Cast.KIND[str((m as Dictionary)["role"])])
-		if kind == "" or not CreatureModel.manifest().has(kind.replace("_", "")):
-			continue
+	for kind: String in _crew_kinds().slice(0, FACES):
 		faces.add_child(_face(CreatureBust.of(kind, "", Color(0, 0, 0, 0))))
 	faces.visible = faces.get_child_count() > 0
 	row.add_child(faces)
@@ -364,6 +370,86 @@ func _face(picture: Texture2D) -> KitRing:
 	ring.custom_minimum_size = Vector2.ONE * UI.px(FACE_POINTS)
 	ring.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return ring
+
+
+## The crew's kinds as they ended, in order, each with its creature's art.
+func _crew_kinds() -> Array[String]:
+	var kinds: Array[String] = []
+	for m: Variant in _crew_end:
+		var kind := str((m as Dictionary).get("kind", "")) if m is Dictionary else ""
+		# Played by role alone: the role's default kind, as the heist's
+		# portraits show it (FxPortrait, Cast.KIND).
+		if kind == "" and m is Dictionary and Cast.KIND.has(str((m as Dictionary).get("role", ""))):
+			kind = String(Cast.KIND[str((m as Dictionary)["role"])])
+		if kind != "" and CreatureModel.manifest().has(kind.replace("_", "")):
+			kinds.append(kind)
+	return kinds
+
+
+## At normal text, the crew's lead in the kit's ring on the Starlight tile's
+## upper corner, clear of its icon: the haul framed by who carried it. On a
+## layer of its own over the tile, so the tile's column keeps its children.
+## With large text the tiles are rows, and the crew stays on its card.
+func _carrier(tile: PanelContainer) -> void:
+	var kinds := _crew_kinds()
+	if Settings.text_scale > KitLayout.SIDE_BY_SIDE_UP_TO or kinds.is_empty():
+		return
+	var layer := Control.new()
+	layer.name = "Carrier"
+	layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	tile.add_child(layer)
+	var ring := _face(CreatureBust.of(kinds[0], "", Color(0, 0, 0, 0)))
+	ring.custom_minimum_size = Vector2.ONE * UI.px(CARRIER_POINTS)
+	ring.position = Vector2(-UI.px(8), -UI.px(6))
+	ring.size = ring.custom_minimum_size
+	layer.add_child(ring)
+
+
+## Each total (`_totals`) in its finish of the kit's baked numerals, over
+## its label, whose own glyphs are hidden: the label keeps its words, its
+## place in the tile and its size, so a screen reader, the fitting and the
+## reward's coins still find it. Drawn again when its words or size change;
+## while a glyph has no piece, the label shows itself.
+func _sync_totals() -> void:
+	for l: Label in _totals:
+		var px := l.get_theme_font_size("font_size")
+		var shown := "%s|%d" % [l.text, px]
+		if str(l.get_meta("baked", "")) == shown:
+			continue
+		l.set_meta("baked", shown)
+		var old := l.get_node_or_null("Baked")
+		if old != null:
+			l.remove_child(old)
+			old.queue_free()
+		l.self_modulate.a = 1.0
+		l.custom_minimum_size = Vector2.ZERO
+		if l.text == "":
+			continue
+		var digits := KitNumerals.make(l.text, str(_totals[l]), "display_s", l.text)
+		if not digits is KitNumerals.Row:
+			digits.free()
+			continue
+		var row := digits as KitNumerals.Row
+		row.name = "Baked"
+		# The line's height, or less where the glyphs would be wider than the
+		# live words with their outline: the total keeps the room the
+		# fitting measured, so large text's rows stay one line deep.
+		var font := l.get_theme_font("font")
+		row.height = floorf(font.get_height(px) * TOTAL_LINE)
+		row.update_minimum_size()
+		var room := font.get_string_size(l.text, HORIZONTAL_ALIGNMENT_LEFT, -1, px).x \
+			+ float(l.get_theme_constant("outline_size"))
+		var wide := row.get_combined_minimum_size().x
+		if wide > room:
+			row.height = floorf(row.height * room / wide)
+		# One layer above the words, as the home's figures: every baked row
+		# draws in one call from the numerals' page.
+		row.z_index = 1
+		row.update_minimum_size()
+		l.add_child(row)
+		row.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		l.custom_minimum_size = row.get_combined_minimum_size()
+		l.self_modulate.a = 0.0
 
 
 ## The plain result's bar at the phone's foot (key frame 03): Home in the
@@ -468,6 +554,7 @@ func _build_world(heist: Dictionary) -> void:
 
 func _process(delta: float) -> void:
 	_clock += delta
+	_sync_totals()
 	if world_view != null and not Settings.reduced_motion:
 		# A slow sway of the island, the diorama on its stand.
 		world_view.sway(sin(_clock * 0.25) * 0.5)
