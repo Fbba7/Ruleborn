@@ -3,17 +3,10 @@
   "updated_at": "2026-11-17T09:40:00Z",
   "expected_next_update_by": "2026-11-17T12:40:00Z",
   "cycle": 121,
-  "merging": {
-    "candidate_sha": "57ea213c67792580dbc71ed8fd86785ad007fa95",
-    "task_ids": [
-      "P3-K1-polish-1"
-    ],
-    "started_at": "2026-11-17T09:41:17Z",
-    "expires_at": "2026-11-17T10:41:17Z"
-  },
+  "merging": null,
   "last_merged": {
-    "task_id": "P3-S1-result-7",
-    "sha": "1abc52ba"
+    "task_id": "P3-K1-polish-1",
+    "sha": "20304b70"
   },
   "acks": [
     "M15",
