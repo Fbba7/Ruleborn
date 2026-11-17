@@ -20,6 +20,10 @@ signal put_away
 
 const SAGE_KIND := 13
 const CAST_KIND := 14
+## The leather looks high contrast re-dresses (AD-R56): the kit's flat mauve
+## sat at the value of the world behind it (Walk's face L* 36.7 on a ground
+## of 48.2), so the heist's plates take the key frame's near-black card.
+const HC_LEATHER := ["leather", "plate_leather", "glass", "tag_dark"]
 
 var sage_button: Button
 var cast_button: Button
@@ -116,12 +120,6 @@ func show_state(sage: Dictionary, casts: Array, tick: int) -> void:
 		if pause is Control:
 			own[pause] = "parchment"
 		hc_plates(host, own)
-
-
-## The leather looks high contrast re-dresses (AD-R56): the kit's flat mauve
-## sat at the value of the world behind it (Walk's face L* 36.7 on a ground
-## of 48.2), so the heist's plates take the key frame's near-black card.
-const HC_LEATHER := ["leather", "plate_leather", "glass", "tag_dark"]
 
 
 ## In high contrast, the heist's plates under `root` as the key frame draws

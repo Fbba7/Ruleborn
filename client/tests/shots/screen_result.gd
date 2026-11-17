@@ -6,6 +6,12 @@ extends SceneTree
 ## sequence has ended, at rest. STATE picks one of the screen's other
 ## states: confirming, refused (REFUSED is the code), testing or play.
 ##
+## The settled heist in its two states (AD-R57): offline by default, the
+## phone's own check with no server answer (one Loot tile with the lead's
+## portrait, the crew's card by role), and SERVER=1, the server's settle
+## answer (the split's three tiles, the fee, the study card and the crew's
+## rest).
+##
 ## STRIP=<folder> records the reward sequence instead (P2-S1-result-2): the
 ## screen's tweens stepped by a thirtieth of a second a frame, whatever the
 ## renderer's speed, each frame saved whole (full_NNN.png) and cut to the

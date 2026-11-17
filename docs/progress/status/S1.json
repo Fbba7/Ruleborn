@@ -8,12 +8,12 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-17T13:30:00Z",
   "lease_until": "2026-11-17T16:30:00Z",
-  "updated_at": "2026-11-17T13:45:00Z",
-  "expected_next_update_by": "2026-11-17T14:30:00Z",
+  "updated_at": "2026-11-17T13:50:00Z",
+  "expected_next_update_by": "2026-11-17T14:35:00Z",
   "progress_marker": {
     "last_green_sha": null,
-    "next_step": "AD-R56 heist hc plates built (card faces, Get out red, Pause light); next AD-R57 offline result crew strip and portrait",
-    "at": "2026-11-17T13:45:00Z"
+    "next_step": "AD-R57 built (offline result: the lead's portrait on the Loot tile, the crew card by role); FIT series running; next guard.sh, track docs, AD preview request, pre-check",
+    "at": "2026-11-17T13:50:00Z"
   },
   "precheck": null,
   "gate_request": null,
@@ -50,7 +50,7 @@
       "id": "S1-R2",
       "from": "S1",
       "to": "K1",
-      "ask": "KitHud.loot that stays narrow in every language and cheap to draw: a caption that wraps between words (\"Carregar at\u00e9 100%\" asks 383 px on one line, 443 px with the panel, which puts the top row at 1,200 px of 1,080 in Portuguese); rows that put a long number under its word (\"Restam ~2.600\") rather than widen the panel; an aim tick that can be left out (a replay has no load target); the Vault's cracking, as a row or a thinner bar; and words, numbers and bars drawn in few calls (a label a row costs a draw call a row, which takes the heist past its record).",
+      "ask": "KitHud.loot that stays narrow in every language and cheap to draw: a caption that wraps between words (\"Carregar até 100%\" asks 383 px on one line, 443 px with the panel, which puts the top row at 1,200 px of 1,080 in Portuguese); rows that put a long number under its word (\"Restam ~2.600\") rather than widen the panel; an aim tick that can be left out (a replay has no load target); the Vault's cracking, as a row or a thinner bar; and words, numbers and bars drawn in few calls (a label a row costs a draw call a row, which takes the heist past its record).",
       "files": [
         "client/ui/kit_hud.gd"
       ],
@@ -464,7 +464,7 @@
       "id": "S1-R30",
       "from": "S1",
       "to": "AD",
-      "ask": "Re-check of objection F from S1-R29 (P2-S1-result-3) at 904a3567 (the fix is a5db9545, with main merged as a686d4a7). The first screen now ends on a whole line whenever the bar sits under the page that scrolls. ResultFit.fold grows the corner's clearance under the bar by the line or card the scroll's edge would cut, which lifts the bar and the edge. It is a cut, not a fade, so it adds no draw call. Where the first screen now ends: en 200% on 'Entry fee 2,840 returned', de 200% on 'Eintrittsgeb\u00fchr 2.840 erstattet', pt_BR 200% on 'Taxa de entrada de' (the rest of that label starts below the edge). The FIT check now fails when the edge cuts a line or card. Stills: SERVER=1 FIT=1 TEXT=200 bash tools/render/shoot.sh client/tests/shots/screen_result.gd out.png, plus CONTRAST=1, LOCALE=pt_BR and LOCALE=de. Draw calls are unchanged (en200 113, hc200 55, pt200 115, de200 114). Details are in docs/art/tracks/result-screen.md, 'Objection F, the fold'. F only; any objection, in one list.",
+      "ask": "Re-check of objection F from S1-R29 (P2-S1-result-3) at 904a3567 (the fix is a5db9545, with main merged as a686d4a7). The first screen now ends on a whole line whenever the bar sits under the page that scrolls. ResultFit.fold grows the corner's clearance under the bar by the line or card the scroll's edge would cut, which lifts the bar and the edge. It is a cut, not a fade, so it adds no draw call. Where the first screen now ends: en 200% on 'Entry fee 2,840 returned', de 200% on 'Eintrittsgebühr 2.840 erstattet', pt_BR 200% on 'Taxa de entrada de' (the rest of that label starts below the edge). The FIT check now fails when the edge cuts a line or card. Stills: SERVER=1 FIT=1 TEXT=200 bash tools/render/shoot.sh client/tests/shots/screen_result.gd out.png, plus CONTRAST=1, LOCALE=pt_BR and LOCALE=de. Draw calls are unchanged (en200 113, hc200 55, pt200 115, de200 114). Details are in docs/art/tracks/result-screen.md, 'Objection F, the fold'. F only; any objection, in one list.",
       "files": [
         "client/scripts/result_fit.gd",
         "client/scripts/result_screen.gd",
@@ -480,7 +480,7 @@
       "id": "S1-R31",
       "from": "S1",
       "to": "AD",
-      "ask": "Preview before the gate (P2-S1-result-4, M10, M12) at 6fb2e3da. New since 06635883: M30's close point, the words over the sunburst (kicker 'ASSALTO CONCLU\u00cdDO', title, condition, time and alarm line, the lines under the tiles) now carry an ink outline set from the size each is drawn at, so it grows with the text size (1.5 points scaled with the text, 3 in high contrast, or 12% of the face): at pt_BR 200% the 'N' of 'Nenhum' has a 10 px edge, the kicker 9 px; no draw call more. Still in from before: (1) Home and the law pills on the kit's tertiary face (ghost: violet), darker than Raid again in grayscale; (2) your board 4b note (S1-R30): the fold keeps a label of up to three lines whole, so pt_BR 200% ends on the Renome tile; (3) the shot's other states (STATE=confirming, refused with REFUSED=<code>, testing, play), all FIT ok at 200% in en, pt_BR and de (M26). Fit sweep at 3d357ac6: 51 stills fit ok, draw calls unchanged. Stills: SERVER=1 FIT=1 TEXT=200 LOCALE=pt_BR bash tools/render/shoot.sh client/tests/shots/screen_result.gd out.png, plus LOCALE=de, CONTRAST=1, and the states, e.g. SERVER=1 FIT=1 STATE=refused TEXT=200 LOCALE=de, or STATE=testing (without SERVER). The reward tiles keep their currency icons with no character frame: the crew card carries the characters, and character art in the tiles would be a new placement for you and the kit to decide. Any objection, in one list.",
+      "ask": "Preview before the gate (P2-S1-result-4, M10, M12) at 6fb2e3da. New since 06635883: M30's close point, the words over the sunburst (kicker 'ASSALTO CONCLUÍDO', title, condition, time and alarm line, the lines under the tiles) now carry an ink outline set from the size each is drawn at, so it grows with the text size (1.5 points scaled with the text, 3 in high contrast, or 12% of the face): at pt_BR 200% the 'N' of 'Nenhum' has a 10 px edge, the kicker 9 px; no draw call more. Still in from before: (1) Home and the law pills on the kit's tertiary face (ghost: violet), darker than Raid again in grayscale; (2) your board 4b note (S1-R30): the fold keeps a label of up to three lines whole, so pt_BR 200% ends on the Renome tile; (3) the shot's other states (STATE=confirming, refused with REFUSED=<code>, testing, play), all FIT ok at 200% in en, pt_BR and de (M26). Fit sweep at 3d357ac6: 51 stills fit ok, draw calls unchanged. Stills: SERVER=1 FIT=1 TEXT=200 LOCALE=pt_BR bash tools/render/shoot.sh client/tests/shots/screen_result.gd out.png, plus LOCALE=de, CONTRAST=1, and the states, e.g. SERVER=1 FIT=1 STATE=refused TEXT=200 LOCALE=de, or STATE=testing (without SERVER). The reward tiles keep their currency icons with no character frame: the crew card carries the characters, and character art in the tiles would be a new placement for you and the kit to decide. Any objection, in one list.",
       "files": [
         "client/scripts/result_screen.gd",
         "client/scripts/result_fit.gd",
@@ -581,6 +581,21 @@
       "due": "2026-11-17T20:00:00Z",
       "default": "The lead approves the rise at the merge of P3-S1-result-7 and K1 (or the lead) records 28. If refused, a follow-up task has the guard's high-contrast shot load no roster (IDLE=-1 in its env, K1's file) and the record stays 27.",
       "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R38",
+      "from": "S1",
+      "to": "K1",
+      "ask": "For AD-R56 (P3-S1-hc-offline-1): a high-contrast face for the near-black card (panel_dark, #140C2A) with a cream line, as key frame high contrast shows. The heist's plates now take the card look in high contrast (client/scripts/heist_hand.gd, hc_plates), but the atlas face draws the card's high-contrast line in lavender #B8A8D8 (L* about 72), and the shader's line_color cannot change a line the atlas draws. A cream line (the kit's ON_DARK #F3EEFF or the key frame's cream) needs a new or re-baked high-contrast panel_dark face in the kit.",
+      "files": [
+        "client/ui/",
+        "art/ui/"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T13:50:00Z",
+      "due": "2026-11-18T13:50:00Z",
+      "default": "The kit's lavender high-contrast line #B8A8D8 stands on the heist's card plates (dL* about 52 to 56 off the sky, so the plates still read); the task's handoff says so and the cream line goes to a K1 follow-up if AD asks for it.",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
@@ -612,5 +627,5 @@
       "where": "docs/progress/lead.md, Now, cycle 112; docs/art/ui-quality/board-4.md, 'Preview of result-6 (S1-R35)'; docs/art/tracks/result-screen.md, 'AD's objection H, a reward word broken (AD-R46)'"
     }
   ],
-  "next_step": "Waiting for the lead's gate run and merge of P3-S1-result-7 at 55716273; S1-R37 (result/hc 27 -> 28) and S1-R36 (AD) open, non-blocking"
+  "next_step": "P3-S1-hc-offline-1: FIT series, guard.sh, track docs and handoff, AD preview, pre-check, gate request"
 }

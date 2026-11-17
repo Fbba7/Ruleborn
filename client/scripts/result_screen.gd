@@ -618,6 +618,7 @@ func _show_rewards(v: Dictionary) -> void:
 	reward_row.visible = paid
 	fee_label.visible = split and int(v.get("fee", 0)) > 0
 	if not split:
+		ResultFit.crew_offline(haul_tile, rest_card, rest_label, _crew_end, v.get("ok", false))
 		return
 	haul_tile.visible = false
 	counter = reward_row
