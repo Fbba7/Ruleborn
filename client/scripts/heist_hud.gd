@@ -392,9 +392,14 @@ func _build_loot(rows: Array, bags: float, load_words: String, vault: Array) -> 
 	# As the alarm: the figures keep clear of the leather's frame, and are
 	# the kit's baked gold numerals, so 946 and ~2,600 read as display
 	# figures rather than flat gold words on the plate.
+	# In high contrast the figures are information, not an order: cream, as
+	# the clock's, never the kit's gold, which says "act here" (AD-R62);
+	# baked, with §20.8's large text, in the numerals' white.
 	_tight(piece, true, 10.0)
 	for n: Variant in piece.get_meta("numbers", []):
-		_bake(n as Label, "num_gold")
+		if Tokens.high_contrast:
+			(n as Label).add_theme_color_override("font_color", Tokens.color("cream"))
+		_bake(n as Label, "num_white" if Tokens.high_contrast else "num_gold")
 	_swap(loot_panel, piece)
 	loot_panel = piece
 	loot_panel.accessibility_name = spoken
