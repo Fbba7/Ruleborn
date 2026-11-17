@@ -3,21 +3,36 @@
   "role": "S1",
   "branch": "claude/ui-screens-heist",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P3-S1-result-7",
-  "task_state": "claimed",
+  "task_state": "ready",
   "claimed_at": "2026-11-17T07:26:30Z",
   "lease_until": "2026-11-17T10:26:30Z",
-  "updated_at": "2026-11-17T08:15:00Z",
-  "expected_next_update_by": "2026-11-17T09:00:00Z",
+  "updated_at": "2026-11-17T08:41:00Z",
+  "expected_next_update_by": "2026-11-17T09:41:00Z",
   "progress_marker": {
     "last_green_sha": "55716273479b27992cdb57e8f5e5151921d31d6f",
-    "next_step": "Pre-check of 55716273 running; then ready with the gate request (S1-R37 for result/hc's budget)",
-    "at": "2026-11-17T08:15:00Z"
+    "next_step": "Ready: the gate's Hierarchy run at 200% pt_BR, then the merge",
+    "at": "2026-11-17T08:41:00Z"
   },
-  "precheck": null,
-  "gate_request": null,
-  "ready_sha": null,
+  "precheck": {
+    "sha": "55716273479b27992cdb57e8f5e5151921d31d6f",
+    "exit": 0,
+    "finished_at": "2026-11-17T08:39:15Z",
+    "summary": "All checks passed."
+  },
+  "gate_request": {
+    "sha": "55716273479b27992cdb57e8f5e5151921d31d6f",
+    "items": [
+      {
+        "item": "result at 200% text, pt_BR",
+        "qualities": [
+          "Hierarchy"
+        ]
+      }
+    ]
+  },
+  "ready_sha": "55716273479b27992cdb57e8f5e5151921d31d6f",
   "stop_at": "2026-11-18T21:00:00Z",
   "acks": [
     "M6",
@@ -612,5 +627,5 @@
       "where": "docs/progress/lead.md, Now, cycle 112; docs/art/ui-quality/board-4.md, 'Preview of result-6 (S1-R35)'; docs/art/tracks/result-screen.md, 'AD's objection H, a reward word broken (AD-R46)'"
     }
   ],
-  "next_step": "Record the pre-check of 55716273, then set ready with the gate request"
+  "next_step": "Waiting for the lead's gate run and merge of P3-S1-result-7 at 55716273; S1-R37 (result/hc 27 -> 28) and S1-R36 (AD) open, non-blocking"
 }
