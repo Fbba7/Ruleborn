@@ -4,23 +4,18 @@
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P3-AD-flow-2",
-  "task_state": "claimed",
-  "claimed_at": "2026-11-17T09:35:00Z",
-  "lease_until": "2026-11-17T12:35:00Z",
-  "updated_at": "2026-11-17T10:08:23Z",
-  "expected_next_update_by": "2026-11-17T10:53:23Z",
+  "task_id": "P3-AD-audit-1b",
+  "task_state": "working",
+  "claimed_at": "2026-11-17T12:08:00Z",
+  "lease_until": "2026-11-17T15:20:00Z",
+  "updated_at": "2026-11-17T12:28:52Z",
+  "expected_next_update_by": "2026-11-17T13:13:52Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "24965010ad39e1f2fd20766476a5d1a316ec5a3e",
-    "next_step": "P3-AD-flow-2: flow-2.md written, AD-R47 to AD-R55 filed; committing, then pre-check and ready."
+    "last_green_sha": "808e42cf710668864502025b276f3afc7b182c05",
+    "next_step": "P3-AD-audit-1b: the six misses re-rendered on main (rows 1, 14, 18 and the offline result still fail; 16 fixed); writing audit-1-misses.md and golden v2"
   },
-  "precheck": {
-    "sha": "24965010ad39e1f2fd20766476a5d1a316ec5a3e",
-    "exit": 0,
-    "finished_at": "2026-11-17T08:20:24Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-18T21:00:00Z",
@@ -781,6 +776,69 @@
       "due": "2026-11-19T10:08:23Z",
       "default": "The HUD draws above every map marker (layer order), in the next heist task. No AD round needed.",
       "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R56",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Audit 1 row 1 still fails on main: in high contrast the heist's Get out and Walk plates sit at the value of their ground (L* 36.7 on 36.7, and 36.7 on 48.2). Owner S1; the hc plate fill may come from the kit's rb_box.gd (K1).",
+      "files": [
+        "client/scripts/heist_hand.gd",
+        "client/scripts/heist_hud.gd",
+        "docs/art/ui-quality/gate/audit/audit-1-misses.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T12:28:52Z",
+      "due": "2026-11-19T12:28:52Z",
+      "default": "An S1 task gives the hc plates the key frame's near-black card (#140C2A) with a cream line, puts Get out on the red danger plate, and sets every control at least one value step (dL* 20) off its local ground.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R57",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Audit 1 rows 7 and 33 still fail on main in the offline state: with no server the result shows one Loot card and no crew or portrait (key frame kf-result puts the crew on it). The server state passes. Owner S1.",
+      "files": [
+        "client/scripts/result_screen.gd",
+        "client/scripts/result_fit.gd",
+        "docs/art/ui-quality/gate/audit/audit-1-misses.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T12:28:52Z",
+      "due": "2026-11-19T12:28:52Z",
+      "default": "The offline result shows the crew strip and the top earner's portrait, as the server state does, and the gate shoots the result in both states.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R58",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Audit 1 row 14 still fails on main: at 200% pt_BR the character screen's display words carry an outline about 5% of the word size, against the rubric's 12%; _ink_large sizes it from the theme size before the text scale and _wrap_in's shrink. Owner S3.",
+      "files": [
+        "client/scripts/character_screen.gd",
+        "docs/art/ui-quality/gate/audit/audit-1-misses.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T12:28:52Z",
+      "due": "2026-11-19T12:28:52Z",
+      "default": "The outline is computed from the size the words render at, after the text scale and the wrap shrink, so the outward stroke is at least 12% of that size.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R59",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Audit 1 row 18 still fails on main: home's goal card XP bar is gold in both looks (KitHud.goal, kit_hud.gd line 61), so gold sits on something other than Collect. Owner K1 (kit); the caller home.gd _show_goal is S2's under P3-S2-home-states.",
+      "files": [
+        "client/ui/kit_hud.gd",
+        "client/scripts/home.gd",
+        "docs/art/ui-quality/gate/audit/audit-1-misses.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T12:28:52Z",
+      "due": "2026-11-19T12:28:52Z",
+      "default": "The goal card's progress uses the key frame's green progress fill in both looks; gold stays on Collect.",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
@@ -915,6 +973,6 @@
       "answer": "AD previewed P3-S2-home-states at e9285afd. All 8 cases fit ok: en, pt_BR and de at 100% and 200%, and high contrast at 100% and 200%. Board 3's objection B holds in every case: the Crew tab's '4' and the Defence badge '2' are clear of the pins and the side buttons; the locked plate ('Lantern Vale' / 'Opens at Keeper 28') at 100% now starts about 24 px from the left edge (S2-R36 note 1 met) and sits about 6 px below the LAB label, clear of the Lab button and every pin; the 200% short form (lock and '28' on one pill) is clear of the Lab button and every pin in all four 200% cases, so Lantern Vale says 'locked' at every size (S2-R36 note 3 closed). Nothing by colour alone. No objection at this commit; S2 may mark ready. Notes, not holding and not depending on the final shape (M40): (1) at 200% the Defence badge's top still overlaps the 61.0k plate's foot by 1 to 3 px, clear of the gauge fill (S2-R36 note 2, unchanged; if moved, drop it 2 to 4 pt); (2) at 200% pt_BR and de the pill sits about 7 px from the '6' pin; if the map loses more height, anchor it under the island. Write-up and stills: docs/art/ui-quality/gate/boards/board-3.md, 'Preview of home-states, second look (S2-R42)'. Default if S2 disagrees with a note: S2's stills stand."
     }
   ],
-  "next_step": "P3-AD-flow-2: flow-2.md written, AD-R47 to AD-R55 filed; committing, then pre-check and ready.",
-  "last_update": "P3-AD-audit-1 ready: 43 rows labelled (30 pass, 13 fail), pre-check PASS at 24965010, owners.py diff passes. S2-R36 answered: no objection, three notes."
+  "next_step": "P3-AD-audit-1b: the six misses re-rendered on main (rows 1, 14, 18 and the offline result still fail; 16 fixed); writing audit-1-misses.md and golden v2",
+  "last_update": "P3-AD-audit-1b: misses re-rendered and labelled on main (4 hold, filed AD-R56 to AD-R59; row 16 fixed), judge-vs-AD lines written, golden set version 2 joined (79 items, held-out third unchanged). Next: pre-check and ready."
 }
