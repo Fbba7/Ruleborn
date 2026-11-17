@@ -8,21 +8,31 @@
   "task_state": "working",
   "claimed_at": "2026-11-17T01:00:00Z",
   "lease_until": "2026-11-17T06:00:00Z",
-  "updated_at": "2026-11-17T03:44:00Z",
-  "expected_next_update_by": "2026-11-17T04:29:00Z",
+  "updated_at": "2026-11-17T04:35:00Z",
+  "expected_next_update_by": "2026-11-17T05:20:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "e674b614",
-    "next_step": "Gate at e674b614: 'home at 100% text', Display type failed 3/3 (first fail under M43). Fix at bac22476: HomeParts.InkedRow inks the counts with kit rows of the same glyphs behind them, tinted ink_line and set off (stroke all round, hard drop), over the kit glyph's own gradient; home draws nothing of its own (check_screens OK); AD-R45 (a): the words after the figures are gold and stroked, no shadow. Draw calls 143/118/143. Next: the 57 fit cases (running), guard, pre-check, then gate_request on 'home at 100% text' (Display type).",
+    "last_green_sha": "a4090ec7",
+    "next_step": "Gate request at a4090ec7: 'home at 100% text', Display type (the second run under M43; the first, at e674b614, failed 3/3). Fix: HomeParts.InkedRow inks the counts with kit rows of the same glyphs behind them, tinted ink_line and set off (stroke all round, hard drop), over the kit glyph's own gradient; home draws nothing of its own. AD-R45 (a): the words after the figures are gold and stroked, no shadow. On a4090ec7: pre-check PASS 04:34Z, guard OK (home 143/118/143), check_screens OK, FIT=1 57/57 fit ok (on bac22476, the same code). On a pass: mark ready; after a second fail: mark ready with the verdict and its reasons in the handoff.",
     "at": "2026-11-17T03:13:00Z"
   },
   "precheck": {
-    "sha": "e674b614a15302227eb9ee9d5d8ba7e9cac8ce14",
+    "sha": "a4090ec77bd7536c10db03e06efcd459d69c4b55",
     "exit": 0,
-    "finished_at": "2026-11-17T02:21:09Z",
+    "finished_at": "2026-11-17T04:34:28Z",
     "summary": "All checks passed."
   },
-  "gate_request": null,
+  "gate_request": {
+    "sha": "a4090ec77bd7536c10db03e06efcd459d69c4b55",
+    "items": [
+      {
+        "item": "home at 100% text",
+        "qualities": [
+          "Display type"
+        ]
+      }
+    ]
+  },
   "ready_sha": null,
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
@@ -532,5 +542,5 @@
     }
   ],
   "answers": [],
-  "next_step": "Gate at e674b614: 'home at 100% text', Display type failed 3/3 (first fail under M43). Fix at bac22476: HomeParts.InkedRow inks the counts with kit rows of the same glyphs behind them, tinted ink_line and set off (stroke all round, hard drop), over the kit glyph's own gradient; home draws nothing of its own (check_screens OK); AD-R45 (a): the words after the figures are gold and stroked, no shadow. Draw calls 143/118/143. Next: the 57 fit cases (running), guard, pre-check, then gate_request on 'home at 100% text' (Display type)."
+  "next_step": "Gate request at a4090ec7: 'home at 100% text', Display type (the second run under M43; the first, at e674b614, failed 3/3). Fix: HomeParts.InkedRow inks the counts with kit rows of the same glyphs behind them, tinted ink_line and set off (stroke all round, hard drop), over the kit glyph's own gradient; home draws nothing of its own. AD-R45 (a): the words after the figures are gold and stroked, no shadow. On a4090ec7: pre-check PASS 04:34Z, guard OK (home 143/118/143), check_screens OK, FIT=1 57/57 fit ok (on bac22476, the same code). On a pass: mark ready; after a second fail: mark ready with the verdict and its reasons in the handoff."
 }
