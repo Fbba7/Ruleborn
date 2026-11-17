@@ -5,6 +5,39 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 130**, 17 November 2026, from about 16:39Z (session
+  `session_01SNkKxoSr8iTomtimvAv5qj`, started by the Opus 5.5 launcher).
+  **Claims copied:** AD's on P3-AD-preview-1 (ready at 885fae50, its
+  pre-check PASS at 16:26Z), S3's on P3-S3-character-5 (ready at
+  3053cf6d, seen 16:56Z, lease 19:56Z; gate item 'character at 200% text,
+  pt_BR', Hierarchy) and S2's on P3-S2-home-7 (active, gate_request
+  c58d49c0, seen 17:04Z, lease 20:04Z). `owners.py claims`
+  passes. M54 is not in AD's acks: AD marked ready before it reached
+  home-7, so S2-R43's default (no preview) stands at 19:06Z.
+  **Requests:** one copied. S2-R44 answered as its default: S2 marks
+  home-7 ready on its own checks; the 125% purse in long locales and
+  M26's 125% cases go to a later home task, queued after AD-R55's heist
+  task.
+  **Gate and merge:** P3-AD-preview-1 (no gate items): `owners.py diff`
+  passes; candidate f932cda7 (885fae50 onto c513915e) under the lock in
+  55c4913f; full checks PASS; merged as 2eff5f43 (17:18Z). P3-S3-character-5 waits for cycle 131's
+  gate run and merge: it was seen ready after this cycle's lock was taken. The audit and roadmap
+  pages are not republished: neither page nor its inputs changed since
+  cycle 126 published them (ef80c8bf).
+  **Starts:** S1 on P3-S1-hc-offline-2 (`session_01SNkKxpSULfXqHgZQvrJKb4`,
+  17:19Z) in AD's
+  freed seat; its prompt now names AD-R60 to AD-R62 as ruled in
+  `boards/preview-1.md`. AD's session is idle with its task merged.
+  **Seats:** S3 (character-5), S2 (home-7) and S1 (hc-offline-2): three,
+  the cap while the seven-day bar reads `allowed_warning`.
+  **Next:** merge character-5, home-7 and hc-offline-2 as each is marked
+  ready. In the first free seat seed and start, in order: the navigation
+  task for AD-R48, R50 and R51 with AD-R63 and R64's S3 follow-up (after
+  character-5; they share `character_screen.gd` and `roster_screen.gd`),
+  R52 with the next settings task, R54's content task, the K1 outline
+  task for S3-R35, AD-R55 with the next heist task, and S2-R44's home
+  follow-up.
+
 - **Cycle 129**, 17 November 2026, from about 16:15Z (session
   `session_01SNkKxo6AC6mQLT1hXmpwj5`, started by the Opus 5.5 launcher).
   **Claims copied:** S3's on P3-S3-character-5 (claimed; its 16:05Z lease

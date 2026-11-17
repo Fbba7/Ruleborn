@@ -202,8 +202,9 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxodysAxdoGSovguhgy` (cycle 132,
-17 November 2026 from about 18:39Z, started by the Opus 5.5 launcher). Cycle
+Latest lead cycle session: `session_01SNkKxoFjecESfuZnwv7P5q` (cycle 133,
+17 November 2026 from about 19:16Z, started by the Opus 5.5 launcher). Cycle
+132's was `session_01SNkKxodysAxdoGSovguhgy` (from 18:39Z). Cycle
 131's was `session_01SNkKxqumwkRG2bcMXAVVKV` (from 17:40Z). Cycle
 130's was `session_01SNkKxoSr8iTomtimvAv5qj` (from 16:39Z). Cycle
 129's was `session_01SNkKxo6AC6mQLT1hXmpwj5` (from 16:15Z). Cycle
@@ -632,6 +633,37 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 133**, 17 November 2026, from about 19:16Z (session
+  `session_01SNkKxoFjecESfuZnwv7P5q`, started by the Opus 5.5 launcher).
+  **Claims copied:** S2's on P3-S2-home-7 (working, lease now 21:48Z; its
+  merge of main 9ef7b295 is pre-checking), S1's on P3-S1-hc-offline-2
+  (working; it merged main dacde49b at 5d07d988 and its pre-check runs)
+  and S3's on P3-S3-nav-1 (claimed; built, stills re-shot, checks next).
+  **Requests:** S2-R45, S3-R40 and S3-R41 copied and answered. S2-R45's
+  default applies (the lead's guard run on the candidate decides); the
+  fix, a bake that gives the same bytes on every machine and not a pixel
+  tolerance, joins the seed order. S3-R40 goes the way of S1-R41: AD has
+  no seat, so the character keeps the kit's icon back, S3 marks ready
+  with its gate request and the lead's gate run judges the stills.
+  S3-R41 (the kit back's leather face, one value step against the night)
+  rides with the K1 kit task for S3-R35.
+  **Gate:** none. No task is ready and there is no new gate_request.
+  **Merge:** none. The audit and roadmap pages are not republished.
+  **Restarts:** none. S1's session (`session_01SNkKxpSULfXqHgZQvrJKb4`)
+  pushed at 19:12Z and S2's (`session_01SNkKxnfpUVpuhWGguwhzhA`) at
+  19:00Z; both are idle waiting on a background pre-check, and S3's
+  (`session_01SNkKxqvCzT3bnuPzL5KvLH`) is running.
+  **Seats:** S3 (nav-1), S2 (home-7) and S1 (hc-offline-2): three, the
+  cap while the seven-day bar reads `allowed_warning`.
+  **Next:** merge home-7, hc-offline-2 and nav-1 as each is marked ready
+  (home-7 re-gated only if its ready sha changes the home stills). If S1
+  or S2 has not pushed by the next cycle's end of its pre-check window
+  (about 20:30Z), restart it. The seed order: AD-R48's navigation task
+  (after home-7), R52 with the next settings task, R54's content task,
+  the K1 kit task for S3-R35 and S3-R41, S2-R45's deterministic icon
+  bake, AD-R55 with the next heist task, and S2-R44's home follow-up.
+  AD's next task carries the previews of S1-R41 and S3-R40.
+
 - **Cycle 132**, 17 November 2026, from about 18:39Z (session
   `session_01SNkKxodysAxdoGSovguhgy`, started by the Opus 5.5 launcher).
   **Claims copied:** S1's on P3-S1-hc-offline-2 (working, seen 18:43Z,
@@ -699,38 +731,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   the K1 outline task for S3-R35, AD-R55 with the next heist task, and
   S2-R44's home follow-up.
 
-- **Cycle 130**, 17 November 2026, from about 16:39Z (session
-  `session_01SNkKxoSr8iTomtimvAv5qj`, started by the Opus 5.5 launcher).
-  **Claims copied:** AD's on P3-AD-preview-1 (ready at 885fae50, its
-  pre-check PASS at 16:26Z), S3's on P3-S3-character-5 (ready at
-  3053cf6d, seen 16:56Z, lease 19:56Z; gate item 'character at 200% text,
-  pt_BR', Hierarchy) and S2's on P3-S2-home-7 (active, gate_request
-  c58d49c0, seen 17:04Z, lease 20:04Z). `owners.py claims`
-  passes. M54 is not in AD's acks: AD marked ready before it reached
-  home-7, so S2-R43's default (no preview) stands at 19:06Z.
-  **Requests:** one copied. S2-R44 answered as its default: S2 marks
-  home-7 ready on its own checks; the 125% purse in long locales and
-  M26's 125% cases go to a later home task, queued after AD-R55's heist
-  task.
-  **Gate and merge:** P3-AD-preview-1 (no gate items): `owners.py diff`
-  passes; candidate f932cda7 (885fae50 onto c513915e) under the lock in
-  55c4913f; full checks PASS; merged as 2eff5f43 (17:18Z). P3-S3-character-5 waits for cycle 131's
-  gate run and merge: it was seen ready after this cycle's lock was taken. The audit and roadmap
-  pages are not republished: neither page nor its inputs changed since
-  cycle 126 published them (ef80c8bf).
-  **Starts:** S1 on P3-S1-hc-offline-2 (`session_01SNkKxpSULfXqHgZQvrJKb4`,
-  17:19Z) in AD's
-  freed seat; its prompt now names AD-R60 to AD-R62 as ruled in
-  `boards/preview-1.md`. AD's session is idle with its task merged.
-  **Seats:** S3 (character-5), S2 (home-7) and S1 (hc-offline-2): three,
-  the cap while the seven-day bar reads `allowed_warning`.
-  **Next:** merge character-5, home-7 and hc-offline-2 as each is marked
-  ready. In the first free seat seed and start, in order: the navigation
-  task for AD-R48, R50 and R51 with AD-R63 and R64's S3 follow-up (after
-  character-5; they share `character_screen.gd` and `roster_screen.gd`),
-  R52 with the next settings task, R54's content task, the K1 outline
-  task for S3-R35, AD-R55 with the next heist task, and S2-R44's home
-  follow-up.
 - **Stopped here**, 13 November 2026, about 13:20Z (the owner's "Stop
   cleanly"). Cycle 84 (session `session_01SNkKxpqF4gx3yYhsXenUGt`) took
   the merge lock for P2-AD-board-4 (candidate `842f09ab`, AD's ready

@@ -2510,6 +2510,54 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   preview, the leather face included, goes into AD's next task; an
   objection becomes an S1 follow-up or a K1 request then.
 
+- **S2-R45** (from S2 to the lead, 17 November 2026 19:05Z; due 18
+  November 19:05Z; not blocking): `tools/ui_bake/guard.sh`'s first step,
+  the byte-for-byte rebake, fails in S2's container on
+  `client/ui/art/icons_256.webp` and `icons_256_hc.webp`, on main
+  (`e0644c93`) as on the branch. `art/ui/icons/studio/bake_icons.js`
+  draws through Chromium's software GL, whose output is the same on every
+  run in one container but not the committed bytes, so the bake depends
+  on the machine. Every other guard step passes on 9ef7b295. Default:
+  home-7 stays ready at 9ef7b295, the lead's own guard run on the
+  candidate decides the merge, and the rebake stays as it is. Copied in
+  cycle 133.
+  **Answered** by the lead in cycle 133: the default applies. The lead's
+  guard run on the candidate decides (it passed in the lead's container
+  in cycle 131). The fix is a bake that gives the same bytes on every
+  machine, not a pixel tolerance, since a tolerance would loosen the
+  guard; it joins the seed order as a tools task after the K1 kit task
+  for S3-R35 and S3-R41.
+
+- **S3-R40** (from S3 to AD, 17 November 2026 19:00Z; due 21:00Z;
+  blocking): AD's preview of P3-S3-nav-1 (the character's back is
+  ScreenNav.back_button, AD-R50; whether the character keeps the kit's
+  icon back or wears settings' labelled parchment back; the roster's
+  kept state, AD-R51; the offline notice as info in one line, AD-R63 and
+  AD-R64; the back's value step, S3-R41). Default: the stills stand as
+  named, the character keeps the kit's icon back as AD-R50 asks, and the
+  task goes ready at the pre-checked sha. Copied in cycle 133.
+  **Answered** by the lead in cycle 133: AD has no seat (S3, S2 and S1
+  fill the cap of three while the seven-day bar reads `allowed_warning`),
+  so, as for S1-R40, S1-R41 and S3-R34, the default applies: the
+  character keeps the kit's icon back, S3 marks ready at its pre-checked
+  sha with the gate request, and the lead's gate run judges the stills.
+  AD's preview goes into AD's next task; an objection becomes an S3
+  follow-up then.
+
+- **S3-R41** (from S3 to the lead, for K1, 17 November 2026 19:00Z; due
+  18 November 19:00Z; not blocking): KitControls.icon_button's maroon
+  leather face (`client/ui/kit_controls.gd`, used by KitNav.back and so
+  by ScreenNav.back_button on nine screens) fails value-steps against the
+  night in standard contrast: L* 23.7 on 13.6, one step where two are
+  asked; high contrast passes. Default: the character keeps the kit's
+  back as it is and the FAIL stands named in the track and the records;
+  nothing is loosened. Copied in cycle 133.
+  **Answered** by the lead in cycle 133: accepted as a finding; the
+  default applies until the fix merges. The lift of the face's or the
+  rim's value (with a value-steps test on a ScreenNav dock) rides with
+  the K1 kit task already queued for S3-R35, which keeps its place in
+  the seed order.
+
 ## Done in cycle 50 (10 November 2026, by the lead)
 
 - **K1-R15** (from K1, due 10 November 20:00Z): granted, as its default
