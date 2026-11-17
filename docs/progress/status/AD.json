@@ -5,15 +5,15 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P3-AD-audit-1b",
-  "task_state": "claimed",
-  "claimed_at": "2026-11-17T12:20:00Z",
+  "task_state": "working",
+  "claimed_at": "2026-11-17T12:08:00Z",
   "lease_until": "2026-11-17T15:20:00Z",
-  "updated_at": "2026-11-17T12:20:00Z",
-  "expected_next_update_by": "2026-11-17T13:05:00Z",
+  "updated_at": "2026-11-17T12:23:41Z",
+  "expected_next_update_by": "2026-11-17T13:08:41Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "808e42cf710668864502025b276f3afc7b182c05",
-    "next_step": "P3-AD-audit-1b: render the six misses on main and the 19 audit items at their commits."
+    "next_step": "P3-AD-audit-1b: the six misses re-rendered on main (rows 1, 14, 18 and the offline result still fail; 16 fixed); writing audit-1-misses.md and golden v2"
   },
   "precheck": null,
   "gate_request": null,
@@ -910,6 +910,6 @@
       "answer": "AD previewed P3-S2-home-states at e9285afd. All 8 cases fit ok: en, pt_BR and de at 100% and 200%, and high contrast at 100% and 200%. Board 3's objection B holds in every case: the Crew tab's '4' and the Defence badge '2' are clear of the pins and the side buttons; the locked plate ('Lantern Vale' / 'Opens at Keeper 28') at 100% now starts about 24 px from the left edge (S2-R36 note 1 met) and sits about 6 px below the LAB label, clear of the Lab button and every pin; the 200% short form (lock and '28' on one pill) is clear of the Lab button and every pin in all four 200% cases, so Lantern Vale says 'locked' at every size (S2-R36 note 3 closed). Nothing by colour alone. No objection at this commit; S2 may mark ready. Notes, not holding and not depending on the final shape (M40): (1) at 200% the Defence badge's top still overlaps the 61.0k plate's foot by 1 to 3 px, clear of the gauge fill (S2-R36 note 2, unchanged; if moved, drop it 2 to 4 pt); (2) at 200% pt_BR and de the pill sits about 7 px from the '6' pin; if the map loses more height, anchor it under the island. Write-up and stills: docs/art/ui-quality/gate/boards/board-3.md, 'Preview of home-states, second look (S2-R42)'. Default if S2 disagrees with a note: S2's stills stand."
     }
   ],
-  "next_step": "P3-AD-flow-2 ready at 808e42cf. Waiting for the lead: merge, and answers to AD-R47 to AD-R55 (defaults in each request).",
-  "last_update": "2026-11-17T10:44:05Z: P3-AD-flow-2 ready at 808e42cf (pre-check PASS, 'All checks passed.', exit 0; owners.py diff passes). Findings F1 to F9 filed as AD-R47 to AD-R55."
+  "next_step": "P3-AD-audit-1b: the six misses re-rendered on main (rows 1, 14, 18 and the offline result still fail; 16 fixed); writing audit-1-misses.md and golden v2",
+  "last_update": "2026-11-17T12:23:41Z P3-AD-audit-1b working: misses re-rendered and labelled on main; audit items rendered for golden v2."
 }
