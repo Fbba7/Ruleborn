@@ -22,8 +22,11 @@ const WORDS := {&"map": "HOME_MAP", &"observatory": "HOME_OBSERVATORY", &"defenc
 const LEFT := [[&"defences", "realmactions/defence", "HOME_SIDE_DEFENCE"],
 	[&"lab", "screens/resonancelab", "HOME_SIDE_LAB"]]
 const RIGHT := [[&"track", "screens/season", "HOME_SIDE_SEASON"], [&"shop", "screens/shop", "HOME_SIDE_SHOP"]]
-## Where each tab goes; the Islands tab is home itself.
-const TAB_ROUTES := {"laws": &"codex", "crew": &"roster", "friends": &"friends"}
+## The tabs home keeps for itself; every other tab goes where the router's table
+## sends it (Router.TABS), as ScreenNav.bar routes it (AD-R49). Islands is home's
+## own tab: a tap shows the whole world. The Heist starts a heist from home, the
+## bar's lead action, rather than opening the Observatory (`_play`).
+const TABS_HOME_KEEPS := ["islands", "heist"]
 ## Each strain band's colour in the kit (§5.5's seven bands, in order).
 const BAND_KEYS := ["quiet", "steady", "humming", "brimming", "strained", "cracking", "breaking"]
 ## The goals' icons in the kit's set, by `UniverseGoal.goals`' names.
@@ -45,8 +48,9 @@ const GOAL_PAD_LARGE := 2.0
 const FOOT_GAP_LARGE := 3.0
 ## Collect's gold either side of its picture and words, in points together.
 const COLLECT_PAD := 16.0
-## The smallest the other tabs' names go, in points at 100% text, before they
-## give way to their icons alone.
+## The smallest the other tabs' names go, in points scaled by the text size but never
+## past their own 13 points at 100%, before they give way to their icons alone (only
+## up to ScreenNav.LABELS_UP_TO: past it they are icons alone anyway).
 const TAB_WORD_LEAST := 11.0
 ## The least share of its size strain's words take to keep the purse's fourth
 ## place at large text.
@@ -374,11 +378,12 @@ func _raise_heist() -> void:
 	(picture.get_parent() as Control).offset_top = -float(UI.px(8))
 
 
-## The tabs' words, after the kit has fitted them (P2-K1-tabs owns KitTabs).
-## The others' names show, smaller where one would be cut, never under
-## TAB_WORD_LEAST: below that (large text) their icons alone, each named aloud,
-## as the key frame at 200% does. The chosen tab's name always shows (board 3's
-## objection C), as large as fits inside its tile.
+## The tabs' words, after the kit has fitted them (P2-K1-tabs owns KitTabs), by
+## ScreenNav.bar's label rule (AD-R49): up to ScreenNav.LABELS_UP_TO the others'
+## names show, smaller where one would be cut, never under TAB_WORD_LEAST; past
+## it, or below that size, their icons alone, each named aloud, as the key frame
+## at 200% does. The chosen tab's name always shows (board 3's objection C), as
+## large as fits inside its tile.
 func _fit_tab_words() -> void:
 	if tabs == null or not is_instance_valid(tabs):
 		return
@@ -394,10 +399,10 @@ func _fit_tab_words() -> void:
 			continue
 		var l: Label = words[key]
 		var room := (tabs.buttons[key] as Button).size.x - UI.px(2)
-		var whole := _tab_word(l, UI.text_px(13))
+		var whole := HomeParts.tab_word(l, UI.text_px(13))
 		if whole > room:
 			at = minf(at, floorf(UI.text_px(13) * room / maxf(whole, 1.0)))
-	var others := at >= UI.text_px(TAB_WORD_LEAST)
+	var others := Settings.text_scale <= ScreenNav.LABELS_UP_TO and at >= minf(UI.text_px(TAB_WORD_LEAST), UI.px(13))
 	for key: String in words:
 		var l: Label = words[key]
 		var b := tabs.buttons[key] as Button
@@ -409,7 +414,7 @@ func _fit_tab_words() -> void:
 		var px := l.get_theme_font_size("font_size")
 		var fit := px
 		var room := b.size.x - UI.px(KitTabs.RIM)
-		var wide := _tab_word(l, px)
+		var wide := HomeParts.tab_word(l, px)
 		if wide > room:
 			fit = floori(px * room / maxf(wide, 1.0))
 		if l.is_visible_in_tree() and l.size.y > 0.0:
@@ -425,12 +430,6 @@ func _fit_tab_words() -> void:
 		_fit_tab_words.call_deferred()
 
 
-## The width `l`'s word takes in capitals at `px`, its stroke included.
-static func _tab_word(l: Label, px: int) -> float:
-	return l.get_theme_font("font").get_string_size(l.text.to_upper(), HORIZONTAL_ALIGNMENT_LEFT, -1, px).x \
-		+ l.get_theme_constant("outline_size")
-
-
 static func _room() -> Control:
 	var room := UI.grow()
 	room.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -444,8 +443,8 @@ func _on_tab(key: String) -> void:
 		world.show_whole()
 	elif key == "heist":
 		_play()
-	elif TAB_ROUTES.has(key):
-		App.services.router.go(TAB_ROUTES[key])
+	elif HomeParts.tab_route(key) != &"":
+		App.services.router.go(HomeParts.tab_route(key))
 
 
 ## A realm tapped in the world: closer, and once close, its realm view.
@@ -893,8 +892,9 @@ func _fit_amounts() -> void:
 		HomeParts.figures(l)
 
 
-## The nearest goal on the kit's goal card, its words and a gold bar of the
-## share done; a tap opens where it is worked on.
+## The nearest goal on the kit's goal card, its words and the kit's green
+## progress fill for the share done (gold stays on Collect); a tap opens where
+## it is worked on.
 func _show_goal(g: Dictionary) -> void:
 	if g == goal and goal_card.get_child_count() > 0:
 		return
@@ -904,10 +904,9 @@ func _show_goal(g: Dictionary) -> void:
 	if g.is_empty():
 		goal_card.visible = false
 		return
+	# The words say what is left; the bar shows the share, never a number (an
+	# empty count hides the bar's labels).
 	var card := KitHud.goal(GOAL_ICONS.get(str(g["icon"]), ""), str(g["text"]), float(g["share"]), 1.0, "")
-	# The words say what is left; the bar shows the share, never a number.
-	for l: Label in card.find_child("Progress", true, false).find_children("*", "Label", true, false):
-		l.visible = false
 	# Its words a point under the kit's, as the key frame sets them under
 	# Collect's: two lines of them stand beside Collect at 100% (S2-R20's second
 	# objection), leaving the world the foot's second line.

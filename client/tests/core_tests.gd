@@ -19,6 +19,7 @@ func run() -> void:
 	await _api()
 	await _outbox()
 	_router()
+	_tabs()
 	_tokens()
 	_overlay()
 
@@ -154,6 +155,28 @@ func _router() -> void:
 			and store.get_slice(AppState.ROUTE)["params"] == {"from": "heist"}
 			and Router.ROUTES.values().all(func(p: String) -> bool: return ResourceLoader.exists(p)),
 		"%s" % [shown])
+
+
+## AD-R49: one route table for the bar. Every tab of the kit's bar has a route
+## in the router's table, and home sends each tab where that table does, but for
+## the tabs home keeps for itself (Home.TABS_HOME_KEEPS: Islands and the Heist).
+func _tabs() -> void:
+	var problems: Array[String] = []
+	var ids: Array[String] = []
+	for tab: Array in KitTabs.TABS:
+		ids.append(str(tab[0]))
+	for id: String in ids:
+		if not Router.TABS.has(id) or not Router.ROUTES.has(Router.TABS[id]):
+			problems.append("%s has no route" % id)
+		var want: StringName = &"" if id in Home.TABS_HOME_KEEPS else Router.TABS.get(id, &"")
+		if HomeParts.tab_route(id) != want:
+			problems.append("home sends %s to '%s'" % [id, HomeParts.tab_route(id)])
+	for id: String in Home.TABS_HOME_KEEPS:
+		if id not in ids:
+			problems.append("home keeps %s, not a tab" % id)
+	check.call("every tab has a route in Router.TABS, and home's tabs go where it says, Islands and the Heist excepted",
+		problems.is_empty() and Router.TABS.size() == ids.size() and Home.TABS_HOME_KEEPS == ["islands", "heist"],
+		"; ".join(problems))
 
 
 func _tokens() -> void:
