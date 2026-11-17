@@ -31,6 +31,9 @@ const OUTLINE_SHARE := 0.12
 ## Godot draws a quarter of a label's `outline_size` outward on each side
 ## (measured in the renderer the stills use, at 540 and 1080 pixels wide).
 const OUTLINE_PER_SIDE := 4.0
+## The outline's soft edge, a pixel of the half-size still in the window's
+## pixels, added so the solid ink measures the least a side there too.
+const OUTLINE_EDGE_PX := 2.0
 
 var controller: RosterController
 var id := 0
@@ -299,10 +302,13 @@ static func _stroke(l: Label) -> void:
 static func _outline_px(l: Label) -> int:
 	var size := float(l.get_theme_font_size("font_size"))
 	var side := maxf(UI.px(OUTLINE_POINTS), size * OUTLINE_SHARE)
-	return roundi(side * OUTLINE_PER_SIDE)
+	return ceili((side + OUTLINE_EDGE_PX) * OUTLINE_PER_SIDE)
 
 
 static func _ink_large(l: Label) -> void:
+	# Off the tree the words have no theme to size them by yet.
+	if not l.is_inside_tree():
+		l.tree_entered.connect(func() -> void: _ink_large(l), CONNECT_ONE_SHOT)
 	var width := _outline_px(l)
 	l.add_theme_color_override("font_outline_color", Tokens.color("ink_line"))
 	l.add_theme_constant_override("outline_size", width)
@@ -815,6 +821,10 @@ func _stand(kind: String, c: Dictionary, slice: Dictionary, words: Dictionary) -
 	var ids: Array = RosterScreen.kinds_of(slice).keys()
 	var at := ids.find(id)
 	var plate := UI.plate(title_label, "plate_dark")
+	# At large text the name wears the backdrop words' outline too, on the
+	# stage's art round its plate (audit 1's row 14, AD-R58).
+	if _large():
+		_ink_large(title_label)
 	var foot := MarginContainer.new()
 	foot.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	foot.mouse_filter = Control.MOUSE_FILTER_IGNORE
