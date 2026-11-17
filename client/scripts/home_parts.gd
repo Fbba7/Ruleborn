@@ -492,15 +492,16 @@ static func amounts_over(amounts: Array, held: Array[Control], room: float, bake
 
 ## The share of their full size the row's amounts take against `room`, and
 ## whether they are baked (x, y): baked, a little smaller where the row does
-## not fit at full size, never under `least`, so every headline count keeps
-## the one baked treatment (P2-S2-home-6); live only where even that does not
-## fit, then a little smaller too where it helps.
-static func amounts_fit(amounts: Array, held: Array[Control], room: float, least: float) -> Vector2:
+## not fit at full size, never under `least_baked`, so every headline count
+## keeps the one baked treatment (P2-S2-home-6); live only where even that
+## does not fit, then a little smaller too, never under `least_live`.
+static func amounts_fit(amounts: Array, held: Array[Control], room: float, least_baked: float,
+		least_live: float) -> Vector2:
 	for baked: bool in [true, false]:
 		var fit := amounts_over(amounts, held, room, baked)
 		if fit.y <= 0.5:
 			return Vector2(1.0, 1.0 if baked else 0.0)
 		var shrunk := (fit.x - fit.y - 1.0) / maxf(fit.x, 1.0)
-		if shrunk >= least:
+		if shrunk >= (least_baked if baked else least_live):
 			return Vector2(shrunk, 1.0 if baked else 0.0)
 	return Vector2(1.0, 0.0)
