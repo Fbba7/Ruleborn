@@ -5,16 +5,16 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P2-S2-home-6",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-17T01:00:00Z",
   "lease_until": "2026-11-17T04:00:00Z",
-  "updated_at": "2026-11-17T01:00:00Z",
-  "expected_next_update_by": "2026-11-17T01:45:00Z",
+  "updated_at": "2026-11-17T01:12:00Z",
+  "expected_next_update_by": "2026-11-17T01:55:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "eb40e8f4",
-    "next_step": "Claimed P2-S2-home-6; main a714186 merged. Next: stroke 'Keeper 24' all round, one big-number treatment for every headline count (purse, gems, Vibrante %).",
-    "at": "2026-11-17T01:00:00Z"
+    "next_step": "Gold baked figures for every headline count (purse, renown, strain share at every size), baked figures shrink before going live, leather rim round 'Keeper 24's ink. Next: full FIT sweep (56 cases), checks, Part 6, AD preview request, pre-check.",
+    "at": "2026-11-17T01:12:00Z"
   },
   "precheck": null,
   "gate_request": null,
@@ -494,5 +494,5 @@
     }
   ],
   "answers": [],
-  "next_step": "None for S2 until the lead acts: AD's preview (S2-R33), then the gate at eb40e8f4. On resync: merge the lead's branch, re-run FIT, guard and the pre-check, and mark ready again."
+  "next_step": "Finish P2-S2-home-6: FIT sweep, guard, check_screens, client tests, Part 6 evidence, AD preview request through the lead, merge main, pre-check, gate request."
 }

@@ -13,12 +13,20 @@ const GOAL_LEAST := 0.85
 ## How far Full hangs above its pill's edge at 100%, beyond half its plate:
 ## clear of the baked figures' tops, which stand on the amount's cap height.
 const FULL_LIFT := 8.0
-## Home's figures: the kit's white baked numerals in the small display
+## Home's figures: the kit's gold baked numerals in the small display
 ## role's slot (kit-spec.md section 2.2, T3), and its words' T2 drawn half
-## again as heavy as the role's theme (`inked`).
-const FIGURE_FINISH := "num_white"
+## again as heavy as the role's theme (`inked`). Gold, not white: the white
+## finish's pale gradient and thinner stroke read as a flat light fill on the
+## dark plates at the still's scale (P2-S2-home-6), where the gold's cream to
+## amber reads as the gradient it is, as the pass anchor's counts do.
+const FIGURE_FINISH := "num_gold"
 const FIGURE_ROLE := "display_s"
 const INK_HEAVIER := 1.5
+## The live words' outline, at least this share of their size (the rubric's
+## 12%, with a little to spare for rounding).
+const OUTLINE_SHARE := 0.13
+## The leather rim round the ink of words over the starfield, in points.
+const RIM := 2.5
 ## The baked figures' share of the role's line: their cells hold the glyph's
 ## stroke and drop round its body, so at the full line the figures stand
 ## taller and higher than the live words beside them (the "k") and meet the
@@ -326,19 +334,34 @@ class Raids:
 ## T2 on `l` where the role's theme draws it too lightly to see: the role's
 ## outline is 2 points and its drop 1.5 with no outline of its own, so the
 ## stroke covers the drop (P2-S2-home-5: the purse's counts read flat cream).
-## The outline here is half again as thick, and the drop is the glyph's own
-## shadow set down by the outline and the role's drop, so it shows below the
-## stroke. A shadow with an outline of its own would draw it in one more call
-## per label, which takes home over §21.3's 150.
-static func inked(l: Label) -> void:
+## The outline here is half again as thick, and never under OUTLINE_SHARE of
+## the words' size, so it holds at large text too. On a plate (`over_art`
+## false) the drop is the glyph's own shadow set down by the outline and the
+## role's drop, so it shows below the stroke, as the baked figures beside it
+## have theirs. Over the starfield (`over_art`) the ink alone merges into the
+## night behind it (P2-S2-home-6: "Keeper 24" read as dropped, not outlined),
+## so the shadow is a band of the plates' leather rim round the stroke, set
+## down by a third of its width (never less than the rim itself would show
+## above the letters): the ink then stands out all round against the rim,
+## and the rim's heavier foot is the drop. That shadow's outline costs
+## one more call, for the one name over the art.
+static func inked(l: Label, over_art := false) -> void:
 	var t := Tokens.type_role(FIGURE_ROLE)
-	var outline := UI.px(float(t["outline"]) * INK_HEAVIER)
+	var px := l.get_theme_font_size("font_size")
+	var outline := maxi(UI.px(float(t["outline"]) * INK_HEAVIER), ceili(px * OUTLINE_SHARE))
+	var drop := maxi(1, UI.px(float(t["drop"]) * INK_HEAVIER))
 	l.add_theme_color_override("font_color", Tokens.color("cream"))
 	l.add_theme_color_override("font_outline_color", Tokens.color("ink_line"))
 	l.add_theme_constant_override("outline_size", outline)
-	l.add_theme_color_override("font_shadow_color", Tokens.color("drop"))
 	l.add_theme_constant_override("shadow_offset_x", 0)
-	l.add_theme_constant_override("shadow_offset_y", outline + maxi(1, UI.px(float(t["drop"]) * INK_HEAVIER)))
+	if over_art:
+		var rim := maxi(3, UI.px(RIM))
+		l.add_theme_color_override("font_shadow_color", Tokens.color("leather_rim"))
+		l.add_theme_constant_override("shadow_offset_y", maxi(1, rim / 3))
+		l.add_theme_constant_override("shadow_outline_size", outline + rim)
+		return
+	l.add_theme_color_override("font_shadow_color", Tokens.color("drop"))
+	l.add_theme_constant_override("shadow_offset_y", outline + drop)
 	l.add_theme_constant_override("shadow_outline_size", 0)
 
 
@@ -465,3 +488,19 @@ static func amounts_over(amounts: Array, held: Array[Control], room: float, bake
 				else l.get_theme_font("font").get_string_size(l.text, HORIZONTAL_ALIGNMENT_LEFT, -1, full).x
 		rest += held[i].get_combined_minimum_size().x - shown_as(l).get_combined_minimum_size().x
 	return Vector2(words, words + rest - room)
+
+
+## The share of their full size the row's amounts take against `room`, and
+## whether they are baked (x, y): baked, a little smaller where the row does
+## not fit at full size, never under `least`, so every headline count keeps
+## the one baked treatment (P2-S2-home-6); live only where even that does not
+## fit, then a little smaller too where it helps.
+static func amounts_fit(amounts: Array, held: Array[Control], room: float, least: float) -> Vector2:
+	for baked: bool in [true, false]:
+		var fit := amounts_over(amounts, held, room, baked)
+		if fit.y <= 0.5:
+			return Vector2(1.0, 1.0 if baked else 0.0)
+		var shrunk := (fit.x - fit.y - 1.0) / maxf(fit.x, 1.0)
+		if shrunk >= least:
+			return Vector2(shrunk, 1.0 if baked else 0.0)
+	return Vector2(1.0, 0.0)

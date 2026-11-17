@@ -747,8 +747,10 @@ func _show_strain(share: float, band: int, known: bool) -> void:
 	hit.set_meta("band", key)
 	hit.size_flags_horizontal = Control.SIZE_SHRINK_END
 	hit.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	# The share in the headline counts' baked figures over the band's name,
+	# at every size (P2-S2-home-6: one big-number treatment).
+	HomeParts.large_strain(pill, pct, named)
 	if Settings.text_scale >= 150:
-		HomeParts.large_strain(pill, pct, named)
 		# The purse's fourth place, as tall as the pill beside it.
 		hit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		hit.size_flags_vertical = Control.SIZE_FILL
@@ -876,16 +878,9 @@ func _fit_amounts() -> void:
 		for i in row:
 			held.append(pills[UniversePurse.ORDER[i]] as Control)
 		var gap := float(purse.get_theme_constant("h_separation")) if large else UI.px(PURSE_GAP_LEAST) * (row - 1.0)
-		var room := purse.size.x - gap
-		# Baked where their row fits at their full size, else live.
-		var fit := HomeParts.amounts_over(amounts.slice(0, row), held, room, true)
-		baked = fit.y <= 0.5
-		if not baked:
-			fit = HomeParts.amounts_over(amounts.slice(0, row), held, room, false)
-		if fit.y > 0.5:
-			var shrunk := (fit.x - fit.y - 1.0) / maxf(fit.x, 1.0)
-			if shrunk >= AMOUNT_LEAST:
-				share = shrunk
+		var fit := HomeParts.amounts_fit(amounts.slice(0, row), held, purse.size.x - gap, AMOUNT_LEAST)
+		share = fit.x
+		baked = fit.y > 0.5
 	for l: Label in amounts:
 		var px := floori(UI.text_px(float(l.get_meta("points"))) * share)
 		if l.get_theme_font_size("font_size") != px:
@@ -981,13 +976,14 @@ func _play() -> void:
 
 ## `l` in the kit's display role at `points`, for home's figures and names:
 ## T2 drawn heavier (`HomeParts.inked`), its figures baked (`HomeParts.figures`).
+## A name with no figures to bake ("Keeper 24") stands over the starfield.
 static func home_figure(l: Label, points: float) -> void:
 	if l == null:
 		return
 	l.theme_type_variation = "Display"
 	l.add_theme_font_size_override("font_size", UI.text_px(points))
 	l.set_meta("points", points)
-	HomeParts.inked(l)
+	HomeParts.inked(l, HomeParts.figures_cut(l.text)[0] == "")
 	HomeParts.figures(l)
 
 
