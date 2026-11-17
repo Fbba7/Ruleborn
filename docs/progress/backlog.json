@@ -2,8 +2,8 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026. Phase 2 started on 12 November 2026 (lead cycle 70): P1-AD-board-1d let board 1 stand and phase 1's other exit criteria hold (report.md section 3.2); its first tasks are the flow findings (S1, S2) and board 1's note G (AIA-2), within the same cap of three. Since 12 November 2026, about 20:00Z, the cap is four UI builders by the owner's order (CLAUDE.md order 3; three while the seven-day bar reads allowed_warning).",
   "wave": "UI wave",
   "phase": 2,
-  "updated_at": "2026-11-17T01:42:00Z",
-  "updated_by": "lead (cycle 109)",
+  "updated_at": "2026-11-17T02:20:00Z",
+  "updated_by": "lead (cycle 110)",
   "stop_at": "2026-11-17T21:00:00Z",
   "lease_hours": 3,
   "status_every_minutes": 45,
@@ -648,15 +648,15 @@
         "agent": "S2",
         "branch": "claude/ui-screens-home",
         "claimed_at": "2026-11-17T01:00:00Z",
-        "seen_at": "2026-11-17T01:42:00Z",
+        "seen_at": "2026-11-17T01:52:00Z",
         "lease_until": "2026-11-17T04:00:00Z"
       },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-17T01:42:00Z",
-      "updated_by": "lead (cycle 109)",
+      "updated_at": "2026-11-17T02:20:00Z",
+      "updated_by": "lead (cycle 110)",
       "id": "P2-S2-home-6",
       "title": "Home screen, part 6 (phase 2 exit, M25, M33): the advisory gate's Display type fails at home 100% text and 200% pt_BR (verdict at eb40e8f4) fixed",
       "exceptions": [
@@ -707,15 +707,15 @@
         "agent": "S1",
         "branch": "claude/ui-screens-heist",
         "claimed_at": "2026-11-17T01:31:29Z",
-        "seen_at": "2026-11-17T01:42:00Z",
+        "seen_at": "2026-11-17T01:58:02Z",
         "lease_until": "2026-11-17T04:31:29Z"
       },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-17T01:42:00Z",
-      "updated_by": "lead (cycle 109)",
+      "updated_at": "2026-11-17T02:20:00Z",
+      "updated_by": "lead (cycle 110)",
       "id": "P2-S1-result-6",
       "title": "Result screen, part 6 (phase 2 exit, M25): S1-R32's local fix dropped once P2-K1-grow-1 merges; the gate at 100% text re-run and its Display type fail fixed if it stands",
       "exceptions": []
@@ -1046,6 +1046,27 @@
       "text": "From 17 November 2026 (agent-brief.md): send AD your preview request as soon as the first stills of the heist screen exist, even rough, and keep building; fold AD's objections in before the gate request. Optionally, before ready, run the ui-judge agent on your 200% pt_BR and high-contrast stills as an advisory pre-judge (no verdict, no attempt counted). A task the lead starts 'stacked on' a ready task branches from main and merges that task's ready_sha. Add M41 to your acks.",
       "sent_at": "2026-11-17T01:30:00Z",
       "ack_by": "2026-11-17T03:30:00Z"
+    },
+    {
+      "id": "M42",
+      "to": "lead",
+      "text": "From 17 November 2026 (lesson, report 100): the wait from ready to merged rated worse two reports in a row (1.7h, then 2.6h). In cycle 108 P2-S2-home-5 and P2-S1-heist-1 were both ready with disjoint claims, but each got its own candidate and check_all run (00:19 to 00:53, then 00:48 to 01:26); the second run covered both. Apply agent-protocol.md's batching rule: when two or more tasks are ready at once, build one candidate from all of them and run the full checks once; only if it fails, re-check each alone. Home 6 and result 6 are the next pair. Add M42 to your acks.",
+      "sent_at": "2026-11-17T01:55:00Z",
+      "ack_by": "2026-11-17T03:55:00Z"
+    },
+    {
+      "id": "M43",
+      "to": "S2",
+      "text": "From 17 November 2026 (lesson, report 100): P2-S2-home-5 was marked ready before the gate judged it, merged still failing the Display type it was seeded to close, and P2-S2-home-6 re-opened it (+1h scope, a second merge). Set gate_request on the task's target items as soon as the first fixed stills exist and keep building; mark ready only once those items pass, or after a second fail with the verdict and your reasons in the handoff. This applies to home 6 now. Add M43 to your acks.",
+      "sent_at": "2026-11-17T01:55:00Z",
+      "ack_by": "2026-11-17T03:55:00Z"
+    },
+    {
+      "id": "M44",
+      "to": "S1",
+      "text": "From 17 November 2026 (lesson, report 100): P2-S2-home-5 was marked ready before the gate judged it and merged still failing the quality it was seeded to close, so a part 6 had to re-open it. Set gate_request on the task's target items as soon as the first fixed stills exist and keep building; mark ready only once those items pass, or after a second fail with the verdict and your reasons in the handoff. This applies to result 6 now. Add M44 to your acks.",
+      "sent_at": "2026-11-17T01:55:00Z",
+      "ack_by": "2026-11-17T03:55:00Z"
     }
   ]
 }
