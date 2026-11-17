@@ -475,6 +475,22 @@ The gate's advisory verdict on home-6 (`verdicts/P2-S2-home-6/e674b614.json`) pa
 
 **Evidence.** Stills at 100% in en and de and at 200% in en. Every count shows the cream-to-gold gradient, the ink stroke all round and the hard drop, and the words after it are gold. Draw calls on home (`budget_shots.py`): 143 at 100%, 118 at 200% and 143 in high contrast (records 145, 121, 145; the same as before the task). `check_screens.py` OK. FIT=1 in M26's 57 cases on bac22476: all "fit ok".
 
+## Part 7: the states the fixture lacked (P3-S2-home-states)
+
+Board 3 carried a note through every round: the shot's fixture (`keyframe()` in `client/tests/shots/universe_home.gd`) had no notifications, no shield and no locked realm. So the dock's count badges, the Defence timer "5 h 12 min" and Lantern Vale's "Opens at Keeper 28" were never seen. This part adds what the design allows of them, and checks them.
+
+**What changed.**
+
+- **Lantern Vale is locked in the key frame's state.** `keyframe()` loads the sample universe with five outer realms open (`UniverseSample.view(5)`), so the sixth, Lantern Vale, is the next to open, blocked until Keeper 28. The map then draws its locked plate: the lock mark and "Opens at Keeper 28" ("Abre no Guardião 28", "Öffnet bei Hüter 28"), left of the Heart, where the key frame has it. When `OUTER` is given, the fixture keeps that count, so the cases that set it are unchanged.
+- **The Crew tab counts the idle crew** (`HomeParts.tab_badges`, from the roster's slice). The design's tutorial gives home "an idle-worker badge" once every producer is staffed (minutes 5 to 7). `keyframe()` adds two idle characters to the sample's four (two working, two idle), so four of the six are idle and the Crew tab shows "4", as in the key frame. The count is the kit's badge (`KitTabs.make`), a number on red, so it is not carried by colour alone, and its name is spoken (`KIT_TAB_BADGE`).
+- **The Defence badge** still counts the raids not yet seen ("2"), as before.
+
+**What is not built, and why.**
+
+- **No shield timer on home.** The key frame shows "5 h 12 min" under the Defence button. The design document overrules that frame: its table of key-frame changes names "Home shield" and says "No timers on home; 12.3's protection said in words on the defence screen while it lasts; shields are never sold" (12.3, 18.8, 22.1), and the home's rules say "no timers on the home screen". The design outranks the task and the key frame, so home shows no timer. S2 asked the lead to confirm (S2-R37); the default is no timer.
+- **No counts on Laws, Heist, Friends or Shop, and Season keeps its "!".** The key frame shows Laws 1, Heist 2, Friends 1, Shop 1 and Season 3. The store holds no count for any of them: no unread laws, no ready heists, no friend requests, no shop offer counted, and the season track says only whether a reward can be claimed, which the Season button shows as "!". Making up a count would show the player a number that means nothing. S2 asked the lead which source each should read (S2-R39); the default is to show only the counts the store holds.
+- **The locked plate shows no realm name.** The key frame's plate reads "Lantern Vale" over "Opens at Keeper 28", on a cream plate like the other pins. Home's locked plate is the map's (`client/world/universe_pins.gd`, not this task's file): a dark plate with the lock and the opening level. S2 asked for the name (S2-R38); the default is the plate as it is.
+
 ## Left for other tasks
 
 These widgets are no longer used by home, but they are outside this task's files:
