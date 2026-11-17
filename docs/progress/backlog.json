@@ -707,15 +707,15 @@
         "agent": "S1",
         "branch": "claude/ui-screens-heist",
         "claimed_at": "2026-11-17T01:31:29Z",
-        "seen_at": "2026-11-17T03:43:39Z",
-        "lease_until": "2026-11-17T06:43:39Z"
+        "seen_at": "2026-11-17T04:13:52Z",
+        "lease_until": "2026-11-17T07:13:52Z"
       },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-17T03:55:00Z",
-      "updated_by": "lead (cycle 113)",
+      "updated_at": "2026-11-17T04:25:00Z",
+      "updated_by": "lead (cycle 114)",
       "id": "P2-S1-result-6",
       "title": "Result screen, part 6 (phase 2 exit, M25): S1-R32's local fix dropped once P2-K1-grow-1 merges; the gate at 100% text re-run and its Display type fail fixed if it stands",
       "exceptions": []
