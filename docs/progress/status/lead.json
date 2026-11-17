@@ -3,7 +3,15 @@
   "updated_at": "2026-11-17T12:06:45Z",
   "expected_next_update_by": "2026-11-17T15:06:45Z",
   "cycle": 124,
-  "merging": null,
+  "merging": {
+    "candidate_sha": "84b0ee7ca9435ea2a880c7453e1c9f25be3482d5",
+    "task_ids": [
+      "P3-K1-polish-2",
+      "P3-S2-home-states"
+    ],
+    "started_at": "2026-11-17T12:32:00Z",
+    "expires_at": "2026-11-17T13:32:00Z"
+  },
   "last_merged": {
     "task_id": "P3-AD-flow-2",
     "sha": "744390e1"
