@@ -180,7 +180,7 @@
       "estimate_h": 1.0,
       "tier": 2,
       "critical": false,
-      "state": "ready",
+      "state": "merged",
       "claim": {
         "agent": "S3",
         "branch": "claude/ui-screens-meta",
@@ -191,12 +191,69 @@
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": "3053cf6d",
-      "merged_sha": null,
-      "updated_at": "2026-11-17T17:18:00Z",
-      "updated_by": "lead (cycle 130)",
+      "merged_sha": "c848afc3",
+      "updated_at": "2026-11-17T18:25:00Z",
+      "updated_by": "lead (cycle 131)",
       "exceptions": [
         "docs/art/shots/menu-screens/**"
       ]
+    },
+    {
+      "assigned_to": "S3",
+      "attempts": 0,
+      "claim": null,
+      "critical": false,
+      "deps": [
+        "P3-S3-character-5"
+      ],
+      "done_when": [
+        "AD-R50 (flow board 2's F4, granted in cycle 123): the character's back is ScreenNav.back_button (client/scripts/screen_nav.gd), not the parchment '<' in the level-up card, with a mount test in client/tests/run.gd that opens every non-tab route through the router and finds exactly one back button on it",
+        "AD-R51 (F5, granted in cycle 123): the roster keeps its scroll and its stage's chosen character across a visit to the character and back, held in the route args or the store, with a mount test in client/tests/run.gd; a store change outside these files is a request to the lead with a default",
+        "AD-R63 (preview-1, granted in cycle 129): the character and the roster set the ERR_OFFLINE notice with UI.set_status(status_label, 'info', ...), ink on the cream plate; red stays for the server's real refusals",
+        "AD-R64 (preview-1, granted in cycle 129, M40): at large text the offline notice takes one line, the '!' and ERR_OFFLINE alone, with the full sentence as its accessibility_name, on the character and the roster; OFFLINE=1 TEXT=200 in pt_BR and de join the character's FIT=1 list, and fit ok",
+        "the gate's item 'character at 200% text, pt_BR' (Hierarchy) passes in both states, online and OFFLINE=1: it failed 3 of 3 at 3053cf6d on the offline notice outweighing Subir de nível (docs/art/ui-quality/gate/verdicts/P3-S3-character-5/3053cf6d.json)",
+        "the character's and the roster's stills at 100% and 200% text (en, pt_BR, de) and in high contrast unchanged in substance, or each change named; board 5 still stands",
+        "AD previews the stills before ready (M10, M12, M23): the builder sends them to AD while the work can still change, and AD's objections are answered in this task",
+        "python3 tools/ui_bake/check_screens.py",
+        "bash tools/ui_bake/guard.sh",
+        "gate: Screen",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed under docs/art/ui-quality/gate/verdicts/ or outside the task's files (M48)",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 1.5,
+      "exceptions": [
+        "docs/art/shots/menu-screens/**"
+      ],
+      "files": [
+        "client/scripts/character_screen.gd",
+        "client/scripts/roster_screen.gd",
+        "client/tests/shots/screen_character.gd",
+        "client/tests/shots/screen_roster.gd",
+        "client/tests/run.gd",
+        "docs/art/tracks/menu-screens.md"
+      ],
+      "gate_items": [
+        {
+          "item": "character at 200% text, pt_BR",
+          "qualities": [
+            "Hierarchy"
+          ]
+        }
+      ],
+      "id": "P3-S3-nav-1",
+      "merged_sha": null,
+      "model": "Opus 5.5",
+      "phase": 3,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "role": "S3",
+      "state": "open",
+      "tier": 2,
+      "title": "Character and roster, navigation and the offline notice: ScreenNav's back (AD-R50), the roster keeps its scroll and stage (AD-R51), the offline notice as info in one line at large text (AD-R63, AD-R64)",
+      "updated_at": "2026-11-17T18:25:00Z",
+      "updated_by": "lead (cycle 131)"
     },
     {
       "id": "P3-AD-preview-1",

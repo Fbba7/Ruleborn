@@ -2464,7 +2464,11 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   roster screens, seeded when P3-S3-character-5 merges (it holds
   `character_screen.gd`), first in the seed order after the navigation
   task for AD-R48, R50 and R51, which shares those files; the two may be
-  one task.
+  one task. **Seeded** in cycle 131, when P3-S3-character-5 merged
+  (c848afc3), as one task, P3-S3-nav-1: AD-R50, R51, R63 and R64. AD-R48
+  is not in it, because its router handler, home's quit question and
+  its core test need `home.gd` and `client/tests/core_tests.gd`, which
+  P3-S2-home-7 holds. AD-R48 is the next seed after home-7 merges.
 
 - **S2-R44** (from S2, 17 November 2026 16:22Z; due 18 November 16:22Z;
   not blocking): P3-S2-home-7 adds 125% text to home's FIT=1 runs, and two
