@@ -409,6 +409,56 @@ The other stills use the same commands, with `LOCALE` set to `de` or `en`.
 - **The name in a stack that shrinks to its start** (`SIZE_SHRINK_BEGIN`): the name's label wrapped letter by letter. The stack fills the row.
 - **The card's rect top for a cut ring:** the fold settled, but the card's drawn rim, 2 px past its rect, still showed over the bar at 100%.
 
+## The offline result's crew and portrait (P3-S1-hc-offline-1, AD-R57)
+
+**AD-R57** (the gate's Character presence on "result at 100% text"): a heist no server has paid yet showed the reward without its crew. It is shown on the phone's own check, a rehearsal, or a play, and the server state carries both the crew strip and the lead's portrait. The offline result now shows both, as the server state does:
+
+- **The crew card, by role.** `ResultFit.crew_offline` fills the faces' card that the server's answer fills with the crew's rest. It uses the same faces (`ResultFit.face`, up to `FACES`), and beside them the roles in the locale's words: "Scout · Breaker · Carrier", "Batedor · Quebrador · Carregador". `_show_rewards` calls it when there is no split (no server totals). The card stays hidden on a failed heist or an empty crew.
+- **The crew's lead on the Loot tile.** The same call puts `ResultFit.carrier` on the haul's one tile, as Starlight's tile carries it in the split: the lead's ring on the tile's upper corner. As in the split, it is skipped above 125% text, where the tile is a row.
+- **High contrast showed no Loot tile.** `_build_world` set `_haul` after its high-contrast early return, so in high contrast `_show_outcome` read a haul of 0 and hid the tile. `_haul` is now set before that return. Offline high contrast now shows "+508 Loot" with the lead's portrait, and the crew card. The server state was not affected (its tiles come from the server's totals).
+
+At 200% text, in both states, the crew card sits under the bar, inside the scroll, as the fold puts it (P3-S1-result-7).
+
+| Still (`FIT=1`) | State | FIT |
+|---|---|---|
+| `result_off_100` | offline, en, 100% | ok |
+| `result_srv_100` | server, en, 100% | ok |
+| `result_off_hc2` | offline, high contrast, 100% | ok |
+| `result_srv_hc2` | server, high contrast, 100% | ok |
+| `result_off_hc200_pt_BR2` | offline, high contrast pt_BR, 200% | ok |
+| `result_srv_hc200_pt_BR2` | server, high contrast pt_BR, 200% | ok |
+| `result_off_200_en`, `_pt_BR`, `_de` | offline, 200% | ok |
+| `result_srv_200_en`, `_pt_BR`, `_de` | server, 200% | ok |
+
+The stills are not committed (docs/art/shots/ is not this task's). The commands:
+
+    FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd result_off_100.png
+    SERVER=1 FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd result_srv_100.png
+    FIT=1 CONTRAST=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd result_off_hc2.png
+    SERVER=1 FIT=1 CONTRAST=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd result_srv_hc2.png
+    FIT=1 CONTRAST=1 TEXT=200 LOCALE=pt_BR bash tools/render/shoot.sh client/tests/shots/screen_result.gd result_off_hc200_pt_BR2.png
+    FIT=1 TEXT=200 LOCALE=de bash tools/render/shoot.sh client/tests/shots/screen_result.gd result_off_200_de.png
+
+The other 200% stills use the last command, with `SERVER=1` added or `LOCALE` set to `en` or `pt_BR`.
+
+**For AD's `docs/art/ui-quality/gate/shots.md`** (AD's file, not this task's): the result's shots so far are the server state. Add the offline state as its own still: `client/tests/shots/screen_result.gd` with no `SERVER`, at 100% text (`result_off_100`) and in high contrast (`CONTRAST=1`, `result_off_hc2`). guard.sh's result shots already use the offline state.
+
+**The guard's draw calls** (`budget_shots.py`, at `a4dcb52e`):
+
+| Shot | Offline (the guard's) | Recorded | Server state |
+|---|---|---|---|
+| result/100 | 103 | 91 | 117 |
+| result/hc | 45 | 28 | 59 |
+| result/200 | 97 | 99 | (not run) |
+
+Offline at 100% rises by 14: the crew card's glass panel and its three faces, and the carrier's ring. Each face is a `KitRing` with a different creature, so they do not batch. In high contrast it rises by 17: the Loot tile that the bug hid, plus the same card and ring. The offline state still draws 14 fewer calls than the server state at both settings, and stays under the cap of 150. The lead's approval of the raise under M33 is requested (S1-R39): it closes AD-R57's objection.
+
+**Open:** at 200% offline, the condition's prose stays at the kit hero's size. `ResultFit.prose` shrinks it only when the reward rows show, and offline there is one tile and no reward rows. The gate's Hierarchy fail at pt_BR 200% was on the server state, which shrinks it. If AD wants the offline prose under its "+508" too, that is a one-line change to the condition in `ResultFit.prose`.
+
+### Tried and failed
+
+- **Setting `_haul` at the end of `_build_world`,** as it was: in high contrast the function returns early, so the Loot tile stayed hidden.
+
 # The reward sequence (P2-S1-result-2)
 
 Branch `claude/ui-screens-heist`, task P2-S1-result-2. The rewards are counted in on the kit's `Motion.reward`, and the screen no longer counts them itself in `_process`.

@@ -110,6 +110,18 @@
       },
       "reason": "S2-R41: P3-S2-home-states adds the states the home shot's fixture lacked (board 3's carried note): the Crew tab's idle-crew count badge (KitStatus.badge, +3) and Lantern Vale's locked plate drawn instead of a sixth realm pin (+2 at 100%), whose short form (the lock and '28' on one pill) now shows at 200% instead of hiding (+3). Measured with budget_shots.py --only home/100,home/200,home/hc on e9285afd; guard.sh at 89659437 failed only on these three lines. Textures and words below 4.5:1 unchanged; home stays 2 under the cap of 150. Written by the lead at the merge, in cycle 125.",
       "request": "S2-R41"
+    },
+    {
+      "approved_by": "lead, cycle 127 (S1-R39)",
+      "date": "2026-11-17",
+      "field": "shots.recorded draw_calls",
+      "figures": {
+        "heist/hc": "121 -> 123",
+        "result/100": "91 -> 103",
+        "result/hc": "28 -> 45"
+      },
+      "reason": "S1-R39: P3-S1-hc-offline-1. heist/hc: the high-contrast plates re-dressed on the near-black card, Get out on the red danger plate and Pause on the light plate (AD-R56). result/100: the offline result's crew card (a glass panel and three KitRing faces of different creatures, which do not batch) and the lead's ring on the Loot tile (AD-R57). result/hc: the same, plus the Loot tile a bug hid in high contrast (fixed). The server state measures 117 and 59, so the offline state stays under it; all stay under the cap of 150. guard.sh at a4dcb52e failed only these three lines. Textures and words below 4.5:1 unchanged. Written by the lead at the merge, in cycle 128.",
+      "request": "S1-R39"
     }
   ],
   "screens": {
@@ -383,7 +395,7 @@
         "words_below": 0
       },
       "heist/hc": {
-        "draw_calls": 121,
+        "draw_calls": 123,
         "texture_bytes": 2499264,
         "words_below": 0
       },
@@ -403,7 +415,7 @@
         "words_below": 0
       },
       "result/100": {
-        "draw_calls": 91,
+        "draw_calls": 103,
         "texture_bytes": 580608,
         "words_below": 0
       },
@@ -413,7 +425,7 @@
         "words_below": 0
       },
       "result/hc": {
-        "draw_calls": 28,
+        "draw_calls": 45,
         "texture_bytes": 580608,
         "words_below": 0
       },
