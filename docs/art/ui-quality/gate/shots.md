@@ -32,6 +32,31 @@ calibration on the golden set, is described in [calibration.md](calibration.md)
   absent; `interactive` defaults to true; `persistent` is true for what stays
   on screen through a heist.
 
+## Screens with more than one state
+
+A screen item's still is rendered with its shot script and
+`bash tools/render/shoot.sh <script> <still>`, with the item's settings in the
+environment. Where a screen has two states the player sees, each state is its
+own still, and the gate judges the item in both.
+
+**The result screen** (`client/tests/shots/screen_result.gd`, P3-AD-preview-1
+for S1-R40) shows the reward in two states. Both read the golden clean heist,
+`client/goldens/planned-clean.rbh`: without the goldens (`bash client/build.sh`
+in a fresh worktree, or `client/goldens/` copied in) every still renders as
+"refused (malformed)", which is a missing file, not the screen's fault.
+
+| State | When the player sees it | Environment | Still |
+|---|---|---|---|
+| Offline (the script's default) | the phone's own check, a rehearsal or a play: no server has paid the heist yet | no `SERVER` | `result_off_100` |
+| Offline, high contrast | the same, with high contrast on | `CONTRAST=1` | `result_off_hc` |
+| Server | the server's settle answer has come back with the totals and the crew's split | `SERVER=1` | `result_srv_100` |
+| Server, high contrast | the same, with high contrast on | `SERVER=1 CONTRAST=1` | `result_srv_hc` |
+
+The items "result at 100% text" and "result in high contrast" take both rows
+of their setting; "result at 200% text, pt_BR" adds `TEXT=200 LOCALE=pt_BR` to
+both. Add `FIT=1` to every run: a still whose run does not print "fit ok" is
+not judged. `tools/ui_bake/guard.sh`'s budget shots use the offline state.
+
 ## The image checks
 
 `python3 tools/ui_gate/checks.py <check> <shot.json>`, with `<check>` one of
