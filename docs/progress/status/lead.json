@@ -1,8 +1,8 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-17T12:06:45Z",
-  "expected_next_update_by": "2026-11-17T15:06:45Z",
-  "cycle": 124,
+  "updated_at": "2026-11-17T13:02:00Z",
+  "expected_next_update_by": "2026-11-17T16:02:00Z",
+  "cycle": 125,
   "merging": null,
   "last_merged": {
     "task_id": "P3-S2-home-states",
@@ -40,9 +40,9 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Cycle 125: merge P3-S2-home-states when S2 marks it ready (session_01SNkKxpWQyicTk71sUaQiab), writing S2-R41's three tools/ui_bake/budgets.json records at its merge (home/100 145 to 148, home/200 121 to 124, home/hc 145 to 148, each with a raises entry). Gate and merge P3-K1-polish-2 when K1 marks it ready (restarted in cycle 124 as session_01SNkKxrLmMHwDeCQXXnnsfn; K1-R26 granted), then start S3 on P3-S3-character-5 in the freed seat, within the cap of three while the seven-day bar reads allowed_warning. Seed AD-R47's kit task for K1 when a seat frees after that, then the navigation task (AD-R48, R50, R51). AD's P3-AD-audit-1b (started in cycle 124 as session_01SNkKxnp8XMcnrw7r4cd79s) when ready.",
+  "next_step": "Cycle 126: merge P3-AD-audit-1b when AD marks it ready (session_01SNkKxnp8XMcnrw7r4cd79s, lease 15:20Z). Merge P3-S3-character-5 when S3 marks it ready (started in cycle 125 as session_01SNkKxnZi7kDm1VGLiH5FC6; gate item 'character at 200% text, pt_BR', Hierarchy). Merge P3-K1-tabs-1 when K1 marks it ready (started in cycle 125 as session_01SNkKxq7JDCazLpMjivYruu; AD-R47 and AD-R59). When a seat frees, within the cap of three while the seven-day bar reads allowed_warning, seed in order: the S1 task for AD-R56 and AD-R57 (heist hc plates, offline result), the navigation task for AD-R48, R50 and R51 (after character-5), S2's home task for R49's home part and R59's caller, R52 with the next settings task, and R54's content task.",
   "seen": {
-    "at": "2026-11-17T12:06:49Z",
+    "at": "2026-11-17T12:59:33Z",
     "heads": {
       "claude/3d-character-screens": "6053b249bee313648da3509142eeb2ba738bb62f",
       "claude/3d-characters": "35d6ae8f5b84a4d75636f68270848b0949c111f3",
@@ -60,17 +60,17 @@
       "claude/plan-v3": "57893713636b7753d0b790c5a9dc35c3b126770a",
       "claude/security-review": "dd1e90f06b512b25a74f3f3f73ace84b3969cce9",
       "claude/server-decisions": "502b63bbf1506801a7060547f6fb225adcbf8f51",
-      "claude/ui-ad": "6a2420eddcf2a921ecced8d942fec5ee28d5f992",
+      "claude/ui-ad": "493eb6be25764f10eab1418d4bd07da752bbb3f6",
       "claude/ui-artist": "45c6366cb2e0f9dcb5aaa428d17c017576beff5d",
       "claude/ui-artist-icons": "a8b06f687a9fbb1048c426157f2336cda5f44202",
-      "claude/ui-bake": "b0549522507715f6dc46568acfe0e8ba8198a039",
+      "claude/ui-bake": "5eab5d35a61f40f86b5fb7fd00ddb822203e2af0",
       "claude/ui-gate-runs": "0e78b6ceace032f62427a1c8e89dd9ee6186a5c0",
       "claude/ui-kit": "17b900ebdc371f05244d4658850a77460f6090c0",
       "claude/ui-plan": "f1affcea749d007fe1a67931bd3c1f7359d98c44",
       "claude/ui-research": "f19d5d4e5eaffff8869da3b91124d111cf1259a6",
       "claude/ui-screens": "dceb6bfcbc6c5da4e261674fe9301e1854f0aa65",
       "claude/ui-screens-heist": "47db9364cf2a121d75ca10ccd19f79a6bcb1d478",
-      "claude/ui-screens-home": "89659437afa647a16500a767400b25b855f2af19",
+      "claude/ui-screens-home": "60a262adfab5455bfa60f570f1d1d4e9fb0602a2",
       "claude/ui-screens-meta": "7d19eeda3a6d1b6f349f453f85365203604f4431",
       "lead/candidate-573416ab12761b92becf0c1d3d7d7bd03e9cf7d1": "573416ab12761b92becf0c1d3d7d7bd03e9cf7d1",
       "lead/candidate-714b24ed52f56133bccc18c82cc879938b53f296": "714b24ed52f56133bccc18c82cc879938b53f296",
@@ -81,7 +81,9 @@
     },
     "ready": {},
     "startable": [
-      "P3-AD-audit-1b"
+      "P3-AD-audit-1b",
+      "P3-K1-tabs-1",
+      "P3-S3-character-5"
     ],
     "messages": [
       "M10",
@@ -126,8 +128,6 @@
       "S3-R9 to S3-R14"
     ],
     "leases": [],
-    "stale": [
-      "S2@2026-11-17T12:05:00Z"
-    ]
+    "stale": []
   }
 }
