@@ -1,0 +1,87 @@
+[
+  {
+    "task_id": "P2-S1-result-6",
+    "sha": "e4e78070f09d70e8f97b79bf7a6b60a51e063648",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-17T02:28:00Z",
+    "item": "result at 100% text",
+    "quality": "Display type",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes. HEIST COMPLETE, Clean, the condition, time, entry-fee and re-simulated lines all carry an unbroken dark outline over the sky; the three totals share one treatment (outline, hard drop, gold gradient). One sample noted the gold kicker's outline is thin against the navy."
+  },
+  {
+    "task_id": "P2-S1-result-6",
+    "sha": "e4e78070f09d70e8f97b79bf7a6b60a51e063648",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-17T02:28:00Z",
+    "item": "result at 100% text",
+    "quality": "Character presence",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes. Three ringed portraits on the crew card, large and apart, in soft toon shading with thin outlines (the yellow lead's fur, Ash's matte charcoal and orange cracks, the otter's fur); the lead frames the Starlight tile with a readable face. At least as good as the pass anchor's heist crew strip."
+  },
+  {
+    "task_id": "P2-S1-result-6",
+    "sha": "e4e78070f09d70e8f97b79bf7a6b60a51e063648",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-17T02:28:00Z",
+    "item": "result at 200% text, pt_BR",
+    "quality": "Display type",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes. Every word over the starburst has an unbroken outline that grew with the 200% text; +2.310, +805 and +15 on the cream tiles share one treatment: outline, hard drop, gold gradient. No word over art lacks an outline."
+  },
+  {
+    "task_id": "P2-S1-result-6",
+    "sha": "e4e78070f09d70e8f97b79bf7a6b60a51e063648",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-17T02:28:00Z",
+    "item": "result at 200% text, pt_BR",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes. ASSALTAR DE NOVO is the largest, most saturated control at the foot and leads in grayscale; the three cream reward tiles are lighter, smaller and information only; the 200% prose is lighter in weight than the totals and the button."
+  },
+  {
+    "task_id": "P2-S1-result-6",
+    "sha": "e4e78070f09d70e8f97b79bf7a6b60a51e063648",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-17T02:28:00Z",
+    "item": "result in high contrast",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes. RAID AGAIN is the full-width gold control at the foot; Home is smaller and darker; the 3 s replay is under half its size; the white reward tiles hold no action and are each smaller than the primary."
+  }
+]
