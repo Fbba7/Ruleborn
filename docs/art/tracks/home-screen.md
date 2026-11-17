@@ -460,19 +460,20 @@ The gate's advisory verdict on home-6 (`verdicts/P2-S2-home-6/e674b614.json`) pa
 
 **What changed.**
 
-- **The baked figures draw their own treatment in screen pixels** (`HomeParts.InkedRow`, a `KitNumerals.Row` that `figures` builds in place of the kit's). From the same glyphs, in the same call, the row draws three layers:
-  - a hard drop in `drop`, from the glyphs' outlines, set down by 10% of the figures' size;
-  - an ink stroke all round, in `ink_line`, 8% of their size and at least 1 px, which adds to the glyphs' own stroke;
-  - each glyph in up to 16 bands, shaded from the art's cream at the top to a deeper amber at the foot (`InkedRow.FOOT`), so the gradient survives at any size.
+- **The baked figures carry an ink stroke and a hard drop drawn from the kit's own rows** (`HomeParts.InkedRow`, a `KitNumerals.Row` that `figures` builds in place of the kit's). Behind the figures sit eleven kit rows of the same glyphs (`InkedRow.Under`), tinted `ink_line`, one layer below them:
+  - eight set off all round by 8% of the figures' size, at least 1 px: an ink stroke that adds to the glyphs' own;
+  - three set off down and to the sides by the stroke plus 10% of the size: the hard drop.
 
-  The figures' cells and widths are unchanged, so the fit is the same.
+  The fill on top is the kit glyph's own cream-to-gold gradient, which still shows at 18 px (a test with a white foot matched the still). Home draws nothing of its own: every layer is the kit's row drawing the kit's glyphs, tinted and moved (`draw_set_transform`), so `check_screens.py` still counts 0 draws in `home_parts.gd`. A first build drew the layers itself with `draw_texture_rect_region`, which `check_screens.py` refused as screen chrome.
+
+  The drop and the stroke share one tint: a tint change between layers splits the batch, two calls a row (home 152), and `drop` (`#0A0408`) and `ink_line` (`#1A0C14`) read the same. The figures stand two layers above the words and their ink one above, so every row's fill and every row's ink draw in one call each. The figures' cells and widths are unchanged, so the fit is the same.
 - **AD-R45 (a): the live words on the plates** ("k", " mil", " Tsd."). They take the figures' `gold`, not cream, keep their ink stroke, and have no shadow. Before, their shadow was the bare glyphs set down by the outline and the drop, which showed as a second copy of the letters below them. AD's fix, a shadow as wide as the stroke and set down by the drop, cost a draw call a label (home 148, 123 and 148 at 100%, 200% and in high contrast, over the records of 145, 121 and 145), so S2 took AD's own fallback: drop the shadow on those words and keep the stroke. The figures' drop beside them carries the hard drop. A plated count that falls to live type (none in the fit cases) keeps the old drop.
 
-**The plates.** The plates' fill (`#180D1C` in the still) is within a step of `ink_line` (`#1A0C14`). An ink stroke alone cannot show on it, which is the judges' close call at 200%. On the figures, the stroke and drop layers take the glyphs' own tones under their tint, so they draw darker than the plate (`#020001` in the still), and the figures stand in a dark halo with a heavier foot. The live words' ink outline still matches the plate; their gold reads against it.
+**The plates.** The plates' fill (`#180D1C` in the still) is within a step of `ink_line` (`#1A0C14`). An ink stroke alone cannot show on it, which is the judges' close call at 200%. On the figures, the stroke and drop layers take the glyphs' own tones under their tint, so they draw darker than the plate, and the figures stand in a dark halo with a heavier foot. The live words' ink outline still matches the plate; their gold reads against it.
 
-**A kit fix is better.** Mipmaps on the kit's pages (`kit_*.webp.import`) and a mipmap filter in `KitNumerals.Row` would keep every screen's baked numerals sharp at small sizes. That is K1's file, so S2 asked the lead for it (S2-R35). Until then, home draws its own treatment.
+**A kit fix is better.** Mipmaps on the kit's pages (`kit_*.webp.import`) and a mipmap filter in `KitNumerals.Row` would keep every screen's baked numerals sharp at small sizes. That is K1's file, so S2 asked the lead for it (S2-R35). Until then, home layers the kit's rows.
 
-**Evidence.** Stills at 100% in en, de and pt_BR, in high contrast, and at 200% in pt_BR and de. Every count shows the cream-to-amber gradient, the dark halo and the hard drop, and the words after it are gold. Draw calls on home (`budget_shots.py`): 142 at 100%, 117 at 200% and 142 in high contrast (records 145, 121, 145; 143, 118 and 143 before). InkedRow costs nothing: its layers are rect commands on the same texture in the same canvas item. FIT=1 in M26's 57 cases on 10f93e8a: all "fit ok".
+**Evidence.** Stills at 100% in en and de and at 200% in en. Every count shows the cream-to-gold gradient, the ink stroke all round and the hard drop, and the words after it are gold. Draw calls on home (`budget_shots.py`): 143 at 100%, 118 at 200% and 143 in high contrast (records 145, 121, 145; the same as before the task). `check_screens.py` OK. FIT=1 in M26's 57 cases on bac22476: running.
 
 ## Left for other tasks
 
