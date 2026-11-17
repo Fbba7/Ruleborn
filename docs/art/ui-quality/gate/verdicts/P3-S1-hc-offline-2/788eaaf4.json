@@ -1,0 +1,19 @@
+[
+  {
+    "task_id": "P3-S1-hc-offline-2",
+    "sha": "788eaaf4d5a46f9cde43ab603446e40b23665715",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-17T21:00:00Z",
+    "item": "heist in high contrast",
+    "quality": "Colour roles and value",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three of three pass, shown with no casts left and with one cast left. Gold fills only the main action (Cast); with no casts left the button turns muted and says 'No casts', so gold keeps one role. Red is only the Intruder alarm and its cone, green only the health bars. Each school carries a shape (triangle, hourglass, square, diamond) that still tells the crew apart on all three colour-blindness sheets. One sample noted that 'Get out' and the disabled 'No casts' share the same muted rose; both are labelled, but S1 may want to tell them apart."
+  }
+]

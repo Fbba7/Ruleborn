@@ -2,8 +2,8 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026. Phase 2 started on 12 November 2026 (lead cycle 70): P1-AD-board-1d let board 1 stand and phase 1's other exit criteria hold (report.md section 3.2); its first tasks are the flow findings (S1, S2) and board 1's note G (AIA-2), within the same cap of three. Since 12 November 2026, about 20:00Z, the cap is four UI builders by the owner's order (CLAUDE.md order 3; three while the seven-day bar reads allowed_warning). Phase 3 (polish and harden, report.md step 12) started on 17 November 2026 (lead cycle 118) under M49: every phase 2 task was merged by 06:55Z, the exit review ran in cycle 118 (boards 3, 4 and 5 stand, board 2 waits on the deferred icon batch 4 by D13 (c), the exceptions queue is empty, every screen passes the gate but result at 200% pt_BR, Hierarchy, which P3-S1-result-7 takes), and the first blind audit (O6) is carried into phase 3 as P3-AD-audit-1. Phase 3 draws from the 20-hour reserve; it exits when no board has an open objection, the second blind audit is done and the wave board (O7) stands.",
   "wave": "UI wave",
   "phase": 3,
-  "updated_at": "2026-11-17T18:45:00Z",
-  "updated_by": "lead (cycle 132)",
+  "updated_at": "2026-11-17T23:00:00Z",
+  "updated_by": "lead (cycle 139)",
   "stop_at": "2026-11-18T21:00:00Z",
   "lease_hours": 3,
   "status_every_minutes": 45,
@@ -154,7 +154,7 @@
         "agent": "S3",
         "branch": "claude/ui-screens-meta",
         "claimed_at": "2026-11-17T18:30:00Z",
-        "seen_at": "2026-11-17T18:43:00Z",
+        "seen_at": "2026-11-17T20:45:00Z",
         "lease_until": "2026-11-17T21:30:00Z"
       },
       "critical": false,
@@ -197,18 +197,18 @@
         }
       ],
       "id": "P3-S3-nav-1",
-      "merged_sha": null,
+      "merged_sha": "2dc57508",
       "model": "Opus 5.5",
       "phase": 3,
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
+      "ready_sha": "5ac311f77e8d174c0ddc5f48cadabfbad25e994f",
       "role": "S3",
-      "state": "claimed",
+      "state": "merged",
       "tier": 2,
       "title": "Character and roster, navigation and the offline notice: ScreenNav's back (AD-R50), the roster keeps its scroll and stage (AD-R51), the offline notice as info in one line at large text (AD-R63, AD-R64)",
-      "updated_at": "2026-11-17T18:45:00Z",
-      "updated_by": "lead (cycle 132)"
+      "updated_at": "2026-11-17T21:15:00Z",
+      "updated_by": "lead (cycle 136)"
     },
     {
       "id": "P3-AD-preview-1",
@@ -291,20 +291,20 @@
       "estimate_h": 1.5,
       "tier": 2,
       "critical": false,
-      "state": "working",
+      "state": "ready",
       "claim": {
         "agent": "S1",
         "branch": "claude/ui-screens-heist",
         "claimed_at": "2026-11-17T17:22:00Z",
-        "seen_at": "2026-11-17T18:43:00Z",
+        "seen_at": "2026-11-17T20:45:00Z",
         "lease_until": "2026-11-17T21:25:00Z"
       },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
+      "ready_sha": "788eaaf4d5a46f9cde43ab603446e40b23665715",
       "merged_sha": null,
-      "updated_at": "2026-11-17T18:45:00Z",
-      "updated_by": "lead (cycle 132)",
+      "updated_at": "2026-11-17T21:15:00Z",
+      "updated_by": "lead (cycle 136)",
       "exceptions": []
     },
     {
@@ -363,21 +363,240 @@
       "estimate_h": 1.5,
       "tier": 2,
       "critical": false,
-      "state": "working",
+      "state": "merged",
       "claim": {
         "agent": "S2",
         "branch": "claude/ui-screens-home",
         "claimed_at": "2026-11-17T15:55:00Z",
-        "seen_at": "2026-11-17T17:04:00Z",
-        "lease_until": "2026-11-17T20:04:00Z"
+        "seen_at": "2026-11-17T20:45:00Z",
+        "lease_until": "2026-11-17T21:48:00Z"
+      },
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "9ef7b2950c64c0ec80267425d050bacf9d8bd0a2",
+      "merged_sha": "9ec770d6",
+      "updated_at": "2026-11-17T20:00:00Z",
+      "updated_by": "lead (cycle 134)",
+      "exceptions": []
+    },
+    {
+      "assigned_to": "S2",
+      "attempts": 0,
+      "claim": {
+        "agent": "S2",
+        "branch": "claude/ui-screens-home",
+        "claimed_at": "2026-11-17T21:25:00Z",
+        "seen_at": "2026-11-17T21:25:00Z",
+        "lease_until": "2026-11-18T00:25:00Z"
+      },
+      "critical": false,
+      "deps": [
+        "P3-S2-home-7"
+      ],
+      "done_when": [
+        "shared things (docs/guides/agent-protocol.md, 'Shared things and their owners'): the lead names S2 the owner of client/i18n/strings.csv for this task, and hands it client/app/router.gd's back table, a route-table change the lead assigns here; the routes in Router.ROUTES and Router.TABS stay as they are",
+        "AD-R48 (flow board 2's F2, granted in cycle 123): one go-back handler for the whole app. Android's back (NOTIFICATION_WM_GO_BACK_REQUEST) and Escape reach it in client/app/app.gd, which hands them to the router; quit on go-back is off (get_tree().set_quit_on_go_back(false), or the project setting), so the system back never closes the app on its own",
+        "the router (client/app/router.gd) sends each route to its back route: every non-tab route to the route its own ScreenNav.back_button opens, every tab route other than home to home, and home asks before quitting; the back table is in one place in router.gd, and no screen keeps a second copy",
+        "home's quit question: a kit dialog (from the kit, docs/art/ui-quality/kit-spec.md) with Quit and Stay, Stay the default and the focus, a second go-back while it is open closes it; its words added to client/i18n/strings.csv in every locale, then node art/ui/keyframes/build_words.mjs and words.js committed with it, and node art/ui/keyframes/check_keyframes.mjs passing (M34)",
+        "a check in client/tests/core_tests.gd that every route in Router.ROUTES has a back route, that the back route of every non-tab route is the one its back button opens, that home's go-back opens the question rather than quitting, and that a second go-back closes the question",
+        "'home at 100% text' still passing on the home stills (unchanged in substance, or each change named in docs/art/tracks/home-screen.md); a still of the quit question at 100% and 200% text, pt_BR, and in high contrast, FIT=1 ok, listed in the handoff",
+        "AD previews the quit question's stills before ready (M10, M12, M23): a request to AD through the lead with a default; if AD has no seat, the lead's gate run judges them",
+        "python3 tools/ui_bake/check_screens.py",
+        "bash tools/ui_bake/guard.sh",
+        "gate: Screen",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed under docs/art/ui-quality/gate/verdicts/ or outside the task's files (M48)",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 1.5,
+      "exceptions": [
+        "docs/art/shots/home-screen/**",
+        "client/project.godot"
+      ],
+      "files": [
+        "client/app/app.gd",
+        "client/app/router.gd",
+        "client/scripts/home.gd",
+        "client/tests/core_tests.gd",
+        "client/tests/shots/universe_home.gd",
+        "client/i18n/strings.csv",
+        "art/ui/keyframes/words.js",
+        "docs/art/tracks/home-screen.md"
+      ],
+      "gate_items": [
+        {
+          "item": "home at 100% text",
+          "qualities": [
+            "Hierarchy"
+          ]
+        }
+      ],
+      "id": "P3-S2-back-1",
+      "merged_sha": null,
+      "model": "Opus 5.5",
+      "phase": 3,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "role": "S2",
+      "state": "working",
+      "tier": 2,
+      "title": "One go-back for the app: Android's back and Escape go to the router, each route to its back route, home asks before quitting (AD-R48)",
+      "updated_at": "2026-11-17T19:50:00Z",
+      "updated_by": "lead (cycle 134)"
+    },
+    {
+      "id": "P3-K1-outline-1",
+      "title": "The kit's outline rule at §21.8's least a side (S3-R35), the back button's leather face two value steps off the night (S3-R41), and a params argument on ScreenNav.back_button (S3-R37)",
+      "phase": 3,
+      "role": "K1",
+      "model": "Opus 5.5",
+      "assigned_to": "K1",
+      "files": [
+        "client/ui/kit_hud.gd",
+        "client/ui/kit_panels.gd",
+        "client/ui/kit_controls.gd",
+        "client/ui/kit_nav.gd",
+        "client/scripts/screen_nav.gd",
+        "client/tests/a11y_tests.gd",
+        "client/tests/shots/ui_kit_heist.gd"
+      ],
+      "deps": [],
+      "done_when": [
+        "S3-R35 (cycle 127): Godot draws a quarter of a label's outline_size on each side, so KitHud._ink (client/ui/kit_hud.gd) and kit_panels.gd's inventory count set outline_size to four times §21.8's least a side plus the soft edge, as character_screen.gd's _outline_px does; the two contrast checks (client/tests/a11y_tests.gd _outline, client/tests/shots/ui_kit_heist.gd _counts) read outline_size the same way (a quarter a side), with a test in client/tests/a11y_tests.gd that fails on today's reading",
+        "S3-R41 (cycle 133): KitControls.icon_button's leather face (used by KitNav.back and so by ScreenNav.back_button on nine screens) stands at least two value steps off the night in standard contrast (today L* 23.7 on 13.6, one step), by lifting the face's or the rim's value; high contrast still passes; with a value-steps test on a ScreenNav dock in client/tests/a11y_tests.gd. The lift is scoped to the icon button: any other leather plate that changes is named in the handoff",
+        "S3-R37 (cycle 136): ScreenNav.back_button(back, params := {}) passes params to router.go, so the character's back can carry the roster's kept state (AD-R51); the default keeps every caller as it is; the handoff says what character_screen.gd can drop (its rewire of the pressed signal), which is S3's, not this task's",
+        "nothing loosened: no contrast, value-steps or outline threshold lowered, no check skipped; client/tests/ui_kit_tests.gd stays at or under gdlint's 1000 lines (it is not in this task's files)",
+        "the catalogue's and the screens' shots unchanged at 100% except where the face lift or the outline change them, each change named in the handoff",
+        "bash tools/ui_bake/guard.sh",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed under docs/art/ui-quality/gate/verdicts/ or outside the task's files (M48)",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 2.0,
+      "tier": 2,
+      "critical": false,
+      "state": "claimed",
+      "claim": {
+        "agent": "K1",
+        "branch": "claude/ui-bake",
+        "claimed_at": "2026-11-17T21:10:20Z",
+        "seen_at": "2026-11-17T21:10:20Z",
+        "lease_until": "2026-11-18T00:10:20Z"
       },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-17T17:18:00Z",
-      "updated_by": "lead (cycle 130)",
-      "exceptions": []
+      "updated_at": "2026-11-17T21:25:00Z",
+      "updated_by": "lead (cycle 137)",
+      "exceptions": [
+        "client/scripts/character_screen.gd",
+        "client/scripts/screen_kit.gd",
+        "client/scripts/ui.gd",
+        "client/ui/rb_theme.gd"
+      ]
+    },
+    {
+      "assigned_to": "S3",
+      "attempts": 0,
+      "claim": null,
+      "critical": false,
+      "deps": [
+        "P3-S3-nav-1"
+      ],
+      "done_when": [
+        "AD-R52 (flow board 2's F6, granted in cycle 123, M40): settings reopens on the tab last shown in this session (game, access or account), not always on game; the tab is held for the session only, in memory (the store or a session-scoped value), never in Settings' saved file; a fresh start opens on game",
+        "a mount test in client/tests/run.gd: open settings through the router, show access, leave to home, open settings again and find access shown; the same for account; a store change outside this task's files is a request to the lead with a default (client/app/router.gd is P3-S2-back-1's)",
+        "the settings stills at 100% and 200% text (en, pt_BR, de) and in high contrast unchanged in substance, or each change named; board 5 still stands",
+        "AD previews the stills before ready (M10, M12, M23): the builder sends them to AD while the work can still change, and AD's objections are answered in this task",
+        "python3 tools/ui_bake/check_screens.py",
+        "bash tools/ui_bake/guard.sh",
+        "gate: Screen",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed under docs/art/ui-quality/gate/verdicts/ or outside the task's files (M48)",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 1.0,
+      "exceptions": [
+        "docs/art/shots/menu-screens/**"
+      ],
+      "files": [
+        "client/scripts/settings_screen.gd",
+        "client/tests/run.gd",
+        "client/tests/shots/screen_settings.gd",
+        "docs/art/tracks/menu-screens.md"
+      ],
+      "gate_items": [
+        {
+          "item": "settings at 100% text",
+          "qualities": [
+            "Hierarchy"
+          ]
+        }
+      ],
+      "id": "P3-S3-settings-3",
+      "merged_sha": null,
+      "model": "Opus 5.5",
+      "phase": 3,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "role": "S3",
+      "state": "open",
+      "tier": 2,
+      "title": "Settings remembers its tab for the session (AD-R52): it reopens on the tab last shown, with a mount test",
+      "updated_at": "2026-11-17T23:00:00Z",
+      "updated_by": "lead (cycle 139)"
+    },
+    {
+      "assigned_to": "AIA-2",
+      "attempts": 0,
+      "claim": {
+        "agent": "AIA-2",
+        "branch": "claude/ui-artist-icons",
+        "claimed_at": "2026-11-17T20:10:00Z",
+        "seen_at": "2026-11-17T21:20:00Z",
+        "lease_until": "2026-11-17T23:10:00Z"
+      },
+      "critical": true,
+      "deps": [],
+      "done_when": [
+        "S2-R45 (cycle 133) and the lead's guard run of cycle 134: tools/ui_bake/guard.sh's byte-for-byte rebake fails on client/ui/art/icons_256.webp in some containers (S2's, and the lead's of cycle 134 on an Intel Xeon with avx512f) on a tree whose bake inputs and outputs are main's, and passes in others (the lead's of cycle 131). art/ui/icons/studio/bake_icons.js draws through Chromium's SwiftShader (--use-angle=swiftshader), whose output depends on the CPU. The fix makes the bake give the same bytes on every x86-64 machine",
+        "the guard is not loosened: the rebake stays byte for byte, with no pixel tolerance and no skipped family; the fix is in how the icons are drawn or finished (for example a drawing path whose arithmetic does not depend on the CPU's vector units, or a finish that brings every pixel to a value that no CPU-dependent rounding can move), and it is said in docs/progress/AIA-2.md why it cannot depend on the machine",
+        "both icon families, icons_256 and icons_48, colour and high contrast, rebaked with the fix and committed with their manifests (client/ui/art/icons_256*, client/ui/art/icons_48*); python3 art/ui/icons/studio/check_icons.py icons_48 icons_256 passes",
+        "proof across machines: the bake run twice in the builder's container gives the same bytes, and the bake run with the CPU's wider vector units turned off for SwiftShader (or by a second route the handoff names) gives those same bytes again; the lead's guard run on the candidate, in another container, passes the rebake",
+        "the icons look as they did: a contact sheet (python3 tools/ui_gate/sheet.py contact) of the old and the new atlas, colour and grayscale, side by side in the handoff; any piece whose pixels change beyond edge antialiasing is named, with a request to AD through the lead",
+        "nothing under tools/ui_bake/** changes (K1's): if the fix needs bake.js or families.json, that part is a request to K1 through the lead, with a default",
+        "bash tools/ui_bake/guard.sh",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed under docs/art/ui-quality/gate/verdicts/ or outside the task's files (M48)",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 2,
+      "exceptions": [],
+      "files": [
+        "art/ui/icons/studio/**",
+        "client/ui/art/icons_256*",
+        "client/ui/art/icons_48*",
+        "art/ui/icons/README.md"
+      ],
+      "gate_items": [],
+      "id": "P3-AIA2-bake-1",
+      "merged_sha": "a957e73b",
+      "model": "Opus 5.5",
+      "phase": 3,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "75798143c332d2674e426f160ebce9e798f670fe",
+      "role": "AIA-2",
+      "state": "merged",
+      "tier": 2,
+      "title": "An icon bake that gives the same bytes on every machine, so the guard's byte-for-byte rebake passes in any container (S2-R45)",
+      "updated_at": "2026-11-17T20:00:00Z",
+      "updated_by": "lead (cycle 134)"
     },
     {
       "id": "SV-B10",
@@ -1160,6 +1379,14 @@
       "sent_at": "2026-11-17T16:22:00Z",
       "ack_by": "2026-11-17T18:22:00Z",
       "acked_at": null
+    },
+    {
+      "id": "M55",
+      "to": "lead",
+      "text": "From the overseer, 17 November 2026 21:45Z, on P3-AIA2-bake-1 (S2-R45): the cross-container proof the task asks for is in. At AIA-2's 75798143, `node art/ui/icons/studio/bake_icons.js icons_48 icons_256 --out <scratch>` in the overseer's container (Intel Xeon @ 2.10GHz with avx512f, the CPU class whose rebake failed in cycles 134 to 136; Node 22.23.4, AIA-2's is 22.23.5) gives all six files byte-identical to the committed client/ui/art/icons_48* and icons_256*. `owners.py diff P3-AIA2-bake-1 35036074 75798143` passes, the branch merges cleanly with 35036074, and main has not touched art/ui/icons, client/ui/art, tools/ui_bake or tools/ui_research since AIA-2's merge 17520f56. Your own guard run on the candidate still decides; this only says the fix is expected to pass. To save cycles: once AIA-2 gives ready_sha (status due 22:05Z), merge bake-1 and, in the same cycle, rebuild and guard home-7 (9ef7b295), nav-1 (5ac311f7) and hc-offline-2 (788eaaf4) back to back on each new main, merging each on a pass, rather than one a cycle. Add M55 to your acks.",
+      "sent_at": "2026-11-17T21:45:00Z",
+      "ack_by": "2026-11-17T23:45:00Z",
+      "acked_at": "2026-11-17T22:52:00Z"
     }
   ]
 }

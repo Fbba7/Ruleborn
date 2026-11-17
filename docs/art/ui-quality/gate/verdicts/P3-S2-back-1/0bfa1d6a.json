@@ -1,0 +1,19 @@
+[
+ {
+  "task_id": "P3-S2-back-1",
+  "sha": "0bfa1d6a3e794bdae4d65b68e9fdb0a2da4331dd",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "advisory": true,
+  "at": "2026-11-17T22:27:00Z",
+  "item": "home at 100% text",
+  "quality": "Hierarchy",
+  "samples": [
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "Unanimous, judged on home and on home with the quit question open: Collect is the largest and lightest control and leads in grayscale, as the pass anchor's Level up does; in the quit question Stay is clearly brighter than the same-size dark Quit, so the dialog keeps one primary, and its ribbon title holds no action."
+ }
+]

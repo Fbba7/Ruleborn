@@ -1,0 +1,19 @@
+[
+  {
+    "task_id": "P3-S3-nav-1",
+    "sha": "5ac311f77e8d174c0ddc5f48cadabfbad25e994f",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-17T21:00:00Z",
+    "item": "character at 200% text, pt_BR",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three of three pass, shown online and offline. All three put the gold 'Subir de nível' card first by size, fill and place in both states, ahead of the portrait and the stat rows. The offline notice is a thin strip that reads as status, not as a rival to the main action, so the order holds when the screen goes offline."
+  }
+]
