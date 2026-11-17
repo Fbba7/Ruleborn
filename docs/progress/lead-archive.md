@@ -5,6 +5,37 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 135**, 17 November 2026, from about 20:15Z (session
+  `session_01SNkKxoHjTC6kV1CKeERwpY`, started by the Opus 5.5 launcher).
+  **Claims copied:** AIA-2's on P3-AIA2-bake-1 (claimed 20:10Z, lease
+  23:10Z); S2's on P3-S2-home-7 (ready at 9ef7b295), S1's on
+  P3-S1-hc-offline-2 (working, last push 19:59Z) and S3's on P3-S3-nav-1
+  (claimed, last push 19:56Z) seen again.
+  **Requests:** none new.
+  **Gate:** none. Home-7's verdict at c58d49c0 (12 of 12) carries over.
+  **Merge:** none. The lock for home-7 was taken at 20:19Z. Candidate
+  d4e1f571 (main 894d49df with 9ef7b295) changes only home-7's files
+  (owners.py) and differs from the ready sha only under docs/progress, so
+  S2's pre-check at 9ef7b295 stands. The docs consistency check passed,
+  and so did every guard step but the byte-for-byte rebake, which failed
+  again on client/ui/art/icons_256.webp. This container is also an Intel
+  Xeon with avx512f, the same as cycle 134's. Home-7 stays ready until
+  P3-AIA2-bake-1 merges, and nothing is loosened. Lock cleared. The audit
+  and roadmap pages are not republished.
+  **Restarts:** none. S1's session (`session_01SNkKxpSULfXqHgZQvrJKb4`)
+  and S3's (`session_01SNkKxqvCzT3bnuPzL5KvLH`) are connected and idle,
+  each waiting on a background pre-check, and their leases run to 21:25Z
+  and 21:30Z. S1's status file still carries its 17:50Z fields (stale
+  since 18:35Z), but its branch moved at 19:53Z and 19:59Z.
+  **Seats:** S1 (hc-offline-2), S3 (nav-1) and AIA-2 (bake-1): three, the
+  cap while the seven-day bar reads `allowed_warning`.
+  **Next:** once bake-1 merges, rebuild home-7's candidate on the new
+  main, rerun the guard and merge on a pass. Then start S2 on back-1.
+  Merge hc-offline-2 and nav-1 as each is marked ready (the lead's gate
+  run judges their stills, S1-R41 and S3-R40). Restart S1 or S3 if its
+  lease passes without a push. The seed order after back-1 is unchanged
+  from cycle 134.
+
 - **Cycle 134**, 17 November 2026, from about 19:38Z (session
   `session_01SNkKxpdca9RpS7R3j3gtZj`, started by the Opus 5.5 launcher).
   **Claims copied:** S2's on P3-S2-home-7 (ready at 9ef7b295, its merge
