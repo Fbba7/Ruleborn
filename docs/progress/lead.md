@@ -202,8 +202,10 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxqbBzHeQrccHM7ZD6p` (cycle 117,
-17 November 2026 from about 06:15Z, started by the Opus 5.5 launcher). Cycle
+Latest lead cycle session: `session_01SNkKxqCqKwynFeQfEP4pR3` (cycle 119,
+17 November 2026 from about 07:40Z, started by the Opus 5.5 launcher). Cycle
+118's was `session_01SNkKxpjRpZTfmY8CdqhAf9` (from 07:14Z). Cycle
+117's was `session_01SNkKxqbBzHeQrccHM7ZD6p` (from 06:15Z). Cycle
 116's was `session_01SNkKxqWFq56FsNSSyzA9pi` (from 05:10Z). Cycle
 115's was `session_01SNkKxoNbeTeKGGMsN9ry59` (from 04:38Z). Cycle
 114's was `session_01SNkKxqWporDHiELckV82hr` (from 04:14Z). Cycle
@@ -315,6 +317,10 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| S2 | `session_01SNkKxqc1c89EaatiimmQ4C` (Opus 5.5, effort high) | P3-S2-home-states (start, cycle 118: phase 3 seeded under M49; S2's last session, `session_01SNkKxq8HjVf66y13L7w5BL`, is idle, its task merged) | `claude/ui-screens-home` | 2026-11-17 07:25Z |
+| S1 | `session_01SNkKxqATU44HSCT5Am2dvc` (Opus 5.5, effort high) | P3-S1-result-7 (start, cycle 118: phase 3 seeded under M49, the gate's Hierarchy fail at result 200% pt_BR; S1's last session, `session_01SNkKxpZ5ULnfUU5QKJPRM6`, is idle, its task merged as c6262802) | `claude/ui-screens-heist` | 2026-11-17 07:25Z |
+| K1 | `session_01SNkKxmdEQj6bHg2JvMnewm` (Opus 5.5, effort high) | P3-K1-polish-1 (start, cycle 118: phase 3 seeded under M49, S3-R32 and S2-R35; K1's last session, `session_01SNkKxr27Br8FeRKiWvTJ1x`, is idle, its task merged) | `claude/ui-bake` | 2026-11-17 07:25Z |
+| AD | `session_01SNkKxp1i52e65jWBFfqp4t` (Opus 5.5, effort high) | P3-AD-audit-1 (start, cycle 118: phase 3 seeded under M49, the first blind audit, O6; AD's last session, `session_01SNkKxoJbJnMvxsrv2outFG`, is idle, its S1-R35 preview done) | `claude/ui-ad` | 2026-11-17 07:25Z |
 | S2 | `session_01SNkKxq8HjVf66y13L7w5BL` (Opus 5.5, effort high) | P2-S2-home-6 (restart, cycle 115: its gate passes Display type 3/3 at a4090ec7, M46, so mark ready; S2's last session, `session_01SNkKxqDPpd7eVdbFeT2dp8`, is idle, waiting on the gate) | `claude/ui-screens-home` | 2026-11-17 04:48Z |
 | AD | `session_01SNkKxoJbJnMvxsrv2outFG` (Opus 5.5, effort high) | S1-R35 (not blocking, due 2026-11-17T10:17Z: preview P2-S1-result-6 at c9d70cc3 or later) (start, cycle 111: S1-R35 copied; AD's last session, `session_01SNkKxnPTEBNJrsj8BFDyUi`, is idle, its S2-R34 preview done) | `claude/ui-ad` | 2026-11-17 02:45Z |
 | AD | `session_01SNkKxnPTEBNJrsj8BFDyUi` (Opus 5.5, effort high; idle, S2-R34 answered at 01:57Z, AD-R45 to the lead; replaced in cycle 111) | S2-R34 (blocking, due 03:30Z: preview P2-S2-home-6 at 4c242628 or later) (start, cycle 109: S2-R34 copied; AD's last session, `session_01SNkKxq1MGyJ5jNneT2tqME`, is idle, its two previews done) | `claude/ui-ad` | 2026-11-17 01:43Z |
@@ -601,6 +607,62 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 119**, 17 November 2026, from about 07:40Z (session
+  `session_01SNkKxqCqKwynFeQfEP4pR3`, started by the Opus 5.5 launcher).
+  **Claims copied:** AD on P3-AD-audit-1 (07:30Z), K1 on P3-K1-polish-1
+  (07:45Z), S1 on P3-S1-result-7 (07:26:30Z) and S2 on P3-S2-home-states
+  (07:30Z). Each lease is three hours, and none has lapsed.
+  **Requests:** S2-R36 to S2-R40 copied. S2-R36 (a preview of home-states
+  at 4797b5c3) goes to AD, who answers once its blind labelling for
+  audit-1 is written; if AD has not answered by 16:00Z, S2's default
+  stands. S2-R37 is confirmed: home has no shield timer, because
+  home-screen.md outranks the key frame. For S2-R39 the default stands:
+  home shows only the counts the store holds. S2-R38 and S2-R40 are
+  granted in this task. `client/world/universe_pins.gd` is the lead's
+  file and has no task in flight, so it joins P3-S2-home-states' files,
+  with a done_when line: the locked plate carries the realm's name, and at
+  large text it takes a short form before it hides. Without that, the lock
+  would read by colour alone at 200%. The estimate moves to 2.0h, and
+  `owners.py claims` passes. M50 tells S2.
+  **Gate and merges:** none. Nothing is ready, and no gate request is
+  open.
+  **Starts:** none. Four builders run.
+  **Seats:** four of four. The seven-day bar reads `allowed_warning` in
+  this cycle, so order 3 drops the cap to three. The four running builders
+  finish their tasks, and no builder starts until fewer than three run.
+  **Next:** when K1's polish-1 merges, start K1 on polish-2, but only if
+  fewer than three builders run while the bar reads `allowed_warning`.
+  S3 starts on character-5 after polish-2, and P3-AD-flow-2 after the
+  audit's merge.
+- **Cycle 118**, 17 November 2026, from about 07:14Z (session
+  `session_01SNkKxpjRpZTfmY8CdqhAf9`, started by the Opus 5.5 launcher).
+  **Claims copied:** none; no builder session was running.
+  **Requests:** none new.
+  **Phase 2 closed under M49:** every phase-2 task is merged before its
+  stop_at (21:00Z), so the exit review ran now. Boards 3, 4 and 5 stand;
+  board 2 stays deferred under D13 (c); the exceptions queue is empty;
+  every screen item passes the gate except result at 200% text, pt_BR,
+  Hierarchy, carried as P3-S1-result-7. O6, the first blind audit, is
+  carried into phase 3 as P3-AD-audit-1, its form at
+  `docs/art/ui-quality/gate/audit/audit-1.md` (43 rows over 19 items).
+  M48 and M49 acked at 07:20Z.
+  **Phase 3 seeded** (stop_at 2026-11-18T21:00:00Z, commit f1828e4e):
+  P3-AD-audit-1, P3-AD-flow-2, P3-K1-polish-1, P3-K1-polish-2,
+  P3-S3-character-5, P3-S1-result-7 and P3-S2-home-states, each with the
+  M48 `owners.py diff` line in its done_when. M48 is in the brief
+  (`docs/guides/agent-brief.md`) and in each prompt; `tools/run_checks.sh`
+  is unchanged, since it does not know the task ID.
+  **Gate and merges:** none.
+  **Starts:** AD on P3-AD-audit-1, K1 on P3-K1-polish-1, S1 on
+  P3-S1-result-7 and S2 on P3-S2-home-states, all on Opus 5.5 at effort
+  high (07:25Z). Every agent's last session was idle with its task
+  merged.
+  **Seats:** four of four (AD, K1, S1, S2). S3 waits on
+  P3-K1-polish-2.
+  **Next:** copy the four claims; route S1's and S2's preview requests to
+  AD, which AD answers between audit rows without opening the audit's
+  verdicts; when K1's polish-1 merges, start K1 on polish-2, then S3 on
+  character-5 after it.
 - **Cycle 117**, 17 November 2026, from about 06:15Z (session
   `session_01SNkKxqbBzHeQrccHM7ZD6p`, started by the Opus 5.5 launcher).
   **Claims copied:** S1 marked P2-S1-result-6 ready again at 32f97a08
@@ -626,61 +688,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   21:00Z; phase 3 is seeded once stop_at passes. The guard's result shots
   need `client/goldens/` in the worktree: copy them in before running
   guard.sh on a fresh candidate worktree.
-- **Cycle 116**, 17 November 2026, from about 05:10Z (session
-  `session_01SNkKxqWFq56FsNSSyzA9pi`, started by the Opus 5.5 launcher).
-  **Claims copied:** S2 marked P2-S2-home-6 ready at a4090ec7 (seen
-  04:55:00Z), acking M46. S1 marked P2-S1-result-6 ready at f6697161 (seen
-  04:55:07Z, pre-check PASS), acking M45.
-  **Requests:** none new.
-  **Gate and merges:** the batch candidate (result-6 with home-6, M42)
-  hit an add/add conflict in
-  `docs/art/ui-quality/gate/verdicts/P2-S1-result-6/b5843368.json`, S1's
-  copy against the lead's verdict of cycle 113. The merge was aborted.
-  `owners.py diff` also flags four more files S1's branch adds in that
-  verdict folder, outside the task's files. **result-6 goes to resync**
-  (M47 to S1: merge main, take main's b5843368.json, git rm the four
-  files, re-run the pre-check, mark ready; the gate's pass carries over).
-  **home-6 merged alone:** candidate 22c81917 (merge lock from 05:16Z),
-  full checks since it differs from a4090ec7 outside `docs/progress`
-  (the lead's verdict files). check_all PASS (05:45Z) and guard.sh exit 0.
-  Merged onto main's bookkeeping head as d032b190, docs check OK. The
-  audit and roadmap pages did not change, so nothing is republished.
-  **Restarts:** S1, `session_01SNkKxpZ5ULnfUU5QKJPRM6`, for the resync of
-  M47. Its last session was idle.
-  **Seats:** S1 (result-6 in resync). S2 has no open task. Two of four.
-  **Next:** merge result-6 once it is ready again, and check M47's ack
-  (due 07:30Z). Under M33 nothing new is seeded before the phase-2 stop at
-  21:00Z.
-- **Cycle 115**, 17 November 2026, from about 04:38Z (session
-  `session_01SNkKxoNbeTeKGGMsN9ry59`, started by the Opus 5.5 launcher).
-  **Claims copied:** S1 works on P2-S1-result-6 (seen 04:22:35Z, lease to
-  07:22:35Z). Its M11/M13 checks pass on cb518273, and its pre-check of
-  f6697161 (the tree for ready) is running; then record and ready. S2's
-  P2-S2-home-6 is pre-checked at a4090ec7 (PASS 04:34Z, guard and fit
-  OK), with `gate_request` there on 'home at 100% text', Display type.
-  Its session went idle at 04:35Z waiting for the gate.
-  **Requests:** none new.
-  **Gate and merges:** advisory gate on home-6 at a4090ec7 (rubric v3,
-  three samples, pictures shuffled, judged from full-resolution crops of
-  'Keeper 24', the gem count and the purse counts). The verdict is in
-  `docs/art/ui-quality/gate/verdicts/P2-S2-home-6/a4090ec7.json`:
-  Display type at home 100% text passes 3/3. The headline counts share
-  one treatment: gradient fill, an ink outline all round and a hard drop.
-  So AD-R45 (a) is closed, and by AD's default nothing is seeded. Noted
-  under AD-R45 in `requests.md`. Nothing is ready, so nothing was merged
-  and no check ran; the merge lock stays null.
-  **Messages:** M45 not acked by S1 yet (ack_by 05:55Z). M46 sent to S2
-  (ack by 06:50Z): the pass, so mark home-6 ready.
-  **Seats:** S2 restarted on home-6 as `session_01SNkKxq8HjVf66y13L7w5BL`
-  (04:48Z). Its last session was idle, waiting on this gate, the same case
-  as cycle 100's S1 restart. The new session reads
-  M46 and marks ready. S1 is working. That is two of four. Under M33 no
-  task qualifies for the free seats before the phase-2 stop at 21:00Z.
-  **Next:** cycle 116 merges result-6 and home-6 as one candidate if both
-  are ready (M42), or whichever is ready first. It checks the acks of M45
-  (05:55Z) and M46 (06:50Z), and restarts S1 only if its update time
-  (05:22Z) passes.
-
 - **Stopped here**, 13 November 2026, about 13:20Z (the owner's "Stop
   cleanly"). Cycle 84 (session `session_01SNkKxpqF4gx3yYhsXenUGt`) took
   the merge lock for P2-AD-board-4 (candidate `842f09ab`, AD's ready
