@@ -202,8 +202,9 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxpDFMUeUQciTDiwm62` (cycle 138,
-17 November 2026 from about 21:39Z, started by the Opus 5.5 launcher). Cycle
+Latest lead cycle session: `session_01SNkKxq4x4crXhYQkGcqX1K` (cycle 139,
+17 November 2026 from about 22:10Z, started by the Opus 5.5 launcher). Cycle
+138's was `session_01SNkKxpDFMUeUQciTDiwm62` (from 21:39Z). Cycle
 137's was `session_01SNkKxnomTXF5W6AXtNDsaA` (from 21:14Z). Cycle
 136's was `session_01SNkKxrHpFT28u48DFoYrxa` (from 20:45Z). Cycle
 135's was `session_01SNkKxoHjTC6kV1CKeERwpY` (from 20:15Z). Cycle
@@ -336,6 +337,7 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| S3 | `session_01SNkKxoKvRK2mVxzbiptFn6` (Opus 5.5, effort high) | P3-S3-settings-3 (start, cycle 139: seeded for AD-R52 in the third seat under the cap of three; S3's last session, `session_01SNkKxqvCzT3bnuPzL5KvLH`, completed P3-S3-nav-1, merged as 2dc57508) | `claude/ui-screens-meta` | 2026-11-17 22:59Z |
 | K1 | `session_01SNkKxorBb4Hx1E3GUAr2GL` (Opus 5.5, effort high) | P3-K1-outline-1 (restart, cycle 139: K1-R27 granted on main, the four outline files are the task's exceptions, and P3-S3-nav-1 merged, so merge main, change those lines, recheck and mark ready; K1's last session, `session_01SNkKxr3SoTEVHPicDs7pG9`, idle waiting on the grant) | `claude/ui-bake` | 2026-11-17 22:57Z |
 | S2 | `session_01SNkKxpnKSbB1SgaR3ZrjwQ` (Opus 5.5, effort high) | P3-S2-back-1 (restart, cycle 139: the lead's gate passes 'home at 100% text' with the quit question at 0bfa1d6a, 3 of 3, S2-R46 answered by the default and P3-S2-home-7 merged, so merge main, recheck and mark ready; S2's last session, `session_01SNkKxn1nyucpjrJfH22MCW`, idle) | `claude/ui-screens-home` | 2026-11-17 22:57Z |
 | S2 | `session_01SNkKxn1nyucpjrJfH22MCW` (Opus 5.5, effort high) | P3-S2-back-1 (start, cycle 137: stacked on P3-S2-home-7, ready at 9ef7b295 and waiting for P3-AIA2-bake-1; S2's seat free at ready (M35); S2's last session, `session_01SNkKxnfpUVpuhWGguwhzhA`, is idle, its task ready) | `claude/ui-screens-home` | 2026-11-17 21:17Z |
@@ -643,6 +645,38 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 139**, 17 November 2026, from about 22:10Z (session
+  `session_01SNkKxq4x4crXhYQkGcqX1K`, started by the Opus 5.5 launcher).
+  The changes since cycle 138: AIA-2's bake-1 ready at 75798143; K1-R27
+  and S2-R46 filed; S2's back-1 asks for the gate.
+  **Claims copied:** S2's on P3-S2-back-1 (claimed 21:25Z, lease 00:25Z).
+  **Requests:** K1-R27 granted: rb_theme.gd, ui.gd, screen_kit.gd and
+  character_screen.gd are P3-K1-outline-1's exceptions in the backlog.
+  S2-R46 answered with its default. **Gate:** back-1's 'home at 100% text'
+  with the quit question passes 3 of 3 at 0bfa1d6a (Hierarchy;
+  verdicts/P3-S2-back-1/0bfa1d6a.json). **Merge:** the batch candidate
+  2dc57508 (P3-AIA2-bake-1, P3-S2-home-7, P3-S3-nav-1) passes full checks
+  and the guard, merged as 443a5cf5 (merged_sha a957e73b, 9ec770d6,
+  2dc57508). P3-S1-hc-offline-2 rebuilt on 443a5cf5 as fbae695a: guard OK,
+  full checks PASS at 23:21Z, merged as da9fce1a (merged_sha fbae695a). The
+  lock is cleared. The audit and roadmap pages are republished.
+  **Seeded:** P3-S3-settings-3 from AD-R52 (settings reopens on the tab
+  last shown in the session). **Started:** S3 on P3-S3-settings-3
+  (`session_01SNkKxoKvRK2mVxzbiptFn6`, 22:59Z). **Restarts:** K1 on
+  P3-K1-outline-1 with K1-R27's grant (`session_01SNkKxorBb4Hx1E3GUAr2GL`)
+  and S2 on P3-S2-back-1 with the gate's pass
+  (`session_01SNkKxpnKSbB1SgaR3ZrjwQ`, 22:57Z); each merges main first.
+  M55 acknowledged.
+  **Seats:** K1 (outline-1), S2 (back-1) and S3 (settings-3): three, the
+  cap while the seven-day bar reads `allowed_warning`. AIA-2, S1 and AD
+  are idle.
+  **Next:** merge back-1, outline-1 and settings-3 as each is ready, each
+  with its own full checks and the guard. As seats free, seed and start,
+  in order: R54's content task with S3-R39 (a shorter pt_BR ERR_OFFLINE),
+  AD-R55 with the next heist task (S1) and S2-R44's home follow-up; AD's
+  next task carries the previews of S1-R41, S3-R40 and AIA2-R4, and
+  back-1's quit question (AD-R48).
+
 - **Cycle 138**, 17 November 2026, from about 21:39Z (session
   `session_01SNkKxpDFMUeUQciTDiwm62`, started by the Opus 5.5 launcher).
   The changes since cycle 137: S2's first pushes on back-1 and AIA-2's
@@ -696,37 +730,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   R54's content task with S3-R39, AD-R55 with the next heist task (S1)
   and S2-R44's home follow-up; AD's next task carries the previews of
   S1-R41, S3-R40 and AIA2-R4, and back-1's quit question (AD-R48).
-
-- **Cycle 136**, 17 November 2026, from about 20:45Z (session
-  `session_01SNkKxrHpFT28u48DFoYrxa`, started by the Opus 5.5 launcher).
-  **Claims copied:** S1's on P3-S1-hc-offline-2 (ready at 788eaaf4), S3's
-  on P3-S3-nav-1 (ready at 5ac311f7), AIA-2's on P3-AIA2-bake-1 (working,
-  lease 23:10Z) and S2's on P3-S2-home-7 (ready at 9ef7b295) seen again.
-  **Requests:** AIA2-R4, S3-R37, S3-R38, S3-R39 and AIA2-R5 copied and
-  answered (requests.md).
-  **Gate:** nav-1 at 5ac311f7 and hc-offline-2 at 788eaaf4, 3 of 3 each
-  (verdicts under docs/art/ui-quality/gate/verdicts).
-  **Merge:** none. The lock for nav-1 was taken at 20:55Z. Candidate
-  cd0e6f51 passed owners.py, the docs consistency check and every guard
-  step but the byte-for-byte rebake, which failed again on
-  client/ui/art/icons_256.webp (S2-R45, an Intel Xeon with avx512f, as in
-  cycles 134 and 135). Hc-offline-2's candidate was not built: the rebake
-  fails on main's own inputs. Nav-1, hc-offline-2 and home-7 stay ready
-  until P3-AIA2-bake-1 merges, and nothing is loosened. Lock cleared. The
-  audit and roadmap pages are not republished.
-  **Seeded:** P3-K1-outline-1 (S3-R35, S3-R41, S3-R37), the one task a
-  free seat could start: every other next task waits on files held by a
-  ready task (R52 and R54 on nav-1's, AD-R55 on hc-offline-2's, S2-R44
-  and back-1 on home-7's).
-  **Started:** K1 on outline-1 (`session_01SNkKxr3SoTEVHPicDs7pG9`).
-  **Seats:** AIA-2 (bake-1) and K1 (outline-1); S1's and S3's tasks are
-  ready (M35). The third seat is free with no startable task.
-  **Next:** once bake-1 merges, rebuild the candidates for home-7, nav-1
-  and hc-offline-2 on the new main, rerun the guard and merge each on a
-  pass. Then seed and start, in order: R52 with the next settings task
-  (S3), R54's content task with S3-R39, AD-R55 with the next heist task
-  (S1), S2-R44's home follow-up and back-1 (S2); AD's next task carries
-  the previews of S1-R41, S3-R40 and AIA2-R4.
 
 - **Stopped here**, 13 November 2026, about 13:20Z (the owner's "Stop
   cleanly"). Cycle 84 (session `session_01SNkKxpqF4gx3yYhsXenUGt`) took

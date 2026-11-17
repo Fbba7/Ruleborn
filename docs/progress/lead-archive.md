@@ -5,6 +5,37 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 136**, 17 November 2026, from about 20:45Z (session
+  `session_01SNkKxrHpFT28u48DFoYrxa`, started by the Opus 5.5 launcher).
+  **Claims copied:** S1's on P3-S1-hc-offline-2 (ready at 788eaaf4), S3's
+  on P3-S3-nav-1 (ready at 5ac311f7), AIA-2's on P3-AIA2-bake-1 (working,
+  lease 23:10Z) and S2's on P3-S2-home-7 (ready at 9ef7b295) seen again.
+  **Requests:** AIA2-R4, S3-R37, S3-R38, S3-R39 and AIA2-R5 copied and
+  answered (requests.md).
+  **Gate:** nav-1 at 5ac311f7 and hc-offline-2 at 788eaaf4, 3 of 3 each
+  (verdicts under docs/art/ui-quality/gate/verdicts).
+  **Merge:** none. The lock for nav-1 was taken at 20:55Z. Candidate
+  cd0e6f51 passed owners.py, the docs consistency check and every guard
+  step but the byte-for-byte rebake, which failed again on
+  client/ui/art/icons_256.webp (S2-R45, an Intel Xeon with avx512f, as in
+  cycles 134 and 135). Hc-offline-2's candidate was not built: the rebake
+  fails on main's own inputs. Nav-1, hc-offline-2 and home-7 stay ready
+  until P3-AIA2-bake-1 merges, and nothing is loosened. Lock cleared. The
+  audit and roadmap pages are not republished.
+  **Seeded:** P3-K1-outline-1 (S3-R35, S3-R41, S3-R37), the one task a
+  free seat could start: every other next task waits on files held by a
+  ready task (R52 and R54 on nav-1's, AD-R55 on hc-offline-2's, S2-R44
+  and back-1 on home-7's).
+  **Started:** K1 on outline-1 (`session_01SNkKxr3SoTEVHPicDs7pG9`).
+  **Seats:** AIA-2 (bake-1) and K1 (outline-1); S1's and S3's tasks are
+  ready (M35). The third seat is free with no startable task.
+  **Next:** once bake-1 merges, rebuild the candidates for home-7, nav-1
+  and hc-offline-2 on the new main, rerun the guard and merge each on a
+  pass. Then seed and start, in order: R52 with the next settings task
+  (S3), R54's content task with S3-R39, AD-R55 with the next heist task
+  (S1), S2-R44's home follow-up and back-1 (S2); AD's next task carries
+  the previews of S1-R41, S3-R40 and AIA2-R4.
+
 - **Cycle 135**, 17 November 2026, from about 20:15Z (session
   `session_01SNkKxoHjTC6kV1CKeERwpY`, started by the Opus 5.5 launcher).
   **Claims copied:** AIA-2's on P3-AIA2-bake-1 (claimed 20:10Z, lease

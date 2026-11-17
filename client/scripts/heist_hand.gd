@@ -91,6 +91,7 @@ func show_state(sage: Dictionary, casts: Array, tick: int) -> void:
 	var open := casts.any(func(c: Dictionary) -> bool: return not c.get("used", false))
 	var said := Strings.t("HEIST_CAST") if not casts.is_empty() else Strings.t("HEIST_NO_CASTS")
 	cast_button.accessibility_name = said
+	_dress_cast(open)
 	# A cast waiting for its place is rimmed in white.
 	var box := RbBox.of(cast_button)
 	if box != null and box.material is ShaderMaterial:
@@ -115,21 +116,55 @@ func show_state(sage: Dictionary, casts: Array, tick: int) -> void:
 		cast_button.text = said
 	FxSkin.redraw(sage_button)
 	if Tokens.high_contrast and host != null:
-		var own := {go_button: "red"}
+		# Get out on the leather secondary plate, flat in high contrast with
+		# its amber rim: red is the alarm's alone (AD-R61). Cast with no cast
+		# left the same leather, never the card (AD-R60).
+		var own := {go_button: "leather"}
+		if not open:
+			own[cast_button] = "leather"
 		var pause: Variant = host.get("pause_button")
 		if pause is Control:
 			own[pause] = "parchment"
 		hc_plates(host, own)
 
 
+## Cast is the main action, in gold, while a cast is left; with none left it
+## is not one, so it stands on the leather secondary plate, its words in the
+## leather's text and still tappable (the wheel says why), and its gold comes
+## back when a cast is left (AD-R60). A Cast built on leather (the hand's own
+## square, before the screen dresses it) stays leather.
+func _dress_cast(open: bool) -> void:
+	var box := RbBox.of(cast_button)
+	if box == null:
+		return
+	if not cast_button.has_meta("look"):
+		cast_button.set_meta("look", box.look)
+	var want := str(cast_button.get_meta("look")) if open else "leather"
+	# High contrast's card stands in for a leather look (hc_plates).
+	if box.look == want or (Tokens.high_contrast and box.look == "card" and want in HC_LEATHER and open):
+		return
+	box = UI.dress(cast_button, want, box.radius_points)
+	cast_button.remove_meta("rim")
+	if cast_button.has_meta("words"):
+		var l := cast_button.get_meta("words") as Label
+		l.add_theme_color_override("font_color", box.spec["text"])
+		if box.spec.has("text_outline"):
+			l.add_theme_color_override("font_outline_color", box.spec["text_outline"][0])
+			l.add_theme_constant_override("outline_size", UI.px(box.spec["text_outline"][1]))
+		else:
+			l.remove_theme_color_override("font_outline_color")
+			l.remove_theme_constant_override("outline_size")
+
+
 ## In high contrast, the heist's plates under `root` as the key frame draws
 ## them (02-heist_hc.png): the near-black card (high contrast's #140C2A)
 ## inside the kit's light line, so every control stands well off its ground
-## (AD-R56). `own` gives some controls their own look: Get out the red
-## danger plate, and Pause, which stands on the night sky (L* about 23,
-## where the card's face would part by only 18), the clock's light plate
-## with its icon inked. The world's own view is not walked. Called on each
-## refresh, as the HUD swaps its plates.
+## (AD-R56). `own` gives some controls their own look: Get out, and Cast
+## with no cast left, the leather secondary plate (AD-R60, AD-R61), and
+## Pause, which stands on the night sky (L* about 23, where the card's face
+## would part by only 18), the clock's light plate with its icon inked. The
+## world's own view is not walked. Called on each refresh, as the HUD swaps
+## its plates.
 static func hc_plates(root: Node, own: Dictionary) -> void:
 	for c: Node in root.get_children():
 		if c is SubViewportContainer or c is SubViewport or c is Node3D:
