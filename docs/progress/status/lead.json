@@ -1,19 +1,12 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-17T15:32:00Z",
-  "expected_next_update_by": "2026-11-17T17:26:00Z",
+  "updated_at": "2026-11-17T15:46:00Z",
+  "expected_next_update_by": "2026-11-17T18:46:00Z",
   "cycle": 128,
-  "merging": {
-    "candidate_sha": "54a11b265407f4e0fe300b8f9a480acfd6536f52 (P3-K1-tabs-1 at 22fae4b7 onto 47646710, which merged as 7d0501d9)",
-    "task_ids": [
-      "P3-K1-tabs-1"
-    ],
-    "started_at": "2026-11-17T14:50:00Z",
-    "expires_at": "2026-11-17T16:50:00Z"
-  },
+  "merging": null,
   "last_merged": {
-    "task_id": "P3-S1-hc-offline-1",
-    "sha": "7d0501d9"
+    "task_id": "P3-K1-tabs-1",
+    "sha": "e3364018"
   },
   "acks": [
     "M15",
@@ -47,9 +40,9 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Cycle 128: merge P3-S3-character-5 when S3 marks it ready (session_01SNkKxnZi7kDm1VGLiH5FC6, lease 16:05Z; gate item 'character at 200% text, pt_BR', Hierarchy; S3-R36's menu-screens stills are its exception). Merge P3-S1-hc-offline-1 when S1 marks it ready (session_01SNkKxpfWQzuYCK1pQhn9Wy, lease 16:30Z; gate items 'heist in high contrast' and 'result at 100% text'), writing S1-R39's three budgets.json records (heist/hc 123, result/100 103, result/hc 45) with a raises entry in its merge. Merge P3-K1-tabs-1 when K1 marks it ready (session_01SNkKxq7JDCazLpMjivYruu, lease 16:05Z; it changes kit files, so the gate runs on its candidate if a gated task merges with it). In the first seat that frees, within the cap of three while the seven-day bar reads allowed_warning, start AD on the previews S1-R40 and S3-R34 and S1-R40's shots.md entry. Then seed in order: the navigation task for AD-R48, R50 and R51 (after character-5), S2's home task for R49's home part and R59's caller, R52 with the next settings task, R54's content task, and the K1 outline task for S3-R35.",
+  "next_step": "Cycle 129: merge P3-S3-character-5 when S3 marks it ready (session_01SNkKxnZi7kDm1VGLiH5FC6; gate item 'character at 200% text, pt_BR', Hierarchy; S3-R36's menu-screens stills are its exception). Merge P3-AD-preview-1 when AD marks it ready (session_01SNkKxoHAV28mTbRdZouhPY); it opens P3-S1-hc-offline-2. Merge P3-S2-home-7 when S2 marks it ready (session_01SNkKxqf3uqLW1HGZt6KLXF; gate items home at 100% text, home at 200% text pt_BR, home in high contrast). Seats: S3, AD, S2, the cap of three while the seven-day bar reads allowed_warning. In the next free seat start S1 on P3-S1-hc-offline-2 once its dep merges; then seed in order: the navigation task for AD-R48, R50 and R51 (after character-5), R52 with the next settings task, R54's content task, the K1 outline task for S3-R35, and AD-R55 with the next heist task.",
   "seen": {
-    "at": "2026-11-17T14:23:14Z",
+    "at": "2026-11-17T15:43:19Z",
     "heads": {
       "claude/3d-character-screens": "6053b249bee313648da3509142eeb2ba738bb62f",
       "claude/3d-characters": "35d6ae8f5b84a4d75636f68270848b0949c111f3",
@@ -70,15 +63,15 @@
       "claude/ui-ad": "1d2e1bd14c639b33679a0d0bc082bc50bf5f633a",
       "claude/ui-artist": "45c6366cb2e0f9dcb5aaa428d17c017576beff5d",
       "claude/ui-artist-icons": "a8b06f687a9fbb1048c426157f2336cda5f44202",
-      "claude/ui-bake": "db03e1410cd908e04f6b8a62864b491ad6ed95c0",
+      "claude/ui-bake": "bc6eb7a2c32a8df83bbbedbce5d0615dd568bfdd",
       "claude/ui-gate-runs": "0e78b6ceace032f62427a1c8e89dd9ee6186a5c0",
       "claude/ui-kit": "17b900ebdc371f05244d4658850a77460f6090c0",
       "claude/ui-plan": "f1affcea749d007fe1a67931bd3c1f7359d98c44",
       "claude/ui-research": "f19d5d4e5eaffff8869da3b91124d111cf1259a6",
       "claude/ui-screens": "dceb6bfcbc6c5da4e261674fe9301e1854f0aa65",
-      "claude/ui-screens-heist": "a4440c181e6ff888d0742ae27af0a9d48aedf2c3",
+      "claude/ui-screens-heist": "a665c85840e933717076aae4d1af3d8f91a1de51",
       "claude/ui-screens-home": "60a262adfab5455bfa60f570f1d1d4e9fb0602a2",
-      "claude/ui-screens-meta": "66d545615e8bbaf2d0abfe947fec87c035812a39",
+      "claude/ui-screens-meta": "ea3bde530f63e5ba5ccc33701f4f305a76d5ea5a",
       "lead/candidate-573416ab12761b92becf0c1d3d7d7bd03e9cf7d1": "573416ab12761b92becf0c1d3d7d7bd03e9cf7d1",
       "lead/candidate-714b24ed52f56133bccc18c82cc879938b53f296": "714b24ed52f56133bccc18c82cc879938b53f296",
       "lead/candidate-791aae3c187caf621ace022ed675004678dc0119": "791aae3c187caf621ace022ed675004678dc0119",
@@ -88,7 +81,10 @@
       "main": "2455f3b5392587009f9b8f7ff57f7b26b01566d1"
     },
     "ready": {},
-    "startable": [],
+    "startable": [
+      "P3-AD-preview-1",
+      "P3-S2-home-7"
+    ],
     "messages": [
       "M10",
       "M3"
