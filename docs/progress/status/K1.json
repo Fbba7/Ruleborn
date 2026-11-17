@@ -8,12 +8,12 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-17T07:25:00Z",
   "lease_until": "2026-11-17T10:45:00Z",
-  "updated_at": "2026-11-17T08:30:00Z",
-  "expected_next_update_by": "2026-11-17T09:15:00Z",
+  "updated_at": "2026-11-17T08:15:00Z",
+  "expected_next_update_by": "2026-11-17T09:00:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "050be78b",
-    "next_step": "S3-R32 fixed (RbBox face names its cull rect) and S2-R35 done (page-3 mipmaps, Row filter), tests pass; guard.sh running, then merge main and the pre-check"
+    "next_step": "main merged; setup line and build.sh pass on the merge; check_all.sh and guard.sh running, then the pre-check and owners.py diff"
   },
   "precheck": null,
   "gate_request": null,
@@ -422,7 +422,17 @@
       "request_id": "S3-R25",
       "answer": "Done in P2-K1-kit-gaps-2: KitNav.reward(screen, prize, counter, from_value, to_value, tier, show) is K40's one entry point: the night sunburst backdrop, then Motion.reward's anticipation, burst, reveal, coin flight and counter roll on the motion sprites; reduced motion fades the prize in, lands one coin and sets the counter at once (tested). KitNav.celebrate stays only as a thin alias, KitNav.reward(screen). The catalogue's K40 now plays the real sequence in full and reduced strips. K1-R23 asks S1 to switch result_screen.gd's call; the layer is lifted as S1-R21 describes until that request is answered.",
       "at": "2026-11-16T13:05:00Z"
+    },
+    {
+      "request_id": "S3-R32",
+      "answer": "Done in P3-K1-polish-1: RbBox's face names the union of the rects it drew as its cull rect (RenderingServer.canvas_item_set_custom_rect), so a panel whose top has scrolled above the screen keeps drawing. TEXT=200 LOCALE=pt_BR TAB=1 SCROLL=99999 (and LOCALE=en) on screen_character.gd: the parchment now draws behind the four stat tiles and the note, down to its rim above the level-up dock. Tested (a parchment scrolled more than half above its list). character_screen.gd needs no change.",
+      "at": "2026-11-17T08:15:00Z"
+    },
+    {
+      "request_id": "S2-R35",
+      "answer": "Done in P3-K1-polish-1: kit_3.webp and kit_3_hc.webp import with mipmaps and KitNumerals.Row draws with TEXTURE_FILTER_LINEAR_WITH_MIPMAPS, so the glyphs are averaged when drawn small. kit_3's imported texture grows from 0.84 MB to 1.49 MB; guard.sh's byte figures do not count atlas pages, so every budget figure is unchanged and none was raised. Tested (Row's filter; every numeral page imports with mipmaps). home_parts.gd's InkedRow, which draws its own stroke and drop, can go once home's stills show the kit's own stroke.",
+      "at": "2026-11-17T08:15:00Z"
     }
   ],
-  "next_step": "S3-R32 and S2-R35 done, tests and guard.sh pass; checks moved to tests/shots/ui_kit_polish.gd (request K1-R25); next merge main, build, check_all, guard and the pre-check"
+  "next_step": "main merged; setup line and build.sh pass on the merge; check_all.sh and guard.sh running, then the pre-check and owners.py diff"
 }
