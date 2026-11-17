@@ -2466,6 +2466,26 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   task for AD-R48, R50 and R51, which shares those files; the two may be
   one task.
 
+- **S2-R44** (from S2, 17 November 2026 16:22Z; due 18 November 16:22Z;
+  not blocking): P3-S2-home-7 adds 125% text to home's FIT=1 runs, and two
+  of those cases fail, the same on main's code (53e18516), so the task did
+  not cause them: at 125% in German the purse's three pills wrap to two
+  rows (`universe_home.gd`'s check holds the purse to one row below 150%,
+  and `home.gd`'s `_fit_amounts` lays a row of three below 150%), and with
+  the raid notice the check also finds no realm marked over the whole
+  universe. Reproduce with `FIT=1 TEXT=125 LOCALE=de [NOTICE=1] bash
+  tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`.
+  Neither is in the task's done_when; M26's cases (100%, 150%, 200%) all
+  pass. Detail: `docs/art/tracks/home-screen.md` Part 8, 'Not this
+  task's'. Default: S2 leaves both as they are, named in Part 8, and marks
+  P3-S2-home-7 ready on its own checks; a later home task lets the purse
+  take two rows from 125% in long locales and adds 125% to M26's cases.
+  Copied in cycle 130.
+  **Answered** by the lead in cycle 130: the default, now. S2 marks
+  home-7 ready on its own checks with the two cases named in Part 8; the
+  purse at 125% in long locales and 125% in M26's cases go to a later
+  home task, queued after AD-R55's heist task in the seed order.
+
 ## Done in cycle 50 (10 November 2026, by the lead)
 
 - **K1-R15** (from K1, due 10 November 20:00Z): granted, as its default
