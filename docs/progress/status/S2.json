@@ -3,49 +3,21 @@
   "role": "S2",
   "branch": "claude/ui-screens-home",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "P3-S2-home-states",
-  "task_state": "ready",
-  "claimed_at": "2026-11-17T10:50:00Z",
-  "lease_until": "2026-11-17T13:50:00Z",
-  "updated_at": "2026-11-17T12:12:00Z",
-  "expected_next_update_by": null,
+  "agent_state": "active",
+  "task_id": "P3-S2-home-7",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-17T15:55:00Z",
+  "lease_until": "2026-11-17T18:55:00Z",
+  "updated_at": "2026-11-17T15:55:00Z",
+  "expected_next_update_by": "2026-11-17T16:40:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "89659437",
-    "next_step": "Ready at 89659437: pre-check PASS, check_all PASS, check_screens OK, owners.py diff OK, 58 of 58 fit cases ok; guard.sh fails only on S2-R41's three draw-call lines. AD's S2-R42 note 1 tried and reverted (the drop hides the left edge with the notice at 200% in fr), note 2 left. Waiting on the gate; no new task."
+    "last_green_sha": "7d1e20af",
+    "next_step": "Main (7d1e20af, with P3-K1-tabs-1) merged as 241e04af. Next: home.gd routes tabs by Router.TABS (Islands, Heist excepted), ScreenNav's label rule, _show_goal's loop dropped; core test; stills; AD preview."
   },
-  "precheck": {
-    "sha": "89659437afa647a16500a767400b25b855f2af19",
-    "exit": 0,
-    "finished_at": "2026-11-17T12:08:45Z",
-    "summary": "All checks passed."
-  },
-  "gate_request": {
-    "sha": "89659437afa647a16500a767400b25b855f2af19",
-    "items": [
-      {
-        "item": "home at 100% text",
-        "qualities": [
-          "Hierarchy",
-          "Display type"
-        ]
-      },
-      {
-        "item": "home at 200% text, pt_BR",
-        "qualities": [
-          "Hierarchy"
-        ]
-      },
-      {
-        "item": "home in high contrast",
-        "qualities": [
-          "Hierarchy"
-        ]
-      }
-    ]
-  },
-  "ready_sha": "89659437afa647a16500a767400b25b855f2af19",
+  "precheck": null,
+  "gate_request": null,
+  "ready_sha": null,
   "stop_at": "2026-11-18T21:00:00Z",
   "acks": [
     "M13",
