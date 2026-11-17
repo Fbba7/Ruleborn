@@ -254,6 +254,25 @@ The stills and records are in `docs/art/shots/menu-screens/`, rendered with `FIT
 
 The table gives the ΔL* that `checks.py value-steps` measures. `checks.py all` passes on the three records, with no FAIL. In all three the next arrow, the subtitle ("Mossbear · Wächter" whole) and the tabs are on the first screen, the info grid below them is within the phone's width (the fit check), and the pill reads on two lines in English and pt_BR and three in German. The other character stills are unchanged. Their fixtures (character 5, and 1 to 3) are not at the highest level, and at 100% and in high contrast the pill is built as before.
 
+### The gate's display-type check at a6d5f2fb (P2-S3-character-4)
+
+The gate's advisory verdict on P2-S3-character-3 (`docs/art/ui-quality/gate/verdicts/P2-S3-character-3/a6d5f2fb.json`) failed "character at 200% text, pt_BR" on display type, five samples of six. The subtitle ("Skyskipper · Carregador") and the level line ("Nível 3 de 10") on the starry backdrop showed a dark edge down and right only, thin to nothing on the top and left. The flat gold HABILIDADE header also differed from the stroked "Subir de nível" header of the same rank.
+
+- **What changed on those labels between 6b7e6b42 and a6d5f2fb: nothing.** The committed still `character-200-pt_BR.png` is the same file at both shas (no pixel differs). Between the two, `character_screen.gd` changed only in `_top_level` (board 5b's K), which builds the tray's pill on character 4, not character 5. The pass at 6b7e6b42 and the fail at a6d5f2fb are two judgments of the same pixels. The treatment was marginal, and this fix makes it unambiguous.
+- **Why it read as a drop.** At large text `_over_stage` set `outline_size` to the greater of 3 points or 12% of the words' size. Godot's `outline_size` spans both sides of a glyph's edge, so that was about 6% a side, half of §21.8's 12%. The 2-point drop below then outweighed it at the foot of the letters, and the top and left edges were a pixel wide in the half-size still.
+- **The fix.** `_ink_large` in `client/scripts/character_screen.gd` sets the outline at §21.8's least a side: 1.5 points or 12% of the words' size, whichever is more (`OUTLINE_POINTS`, `OUTLINE_SHARE`), so `outline_size` is twice that. For the 16-point subtitle at 200% (88 px), that is 21 px against 11 before. For the 14-point level line (77 px), it is 19 against 9. When `_wrap_in` shrinks the words to fit, it sets the outline again from the size shown. The drop stays as it was: 2 points, in ink. At 100% text the backdrop's words keep `ScreenKit.inked`, as before.
+- **HABILIDADE.** At large text, the ability card's kicker is stroked and dropped in ink as Level up's title is (`_stroke`, display_s's outline × 1.5 and its drop), keeping the top gold that S3-R4 gave it. Level up's title now uses the same `_stroke`, with the same values as before. At 100% the kicker is as before, so "character at 100% text" sees the same pixels.
+- **The dock and the last card.** At 200% text, scrolled to the end, every tab's last card stands clear above the Level up dock in English, pt_BR and German (nine renders, `TEXT=200 LOCALE=<locale> TAB=<0..2> SCROLL=99999`). The scroll's foot already leaves the dock's height under the column. The hierarchy samples that saw the ability card clipped by the dock looked at the first screen, where it runs on under the dock as scroll content (key frame 04's header band does the same).
+- **A kit defect found on the way (S3-R32).** On the Stats tab at 200% in English and pt_BR, scrolled to the end, the parchment behind the tiles and their note is not drawn once its top has scrolled off the screen. The note's dark-brown words then stand on the night backdrop. It shows at SCROLL=1600 and after, and not at 1400. It shows on main without this task's change too, and German's shorter page is not affected. The parchment is the kit's box (`client/ui/rb_box.gd`, K1's), so it goes to K1 through the lead. No committed still shows it.
+
+#### Evidence
+
+Rendered on this task's code with `FIT=1` (and `RECORD=1` for the recorded ones) and the env in Part 2's tables. Every still printed `fit ok`.
+
+- **Changed:** `character-200-pt_BR.png`, `character-200-en.png`, `character-200-de.png`, `character-200-{en,pt_BR,de}-4.png`, and `character-200-pt_BR-stats.png` and `-compare.png`. Only the subtitle, the level line and (on the Heist tab) the ability's kicker differ. Their records are unchanged, and `checks.py all` passes on the six, with no FAIL and the same ΔL* as before. The draw calls at 200% are 69, against 66.
+- **The same pixels as before:** `character-100.png`, `-100-pt_BR`, `-100-de`, `-100-stats`, `-100-compare`, `character-hc.png`, `-hc-pt_BR` and `character-200-pt_BR-scrolled.png`.
+- **Fit check:** `fit_character.sh` (lesson M26, every fixture state): 50 shots of 50 `fit ok` (exit 0).
+
 ## Part 3: the settings screen (P2-S3-settings)
 
 ### What was done

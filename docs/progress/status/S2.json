@@ -4,29 +4,45 @@
   "branch": "claude/ui-screens-home",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P2-S2-home-4",
-  "task_state": "in_progress",
-  "claimed_at": "2026-11-16T09:35:00Z",
-  "lease_until": "2026-11-16T12:35:00Z",
-  "updated_at": "2026-11-16T11:28:00Z",
-  "expected_next_update_by": "2026-11-16T12:13:00Z",
+  "task_id": "P2-S2-home-5",
+  "task_state": "working",
+  "claimed_at": "2026-11-16T21:00:00Z",
+  "lease_until": "2026-11-17T00:00:00Z",
+  "updated_at": "2026-11-16T22:05:00Z",
+  "expected_next_update_by": "2026-11-16T22:50:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "ade915de",
-    "next_step": "P2-S2-home-4: pre-check PASS on fc48b017. Waiting on AD's preview (S2-R31, default 14:58Z) and the lead on S2-R30; then the gate request at fc48b017.",
-    "at": "2026-11-16T11:28:00Z"
+    "last_green_sha": "1697a6c6",
+    "next_step": "No verdict yet for the re-run on main f083c96c; main's own still shows the purse's counts flat cream, so the fail is taken to stand and the fix is built. Counts baked where their row fits at full size, the keeper's name and live words a heavier T2 with a visible drop, the strain share at large text baked too (it was handed to figures before it had a parent). Draw calls: home/100 142, home/200 117, home/hc 142, all under the records. The 17 100% fit cases pass; the 39 large-text cases are re-running after the share fix. Then the AD preview request, the pre-check and the gate request.",
+    "at": "2026-11-16T22:05:00Z"
   },
-  "precheck": {
-    "sha": "fc48b017bf55351211b9180f22356a8970e9f658",
-    "exit": 0,
-    "finished_at": "2026-11-16T11:25:39Z",
-    "summary": "All checks passed."
+  "precheck": null,
+  "gate_request": {
+    "sha": "f083c96c23c9c3b14bd0a4de80e2bda36704e913",
+    "items": [
+      {
+        "item": "home at 100% text",
+        "qualities": [
+          "Display type",
+          "Hierarchy",
+          "Character presence"
+        ]
+      },
+      {
+        "item": "home in high contrast",
+        "qualities": [
+          "Hierarchy"
+        ]
+      }
+    ],
+    "note": "P2-S2-home-5's first step: the re-run on current main (f083c96c; S2's branch adds only its progress files). Render from main, not from a stills folder of S2's."
   },
-  "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
-    "M13"
+    "M13",
+    "M28",
+    "M26"
   ],
   "requests": [
     {
@@ -462,8 +478,22 @@
       "due": "2026-11-16T14:58:00Z",
       "default": "The stills stand as previewed: S2 sends the gate request at the pre-checked commit, and any objection becomes a follow-up task.",
       "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R32",
+      "from": "S2",
+      "to": "lead",
+      "ask": "Seen while covering home's empty state (M26): client/i18n/strings.csv has WEAVING_BAND_0 to WEAVING_BAND_6 (Quiet, Steady, Humming, Brimming, Strained, Cracking, Breaking) in English in every column, pt_BR, pt_PT, de and fr included, so home's strain pill reads 'Quiet' and 'Humming' in every language. The lead owns the strings: please have them translated, or say they are names kept in English on purpose. Repro: `FIT=1 TEXT=200 LOCALE=pt_BR EMPTY=1 OUTER=0 NOTICE=1 bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`.",
+      "files": [
+        "client/i18n/strings.csv"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-16T11:33:00Z",
+      "due": "2026-11-17T19:33:00Z",
+      "default": "The seven band names stay in English in every language, as now; home does not change.",
+      "escalate_to": "lead"
     }
   ],
   "answers": [],
-  "next_step": "AD previews home-4 (S2-R31) and the lead answers S2-R30; then S2 runs the pre-check and sends the gate request (home at 200% text, pt_BR)."
+  "next_step": "Gate re-run requested on main f083c96c for 'home at 100% text' and 'home in high contrast' (the lead's next cycle). Meanwhile S2 renders main's stills and prepares a stronger display treatment for the purse's counts and the keeper's name on a WIP, in case the fail stands."
 }

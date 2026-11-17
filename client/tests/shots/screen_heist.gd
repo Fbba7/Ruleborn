@@ -12,12 +12,25 @@ extends SceneTree
 ## MANIFEST the design's planned crew of five with a Sage and a cast, and
 ## ESTIMATE a target card's rough loot estimate, FRAME_H the frame's height (1920 for
 ## 9:16), WHEEL "sage" or "cast" a
-## wheel open.
+## wheel open. M26's fixture states: CREW a crew of 1 to 5 with MANIFEST
+## (the plan's first CREW members), LONG the longest names the word list
+## gives in the locale (server/src/words.json, adjective and noun, the widest
+## five by letters), END the clock played on to its last seconds (red).
 
 const LawShot := preload("res://tests/shots/law_heist.gd")
 const TO := {"hold": [[4, 9], [3, 10], [4, 11]], "entry": [], "escape": [[2, 10], [3, 10], [2, 11]],
 	"cross": [[4, 9], [3, 10], [4, 11]], "sneak": [[4, 9], [3, 10], [4, 11]], "vault": [[6, 10], [5, 10], [7, 10]],
 	"alarm": [[5, 6], [3, 10], [4, 11]], "start": [[7, 8], [2, 10], [1, 10]]}
+## The longest crew names each locale's word list makes (SocialPresenter.
+## word_name over server/src/words.json): the five longest, each its own noun.
+const LONGEST := {
+	"en": ["Whispering Sanctuary", "Whispering Waterfall", "Whispering Crossing", "Whispering Fountain",
+		"Whispering Mountain"],
+	"pt_BR": ["Biblioteca Tempestuosa", "Santuário Sussurrante", "Travessia Sussurrante", "Labirinto Tempestuoso",
+		"Fortaleza Sussurrante"],
+	"de": ["Bernsteinfarbenes Leuchtfeuer", "Bernsteinfarbener Obstgarten", "Bernsteinfarbener Wasserfall",
+		"Bernsteinfarbenes Labyrinth", "Bernsteinfarbene Bibliothek"],
+}
 const TICKS := {"hold": 150, "entry": 20, "escape": 120, "cross": 60, "start": 30, "sneak": 150, "vault": 300,
 	"alarm": 150}
 
@@ -59,15 +72,21 @@ func _go() -> void:
 		# the Archivist and one cast, named as the design names them.
 		var law := Array(RulebornStability.law_ids()).find("glowing_dark")
 		var plan := PackedByteArray()
-		for k: int in [1, 6, 4, 3, 9]:
+		var size := clampi(int(OS.get_environment("CREW")), 1, 5) if OS.get_environment("CREW") != "" else 5
+		for k: int in ([1, 6, 4, 3, 9] as Array).slice(0, size):
 			plan.append_array(PackedByteArray([k, 0, 3, 0]))
 		plan.append_array(PackedByteArray([1, 1, law]))
-		screen.names_given = ["Pip", "Mo", "Bramble", "Hollow", "Ash"]
-		screen.begin(HeistController.SEED, HeistController.TICKS, 5, island, "", plan)
+		screen.names_given = ["Pip", "Mo", "Bramble", "Hollow", "Ash"].slice(0, size)
+		screen.begin(HeistController.SEED, HeistController.TICKS, size, island, "", plan)
 		# ESTIMATE: the target card's rough loot estimate (§12.4).
 		if OS.get_environment("ESTIMATE") != "":
 			screen.hud.estimate = int(OS.get_environment("ESTIMATE"))
 		screen.controller.load_target = 80
+	if OS.get_environment("LONG") != "":
+		var longest: Array = LONGEST.get(TranslationServer.get_locale(), LONGEST["en"])
+		screen.names_given = longest.slice(0, screen.controller.world.crew().size())
+		# The portraits are drawn again with these names at the next refresh.
+		screen._crew_key = ""
 	var view := screen.view
 	view.set_sky_hour(int(OS.get_environment("HOUR")) if OS.get_environment("HOUR") != "" else 12)
 	var moment := OS.get_environment("MOMENT") if OS.get_environment("MOMENT") != "" else "sneak"
@@ -132,6 +151,16 @@ func _go() -> void:
 			screen.controller.advance(10)
 			screen._refresh()
 			view._process(1.0 / 3.0)
+	if OS.get_environment("END") != "":
+		# END: the clock played on to its last seconds, where it turns red
+		# (§21.8), stopped short of running out.
+		var r := screen.controller.world
+		var tps := RulebornReplay.ticks_per_second()
+		while r.ticks() - r.tick() > 12 * tps:
+			screen.controller.advance(10)
+		screen._refresh()
+		view._process(1.0 / 3.0)
+		print("left ", (r.ticks() - r.tick()) / tps)
 	if moment == "hold":
 		# A held press on the ground: the gait menu at the finger.
 		screen.open_gait_menu(view.screen_at(Vector2i(5, 8)))
@@ -274,12 +303,16 @@ static func fit(screen: HeistScreen) -> Array[String]:
 	if layer == null or layer.get_parent() != screen or layer.get_index() < top.get_index():
 		bad.append("the guards' words are drawn below the panels")
 	# A bubble may lie over a panel's edge where the world shows no room for
-	# it (it is drawn above the panels), but never over a panel's words.
+	# it (it is drawn above the panels), but never over a panel's words (as
+	# their lines stand) nor a portrait with its name and tag.
 	var words: Array[Rect2] = []
 	for root: Control in [screen.hud, screen.actions_band, screen.hint_panel]:
 		for l: Label in root.find_children("*", "Label", true, false):
 			if l.is_visible_in_tree() and l.text != "":
-				words.append(l.get_global_rect())
+				words.append(FxAnchors.words_rect(l))
+	for b: FxPortrait in screen.crew_buttons:
+		if b.is_visible_in_tree():
+			words.append(b.drawn_rect())
 	for box: Rect2 in anchors.speech_boxes:
 		var on := Rect2(box.position + layer.global_position, box.size)
 		if not whole.encloses(on):
