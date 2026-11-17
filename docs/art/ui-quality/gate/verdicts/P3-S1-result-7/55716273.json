@@ -1,0 +1,19 @@
+[
+ {
+  "task_id": "P3-S1-result-7",
+  "sha": "55716273479b27992cdb57e8f5e5151921d31d6f",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "advisory": true,
+  "at": "2026-11-17T08:55:00Z",
+  "item": "result at 200% text, pt_BR",
+  "quality": "Hierarchy",
+  "samples": [
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "All three samples pass, against kf-character-text200 (pass anchor) and today-heist (fail anchor). In grayscale the full-width gold ASSALTAR DE NOVO at the foot, now carrying the idle crew line, is the largest and most saturated control and the first place the eye lands. The summary and alarm lines sit well below the totals and the button, the answer to b5843368's fail; Starlight's +2.310 card leads the other two rewards by size, holds no action and is smaller than the button, so under ruling v3 it falls in behind. The Home button and the multiplier pill are clearly secondary."
+ }
+]

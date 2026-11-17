@@ -359,6 +359,56 @@ Character presence split, and passes because a fail needs 4 or more fails of 6. 
 - **Gold totals on the glass tiles.** The gate failed it 0/3: the dark outline and drop vanish on the dark ground.
 - **A baked row floored under its words** (the first H fix, r1): the gold row was kept narrower than the totals' text, so the hidden live label grew narrower than its words. FIT failed: "+805" drawn 224 px in 222. The label's minimum width is now the wider of its words and the baked row.
 
+## The prose under the totals, Starlight's lead, the idle crew and the fold (P3-S1-result-7)
+
+**The gate's Hierarchy fail at pt_BR 200%** (the lead's cycle 113, `verdicts/P2-S1-result-6/b5843368.json`, 3/3 fail): the condition's prose and the alarm line read as large as the raid button's words and larger than the reward numerals, light on the dark; the three cream tiles read as one block, with no lead.
+
+**The prose under the numerals** (`03e22ae1`, `b01ee4ac`). Above 125% text (`KitLayout.SIDE_BY_SIDE_UP_TO`) `ResultFit.prose` sets the condition at 14 points and the alarm line at 13 (`PROSE_POINTS`, `ALARM_POINTS`; the kit hero's are 16 and 14), in the UI face's weight 500, not bold. `hero_shrink` takes the same points from `_prose()`, so a later shrink keeps them under the totals. At 100% the hero is the kit's, unchanged.
+
+**Starlight leads by size.** Above 125% text, `ResultFit.lead_stack` stacks Starlight's total over its name, and `ResultFit.lead_fit` sets the total at `LEAD` (1.5) times the others' 24 points, its icon grown with it, stepping down by 4% while the row is wider than the column. Key frame 03-result_text200 leads the same way, its "1.288" larger than the other figures. The two other ways the task offers were not taken:
+
+- **A darker plate:** the kit has no darker parchment tile (kit-spec section 1), and a kit change is K1's.
+- **Its value:** on the kit's glass the gold totals sank (Display type 0/3 at `24cc4d7c`, above), and all three tiles stay on parchment as AD's preview (S1-R35) kept them.
+
+**The idle crew in the fixture** (board 4). The shot loads a roster with `IDLE` of its crew idle (3 by default; `IDLE=-1` loads none and the line hides). With FIT=1 the shot fails unless the raid button shows "Idle crew of N ready" in the locale's words (`RESULT_IDLE_CREW`) whenever `ResultScreen.idle_crew()` is 0 or more.
+
+**The fold at 100%** (board 4's note on P2-S1-result-6: in pt_BR, de and high contrast pt_BR the crew card's rim and its rings' tops showed over the bar, and in de also "Deine 5-köpfige Crew"). The crew card has no header above its faces: it is one row, the faces beside the rest line, so the fold cannot fall on a header and leave the faces under it. It now puts the card whole under the bar:
+
+- `ResultFit.part_line` counts a face's ring the edge cuts as a part card, from the top of the card's drawn box (`RbBox.quad`, which reaches past the card's rect by its rim). So the fold's cut takes the whole card under the bar, its rim with it.
+- `ResultFit.fold` reads the corner's height as laid, not as asked. With the larger cut, a fitting queued before the last one read the old edge with the new cut, found nothing cut and set the corner back, so the bar swung between the two (FIT failed, 116 px).
+
+The bar then ends the first screen under the study card; the crew card is the first thing the page scrolls up.
+
+| Still (`SERVER=1 FIT=1`, at `b01ee4ac`) | FIT | Draw calls |
+|---|---|---|
+| en, 100% | ok | 117 |
+| en, 200% | ok | 100 |
+| pt_BR, 100% | ok | 119 |
+| pt_BR, 200% | ok | 102 |
+| de, 100% | ok | 119 |
+| de, 200% | ok | 102 |
+| High contrast pt_BR, 100% | ok | 61 |
+| High contrast pt_BR, 200% | ok | 44 |
+
+The draw calls are the shot test's own count, as above; all are under the task's 150. Against `b5843368`, 100% rises by 1 (the idle line on the raid button) and high contrast by 2 to 3; 200% is level.
+
+**The idle crew's line** shows at every setting: "Idle crew of 3 ready", "3 da equipe livres e prontos", "3 freie Crew bereit".
+
+    SERVER=1 FIT=1 LOCALE=pt_BR bash tools/render/shoot.sh client/tests/shots/screen_result.gd pt100.png
+    SERVER=1 FIT=1 LOCALE=pt_BR CONTRAST=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd hc100.png
+    SERVER=1 FIT=1 TEXT=200 LOCALE=pt_BR bash tools/render/shoot.sh client/tests/shots/screen_result.gd pt200.png
+    SERVER=1 FIT=1 TEXT=200 LOCALE=pt_BR CONTRAST=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd hc200.png
+
+The other stills use the same commands, with `LOCALE` set to `de` or `en`.
+
+**The gate:** requested at the ready commit for "result at 200% text, pt_BR", Hierarchy; the lead's run writes the verdict.
+
+### Tried and failed
+
+- **Starlight's lead beside its name,** in the tile's row: at 200% the row's width bounded the total, which `lead_fit` stepped back to barely over the others', too weak to lead. It now stands over its name.
+- **The name in a stack that shrinks to its start** (`SIZE_SHRINK_BEGIN`): the name's label wrapped letter by letter. The stack fills the row.
+- **The card's rect top for a cut ring:** the fold settled, but the card's drawn rim, 2 px past its rect, still showed over the bar at 100%.
+
 # The reward sequence (P2-S1-result-2)
 
 Branch `claude/ui-screens-heist`, task P2-S1-result-2. The rewards are counted in on the kit's `Motion.reward`, and the screen no longer counts them itself in `_process`.

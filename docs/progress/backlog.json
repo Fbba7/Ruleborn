@@ -2,8 +2,8 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026. Phase 2 started on 12 November 2026 (lead cycle 70): P1-AD-board-1d let board 1 stand and phase 1's other exit criteria hold (report.md section 3.2); its first tasks are the flow findings (S1, S2) and board 1's note G (AIA-2), within the same cap of three. Since 12 November 2026, about 20:00Z, the cap is four UI builders by the owner's order (CLAUDE.md order 3; three while the seven-day bar reads allowed_warning). Phase 3 (polish and harden, report.md step 12) started on 17 November 2026 (lead cycle 118) under M49: every phase 2 task was merged by 06:55Z, the exit review ran in cycle 118 (boards 3, 4 and 5 stand, board 2 waits on the deferred icon batch 4 by D13 (c), the exceptions queue is empty, every screen passes the gate but result at 200% pt_BR, Hierarchy, which P3-S1-result-7 takes), and the first blind audit (O6) is carried into phase 3 as P3-AD-audit-1. Phase 3 draws from the 20-hour reserve; it exits when no board has an open objection, the second blind audit is done and the wave board (O7) stands.",
   "wave": "UI wave",
   "phase": 3,
-  "updated_at": "2026-11-17T07:20:00Z",
-  "updated_by": "lead (cycle 118)",
+  "updated_at": "2026-11-17T07:50:00Z",
+  "updated_by": "lead (cycle 119)",
   "stop_at": "2026-11-18T21:00:00Z",
   "lease_hours": 3,
   "status_every_minutes": 45,
@@ -70,14 +70,20 @@
       "estimate_h": 1.5,
       "tier": 2,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "merged",
+      "claim": {
+        "agent": "AD",
+        "branch": "claude/ui-ad",
+        "claimed_at": "2026-11-17T07:30:00Z",
+        "seen_at": "2026-11-17T07:50:00Z",
+        "lease_until": "2026-11-17T10:30:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null,
-      "updated_at": "2026-11-17T07:20:00Z",
-      "updated_by": "lead (cycle 118)",
+      "ready_sha": "24965010ad39e1f2fd20766476a5d1a316ec5a3e",
+      "merged_sha": "1abc52ba",
+      "updated_at": "2026-11-17T09:35:00Z",
+      "updated_by": "lead (cycle 119)",
       "exceptions": []
     },
     {
@@ -146,15 +152,24 @@
       "estimate_h": 2.5,
       "tier": 2,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "claimed",
+      "claim": {
+        "agent": "K1",
+        "branch": "claude/ui-bake",
+        "claimed_at": "2026-11-17T07:45:00Z",
+        "seen_at": "2026-11-17T07:50:00Z",
+        "lease_until": "2026-11-17T10:45:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-17T07:20:00Z",
-      "updated_by": "lead (cycle 118)",
-      "exceptions": []
+      "updated_at": "2026-11-17T08:25:00Z",
+      "updated_by": "lead (cycle 120)",
+      "exceptions": [
+        "client/tests/shots/ui_kit_polish.gd",
+        "client/tests/shots/ui_kit_polish.gd.uid"
+      ]
     },
     {
       "id": "P3-K1-polish-2",
@@ -285,14 +300,20 @@
       "estimate_h": 1.5,
       "tier": 2,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "merged",
+      "claim": {
+        "agent": "S1",
+        "branch": "claude/ui-screens-heist",
+        "claimed_at": "2026-11-17T07:26:30Z",
+        "seen_at": "2026-11-17T07:50:00Z",
+        "lease_until": "2026-11-17T10:26:30Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null,
-      "updated_at": "2026-11-17T07:20:00Z",
-      "updated_by": "lead (cycle 118)",
+      "ready_sha": "55716273479b27992cdb57e8f5e5151921d31d6f",
+      "merged_sha": "1abc52ba",
+      "updated_at": "2026-11-17T09:35:00Z",
+      "updated_by": "lead (cycle 119)",
       "exceptions": []
     },
     {
@@ -305,13 +326,15 @@
       "files": [
         "client/scripts/home.gd",
         "client/scripts/home_parts.gd",
+        "client/world/universe_pins.gd",
         "client/tests/shots/universe_home.gd",
         "docs/art/tracks/home-screen.md"
       ],
       "deps": [],
       "done_when": [
-        "keyframe() in client/tests/shots/universe_home.gd gives the dock count badges, an active shield (the Defence timer '5 h 12 min') and Lantern Vale locked ('Opens at Keeper 28'), as key frame 02 shows",
-        "at 100% and 200% text (en, pt_BR, de) and in high contrast the badges, the timer and the lock read clearly, clear of the pins and the side buttons (board 3's objection B), and nothing carried by colour alone; what breaks is fixed in home.gd or home_parts.gd",
+        "keyframe() in client/tests/shots/universe_home.gd gives the dock count badges the store holds (Defence raids, Season '!', Crew idle; S2-R39) and Lantern Vale locked ('Opens at Keeper 28'), as key frame 02 shows; no shield timer on home (S2-R37: home-screen.md's table of key-frame changes, row 'Home shield', outranks the frame)",
+        "at 100% and 200% text (en, pt_BR, de) and in high contrast the badges and the lock read clearly, clear of the pins and the side buttons (board 3's objection B), and nothing carried by colour alone; what breaks is fixed in home.gd or home_parts.gd",
+        "S2-R38 and S2-R40 (granted here, cycle 119): client/world/universe_pins.gd gives the locked realm's plate the realm's name over its opening level, as key frame 02 has it, and a short form (the lock and '28' on the same dark pill) that it takes at large text before it hides, as the realm pins' `_shape` does, so at 200% in en, pt_BR and de Lantern Vale's lock still reads in words, not by colour alone",
         "'home at 100% text', 'home at 200% text, pt_BR' and 'home in high contrast' passing on the new stills",
         "AD previews the stills before ready (M10, M12, M23): the builder sends them to AD while the work can still change, and AD's objections are answered in this task",
         "python3 tools/ui_bake/check_screens.py",
@@ -343,17 +366,23 @@
         }
       ],
       "attempts": 0,
-      "estimate_h": 1.5,
+      "estimate_h": 2.0,
       "tier": 2,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "claimed",
+      "claim": {
+        "agent": "S2",
+        "branch": "claude/ui-screens-home",
+        "claimed_at": "2026-11-17T07:30:00Z",
+        "seen_at": "2026-11-17T07:50:00Z",
+        "lease_until": "2026-11-17T10:30:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-17T07:20:00Z",
-      "updated_by": "lead (cycle 118)",
+      "updated_at": "2026-11-17T07:50:00Z",
+      "updated_by": "lead (cycle 119)",
       "exceptions": []
     },
     {
@@ -1097,6 +1126,22 @@
       "sent_at": "2026-11-17T07:15:00Z",
       "ack_by": "2026-11-17T09:15:00Z",
       "acked_at": "2026-11-17T07:20:00Z"
+    },
+    {
+      "id": "M50",
+      "to": "S2",
+      "text": "From 17 November 2026 (cycle 119), on S2-R37 to S2-R40. S2-R37: confirmed, no shield timer on home; home-screen.md outranks key frame 02, and the task's first two done_when lines now say so. S2-R39: your default stands; each other count comes with the task that puts its source in the store. S2-R38 and S2-R40: granted in this task. client/world/universe_pins.gd (the lead's, no task in flight) is added to P3-S2-home-states' files, with a done_when line: the locked plate gets the realm's name over its opening level, and a short form (the lock and '28') it takes at large text before it hides, so Lantern Vale's lock reads in words at 200%. The estimate moves to 2.0h; your lease stands. S2-R36 is copied under AD in requests.md; AD answers once its blind labelling for audit-1 is written, and if AD has not answered by the due time, your default stands. Add M50 to your acks.",
+      "sent_at": "2026-11-17T07:50:00Z",
+      "ack_by": "2026-11-17T09:50:00Z",
+      "acked_at": "2026-11-17T07:52:00Z"
+    },
+    {
+      "id": "M51",
+      "to": "K1",
+      "text": "From 17 November 2026 (cycle 120), on K1-R25: granted now, not at the merge. client/tests/shots/ui_kit_polish.gd and its .uid are P3-K1-polish-1's exceptions in backlog.json, so owners.py diff passes and you mark ready when your checks pass (M48). S1-R37 (result/hc draw_calls 27 to 28 in budgets.json) is approved by the lead and recorded at P3-S1-result-7's merge; leave it out of polish-1. Add M51 to your acks.",
+      "sent_at": "2026-11-17T08:25:00Z",
+      "ack_by": "2026-11-17T10:25:00Z",
+      "acked_at": null
     }
   ]
 }
