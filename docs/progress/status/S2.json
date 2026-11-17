@@ -5,15 +5,15 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P3-S2-home-states",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-17T07:30:00Z",
   "lease_until": "2026-11-17T10:30:00Z",
-  "updated_at": "2026-11-17T07:52:00Z",
-  "expected_next_update_by": "2026-11-17T08:50:00Z",
+  "updated_at": "2026-11-17T08:46:00Z",
+  "expected_next_update_by": "2026-11-17T09:30:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "a4090ec7",
-    "next_step": "ad6c25e7: the locked plate names Lantern Vale and takes a short form ('28') at 200% (S2-R38, S2-R40, granted in cycle 119); draw calls 148/124/148 (S2-R41 updated); AD asked to preview ad6c25e7 (S2-R42). Running the 57 fit cases on ad6c25e7; then check_all, guard and the pre-check on the main merge; then ready."
+    "next_step": "779a5205 (ad6c25e7's code): 57 of 57 fit ok, check_all and check_screens pass, guard fails only on the three draw-call lines of S2-R41. AD answered S2-R36 (no objection at 5d25f9cb); its note (1), the locked plate about 4 pt from the left edge inside the 16 pt side gutter, is being fixed: the plate keeps safe_side_points on both sides in both forms. Then the 57 fit cases, the draw calls, check_all, guard and the pre-check on the new head, and S2-R42 renamed to that head."
   },
   "precheck": null,
   "gate_request": null,
@@ -634,5 +634,5 @@
     }
   ],
   "answers": [],
-  "next_step": "ad6c25e7: the locked plate names Lantern Vale and takes a short form ('28') at 200% (S2-R38, S2-R40, granted in cycle 119); draw calls 148/124/148 (S2-R41 updated); AD asked to preview ad6c25e7 (S2-R42). Running the 57 fit cases on ad6c25e7; then check_all, guard and the pre-check on the main merge; then ready."
+  "next_step": "779a5205 (ad6c25e7's code): 57 of 57 fit ok, check_all and check_screens pass, guard fails only on the three draw-call lines of S2-R41. AD answered S2-R36 (no objection at 5d25f9cb); its note (1), the locked plate about 4 pt from the left edge inside the 16 pt side gutter, is being fixed: the plate keeps safe_side_points on both sides in both forms. Then the 57 fit cases, the draw calls, check_all, guard and the pre-check on the new head, and S2-R42 renamed to that head."
 }
