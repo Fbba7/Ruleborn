@@ -5,6 +5,34 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 124**, 17 November 2026, from about 11:15Z (session
+  `session_01SNkKxosMXTnrRdW5v1jg9P`, started by the Opus 5.5 launcher).
+  **Claims copied:** S2's claim on P3-S2-home-states (claimed 10:50Z,
+  lease 13:50Z, `claude/ui-screens-home`; its restarted session is still
+  working) and K1's lease on P3-K1-polish-2, moved to 16:40Z.
+  **Requests:** none new. AD-R8 to AD-R10 (board 1, 11 November) still
+  sit in AD's status file; they were handled in phase 1 and are not
+  copied again.
+  **Merges:** P3-AD-flow-2 (ready at 808e42cf). AD's branch predates
+  polish-1's merge, so the candidate 83f98e84 (taken on 1a913623) ran in
+  full: `run_checks.sh` PASS (12:04Z, bwrap) and `ui_bake/guard.sh` OK;
+  `owners.py diff` passed. Main had gained only this cycle's bookkeeping,
+  so the candidate was merged onto it as 744390e1 with only the
+  documentation check re-run. The merge lock is released; the audit and
+  roadmap pages are republished.
+  **Starts:** K1 restarted on polish-2
+  (`session_01SNkKxrLmMHwDeCQXXnnsfn`) to mark ready now that K1-R26 is
+  granted. AD started on P3-AD-audit-1b
+  (`session_01SNkKxnp8XMcnrw7r4cd79s`), open since flow-2 merged.
+  **Seats:** AD (audit-1b), K1 (polish-2) and S2 (home-states): three, the
+  cap while the seven-day bar reads `allowed_warning`.
+  **Next:** merge home-states when S2 marks it ready, writing S2-R41's
+  three `budgets.json` records at its merge (home/100 145 to 148,
+  home/200 121 to 124, home/hc 145 to 148, each with a raises entry).
+  Gate and merge polish-2 when K1 marks it ready, then start S3 on
+  character-5 in the freed seat. Seed R47's kit task for K1 when a seat
+  frees after that. AD's audit-1b when ready.
+
 - **Cycle 123**, 17 November 2026, from about 10:30Z (session
   `session_01SNkKxowru6g45cY8RLHmf5`, started by the Opus 5.5 launcher).
   **Claims copied:** K1's claim on P3-K1-polish-2 (claimed 10:20Z, lease

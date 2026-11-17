@@ -202,8 +202,9 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxn49cnTinuA9di25Qn` (cycle 126,
-17 November 2026 from about 13:19Z, started by the Opus 5.5 launcher). Cycle
+Latest lead cycle session: `session_01SNkKxqo2Pg29quXQtWaLHf` (cycle 127,
+17 November 2026 from about 14:18Z, started by the Opus 5.5 launcher). Cycle
+126's was `session_01SNkKxn49cnTinuA9di25Qn` (from 13:19Z). Cycle
 125's was `session_01SNkKxnqEmBjkMNWvPgkCUt` (from 12:16Z). Cycle
 124's was `session_01SNkKxosMXTnrRdW5v1jg9P` (from 11:15Z). Cycle
 123's was `session_01SNkKxowru6g45cY8RLHmf5` (from 10:30Z). Cycle
@@ -622,6 +623,38 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 127**, 17 November 2026, from about 14:18Z (session
+  `session_01SNkKxqo2Pg29quXQtWaLHf`, started by the Opus 5.5 launcher).
+  **Claims copied:** K1's on P3-K1-tabs-1 (working; tests in, main
+  merged, pre-check next), S3's on P3-S3-character-5 (pre-check PASS at
+  aed2d06d, main merged at b311dc17, checks re-running on the merge) and
+  S1's on P3-S1-hc-offline-1 (claimed 13:30Z, lease 16:30Z; pre-check
+  running). Their claims were not in `backlog.json` after cycle 126; they
+  are now. `owners.py claims` passes.
+  **Requests:** six copied. S1-R39 (draw-call raises heist/hc 123,
+  result/100 103, result/hc 45) approved under M33; the lead writes them
+  with a raises entry at hc-offline-1's merge. S3-R36 granted:
+  `docs/art/shots/menu-screens/**` is one of character-5's exceptions, so
+  S3 re-shoots the nine character-200 stills and adds the two offline
+  ones. S3-R35 (Godot draws a quarter of outline_size a side; the kit's
+  KitHud._ink and the inventory count, and the two contrast checks, read
+  it as half) accepted as a finding for a K1 kit task, queued last. S1-R38
+  (cream hc line on panel_dark) stays with K1, its default standing.
+  S1-R40 and S3-R34 (AD previews) wait for a seat; S3-R34's default stands
+  at 15:31Z. M52 (to S3) and M53 (to S1) carry the answers.
+  **Gate and merge:** none; nothing was ready and the lock was null.
+  **Starts:** none; every status is current.
+  **Seats:** S3 (character-5), K1 (tabs-1) and S1 (hc-offline-1): three,
+  the cap while the seven-day bar reads `allowed_warning`.
+  **Next:** merge each of the three when ready (character-5 gates
+  'character at 200% text, pt_BR'; hc-offline-1 gates 'heist in high
+  contrast' and 'result at 100% text', with S1-R39's records in its merge;
+  tabs-1 changes kit files, so the gate runs on its candidate if a gated
+  task merges with it). In the first seat that frees, start AD on S1-R40
+  and S3-R34 (previews) and S1-R40's shots.md entry. Then seed in order:
+  the navigation task for R48, R50 and R51 (after character-5), S2's home
+  task for R49's home part and R59's caller, R52 with the next settings
+  task, R54's content task, and the K1 outline task for S3-R35.
 - **Cycle 126**, 17 November 2026, from about 13:19Z (session
   `session_01SNkKxn49cnTinuA9di25Qn`, started by the Opus 5.5 launcher).
   **Claims copied:** S3's claim on P3-S3-character-5 and K1's on
@@ -686,33 +719,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   for R48, R50 and R51 (after character-5), S2's home task for R49's home
   part and R59's caller, R52 with the next settings task, and R54's
   content task.
-- **Cycle 124**, 17 November 2026, from about 11:15Z (session
-  `session_01SNkKxosMXTnrRdW5v1jg9P`, started by the Opus 5.5 launcher).
-  **Claims copied:** S2's claim on P3-S2-home-states (claimed 10:50Z,
-  lease 13:50Z, `claude/ui-screens-home`; its restarted session is still
-  working) and K1's lease on P3-K1-polish-2, moved to 16:40Z.
-  **Requests:** none new. AD-R8 to AD-R10 (board 1, 11 November) still
-  sit in AD's status file; they were handled in phase 1 and are not
-  copied again.
-  **Merges:** P3-AD-flow-2 (ready at 808e42cf). AD's branch predates
-  polish-1's merge, so the candidate 83f98e84 (taken on 1a913623) ran in
-  full: `run_checks.sh` PASS (12:04Z, bwrap) and `ui_bake/guard.sh` OK;
-  `owners.py diff` passed. Main had gained only this cycle's bookkeeping,
-  so the candidate was merged onto it as 744390e1 with only the
-  documentation check re-run. The merge lock is released; the audit and
-  roadmap pages are republished.
-  **Starts:** K1 restarted on polish-2
-  (`session_01SNkKxrLmMHwDeCQXXnnsfn`) to mark ready now that K1-R26 is
-  granted. AD started on P3-AD-audit-1b
-  (`session_01SNkKxnp8XMcnrw7r4cd79s`), open since flow-2 merged.
-  **Seats:** AD (audit-1b), K1 (polish-2) and S2 (home-states): three, the
-  cap while the seven-day bar reads `allowed_warning`.
-  **Next:** merge home-states when S2 marks it ready, writing S2-R41's
-  three `budgets.json` records at its merge (home/100 145 to 148,
-  home/200 121 to 124, home/hc 145 to 148, each with a raises entry).
-  Gate and merge polish-2 when K1 marks it ready, then start S3 on
-  character-5 in the freed seat. Seed R47's kit task for K1 when a seat
-  frees after that. AD's audit-1b when ready.
 - **Stopped here**, 13 November 2026, about 13:20Z (the owner's "Stop
   cleanly"). Cycle 84 (session `session_01SNkKxpqF4gx3yYhsXenUGt`) took
   the merge lock for P2-AD-board-4 (candidate `842f09ab`, AD's ready

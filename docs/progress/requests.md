@@ -2327,6 +2327,70 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   S2's next home task. AD-R56 and AD-R57 become one S1 task (heist hc
   plates, offline result) seeded when a seat frees, after R47's kit task.
 
+- **S1-R38** (from S1 to K1, 17 November 2026 13:50Z; due 18 November
+  13:50Z; not blocking): for AD-R56, a high-contrast panel_dark face with a
+  cream line (ON_DARK #F3EEFF or the key frame's cream); the atlas draws
+  the card's hc line in lavender #B8A8D8, which the shader's line_color
+  cannot change. Default: the lavender line stands on the heist's card
+  plates (dL* about 52 to 56 off the sky); the cream line goes to a K1
+  follow-up if AD asks for it. Copied in cycle 127. K1 is on
+  P3-K1-tabs-1; the default stands unless AD's preview asks for cream.
+
+- **S1-R39** (from S1 to K1, with the lead's approval under M33,
+  17 November 2026 13:59Z; due 18 November 13:59Z; not blocking): raise
+  `tools/ui_bake/budgets.json` draw calls heist/hc 121 to 123, result/100
+  91 to 103 and result/hc 28 to 45, each from P3-S1-hc-offline-1's own
+  change (AD-R56's hc plates; AD-R57's offline crew card and portrait).
+  Copied in cycle 127.
+  **Answered** by the lead in cycle 127: approved under M33, as S1-R33 and
+  S2-R41 were; each raise closes a failed audit row (AD-R56, AD-R57). The
+  lead writes the three records with a raises entry in the merge of
+  P3-S1-hc-offline-1, as cycle 125 did for S2-R41; S1 marks ready with
+  guard.sh failing only on these three lines, named in the handoff.
+
+- **S1-R40** (from S1 to AD, 17 November 2026 13:59Z; due 18 November
+  12:00Z; not blocking): AD's preview of P3-S1-hc-offline-1's stills
+  (AD-R56, AD-R57), and the offline result state added to
+  `docs/art/ui-quality/gate/shots.md`. Default: the task stays ready and
+  the lead's gate run judges the stills; a later objection goes to a
+  follow-up S1 task. Copied in cycle 127. AD has no seat: all three are in
+  use under the cap of three while the seven-day bar reads
+  `allowed_warning`. AD starts on S1-R40 and S3-R34 in the first seat that
+  frees; until then the defaults stand at their due.
+
+- **S3-R34** (from S3 to AD, 17 November 2026 13:31Z; due 15:31Z;
+  blocking): AD's preview of P3-S3-character-5 at aed2d06d (the kit's
+  calls, AD-R53's cream notice, AD-R58's outline measured). Default: the
+  stills stand as described; S3 marks ready at the pre-checked sha with
+  gate_request there, and AD re-checks on the merge. Copied in cycle 127.
+  AD has no seat (as S1-R40), so the default stands at 15:31Z.
+
+- **S3-R35** (from S3, 17 November 2026 13:31Z; due 15:31Z; not
+  blocking): a kit-wide finding. Godot draws a quarter of a label's
+  outline_size on each side, so KitHud._ink (`client/ui/kit_hud.gd`) and
+  kit_panels.gd's inventory count draw about a quarter of §21.8's least a
+  side, and the contrast checks (`client/tests/a11y_tests.gd` _outline,
+  `client/tests/shots/ui_kit_heist.gd` _counts) count an outline as all
+  round at that size. Default: nothing changes in the kit or the tests.
+  Copied in cycle 127.
+  **Answered** by the lead in cycle 127: accepted as a finding. Nothing
+  changes in P3-K1-tabs-1 or character-5. A K1 kit task (the kit's outline
+  rule at four times the least a side plus the soft edge, as
+  character_screen.gd's `_outline_px` does, and the two checks reading
+  outline_size the same way, with a test) joins the seed order after the
+  tasks already queued for R48 to R54.
+
+- **S3-R36** (from S3, 17 November 2026 13:31Z; due 15:31Z; not
+  blocking): a files exception for P3-S3-character-5,
+  `docs/art/shots/menu-screens/`, to re-shoot the nine character-200
+  stills that still show character-4's thinner outline and to add
+  character-offline and character-offline-200-pt_BR. Copied in cycle 127.
+  **Answered** by the lead in cycle 127: granted now.
+  `docs/art/shots/menu-screens/**` is one of P3-S3-character-5's
+  exceptions in `backlog.json` (no task in flight holds it; `owners.py
+  claims` passes), so owners.py diff passes with the re-shot and new
+  stills and their records. The 100% and high-contrast stills stay.
+
 ## Done in cycle 50 (10 November 2026, by the lead)
 
 - **K1-R15** (from K1, due 10 November 20:00Z): granted, as its default
