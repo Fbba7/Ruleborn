@@ -24,6 +24,10 @@ const STATS := [["health", "hud/shield"], ["speed", "realmactions/speed"], ["pow
 ## The tabs, by their words' keys, and the design's icon for each.
 const TABS := ["CHARACTER_TAB_HEIST", "CHARACTER_TAB_STATS", "CHARACTER_TAB_COMPARE"]
 const TAB_ICONS := ["screens/heist", "realmactions/upgrade", "screens/roster"]
+## §21.8's least ink outline a side for words over the backdrop at large
+## text: 1.5 points, or 12% of their size if that is more.
+const OUTLINE_POINTS := 1.5
+const OUTLINE_SHARE := 0.12
 
 var controller: RosterController
 var id := 0
@@ -314,19 +318,43 @@ static func _large() -> bool:
 
 
 ## Words on the backdrop under the stage with the kit's ink outline all
-## round; at large text, as the large-text key frame's, a heavier one
-## (§21.8: 12% of their size) and the hard drop of the display type.
+## round; at large text, as the large-text key frame's, a heavier one and
+## the hard drop of the display type.
 static func _over_stage(l: Label) -> Label:
 	if not _large():
 		return ScreenKit.inked(l)
-	var size := float(l.get_theme_font_size("font_size"))
+	l.set_meta("over_stage", true)
+	_ink_large(l)
+	return l
+
+
+## The display type's ink stroke and hard drop, as Level up's title wears.
+static func _stroke(l: Label) -> void:
+	var role := Tokens.type_role("display_s")
+	var width := UI.px(float(role["outline"]) * 1.5)
 	l.add_theme_color_override("font_outline_color", Tokens.color("ink_line"))
-	l.add_theme_constant_override("outline_size", maxi(UI.px(3.0), roundi(size * 0.12)))
+	l.add_theme_constant_override("outline_size", width)
+	l.add_theme_color_override("font_shadow_color", Tokens.color("ink_line"))
+	l.add_theme_constant_override("shadow_offset_x", 0)
+	l.add_theme_constant_override("shadow_offset_y", maxi(1, UI.px(float(role["drop"]))))
+	l.add_theme_constant_override("shadow_outline_size", width)
+
+
+## §21.8's outline all round at large text: at least 1.5 points or 12% of
+## the words' size wide on each side, at the size they are shown (`_wrap_in`
+## may make them smaller). Godot's `outline_size` spans both sides, so it is
+## twice that. The outline once spanned 12% in all, 6% a side, which read as
+## a drop alone over the stars (the gate's display-type check at a6d5f2fb).
+static func _ink_large(l: Label) -> void:
+	var size := float(l.get_theme_font_size("font_size"))
+	var side := maxf(UI.px(OUTLINE_POINTS), size * OUTLINE_SHARE)
+	var width := roundi(side * 2.0)
+	l.add_theme_color_override("font_outline_color", Tokens.color("ink_line"))
+	l.add_theme_constant_override("outline_size", width)
 	l.add_theme_color_override("font_shadow_color", Tokens.color("ink_line"))
 	l.add_theme_constant_override("shadow_offset_x", 0)
 	l.add_theme_constant_override("shadow_offset_y", UI.px(2.0))
-	l.add_theme_constant_override("shadow_outline_size", maxi(UI.px(3.0), roundi(size * 0.12)))
-	return l
+	l.add_theme_constant_override("shadow_outline_size", width)
 
 
 ## `l` on one line while it fits in `room`'s width, less `inset` points,
@@ -357,6 +385,8 @@ static func _wrap_in(l: Label, room: Control, inset: float, least := 0.0) -> voi
 				at = maxi(UI.px(least), floori(full * (fits - UI.px(inset)) / whole))
 			if l.get_theme_font_size("font_size") != at:
 				l.add_theme_font_size_override("font_size", at)
+				if l.has_meta("over_stage"):
+					_ink_large(l)
 		var want := minf(wide.call(), fits - UI.px(inset))
 		if absf(l.custom_minimum_size.x - want) > 0.5:
 			l.custom_minimum_size.x = want)
@@ -433,6 +463,11 @@ func _heist_tab(c: Dictionary, me: Dictionary) -> void:
 			# 60 that bold words ask (§21.8); the gradient's top gold is Lc 75.
 			# Requested of the kit in S3-R4 (docs/progress/status/S3.json).
 			l.add_theme_color_override("font_color", Tokens.color("gold_top"))
+			# At large text stroked and dropped in ink as Level up's title is,
+			# so the card's header reads as display type beside it (the
+			# gate's display-type check at a6d5f2fb).
+			if _large():
+				_stroke(l)
 			var head := l.get_parent() as HFlowContainer
 			if head.get_child_count() > 1:
 				_untrack_when_tight(l, head, head.get_child(1) as Control, UI.px(4))
@@ -763,12 +798,7 @@ static func _fit_upgrade(b: Button) -> void:
 	title.uppercase = false
 	title.autowrap_mode = TextServer.AUTOWRAP_WORD
 	title.add_theme_color_override("font_color", Tokens.color("cream"))
-	title.add_theme_color_override("font_outline_color", Tokens.color("ink_line"))
-	title.add_theme_constant_override("outline_size", UI.px(float(Tokens.type_role("display_s")["outline"]) * 1.5))
-	title.add_theme_color_override("font_shadow_color", Tokens.color("ink_line"))
-	title.add_theme_constant_override("shadow_offset_x", 0)
-	title.add_theme_constant_override("shadow_offset_y", maxi(1, UI.px(float(Tokens.type_role("display_s")["drop"]))))
-	title.add_theme_constant_override("shadow_outline_size", UI.px(float(Tokens.type_role("display_s")["outline"]) * 1.5))
+	_stroke(title)
 	var price := cost.get_child(0) as HBoxContainer
 	var figure := price.get_child(price.get_child_count() - 1) as Label
 	var shown := KitNumerals.make(figure.text, "num_white", "display_s")

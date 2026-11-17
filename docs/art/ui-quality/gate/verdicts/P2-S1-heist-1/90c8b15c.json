@@ -1,0 +1,141 @@
+[
+  {
+    "task_id": "P2-S1-heist-1",
+    "sha": "90c8b15ca6765cea2e9e4d749841582db74eef51",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-17T00:50:00Z",
+    "item": "heist at 100% text",
+    "quality": "Colour roles and value",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes. Gold fill is kept for the main action Cast, with gold elsewhere only as rim material; green is health only; Get out is a dark plum button with a gold rim, not the fail anchor's (today-heist) pink-red fill. Each crew school carries a shape (triangle, hourglass, square, diamond) and the rarity diamonds differ in value, so all stay apart on the protanopia, deuteranopia and tritanopia sheet, at least as well as the pass anchor (kf-character-text200)."
+  },
+  {
+    "task_id": "P2-S1-heist-1",
+    "sha": "90c8b15ca6765cea2e9e4d749841582db74eef51",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-17T00:50:00Z",
+    "item": "heist at 100% text",
+    "quality": "One art-direction idea",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes. Every HUD part (the cream LAWS HERE tab, the inked timer and alarm plaques, the thick vault bar, the ringed portraits, the domed gold Cast) is drawn in one chunky gold-rimmed toy-box idiom; the fail anchor's (today-heist) unframed 'Laws here' label and thin flat slider are gone. At least as unified as the pass anchor (kf-character-text200)."
+  },
+  {
+    "task_id": "P2-S1-heist-1",
+    "sha": "90c8b15ca6765cea2e9e4d749841582db74eef51",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-17T00:50:00Z",
+    "item": "heist at 200% text",
+    "quality": "Character presence",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes. The five crew portraits in the tray (Pip, Mo, Bramble, Hollow, Ash) each read as a figure in its own gold ring, in soft or stepped toon shading with no photographic grain or mirror sheen, and Hollow and Bramble no longer turn to smudges as they do in the pass anchor (today-heist). Closest call, noted once: Ash's mottled ember surface, read as glow."
+  },
+  {
+    "task_id": "P2-S1-heist-1",
+    "sha": "90c8b15ca6765cea2e9e4d749841582db74eef51",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-17T00:50:00Z",
+    "item": "heist at 200% text",
+    "quality": "Colour roles and value",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes, as at 100%: gold fill only on Cast, Get out neutral, green only for health and the law bloom, shape-coded school marks and value-coded rarity, all distinct on the colour-blindness sheet."
+  },
+  {
+    "task_id": "P2-S1-heist-1",
+    "sha": "90c8b15ca6765cea2e9e4d749841582db74eef51",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-17T00:50:00Z",
+    "item": "heist at 200% text",
+    "quality": "Display type",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes. The headline figures (2:25, Alarm 0/6, 946, ~2,600) carry a thick dark outline that grew with the 200% text, a hard drop and a gradient fill; every word label (laws, crew names, Room, Left, the load target) sits on a plate or card, so none is over art unstroked, and no glyph is clipped. At least as good as the pass anchor (plant-heist-dim)."
+  },
+  {
+    "task_id": "P2-S1-heist-1",
+    "sha": "90c8b15ca6765cea2e9e4d749841582db74eef51",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-17T00:50:00Z",
+    "item": "heist at 200% text",
+    "quality": "Layered materials",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes; this was AD-R44's Layered item. Cast has a lit gold gradient, a gloss band, a dark rim and a solid lip; Get out, the law pills and the Room panel are smooth plum enamel with a bevelled gold frame, an inner rim, a gloss band and a drop; the crew tray is a framed panel with an inset well. Smooth materials need no grain; no banding at 960 px. Level with the pass anchor (kf-character-text200)."
+  },
+  {
+    "task_id": "P2-S1-heist-1",
+    "sha": "90c8b15ca6765cea2e9e4d749841582db74eef51",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-17T00:50:00Z",
+    "item": "heist at 200% text",
+    "quality": "Painted or rendered icons",
+    "samples": [
+      "pass",
+      "pass",
+      "fail",
+      "pass",
+      "fail",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Split 2 to 1, so three more samples: four passes and two fails of six, a pass (a fail needs four). The passes read the wand and door as modelled (outline, top-left light, gloss) and the law orbs in school-shaped frames (leaf, flame) as above the fail anchor's (today-heist) flat flower glyph, with the role badges as abstract marks. The two fails saw the law icons as flat cream discs with only a faint gradient and no top-left highlight or specular. Point for a later pass: give the law orbs a clear top-left highlight and a specular so they match the pass anchor's (kf-character-text200) drop and arrow."
+  },
+  {
+    "task_id": "P2-S1-heist-1",
+    "sha": "90c8b15ca6765cea2e9e4d749841582db74eef51",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-17T00:50:00Z",
+    "item": "heist at 200% text, pt_BR, no crew plan",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes; this was AD-R44's Hierarchy item. In grayscale Lançar is the largest light block and the only saturated gold control; Fugir is smaller and dark, the cream 2:25 timer and LEIS AQUI tag are about half its size, and the big Espaço/Restam panel is darker and holds no action. One thing leads at least as clearly as Level up on the pass anchor (kf-character-text200)."
+  }
+]

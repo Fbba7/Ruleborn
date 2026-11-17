@@ -77,6 +77,17 @@
       },
       "reason": "S2-R30: P2-S2-home-4 (board 3b's objection H, home half: with the chosen tab inside the bar, the right edge's two discs, Season and Shop, move into the top row beside the keeper plate at large text, so they draw between the plate and the purse); every draw order that keeps the layout reads 120 or 121. Textures and words below 4.5:1 unchanged; home/100 and home/hc stay at 144 under their 145; home/200 stays 29 under the cap of 150, and under S2-R21's approved 124.",
       "request": "S2-R30"
+    },
+    {
+      "approved_by": "lead, cycle 106 (S1-R33)",
+      "date": "2026-11-17",
+      "field": "shots.recorded draw_calls",
+      "figures": {
+        "heist/200": "116 -> 118",
+        "heist/hc": "120 -> 121"
+      },
+      "reason": "S1-R33: P2-S1-heist-1's gate fixes. The 'Laws here' badges (FxLawBadge: the school's shape as a frame behind a cream disc and the painted icon, for the gate's Painted icons fail; +1 at 200 and hc) and the crew tray's inner well (ScreenKit.panel('well'), for the Layered materials fail; +1 at each size). Measured at dceed4bf with budget_shots.py --only heist/100,heist/200,heist/hc: 120, 118, 121, after three cheaper draw orders. Textures and words below 4.5:1 unchanged; heist/100 stays at 120; the heist stays 29 under the cap of 150.",
+      "request": "S1-R33"
     }
   ],
   "screens": {
@@ -345,12 +356,12 @@
         "words_below": 0
       },
       "heist/200": {
-        "draw_calls": 116,
+        "draw_calls": 118,
         "texture_bytes": 2333376,
         "words_below": 0
       },
       "heist/hc": {
-        "draw_calls": 120,
+        "draw_calls": 121,
         "texture_bytes": 2499264,
         "words_below": 0
       },

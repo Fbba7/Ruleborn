@@ -62,6 +62,14 @@ var speech_layer: Control:
 ## The screen's panels, in this layer's pixels (a Callable returning an
 ## Array of Rect2): a bubble moves off them to the nearest clear place.
 var keep_off := Callable()
+## Panels a bubble may rest on where the world shows no room (a Callable
+## as keep_off's): counted at a quarter of their area, so a bubble with no
+## clear place covers these before keep_off's words.
+var keep_soft := Callable()
+## What a bubble never covers, the panels' words and the portraits (a
+## Callable as keep_off's): where every place near its guard covers one, the
+## bubble goes to the nearest place on screen clear of them.
+var keep_clear := Callable()
 ## Where the last frame drew each bubble, in this layer's pixels.
 var speech_boxes: Array[Rect2] = []
 
@@ -450,7 +458,7 @@ func _draw_speech_layer() -> void:
 	_pen(speech_layer, _paint_speech.bind(speech_layer, _said))
 
 
-## `box` moved up or down off the screen's panels (keep_off) to the nearest
+## `box` moved up or down off the screen's panels (keep_off, keep_soft) to the nearest
 ## place on screen clear of them, within a few lines of where it was said.
 ## Where there is none, it goes where it covers the least of them (in a gap
 ## narrower than itself, its middle), and the speech layer draws it above the
@@ -458,53 +466,128 @@ func _draw_speech_layer() -> void:
 func _off_panels(box: Rect2, px: float) -> Rect2:
 	if not keep_off.is_valid():
 		return box
-	var panels: Array = keep_off.call()
+	var hard: Array = keep_off.call()
+	var soft: Array = keep_soft.call() if keep_soft.is_valid() else []
+	var panels: Array = hard + soft
 	var cover := func(b: Rect2) -> float:
 		var sum := 0.0
-		for r: Rect2 in panels:
-			var o := b.grow(px * 0.1).intersection(r)
-			sum += o.get_area() if b.grow(px * 0.1).intersects(r) else 0.0
+		for i in panels.size():
+			var r: Rect2 = panels[i]
+			if b.grow(px * 0.1).intersects(r):
+				sum += b.grow(px * 0.1).intersection(r).get_area() * (1.0 if i < hard.size() else 0.25)
 		return sum
 	if cover.call(box) == 0.0:
 		return box
-	var ys: Array[float] = []
+	var ys: Array[float] = [box.position.y]
 	for r: Rect2 in panels:
 		ys.append(r.position.y - box.size.y - px * 0.2)
 		ys.append(r.end.y + px * 0.2)
 		for q: Rect2 in panels:
 			if q.position.y > r.end.y:
 				ys.append((r.end.y + q.position.y - box.size.y) * 0.5)
-	var best := box
-	var least: float = cover.call(box)
-	var far := INF
-	for y: float in ys:
-		var b := Rect2(Vector2(box.position.x, y), box.size)
-		var away := absf(y - box.position.y)
-		if y < px * 0.2 or b.end.y > size.y - px * 0.2 or away > px * 6.0:
-			continue
-		var c: float = cover.call(b)
-		if c < least or (c == least and away < far):
-			least = c
-			far = away
-			best = b
+	# Beside a hard panel too (a portrait in the tray), not only above or
+	# below one.
+	var xs: Array[float] = [box.position.x]
+	for r: Rect2 in hard:
+		xs.append(r.position.x - box.size.x - px * 0.2)
+		xs.append(r.end.x + px * 0.2)
+	var clear: Array = keep_clear.call() if keep_clear.is_valid() else []
+	var best := _least_cover(box, xs, ys, cover, px, [], px * 6.0)
+	for r: Rect2 in clear:
+		if best.intersects(r):
+			return _least_cover(box, xs, ys, cover, px, clear, INF)
 	return best
 
 
-## Whether `box` lies over one of the screen's panels (keep_off).
+## Of the places at `xs` by `ys` on screen within `reach` up or down of
+## `box`, and clear of every rect in `clear`, the one covering the least of
+## the panels (`cover`), the nearest where two tie; `box` itself where none.
+func _least_cover(box: Rect2, xs: Array[float], ys: Array[float], cover: Callable, px: float,
+		clear: Array, reach: float) -> Rect2:
+	var best := box
+	var least: float = INF if clear.size() > 0 else cover.call(box)
+	var far := INF
+	for x: float in xs:
+		if x < px * 0.2 or x + box.size.x > size.x - px * 0.2:
+			continue
+		for y: float in ys:
+			var b := Rect2(Vector2(x, y), box.size)
+			var away := absf(y - box.position.y) + absf(x - box.position.x) * 0.5
+			if y < px * 0.2 or b.end.y > size.y - px * 0.2 or absf(y - box.position.y) > reach:
+				continue
+			if clear.any(func(r: Rect2) -> bool: return b.intersects(r)):
+				continue
+			var c: float = cover.call(b)
+			if c < least or (c == least and away < far):
+				least = c
+				far = away
+				best = b
+	return best
+
+
+## Each control's rect in `layer`'s pixels (a portrait's as it draws, its
+## tag included), for keep_off and keep_soft.
+static func rects_of(controls: Array, layer: Control) -> Array:
+	var out: Array = []
+	for c: Variant in controls:
+		var ctl := c as Control
+		if ctl != null and ctl.is_visible_in_tree() and ctl.size.x > 0.0:
+			var r: Rect2 = ctl.call("drawn_rect") if ctl.has_method("drawn_rect") else ctl.get_global_rect()
+			r.position -= layer.global_position
+			out.append(r)
+	return out
+
+
+## The words of every label under `roots`, each as its lines stand in the
+## label (not the label's whole rect), in `layer`'s pixels.
+static func words_in(roots: Array, layer: Control) -> Array:
+	var out: Array = []
+	for root: Control in roots:
+		for l: Label in root.find_children("*", "Label", true, false):
+			if l.is_visible_in_tree() and l.text != "":
+				var r := words_rect(l)
+				r.position -= layer.global_position
+				out.append(r)
+	return out
+
+
+## Where a label's words stand on screen: as wide as its widest line (wrapped
+## at its width where it wraps), placed by its alignment, as tall as it is.
+static func words_rect(l: Label) -> Rect2:
+	var at := l.get_global_rect()
+	var wraps := l.autowrap_mode != TextServer.AUTOWRAP_OFF
+	var wide := l.get_theme_font("font").get_multiline_string_size(l.text, HORIZONTAL_ALIGNMENT_LEFT,
+		at.size.x if wraps else -1.0, l.get_theme_font_size("font_size")).x
+	wide = minf(wide, at.size.x)
+	var x := at.position.x
+	if l.horizontal_alignment == HORIZONTAL_ALIGNMENT_CENTER:
+		x += (at.size.x - wide) * 0.5
+	elif l.horizontal_alignment == HORIZONTAL_ALIGNMENT_RIGHT:
+		x += at.size.x - wide
+	elif l.horizontal_alignment == HORIZONTAL_ALIGNMENT_FILL:
+		wide = at.size.x
+	return Rect2(x, at.position.y, wide, at.size.y)
+
+
+## The screen's panels, keep_off's and keep_soft's together.
+func _all_panels() -> Array:
+	var out: Array = keep_off.call() if keep_off.is_valid() else []
+	if keep_soft.is_valid():
+		out.append_array(keep_soft.call())
+	return out
+
+
+## Whether `box` lies over one of the screen's panels (keep_off, keep_soft).
 func _covers_panel(box: Rect2, px: float) -> bool:
-	if not keep_off.is_valid():
-		return false
-	for r: Rect2 in keep_off.call():
+	for r: Rect2 in _all_panels():
 		if box.grow(px * 0.1).intersects(r as Rect2):
 			return true
 	return false
 
 
-## Whether `at` lies under one of the screen's panels (keep_off).
+## Whether `at` lies under one of the screen's panels (keep_off, keep_soft).
 func _under_panel(at: Vector2) -> bool:
-	if not keep_off.is_valid():
-		return false
-	for r: Rect2 in keep_off.call():
+	for r: Rect2 in _all_panels():
 		if (r as Rect2).has_point(at):
 			return true
 	return false

@@ -385,6 +385,96 @@ Guard fails on home/200 alone, 2 over its record and 29 under the cap of 150; th
 - **At 200% in German with the raid notice up, the notice still drops its red disc** (Part 3). The alarm glyph on the tag stays.
 - **At large text the right edge's discs are in the top row, not in a column beside the band**, where both 200% key frames draw them. The key frames keep one row of the purse where strain sits beside it; home's purse takes two rows in every language at large text (Part 3, C). Both edges in the band leave the realms no room with the notice up, so AD may weigh the place on the board.
 
+## Part 5: the purse's counts in the kit's display type (P2-S2-home-5)
+
+The gate's last verdict on home at 100% (`verdicts/P2-S2-home-1/977edd5b.json`) failed Display type: the purse's counts read as flat cream. This task first asked the gate to re-run 'home at 100% text' and 'home in high contrast' on current main (`f083c96c`), to learn whether that fail still stands.
+
+**Does the fail still stand?** No verdict on main had come back when this part was written: the lead's branch at `2ab3a985` has no `verdicts/P2-S2-home-5/`. S2's own still of main at 100% (`FIT=1 bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png` on `f083c96c`) still shows the counts as flat cream type, for the reason below, so S2 took the fail to stand and built the fix. The gate request at the ready commit covers the fixed home.
+
+**Why the counts read flat.** The counts and the keeper's name were drawn in the kit's small display role (`display_s`) through the theme, which draws the role's 2-point ink outline and its 1.5-point drop with no outline of its own. The outline covers the drop, so no drop shows. On the purse's near-black plates, the ink outline does not show either, so the counts read as plain cream type.
+
+**What changed.**
+
+- **The counts are in the kit's baked numerals** (kit-spec.md section 2.2, T3, as K23's Currency pill specifies): a gradient fill, a thick ink stroke and a hard drop, from `num_white` on `kit_3.webp`. `HomeParts.figures` builds them with `KitNumerals.make` in a row that takes the amount label's place. The words after the figures ("k", " mil", " Tsd.") stay live type beside them. The hidden label keeps its words, so a screen reader and the purse's fit still read them. The renown ("1,460", K23) and, at large text, the strain card's share ("82%") take the same figures, through `Home.home_figure`. The share used to be handed to `figures` before it stood in its card, so it stayed live; it is now placed first.
+  - **They are baked only where the purse's row fits them at full size** (`Home._fit_amounts`, `HomeParts.amounts_over`). The baked figures have fixed advances and run about a fifth wider than the live face. Where the row does not fit them at full size, the amounts stay live type, which may shrink to 85% as before. In M26's fit stills they are baked in English and French at 100% and 200%, and in every language at 150%, where the purse takes two rows of wider pills. They stay live in German and Portuguese at 100% and 200% ("142,0 Tsd.", "142,0 mil"). Baking them there broke the purse into three rows at 200% in pt_BR and hid two side buttons. The renown's single count is baked in every case.
+  - **Their size** is 90% of the role's line (`FIGURE_LINE`), foot on the line's foot. At the full line the figures stood taller and higher than the live "k" beside them. At this share their bodies match the live face and stand on its baseline.
+- **The keeper's name and every live word in home's figures take a heavier T2** (`HomeParts.inked`): the ink outline is half again as thick as the role's, and the drop is the glyph's own shadow, set down by that outline and by the role's drop half again, so a hard drop shows under the stroke. `character_screen.gd`'s upgrade title gives its shadow an outline as thick as the stroke instead. Here that cost one more draw call per label and took home/100 to 151, over §21.3's limit of 150.
+- **The baked rows stand one layer above the words** (`UI.WORDS_Z` + 1). In the art's layer, a row from the numerals' page between the pills' faces split their batch, and home/200 went from 121 to 123 draw calls. Above the words, every row draws in one call: home/100 and home/hc 142, home/200 117, against the recorded 145, 145 and 121. Nothing on home is drawn over the counts but its full-screen layers, which stand `UI.OVERLAY_Z` higher.
+- **Full hangs a little higher at 100%** (`HomeParts.FULL_LIFT`, 8 points beyond half its plate). The baked figures' tops stand higher than the live type's did, and the tag covered the top of the third pill's "0".
+
+**Evidence.**
+
+- **Fit (M26).** `FIT=1` prints "fit ok" in all 56 cases: the five languages at 100%, with and without the notice; 900 and 960 tall; high contrast in en and pt_BR; the widest amounts (`MOST=1`); 150% in four languages, with the notice, the widest amounts and 960 tall; 200% in all five languages with and without the notice, at 900 tall, in high contrast (en, pt_BR, de), with the widest amounts and 99 raids, and the new Keeper (`EMPTY=1`). Each case is `FIT=1 <flags> bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`.
+- **Draw calls (§21.3).** `python3 tools/ui_bake/budget_shots.py --only home/100,home/200,home/hc`:
+
+  | Shot | Recorded | Main `f083c96c` | This task |
+  |---|---:|---:|---:|
+  | home/100 | 145 | 144 | 142 |
+  | home/200 | 121 | 121 | 117 |
+  | home/hc | 145 | 144 | 142 |
+
+  The live share at large text drew in a call of its own; baked, it joins the rows' call. Contrast is unchanged: 0 words below 4.5:1 in each shot.
+- **Stills.** The three budget stills (home at 100%, 200% and high contrast) show "Keeper 24" with a hard drop below its stroke, and "142.0k", "31.4k", "61.0k", "1,460" and, at 200%, "82%" in the baked figures.
+
+## Part 6: one big-number treatment (P2-S2-home-6)
+
+The gate's advisory verdict on home-5 (`verdicts/P2-S2-home-5/eb40e8f4.json`) failed Display type on 'home at 100% text' and 'home at 200% text, pt_BR', 0 of 3 samples each. Hierarchy and Character presence passed. The judge saw two faults:
+
+- **"Keeper 24" had a drop but no outline that showed.** Its ink outline merged into the dark starfield behind it, so only the drop read. The rubric fails a drop standing in for the outline.
+- **The headline counts did not share one heavy treatment.** The `num_white` baked figures read as a flat, pale fill on the near-black plates. In German and Portuguese the purse's counts stayed live type. At 100%, "82%" was live type in the strain pill.
+
+**What changed.**
+
+- **Every headline count is in the kit's gold baked numerals** (`num_gold`, T3), not `num_white` (`HomeParts.FIGURE_FINISH`). That covers the purse's three counts, the renown ("1,460", "1.460") and the strain share ("82%"). At the still's scale the white finish's pale white-to-lavender gradient and thinner stroke read as a flat light fill. The gold's cream-to-amber gradient, thick ink stroke and hard drop read as what they are, as the counts on the pass anchor do (`proof-heist-hud.png`, "After"). The gold glyphs are also narrower for their height (advance 120 on a 210 px glyph, against 96 on 162), so they fit better.
+- **The baked figures shrink before they go live** (`HomeParts.amounts_fit`). Before, the purse's amounts were baked only where their row fit them at full size, and otherwise stayed live type: German and Portuguese at 100% and 200%. Now they are baked first and shrink where the row needs it, to no less than 78% (`Home.BAKED_LEAST`). Only where even that does not fit do they fall back to live type, which keeps its own floor of 85% (`AMOUNT_LEAST`). The baked floor is lower because the figures' heavy stroke and drop read at a smaller size than the live face. German's "142,0 Tsd." needs 80% at 100% and at 200%, and pt_BR's "142,0 mil" 88% at 100%. English and French fit at full size.
+- **The strain share is baked at every text size** (`HomeParts.large_strain`, now used at 100% too). Its card stacks the baked share over the band's name ("82%" over "Humming"), as it already did at large text.
+- **The keeper's name over the starfield gets a band of the plates' leather rim round its ink** (`HomeParts.inked(l, over_art = true)`). The label's shadow is drawn in `leather_rim` with an outline as thick as the ink's plus 2.5 points, and set down by a third of that band. The ink outline then stands out all round against the rim, and the rim's heavier foot reads as the drop. Its outline stays at least 13% of the name's size (`OUTLINE_SHARE`, over the rubric's 12%) and never under 1.5 times the role's 2 points. The live words beside the figures on the plates ("k", " mil", " Tsd.") keep home-5's ink outline with a hard ink drop below it. A name with no figures to bake is the one that stands over the art (`Home.home_figure`).
+
+**Tried and dropped.** A rim of 2 px with a 3 px drop: the drop set the band lower than its width, so no rim showed over the tops of the letters. The rim is now at least 3 px and set down by a third of itself.
+
+**Evidence.**
+
+- **Fit (M26).** `FIT=1` prints "fit ok" in all 57 cases on 4c242628, and every headline count in them is baked. The cases are Part 5's, plus the new Keeper at 100% and at 150% with the notice. That means the five languages at 100% and 200%, each with and without the notice; 900 and 960 points tall; high contrast in en and pt_BR at 100%, and in en, pt_BR and de at 200%; the widest amounts (`MOST=1`), with and without the notice, and with 99 raids; 150% in four languages; the new Keeper (`EMPTY=1`) with and without the Heart's neighbours and the notice. Each case is `FIT=1 <flags> bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`.
+- **Draw calls (§21.3).** `python3 tools/ui_bake/budget_shots.py --only home/100,home/200,home/hc`:
+
+  | Shot | Recorded | home-5 (`eb40e8f4`) | This task |
+  |---|---:|---:|---:|
+  | home/100 | 145 | 142 | 143 |
+  | home/200 | 121 | 117 | 118 |
+  | home/hc | 145 | 142 | 143 |
+
+  The one call more is the name's rim, its shadow's own outline. The baked share joins the rows' call. Contrast is unchanged: 0 words below 4.5:1 in each shot (worst 6.40, 8.94 in high contrast).
+- **Stills.** At 100% in en, pt_BR and de, at 200% in pt_BR and in high contrast: "Keeper 24" (and "Guardião 24", "Hüter 24") cream in its ink outline, ringed by the leather rim. "142.0k", "142,0 mil", "142,0 Tsd.", "1,460", "1.460" and "82%" in the gold figures, each with its ink stroke and hard drop.
+
+**Still worse, or open.**
+
+- **The purse's counts shrink to fit in German and Portuguese.** They stand at 80% (German) and 88% (pt_BR at 100%) of the English counts' size. They keep the one treatment, only smaller.
+- **A count that falls back to live type no longer takes the name's leather rim.** The purse's labels start as "–", which has no figures, so `home_figure` took them for words over the art. They are now marked as counts on a plate (`plated`). No fit case below falls back to live type, so no still shows this.
+- **Part 4's and Part 3's open items stand.**
+
+### The gate at e674b614: Display type at 100%
+
+The gate's advisory verdict on home-6 (`verdicts/P2-S2-home-6/e674b614.json`) passed five of its six item-qualities, 3 of 3 samples each. Display type passed at 200% pt_BR and failed at 100%, 0 of 3. The judge's reason: at 100% the headline counts ("1,460" and the purse's "142.0k", "31.4k", "61.0k") were "flat gold fills on dark plates, with no ink outline, no hard drop and no gradient", while "Keeper 24" carried the stroked treatment. It named AD-R45 (a) as still open.
+
+**Why the counts went flat at 100%.** The kit's gold glyphs are 210 px tall, and at 100% text they draw about 18 px tall. The kit's atlas pages are imported without mipmaps, so a glyph drawn at under a tenth of its size is sampled, not averaged. Its thin baked stroke and drop fall between the samples, and its gradient flattens to one gold. At 200% the glyphs draw twice as large and keep their own treatment, which is why that still passed.
+
+**What changed.**
+
+- **The baked figures carry an ink stroke and a hard drop drawn from the kit's own rows** (`HomeParts.InkedRow`, a `KitNumerals.Row` that `figures` builds in place of the kit's). Behind the figures sit eleven kit rows of the same glyphs (`InkedRow.Under`), tinted `ink_line`, one layer below them:
+  - eight set off all round by 8% of the figures' size, at least 1 px: an ink stroke that adds to the glyphs' own;
+  - three set off down and to the sides by the stroke plus 10% of the size: the hard drop.
+
+  The fill on top is the kit glyph's own cream-to-gold gradient, which still shows at 18 px (a test with a white foot matched the still). Home draws nothing of its own: every layer is the kit's row drawing the kit's glyphs, tinted and moved (`draw_set_transform`), so `check_screens.py` still counts 0 draws in `home_parts.gd`. A first build drew the layers itself with `draw_texture_rect_region`, which `check_screens.py` refused as screen chrome.
+
+  The drop and the stroke share one tint: a tint change between layers splits the batch, two calls a row (home 152), and `drop` (`#0A0408`) and `ink_line` (`#1A0C14`) read the same. The figures stand two layers above the words and their ink one above, so every row's fill and every row's ink draw in one call each. The figures' cells and widths are unchanged, so the fit is the same.
+- **AD-R45 (a): the live words on the plates** ("k", " mil", " Tsd."). They take the figures' `gold`, not cream, keep their ink stroke, and have no shadow. Before, their shadow was the bare glyphs set down by the outline and the drop, which showed as a second copy of the letters below them. AD's fix, a shadow as wide as the stroke and set down by the drop, cost a draw call a label (home 148, 123 and 148 at 100%, 200% and in high contrast, over the records of 145, 121 and 145), so S2 took AD's own fallback: drop the shadow on those words and keep the stroke. The figures' drop beside them carries the hard drop. A plated count that falls to live type (none in the fit cases) keeps the old drop.
+
+**The plates.** The plates' fill (`#180D1C` in the still) is within a step of `ink_line` (`#1A0C14`). An ink stroke alone cannot show on it, which is the judges' close call at 200%. On the figures, the stroke and drop layers take the glyphs' own tones under their tint, so they draw darker than the plate, and the figures stand in a dark halo with a heavier foot. The live words' ink outline still matches the plate; their gold reads against it.
+
+**A kit fix is better.** Mipmaps on the kit's pages (`kit_*.webp.import`) and a mipmap filter in `KitNumerals.Row` would keep every screen's baked numerals sharp at small sizes. That is K1's file, so S2 asked the lead for it (S2-R35). Until then, home layers the kit's rows.
+
+**Evidence.** Stills at 100% in en and de and at 200% in en. Every count shows the cream-to-gold gradient, the ink stroke all round and the hard drop, and the words after it are gold. Draw calls on home (`budget_shots.py`): 143 at 100%, 118 at 200% and 143 in high contrast (records 145, 121, 145; the same as before the task). `check_screens.py` OK. FIT=1 in M26's 57 cases on bac22476: all "fit ok".
+
 ## Left for other tasks
 
 These widgets are no longer used by home, but they are outside this task's files:

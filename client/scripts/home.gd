@@ -64,6 +64,9 @@ const PURSE_GAP_LEAST := 3.0
 ## The least share of their size the purse's amounts take at large text to
 ## keep the purse to two rows (`_fit_amounts`).
 const AMOUNT_LEAST := 0.85
+## The least share the baked figures take: German's "142,0 Tsd." needs 80%
+## (P2-S2-home-6); their heavy stroke reads smaller than the live face.
+const BAKED_LEAST := 0.78
 
 ## The unseen raids the player dismissed the notice for: it returns only when
 ## more come.
@@ -272,7 +275,7 @@ func _build_top(column: VBoxContainer) -> void:
 		# The counts are the screen's headline figures: the kit's display face,
 		# ink-outlined with a hard drop, as the design draws them (S2-R12 asks
 		# K1 to make it the resource part's own).
-		home_figure(pill.find_child("Amount", true, false) as Label, 18)
+		home_figure(pill.find_child("Amount", true, false) as Label, 18, true)
 		HomeParts.hang_full(pill)
 		pills[k] = pill
 		purse.add_child(pill)
@@ -747,8 +750,10 @@ func _show_strain(share: float, band: int, known: bool) -> void:
 	hit.set_meta("band", key)
 	hit.size_flags_horizontal = Control.SIZE_SHRINK_END
 	hit.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	# The share in the headline counts' baked figures over the band's name,
+	# at every size (P2-S2-home-6: one big-number treatment).
+	HomeParts.large_strain(pill, pct, named)
 	if Settings.text_scale >= 150:
-		HomeParts.large_strain(pill, pct, named)
 		# The purse's fourth place, as tall as the pill beside it.
 		hit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		hit.size_flags_vertical = Control.SIZE_FILL
@@ -821,6 +826,7 @@ func _show_purse(rows: Dictionary) -> void:
 		var share := clampf(float(r.get("ready", 0)) / holds, 0.0, 1.0) if holds > 0 else 0.0
 		_full[k] = share >= UniversePurse.FULL
 		KitStatus.set_resource(pills[k], UniverseHud.compact(amount) if amount >= 0 else "–", share)
+		HomeParts.figures((pills[k] as Control).find_child("Amount", true, false) as Label)
 		said.append(Strings.t("HOME_PURSE_SPOKEN", [Strings.t("HOME_RES_" + k.to_upper()),
 			UniverseHud.grouped(amount) if amount >= 0 else Strings.t("HOME_UNKNOWN"),
 			UniverseHud.grouped(int(r.get("ready", 0)))]))
@@ -857,7 +863,8 @@ func _fit_purse() -> void:
 
 ## The purse in one row at 100% text, in two with large text (§20.8). Where
 ## the pills of a row cannot share it (German's "142,0 Tsd."), all three
-## amounts are a little smaller, never under AMOUNT_LEAST: at 100% so Essence
+## amounts are a little smaller, never under BAKED_LEAST baked or AMOUNT_LEAST
+## live: at 100% so Essence
 ## does not drop to a row alone (AD's objection (c) on S2-R22), with large text
 ## so the third row stays the realms' chips.
 func _fit_amounts() -> void:
@@ -867,28 +874,23 @@ func _fit_amounts() -> void:
 		if l != null and l.has_meta("points"):
 			amounts.append(l)
 	var share := 1.0
+	var baked := true
 	var large := Settings.text_scale >= 150
 	var row := 2 if large else 3
 	if amounts.size() >= row:
-		# The row's pills' widths with their amounts at full size, read from
-		# the face, not from the labels as they are now.
-		var words := 0.0
-		var rest := 0.0
+		var held: Array[Control] = []
 		for i in row:
-			var l := amounts[i]
-			var full := UI.text_px(float(l.get_meta("points")))
-			words += l.get_theme_font("font").get_string_size(l.text, HORIZONTAL_ALIGNMENT_LEFT, -1, full).x
-			rest += (pills[UniversePurse.ORDER[i]] as Control).get_combined_minimum_size().x - l.get_combined_minimum_size().x
+			held.append(pills[UniversePurse.ORDER[i]] as Control)
 		var gap := float(purse.get_theme_constant("h_separation")) if large else UI.px(PURSE_GAP_LEAST) * (row - 1.0)
-		var over := words + rest + gap - purse.size.x
-		if over > 0.5:
-			var shrunk := (words - over - 1.0) / maxf(words, 1.0)
-			if shrunk >= AMOUNT_LEAST:
-				share = shrunk
+		var fit := HomeParts.amounts_fit(amounts.slice(0, row), held, purse.size.x - gap, BAKED_LEAST, AMOUNT_LEAST)
+		share = fit.x
+		baked = fit.y > 0.5
 	for l: Label in amounts:
 		var px := floori(UI.text_px(float(l.get_meta("points"))) * share)
 		if l.get_theme_font_size("font_size") != px:
 			l.add_theme_font_size_override("font_size", px)
+		l.set_meta("live", not baked)
+		HomeParts.figures(l)
 
 
 ## The nearest goal on the kit's goal card, its words and a gold bar of the
@@ -976,15 +978,17 @@ func _play() -> void:
 	App.services.router.go(&"heist")
 
 
-## `l` in the kit's display role (tokens.json "display": its face, heavier ink
-## and hard drop) at `points`, for home's figures and names, which the small
-## role's thinner line leaves flat over the starfield (cycle 77's gate).
-static func home_figure(l: Label, points: float) -> void:
+## `l` in the kit's display role at `points`, for home's figures and names:
+## T2 drawn heavier (`HomeParts.inked`), its figures baked (`HomeParts.figures`).
+## A name with no figures ("Keeper 24") stands over the starfield, a count on a plate never.
+static func home_figure(l: Label, points: float, plated := false) -> void:
 	if l == null:
 		return
 	l.theme_type_variation = "Display"
 	l.add_theme_font_size_override("font_size", UI.text_px(points))
 	l.set_meta("points", points)
+	HomeParts.inked(l, not plated and HomeParts.figures_cut(l.text)[0] == "")
+	HomeParts.figures(l)
 
 
 ## A secondary place (§21.1 binds only the frequently used controls to the
