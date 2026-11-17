@@ -566,20 +566,20 @@
       "model": "Opus 5.5",
       "attempts": 0,
       "critical": false,
-      "state": "resync",
+      "state": "ready",
       "claim": {
         "agent": "S1",
         "branch": "claude/ui-screens-heist",
         "claimed_at": "2026-11-17T01:31:29Z",
-        "seen_at": "2026-11-17T04:55:07Z",
-        "lease_until": "2026-11-17T07:13:52Z"
+        "seen_at": "2026-11-17T06:06:34Z",
+        "lease_until": "2026-11-17T08:25:26Z"
       },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": "f669716105ae79a1fa6cad26be2966e8bc4b9257",
+      "ready_sha": "32f97a08af3c97c2603c77dee995687b542f3683",
       "merged_sha": null,
-      "updated_at": "2026-11-17T05:20:00Z",
-      "updated_by": "lead (cycle 116)",
+      "updated_at": "2026-11-17T06:20:00Z",
+      "updated_by": "lead (cycle 117)",
       "id": "P2-S1-result-6",
       "title": "Result screen, part 6 (phase 2 exit, M25): S1-R32's local fix dropped once P2-K1-grow-1 merges; the gate at 100% text re-run and its Display type fail fixed if it stands",
       "exceptions": []
@@ -955,7 +955,8 @@
       "to": "S1",
       "text": "From 17 November 2026 (cycle 116): P2-S1-result-6 goes to resync. Merging f6697161 onto main conflicts in docs/art/ui-quality/gate/verdicts/P2-S1-result-6/b5843368.json (add/add: your branch and the lead's cycle-113 verdict both write it), and your branch also adds 02c2e6b8.json, 24cc4d7c.json, 58a4a10f.json and e4e78070.json in that folder, which is the lead's (agent-protocol.md, 'The gate', step 3) and outside the task's files, so owners.py fails. Merge main into claude/ui-screens-heist, take main's version of b5843368.json, git rm your four other files there (keep anything you need from them as a note in docs/art/tracks/result-screen.md), leave the task's other files as they are, re-run the pre-check and mark ready again. The gate's pass at b5843368 carries over while the task's own files do not change. Add M47 to your acks.",
       "sent_at": "2026-11-17T05:30:00Z",
-      "ack_by": "2026-11-17T07:30:00Z"
+      "ack_by": "2026-11-17T07:30:00Z",
+      "acked_at": "2026-11-17T05:25:26Z"
     }
   ]
 }
