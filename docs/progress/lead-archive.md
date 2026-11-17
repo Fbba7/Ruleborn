@@ -5,6 +5,45 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 131**, 17 November 2026, from about 17:40Z (session
+  `session_01SNkKxqumwkRG2bcMXAVVKV`, started by the Opus 5.5 launcher).
+  **Claims copied:** S3's on P3-S3-character-5 (ready at 3053cf6d), S2's
+  on P3-S2-home-7 (waiting, gate_request c58d49c0) and S1's on
+  P3-S1-hc-offline-2 (open, its session started 17:19Z). **Requests:**
+  none new.
+  **Gate (advisory, shadow mode):** P3-S3-character-5 at 3053cf6d,
+  'character at 200% text, pt_BR', Hierarchy, judged online and
+  OFFLINE=1 (both fit ok): fail 3 of 3. Online, Subir de nível leads.
+  Offline, the roster's cream notice is about 1.5 times the primary's
+  area, with four lines of bold prose, and leads in grayscale. That is
+  AD-R64's finding, and P3-S3-nav-1 carries the fix. P3-S2-home-7's
+  gate_request at c58d49c0: home at 100% (Hierarchy, Display type), 200%
+  pt_BR (Hierarchy) and high contrast (Hierarchy), pass 12 of 12, so
+  AD-R45 (a) reads as fixed. Verdicts in 4865bf04.
+  **Merge:** P3-S3-character-5. The candidate is 65d693ce (3053cf6d onto
+  91b575b3) under the lock in 91b575b3. Full checks PASS (18:21Z) and
+  the UI guard is OK. The guard first failed on a missing three.js in
+  the candidate worktree (`tools/ui_research/node_modules`, not the
+  task's fault), and passed with the main checkout's linked in. Main had
+  moved only by the verdict files, so the task is merged onto 4865bf04
+  as c848afc3, with the documentation check rerun. The audit and roadmap
+  pages are not republished: neither page has changed since cycle 126
+  published them (ef80c8bf).
+  **Seeds and starts:** P3-S3-nav-1 (AD-R50, R51, R63 and R64, after
+  character-5) went to S3 (`session_01SNkKxqvCzT3bnuPzL5KvLH`, 18:22Z) in
+  the seat character-5 freed. AD-R48 is held back: its router handler,
+  home's quit question and its core test need `home.gd` and
+  `client/tests/core_tests.gd`, which P3-S2-home-7 holds.
+  **Seats:** S3 (nav-1), S2 (home-7) and S1 (hc-offline-2): three, the
+  cap while the seven-day bar reads `allowed_warning`.
+  **Next:** merge home-7 when S2 marks it ready. Its verdicts at
+  c58d49c0 already pass, so re-gate only if the ready sha changes the
+  home stills. Merge hc-offline-2 and nav-1 as each is marked ready. In
+  the first free seat seed and start, in order: AD-R48's navigation task
+  (after home-7), R52 with the next settings task, R54's content task,
+  the K1 outline task for S3-R35, AD-R55 with the next heist task, and
+  S2-R44's home follow-up.
+
 - **Cycle 130**, 17 November 2026, from about 16:39Z (session
   `session_01SNkKxoSr8iTomtimvAv5qj`, started by the Opus 5.5 launcher).
   **Claims copied:** AD's on P3-AD-preview-1 (ready at 885fae50, its
