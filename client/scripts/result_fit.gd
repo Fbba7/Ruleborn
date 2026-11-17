@@ -53,9 +53,11 @@ static func tile_row(tile: PanelContainer) -> void:
 
 ## With large text, the reward rows (`labels`, each tile's number, in
 ## `rows`) while each one's icon, number and name fit across a phone `width`
-## wide; when one does not (German's "Sternenlicht" beside its number), every
-## tile goes back to the design's column, one above another, rather than
-## break a word by its letters.
+## wide; when one does not, every tile goes back to the design's column, one
+## above another, rather than break a word by its letters. Each row is
+## measured as it is drawn: the number at its baked width (`bake_totals` has
+## laid it), the name by its longest word too (AD's objection H, German's
+## "Sternenlicht" at 200%).
 static func reward_rows(rows: BoxContainer, labels: Dictionary, width: float) -> void:
 	if Settings.text_scale <= KitLayout.SIDE_BY_SIDE_UP_TO:
 		return
@@ -65,8 +67,8 @@ static func reward_rows(rows: BoxContainer, labels: Dictionary, width: float) ->
 		var row := (labels[kind] as Label).get_parent() as BoxContainer
 		var wide := float(UI.px(26)) + 2.0 * row.get_theme_constant("separation")
 		for l: Label in [row.get_child(1), row.get_child(2)]:
-			wide += l.get_theme_font("font").get_string_size(l.text, HORIZONTAL_ALIGNMENT_LEFT, -1,
-				l.get_theme_font_size("font_size")).x
+			wide += maxf(l.get_combined_minimum_size().x, l.get_theme_font("font").get_string_size(
+				l.text, HORIZONTAL_ALIGNMENT_LEFT, -1, l.get_theme_font_size("font_size")).x)
 		fits = fits and wide <= room
 	if fits:
 		return
@@ -393,12 +395,15 @@ static func bake_totals(totals: Dictionary) -> void:
 		row.name = "Baked"
 		# The line's height, or less where the glyphs would be wider than the
 		# live words with their outline: the total keeps the room the
-		# fitting measured, so large text's rows stay one line deep.
+		# fitting measured. With large text, where the tiles are rows, the
+		# live words alone (result-4's width), so a name beside the total
+		# keeps its room (AD's objection H).
 		var font := l.get_theme_font("font")
 		row.height = floorf(font.get_height(px) * BAKED_LINE)
 		row.update_minimum_size()
-		var room := font.get_string_size(l.text, HORIZONTAL_ALIGNMENT_LEFT, -1, px).x \
-			+ float(l.get_theme_constant("outline_size"))
+		var room := font.get_string_size(l.text, HORIZONTAL_ALIGNMENT_LEFT, -1, px).x
+		if Settings.text_scale <= KitLayout.SIDE_BY_SIDE_UP_TO:
+			room += float(l.get_theme_constant("outline_size"))
 		var wide := row.get_combined_minimum_size().x
 		if wide > room:
 			row.height = floorf(row.height * room / wide)
@@ -408,5 +413,9 @@ static func bake_totals(totals: Dictionary) -> void:
 		row.update_minimum_size()
 		l.add_child(row)
 		row.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		l.custom_minimum_size = row.get_combined_minimum_size()
+		# At least as wide as its live words, which it keeps for the reader
+		# and the fitting.
+		var words := font.get_string_size(l.text, HORIZONTAL_ALIGNMENT_LEFT, -1, px).x
+		l.custom_minimum_size = Vector2(maxf(ceilf(words), row.get_combined_minimum_size().x),
+			row.get_combined_minimum_size().y)
 		l.visible_characters = 0

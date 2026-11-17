@@ -192,6 +192,9 @@ static func fit(screen: Control) -> Array[String]:
 			bad.append("%s %s: %.0f px of words in %.0f" % [l.get_path(), l.text, words, at.size.x])
 		if l.clip_text and words > at.size.x + 1.0:
 			bad.append("%s %s: cut, %.0f px of words in %.0f" % [l.get_path(), l.text, words, at.size.x])
+		var broken := broken_word(l)
+		if broken != "":
+			bad.append("%s %s: the word %s breaks inside itself" % [l.get_path(), l.text, broken])
 		var p := l.get_parent()
 		while p != null and not p is PanelContainer:
 			# Words drawn inside a button lie inside it: the kit grows the
@@ -248,6 +251,22 @@ static func fit(screen: Control) -> Array[String]:
 		if part > 1.0:
 			bad.append("fold: the page ends %.0f px into a line or card above the bar" % part)
 	return bad
+
+
+## The first word of `l` that wraps between its letters: one wider than the
+## room the label's lines have (AD's objection H, German's "Sternenlicht" as
+## "Sternenlich" over "t" at 200%), or "" when each word stands whole.
+static func broken_word(l: Label) -> String:
+	if l.autowrap_mode == TextServer.AUTOWRAP_OFF or l.clip_text:
+		return ""
+	var room := l.size.x - l.get_theme_stylebox("normal").get_minimum_size().x
+	var font := l.get_theme_font("font")
+	var font_px := l.get_theme_font_size("font_size")
+	var text := l.text.to_upper() if l.uppercase else l.text
+	for word: String in text.replace("\n", " ").split(" ", false):
+		if font.get_string_size(word, HORIZONTAL_ALIGNMENT_LEFT, -1, font_px).x > room + 1.0:
+			return word
+	return ""
 
 
 ## The integrator's cast of character models, until the app sets one: each

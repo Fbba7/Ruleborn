@@ -602,6 +602,9 @@ func _show_rewards(v: Dictionary) -> void:
 	for kind: String in reward_labels:
 		(reward_labels[kind] as Label).set_meta("to", int(v.get(kind, 0)))
 	_count_rewards(1.0)
+	# The totals baked at their final words first, so the rows are measured
+	# as they are drawn (AD's objection H).
+	ResultFit.bake_totals(_totals)
 	ResultFit.reward_rows(reward_row, reward_labels, get_viewport_rect().size.x)
 	var fee := int(v["fee"])
 	var back := int(v.get("fee_returned", 0))
