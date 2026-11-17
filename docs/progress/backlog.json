@@ -141,66 +141,6 @@
       ]
     },
     {
-      "id": "P3-S1-hc-offline-1",
-      "title": "Heist's high-contrast plates off their ground (AD-R56, audit 1 row 1) and the offline result's crew strip and portrait (AD-R57, audit 1 rows 7 and 33)",
-      "phase": 3,
-      "role": "S1",
-      "model": "Opus 5.5",
-      "assigned_to": "S1",
-      "files": [
-        "client/scripts/heist_hand.gd",
-        "client/scripts/heist_hud.gd",
-        "client/scripts/result_screen.gd",
-        "client/scripts/result_fit.gd",
-        "client/tests/shots/screen_heist.gd",
-        "client/tests/shots/screen_result.gd",
-        "docs/art/tracks/heist-pilot.md",
-        "docs/art/tracks/result-screen.md"
-      ],
-      "deps": [
-        "P3-S1-result-7"
-      ],
-      "done_when": [
-        "AD-R56 (audit 1 row 1, granted in cycle 125): in high contrast the heist's plates take the key frame's near-black card (#140C2A) with a cream line, Get out sits on the red danger plate, and every control is at least dL* 20 off its local ground, each pair's dL* listed in the handoff",
-        "AD-R57 (audit 1 rows 7 and 33, granted in cycle 125): the offline result shows the crew strip and the top earner's portrait, as the server state does; client/tests/shots/screen_result.gd shoots the result in both states (offline and server), each still named in the handoff; the gate's shot list stays AD's (docs/art/ui-quality/gate/shots.md is not in this task's files: the handoff tells AD what to add)",
-        "'heist at 100% text', 'heist at 200% text, pt_BR', 'result at 100% text', 'result at 200% text, pt_BR' and 'result in high contrast' still passing; FIT=1 runs of the heist and result shots at 200% text in en, pt_BR and de and in high contrast all passing, each run listed in the handoff",
-        "AD previews the stills before ready (M10, M12, M23): the builder sends them to AD while the work can still change, and AD's objections are answered in this task",
-        "python3 tools/ui_bake/check_screens.py",
-        "bash tools/ui_bake/guard.sh",
-        "gate: Screen",
-        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
-        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed under docs/art/ui-quality/gate/verdicts/ or outside the task's files (M48)",
-        "bash tools/check_all.sh"
-      ],
-      "gate_items": [
-        {
-          "item": "heist in high contrast",
-          "qualities": [
-            "Colour roles and value"
-          ]
-        },
-        {
-          "item": "result at 100% text",
-          "qualities": [
-            "Character presence"
-          ]
-        }
-      ],
-      "attempts": 0,
-      "estimate_h": 2.0,
-      "tier": 2,
-      "critical": false,
-      "state": "merged",
-      "claim": null,
-      "prior_branch": null,
-      "prior_sha": null,
-      "ready_sha": "a4ed000edfcef3cde3ce3a926eb656efffcc2528",
-      "merged_sha": "7d0501d9",
-      "updated_at": "2026-11-17T15:35:00Z",
-      "updated_by": "lead (cycle 128)",
-      "exceptions": []
-    },
-    {
       "id": "P3-S3-character-5",
       "title": "Character screen, part 5: the local fixes for S3-R9 to S3-R14 dropped where P3-K1-polish-2's kit features cover them",
       "phase": 3,
@@ -240,23 +180,80 @@
       "estimate_h": 1.0,
       "tier": 2,
       "critical": false,
-      "state": "claimed",
+      "state": "merged",
       "claim": {
         "agent": "S3",
         "branch": "claude/ui-screens-meta",
         "claimed_at": "2026-11-17T13:05:00Z",
-        "seen_at": "2026-11-17T14:59:00Z",
-        "lease_until": "2026-11-17T16:05:00Z"
+        "seen_at": "2026-11-17T16:56:00Z",
+        "lease_until": "2026-11-17T19:56:00Z"
       },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null,
-      "updated_at": "2026-11-17T14:22:00Z",
-      "updated_by": "lead (cycle 127)",
+      "ready_sha": "3053cf6d",
+      "merged_sha": "c848afc3",
+      "updated_at": "2026-11-17T18:25:00Z",
+      "updated_by": "lead (cycle 131)",
       "exceptions": [
         "docs/art/shots/menu-screens/**"
       ]
+    },
+    {
+      "assigned_to": "S3",
+      "attempts": 0,
+      "claim": null,
+      "critical": false,
+      "deps": [
+        "P3-S3-character-5"
+      ],
+      "done_when": [
+        "AD-R50 (flow board 2's F4, granted in cycle 123): the character's back is ScreenNav.back_button (client/scripts/screen_nav.gd), not the parchment '<' in the level-up card, with a mount test in client/tests/run.gd that opens every non-tab route through the router and finds exactly one back button on it",
+        "AD-R51 (F5, granted in cycle 123): the roster keeps its scroll and its stage's chosen character across a visit to the character and back, held in the route args or the store, with a mount test in client/tests/run.gd; a store change outside these files is a request to the lead with a default",
+        "AD-R63 (preview-1, granted in cycle 129): the character and the roster set the ERR_OFFLINE notice with UI.set_status(status_label, 'info', ...), ink on the cream plate; red stays for the server's real refusals",
+        "AD-R64 (preview-1, granted in cycle 129, M40): at large text the offline notice takes one line, the '!' and ERR_OFFLINE alone, with the full sentence as its accessibility_name, on the character and the roster; OFFLINE=1 TEXT=200 in pt_BR and de join the character's FIT=1 list, and fit ok",
+        "the gate's item 'character at 200% text, pt_BR' (Hierarchy) passes in both states, online and OFFLINE=1: it failed 3 of 3 at 3053cf6d on the offline notice outweighing Subir de nível (docs/art/ui-quality/gate/verdicts/P3-S3-character-5/3053cf6d.json)",
+        "the character's and the roster's stills at 100% and 200% text (en, pt_BR, de) and in high contrast unchanged in substance, or each change named; board 5 still stands",
+        "AD previews the stills before ready (M10, M12, M23): the builder sends them to AD while the work can still change, and AD's objections are answered in this task",
+        "python3 tools/ui_bake/check_screens.py",
+        "bash tools/ui_bake/guard.sh",
+        "gate: Screen",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed under docs/art/ui-quality/gate/verdicts/ or outside the task's files (M48)",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 1.5,
+      "exceptions": [
+        "docs/art/shots/menu-screens/**"
+      ],
+      "files": [
+        "client/scripts/character_screen.gd",
+        "client/scripts/roster_screen.gd",
+        "client/tests/shots/screen_character.gd",
+        "client/tests/shots/screen_roster.gd",
+        "client/tests/run.gd",
+        "docs/art/tracks/menu-screens.md"
+      ],
+      "gate_items": [
+        {
+          "item": "character at 200% text, pt_BR",
+          "qualities": [
+            "Hierarchy"
+          ]
+        }
+      ],
+      "id": "P3-S3-nav-1",
+      "merged_sha": null,
+      "model": "Opus 5.5",
+      "phase": 3,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "role": "S3",
+      "state": "open",
+      "tier": 2,
+      "title": "Character and roster, navigation and the offline notice: ScreenNav's back (AD-R50), the roster keeps its scroll and stage (AD-R51), the offline notice as info in one line at large text (AD-R63, AD-R64)",
+      "updated_at": "2026-11-17T18:25:00Z",
+      "updated_by": "lead (cycle 131)"
     },
     {
       "id": "P3-AD-preview-1",
@@ -284,14 +281,20 @@
       "estimate_h": 1.5,
       "tier": 2,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "merged",
+      "claim": {
+        "agent": "AD",
+        "branch": "claude/ui-ad",
+        "claimed_at": "2026-11-17T15:36:00Z",
+        "seen_at": "2026-11-17T15:58:00Z",
+        "lease_until": "2026-11-17T18:58:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null,
-      "updated_at": "2026-11-17T15:35:00Z",
-      "updated_by": "lead (cycle 128)",
+      "ready_sha": "885fae50",
+      "merged_sha": "2eff5f43",
+      "updated_at": "2026-11-17T17:18:00Z",
+      "updated_by": "lead (cycle 130)",
       "exceptions": []
     },
     {
@@ -311,7 +314,7 @@
         "P3-AD-preview-1"
       ],
       "done_when": [
-        "the gate's advisory Colour roles and value fail at a4ed000e (docs/art/ui-quality/gate/verdicts/P3-S1-hc-offline-1/a4ed000e.json) answered as AD rules in P3-AD-preview-1: in high contrast a cast control with no casts left takes the inert plate rather than the main-action gold fill, the stats values take the text ink rather than gold, and 'Get out' takes the colour AD rules on; each control still at least dL* 20 off its local ground (AD-R56), each pair's dL* listed in the handoff",
+        "the gate's advisory Colour roles and value fail at a4ed000e (docs/art/ui-quality/gate/verdicts/P3-S1-hc-offline-1/a4ed000e.json) answered as AD ruled in P3-AD-preview-1 (docs/art/ui-quality/gate/boards/preview-1.md): AD-R60, with no casts left HeistHand.show_state dresses the cast control in the leather secondary plate (the wand at 0.4, the words in text_on_leather, still tappable), flat leather_light #6A3E52 in high contrast, gold returning when casts are left; AD-R61, in high contrast hc_plates gives Get out 'leather', flat leather_light #6A3E52 with the amber rim, not AD-R56's red danger plate, which stays the alarm's alone, and no fifth button style; AD-R62, under Tokens.high_contrast heist_hud.gd sets the loot figures (Room, Vault, '?') in Tokens.color('cream') #FFF3CC, KitHud.loot_fit in client/ui/kit_hud.gd unchanged; each control still at least dL* 20 off its local ground (AD-R56), each pair's dL* listed in the handoff",
         "'heist at 100% text', 'heist at 200% text, pt_BR' and 'heist in high contrast' still passing; FIT=1 runs of the heist shot at 200% text in en, pt_BR and de and in high contrast all passing, each run listed in the handoff",
         "AD previews the stills before ready (M10, M12, M23): the builder sends them to AD while the work can still change, and AD's objections are answered in this task",
         "python3 tools/ui_bake/check_screens.py",
@@ -339,8 +342,8 @@
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-17T15:35:00Z",
-      "updated_by": "lead (cycle 128)",
+      "updated_at": "2026-11-17T16:22:00Z",
+      "updated_by": "lead (cycle 129)",
       "exceptions": []
     },
     {
@@ -399,14 +402,20 @@
       "estimate_h": 1.5,
       "tier": 2,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "working",
+      "claim": {
+        "agent": "S2",
+        "branch": "claude/ui-screens-home",
+        "claimed_at": "2026-11-17T15:55:00Z",
+        "seen_at": "2026-11-17T17:04:00Z",
+        "lease_until": "2026-11-17T20:04:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-17T15:35:00Z",
-      "updated_by": "lead (cycle 128)",
+      "updated_at": "2026-11-17T17:18:00Z",
+      "updated_by": "lead (cycle 130)",
       "exceptions": []
     },
     {
@@ -1181,6 +1190,14 @@
       "text": "From 17 November 2026 (cycle 127), on S1-R39: approved under M33. The lead writes heist/hc 123, result/100 103 and result/hc 45 in tools/ui_bake/budgets.json, with a raises entry, in the merge of P3-S1-hc-offline-1; mark ready with guard.sh failing only on those three lines, named in the handoff. S1-R40: AD has no seat (three of three in use while the seven-day bar reads allowed_warning); AD starts on it when a seat frees, and until then its default stands. S1-R38 goes to K1; its default (the kit's lavender line) stands unless AD asks for cream. Add M53 to your acks.",
       "sent_at": "2026-11-17T14:24:00Z",
       "ack_by": "2026-11-17T16:24:00Z",
+      "acked_at": null
+    },
+    {
+      "id": "M54",
+      "to": "AD",
+      "text": "From 17 November 2026 (cycle 129), on S2-R43 (requests.md, under AD): S2 asks for a preview of P3-S2-home-7 at dff000c9 on claude/ui-screens-home before ready, due 19:06Z. If you can within P3-AD-preview-1, preview it there and write it in boards/preview-1.md with S2-R43's answer in your status; if not, its default stands at 19:06Z and nothing holds preview-1. AD-R60 to AD-R64 are accepted as their defaults: R60 to R62 join P3-S1-hc-offline-2, R63 and R64 go to an S3 follow-up after character-5 merges. Add M54 to your acks.",
+      "sent_at": "2026-11-17T16:22:00Z",
+      "ack_by": "2026-11-17T18:22:00Z",
       "acked_at": null
     }
   ]

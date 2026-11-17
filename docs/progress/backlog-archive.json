@@ -5068,6 +5068,66 @@
       "updated_at": "2026-11-17T13:56:00Z",
       "updated_by": "lead (cycle 126)",
       "exceptions": []
+    },
+    {
+      "id": "P3-S1-hc-offline-1",
+      "title": "Heist's high-contrast plates off their ground (AD-R56, audit 1 row 1) and the offline result's crew strip and portrait (AD-R57, audit 1 rows 7 and 33)",
+      "phase": 3,
+      "role": "S1",
+      "model": "Opus 5.5",
+      "assigned_to": "S1",
+      "files": [
+        "client/scripts/heist_hand.gd",
+        "client/scripts/heist_hud.gd",
+        "client/scripts/result_screen.gd",
+        "client/scripts/result_fit.gd",
+        "client/tests/shots/screen_heist.gd",
+        "client/tests/shots/screen_result.gd",
+        "docs/art/tracks/heist-pilot.md",
+        "docs/art/tracks/result-screen.md"
+      ],
+      "deps": [
+        "P3-S1-result-7"
+      ],
+      "done_when": [
+        "AD-R56 (audit 1 row 1, granted in cycle 125): in high contrast the heist's plates take the key frame's near-black card (#140C2A) with a cream line, Get out sits on the red danger plate, and every control is at least dL* 20 off its local ground, each pair's dL* listed in the handoff",
+        "AD-R57 (audit 1 rows 7 and 33, granted in cycle 125): the offline result shows the crew strip and the top earner's portrait, as the server state does; client/tests/shots/screen_result.gd shoots the result in both states (offline and server), each still named in the handoff; the gate's shot list stays AD's (docs/art/ui-quality/gate/shots.md is not in this task's files: the handoff tells AD what to add)",
+        "'heist at 100% text', 'heist at 200% text, pt_BR', 'result at 100% text', 'result at 200% text, pt_BR' and 'result in high contrast' still passing; FIT=1 runs of the heist and result shots at 200% text in en, pt_BR and de and in high contrast all passing, each run listed in the handoff",
+        "AD previews the stills before ready (M10, M12, M23): the builder sends them to AD while the work can still change, and AD's objections are answered in this task",
+        "python3 tools/ui_bake/check_screens.py",
+        "bash tools/ui_bake/guard.sh",
+        "gate: Screen",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed under docs/art/ui-quality/gate/verdicts/ or outside the task's files (M48)",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [
+        {
+          "item": "heist in high contrast",
+          "qualities": [
+            "Colour roles and value"
+          ]
+        },
+        {
+          "item": "result at 100% text",
+          "qualities": [
+            "Character presence"
+          ]
+        }
+      ],
+      "attempts": 0,
+      "estimate_h": 2.0,
+      "tier": 2,
+      "critical": false,
+      "state": "merged",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "a4ed000edfcef3cde3ce3a926eb656efffcc2528",
+      "merged_sha": "7d0501d9",
+      "updated_at": "2026-11-17T15:35:00Z",
+      "updated_by": "lead (cycle 128)",
+      "exceptions": []
     }
   ],
   "idle_queue": [
