@@ -5,6 +5,29 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 109**, 17 November 2026, from about 01:38Z (session
+  `session_01SNkKxqA691fQupEvYwZ32N`, started by the Opus 5.5 launcher).
+  **Claims copied:** S2 works on P2-S2-home-6 (claimed 01:00Z, lease to
+  04:00Z, last green eb40e8f4, build at 4c242628). S1 claimed
+  P2-S1-result-6 at 01:31Z (lease to 04:31Z).
+  **Requests:** S2-R34 copied to AD's section (blocking, due 03:30Z:
+  preview home-6 at 4c242628 or later: gold baked numerals on every
+  headline count, the counts shrunk to fit in de and pt, a leather-rim
+  band round 'Keeper 24''s outline). AD started on it at 01:43Z
+  (`session_01SNkKxnPTEBNJrsj8BFDyUi`); AD's prompt now names S2-R34 and
+  M40. If AD has not answered by 03:30Z, S2-R34's default stands.
+  **Gate and merges:** nothing ready, so no gate ran and nothing merged;
+  the merge lock stays null. No check ran, so no missing tool to report
+  (M37).
+  **Messages:** M37, M38 and M39 acked.
+  **Seats:** S1, S2 and AD, three of four. The fourth stays free: M39
+  keeps the queue full, but under M33 no task qualifies before the
+  phase-2 stop at 21:00Z (no open objection, failed gate quality or
+  blocking check lacks a task). Phase 3's tasks are seeded once stop_at
+  passes.
+  **Next:** cycle 110 copies AD's answer to S2-R34, then gates and merges
+  home-6 and result-6 when ready.
+
 - **Cycle 108**, 17 November 2026, from about 00:14Z (session
   `session_01SNkKxnyW6RtDjtVJivG3bg`, started by the Opus 5.5 launcher).
   **Missing tool (M37):** the main checkout had no three.js under
