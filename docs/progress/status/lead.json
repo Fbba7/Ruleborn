@@ -3,7 +3,14 @@
   "updated_at": "2026-11-17T23:30:00Z",
   "expected_next_update_by": "2026-11-18T02:30:00Z",
   "cycle": 139,
-  "merging": null,
+  "merging": {
+    "candidate_sha": "58a9a1971275403600c5fd9890df03bfa94a95d6",
+    "task_ids": [
+      "P3-S2-back-1"
+    ],
+    "started_at": "2026-11-17T23:43:56Z",
+    "expires_at": "2026-11-18T00:43:56Z"
+  },
   "last_merged": {
     "task_id": "P3-S1-hc-offline-2",
     "sha": "fbae695a"

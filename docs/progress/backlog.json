@@ -298,7 +298,8 @@
         "client/scripts/character_screen.gd",
         "client/scripts/screen_kit.gd",
         "client/scripts/ui.gd",
-        "client/ui/rb_theme.gd"
+        "client/ui/rb_theme.gd",
+        "client/world/overlay_landing.gd"
       ]
     },
     {
@@ -323,7 +324,9 @@
       ],
       "estimate_h": 1.0,
       "exceptions": [
-        "docs/art/shots/menu-screens/**"
+        "docs/art/shots/menu-screens/**",
+        "client/tests/settings_tab_tests.gd",
+        "client/tests/settings_tab_tests.gd.uid"
       ],
       "files": [
         "client/scripts/settings_screen.gd",
