@@ -38,20 +38,20 @@
    ]
   },
   {
-   "name": "back 5: Plantel",
+   "name": "back 5: Voltar",
    "rect": [
     28.17,
-    702.0,
-    60.67,
-    60.67
+    706.33,
+    52.0,
+    52.0
    ]
   },
   {
    "name": "up 6: Skyskipper: Subir ao nível 4, 200 de Essência",
    "rect": [
-    97.5,
+    88.83,
     697.67,
-    264.33,
+    273.0,
     69.33
    ]
   }

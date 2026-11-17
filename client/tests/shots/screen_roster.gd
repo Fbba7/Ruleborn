@@ -1,6 +1,8 @@
 extends SceneTree
 ## The Roster with a dozen characters (tools/render/shoot.sh): RosterTests'
-## sample grown to every school, at a fixed moment.
+## sample grown to every school, at a fixed moment. LOCALE picks the words
+## (pt_BR, de); OFFLINE=1 fails the roster's load after it, as "no server is
+## set" does, to show the offline notice.
 func _initialize() -> void:
 	_go()
 
@@ -11,6 +13,8 @@ func _go() -> void:
 	if OS.get_environment("TEXT") != "":
 		Settings.text_scale = int(OS.get_environment("TEXT"))
 	Settings.high_contrast = OS.get_environment("HC") != ""
+	if OS.get_environment("LOCALE") != "":
+		Strings.set_locale(OS.get_environment("LOCALE"))
 	Settings.apply()
 	App.services = Fixtures.answered(Services.build(root, "", null, "user://outbox-shot.json"))
 	var screen: RosterScreen = load("res://scenes/roster.tscn").instantiate()
@@ -18,6 +22,8 @@ func _go() -> void:
 	screen.clock = func() -> int: return RosterTests.NOW
 	await process_frame
 	App.services.store.dispatch(&"roster_loaded", {"view": ShotData.roster()})
+	if OS.get_environment("OFFLINE") != "":
+		App.services.store.dispatch(&"roster_failed", {"code": "offline"})
 	for i in 90:
 		await process_frame
 		if Portrait.settled() and i > 6:

@@ -1,7 +1,7 @@
 class_name HomeParts
 extends RefCounted
-## Parts of the home screen (`Home`): the raid notice, and how the purse's
-## strain and Full take large text. A helper of its own so home.gd stays within
+## Parts of the home screen (`Home`): the raid notice, how the purse's strain
+## and Full take large text, and where the tabs go. A helper of its own so home.gd stays within
 ## gdlint's file length (S2-R23).
 
 ## Full's words on its plate with large text, in points before the scale: the
@@ -598,3 +598,15 @@ static func tab_badges(roster: Dictionary) -> Dictionary:
 		if str(c.get("state", "")) == "idle":
 			idle += 1
 	return {"crew": idle} if idle > 0 else {}
+
+
+## Where home's tab `key` goes: the router's own route (Router.TABS), or none for
+## the tabs home keeps for itself (Home.TABS_HOME_KEEPS), which home acts on.
+static func tab_route(key: String) -> StringName:
+	return &"" if key in Home.TABS_HOME_KEEPS else Router.TABS.get(key, &"")
+
+
+## The width `l`'s word takes in capitals at `px`, its stroke included.
+static func tab_word(l: Label, px: int) -> float:
+	return l.get_theme_font("font").get_string_size(l.text.to_upper(), HORIZONTAL_ALIGNMENT_LEFT, -1, px).x \
+		+ l.get_theme_constant("outline_size")
