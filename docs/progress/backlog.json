@@ -2,7 +2,7 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026. Phase 2 started on 12 November 2026 (lead cycle 70): P1-AD-board-1d let board 1 stand and phase 1's other exit criteria hold (report.md section 3.2); its first tasks are the flow findings (S1, S2) and board 1's note G (AIA-2), within the same cap of three. Since 12 November 2026, about 20:00Z, the cap is four UI builders by the owner's order (CLAUDE.md order 3; three while the seven-day bar reads allowed_warning). Phase 3 (polish and harden, report.md step 12) started on 17 November 2026 (lead cycle 118) under M49: every phase 2 task was merged by 06:55Z, the exit review ran in cycle 118 (boards 3, 4 and 5 stand, board 2 waits on the deferred icon batch 4 by D13 (c), the exceptions queue is empty, every screen passes the gate but result at 200% pt_BR, Hierarchy, which P3-S1-result-7 takes), and the first blind audit (O6) is carried into phase 3 as P3-AD-audit-1. Phase 3 draws from the 20-hour reserve; it exits when no board has an open objection, the second blind audit is done and the wave board (O7) stands.",
   "wave": "UI wave",
   "phase": 3,
-  "updated_at": "2026-11-17T20:45:00Z",
+  "updated_at": "2026-11-17T21:15:00Z",
   "updated_by": "lead",
   "stop_at": "2026-11-18T21:00:00Z",
   "lease_hours": 3,
@@ -207,8 +207,8 @@
       "state": "ready",
       "tier": 2,
       "title": "Character and roster, navigation and the offline notice: ScreenNav's back (AD-R50), the roster keeps its scroll and stage (AD-R51), the offline notice as info in one line at large text (AD-R63, AD-R64)",
-      "updated_at": "2026-11-17T19:20:00Z",
-      "updated_by": "lead (cycle 133)"
+      "updated_at": "2026-11-17T21:15:00Z",
+      "updated_by": "lead (cycle 136)"
     },
     {
       "id": "P3-AD-preview-1",
@@ -303,8 +303,8 @@
       "prior_sha": null,
       "ready_sha": "788eaaf4d5a46f9cde43ab603446e40b23665715",
       "merged_sha": null,
-      "updated_at": "2026-11-17T19:20:00Z",
-      "updated_by": "lead (cycle 133)",
+      "updated_at": "2026-11-17T21:15:00Z",
+      "updated_by": "lead (cycle 136)",
       "exceptions": []
     },
     {
@@ -438,6 +438,49 @@
       "title": "One go-back for the app: Android's back and Escape go to the router, each route to its back route, home asks before quitting (AD-R48)",
       "updated_at": "2026-11-17T19:50:00Z",
       "updated_by": "lead (cycle 134)"
+    },
+    {
+      "id": "P3-K1-outline-1",
+      "title": "The kit's outline rule at §21.8's least a side (S3-R35), the back button's leather face two value steps off the night (S3-R41), and a params argument on ScreenNav.back_button (S3-R37)",
+      "phase": 3,
+      "role": "K1",
+      "model": "Opus 5.5",
+      "assigned_to": "K1",
+      "files": [
+        "client/ui/kit_hud.gd",
+        "client/ui/kit_panels.gd",
+        "client/ui/kit_controls.gd",
+        "client/ui/kit_nav.gd",
+        "client/scripts/screen_nav.gd",
+        "client/tests/a11y_tests.gd",
+        "client/tests/shots/ui_kit_heist.gd"
+      ],
+      "deps": [],
+      "done_when": [
+        "S3-R35 (cycle 127): Godot draws a quarter of a label's outline_size on each side, so KitHud._ink (client/ui/kit_hud.gd) and kit_panels.gd's inventory count set outline_size to four times §21.8's least a side plus the soft edge, as character_screen.gd's _outline_px does; the two contrast checks (client/tests/a11y_tests.gd _outline, client/tests/shots/ui_kit_heist.gd _counts) read outline_size the same way (a quarter a side), with a test in client/tests/a11y_tests.gd that fails on today's reading",
+        "S3-R41 (cycle 133): KitControls.icon_button's leather face (used by KitNav.back and so by ScreenNav.back_button on nine screens) stands at least two value steps off the night in standard contrast (today L* 23.7 on 13.6, one step), by lifting the face's or the rim's value; high contrast still passes; with a value-steps test on a ScreenNav dock in client/tests/a11y_tests.gd. The lift is scoped to the icon button: any other leather plate that changes is named in the handoff",
+        "S3-R37 (cycle 136): ScreenNav.back_button(back, params := {}) passes params to router.go, so the character's back can carry the roster's kept state (AD-R51); the default keeps every caller as it is; the handoff says what character_screen.gd can drop (its rewire of the pressed signal), which is S3's, not this task's",
+        "nothing loosened: no contrast, value-steps or outline threshold lowered, no check skipped; client/tests/ui_kit_tests.gd stays at or under gdlint's 1000 lines (it is not in this task's files)",
+        "the catalogue's and the screens' shots unchanged at 100% except where the face lift or the outline change them, each change named in the handoff",
+        "bash tools/ui_bake/guard.sh",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed under docs/art/ui-quality/gate/verdicts/ or outside the task's files (M48)",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 2.0,
+      "tier": 2,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-17T21:15:00Z",
+      "updated_by": "lead (cycle 136)",
+      "exceptions": []
     },
     {
       "assigned_to": "AIA-2",
