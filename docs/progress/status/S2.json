@@ -5,18 +5,41 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P3-S2-home-7",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-17T15:55:00Z",
-  "lease_until": "2026-11-17T18:55:00Z",
-  "updated_at": "2026-11-17T15:55:00Z",
-  "expected_next_update_by": "2026-11-17T16:40:00Z",
+  "lease_until": "2026-11-17T19:06:28Z",
+  "updated_at": "2026-11-17T16:06:28Z",
+  "expected_next_update_by": "2026-11-17T17:36:28Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "7d1e20af",
-    "next_step": "Main (7d1e20af, with P3-K1-tabs-1) merged as 241e04af. Next: home.gd routes tabs by Router.TABS (Islands, Heist excepted), ScreenNav's label rule, _show_goal's loop dropped; core test; stills; AD preview."
+    "last_green_sha": "dff000c9",
+    "next_step": "Routing by Router.TABS (Islands, Heist excepted), the label rule, the green goal bar and the core test are in (690afb8b, dff000c9). Running all FIT=1 cases (M26's set plus 125%); then Part 8, main merged, checks, ready."
   },
   "precheck": null,
-  "gate_request": null,
+  "gate_request": {
+    "sha": "dff000c9",
+    "items": [
+      {
+        "item": "home at 100% text",
+        "qualities": [
+          "Hierarchy",
+          "Display type"
+        ]
+      },
+      {
+        "item": "home at 200% text, pt_BR",
+        "qualities": [
+          "Hierarchy"
+        ]
+      },
+      {
+        "item": "home in high contrast",
+        "qualities": [
+          "Hierarchy"
+        ]
+      }
+    ]
+  },
   "ready_sha": null,
   "stop_at": "2026-11-18T21:00:00Z",
   "acks": [
@@ -632,6 +655,23 @@
       "default": "As S2-R36's: if AD has not answered by 16:00Z, the stills stand and S2 marks ready on its own checks; the gate judges them.",
       "escalate_to": "lead",
       "answered": "AD previewed e9285afd (board-3.md, second look): no objection. Note 1 tried (f0092fee) and reverted (09f0f119), as the taller holder hides the left edge at 200% with the notice in pt_BR, pt_PT and fr; note 2 left. home-screen.md, \"AD's preview, second look\"."
+    },
+    {
+      "id": "S2-R43",
+      "from": "S2",
+      "to": "AD",
+      "ask": "For AD, through the lead (P3-S2-home-7's done_when: AD previews the stills before ready). Preview dff000c9 on claude/ui-screens-home. What changed: (1) the tab bar routes by Router.TABS, as ScreenNav.bar does; Islands and the Heist stay home's own (Islands shows the world, the Heist starts a heist), named in home.gd's TABS_HOME_KEEPS. (2) ScreenNav's label rule: the tabs not chosen show their names up to 125% text and icons alone above it, each named aloud; the chosen tab's word always shows. At 125% the names shrink no lower than their 100% size (13 pt) and give way to icons where they still do not fit (125% pt_BR does; en keeps them). (3) The goal bar's 'Progress' labels show again and its fill is green in both looks; gold stays on Collect. Check at 100%, 125% and 200% text in en, pt_BR and de, and in high contrast: the chosen tab's word, the other names or icons, the goal bar's green against the Collect gold, nothing by colour alone. Reproduce with `FIT=1 [TEXT=125|200] [LOCALE=<loc>] [CONTRAST=1] bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`. Objections in one round, please. Detail: docs/art/tracks/home-screen.md Part 8.",
+      "files": [
+        "client/scripts/home.gd",
+        "client/scripts/home_parts.gd",
+        "client/tests/shots/universe_home.gd",
+        "docs/art/tracks/home-screen.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T16:06:28Z",
+      "due": "2026-11-17T19:06:28Z",
+      "default": "If AD has not answered by the due time, the stills stand and S2 marks ready on its own checks; the gate judges them.",
+      "escalate_to": "lead"
     }
   ],
   "answers": [],
