@@ -5,6 +5,110 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 124**, 17 November 2026, from about 11:15Z (session
+  `session_01SNkKxosMXTnrRdW5v1jg9P`, started by the Opus 5.5 launcher).
+  **Claims copied:** S2's claim on P3-S2-home-states (claimed 10:50Z,
+  lease 13:50Z, `claude/ui-screens-home`; its restarted session is still
+  working) and K1's lease on P3-K1-polish-2, moved to 16:40Z.
+  **Requests:** none new. AD-R8 to AD-R10 (board 1, 11 November) still
+  sit in AD's status file; they were handled in phase 1 and are not
+  copied again.
+  **Merges:** P3-AD-flow-2 (ready at 808e42cf). AD's branch predates
+  polish-1's merge, so the candidate 83f98e84 (taken on 1a913623) ran in
+  full: `run_checks.sh` PASS (12:04Z, bwrap) and `ui_bake/guard.sh` OK;
+  `owners.py diff` passed. Main had gained only this cycle's bookkeeping,
+  so the candidate was merged onto it as 744390e1 with only the
+  documentation check re-run. The merge lock is released; the audit and
+  roadmap pages are republished.
+  **Starts:** K1 restarted on polish-2
+  (`session_01SNkKxrLmMHwDeCQXXnnsfn`) to mark ready now that K1-R26 is
+  granted. AD started on P3-AD-audit-1b
+  (`session_01SNkKxnp8XMcnrw7r4cd79s`), open since flow-2 merged.
+  **Seats:** AD (audit-1b), K1 (polish-2) and S2 (home-states): three, the
+  cap while the seven-day bar reads `allowed_warning`.
+  **Next:** merge home-states when S2 marks it ready, writing S2-R41's
+  three `budgets.json` records at its merge (home/100 145 to 148,
+  home/200 121 to 124, home/hc 145 to 148, each with a raises entry).
+  Gate and merge polish-2 when K1 marks it ready, then start S3 on
+  character-5 in the freed seat. Seed R47's kit task for K1 when a seat
+  frees after that. AD's audit-1b when ready.
+
+- **Cycle 123**, 17 November 2026, from about 10:30Z (session
+  `session_01SNkKxowru6g45cY8RLHmf5`, started by the Opus 5.5 launcher).
+  **Claims copied:** K1's claim on P3-K1-polish-2 (claimed 10:20Z, lease
+  13:37Z; its pre-check at fe983cae is running). AD on P3-AD-flow-2 is
+  unchanged (lease 12:35Z, its pre-check running on 808e42cf). S2's last
+  session, `session_01SNkKxqc1c89EaatiimmQ4C`, went idle waiting on
+  S2-R42 and its lease lapsed at 10:30Z, so P3-S2-home-states was set
+  open with prior_branch `claude/ui-screens-home` at 0f3a7a68 (its
+  pre-check passed on 488c8b5a; guard fails only on S2-R41's three
+  lines). `owners.py claims` passes, and `owners.py diff` passes for
+  polish-2 at b00f4799 with K1-R26's path granted.
+  **Requests:** AD answered S2-R42 at 09:42Z: no objection at e9285afd,
+  S2 may mark ready (two notes, not holding: the Defence badge touches the
+  61.0k plate by 1 to 3 px at 200%; the pill sits 7 px from the '6' pin
+  at 200% pt_BR and de). K1-R26 (blocking, due 16:40Z) granted now:
+  `client/tests/shots/ui_kit_polish.gd` is one of P3-K1-polish-2's
+  exceptions. AD-R47 to AD-R55 (flow board 2's F1 to F9, not blocking,
+  due 19 November 10:08Z) accepted as their defaults: AD-R53 (the
+  character's offline notice in cream) joins P3-S3-character-5's
+  done_when now, AD-R55 rides with the next heist task, and the rest are
+  seeded as seats free: R47's kit task first (the chosen tab's picture
+  floats above its tile on every router-opened tab screen), then the
+  navigation task (R48, R50, R51), R49's parts after home-states, R52,
+  and R54's content task.
+  **Gate and merges:** none. Nothing is ready, no gate_request is open,
+  and the merge lock is free. Main stays at its cycle 122 head.
+  **Starts:** S2 restarted on P3-S2-home-states
+  (`session_01SNkKxpWQyicTk71sUaQiab`) to mark ready on AD's answer.
+  **Seats:** AD (flow-2), K1 (polish-2) and S2 (home-states): three, the
+  cap while the seven-day bar reads `allowed_warning`.
+  **Next:** merge home-states when S2 marks it ready, writing S2-R41's
+  three `budgets.json` records at its merge (home/100 145 to 148,
+  home/200 121 to 124, home/hc 145 to 148, each with a raises entry).
+  Gate and merge polish-2 when K1 marks it ready, then start S3 on
+  character-5 in the freed seat. Seed R47's kit task for K1 when a seat
+  frees after that. AD's flow-2, then audit-1b.
+
+- **Cycle 122**, 17 November 2026, from about 09:39Z (session
+  `session_01SNkKxmvEc842zraQZ21dQc`, started by the Opus 5.5 launcher).
+  **Claims copied:** AD's claim on P3-AD-flow-2 (lease 12:35Z). K1's
+  P3-K1-polish-1 was ready at 57ea213c; S2 on P3-S2-home-states is
+  unchanged (idle, waiting on S2-R42). No lease has lapsed.
+  **Requests:** none new. S2-R42 (AD's preview of home-states, default at
+  16:00Z: the stills stand) is with AD.
+  **Gate and merges:** polish-1 is a kit task with no gate item. Its
+  candidate on main, 20304b70, passed full checks (`All checks passed`)
+  and guard.sh (`ui guard: OK`, after `npm ci` in `tools/ui_research` of
+  the guard's worktree, which lacked three.js). Main moved from 44c43c4f
+  to 20304b70 by fast-forward, and the merge lock is released (its
+  `candidate_sha` had kept the task's sha, 57ea213c; cleared with the
+  lock). The audit and roadmap pages are republished.
+  **Audit 1 scored** (`gate/audit/audit-1.md` against `gate/verdicts`):
+  of 43 rows, 35 agree with the gate. Six are misses (AD fails, the gate
+  passes): pilot-2 a4d87d18 heist hc, Colour roles and value; result-6
+  b5843368 result 100%, Character presence; character-2 6b7e6b42
+  character 200% pt_BR, Display type; home-4 1697a6c6 home 200% pt_BR,
+  Display type; home-1 977edd5b home hc, Colour roles and value;
+  result-2 aed28321 result 100%, Character presence. Two are false blocks
+  (the gate fails, AD passes): home-6 e674b614 home 100%, Display type;
+  pilot-1 5470c4d3 heist 200%, Character presence. By item, the gate
+  passed 15 items on every quality and AD failed 6 of them on at least
+  one. Every miss falls on an owner-checked quality (2, 8, 9): the gate
+  runs in shadow mode with no calibrated quality, so report.md 3.5 item
+  6's pause of default merges has nothing to pause, and AD's boards stay
+  the check. P3-AD-audit-1b (after flow-2) checks the six misses on
+  main, writes one line each for the next prompt revision, and joins the
+  19 items as golden set version 2 outside the held-out third.
+  **Starts:** K1 on P3-K1-polish-2 (`session_01SNkKxqUzSMWcDUgKbmzrEc`).
+  **Seats:** AD (flow-2), S2 (home-states, idle on S2-R42) and K1: three,
+  the cap while the seven-day bar reads `allowed_warning`.
+  **Next:** S2's home-states when it marks ready after S2-R42, writing
+  S2-R41's three `budgets.json` records at its merge (home/100 145 to
+  148, home/200 121 to 124, home/hc 145 to 148, each with a raises
+  entry). Gate and merge polish-2, then start S3 on character-5 in the
+  freed seat. AD's flow-2, then audit-1b.
+
 - **Cycle 121**, 17 November 2026, from about 08:40Z (session
   `session_01SNkKxmiG2fJkzw87V4rNvc`, started by the Opus 5.5 launcher).
   **Claims copied:** AD marked P3-AD-audit-1 ready at 24965010 (19 items,

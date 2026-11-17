@@ -147,12 +147,19 @@ func _go() -> void:
 
 
 ## The key frame's state (art/ui/keyframes/01-home.*) over the sample's:
-## Keeper 24 with 1,240 experience to go, strain at 82% (Humming), and
-## 3.4k waiting to be collected, the essence garden full.
+## Keeper 24 with 1,240 experience to go, strain at 82% (Humming),
+## 3.4k waiting to be collected, the essence garden full, four of the crew
+## idle (the Crew tab's count), and Lantern Vale locked until Keeper 28
+## (five outer realms open; OUTER, when given, keeps its own count).
 static func keyframe(store: Store) -> void:
+	if OS.get_environment("OUTER") == "":
+		store.dispatch(&"universe_loaded", {"view": UniverseSample.view(5)})
 	store.dispatch(&"keeper_loaded", {"view": {"level": 24, "xp": 22760, "toNext": 24000}})
 	store.dispatch(&"weaving_loaded", {"view": {"stability": {"strain": 0.82, "band": 2}}})
-	store.dispatch(&"roster_loaded", {"view": {"producers": [
+	var crew: Array = UniverseSample.extras()["characters"]
+	for kind: String in ["emberling", "rambler"]:
+		crew.append({"kind": kind, "state": "idle", "home": "spire", "work": null})
+	store.dispatch(&"roster_loaded", {"view": {"characters": crew, "producers": [
 		{"kind": "star_well", "realm": "heart", "stored": 2000, "holds": 3200},
 		{"kind": "aether_spring", "realm": "outer-2", "stored": 600, "holds": 1800},
 		{"kind": "garden", "realm": "outer-4", "stored": 800, "holds": 860}]}})

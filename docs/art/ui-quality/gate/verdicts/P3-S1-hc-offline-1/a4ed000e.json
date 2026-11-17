@@ -1,0 +1,28 @@
+[
+  {
+    "task_id": "P3-S1-hc-offline-1",
+    "sha": "a4ed000edfcef3cde3ce3a926eb656efffcc2528",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-17T15:00:00Z",
+    "item": "heist in high contrast",
+    "quality": "Colour roles and value",
+    "result": "fail",
+    "samples": ["pass", "fail", "fail", "fail", "fail", "fail"],
+    "critique": "Five samples of six fail, all on the same spot. In high contrast the heist's bottom-right action column puts the full main-action gold fill on 'No casts', a disabled cast control rather than a live main action, so gold takes a second role (calibration ruling). Three samples also note that the 'Get out' exit button uses the same alarm red as the 'Intruder!' tag, and one notes gold on plain data values in the stats panel (Room 508, Vault 0%, '?'). Every sample agrees on what holds: green stays on health, and the crew role badges keep their shapes (arrow or triangle, diamond, hourglass) and stay distinct on the colour-blindness sheet. Fix: give a cast button with no casts the inert plate style rather than the gold main-action fill, give 'Get out' its own exit colour rather than alarm red, and use the text ink for stats values."
+  },
+  {
+    "task_id": "P3-S1-hc-offline-1",
+    "sha": "a4ed000edfcef3cde3ce3a926eb656efffcc2528",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-17T15:00:00Z",
+    "item": "result at 100% text",
+    "quality": "Character presence",
+    "result": "pass",
+    "samples": ["pass", "fail", "fail", "pass", "pass", "pass"],
+    "critique": "Four samples of six pass. In both states (offline and server) the reward card carries a Scout portrait medallion, and the crew row has three gold-ringed portraits of about 55 px at 960. That is the heist anchor's size or larger, and each portrait reads as a figure in soft toon shading. The two fails both name fine photographic-looking grain on the Breaker's dark rock body (ruling v3). The four passes read the same crop as soft, mottled stepped shading with lit cracks. The Breaker's body material is the one point to watch in a later look."
+  }
+]
