@@ -712,7 +712,7 @@ func _show_hud() -> void:
 	collect_button.set_meta("natural", clampf(need, UI.px(120), maxf(UI.px(120), most)))
 	collect_button.custom_minimum_size.x = collect_button.get_meta("natural")
 	collect_button.accessibility_name = Strings.t("HOME_COLLECT_SPOKEN", ", ".join(waiting))
-	_build_tabs({})
+	_build_tabs(HomeParts.tab_badges(store.get_slice(RosterState.ROSTER)))
 
 
 ## Every producer collected (§9.3), the amounts flying into their bars.

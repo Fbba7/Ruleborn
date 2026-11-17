@@ -75,6 +75,10 @@ var plinth := false
 ## party large across the foot of the frame, cut at the knees, the middle one
 ## nearest, and the universe (add_universe) filling the frame above them.
 var welcome := false
+## Whether the stage's foot fades into the menus' night where the stage ends
+## on the screen (S3-R11), so a stage high on a long page runs on into the
+## backdrop behind it with no edge; off, it fades into the night's foot.
+var blend_foot := false
 var _spin := 0.0
 var _spin_speed := 0.0
 var _press := Vector2.ZERO
@@ -87,6 +91,8 @@ var _shells: Array[Node3D] = []
 ## Seconds until the figures switch between their two idles (§21.6's "two
 ## idles"), so a character on a stage never loops one clip for long.
 var _fidget := IDLE2_EVERY
+## The foot's fade, from clear to the night it fades into.
+var _foot_ramp: Gradient
 
 
 func _init() -> void:
@@ -117,6 +123,7 @@ func _init() -> void:
 	ramp.set_color(0, Color(StageHeroBackdrop.NIGHT_FOOT, 0.0))
 	ramp.set_color(1, StageHeroBackdrop.NIGHT_FOOT)
 	fade.gradient = ramp
+	_foot_ramp = ramp
 	foot.texture = fade
 	foot.stretch_mode = TextureRect.STRETCH_SCALE
 	foot.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
@@ -447,9 +454,29 @@ func at_time(seconds: float) -> void:
 			p.pause()
 
 
+## With `blend_foot`, the foot's night: the menus' night gradient where the
+## stage ends down the window, as the backdrop behind the page has it there.
+func foot_night() -> Color:
+	if not blend_foot or not is_inside_tree():
+		return StageHeroBackdrop.NIGHT_FOOT
+	var at := clampf(get_global_rect().end.y / maxf(1.0, get_viewport_rect().size.y), 0.0, 1.0)
+	return Tokens.gradient("night").sample(at)
+
+
+## The foot fades into `foot_night`, checked each frame the stage is shown,
+## so it follows the page as it scrolls.
+func blend() -> void:
+	var night := foot_night()
+	if _foot_ramp.get_color(1) != night:
+		_foot_ramp.set_color(0, Color(night, 0.0))
+		_foot_ramp.set_color(1, night)
+
+
 func _process(delta: float) -> void:
 	if not is_visible_in_tree():
 		return
+	if blend_foot:
+		blend()
 	if moving:
 		time += delta
 		backdrop.advance(delta)

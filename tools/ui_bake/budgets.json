@@ -98,6 +98,18 @@
       },
       "reason": "S1-R37: P3-S1-result-7's idle crew line on the raid button ('Idle crew of 3 ready', board 4's notes), which the guard's high-contrast shot now draws because client/tests/shots/screen_result.gd loads a roster with 3 idle. guard.sh at 55716273 failed only 'result/hc: 28 draw calls, recorded 27'. result/100 (89, record 91) and result/200 (95, record 99) keep their records; textures and words below 4.5:1 unchanged.",
       "request": "S1-R37"
+    },
+    {
+      "approved_by": "lead, cycle 120 (S2-R41)",
+      "date": "2026-11-17",
+      "field": "shots.recorded draw_calls",
+      "figures": {
+        "home/100": "145 -> 148",
+        "home/200": "121 -> 124",
+        "home/hc": "145 -> 148"
+      },
+      "reason": "S2-R41: P3-S2-home-states adds the states the home shot's fixture lacked (board 3's carried note): the Crew tab's idle-crew count badge (KitStatus.badge, +3) and Lantern Vale's locked plate drawn instead of a sixth realm pin (+2 at 100%), whose short form (the lock and '28' on one pill) now shows at 200% instead of hiding (+3). Measured with budget_shots.py --only home/100,home/200,home/hc on e9285afd; guard.sh at 89659437 failed only on these three lines. Textures and words below 4.5:1 unchanged; home stays 2 under the cap of 150. Written by the lead at the merge, in cycle 125.",
+      "request": "S2-R41"
     }
   ],
   "screens": {
@@ -376,17 +388,17 @@
         "words_below": 0
       },
       "home/100": {
-        "draw_calls": 145,
+        "draw_calls": 148,
         "texture_bytes": 4723360,
         "words_below": 0
       },
       "home/200": {
-        "draw_calls": 121,
+        "draw_calls": 124,
         "texture_bytes": 4880360,
         "words_below": 0
       },
       "home/hc": {
-        "draw_calls": 145,
+        "draw_calls": 148,
         "texture_bytes": 4723360,
         "words_below": 0
       },
