@@ -498,7 +498,7 @@ Board 3 carried a note through every round: the shot's fixture (`keyframe()` in 
 - **Fit.** All 57 of M26's cases print "fit ok" with `FIT=1` on e9285afd, at 100%, 150% and 200% text, in en, pt_BR, pt_PT, fr and de, with and without the raid notice, in high contrast, at 900 and 960 tall, with the widest amounts, 99 raids, an empty home, and no or six outer realms. (On 4797b5c3, before the plate's name and short form, and on ad6c25e7, before the gutter, all 57 passed too.)
 - **Clear of the pins and the side buttons** (board 3's objection B), seen in the stills at 100% and 200% (en, pt_BR, de) and in high contrast. The Crew tab's "4" sits on the tab's top right, inside the bar, under no pin. The Defence badge "2" keeps its place beside the Defence button, and the pins give it room as before. At 100% the locked plate, now two lines, sits left of the Heart, 24 pt from the left edge, below the Lab button and clear of it, and over the Heart's island but clear of the Heart's pin (en, pt_BR and de, whose "Öffnet bei Hüter 28" is the widest). At 200% the short form "28" sits beside the Lab button, clear of it and of the realms' chips (en, pt_BR, de and high contrast).
 - **Not by colour alone.** Every count is a number on its disc, with a dark outline in high contrast, and the tab's spoken name carries it (`KIT_TAB_BADGE`). The locked plate says its lock with the lock mark and words at every size: the realm's name and its opening level at 100% and 150%, the lock and "28" at 200%.
-- **Draw calls** (`budget_shots.py --only home/100,home/200,home/hc` on ad6c25e7):
+- **Draw calls** (`budget_shots.py --only home/100,home/200,home/hc` on e9285afd):
 
   | Shot | Before | Now | Record |
   |---|---:|---:|---:|

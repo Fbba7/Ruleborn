@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-17T07:30:00Z",
   "lease_until": "2026-11-17T10:30:00Z",
-  "updated_at": "2026-11-17T08:46:00Z",
-  "expected_next_update_by": "2026-11-17T09:30:00Z",
+  "updated_at": "2026-11-17T09:03:00Z",
+  "expected_next_update_by": "2026-11-17T09:45:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "a4090ec7",
-    "next_step": "779a5205 (ad6c25e7's code): 57 of 57 fit ok, check_all and check_screens pass, guard fails only on the three draw-call lines of S2-R41. AD answered S2-R36 (no objection at 5d25f9cb); its note (1), the locked plate about 4 pt from the left edge inside the 16 pt side gutter, is being fixed: the plate keeps safe_side_points on both sides in both forms. Then the 57 fit cases, the draw calls, check_all, guard and the pre-check on the new head, and S2-R42 renamed to that head."
+    "next_step": "e9285afd: the locked plate keeps the 16 pt side gutter (AD's S2-R36 note 1); 57 of 57 fit ok, draw calls 148/124/148 unchanged. Pre-check and guard running on the head; S2-R42 asks AD to preview e9285afd (due 16:00Z, default: the stills stand). Ready (with gate_request) once the pre-check passes and AD has previewed, or at 16:00Z on the default."
   },
   "precheck": null,
   "gate_request": null,
@@ -605,7 +605,7 @@
       "id": "S2-R41",
       "from": "S2",
       "to": "lead",
-      "ask": "Record home's draw calls in tools/ui_bake/budgets.json (K1's file, written at the merge as for S2-R17 and S2-R30) when P3-S2-home-states merges: home/100 145 -> 148, home/200 121 -> 124, home/hc 145 -> 148. Measured with `python3 tools/ui_bake/budget_shots.py --only home/100,home/200,home/hc` on ad6c25e7; textures and words below 4.5:1 (0) pass their records; still 2 under §21.3's cap of 150. The calls are the states the task adds to the fixture, which the records never saw: the Crew tab's count badge costs 3 (KitTabs' own badge, KitStatus.badge: 146 with OUTER=6 against 143 with the badge taken out); Lantern Vale's locked plate, drawn instead of a sixth realm pin, costs 2 at 100% (148 against 146; its name, S2-R38, batches with its words); at 200% the plate used to hide and now shows its short form (S2-R40), 3 calls (124 against 121 on 4797b5c3). A cheaper badge (drawn in the tab row's batch) would be K1's.",
+      "ask": "Record home's draw calls in tools/ui_bake/budgets.json (K1's file, written at the merge as for S2-R17 and S2-R30) when P3-S2-home-states merges: home/100 145 -> 148, home/200 121 -> 124, home/hc 145 -> 148. Measured with `python3 tools/ui_bake/budget_shots.py --only home/100,home/200,home/hc` on e9285afd (unchanged from ad6c25e7); textures and words below 4.5:1 (0) pass their records; still 2 under §21.3's cap of 150. The calls are the states the task adds to the fixture, which the records never saw: the Crew tab's count badge costs 3 (KitTabs' own badge, KitStatus.badge: 146 with OUTER=6 against 143 with the badge taken out); Lantern Vale's locked plate, drawn instead of a sixth realm pin, costs 2 at 100% (148 against 146; its name, S2-R38, batches with its words); at 200% the plate used to hide and now shows its short form (S2-R40), 3 calls (124 against 121 on 4797b5c3). A cheaper badge (drawn in the tab row's batch) would be K1's.",
       "files": [
         "tools/ui_bake/budgets.json"
       ],
@@ -619,7 +619,7 @@
       "id": "S2-R42",
       "from": "S2",
       "to": "AD",
-      "ask": "For AD, through the lead, following S2-R36 (answered in cycle 119: AD previews the commit S2 names once the plate changes under S2-R38 and S2-R40). The commit to preview is now ad6c25e7 on claude/ui-screens-home. Since 4797b5c3 the locked plate reads 'Lantern Vale' over the lock and 'Opens at Keeper 28' on the map's dark pill, and at 200% text, where that finds no room, it shows the lock and '28' on the same pill instead of hiding. Check, as in S2-R36, at 100% and 200% text in en, pt_BR and de, and in high contrast: the Crew tab's '4', the Defence badge '2' and the plate clear of the pins and the side buttons (board 3's objection B), nothing by colour alone. Reproduce with `FIT=1 [TEXT=200] [LOCALE=<loc>] [CONTRAST=1] bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`. Detail: docs/art/tracks/home-screen.md Part 7.",
+      "ask": "For AD, through the lead, following S2-R36 (answered in cycle 119: AD previews the commit S2 names once the plate changes under S2-R38 and S2-R40). The commit to preview is now e9285afd on claude/ui-screens-home (ad6c25e7 plus your S2-R36 note 1: the plate keeps the 16 pt side gutter, now about 24 pt from the left edge at 100%). Since 4797b5c3 the locked plate reads 'Lantern Vale' over the lock and 'Opens at Keeper 28' on the map's dark pill, and at 200% text, where that finds no room, it shows the lock and '28' on the same pill instead of hiding. Check, as in S2-R36, at 100% and 200% text in en, pt_BR and de, and in high contrast: the Crew tab's '4', the Defence badge '2' and the plate clear of the pins and the side buttons (board 3's objection B), nothing by colour alone. Reproduce with `FIT=1 [TEXT=200] [LOCALE=<loc>] [CONTRAST=1] bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`. Detail: docs/art/tracks/home-screen.md Part 7.",
       "files": [
         "client/world/universe_pins.gd",
         "client/tests/shots/universe_home.gd",
@@ -634,5 +634,5 @@
     }
   ],
   "answers": [],
-  "next_step": "779a5205 (ad6c25e7's code): 57 of 57 fit ok, check_all and check_screens pass, guard fails only on the three draw-call lines of S2-R41. AD answered S2-R36 (no objection at 5d25f9cb); its note (1), the locked plate about 4 pt from the left edge inside the 16 pt side gutter, is being fixed: the plate keeps safe_side_points on both sides in both forms. Then the 57 fit cases, the draw calls, check_all, guard and the pre-check on the new head, and S2-R42 renamed to that head."
+  "next_step": "e9285afd: the locked plate keeps the 16 pt side gutter (AD's S2-R36 note 1); 57 of 57 fit ok, draw calls 148/124/148 unchanged. Pre-check and guard running on the head; S2-R42 asks AD to preview e9285afd (due 16:00Z, default: the stills stand). Ready (with gate_request) once the pre-check passes and AD has previewed, or at 16:00Z on the default."
 }
