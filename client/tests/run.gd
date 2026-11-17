@@ -172,11 +172,10 @@ func _mount(scene: String) -> Control:
 func _tab_routes() -> void:
 	var router := App.services.router
 	var was := router.change
-	var shown: Array[Node] = []
+	# The router's own change (`change_scene_to_file`): the screen enters the
+	# tree before its first layout, as on the phone, where F1 showed.
 	router.change = func(path: String) -> void:
-		var node: Node = load(path).instantiate()
-		root.add_child(node)
-		shown.append(node)
+		change_scene_to_file(path)
 	var moving := Settings.reduced_motion
 	Settings.reduced_motion = false
 	var misses: Array[String] = []
@@ -188,9 +187,7 @@ func _tab_routes() -> void:
 			router.go(Router.TABS[tab])
 			await create_timer(0.3).timeout
 			await process_frame
-			var bars: Array[KitTabs] = []
-			for screen: Node in shown:
-				bars.append_array(_bars(screen))
+			var bars := _bars(current_scene)
 			if bars.is_empty() != (Router.TABS[tab] in WITHOUT_TABS):
 				misses.append("%s at %d%%: %s tab bar" % [tab, look[0], "a" if bars else "no"])
 			for bar: KitTabs in bars:
@@ -198,10 +195,8 @@ func _tab_routes() -> void:
 				if miss != "":
 					misses.append("%s (%s) at %d%%%s: %s" % [Router.TABS[tab], bar.active, look[0],
 						" hc" if look[1] else "", miss])
-			for screen: Node in shown:
-				screen.queue_free()
-			shown.clear()
-			await process_frame
+	unload_current_scene()
+	await process_frame
 	Settings.text_scale = 100
 	Settings.high_contrast = false
 	Settings.apply()
