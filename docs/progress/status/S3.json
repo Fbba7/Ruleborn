@@ -8,13 +8,13 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-17T13:05:00Z",
   "lease_until": "2026-11-17T16:05:00Z",
-  "updated_at": "2026-11-17T13:18:00Z",
-  "expected_next_update_by": "2026-11-17T14:00:00Z",
+  "updated_at": "2026-11-17T13:31:00Z",
+  "expected_next_update_by": "2026-11-17T14:11:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "ee67dcea90dcaef929db2240127f1b87b13ad735",
-    "next_step": "kit calls in place and AD-R58 measured (subtitle 6 px on 48, level 6 on 42 in the still); main 851e0c7a merged; next: full stills, checks, menu-screens.md, AD preview request, precheck",
-    "at": "2026-11-17T13:18:00Z"
+    "next_step": "code, track and handoff at aed2d06d (fit 50/50, check_screens OK, guard OK); main 6f3ec53c merged; pre-check running at aed2d06d; AD preview S3-R34 asked; then ready with gate_request",
+    "at": "2026-11-17T13:31:00Z"
   },
   "precheck": {
     "sha": "ee67dcea90dcaef929db2240127f1b87b13ad735",
@@ -619,6 +619,53 @@
       "due": "2026-11-16T23:10:00Z",
       "default": "S3 takes f083c96c as the main it last merged, runs the merge checks on its branch head, and marks P2-S3-character-4 ready there; the lead merges onto whatever main it restores",
       "escalate_to": "overseer"
+    },
+    {
+      "id": "S3-R34",
+      "from": "S3",
+      "to": "AD",
+      "ask": "Preview of P3-S3-character-5 at aed2d06d on claude/ui-screens-meta (main 6f3ec53c merged). (1) The kit's calls replace the screen's local fixes (tabs, ability measures, stage foot blend, hex size, compact facts, untracking): at 100% text in en, pt_BR and de, on all three tabs, and in high contrast (en, pt_BR), the stills are pixel for pixel as before. (2) AD-R53: the offline notice stands on the roster's cream plate (StageHeroSkin.plate) with its words in alarm red, as flow board 2's F7; it was glass with a red fill. New shots: OFFLINE=1 LOCALE=en, and OFFLINE=1 TEXT=200 LOCALE=pt_BR. (3) AD-R58: Godot draws a quarter of outline_size on each side, not half, so character-4's outline was about 6% a side (audit 1 read 5%). At 200% the subtitle and the level line now measure 6 still pixels a side on words 48 and 42 pixels tall (12.5% and 14%; en and de 6 to 7), against 2 to 3 before; the headline on the stage art, the HABILIDADE kicker and Level up's title carry the same rule. Board 5's layout is unchanged; every shot fits. Render with FIT=1 RECORD=1 <env> bash tools/render/shoot.sh client/tests/shots/screen_character.gd <still> (TEXT=200, LOCALE=, HC=1, TAB=1|2, ID=4, OFFLINE=1). Track Part 2, 'The kit's calls, the cream notice and the outline measured (P3-S3-character-5)'. Please give every objection in this one round.",
+      "files": [
+        "client/scripts/character_screen.gd",
+        "client/tests/shots/screen_character.gd",
+        "docs/art/tracks/menu-screens.md"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-17T13:31:00Z",
+      "due": "2026-11-17T15:31:00Z",
+      "default": "The stills stand as described; S3 marks P3-S3-character-5 ready at the pre-checked sha with gate_request there, and AD re-checks on the merge",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S3-R35",
+      "from": "S3",
+      "to": "lead",
+      "ask": "For K1 and the lead, a finding, not this task's to fix: Godot draws a quarter of a label's outline_size outward on each side (measured in the renderer the stills use, at 540 and 1080 wide). Code that sets outline_size to §21.8's least a side therefore draws about a quarter of it: KitHud._ink (client/ui/kit_hud.gd, 1.5 pt or 12% plus half a point, about 3% a side), and kit_panels.gd's inventory count (20% of the size, about 5% a side). The contrast check reads outline_size the same way: _outline in client/tests/a11y_tests.gd and _counts in client/tests/shots/ui_kit_heist.gd count an outline as all round once outline_size reaches the least a side. The character screen now sets four times the least a side plus the soft edge (character_screen.gd _outline_px). Track Part 2, P3-S3-character-5, 'A kit-wide finding'.",
+      "files": [
+        "client/ui/kit_hud.gd",
+        "client/ui/kit_panels.gd",
+        "client/tests/a11y_tests.gd",
+        "client/tests/shots/ui_kit_heist.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T13:31:00Z",
+      "due": "2026-11-17T15:31:00Z",
+      "default": "Nothing changes in the kit or the tests; the character screen keeps its own outline rule",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S3-R36",
+      "from": "S3",
+      "to": "lead",
+      "ask": "A files exception for P3-S3-character-5: its files do not include docs/art/shots/menu-screens/, so the committed character-200 stills (character-200-{pt_BR,en,de}, -{en,pt_BR,de}-4, -pt_BR-stats, -pt_BR-compare, -pt_BR-scrolled) still show character-4's thinner outline, and there is no offline still. With the exception S3 re-shoots those nine and adds character-offline and character-offline-200-pt_BR (stills and records); the 100% and high-contrast stills are byte-identical and stay.",
+      "files": [
+        "docs/art/shots/menu-screens/"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T13:31:00Z",
+      "due": "2026-11-17T15:31:00Z",
+      "default": "The committed stills stay as they are; the track names which differ and how to render them, and the next character task re-shoots them",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
