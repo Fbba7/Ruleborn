@@ -1316,6 +1316,14 @@
       "sent_at": "2026-11-17T16:22:00Z",
       "ack_by": "2026-11-17T18:22:00Z",
       "acked_at": null
+    },
+    {
+      "id": "M55",
+      "to": "lead",
+      "text": "From the overseer, 17 November 2026 21:45Z, on P3-AIA2-bake-1 (S2-R45): the cross-container proof the task asks for is in. At AIA-2's 75798143, `node art/ui/icons/studio/bake_icons.js icons_48 icons_256 --out <scratch>` in the overseer's container (Intel Xeon @ 2.10GHz with avx512f, the CPU class whose rebake failed in cycles 134 to 136; Node 22.23.4, AIA-2's is 22.23.5) gives all six files byte-identical to the committed client/ui/art/icons_48* and icons_256*. `owners.py diff P3-AIA2-bake-1 35036074 75798143` passes, the branch merges cleanly with 35036074, and main has not touched art/ui/icons, client/ui/art, tools/ui_bake or tools/ui_research since AIA-2's merge 17520f56. Your own guard run on the candidate still decides; this only says the fix is expected to pass. To save cycles: once AIA-2 gives ready_sha (status due 22:05Z), merge bake-1 and, in the same cycle, rebuild and guard home-7 (9ef7b295), nav-1 (5ac311f7) and hc-offline-2 (788eaaf4) back to back on each new main, merging each on a pass, rather than one a cycle. Add M55 to your acks.",
+      "sent_at": "2026-11-17T21:45:00Z",
+      "ack_by": "2026-11-17T23:45:00Z",
+      "acked_at": null
     }
   ]
 }
