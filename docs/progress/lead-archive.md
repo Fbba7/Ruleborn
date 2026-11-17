@@ -5,6 +5,103 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 112**, 17 November 2026, from about 03:14Z (session
+  `session_01SNkKxnALgp923n1Xz8RyLi`, started by the Opus 5.5 launcher).
+  **Claims copied:** S2 works on P2-S2-home-6 (seen 03:13Z, lease to
+  06:00Z): AD-R45 (a) fixed by its fallback (the words after the counts
+  take no shadow), the counts' stroke, drop and gradient drawn in
+  `HomeParts.InkedRow`, draw calls 142/117/142; FIT sweep, guard and
+  pre-check next, then `gate_request` on 'home at 100% text', Display
+  type. S1 marked P2-S1-result-6 ready at c9d70cc3 (pre-check passed,
+  its own gate 3/3 at e4e78070, `gate_request` on the three items); the
+  lead sends it back to working (below).
+  **Requests:** AD answered S1-R35 at 02:58Z, on 16515088: both of S1's
+  departures stand, one objection, AD-R46 (H): at 200% German
+  'Sternenlicht' breaks by its letters in the Starlight row, missed by
+  FIT. Copied to Lead and answered: S1 fixes H in result-6 before it
+  merges (AD's default; result-6's done_when asks AD's objections
+  answered in the task), so result-6 goes back to working and nothing is
+  seeded (M33). S2-R35 (to K1: mipmaps on the numerals' pages, not
+  blocking, due 18 November 12:00Z) copied to K1 and answered: logged for
+  phase 3, about 1 h; home closes its fail with `HomeParts.InkedRow`, so
+  M33 seeds nothing and the default stands.
+  **Gate and merges:** the lead did not gate result-6 at c9d70cc3: H
+  changes `result_fit.gd` and the shot, so a pass there would not carry
+  over to the fixed commit. S1 re-gates at the new commit (M44). Nothing
+  ready, so nothing merged and no check ran; the merge lock stays null.
+  **Messages:** M43 acked by S2 (03:13Z). M44 is not acked by S1 yet; it
+  is in S1's restart prompt, and its ack_by is 03:55Z.
+  **Seats:** S1 restarted (`session_01SNkKxpBG3xx2UUqDBfeMa9`) and S2
+  working, two of four. AD is done (its session idle after S1-R35).
+  Under M33 no task qualifies for the free seats before the phase-2 stop
+  at 21:00Z.
+  **Next:** cycle 113 gates home-6 on S2's `gate_request` (100% text,
+  Display type) and result-6 on S1's new one, and merges both as one
+  candidate when both are ready (M42; one alone if the other is far off).
+  It checks M44's ack, and restarts S1 or S2 only if its update time
+  passes.
+
+- **Cycle 111**, 17 November 2026, from about 02:39Z (session
+  `session_01SNkKxp3QH4szJPdrskLbcc`, started by the Opus 5.5 launcher).
+  **Claims copied:** S2 works on P2-S2-home-6 (seen 02:21Z, lease to
+  04:00Z): pre-check passed on e674b614, `gate_request` set there under
+  M43, not ready. S1 works on P2-S1-result-6 (seen 02:32Z, lease to
+  04:31Z): its own gate run passed at e4e78070, its pre-check of c9d70cc3
+  running, not ready.
+  **Requests:** S1-R35 (preview result-6 at c9d70cc3, not blocking, due
+  10:17Z) copied to AD's section and answered: AD is started for it, and
+  the merge does not wait for AD.
+  **Gate and merges:** the advisory gate (rubric v3, ui-judge at effort
+  high, three samples each, stills rendered by the lead from the home
+  shot at e674b614) ran on S2's `gate_request`
+  (docs/art/ui-quality/gate/verdicts/P2-S2-home-6/e674b614.json).
+  Display type at home 100% text fails 3 of 3: the headline counts
+  (1,460, 142.0k, 31.4k, 61.0k) are flat gold on dark plates beside a
+  stroked 'Keeper 24'; AD-R45 (a) is still open at e674b614. The other
+  five pass 3 of 3: Hierarchy at 100%, 200% pt_BR and high contrast,
+  Character presence at 100%, Display type at 200% pt_BR. No split. It is
+  home-6's first fail under M43; the note under AD-R45 tells S2 to fix
+  (a) and the 100% counts in home-6 and request the gate again. Nothing
+  is ready, so nothing merged and no check ran; the merge lock stays
+  null.
+  **Messages:** none new. M43 and M44 are due at 03:55Z.
+  **Seats:** S1, S2 and AD working, three of four. AD's new session
+  (`session_01SNkKxoJbJnMvxsrv2outFG`) takes S1-R35. Under M33 no task
+  qualifies for the fourth seat before the phase-2 stop at 21:00Z.
+  **Next:** cycle 112 re-gates home-6 at 100% text, Display type, when S2
+  requests it, gates result-6 when S1 requests it, merges both as one
+  candidate when both are ready (M42; one alone if the other is far
+  off), checks M43 and M44 at 03:55Z, and restarts S1 or S2 only if its
+  update time passes.
+
+- **Cycle 110**, 17 November 2026, from about 02:14Z (session
+  `session_01SNkKxqnwS161aj2Ndyfo94`, started by the Opus 5.5 launcher).
+  **Claims copied:** S2 works on P2-S2-home-6 (seen 01:52Z, lease to
+  04:00Z; pre-check running on e674b614, main merged in, then its gate
+  request). S1 works on P2-S1-result-6 (seen 01:58Z, lease to 04:31Z;
+  the Starlight tile framed with the crew's face, the totals baked, the
+  helpers moved to result_fit.gd at f96569c0).
+  **Requests:** AD answered S2-R34 at 01:57Z: S2's three changes stand,
+  one objection kept and sent to the lead as AD-R45 (the live words
+  after the baked figures echo below themselves and are cream beside
+  gold). The lead copied both and answered AD-R45: S2 fixes it in home-6
+  before ready, as AD's default offers, so nothing is seeded (M33).
+  **Gate and merges:** nothing ready, so no gate ran and nothing merged;
+  the merge lock stays null. No check ran.
+  **Messages:** M42 acked. When home-6 and result-6 are both ready, the
+  lead builds one candidate from both and runs the full checks once; only
+  a failed batch is re-checked task by task. M43 (S2) and M44 (S1) are
+  due at 03:55Z.
+  **Seats:** S1 and S2 working, two of four. AD's session
+  (`session_01SNkKxnPTEBNJrsj8BFDyUi`) is idle, its preview done. Under
+  M33 no task qualifies before the phase-2 stop at 21:00Z: AD-R45 is
+  answered inside home-6, and no failed gate quality or blocking check
+  lacks a task. Phase 3's tasks are seeded once stop_at passes.
+  **Next:** cycle 111 gates and merges home-6 and result-6 as one batch
+  when both are ready (one alone if the other is still far off), checks
+  M43 and M44 at 03:55Z, and restarts S1 or S2 only if its update time
+  passes.
+
 - **Cycle 109**, 17 November 2026, from about 01:38Z (session
   `session_01SNkKxqA691fQupEvYwZ32N`, started by the Opus 5.5 launcher).
   **Claims copied:** S2 works on P2-S2-home-6 (claimed 01:00Z, lease to

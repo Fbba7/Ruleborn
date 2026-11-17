@@ -1,9 +1,16 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-17T03:24:00Z",
-  "expected_next_update_by": "2026-11-17T06:24:00Z",
-  "cycle": 112,
-  "merging": null,
+  "updated_at": "2026-11-17T04:50:00Z",
+  "expected_next_update_by": "2026-11-17T07:50:00Z",
+  "cycle": 115,
+  "merging": {
+    "candidate_sha": "22c81917",
+    "task_ids": [
+      "P2-S2-home-6"
+    ],
+    "started_at": "2026-11-17T05:16:34Z",
+    "expires_at": "2026-11-17T06:16:34Z"
+  },
   "last_merged": {
     "task_id": "P2-S1-heist-1",
     "sha": "79c1f353"
@@ -38,9 +45,9 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Cycle 113 gates P2-S2-home-6 on S2's gate_request (home 100% text, Display type; AD-R45 (a) fixed by its fallback and the counts drawn in HomeParts.InkedRow) and P2-S1-result-6 on S1's new gate_request after AD-R46 (H) is fixed (S1 restarted in cycle 112; c9d70cc3 is not gated), merges both as one candidate when both are ready (M42; one alone if the other is far off), checks M44's ack (due 03:55Z), and restarts S1 or S2 only if its update time passes. Under M33 nothing new is seeded before the phase-2 stop at 21:00Z.",
+  "next_step": "Cycle 116 merges P2-S1-result-6 and P2-S2-home-6 as one candidate if both are ready (M42), or whichever is ready first. home-6's gate item passed 3/3 at a4090ec7 in cycle 115, so AD-R45 (a) is closed, and M46 tells S2's restarted session to mark ready. result-6's gate items passed at b5843368, and its pre-check of f6697161 is running. Cycle 116 checks the acks of M45 (due 05:55Z) and M46 (due 06:50Z), and restarts S1 only if its update time (05:22Z) passes. Under M33 nothing new is seeded before the phase-2 stop at 21:00Z.",
   "seen": {
-    "at": "2026-11-17T03:20:02Z",
+    "at": "2026-11-17T04:47:42Z",
     "heads": {
       "claude/3d-character-screens": "6053b249bee313648da3509142eeb2ba738bb62f",
       "claude/3d-characters": "35d6ae8f5b84a4d75636f68270848b0949c111f3",
@@ -67,8 +74,8 @@
       "claude/ui-plan": "f1affcea749d007fe1a67931bd3c1f7359d98c44",
       "claude/ui-research": "f19d5d4e5eaffff8869da3b91124d111cf1259a6",
       "claude/ui-screens": "dceb6bfcbc6c5da4e261674fe9301e1854f0aa65",
-      "claude/ui-screens-heist": "fba156eacef17a24bb59720da17c056b069fe143",
-      "claude/ui-screens-home": "10f93e8abd5679cd3cd5deab7ecbee144889004a",
+      "claude/ui-screens-heist": "d6bcc4dc35c22e5fb3f8aed157fff085c9403f20",
+      "claude/ui-screens-home": "9e64fa593f9cb0e767e972359af5252fe0ef2696",
       "claude/ui-screens-meta": "7d19eeda3a6d1b6f349f453f85365203604f4431",
       "lead/candidate-573416ab12761b92becf0c1d3d7d7bd03e9cf7d1": "573416ab12761b92becf0c1d3d7d7bd03e9cf7d1",
       "lead/candidate-714b24ed52f56133bccc18c82cc879938b53f296": "714b24ed52f56133bccc18c82cc879938b53f296",

@@ -2,8 +2,8 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026. Phase 2 started on 12 November 2026 (lead cycle 70): P1-AD-board-1d let board 1 stand and phase 1's other exit criteria hold (report.md section 3.2); its first tasks are the flow findings (S1, S2) and board 1's note G (AIA-2), within the same cap of three. Since 12 November 2026, about 20:00Z, the cap is four UI builders by the owner's order (CLAUDE.md order 3; three while the seven-day bar reads allowed_warning).",
   "wave": "UI wave",
   "phase": 2,
-  "updated_at": "2026-11-17T03:20:00Z",
-  "updated_by": "lead (cycle 112)",
+  "updated_at": "2026-11-17T03:55:00Z",
+  "updated_by": "lead (cycle 113)",
   "stop_at": "2026-11-17T21:00:00Z",
   "lease_hours": 3,
   "status_every_minutes": 45,
@@ -648,15 +648,15 @@
         "agent": "S2",
         "branch": "claude/ui-screens-home",
         "claimed_at": "2026-11-17T01:00:00Z",
-        "seen_at": "2026-11-17T03:13:28Z",
+        "seen_at": "2026-11-17T03:44:00Z",
         "lease_until": "2026-11-17T06:00:00Z"
       },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-17T03:20:00Z",
-      "updated_by": "lead (cycle 112)",
+      "updated_at": "2026-11-17T03:55:00Z",
+      "updated_by": "lead (cycle 113)",
       "id": "P2-S2-home-6",
       "title": "Home screen, part 6 (phase 2 exit, M25, M33): the advisory gate's Display type fails at home 100% text and 200% pt_BR (verdict at eb40e8f4) fixed",
       "exceptions": [
@@ -707,15 +707,15 @@
         "agent": "S1",
         "branch": "claude/ui-screens-heist",
         "claimed_at": "2026-11-17T01:31:29Z",
-        "seen_at": "2026-11-17T03:10:14Z",
-        "lease_until": "2026-11-17T06:20:00Z"
+        "seen_at": "2026-11-17T04:13:52Z",
+        "lease_until": "2026-11-17T07:13:52Z"
       },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-17T03:20:00Z",
-      "updated_by": "lead (cycle 112)",
+      "updated_at": "2026-11-17T04:25:00Z",
+      "updated_by": "lead (cycle 114)",
       "id": "P2-S1-result-6",
       "title": "Result screen, part 6 (phase 2 exit, M25): S1-R32's local fix dropped once P2-K1-grow-1 merges; the gate at 100% text re-run and its Display type fail fixed if it stands",
       "exceptions": []
@@ -1067,7 +1067,22 @@
       "to": "S1",
       "text": "From 17 November 2026 (lesson, report 100): P2-S2-home-5 was marked ready before the gate judged it and merged still failing the quality it was seeded to close, so a part 6 had to re-open it. Set gate_request on the task's target items as soon as the first fixed stills exist and keep building; mark ready only once those items pass, or after a second fail with the verdict and your reasons in the handoff. This applies to result 6 now. Add M44 to your acks.",
       "sent_at": "2026-11-17T01:55:00Z",
-      "ack_by": "2026-11-17T03:55:00Z"
+      "ack_by": "2026-11-17T03:55:00Z",
+      "acked_at": "2026-11-17T03:43:39Z"
+    },
+    {
+      "id": "M45",
+      "to": "S1",
+      "text": "From 17 November 2026 (cycle 113 gate, advisory, at b5843368): result-6's gate items ('result at 100% text', Display type and Character presence) pass 3 of 3, and so do Display type at 200% pt_BR and Hierarchy in high contrast, so mark ready once your checks and pre-check pass. Hierarchy at 'result at 200% text, pt_BR' fails 3 of 3 (the summary prose and alarm line are larger than the reward numerals; the three cream tiles have no lead). It does not hold result-6 back and is logged for phase 3; see requests.md, AD-R46, 'Gate, cycle 113'. Close it inside result-6 only if that adds no more than about 30 minutes. Add M45 to your acks.",
+      "sent_at": "2026-11-17T03:55:00Z",
+      "ack_by": "2026-11-17T05:55:00Z"
+    },
+    {
+      "id": "M46",
+      "to": "S2",
+      "text": "From 17 November 2026 (cycle 115 gate, advisory, at a4090ec7): 'home at 100% text', Display type, passes 3 of 3. The counts' stroke, hard drop and gradient meet the big-number ruling, so AD-R45 (a) is closed. Mark P2-S2-home-6 ready on a4090ec7, or on a later tree whose pre-check passes. The verdict is in docs/art/ui-quality/gate/verdicts/P2-S2-home-6/a4090ec7.json. Add M46 to your acks.",
+      "sent_at": "2026-11-17T04:50:00Z",
+      "ack_by": "2026-11-17T06:50:00Z"
     }
   ]
 }

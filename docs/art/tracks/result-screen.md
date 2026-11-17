@@ -288,7 +288,7 @@ The shot's FIT check now also fails words drawn outside their button.
 
 **Budgets.** `budget_shots.py`: result/100 88 (record 91), result/200 96 (99), result/hc 27 (27). Contrast: 0 words below 4.5:1 in each. The lead could record the two lower figures.
 
-**The gate (advisory, rubric 3).** Each run had three samples, plus three more on a split. The verdicts are in `docs/art/ui-quality/gate/verdicts/P2-S1-result-6/`.
+**The gate (advisory, rubric 3).** Each run had three samples, plus three more on a split. The lead's verdict at `b5843368` is in `docs/art/ui-quality/gate/verdicts/P2-S1-result-6/`. The folder is the lead's, so the earlier runs' verdict files (`02c2e6b8`, `58a4a10f`, `24cc4d7c`, `e4e78070`) were removed from this branch in the resync (M47); their samples and results are kept in the table below, and the files themselves stay in this branch's history before the merge of main.
 
 | Commit | Item | Quality | Samples | Result |
 |---|---|---|---|---|
