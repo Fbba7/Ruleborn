@@ -11,6 +11,10 @@ extends SceneTree
 ## renderer's speed, each frame saved whole (full_NNN.png) and cut to the
 ## hero and the reward tiles (crop_NNN.png). REDUCED records its
 ## reduced-motion form.
+##
+## IDLE is how many of the crew stand idle at home (board 4: the raid's
+## "Idle crew of N ready" line shown and checked), 3 by default as key
+## frame 03's; IDLE=-1 loads no roster, and the line hides.
 
 ## A recorded frame's length, in seconds.
 const STEP := 1.0 / 30.0
@@ -58,6 +62,9 @@ func _go() -> void:
 	elif state == "play":
 		start = {"workshop": {"id": "shot", "token": "shot", "seed": "shot"}}
 	App.services.store.dispatch(&"heist_started", start)
+	var idle := int(OS.get_environment("IDLE")) if OS.get_environment("IDLE") != "" else 3
+	if idle >= 0:
+		App.services.store.dispatch(&"roster_loaded", {"view": roster(idle)})
 	var verdict := RulebornReplay.validate(replay, PackedByteArray())
 	if OS.get_environment("SERVER") != "":
 		# SERVER: the server's settle answer as HeistController.settled reads
@@ -238,10 +245,22 @@ static func fit(screen: Control) -> Array[String]:
 			if result._ending[0].get_parent() == result._scroll.get_parent():
 				top = minf(top, result._scroll.get_global_rect().end.y)
 		for kind: String in result.reward_labels:
-			var tile := (result.reward_labels[kind] as Label).get_parent().get_parent() as Control
+			var tile := ResultFit.tile_of(result.reward_labels[kind])
 			if tile.get_global_rect().end.y > top + 1.0:
 				bad.append("reward %s: ends at %.0f px, under the first screen's %.0f" % [kind,
 					tile.get_global_rect().end.y, top])
+	# The raid's line, when a roster is loaded: how many of the crew stand
+	# idle, shown on the button (board 4).
+	var idle := ResultScreen.idle_crew()
+	var again: Control = null
+	if not result._ending.is_empty():
+		again = (result._ending[0] as Control).find_child("Action", true, false) as Control
+	if idle >= 0 and again != null and again.is_visible_in_tree():
+		var line := Strings.t("RESULT_IDLE_CREW", idle)
+		var shown := again.find_children("*", "Label", true, false).filter(func(l: Label) -> bool:
+			return l.text == line and l.is_visible_in_tree())
+		if shown.is_empty():
+			bad.append("raid: the line %s is not shown" % line)
 	# With the bar under the page that scrolls, the first screen ends on a
 	# whole line, never the tops of a line's letters or a card's sliver
 	# (AD's objection F: "Re-simulated by the server" at 200% in English).
@@ -251,6 +270,19 @@ static func fit(screen: Control) -> Array[String]:
 		if part > 1.0:
 			bad.append("fold: the page ends %.0f px into a line or card above the bar" % part)
 	return bad
+
+
+## The character screens' roster (ShotData's) with `idle` of its crew idle
+## and the rest of the idle ones resting.
+static func roster(idle: int) -> Dictionary:
+	var view := ShotData.roster()
+	var n := 0
+	for c: Dictionary in view["characters"]:
+		if str(c["state"]) == "idle":
+			n += 1
+			if n > idle:
+				c["state"] = "resting"
+	return view
 
 
 ## The first word of `l` that wraps between its letters: one wider than the
