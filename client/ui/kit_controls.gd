@@ -64,8 +64,14 @@ static func action2(text: String, line: String, pressed: Callable, look := "gold
 	# their two lines at the player's text size.
 	var lines := UI.text_px(16) + (UI.text_px(13) if line != "" else 0)
 	b.custom_minimum_size = Vector2(UI.px(120), maxf(UI.px(56), lines * 1.3 + UI.px(12)))
+	# Inside the button's 9 points of padding either side; at large text its
+	# words break between words there and it grows to its lines (S1-R15).
 	var v := VBoxContainer.new()
 	v.set_anchors_preset(Control.PRESET_FULL_RECT)
+	v.offset_left = UI.px(9)
+	v.offset_right = -UI.px(9)
+	v.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	v.grow_vertical = Control.GROW_DIRECTION_BOTH
 	v.alignment = BoxContainer.ALIGNMENT_CENTER
 	v.add_theme_constant_override("separation", -UI.px(2))
 	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -93,8 +99,11 @@ static func action2(text: String, line: String, pressed: Callable, look := "gold
 		t.add_theme_color_override("font_outline_color", box.spec["text_outline"][0])
 		t.add_theme_constant_override("outline_size", UI.px(box.spec["text_outline"][1]))
 	top.add_child(t)
+	if top == v:
+		_wraps(t)
 	if line == "":
 		b.add_child(v)
+		_grow(b, v, Vector2(0, UI.px(12)))
 		return b
 	var s := UI.label(line, 13)
 	s.add_theme_font_override("font", UI.bold_font())
@@ -103,9 +112,62 @@ static func action2(text: String, line: String, pressed: Callable, look := "gold
 	if box.spec.has("text_outline"):
 		s.add_theme_color_override("font_outline_color", box.spec["text_outline"][0])
 		s.add_theme_constant_override("outline_size", UI.px(box.spec["text_outline"][1]))
+	_wraps(s)
 	v.add_child(s)
 	b.add_child(v)
+	_grow(b, v, Vector2(0, UI.px(12)))
 	return b
+
+
+## A label whose words break between words, centred, never inside a word:
+## it is never narrower than its widest (kept so by `_grow`).
+static func _wraps(l: Label) -> void:
+	l.autowrap_mode = TextServer.AUTOWRAP_WORD
+	l.set_meta("kit_words", true)
+
+
+## The widest word of `l` as it is drawn, in pixels.
+static func _widest_word(l: Label) -> float:
+	var font := l.get_theme_font("font")
+	var points := l.get_theme_font_size("font_size")
+	var words := l.text.to_upper() if l.uppercase else l.text
+	var widest := 0.0
+	for w: String in words.split(" ", false):
+		widest = maxf(widest, font.get_string_size(w, HORIZONTAL_ALIGNMENT_LEFT, -1, points).x)
+	return ceilf(widest)
+
+
+## A button that draws its words in a box of its own (`inner`, laid over it
+## by its offsets): a Button's children do not size it, so it grows to the
+## box's combined minimum, the box's offsets and `pad`, and is never smaller
+## than the least size set on it. A size set on it from outside since it last
+## grew (a screen's width, upgrade's height) becomes that least, so it is
+## kept, not undone. Each wrapping label (`_wraps`) is kept as wide as its
+## widest word, so the button holds every word whole (S1-R15, S1-R23, S3-R3).
+static func _grow(b: Button, inner: Control, pad: Vector2) -> void:
+	var grow := func() -> void:
+		if not is_instance_valid(b) or not is_instance_valid(inner):
+			return
+		for l: Label in inner.find_children("*", "Label", true, false):
+			if l.has_meta("kit_words") and l.autowrap_mode != TextServer.AUTOWRAP_OFF:
+				var widest := _widest_word(l)
+				if absf(l.custom_minimum_size.x - widest) > 0.5:
+					l.custom_minimum_size.x = widest
+		var grown: Vector2 = b.get_meta("kit_grown", -Vector2.ONE)
+		var least: Vector2 = b.get_meta("kit_least", b.custom_minimum_size)
+		if absf(b.custom_minimum_size.x - grown.x) > 0.5:
+			least.x = b.custom_minimum_size.x
+		if absf(b.custom_minimum_size.y - grown.y) > 0.5:
+			least.y = b.custom_minimum_size.y
+		b.set_meta("kit_least", least)
+		var edges := Vector2(inner.offset_left - inner.offset_right, inner.offset_top - inner.offset_bottom)
+		var want := least.max((inner.get_combined_minimum_size() + edges + pad).ceil())
+		b.set_meta("kit_grown", want)
+		if not want.is_equal_approx(b.custom_minimum_size):
+			b.custom_minimum_size = want
+	inner.minimum_size_changed.connect(grow)
+	b.tree_entered.connect(grow)
+	b.set_meta("kit_grow", grow)
 
 
 ## Dresses round button `b` as a disc `disc_points` across, centred in
@@ -310,6 +372,9 @@ static func big_action(icon: String, words: String, pressed: Callable, look := "
 		l.add_theme_constant_override("outline_size", UI.px(box.spec["text_outline"][1]))
 	v.add_child(l)
 	b.add_child(v)
+	# Grown to its icon and words with 6 and 5 points about them: at 200%
+	# text "3 s" would sit under its edge (S1-R23).
+	_grow(b, v, Vector2(UI.px(12), UI.px(10)))
 	return b
 
 
@@ -323,11 +388,15 @@ static func upgrade(text: String, line: String, icon: String, price: String, pre
 	b.accessibility_name = "%s, %s, %s" % [text, line, price]
 	b.custom_minimum_size.y = UI.px(64)
 	var v := b.get_child(0) as Control
+	# Its words in the room left of the price, from its left edge.
+	v.offset_left = 0
 	v.offset_right = -UI.px(96)
+	v.set_meta("kit_right", v.offset_right)
 	(v.get_child(0) as Label).uppercase = true
 	(v.get_child(0) as Label).add_theme_font_size_override("font_size", UI.text_px(20))
 	(v.get_child(0) as Label).add_theme_font_override("font", Tokens.font("display"))
 	var cost := PanelContainer.new()
+	cost.name = "Price"
 	cost.add_theme_stylebox_override("panel", UI.clear_box(8, 3))
 	UI.dress(cost, "price_chip")
 	cost.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -345,4 +414,52 @@ static func upgrade(text: String, line: String, icon: String, price: String, pre
 	cost.grow_vertical = Control.GROW_DIRECTION_BOTH
 	cost.offset_right = -UI.px(10)
 	b.add_child(cost)
+	# At large text the title breaks between words and the button grows to
+	# it; the room left of the price widens with a wider price (S3-R3). A
+	# screen that sets the words' room itself keeps it.
+	_wraps(v.get_child(0) as Label)
+	var room := func() -> void:
+		if not is_instance_valid(v) or cost.get_parent() != b:
+			return
+		if absf(v.offset_right - float(v.get_meta("kit_right"))) > 0.5:
+			return
+		var right := -maxf(UI.px(96), cost.get_combined_minimum_size().x + UI.px(20))
+		if absf(v.offset_right - right) > 0.5:
+			v.offset_right = right
+			v.set_meta("kit_right", right)
+			# The box's own minimum is unchanged, so the button is grown here.
+			(b.get_meta("kit_grow") as Callable).call()
+	cost.minimum_size_changed.connect(room)
+	cost.tree_entered.connect(room)
 	return b
+
+
+## A slider (K06; §20.8's separate volumes): the slider skin's track, fill
+## and knob while it is on, `RbTheme`'s code-drawn ones while it is off,
+## 48 points tall (§21.1). A screen reader hears `spoken` as its name and
+## its value in words: `said` turns the value into them, else the share of
+## the way from `low` to `high` as a percentage. `changed` is called with
+## each new value.
+static func slider(spoken: String, value: float, changed: Callable, low := 0.0, high := 100.0, step := 1.0,
+		said := Callable()) -> HSlider:
+	var s := HSlider.new()
+	s.name = "Slider"
+	s.min_value = low
+	s.max_value = high
+	s.step = step
+	s.value = value
+	s.custom_minimum_size = Vector2(UI.px(150), UI.px(UI.CONTROL_POINTS))
+	s.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	s.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	s.accessibility_name = spoken
+	var say := func(v: float) -> void:
+		if said.is_valid():
+			s.accessibility_description = str(said.call(v))
+		else:
+			s.accessibility_description = "%d%%" % roundi(100.0 * (v - low) / maxf(high - low, 0.0001))
+	say.call(s.value)
+	s.value_changed.connect(func(v: float) -> void:
+		say.call(v)
+		if changed.is_valid():
+			changed.call(v))
+	return s

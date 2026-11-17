@@ -44,8 +44,12 @@ static func back(pressed: Callable) -> Button:
 ## The hub's segmented control (the designs' sub-tab strip): a dark track
 ## with a brown-gold edge, the chosen segment a gold tab inside it; an
 ## option is its words, or [words, icon] for an icon over them. `picked` is
-## called with the chosen index.
-static func segmented(options: Array, chosen: int, picked: Callable, light := false) -> PanelContainer:
+## called with the chosen index. With `forms`, [words, icon] options take key
+## frame 04's two forms (S3-R9): at body size each icon beside its words, one
+## line tall; at large text every option on one line, the chosen one in its
+## words and the others as their icons, each named for a screen reader.
+static func segmented(options: Array, chosen: int, picked: Callable, light := false,
+		forms := false) -> PanelContainer:
 	var p := PanelContainer.new()
 	p.name = "Segments"
 	p.add_theme_stylebox_override("panel", UI.clear_box(4, 4))
@@ -56,11 +60,13 @@ static func segmented(options: Array, chosen: int, picked: Callable, light := fa
 	# At large text more than two segments go two to a line, so each word
 	# stays whole ("Wellbeing", not "Wellb") rather than cut.
 	var large := Settings.text_scale > KitLayout.SIDE_BY_SIDE_UP_TO and options.size() > 2
+	# Key frame 04's large form: the options as icons, all on one line.
+	var icons := forms and Settings.text_scale > KitLayout.SIDE_BY_SIDE_UP_TO
 	var row: Container = HBoxContainer.new()
 	row.add_theme_constant_override("separation", UI.px(2))
 	if large:
 		var grid := GridContainer.new()
-		grid.columns = 2
+		grid.columns = options.size() if icons else 2
 		grid.add_theme_constant_override("h_separation", UI.px(2))
 		grid.add_theme_constant_override("v_separation", UI.px(2))
 		row = grid
@@ -87,7 +93,10 @@ static func segmented(options: Array, chosen: int, picked: Callable, light := fa
 		var whole := longest + UI.px(22) <= share
 		b.autowrap_mode = TextServer.AUTOWRAP_WORD if whole else TextServer.AUTOWRAP_WORD_SMART
 		b.custom_minimum_size.x = maxf(UI.px(UI.CONTROL_POINTS), minf(longest + UI.px(22), share))
-		if option is Array:
+		b.set_meta("wide", b.custom_minimum_size.x)
+		if option is Array and forms:
+			_forms(b, words, str(option[1]), icons)
+		elif option is Array:
 			# The icon over a line of words at any text size.
 			b.custom_minimum_size.y = maxf(UI.px(56), UI.px(34) + UI.text_px(13) * 1.4)
 			var v := VBoxContainer.new()
@@ -115,12 +124,50 @@ static func segmented(options: Array, chosen: int, picked: Callable, light := fa
 			buttons[j].set_meta("chosen", j == n)
 			for l: Node in buttons[j].find_children("*", "Label", true, false):
 				(l as Label).add_theme_color_override("font_color", RbBox.of(buttons[j]).spec["text"])
+			if icons and buttons[j].has_meta("forms"):
+				_icon_form(buttons[j], j == n)
 	for i: int in buttons.size():
 		buttons[i].pressed.connect(func() -> void:
 			choose.call(i)
 			picked.call(i))
 	choose.call(chosen)
 	return p
+
+
+## `b`'s icon and `words` in key frame 04's forms (S3-R9): at body size the
+## icon before its words on one line; at large text (`icons`) the words
+## shown only while the segment is chosen (`_icon_form`).
+static func _forms(b: Button, words: String, icon: String, icons: bool) -> void:
+	var h := HBoxContainer.new()
+	h.name = "Form"
+	h.set_anchors_preset(Control.PRESET_FULL_RECT)
+	h.alignment = BoxContainer.ALIGNMENT_CENTER
+	h.add_theme_constant_override("separation", UI.px(5))
+	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var picture := Icons.view(icon, 32 if icons else 24)
+	picture.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	h.add_child(picture)
+	# 13 points, the floor (§21.8), whole: never trimmed to an ellipsis.
+	var l := UI.label(words, 13)
+	l.theme_type_variation = "Tab"
+	l.set_meta("bold", true)
+	l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	h.add_child(l)
+	b.add_child(h)
+	b.set_meta("forms", true)
+	var line := l.get_theme_font("font").get_height(l.get_theme_font_size("font_size"))
+	b.custom_minimum_size.y = maxf(UI.px(48.0 if icons else UI.CONTROL_POINTS), line + UI.px(16))
+
+
+## At large text a segment in key frame 04's forms shows its words while it
+## is `chosen` and its icon, 32 points on a segment 48 wide, while it is not;
+## its spoken name is its words either way.
+static func _icon_form(b: Button, chosen: bool) -> void:
+	var h := b.get_node("Form") as HBoxContainer
+	h.get_child(0).visible = not chosen
+	h.get_child(1).visible = chosen
+	b.custom_minimum_size.x = float(b.get_meta("wide")) if chosen else float(UI.px(UI.CONTROL_POINTS))
 
 
 ## The designs' sub-screen header: a round back button, the title in
@@ -187,12 +234,30 @@ static func hero(kicker: String, title: String, line := "", pill := "") -> VBoxC
 	return v
 
 
-## The backdrop of a screen made by UI.frame turned to a celebration: the
-## night with a still sunburst behind the title (results, a level-up).
-static func celebrate(screen: Control) -> void:
+## K40, the reward sequence, the one entry point a screen calls: the
+## backdrop of `screen` (made by UI.frame) turned to the night with a still
+## sunburst, then, given a `prize` and a `counter` in the tree, the sequence
+## on the motion sprites (Motion.reward: anticipation, burst, reveal, coin
+## flight, counter roll from `from_value` to `to_value`, `show` writing each
+## value). Under reduced motion the prize fades in, one coin lands and the
+## counter shows `to_value` at once; under high contrast the sky is left as
+## it is. Returns the sequence's tween, or null when there is no prize to
+## play it on.
+static func reward(screen: Control, prize: Control = null, counter: Control = null, from_value := 0,
+		to_value := 0, tier := "common", show := Callable()) -> Tween:
+	# Under high contrast the sky stays plain: no rays behind the words
+	# (S1-R32; §20.8).
 	var sky := screen.get_node_or_null("Sky") as Control
-	if sky != null:
+	if sky != null and not (Settings.high_contrast or Tokens.high_contrast):
 		RbBox.dress(sky, "night_rays", 0)
+	if prize == null or counter == null or not prize.is_inside_tree():
+		return null
+	return Motion.reward(prize, counter, from_value, to_value, tier, show)
+
+
+## The backdrop alone (results, a level-up): kept as an alias of `reward`.
+static func celebrate(screen: Control) -> void:
+	reward(screen)
 
 
 ## The game's name as the designs set it on first launch (20-first-launch

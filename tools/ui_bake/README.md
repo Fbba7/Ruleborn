@@ -11,6 +11,7 @@ node --test tools/ui_bake/test/bake.test.js # the bake's tests, on a fixture fam
 python3 tools/ui_bake/check_screens.py      # screens add no chrome of their own, in a second
 bash tools/ui_bake/guard.sh                 # the UI guards before a merge, about 12 minutes
 bash tools/ui_bake/guard.sh --self-test     # they refuse a planted extra draw call
+bash tools/ui_bake/guard.sh --prereqs       # only what the guards need, in a second or two
 bash tools/ui_bake/catalogue.sh             # the catalogue sheet, eight variants (or: en n 100)
 ```
 
@@ -72,6 +73,13 @@ margin or advance that is not whole pixels; margins wider than the piece; a
 name that is not lower-case words; two sources making one piece; and pieces
 that do not fit a 2048 × 2048 atlas.
 
+A family's entry in `families.json` may name a `curves` file in its source
+folder (the motion family: `"curves": "curves.json"`, `art/ui/motion/curves.json`,
+report.md step 8). The bake copies that file's JSON into the manifest's
+top-level `curves`, so `client/ui/motion.gd` reads the timings beside the
+sprites, and `--check` fails when the manifest's curves are not the file as it
+stands. After an edit to `curves.json`, run `node tools/ui_bake/bake.js motion`.
+
 The fixture in `test/fixture/` shows each form: a button with two states and
 twin groups, a tinted disc with a class twin, and a numeral.
 
@@ -92,7 +100,21 @@ reported but not limited. The counts recorded on 31 October 2026, at main's
 calls of data drawing. (Section 7's 383 counts the whole client, `client/ui/`
 included; the kit's own drawing is not limited here.)
 
-`guard.sh` runs, in order: the full rebake byte for byte (each family with a
+`guard.sh` checks its prerequisites first, in every mode (lessons M19 and
+M32: a fresh worktree without them stalled a candidate's guard for 30
+minutes). It looks for the native library `client/bin/libruleborn_godot.so`
+and the Godot binary pinned in `client/build.sh` (`$RULEBORN_GODOT`, else
+`~/.cache/ruleborn/`), both made by `bash client/build.sh`; three.js in
+`tools/ui_research/node_modules` (`(cd tools/ui_research && npm ci)`, or in a
+worktree a link to the main checkout's); Node with the Playwright module and
+its Chromium; Python 3 with Pillow and WebP; and `xvfb-run`, `timeout` and
+`cmp`. For each one missing it prints a `missing:` line and an `install:`
+line with the command that installs it, and exits 1 within a second or two,
+before any guard runs. `--prereqs` runs this check alone; `--self-test` shows
+it passes a scratch worktree with the library and `node_modules` linked in
+and refuses one without each.
+
+Then `guard.sh` runs, in order: the full rebake byte for byte (each family with a
 manifest in `client/ui/art/` is baked into a scratch folder and compared file
 by file; with none baked yet, the fixture is baked twice and compared);
 `bake.js --check`; `check_screens.py`; and `budget_shots.py`, the five key
@@ -122,7 +144,7 @@ The run takes about 12 minutes and writes its logs and stills to
 `$UI_GUARD_LOGS`. `budget_shots.py --only home/100,heist/hc` runs some shots;
 `--record` lowers the recorded figures (it writes them only when none is
 recorded yet). A recorded figure rises only by request to K1 with the lead's
-approval, logged in `budgets.json`'s `raises`. `guard.sh --self-test` plants
+approval, logged in `budgets.json`'s `raises`. `guard.sh --self-test` also plants
 a `draw_rect` in a copy of a screen's source, an extra draw call (a square
 with a material of its own) on the result screen's shot, and grey words on a
 grey square there, and passes only if each is refused for that reason.

@@ -17,13 +17,21 @@ existed, and added planted fails to it. P0-AD-golden-2 adds part 2.
 **Version 1.** The items as they stand and the labels O3 gave them are golden
 set version 1, the one calibrated against rubric version 1
 ([../calibration.md](../calibration.md)). Adding, dropping or relabelling an
-item makes version 2 and re-runs the held-out third.
+item makes a new version and re-runs the held-out third.
+
+**Version 2** (17 November 2026, P3-AD-audit-1b) adds the 19 items and 43
+labels of blind audit 1 (see "Version 2" below) and drops nothing. The
+labels of version 1 did not change. `items.json`'s `version` is 2, and each
+new item carries `golden_version` 2. The held-out re-run that version 2
+calls for is due with the next prompt revision (02, 08 and 09), and is run
+once on that revision.
 
 ## The set at a glance
 
-There are 60 items: 32 screens, 17 kit art and 11 icons. Of these, 32 are
-expected to fail and 18 are borderline; 47 are natural and 13 planted. Part 1
-had 45 items; part 2 added 19 and dropped 4 to stay within 60 (see "Part 2").
+There are 79 items: 51 screens, 17 kit art and 11 icons. Of these, 41 are
+expected to fail and 25 are borderline; 66 are natural and 13 planted. Part 1
+had 45 items; part 2 added 19 and dropped 4 to stay within 60 (see "Part 2"),
+which made version 1; version 2 added the audit's 19.
 
 ## Part 1
 
@@ -84,16 +92,44 @@ are the borderline plants: they are only half broken.
   normal plates; `ai-renown` and `today-icon-renown`, which repeated their
   rows' other icons. That kept the set at 60.
 
+## Version 2: blind audit 1
+
+- **The items** (`audit1-<screen>[-hc|-text200]-<commit>`): the 19 screens
+  of blind audit 1 ([../audit/audit-1.md](../audit/audit-1.md)), drawn from
+  the gate's verdicts on the pilot heist and the phase 2 screens. Each
+  `source` is AD's audit still of the item at its commit, in
+  `../audit/audit-1/renders/`, at 540 x 1170 (heist, result and character
+  were shot at 1080 x 2340 and halved). Each item's `shot` gives the commit,
+  the shot script and the environment it was rendered with.
+- **Qualities and labels:** only the qualities the audit labelled, with
+  AD's audit labels and critiques. An item is expected to fail when any
+  label fails, and is borderline when the audit marked a row borderline.
+  Nine of the 19 fail, and seven are borderline. Most rows are on Hierarchy
+  (17) and Display type (10), which adds the passing screens the held-out
+  run lacked.
+- **Two states.** The result items use the offline still, which AD
+  labelled (one Loot card, no crew); the gate shot the server state
+  (`SERVER=1`). The heist at 200% uses the default three crew; the gate
+  shot the named five (`MANIFEST=1`). The labels hold for the stills here.
+  [../audit/audit-1-misses.md](../audit/audit-1-misses.md) has the
+  misses re-rendered on main and what the judge and AD each saw.
+- **Not held out.** The new items are in thirds 1 and 2 only. The held-out
+  third keeps its 20 version 1 items and `labels-blind.md` is unchanged,
+  so the held-out re-run on the next prompt revision compares with
+  `held-opus`.
+
 ## The thirds
 
 `golden.py split` deals the items into three thirds, stratified by class,
 expected label, borderline flag and origin, and writes `third` into each item.
 Third 3 is held out: at O3 a second labeller labels it blind in
 `labels-blind.md`. `golden.py check` makes sure the held-out third has about a
-third of the items and holds a fail, a borderline item and a plant. Today it
-holds 20 items: 11 expected fails, 6 borderline and 4 plants. Rerunning
-`split` after adding items reshuffles the thirds, so do it only before the
-forms are filled in.
+third of the version 1 items, holds a fail, a borderline item and a plant,
+and holds no item a later version added. Today it holds 20 items: 11
+expected fails, 6 borderline and 4 plants. Thirds 1 and 2 hold 30 and 29.
+`split` deals version 1 items into all three thirds and later items into
+thirds 1 and 2 only. Rerunning it still reshuffles the thirds, so do it
+only before the forms are filled in.
 
 ## Rebuilding and checking
 

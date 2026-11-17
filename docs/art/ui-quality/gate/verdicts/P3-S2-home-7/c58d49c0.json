@@ -1,0 +1,70 @@
+[
+  {
+    "task_id": "P3-S2-home-7",
+    "sha": "c58d49c0a07af5ebc5e2cc1c848ee1de626efce8",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-17T18:20:00Z",
+    "item": "home at 100% text",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Unanimous: the gold 'Collect 3.4k' button is the largest and lightest block and leads in grayscale. The experience panel is dark and holds no action, so it does not compete."
+  },
+  {
+    "task_id": "P3-S2-home-7",
+    "sha": "c58d49c0a07af5ebc5e2cc1c848ee1de626efce8",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-17T18:20:00Z",
+    "item": "home at 100% text",
+    "quality": "Display type",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Unanimous: 'Keeper 24', the only header straight over art, has a dark outline all round, and the headline counts (1,460 gems, 142.0k, 31.4k and 61.0k, and 82%) share one heavy cream-to-gold treatment with outline and drop, at least the pass anchor's bar. Everything else sits on plates, cards or the nav bar. Nothing is clipped. The judges read the gradient from the 960 px sheet, not a crop. AD-R45 (a) reads as fixed at c58d49c0."
+  },
+  {
+    "task_id": "P3-S2-home-7",
+    "sha": "c58d49c0a07af5ebc5e2cc1c848ee1de626efce8",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-17T18:20:00Z",
+    "item": "home at 200% text, pt_BR",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Unanimous: the full-width 'Coletar 3,4 mil' bar leads and nothing else reaches its weight at 200%."
+  },
+  {
+    "task_id": "P3-S2-home-7",
+    "sha": "c58d49c0a07af5ebc5e2cc1c848ee1de626efce8",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-17T18:20:00Z",
+    "item": "home in high contrast",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Unanimous: Collect is the largest light block in high contrast and leads in grayscale."
+  }
+]

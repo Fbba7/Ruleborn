@@ -1,0 +1,28 @@
+{
+ "controls": [
+  {
+   "name": "back 1: Plantel",
+   "rect": [
+    28.17,
+    668.42,
+    60.67,
+    60.67
+   ]
+  },
+  {
+   "name": "up 2: Skyskipper: Subir ao nível 4, 200 de Essência",
+   "rect": [
+    97.5,
+    630.5,
+    264.33,
+    136.5
+   ]
+  }
+ ],
+ "frame_pt": [
+  390.0,
+  845.0
+ ],
+ "image": "character-200-pt_BR-scrolled.png",
+ "text_scale": 2.0
+}

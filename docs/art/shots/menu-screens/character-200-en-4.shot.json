@@ -1,0 +1,66 @@
+{
+ "controls": [
+  {
+   "name": "arrow 1: Previous character, Featherkin 2",
+   "rect": [
+    21.67,
+    110.86,
+    52.0,
+    52.0
+   ]
+  },
+  {
+   "name": "arrow 2: Next character, Skyskipper",
+   "rect": [
+    313.44,
+    110.86,
+    52.0,
+    52.0
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "words 3: Mossbear",
+   "rect": [
+    119.89,
+    154.92,
+    146.97,
+    47.67
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "words 4: Mossbear · Warden",
+   "rect": [
+    37.19,
+    294.31,
+    312.72,
+    47.67
+   ]
+  },
+  {
+   "name": "row 5: Heist Stats Compare",
+   "rect": [
+    17.33,
+    479.92,
+    352.44,
+    64.64
+   ]
+  },
+  {
+   "name": "back 6: Roster",
+   "rect": [
+    28.17,
+    689.72,
+    60.67,
+    60.67
+   ]
+  }
+ ],
+ "frame_pt": [
+  390.0,
+  845.0
+ ],
+ "image": "character-200-en-4.png",
+ "text_scale": 2.0
+}

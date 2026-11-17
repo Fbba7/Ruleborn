@@ -1,0 +1,36 @@
+[
+  {
+    "task_id": "P2-S2-home-3",
+    "sha": "14fdcdfe20e797d94669f8657ea3c4d78f9781ba",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-13T12:53:00Z",
+    "item": "home at 100% text",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes. The full-width gold 'Collect 3.4k' button above the experience bar is the largest and lightest control in grayscale and catches the eye first; the island name pills, the currency strip and the Islands/Heist tabs are smaller or darker and fall in behind it."
+  },
+  {
+    "task_id": "P2-S2-home-3",
+    "sha": "14fdcdfe20e797d94669f8657ea3c4d78f9781ba",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-13T12:53:00Z",
+    "item": "home at 100% text",
+    "quality": "Character presence",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes. The keeper portrait in the gold ring beside 'Keeper 24' is larger than the pass anchor's crew portraits, with a readable face, a dark outline and a wand, in soft stepped toon fills with no photographic grain or sheen, and it reads in grayscale. Judged from the 960 px still; no crop was supplied. The island figures were left out as world."
+  }
+]

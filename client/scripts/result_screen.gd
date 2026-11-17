@@ -4,22 +4,59 @@ extends Control
 ## read from the check the server would make, never from what the device
 ## claims: the grade is the re-simulation's (§24.12). A cleared rehearsal
 ## offers to publish the island (§18.6); a Workshop play, to rate it.
+##
+## Built from the kit alone (key frame 03-result.png): the night with its
+## sunburst behind the outcome, the hero title, the moment's card, the reward
+## tiles, the study card, the crew home with their faces, and the bar of
+## actions. Nothing here draws or styles a box of its own.
+
+## The reward sequence has ended, or there was none (`start_reward`).
+signal rewarded
 
 ## §12.9's outcomes: each one's condition and what it multiplies (the haul
 ## and Renown), as the document's table gives them.
 const OUTCOME := {"Clean": ["RESULT_CONDITION_CLEAN", "1.0", "1.0"], "Loud": ["RESULT_CONDITION_LOUD", "0.7", "0.8"],
 	"Partial": ["RESULT_CONDITION_PARTIAL", "0.4", "0.5"], "Foiled": ["RESULT_CONDITION_FOILED", "0", "0"]}
 
-## How long the coins fly home, in seconds, before the page rests.
-const FLIGHT_SECONDS := 2.2
-## The design's reward tiles, in its order, each rimmed in its colour.
-const REWARDS := [["starlight", "#F2B43C"], ["essence", "#3FBF7F"], ["renown", "#E06AC4"]]
+## Each reward's tile: all three on the kit's parchment, as the design's
+## still 07 has them, so the three totals, one rank, show the one gold finish
+## with its ink outline and hard drop on a like ground (gate, Display type at
+## 200% text). The kit's `reward_gold` and `reward_green` are its gold and
+## green button faces, which would rival Raid again, so the plain parchment
+## stands for the edged tiles. Starlight's tile stays the wider one.
+const REWARDS := [["starlight", "parchment"], ["essence", "parchment"], ["renown", "parchment"]]
+## How many of the crew's faces the rest card shows, apart and larger than
+## key frame 03's stack (gate, Character presence), and how large, in points.
+const FACES := 3
+const FACE_POINTS := 52.0
+## The crew member on the Starlight tile's corner at normal text: the reward
+## framed with character art (report.md's Character presence).
+const CARRIER_POINTS := 34.0
+## The outcome's medal beside its title, in points.
+const MEDAL_POINTS := 34.0
+const TITLE_POINTS := 40.0
+## With large text, the condition's prose and the alarm line under the
+## totals in points and weight (gate, Hierarchy at pt_BR 200%), and
+## Starlight's total LEAD times the others' (key frame 03-result_text200's
+## "1.288"): by size, as the kit has no darker parchment (kit-spec section 1)
+## and on its glass the gold totals sank (Display type, `24cc4d7c`).
+const PROSE_POINTS := 14.0
+const ALARM_POINTS := 13.0
+const PROSE_WEIGHT := 500
+const LEAD := 1.5
+## The reward's tier (the kit Motion's) for each outcome that pays.
+const TIERS := {"Clean": "epic", "Loud": "rare", "Partial": "common"}
+## The pause before the reward begins, in seconds.
+const REWARD_WAIT := 0.6
 
 var kicker_label: Label
 var grade_label: Label
-## §12.9's condition under the outcome, and its multipliers on a chip.
+## The outcome's medal beside the title, hidden for a refusal.
+var grade_icon: Control
+## §12.9's condition under the outcome, and its multipliers on a pill.
 var condition_label: Label
 var chip_label: Label
+var chip: PanelContainer
 ## The heist's length and the alarm's true peak (§12.9).
 var subline_label: Label
 ## §12.13's moment: when, and what happened.
@@ -31,7 +68,9 @@ var moment_card: PanelContainer
 var reward_row: BoxContainer
 var reward_labels := {}
 var fee_label: Label
-## §11.6: the crew home and how long it rests, as the server set it.
+## §11.6: the crew home and how long it rests, as the server set it, beside
+## the faces of the crew that ran the heist.
+var rest_card: PanelContainer
 var rest_label: Label
 ## §7.6's study card: one law the crew crossed, studied once for the pages
 ## the server gives.
@@ -43,11 +82,16 @@ var detail_label: Label
 var check_label: Label
 ## A Workshop play's Again, which waits for the island's answer.
 var again_button: Button
-## The island after the heist, and the coins flying home over it.
+## The island after the heist, a quiet picture under the sunburst.
 var world_view: WorldView
-var flight: FxDraw
-## The haul's number on the card, where the coins land.
+## Where the reward lands: the haul's tile, or the row of the split.
 var counter: Control
+## Set before `_ready`, the screen waits for `start_reward` (a shot steps it).
+var hold_reward := false
+## The reward sequence while it plays.
+var reward_tween: Tween
+## The reward has ended, or there was none to play.
+var reward_done := false
 ## The laws the crew crossed, from the replay's pylons, for the study card.
 var _crossed: Array[String] = []
 var _haul := 0
@@ -58,195 +102,111 @@ var _ticks := 0
 var _peak := 0
 var _crew_end: Array = []
 var _clock := 0.0
+## The totals drawn in the kit's baked numerals, each with its finish
+## (`ResultFit.bake_totals`).
+var _totals: Dictionary = {}
 var _verdict := {}
+## F6: the page that scrolls, and the actions with the corner's clearance
+## that end it, or the bar at the phone's foot they move to (_fit_actions).
+var _scroll: ScrollContainer
+var _foot: VBoxContainer
+var _ending: Array[Control] = []
 
 
 func _ready() -> void:
 	App.ready(self)
 	var heist: Dictionary = App.services.store.get_slice(AppState.HEIST)
+	var v0: Dictionary = heist["verdict"]
+	# The kit's frame: the night, and the column inside the safe areas; the
+	# sunburst behind the title where the outcome celebrates (`_celebrates`).
+	var column := UI.frame(self)
+	if _celebrates(v0):
+		KitNav.celebrate(self)
 	_build_world(heist)
-	# The designs' result: the outcome over gold rays (a red dusk when
-	# foiled) on the night under the island, the haul on a parchment tile.
-	# The page is the night's: its words take the dark family's shades, and
-	# the contrast checks read them against the night they stand on.
-	theme = RbTheme.of("dark")
-	set_meta("text_bg", Tokens.material("night")["text_bg"])
-	set_meta("rb_family", "dark")
-	var backdrop := FxDraw.new(_draw_rays)
-	backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	add_child(backdrop)
-	var columns := FxSkin.frame(self)
-	var column := columns[1]
-	# The page hangs from the top, as the design's, over the bottom bar.
-	# With large text the page is taller than the phone: it scrolls under the
-	# safe top, over the bottom bar that stays where the thumb is.
-	var page: VBoxContainer = columns[0]
-	if Settings.text_scale > 100:
-		var safe := column.get_parent() as MarginContainer
-		safe.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		safe.add_theme_constant_override("margin_top", UI.px(Tokens.number("size", "safe_top_points")))
-		var scroll := ScrollContainer.new()
-		scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-		scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-		page = VBoxContainer.new()
-		page.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		page.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		page.add_theme_constant_override("separation", column.get_theme_constant("separation"))
-		scroll.add_child(page)
-		column.add_child(scroll)
-	var card := VBoxContainer.new()
-	card.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var box := VBoxContainer.new()
-	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	box.add_theme_constant_override("separation", UI.px(4))
-	card.add_child(box)
-	kicker_label = FxSkin.label("", 14.0)
-	kicker_label.add_theme_color_override("font_color", FxSkin.GOLD)
-	kicker_label.add_theme_constant_override("outline_size", UI.px(3))
-	grade_label = FxSkin.label("", UI.TITLE_POINTS + 26.0)
-	grade_label.add_theme_font_override("font", Tokens.font("title"))
-	# Warm cream, as the designs' title over its rays.
-	grade_label.add_theme_color_override("font_color", Color("#FFF1CF"))
-	grade_label.add_theme_constant_override("outline_size", UI.px(5))
-	grade_label.add_theme_color_override("font_shadow_color", Color(FxSkin.INK_LINE, 0.9))
-	grade_label.add_theme_constant_override("shadow_offset_y", UI.px(3))
-	grade_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	condition_label = FxSkin.label("", UI.TEXT_POINTS)
-	condition_label.add_theme_color_override("font_color", FxSkin.ON_DARK_SOFT)
-	condition_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	var chip := PanelContainer.new()
-	chip.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	chip.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	chip_label = FxSkin.label("", 15.0)
-	# A pill as wide as its words; with large text it spans the page and its
-	# words wrap there (a wrapping label in a shrunk pill has no width at all).
-	if Settings.text_scale > 100:
-		chip.size_flags_horizontal = Control.SIZE_FILL
-		chip_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	chip.add_child(chip_label)
-	subline_label = FxSkin.label("", 14.0)
-	subline_label.add_theme_font_override("font", FxSkin.figures())
-	subline_label.add_theme_color_override("font_color", FxSkin.ON_DARK_SOFT)
-	detail_label = FxSkin.label("", UI.TEXT_POINTS)
-	detail_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	check_label = FxSkin.label("", 13.0)
-	check_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	box.add_child(kicker_label)
-	box.add_child(grade_label)
-	box.add_child(condition_label)
-	box.add_child(chip)
-	box.add_child(subline_label)
-	# The haul on a parchment tile, counting up beside the loot's icon.
-	haul_tile = UI.panel("parchment")
-	haul_tile.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	haul_tile.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	# As the designs' reward tiles: the icon over the number over its name,
-	# on cream rimmed in gold.
-	haul_tile.custom_minimum_size.x = UI.px(118)
-	HeistHud._gold_rim(haul_tile)
-	var tile := VBoxContainer.new()
-	tile.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	tile.add_theme_constant_override("separation", 0)
-	tile.alignment = BoxContainer.ALIGNMENT_CENTER
-	var icon := Icons.view("resources/starlight", 30.0)
-	icon.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	tile.add_child(icon)
-	haul_label = FxSkin.label("", 24.0, "parchment")
-	haul_label.add_theme_font_override("font", FxSkin.figures())
-	tile.add_child(haul_label)
-	var loot_word := FxSkin.label(Strings.t("RESULT_LOOT"), 14.0, "parchment")
-	tile.add_child(loot_word)
-	haul_tile.add_child(tile)
-	box.add_child(haul_tile)
-	counter = haul_tile
-	reward_row = HBoxContainer.new()
-	# With §20.8's large text the tiles stand one above another.
-	if Settings.text_scale > 100:
-		reward_row = VBoxContainer.new()
-	reward_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	reward_row.alignment = BoxContainer.ALIGNMENT_CENTER
-	reward_row.add_theme_constant_override("separation", UI.px(8))
-	for r: Array in REWARDS:
-		reward_row.add_child(_reward_tile(str(r[0]), Color(str(r[1]))))
-	reward_row.visible = false
-	box.add_child(reward_row)
-	fee_label = FxSkin.label("", 14.0)
-	fee_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	fee_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	fee_label.visible = false
-	box.add_child(fee_label)
-	rest_label = FxSkin.label("", 14.0)
-	rest_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	rest_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	rest_label.add_theme_color_override("font_color", FxSkin.ON_DARK_SOFT)
-	rest_label.visible = false
-	box.add_child(rest_label)
-	box.add_child(detail_label)
-	box.add_child(check_label)
-	page.add_child(card)
+	if world_view != null:
+		# The island over the night and under the page.
+		move_child(world_view, get_node("Sky").get_index() + 1)
+	var page := UI.scroll(column)
+	page.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_scroll = page.get_parent() as ScrollContainer
+	page.add_child(_hero())
 	# §12.13: the moment that decided it, with its replay a tap away.
-	moment_card = UI.panel("card")
-	# The play button beside the words; over them with large text, so the
-	# words keep the card's width.
-	var moment: BoxContainer = HBoxContainer.new()
-	if Settings.text_scale > 100:
-		moment = VBoxContainer.new()
-	moment.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	moment.add_theme_constant_override("separation", UI.px(10))
-	var words := VBoxContainer.new()
-	words.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	moment_when = FxSkin.label("", 14.0)
-	moment_when.add_theme_color_override("font_color", FxSkin.GOLD)
-	moment_when.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	moment_when.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	moment_label = FxSkin.label("", UI.TEXT_POINTS)
-	moment_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	moment_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	words.add_child(moment_when)
-	words.add_child(moment_label)
-	# The designs' square play button with the replay's length under it.
-	var watch := UI.action("", _watch_moment, "leather", Strings.t("RESULT_WATCH"))
-	watch.custom_minimum_size = Vector2(UI.px(60), UI.px(60))
-	watch.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	watch.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
-	# Watching the moment is occasional, not one of the hand's frequent
-	# controls §21.1's thumb zone binds; it stays with its words.
-	watch.set_meta("frequent", false)
-	UI.dress(watch, "leather", 14.0)
-	var watch_box := VBoxContainer.new()
-	watch_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	watch_box.alignment = BoxContainer.ALIGNMENT_CENTER
-	watch_box.add_theme_constant_override("separation", 0)
-	watch_box.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	watch_box.add_child(Icons.view("hud/play", 22.0))
-	watch_box.add_child(FxSkin.label(Strings.t("RESULT_THREE_SECONDS"), 14.0))
-	watch.add_child(watch_box)
-	moment.add_child(watch)
-	moment.add_child(words)
-	moment_card.add_child(moment)
-	moment_card.visible = false
-	page.add_child(moment_card)
-	# The designs' order: the outcome, the moment, then what it paid.
+	var moment := _moment_card()
 	var paid := VBoxContainer.new()
 	paid.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	paid.add_theme_constant_override("separation", UI.px(4))
-	for c: Control in [haul_tile, reward_row, fee_label, rest_label, detail_label, check_label]:
-		c.reparent(paid)
-	page.add_child(paid)
-	# The design's order: what it paid, then the law to study.
+	haul_tile = KitCards.reward("resources/starlight", "", Strings.t("RESULT_LOOT"), "gold")
+	UI.dress(haul_tile, "parchment")
+	haul_tile.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	haul_tile.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	haul_tile.custom_minimum_size.x = UI.px(118)
+	haul_label = haul_tile.get_child(0).get_child(1) as Label
+	ResultFit.tile_row(haul_tile)
+	counter = haul_tile
+	paid.add_child(haul_tile)
+	var tiles: Array = []
+	for r: Array in REWARDS:
+		var words := Strings.t("RESULT_" + str(r[0]).to_upper())
+		var t := KitCards.reward("resources/" + str(r[0]), "", words, "gold")
+		UI.dress(t, str(r[1]))
+		t.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		t.size_flags_stretch_ratio = 1.3 if r[0] == "starlight" else 1.0
+		reward_labels[str(r[0])] = t.get_child(0).get_child(1)
+		ResultFit.tile_row(t)
+		if r[0] == "starlight":
+			ResultFit.lead_stack(t)
+			ResultFit.carrier(t, ResultFit.crew_kinds(_crew_end), CARRIER_POINTS)
+		tiles.append(t)
+	# Side by side, as the design's; one above another with large text.
+	reward_row = KitLayout.columns(tiles, 8)
+	if Settings.text_scale > KitLayout.SIDE_BY_SIDE_UP_TO:
+		# Rows one above another sit closer, so the third clears the dock.
+		reward_row.add_theme_constant_override("separation", UI.px(4))
+	reward_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	reward_row.visible = false
+	paid.add_child(reward_row)
+	fee_label = UI.label("", 14, true)
+	fee_label.visible = false
+	paid.add_child(fee_label)
+	detail_label = UI.label("", UI.TEXT_POINTS, true)
+	paid.add_child(detail_label)
+	check_label = UI.label("", 13, true)
+	paid.add_child(check_label)
+	# The lines under the tiles stand on the night with no plate.
+	for l: Label in [fee_label, detail_label, check_label]:
+		ResultFit.ink(l)
+	# With large text Starlight's total leads by size, its icon with it.
+	ResultFit.lead_fit(reward_labels["starlight"], roundi(UI.text_px(24.0) * LEAD), UI.text_px(24.0), INF)
+	# The totals as the home's display figures: the lead deep gold, the
+	# others cream (key frame 03's "1,288", "+46" and "+12").
+	_display(haul_label, "starlight")
+	for k: String in reward_labels:
+		_display(reward_labels[k], "starlight" if k == "starlight" else "cream")
+	# All of them in the kit's baked gold numerals (T3): the totals are one
+	# rank, so they share one treatment (outline, hard drop and gradient).
+	_totals[haul_label] = "num_gold"
+	for k: String in reward_labels:
+		_totals[reward_labels[k]] = "num_gold"
+	# With large text the haul comes first, under the time line, and the
+	# moment after it (key frame 03-result_text200_pt_BR; AD's S1-R24): the
+	# first screen shows what the heist paid.
+	if Settings.text_scale > KitLayout.SIDE_BY_SIDE_UP_TO:
+		page.add_child(paid)
+		page.add_child(moment)
+	else:
+		page.add_child(moment)
+		page.add_child(paid)
+	# The design's order: what it paid, the law to study, the crew home.
 	study_card = _study_card()
 	page.add_child(study_card)
+	rest_card = _rest_card()
+	page.add_child(rest_card)
 	var play: Dictionary = heist["workshop"]
-	var plain: bool = not heist["testing"] and play.is_empty()
-	# The plain result's bottom bar is one row, Home and the wide next raid;
-	# the others wrap their several choices.
+	# The plain result's bottom bar is one row, Home and the wide next raid,
+	# on the kit's bar; the others wrap their several choices.
 	var actions: Container = UI.row()
-	if plain:
-		actions = HBoxContainer.new()
 	actions.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	if plain:
-		actions.add_theme_constant_override("separation", UI.px(8))
+	var ending: Control = UI.narrow(actions)
 	if heist["testing"]:
 		actions.add_child(_button(Strings.t("RESULT_WATCH"), func() -> void: App.services.router.go(&"replay"), "card"))
 		actions.add_child(_button(Strings.t("RESULT_BUILDER"), func() -> void: App.services.router.go(&"builder")))
@@ -264,46 +224,202 @@ func _ready() -> void:
 		again_button = _button(Strings.t("RESULT_AGAIN"), play_again.bind(str(play["id"])), "gold")
 		actions.add_child(again_button)
 	else:
-		# The designs' bottom bar: Home, and the next raid as the main action,
-		# wide, in gold (in red when the heist was foiled).
-		actions.add_child(UI.action(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home"),
-			"leather"))
-		var foiled := str((heist["verdict"] as Dictionary).get("grade", "")) == "Foiled"
-		# The design's "Raid again", with how many of the roster are idle to
-		# go (the roster's states) when it is known.
-		var idle := idle_crew()
-		var again_words := Strings.t("RESULT_RAID_AGAIN").to_upper()
-		if idle >= 0:
-			again_words += "\n" + Strings.t("RESULT_IDLE_CREW", idle)
-		var again := UI.action(again_words, func() -> void:
+		ending = _raid_bar(str(v0.get("grade", "")) == "Foiled")
+	# F6: the actions follow what the heist paid, at the page's end, rather
+	# than a bar at the phone's foot with an empty band above it. With large
+	# text the bar stays at the foot, where the thumb is, under the page.
+	_foot = column
+	var corner := Control.new()
+	corner.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	corner.custom_minimum_size.y = UI.px(Tokens.number("size", "corner_points") + 10.0)
+	_ending = [ending, corner]
+	for c: Control in _ending:
+		(column if Settings.text_scale > 100 else page).add_child(c)
+	show_verdict(heist["verdict"], (heist["replay"] as PackedByteArray).size())
+	_fit_raid()
+	_fit_actions()
+	# The numbers start from nothing when the reward will bring them.
+	if _reward_to() > 0:
+		_write_reward(0, _reward_to())
+	if not hold_reward:
+		create_tween().tween_callback(start_reward).set_delay(0.0 if Settings.reduced_motion else REWARD_WAIT)
+
+
+## The outcome as the kit's hero (key frame 03): the kicker, the medal and
+## the title, the condition, the multipliers on the gold-edged pill, and the
+## heist's length with the alarm's peak.
+func _hero() -> VBoxContainer:
+	var hero := KitNav.hero(" ", " ", " ", " ")
+	hero.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	kicker_label = hero.get_child(0) as Label
+	grade_label = hero.get_child(1) as Label
+	# Key frame 03's outcome is Marcellus at 40 points, under the kit hero's
+	# 52, so the page keeps its crew's card above the fold.
+	grade_label.add_theme_font_size_override("font_size", UI.text_px(TITLE_POINTS))
+	grade_label.set_meta("points", TITLE_POINTS)
+	condition_label = hero.get_child(2) as Label
+	chip = hero.get_child(3) as PanelContainer
+	chip_label = chip.find_child("Words", true, false) as Label
+	# The medal beside the title, as the design's.
+	var title_row := HBoxContainer.new()
+	title_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	title_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	title_row.add_theme_constant_override("separation", UI.px(8))
+	grade_icon = Icons.view("heistoutcomes/clean", MEDAL_POINTS)
+	grade_icon.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	title_row.add_child(grade_icon)
+	hero.remove_child(grade_label)
+	title_row.add_child(grade_label)
+	hero.add_child(title_row)
+	hero.move_child(title_row, 1)
+	subline_label = UI.label("", 14, true)
+	subline_label.theme_type_variation = "Secondary"
+	hero.add_child(subline_label)
+	if Settings.text_scale > KitLayout.SIDE_BY_SIDE_UP_TO:
+		ResultFit.prose(_prose(), PROSE_WEIGHT)
+	# The hero's words stand on the sunburst, unplated: inked by their size.
+	for l: Label in [kicker_label, grade_label, condition_label, subline_label]:
+		ResultFit.ink(l)
+	grade_label.add_theme_color_override("font_shadow_color", Color.TRANSPARENT)  # Outline for drop.
+	return hero
+
+
+## The condition and the time line with their points: the kit hero's at
+## normal text, under the totals' with large text (PROSE_POINTS).
+func _prose() -> Array:
+	if Settings.text_scale > KitLayout.SIDE_BY_SIDE_UP_TO:
+		return [[condition_label, PROSE_POINTS], [subline_label, ALARM_POINTS]]
+	return [[condition_label, 16.0], [subline_label, 14.0]]
+
+
+## A reward's total as the home's figures ("Keeper 24", `Home.home_figure`):
+## the display face, `tone` (a tokens.json colour) filled solid, a heavy ink
+## outline and a hard drop under it, alike on parchment and glass and in
+## high contrast (board 4's objection A).
+static func _display(l: Label, tone: String) -> void:
+	var font_px := float(l.get_theme_font_size("font_size"))
+	var line := maxi(UI.px(2.0), int(round(0.21 * font_px)))
+	l.add_theme_font_override("font", RbTheme.role_font("display"))
+	l.add_theme_color_override("font_color", Tokens.color(tone))
+	l.add_theme_color_override("font_outline_color", Tokens.color("ink_line"))
+	l.add_theme_constant_override("outline_size", line)
+	l.add_theme_color_override("font_shadow_color", Tokens.color("drop"))
+	l.add_theme_constant_override("shadow_offset_x", 0)
+	l.add_theme_constant_override("shadow_offset_y", maxi(UI.px(1.5), int(round(0.08 * font_px))))
+	l.add_theme_constant_override("shadow_outline_size", line)
+
+
+## §12.13's moment on the kit's card: the gold play button with the replay's
+## length on it, beside when and what happened; over them with large text,
+## so the words keep the card's width.
+func _moment_card() -> PanelContainer:
+	moment_card = UI.panel("card")
+	moment_card.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var moment: BoxContainer
+	if Settings.text_scale <= 100:
+		moment = HBoxContainer.new()
+	else:
+		moment = VBoxContainer.new()
+	moment.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	moment.add_theme_constant_override("separation", UI.px(12))
+	var watch := KitControls.big_action("hud/play", Strings.t("RESULT_THREE_SECONDS"), _watch_moment, "gold")
+	watch.accessibility_name = Strings.t("RESULT_WATCH")
+	watch.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	watch.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	# Watching the moment is occasional, not one of the hand's frequent
+	# controls §21.1's thumb zone binds; it stays with its words.
+	watch.set_meta("frequent", false)
+	# The kit grows it to its icon and words, so "3 s" shows at 200% (S1-R23).
+	moment.add_child(watch)
+	var words := VBoxContainer.new()
+	words.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	words.alignment = BoxContainer.ALIGNMENT_CENTER
+	moment_when = UI.label("", 14, true)
+	moment_when.theme_type_variation = "Kicker"
+	moment_when.uppercase = true
+	moment_when.add_theme_color_override("font_color", Tokens.color("gold"))
+	moment_when.set_meta("bold", true)
+	moment_when.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	moment_label = UI.label("", UI.TEXT_POINTS, true)
+	moment_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	words.add_child(moment_when)
+	words.add_child(moment_label)
+	moment.add_child(words)
+	moment_card.add_child(moment)
+	moment_card.visible = false
+	return moment_card
+
+
+## §11.6's crew home on the kit's card (key frame 03): the faces of the crew
+## that ran the heist, each apart in its ring, beside how long it rests.
+func _rest_card() -> PanelContainer:
+	var card := UI.panel("glass")
+	card.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	card.visible = false
+	var row := HBoxContainer.new()
+	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_theme_constant_override("separation", UI.px(6))
+	var faces := HBoxContainer.new()
+	faces.name = "Faces"
+	faces.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	faces.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	# Apart, not overlapping: the key frame's stack read as one small strip.
+	# The rings' own ink edges are the gaps (about 8 px between the gold
+	# bands at 960), so the rest line keeps two lines (AD's S1-R24).
+	faces.add_theme_constant_override("separation", 0)
+	for kind: String in ResultFit.crew_kinds(_crew_end).slice(0, FACES):
+		faces.add_child(ResultFit.face(CreatureBust.of(kind, "", Color(0, 0, 0, 0)), FACE_POINTS))
+	faces.visible = faces.get_child_count() > 0
+	row.add_child(faces)
+	rest_label = UI.label("", 13, true)
+	rest_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	rest_label.add_theme_constant_override("line_spacing", 0)
+	rest_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	rest_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(rest_label)
+	card.add_child(row)
+	return card
+
+
+## The plain result's bar at the phone's foot (key frame 03): Home in the
+## kit's tertiary face (violet, darker than the raid in grayscale: the gate's
+## close point on P2-S1-result-3), and the next raid as the main action, wide,
+## in gold (red when foiled), with how many of the roster are idle to go.
+func _raid_bar(foiled: bool) -> PanelContainer:
+	# On glass, as the design's: the tab bar's skin runs off the screen at its
+	# foot, and here the bar stands in the page.
+	var bar := UI.panel("glass")
+	bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	# A box that can stand upright (`_fit_raid`), side by side at first.
+	var row := BoxContainer.new()
+	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_theme_constant_override("separation", UI.px(8))
+	var home := UI.action(Strings.t("COMMON_HOME"), func() -> void: App.services.router.go(&"home"), "ghost")
+	home.icon = Icons.texture("hud/home")
+	home.expand_icon = false
+	home.add_theme_constant_override("icon_max_width", UI.px(26))
+	UI.fit(home)
+	row.add_child(home)
+	var idle := idle_crew()
+	var again := KitControls.action2(Strings.t("RESULT_RAID_AGAIN"),
+		Strings.t("RESULT_IDLE_CREW", idle) if idle >= 0 else "", func() -> void:
 			App.services.store.dispatch(&"heist_started", {})
 			App.services.router.go(&"heist"), "red" if foiled else "gold")
-		again.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		# Its words wrap rather than outgrow the phone with large text.
-		again.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		again.custom_minimum_size.x = UI.px(UI.CONTROL_POINTS)
-		actions.add_child(again)
-	column.add_child(actions if plain else UI.narrow(actions))
-	column.add_child(FxSkin.corner_clear())
-	show_verdict(heist["verdict"], (heist["replay"] as PackedByteArray).size())
-	# The coins fly over everything, into the card.
-	if flight != null:
-		add_child(flight)
+	again.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(again)
+	bar.add_child(row)
+	return bar
 
 
 ## The island after the heist (§23.2's result: "Celebrate or learn"): the
 ## replay played to its end on the island it was played on, seen whole from
-## the home camera's pitch, turning slowly, with the loot flying home. A
-## replay this phone cannot load leaves the night sky behind the card.
+## the home camera's pitch, turning slowly, quiet under the page. A replay
+## this phone cannot load leaves the night alone.
 func _build_world(heist: Dictionary) -> void:
 	var bytes: PackedByteArray = heist["replay"]
 	var r := RulebornReplay.new()
 	if bytes.is_empty() or not r.load(bytes, heist.get("island", PackedByteArray())):
-		# No island to stand on: the night behind the card.
-		var sky := FxDraw.new(func(ci: Control) -> void:
-			FxPen.rect(ci, Rect2(Vector2.ZERO, ci.size), FxSkin.CARD_BOTTOM))
-		sky.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		add_child(sky)
 		return
 	_moments = ReplayScreen.moments(bytes, heist.get("island", PackedByteArray()))
 	for p: Dictionary in r.pylons():
@@ -313,14 +429,19 @@ func _build_world(heist: Dictionary) -> void:
 		_peak = maxi(_peak, r.alarm())
 	_ticks = r.tick()
 	_crew_end = r.crew()
+	var v: Dictionary = heist["verdict"]
+	_haul = int(v.get("banked", 0)) if v.get("ok", false) else 0
+	# High contrast keeps the night plain: no island, nor its sky's moon and
+	# stars, behind the words (AD's S1-R24).
+	if Settings.high_contrast:
+		return
 	world_view = WorldView.new()
 	world_view.heist = false
 	world_view.pitch = WorldView.HOME_PITCH
 	world_view.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	world_view.anchor_bottom = 0.56
-	# Under the title's rays, as the design's page: the island a quiet
-	# backdrop, so the outcome reads first.
-	world_view.modulate = Color(0.5, 0.45, 0.65)
+	# The island a faint picture through the night, as the design's: the
+	# outcome and the page read first.
+	world_view.modulate = Color(0.55, 0.5, 0.7, 0.3)
 	world_view.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(world_view)
 	world_view.show_replay(r)
@@ -334,8 +455,7 @@ func _build_world(heist: Dictionary) -> void:
 		g.visible = false
 	# A heist that paid: the crew that got away celebrates on the island,
 	# where character models stand in for them.
-	var v0: Dictionary = heist["verdict"]
-	if v0.get("ok", false) and str(v0.get("grade", "")) in ["Clean", "Loud", "Partial"]:
+	if v.get("ok", false) and str(v.get("grade", "")) in ["Clean", "Loud", "Partial"]:
 		var crew := r.crew()
 		world_view._sync_skiff(0.0)
 		var aboard: Array[int] = []
@@ -359,84 +479,101 @@ func _build_world(heist: Dictionary) -> void:
 			world_view.pitch = WorldView.HEIST_PITCH
 			world_view.follow = aboard
 			world_view.set_zoom(1)
-	var v: Dictionary = heist["verdict"]
-	_haul = int(v.get("banked", 0)) if v.get("ok", false) else 0
-	flight = FxDraw.new(_draw_flight)
-	flight.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-
-
-## The page behind the outcome (the designs'): the night rising over the
-## island's foot, and from behind the title a burst of gold rays turning
-## slowly when the heist paid, a red dusk when it was foiled (§23.2's
-## result: "Celebrate or learn").
-func _draw_rays(ci: Control) -> void:
-	var h := ci.size.y
-	var top := h * 0.3
-	var night := FxSkin.CARD_BOTTOM
-	# The fade from the island into the night, in bands.
-	for k in 12:
-		var y := top + (h * 0.22) * k / 12.0
-		FxPen.rect(ci, Rect2(0, y, ci.size.x, h * 0.22 / 12.0 + 1.0), Color(night, (k + 1) / 12.0))
-	FxPen.rect(ci, Rect2(0, top + h * 0.22, ci.size.x, h), night)
-	if grade_label == null or not grade_label.is_visible_in_tree():
-		return
-	var c := grade_label.get_global_rect().get_center() - ci.get_global_rect().position
-	if str(_verdict.get("grade", "")) == "Foiled":
-		for k in 10:
-			FxPen.circle(ci, c, ci.size.x * (0.9 - k * 0.07), Color(FxSkin.ALARM_DEEP, 0.05))
-		return
-	if _haul <= 0:
-		return
-	var turn := 0.0 if Settings.reduced_motion else _clock * 0.05
-	var reach := ci.size.x * 0.9
-	for k in 18:
-		var a := turn + TAU * k / 18.0
-		var w := 0.07
-		var pts := PackedVector2Array([c, c + Vector2(cos(a - w), sin(a - w)) * reach,
-			c + Vector2(cos(a + w), sin(a + w)) * reach])
-		FxPen.polygon(ci, pts, Color(1.0, 0.86, 0.45, 0.1 if k % 2 == 0 else 0.05))
-
-
-## §21.8: "rewards fly into their counter": coins rise from the island and
-## arc into the card, a few at a time, for as long as there is loot to bring
-## home; reduced motion shows them resting in the card instead.
-func _draw_flight(ci: Control) -> void:
-	# The coins fly while the count rises, then rest: the page settles as
-	# the design's does.
-	if _haul <= 0 or counter == null or _clock > FLIGHT_SECONDS:
-		return
-	var to := counter.get_global_rect().get_center() - ci.get_global_rect().position
-	to.x -= UI.px(24)
-	var from := Vector2(ci.size.x * 0.5, ci.size.y * 0.3)
-	var count := clampi(_haul / 40, 4, 14)
-	var r := UI.px(5)
-	if Settings.reduced_motion:
-		for k in 3:
-			FxIcons.coin(ci, to + Vector2((k - 1) * r * 2.4, -r * 2.0), r)
-		return
-	for k in count:
-		var u := fmod(_clock * 0.55 + float(k) / count, 1.0)
-		var side := (float(k % 5) - 2.0) * ci.size.x * 0.06
-		var p := from.lerp(to, u) + Vector2(side * sin(u * PI), -sin(u * PI) * ci.size.y * 0.12)
-		FxIcons.coin(ci, p, r * (0.7 + 0.5 * sin(u * PI)) * (1.0 - 0.4 * u))
 
 
 func _process(delta: float) -> void:
 	_clock += delta
+	ResultFit.bake_totals(_totals)
 	if world_view != null and not Settings.reduced_motion:
 		# A slow sway of the island, the diorama on its stand.
 		world_view.sway(sin(_clock * 0.25) * 0.5)
-	if flight != null:
-		flight.queue_redraw()
-	if haul_label != null:
-		# The haul counting up from nothing in a second (reduced motion: at
-		# once).
-		var shown := _haul if Settings.reduced_motion else int(_haul * clampf((_clock - 0.6) / 1.0, 0.0, 1.0))
-		haul_label.text = "+%d" % shown
-	if reward_row != null and reward_row.visible:
-		_count_rewards(1.0 if Settings.reduced_motion else clampf((_clock - 0.6) / 1.0, 0.0, 1.0))
-	for c in find_children("*", "FxDraw", true, false):
-		(c as FxDraw).queue_redraw()
+
+
+## The reward (report.md step 8) on the kit's one entry point, K40's
+## `KitNav.reward`: the medal bursts and coins fly into the Starlight tile
+## (else the haul's), the other tiles counting with it, in the outcome's tier
+## (TIERS); its reduced form with reduced motion. With nothing to reward it
+## ends at once and returns null; else it returns the sequence's tween.
+func start_reward() -> Tween:
+	var to := _reward_to()
+	if to <= 0 or not grade_icon.visible or not is_inside_tree():
+		_end_reward.call_deferred()
+		return null
+	var tile := _reward_mark()
+	var tier := str(TIERS.get(str(_verdict.get("grade", "")), "common"))
+	_write_reward(0, to)
+	reward_tween = KitNav.reward(self, grade_icon, tile, 0, to, tier, _write_reward.bind(to))
+	if reward_tween == null:
+		_end_reward.call_deferred()
+		return null
+	# KitNav.reward dresses the sunburst too (as `_ready` did), except under
+	# high contrast (S1-R32); where the outcome keeps the plain night, the
+	# night goes back.
+	if not _celebrates(_verdict):
+		RbBox.dress(get_node("Sky") as Control, "night", 0)
+	_lift_reward()
+	reward_tween.finished.connect(_end_reward)
+	return reward_tween
+
+
+## A heist that paid turns the night to the sunburst; a foiled or refused one
+## keeps the plain night (§23.2: "Celebrate or learn"). Under high contrast
+## the kit keeps it plain too, as key frame 03-result_hc: no rays behind the
+## words (AD's S1-R24; the kit's since S1-R32).
+func _celebrates(v: Dictionary) -> bool:
+	return v.get("ok", false) and str(v.get("grade", "")) in ["Clean", "Loud", "Partial"]
+
+
+## Motion's reward layer is `top_level`, so its z of 10 does not add to the
+## page's 32 and it drew under the tiles. Until the kit answers (S1-R21), it
+## takes the medal's whole z plus its own.
+func _lift_reward() -> void:
+	var z := 0
+	var node: Node = grade_icon
+	while node is CanvasItem:
+		z += (node as CanvasItem).z_index
+		if not (node as CanvasItem).z_as_relative:
+			break
+		node = node.get_parent()
+	for layer in grade_icon.get_children(true):
+		if layer is CanvasItem and (layer as CanvasItem).top_level:
+			(layer as CanvasItem).z_index = clampi(z + (layer as CanvasItem).z_index, RenderingServer.CANVAS_ITEM_Z_MIN,
+				RenderingServer.CANVAS_ITEM_Z_MAX)
+
+
+## Where the coins land and what pulses: the icon (its box's first child) by
+## the Starlight number, else the haul's, so no coin hides the roll (AD's D).
+func _reward_mark() -> Control:
+	var number := (reward_labels["starlight"] as Label) if reward_row.visible else haul_label
+	return ResultFit.tile_of(number).get_child(0).get_child(0) as Control
+
+
+## What the coins bring: the split's Starlight, else the haul, else 0.
+func _reward_to() -> int:
+	if reward_row.visible:
+		return int((reward_labels["starlight"] as Label).get_meta("to", 0))
+	return _haul if haul_tile.visible else 0
+
+
+## Starlight (or the haul) at `v` of `to`, the other tiles at that share.
+func _write_reward(v: int, to: int) -> void:
+	if reward_row.visible:
+		_count_rewards(float(v) / float(maxi(to, 1)))
+		(reward_labels["starlight"] as Label).text = "+" + ShopPresenter.grouped(v)
+	else:
+		haul_label.text = "+%d" % v
+
+
+## The reward has ended: every number at its final value.
+func _end_reward() -> void:
+	if reward_done:
+		return
+	reward_done = true
+	reward_tween = null
+	if reward_row.visible:
+		_count_rewards(1.0)
+	haul_label.text = "+%d" % _haul
+	rewarded.emit()
 
 
 ## The replay from three seconds before the moment (§12.13).
@@ -469,32 +606,6 @@ func _moment_words(m: Dictionary) -> String:
 	return Strings.t("RESULT_MOMENT_CLOCK")
 
 
-## One of the design's reward tiles: the resource's icon over its number
-## over its name, on cream rimmed in its colour; its number's label is kept
-## by name.
-func _reward_tile(kind: String, rim: Color) -> PanelContainer:
-	var t := UI.panel("parchment")
-	t.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	t.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var box := RbBox.of(t)
-	if box != null and box.material is ShaderMaterial:
-		(box.material as ShaderMaterial).set_shader_parameter("rim_color", rim)
-		(box.material as ShaderMaterial).set_shader_parameter("rim_w", UI.px(3.5))
-	var v := VBoxContainer.new()
-	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	v.add_theme_constant_override("separation", 0)
-	var icon := Icons.view("resources/" + kind, 30.0)
-	icon.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	v.add_child(icon)
-	var n := FxSkin.label("", 22.0, "parchment")
-	n.add_theme_font_override("font", FxSkin.figures())
-	v.add_child(n)
-	v.add_child(FxSkin.label(Strings.t("RESULT_" + kind.to_upper()), 14.0, "parchment"))
-	t.add_child(v)
-	reward_labels[kind] = n
-	return t
-
-
 ## The server's split on the three tiles and the entry fee's line; the one
 ## haul tile when the answer has none (the phone's own check, a Workshop
 ## play).
@@ -506,22 +617,35 @@ func _show_rewards(v: Dictionary) -> void:
 	reward_row.visible = paid
 	fee_label.visible = split and int(v.get("fee", 0)) > 0
 	if not split:
+		ResultFit.crew_offline(haul_tile, rest_card, rest_label, _crew_end, v.get("ok", false))
 		return
 	haul_tile.visible = false
 	counter = reward_row
 	for kind: String in reward_labels:
 		(reward_labels[kind] as Label).set_meta("to", int(v.get(kind, 0)))
 	_count_rewards(1.0)
+	# The totals baked at their final words first, so the rows are measured
+	# as they are drawn (AD's objection H).
+	ResultFit.lead_fit(reward_labels["starlight"], roundi(UI.text_px(24.0) * LEAD), UI.text_px(24.0),
+		get_viewport_rect().size.x)
+	ResultFit.bake_totals(_totals)
+	ResultFit.reward_rows(reward_row, reward_labels, get_viewport_rect().size.x)
 	var fee := int(v["fee"])
 	var back := int(v.get("fee_returned", 0))
-	fee_label.text = Strings.t("RESULT_FEE_RETURNED", ShopPresenter.grouped(fee)) if back >= fee \
+	var said := Strings.t("RESULT_FEE_RETURNED", ShopPresenter.grouped(fee)) if back >= fee \
 		else (Strings.t("RESULT_FEE_PAID", ShopPresenter.grouped(fee)) if back <= 0
 		else Strings.t("RESULT_FEE_HALF", [ShopPresenter.grouped(fee), ShopPresenter.grouped(back)]))
-	fee_label.add_theme_color_override("font_color", FxSkin.ON_DARK_SOFT if back > 0 else FxSkin.ALARM_ON_DARK)
+	# A fee lost is the kit's alarm line; one returned, a quiet line.
+	if back <= 0:
+		UI.set_status(fee_label, "alarm", said)
+	else:
+		fee_label.theme_type_variation = "Secondary"
+		fee_label.text = said
 	# §11.6: the crew home, resting as long as the server set (the design's
 	# "What you kept").
 	var rest: Variant = v.get("rest")
 	rest_label.visible = rest is Dictionary and int(rest.get("crew", 0)) > 0
+	rest_card.visible = rest_label.visible
 	if rest_label.visible:
 		rest_label.text = Strings.t("RESULT_CREW_RESTING", [int(rest["crew"]), int(rest.get("minutes", 0))])
 
@@ -548,29 +672,53 @@ func _count_rewards(share: float) -> void:
 ## tile a law the crew crossed; a tap studies it, once, and the tile says the
 ## pages the server gave. Shown for a heist the server settled.
 func _study_card() -> PanelContainer:
-	var card := UI.panel("parchment")
+	var card := UI.panel("card")
 	card.visible = false
 	var box := VBoxContainer.new()
-	box.add_theme_constant_override("separation", UI.px(6))
-	var title := FxSkin.label(Strings.t("RESULT_STUDY"), 15.0, "parchment")
+	box.add_theme_constant_override("separation", UI.px(8))
+	# The header as the hero's kicker: small capitals over the laws.
+	var title := UI.label(Strings.t("RESULT_STUDY"), 14, true)
+	title.theme_type_variation = "Kicker"
+	title.uppercase = true
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	title.set_meta("bold", true)
 	box.add_child(title)
-	var row := UI.row(6.0, true)
+	# The laws side by side in the tertiary face as Home, each an equal share,
+	# its icon then its name, which wraps between words; stacked at large
+	# text. More than three go two to a row.
+	var laws: Array[Control] = []
 	for law: String in _crossed:
-		var b := UI.action(Strings.term("LAW", law), func() -> void: _study(law), "parchment", Strings.term("LAW", law))
-		b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		b.custom_minimum_size = Vector2(UI.px(96), UI.px(64))
+		var b := UI.action(Strings.term("LAW", law), func() -> void: _study(law), "ghost", Strings.term("LAW", law))
+		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		# A law's name in the title family, as the key frame's law papers and
+		# the kit's law names (type role "heading"), at body size.
+		b.add_theme_font_override("font", RbTheme.role_font("heading"))
+		b.set_meta("bold", false)
+		# Six points of paper either side of the words, not a pill's nine, so
+		# three laws share a row.
+		for state: String in ["normal", "hover", "pressed", "focus", "disabled"]:
+			b.add_theme_stylebox_override(state, UI.clear_box(6, 4))
+		b.autowrap_mode = TextServer.AUTOWRAP_WORD
+		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		# No width of its own (UI.action fits one to the words), so each law
+		# takes an equal share of the row.
+		b.custom_minimum_size = Vector2(0, UI.px(52))
 		var icon := "laws/" + law.replace("_", "")
 		if Icons.has(icon):
 			b.icon = Icons.texture(icon)
 			b.expand_icon = false
-			b.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
-			b.vertical_icon_alignment = VERTICAL_ALIGNMENT_TOP
-			b.add_theme_constant_override("icon_max_width", UI.px(28))
+			b.icon_alignment = HORIZONTAL_ALIGNMENT_LEFT
+			b.add_theme_constant_override("icon_max_width", UI.px(24))
 		b.set_meta("law", law)
-		row.add_child(b)
-	box.add_child(row)
+		laws.append(b)
+	var grid: Container
+	if laws.size() <= 3:
+		grid = KitLayout.columns(laws, 6.0)
+	else:
+		grid = KitLayout.grid(2)
+		for b: Control in laws:
+			grid.add_child(b)
+	box.add_child(grid)
 	card.add_child(box)
 	return card
 
@@ -605,11 +753,10 @@ static func keeper_name() -> String:
 	return SocialPresenter.word_name(words, int(named["adjective"]), int(named["noun"]))
 
 
-## A result button in the heist's skin.
+## A result button in the kit's material.
 func _button(words: String, call: Callable, kind := "leather") -> Button:
-	var b := UI.button(words, call)
-	FxSkin.style_button(b, kind)
-	UI.fit(b)
+	var b := UI.action(words, call, kind)
+	ResultFit.fit_whole(b)
 	return b
 
 
@@ -630,6 +777,8 @@ func play_again(id: String) -> void:
 
 func show_verdict(v: Dictionary, replay_bytes: int) -> void:
 	_verdict = v
+	if is_node_ready():
+		_fit_actions()
 	var by_server: bool = v.get("server", false)
 	_show_outcome(v)
 	_show_rewards(v)
@@ -646,11 +795,11 @@ func show_verdict(v: Dictionary, replay_bytes: int) -> void:
 				else "WORKSHOP_NOT_CLEARED")
 			if by_server and WorkshopController.clears(v):
 				detail_label.text += "\n" + Strings.t("RESULT_COUNTED" if v.get("counted", false) else "RESULT_NOT_COUNTED")
-			check_label.text = Strings.t("RESULT_CONFIRMING" if v.get("confirming", false)
+			check_label.text = _verdict_line("RESULT_CONFIRMING" if v.get("confirming", false)
 				else "RESULT_ACCEPTED_SERVER", replay_bytes)
 		elif v.get("confirming", false):
 			detail_label.text = Strings.t("RESULT_BANKED", int(v["banked"]))
-			check_label.text = Strings.t("RESULT_CONFIRMING", replay_bytes)
+			check_label.text = _verdict_line("RESULT_CONFIRMING", replay_bytes)
 		elif by_server:
 			# The split's tiles say what was minted; without one, the line does.
 			var lines := PackedStringArray()
@@ -662,10 +811,10 @@ func show_verdict(v: Dictionary, replay_bytes: int) -> void:
 			if v.get("gift", false):
 				lines.append(Strings.t("RESULT_INVITE_GIFT"))
 			detail_label.text = "\n".join(lines)
-			check_label.text = Strings.t("RESULT_ACCEPTED_SERVER", replay_bytes)
+			check_label.text = _verdict_line("RESULT_ACCEPTED_SERVER", replay_bytes)
 		else:
 			detail_label.text = Strings.t("RESULT_BANKED", int(v["banked"]))
-			check_label.text = Strings.t("RESULT_ACCEPTED_LOCAL", replay_bytes)
+			check_label.text = _verdict_line("RESULT_ACCEPTED_LOCAL", replay_bytes)
 		# The haul's count on the rule already says what was banked.
 		detail_label.visible = detail_label.text != Strings.t("RESULT_BANKED", int(v["banked"])) \
 			and detail_label.text != ""
@@ -678,37 +827,146 @@ func show_verdict(v: Dictionary, replay_bytes: int) -> void:
 		UI.set_status(check_label, "alarm", Strings.t("RESULT_PLAY_NOT_COUNTED" if v.get("workshop", false) else nothing))
 
 
-## §12.9's outcome in full: the kicker, the condition, what it multiplies,
-## and the heist's length with the alarm's true peak; §12.13's moment under
-## it. A Workshop play and a refusal show only their own lines.
+## F6: the actions end the page while it fits on the phone; a page taller
+## than the phone (a long language over the study card, say) leaves them in
+## the bar at its foot, under the page that scrolls, as large text does. Once
+## moved they stay: the page only grows. Its foot lands on a whole line.
+func _fit_actions() -> void:
+	if _ending.is_empty():
+		return
+	# The wrapped lines' heights are known once the page is laid out.
+	await get_tree().process_frame
+	await get_tree().process_frame
+	if not is_inside_tree():
+		return
+	var laws := _fit_laws()
+	if _fit_raid() or laws:
+		await get_tree().process_frame
+		await get_tree().process_frame
+	var page := _ending[0].get_parent() as Control
+	if Settings.text_scale > 100 and reward_row.visible and page == _foot:
+		ResultFit.hero_shrink([[kicker_label, 14.0], [grade_label, TITLE_POINTS]] + _prose(),
+			reward_labels.values(), _ending[0])
+	if is_inside_tree() and page != _foot and page.get_combined_minimum_size().y > _scroll.size.y:
+		for c: Control in _ending:
+			c.reparent(_foot)
+	ResultFit.fold(_scroll, _ending[0], _ending[1])
+
+
+## The laws to study two to a row, rather than side by side, when a law's
+## longest word is wider than its share of the row (German's and
+## Portuguese's long names). True when they moved.
+func _fit_laws() -> bool:
+	var row := study_card.find_child("Columns", true, false) as HBoxContainer
+	if row == null:
+		return false
+	var fits := true
+	for b: Button in row.get_children():
+		fits = fits and ResultFit.word_fits(b)
+	if fits:
+		return false
+	var grid := KitLayout.grid(2)
+	row.add_sibling(grid)
+	for b: Button in row.get_children():
+		b.reparent(grid, false)
+	row.queue_free()
+	return true
+
+
+## The raid above Home, the bar's width, when one of its words alone is
+## wider than the room Home leaves it (large text, a long language); the
+## kit's action2 wraps its words between words and grows to them (S1-R15).
+## True when the bar changed.
+func _fit_raid() -> bool:
+	var again := _ending[0].find_child("Action", true, false) as Button
+	if again == null or again.has_meta("wrapped"):
+		return false
+	var row := again.get_parent() as BoxContainer
+	if row == null:
+		return false
+	again.set_meta("wrapped", true)
+	# Less a margin of paper either side, so a long word does not meet the
+	# button's edge.
+	var pad := again.get_theme_stylebox("normal").get_minimum_size().x + UI.px(16)
+	# The room as the column will lay it out, the phone's width less its
+	# safe sides, the bar's padding and Home's: measured rather than read
+	# from the layout, so the bar is fitted before its first frame and never
+	# shows unfitted.
+	var wide := get_viewport_rect().size.x - 2.0 * UI.px(Tokens.number("size", "safe_side_points")) \
+		- (row.get_parent() as Control).get_theme_stylebox("panel").get_minimum_size().x
+	var changed := false
+	for c: Control in row.get_children():
+		# Large text: Home as its icon on a square beside the raid, named
+		# aloud, in every language, as key frames 03-result_text200 and
+		# _pt_BR, so the raid leads the bar (board 4's objection E).
+		if c != again and c is Button and Settings.text_scale > 100:
+			ResultFit.home_square(c as Button)
+			changed = true
+		if c != again:
+			wide -= c.get_combined_minimum_size().x + row.get_theme_constant("separation")
+	if not ResultFit.words_fit(again.find_children("*", "Label", true, false), wide - pad):
+		row.vertical = true
+		row.move_child(again, 0)
+		changed = true
+	return changed
+
+
+## The verdict's line as the player reads it (F6): the check and what it
+## found, without the replay's size in bytes, which is the developer's. The
+## accepted lines carry the size on a line of their own, which is dropped;
+## the confirming line carries it inline and keeps it until its string loses
+## it (request S1-R13).
+func _verdict_line(key: String, replay_bytes: int) -> String:
+	return Strings.t(key, replay_bytes).split("\n")[0]
+
+
+## §12.9's outcome in full (kicker, medal, condition, multipliers, length and
+## peak) and §12.13's moment; a Workshop play or a refusal only its own lines.
 func _show_outcome(v: Dictionary) -> void:
 	var grade := str(v.get("grade", ""))
 	var shown: bool = v.get("ok", false) and not v.get("workshop", false) and OUTCOME.has(grade)
-	for l: Control in [kicker_label, condition_label, chip_label.get_parent(), subline_label]:
+	for l: Control in [kicker_label, condition_label, chip, subline_label]:
 		l.visible = shown
 	haul_tile.visible = _haul > 0
+	haul_label.text = "+%d" % _haul
+	# The medal for a graded heist; a refusal has none.
+	var medal := "heistoutcomes/" + grade.to_lower()
+	grade_icon.visible = v.get("ok", false) and Icons.has(medal)
+	if grade_icon.visible:
+		(grade_icon as TextureRect).texture = Icons.texture(medal)
+	_fit_title.call_deferred()
 	if not shown:
 		moment_card.visible = false
 		return
 	var row: Array = OUTCOME[grade]
-	# The multipliers on a pill rimmed in gold, in red when foiled.
-	var pill := StyleBoxFlat.new()
-	pill.bg_color = Color(FxSkin.CARD_BOTTOM, 0.85)
-	pill.border_color = FxSkin.ALARM if grade == "Foiled" else FxSkin.GOLD
-	pill.set_border_width_all(UI.px(2))
-	pill.set_corner_radius_all(UI.px(20))
-	pill.content_margin_left = UI.px(14)
-	pill.content_margin_right = UI.px(14)
-	pill.content_margin_top = UI.px(4)
-	pill.content_margin_bottom = UI.px(4)
-	(chip_label.get_parent() as PanelContainer).add_theme_stylebox_override("panel", pill)
-	chip_label.add_theme_color_override("font_color", FxSkin.ALARM_ON_DARK if grade == "Foiled" else FxSkin.GOLD)
-	kicker_label.text = Strings.t("RESULT_KICKER_FOILED" if grade == "Foiled" else "RESULT_KICKER_DONE").to_upper()
+	# The multipliers on the kit's gold-edged pill; on its alarm tag when
+	# foiled.
+	if grade == "Foiled":
+		UI.dress(chip, "tag_alarm", 999)
+	KitStatus.set_pill(chip, Strings.t("RESULT_FOILED_CHIP") if grade == "Foiled" else Strings.t("RESULT_MULTIPLIERS",
+		[row[1], row[2]]))
+	if Settings.text_scale > 100 and not ResultFit.chip_on_one_line(chip, chip_label, get_viewport_rect().size.x):
+		# Large text: the pill's words wrap onto more lines instead of
+		# trailing off, when even its narrow form does not fit.
+		chip_label.clip_text = false
+		chip_label.text_overrun_behavior = TextServer.OVERRUN_NO_TRIMMING
+		chip_label.custom_minimum_size.x = 0
+		chip_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		chip_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		chip.size_flags_horizontal = Control.SIZE_FILL
+		# Each part kept whole ("Renown ×1.0", "Renown −8"): the pill breaks
+		# only at its dots.
+		var parts := Array(chip_label.text.split(" · ")).map(func(part: String) -> String:
+			return part.replace(" ", "\u00A0"))
+		chip_label.text = " · ".join(parts)
+	kicker_label.text = Strings.t("RESULT_KICKER_FOILED" if grade == "Foiled" else "RESULT_KICKER_DONE")
 	condition_label.text = Strings.t(row[0])
-	chip_label.text = Strings.t("RESULT_FOILED_CHIP") if grade == "Foiled" else Strings.t("RESULT_MULTIPLIERS",
-		[row[1], row[2]])
 	var seconds := _ticks / RulebornReplay.ticks_per_second()
-	subline_label.text = Strings.t("RESULT_SUBLINE", [seconds / 60, seconds % 60, _peak])
+	# F6: "alarm 5 / 6" under "No guard alerted" read as a contradiction.
+	# The peak is the realm's ladder (§12.17), which climbs with time whatever
+	# the crew does, so the line names it as that: the length, then the
+	# realm alarm's true peak (§12.9).
+	subline_label.text = "%d:%02d" % [seconds / 60, seconds % 60] + " · " + Strings.t("DEFENCES_ALARM", _peak)
 	var keeper := keeper_name()
 	if keeper != "":
 		subline_label.text = Strings.t("RESULT_KEEPER_REALM", keeper) + " · " + subline_label.text
@@ -718,3 +976,24 @@ func _show_outcome(v: Dictionary) -> void:
 	var at := int(m.get("tick", _ticks)) / RulebornReplay.ticks_per_second()
 	moment_when.text = Strings.t("RESULT_MOMENT", [at / 60, at % 60])
 	moment_label.text = _moment_words(m)
+
+
+## The title on one line beside its medal while it fits the phone's width;
+## a title too long for that (a long language) wraps under no medal.
+func _fit_title() -> void:
+	if not is_inside_tree() or grade_label == null:
+		return
+	var font := grade_label.get_theme_font("font")
+	var size := grade_label.get_theme_font_size("font_size")
+	var wide := font.get_string_size(grade_label.text, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x
+	var room := get_viewport_rect().size.x - 2.0 * UI.px(Tokens.number("size", "safe_side_points")) - UI.px(20)
+	var medal := 0.0
+	if grade_icon.visible:
+		medal = float(UI.px(MEDAL_POINTS) + UI.px(8))
+	if wide + medal <= room:
+		grade_label.autowrap_mode = TextServer.AUTOWRAP_OFF
+		grade_label.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		return
+	grade_icon.visible = false
+	grade_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	grade_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL

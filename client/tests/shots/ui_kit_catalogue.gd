@@ -229,9 +229,8 @@ static func parts() -> Array:
 		var r := _flow()
 		for s: String in ["N", "P", "D", "RM"]:
 			r.add_child(_cell("K06", s, func() -> Control:
-				var slider := HSlider.new()
-				slider.custom_minimum_size = Vector2(UI.px(150), UI.px(48))
-				slider.value = 60
+				var slider := KitControls.slider(Strings.t("SETTINGS_MUSIC", 60), 60, none)
+				slider.size_flags_horizontal = Control.SIZE_FILL
 				return slider))
 		return _part("K06 Slider", [r])])
 	out.append(["K07 Segmented control", func() -> Control:
@@ -267,17 +266,19 @@ static func parts() -> Array:
 			var b := KitNav.tabs(chosen, badges)
 			b.set_meta("target", b.buttons["laws"])
 			return b
-	out.append(["K09 Tab bar", func() -> Control:
-		var rows := [
-			_wide("K09", "N", tabs.call("islands"), "islands chosen"),
+	# Two parts: the bar stands as tall as its chosen tab's picture (S2-R24),
+	# and five bars are taller than a page.
+	out.append(["K09 Tab bar (states)", func() -> Control:
+		return _part("K09 Tab bar", [_wide("K09", "N", tabs.call("islands"), "islands chosen"),
 			_wide("K09", "P", tabs.call("islands"), "laws held"),
-			_wide("K09", "S", tabs.call("heist"), "heist chosen", true),
+			_wide("K09", "S", tabs.call("heist"), "heist chosen", true)])])
+	out.append(["K09 Tab bar (badges)", func() -> Control:
+		return _part("K09 Tab bar: badges, reduced motion", [
 			_wide("K09", "A", tabs.call("islands", {"laws": 3, "crew": 1}), "badges", true),
-			_wide("K09", "RM", tabs.call("islands")),
-		]
-		return _part("K09 Tab bar", rows)])
+			_wide("K09", "RM", tabs.call("islands"))])])
 	_motion(out, "K09 Tab bar", tabs.call("islands"),
-		func(c: Control) -> void: (c as KitTabs).choose("crew"), Tokens.number("motion", "pop_ms"), true, false, true)
+		func(c: Control) -> void: (c as KitTabs).choose("crew"), Tokens.number("motion", "pop_ms"), true, false, true,
+		0.9)
 	out.append(["K10 Hub control", func() -> Control:
 		var hub := func(route: StringName) -> Callable:
 			return func() -> Control:
@@ -335,17 +336,24 @@ static func parts() -> Array:
 		return _part("K16 Sheet", rows)])
 	_motion(out, "K16 Sheet", sheet.call("sheet"),
 		func(c: Control) -> void: Motion.sheet_in(c), Tokens.number("motion", "sheet_ms"), true, true, true)
-	var popup := func() -> Control:
+	var popup := func(kind: String) -> Control:
 		var stage := Control.new()
 		stage.custom_minimum_size = Vector2(UI.px(340), UI.px(230) * maxf(1.0, Settings.text_scale / 100.0))
 		stage.clip_contents = true
+		var actions := [UI.action(t.call("COMMON_DISMISS"), none, "gold")]
+		if kind == "confirm":
+			actions = [UI.action(t.call("KIT_BACK"), none), UI.action(t.call("SHOP_BUY"), none, "gold")]
 		KitPanels.dialog(stage, t.call("SHOP_BUY"), t.call("ERR_NOT_ENOUGH_ESSENCE"),
-			[UI.action(t.call("COMMON_DISMISS"), none, "gold")])
+			[] if kind == "info" else actions, kind)
 		return stage
 	out.append(["K17 Popup", func() -> Control:
-		var rows := [_wide("K17", "N", popup, "dialog"), _wide("K17", "RM", popup)]
+		var rows := [_wide("K17", "N", popup.bind("dialog"), "dialog"), _wide("K17", "RM", popup.bind("dialog"))]
 		return _part("K17 Popup", rows)])
-	_motion(out, "K17 Popup", popup, func(c: Control) -> void:
+	# The confirm and the info: a ribbon title and one primary action (S3-R27).
+	out.append(["K17 Confirm and info", func() -> Control:
+		var rows := [_wide("K17", "N", popup.bind("confirm"), "confirm"), _wide("K17", "N", popup.bind("info"), "info")]
+		return _part("K17 Confirm and info", rows)])
+	_motion(out, "K17 Popup", popup.bind("dialog"), func(c: Control) -> void:
 		var cards := c.find_children("*", "PanelContainer", true, false)
 		if not cards.is_empty():
 			Motion.pop(cards[0] as Control), Tokens.number("motion", "pop_ms"), false, false, true, 0.4)
@@ -461,17 +469,19 @@ static func parts() -> Array:
 	_motion(out, "K29 Banner", banner.call("success", "SHOP_BUY"),
 		func(c: Control) -> void: Motion.pop(c), Tokens.number("motion", "pop_ms"), true, false, true)
 	out.append(["K30 Info popover", func() -> Control:
-		# None today: a stand-in from today's parts (an (i) control and a
-		# small glass frame), so the pair has its place.
+		# The (i) control over its popover as a tap opens it.
 		var pop := func() -> Control:
 			var v := VBoxContainer.new()
-			v.add_child(KitControls.icon_button("generalui/info", "", none))
-			var p := _panel("glass", t.call("ERR_NOT_ENOUGH_ESSENCE"))
-			v.add_child(p)
+			v.add_theme_constant_override("separation", 0)
+			var i := KitPanels.info(t.call("SHOP_BUY"), t.call("ERR_NOT_ENOUGH_ESSENCE"))
+			i.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+			v.add_child(i)
+			v.add_child(KitPanels.popover(t.call("ERR_NOT_ENOUGH_ESSENCE")))
+			v.set_meta("target", i)
 			return v
 		var r := _flow()
-		r.add_child(_cell("K30", "N", pop, "stand-in, none today"))
-		r.add_child(_cell("K30", "RM", pop, "stand-in, none today"))
+		r.add_child(_cell("K30", "N", pop, "open"))
+		r.add_child(_cell("K30", "RM", pop, "open"))
 		return _part("K30 Info popover", [r])])
 	out.append(["K31 Heist clock and alarm meter", func() -> Control:
 		var r := _flow()
@@ -501,22 +511,17 @@ static func parts() -> Array:
 			_wide("K33", "RM", func() -> Control: return KitStatus.hint(t.call("MAP_NO_ALERTS"))),
 			_wide("K33", "N", func() -> Control: return KitHud.tip(t.call("HEIST_SKIFF_HINT")), "tip")])])
 	out.append(["K34 Spinner", func() -> Control:
-		# None today: one sprite turned, a quarter a frame; reduced, a still
-		# mark with the word.
-		var r := _flow()
-		for turn: int in 4:
-			r.add_child(_cell("K34", "", func() -> Control: return _spinner(turn * 90.0),
-				"%d°%s" % [turn * 90, "" if Art.pieces.has(Art.OVERLAYS["Ld"]) else ", stand-in"]))
-		var still := _flow()
-		still.add_child(_cell("K34", "RM", func() -> Control:
-			var h := HBoxContainer.new()
-			h.add_child(_spinner(0.0))
-			h.add_child(UI.label(t.call("COMMON_LOADING"), 15))
-			return h, "a still mark and the word"))
-		return _part("K34 Spinner", [_caption("full"), r, _caption("reduced"), still])])
+		# KitStatus.spinner: one turn a second, a quarter a frame; reduced, a
+		# still mark with the word.
+		return _part("K34 Spinner", _strip("K34", func() -> Control:
+			# Wide enough that the frame's caption stays on one line.
+			var m := HBoxContainer.new()
+			m.custom_minimum_size = Vector2(UI.px(64), UI.px(24))
+			return m, func(c: Control) -> void: c.add_child(KitStatus.spinner(24.0)),
+			KitSkin.SPIN_SECONDS * 1000.0))])
 	out.append(["K35 Empty state", func() -> Control:
 		return _part("K35 Empty state", [_wide("K35", "N", func() -> Control:
-			return ScreenParts.empty("generalui", "info", t.call("LAB_FOUND_NONE"), func() -> void: pass))])])
+			return KitPanels.empty("generalui/info", t.call("LAB_FOUND_NONE"), t.call("SCREEN_TRY_AGAIN"), none))])])
 	out.append(["K36 Avatar", func() -> Control:
 		var r := _flow()
 		for s: String in ["N", "P", "S", "A"]:
@@ -575,8 +580,19 @@ static func parts() -> Array:
 			return KitCards.season_reward("Common", "currencies/starglass", "600", func() -> void: pass, false,
 				t.call("TRACK_CLAIM")), "season"))
 		return _part("K39 Reward tile", [r])])
-	out.append(["K40 Reward sequence", func() -> Control:
-		return _part("K40 Reward sequence", _sequence())])
+	# KitNav.reward at full size: its sprites fly on a layer of their own,
+	# which a frame drawn smaller would not shrink. Full and reduced apart,
+	# each over its own length: 350 ms a frame puts the common burst, the
+	# coins in flight and the last landing each in a frame; the reduced form
+	# is over in 350 ms, its one coin landing in the middle frames.
+	var rewarded := func(c: Control) -> void:
+		KitNav.reward(c, c.get_node("Prize"), c.get_node("Counter"), 10, 15)
+		_lift(c.get_node("Prize"))
+	for half: Array in [[false, 1400.0], [true, 350.0]]:
+		var which: Array[bool] = [half[0]]
+		out.append(["K40 Reward sequence: motion", func() -> Control:
+			return _part("K40 Reward sequence: motion", _strip("K40", _reward_stage, rewarded, half[1], false,
+				false, which))])
 	out.append(["K41 Stat tile", func() -> Control:
 		var r := _flow()
 		for s: String in ["N", "A"]:
@@ -779,33 +795,31 @@ static func _apply(c: Control, state: String, over: Control) -> String:
 			elif _target(c) is LineEdit:
 				_posts.append((_target(c) as LineEdit).grab_focus)
 		"L":
+			# The kit's L overlay; the face is the baked locked one (Art.lock).
 			var target := _target(c)
 			_posts.append(Art.lock.bind(target))
-			var mark := TextureRect.new()
-			var lock := Art.overlay(Art.OVERLAYS["L"])
-			mark.texture = lock if lock != null else Icons.texture("generalui/lock")
-			mark.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-			mark.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-			mark.size = Vector2.ONE * UI.px(22)
-			mark.position = Vector2.ONE * -UI.px(4)
-			over.add_child(mark)
-			return Strings.t("SAGE_UNLOCKS") % 5 if Strings.t("SAGE_UNLOCKS").contains("%d") else Strings.t("SCREEN_SLOT_LOCKED")
+			var why := Strings.t("SAGE_UNLOCKS") % 5 if Strings.t("SAGE_UNLOCKS").contains("%d") \
+				else Strings.t("SCREEN_SLOT_LOCKED")
+			KitStatus.locked(target, why, true, false)
+			Art.kit_drew("L")
+			return why
 		"A":
-			var badge := KitStatus.badge("3")
-			badge.set_anchors_preset(Control.PRESET_TOP_RIGHT)
-			badge.grow_horizontal = Control.GROW_DIRECTION_BEGIN
-			badge.position.y = -UI.px(6)
-			over.add_child(badge)
+			# The kit's A overlay, held at rest: its one pulse would land
+			# anywhere in a still.
+			_still(KitStatus.notice.bind(_target(c), "3"))
 		"Ld":
-			for n: Node in [c] + c.find_children("*", "", true, false):
-				if n is Label or n is Button or n is LineEdit:
-					(n as CanvasItem).self_modulate.a = 0.0
-			var centre := CenterContainer.new()
-			centre.set_anchors_preset(Control.PRESET_FULL_RECT)
-			centre.mouse_filter = Control.MOUSE_FILTER_IGNORE
-			centre.add_child(_spinner(0.0))
-			over.add_child(centre)
+			# The kit's Ld state once laid out, its spinner held at 0°.
+			_posts.append(_still.bind(KitStatus.loading.bind(c)))
+			Art.kit_drew("Ld")
 	return ""
+
+
+## Runs `call` under reduced motion, for a still with no motion under way.
+static func _still(call: Callable) -> void:
+	var was := Settings.reduced_motion
+	Settings.reduced_motion = true
+	call.call()
+	Settings.reduced_motion = was
 
 
 ## The control a state applies to: the one the component names (meta
@@ -836,23 +850,6 @@ static func _panel(look: String, words: String) -> PanelContainer:
 	p.custom_minimum_size = Vector2(UI.px(150), UI.px(64))
 	p.add_child(UI.label(words, 15, true))
 	return p
-
-
-## The loading mark: one sprite, turned `degrees`.
-static func _spinner(degrees: float) -> Control:
-	var holder := Control.new()
-	holder.custom_minimum_size = Vector2.ONE * UI.px(24)
-	holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var mark := TextureRect.new()
-	var ring := Art.overlay(Art.OVERLAYS["Ld"])
-	mark.texture = ring if ring != null else Icons.texture("generalui/timer")
-	mark.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	mark.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	mark.size = Vector2.ONE * UI.px(24)
-	mark.pivot_offset = mark.size * 0.5
-	mark.rotation_degrees = degrees
-	holder.add_child(mark)
-	return holder
 
 
 # --- Motion strips --------------------------------------------------------
@@ -919,51 +916,41 @@ static func _strip(id: String, make: Callable, start: Callable, ms: float, wide 
 	return out
 
 
-## K40, built from today's parts until its motion sprites come (report.md
-## step 7): anticipation, burst, reveal, coin flight and counter roll, full;
-## reduced, the reward at rest.
-static func _sequence() -> Array:
-	_pending.append("K40:RM")
-	var tile := func() -> Control:
-		return KitCards.reward("resources/starlight", "+2,310", Strings.t("RESULT_STARLIGHT"), "gold")
-	var full := _flow()
-	var beat := func(words: String, c: Control) -> void:
-		var v := VBoxContainer.new()
-		v.add_theme_constant_override("separation", UI.px(2))
-		v.add_child(c)
-		v.add_child(_caption(words))
-		full.add_child(v)
-	var a: Control = tile.call()
-	a.modulate.a = 0.5
-	a.set_meta("rest", true)
-	_posts.append(func() -> void:
-		a.pivot_offset = a.size * 0.5
-		a.scale = Vector2.ONE * 0.92)
-	beat.call("anticipation", a)
-	var burst := UI.panel("night_rays")
-	burst.custom_minimum_size = Vector2.ONE * UI.px(96)
-	beat.call("burst", burst)
-	var reveal := UI.panel("night_rays")
-	reveal.add_child(tile.call())
-	beat.call("reveal", reveal)
-	var flight := Control.new()
-	flight.custom_minimum_size = Vector2(UI.px(140), UI.px(96))
-	for k: int in 4:
-		var coin := TextureRect.new()
-		coin.texture = Icons.texture("resources/starlight")
-		coin.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		coin.size = Vector2.ONE * UI.px(22)
-		var u := k / 3.0
-		coin.position = Vector2(UI.px(8) + u * UI.px(100), UI.px(64) - sin(u * PI) * UI.px(56))
-		coin.modulate.a = 0.4 + 0.2 * k
-		flight.add_child(coin)
-	beat.call("coin flight", flight)
-	var roll := UI.label("1,160", 30)
-	roll.theme_type_variation = "Display"
-	beat.call("counter roll", roll)
-	var still := _flow()
-	var rest := VBoxContainer.new()
-	rest.add_child(tile.call())
-	rest.add_child(_caption("the reward at rest, no flight or roll"))
-	still.add_child(rest)
-	return [_caption("K40: full motion, stand-in from today's parts"), full, _caption("K40: reduced motion"), still]
+## The reward layer is `top_level`, so its z of 10 does not add to the
+## page's (the frame's 16) and it would draw under the stage. Until the kit
+## answers S1-R21, the catalogue lifts it as the result screen does: by the
+## prize's whole z.
+static func _lift(prize: Control) -> void:
+	var z := 0
+	var node: Node = prize
+	while node is CanvasItem:
+		z += (node as CanvasItem).z_index
+		if not (node as CanvasItem).z_as_relative:
+			break
+		node = node.get_parent()
+	for layer: Node in prize.get_children(true):
+		if layer is CanvasItem and (layer as CanvasItem).top_level:
+			(layer as CanvasItem).z_index = clampi(z + (layer as CanvasItem).z_index,
+				RenderingServer.CANVAS_ITEM_Z_MIN, RenderingServer.CANVAS_ITEM_Z_MAX)
+
+
+## K40's stage: a screen's sky behind the prize (an icon, as the result
+## screen's grade is) and its counter, for KitNav.reward to play on.
+static func _reward_stage() -> Control:
+	var page := Control.new()
+	page.custom_minimum_size = Vector2(UI.px(120), UI.px(100))
+	var sky := Control.new()
+	sky.name = "Sky"
+	sky.set_anchors_preset(Control.PRESET_FULL_RECT)
+	page.add_child(sky)
+	RbBox.dress(sky, "night", 0)
+	var prize := Icons.view("resources/starlight", 44)
+	prize.name = "Prize"
+	prize.position = Vector2(UI.px(22), UI.px(40))
+	page.add_child(prize)
+	var counter := UI.label("10", 26)
+	counter.name = "Counter"
+	counter.theme_type_variation = "Display"
+	counter.position = Vector2(UI.px(80), UI.px(4))
+	page.add_child(counter)
+	return page

@@ -12,6 +12,116 @@
       },
       "reason": "AD-R14: the heist's 'Laws here' / 'Leis aqui' header wears the kit's display stroke (kit-spec.md section 2.2, T2), an ink outline and a hard gold_drop drop with its own outline; the drop is the label's shadow pass, 2 draw calls. Textures and contrast unchanged; the heist stays 30 under the cap of 150.",
       "request": "K1-R18"
+    },
+    {
+      "approved_by": "lead, cycle 74 (S2-R7) and cycle 76 (S2-R16)",
+      "date": "2026-11-13",
+      "field": "shots.recorded draw_calls",
+      "figures": {
+        "home/100": "119 -> 143",
+        "home/200": "97 -> 112",
+        "home/hc": "119 -> 143"
+      },
+      "reason": "S2-R7 and S2-R16: home is built from the kit's parts alone (P2-S2-home-1), and a kit part interleaves the skin atlas, its icon texture and the font, where the old home drew its purse and side buttons in one layer each; cycle 74's gate then asked for the goal card beside Collect, the character portrait and the display type. Textures and contrast unchanged; home stays 7 under the cap of 150.",
+      "request": "S2-R16"
+    },
+    {
+      "approved_by": "lead, cycle 78 (S2-R17)",
+      "date": "2026-11-13",
+      "field": "shots.recorded draw_calls",
+      "figures": {
+        "home/100": "143 -> 145",
+        "home/200": "112 -> 114",
+        "home/hc": "143 -> 145"
+      },
+      "reason": "S2-R17: the Keeper's companion on home is drawn live each frame in its own 3D stage (the model and its ink pass), for rubric quality 9, Character presence (P2-S2-home-2). Textures and words below 4.5:1 unchanged; home stays 5 under the cap of 150.",
+      "request": "S2-R17"
+    },
+    {
+      "approved_by": "lead, cycle 82 (S1-R26)",
+      "date": "2026-11-13",
+      "field": "shots.recorded draw_calls",
+      "figures": {
+        "result/200": "90 -> 98"
+      },
+      "reason": "S1-R26: AD's 200% first screen for S1-R24 puts the haul above the moment card, the reward tiles in rows and the multipliers pill on one line (P2-S1-result-2); a bisect shows removing any one brings back an objection. Textures and words below 4.5:1 unchanged; result/200 stays 52 under the cap of 150. result/100 (94 -> 89) and result/hc (94 -> 27) are lowered with it, and check_screens' result_screen.gd (draw 5 -> 0, fill 1 -> 0) and character_screen.gd (fill 3 -> 0).",
+      "request": "S1-R26"
+    },
+    {
+      "approved_by": "lead, cycle 90 (S1-R28)",
+      "date": "2026-11-16",
+      "field": "shots.recorded draw_calls",
+      "figures": {
+        "result/100": "89 -> 91",
+        "result/200": "98 -> 99"
+      },
+      "reason": "S1-R28: board 4's objection A, the hard drop under the three reward figures (the home's Keeper finish), on the result screen (P2-S1-result-3); with the drop taken out, result/100 reads 89 and result/200 97. Textures and words below 4.5:1 unchanged; result/hc stays 27; result/100 stays 59 and result/200 51 under the cap of 150.",
+      "request": "S1-R28"
+    },
+    {
+      "approved_by": "lead, cycle 93 (K1-R22) and cycle 94 (S2-R21, approved to 124)",
+      "date": "2026-11-16",
+      "field": "shots.recorded draw_calls",
+      "figures": {
+        "home/200": "114 -> 119"
+      },
+      "reason": "S2-R21 and K1-R22: P2-S2-home-3 (board 3's objections A to C and (f), (g): the realm chips, the side buttons' discs at 200% and the one-line notice) and P2-K1-tabs-2 (the tab bar declares the height its chosen tab takes) merged in one candidate; guard.sh reads home/200 at 119 on it, under S2-R21's approved 124. Textures and words below 4.5:1 unchanged; home/100 and home/hc read 144, under their 145; home/200 stays 31 under the cap of 150.",
+      "request": "S2-R21"
+    },
+    {
+      "approved_by": "lead, cycle 100 (S2-R30)",
+      "date": "2026-11-16",
+      "field": "shots.recorded draw_calls",
+      "figures": {
+        "home/200": "119 -> 121"
+      },
+      "reason": "S2-R30: P2-S2-home-4 (board 3b's objection H, home half: with the chosen tab inside the bar, the right edge's two discs, Season and Shop, move into the top row beside the keeper plate at large text, so they draw between the plate and the purse); every draw order that keeps the layout reads 120 or 121. Textures and words below 4.5:1 unchanged; home/100 and home/hc stay at 144 under their 145; home/200 stays 29 under the cap of 150, and under S2-R21's approved 124.",
+      "request": "S2-R30"
+    },
+    {
+      "approved_by": "lead, cycle 106 (S1-R33)",
+      "date": "2026-11-17",
+      "field": "shots.recorded draw_calls",
+      "figures": {
+        "heist/200": "116 -> 118",
+        "heist/hc": "120 -> 121"
+      },
+      "reason": "S1-R33: P2-S1-heist-1's gate fixes. The 'Laws here' badges (FxLawBadge: the school's shape as a frame behind a cream disc and the painted icon, for the gate's Painted icons fail; +1 at 200 and hc) and the crew tray's inner well (ScreenKit.panel('well'), for the Layered materials fail; +1 at each size). Measured at dceed4bf with budget_shots.py --only heist/100,heist/200,heist/hc: 120, 118, 121, after three cheaper draw orders. Textures and words below 4.5:1 unchanged; heist/100 stays at 120; the heist stays 29 under the cap of 150.",
+      "request": "S1-R33"
+    },
+    {
+      "approved_by": "lead, cycle 121 (S1-R37)",
+      "date": "2026-11-17",
+      "field": "shots.recorded draw_calls",
+      "figures": {
+        "result/hc": "27 -> 28"
+      },
+      "reason": "S1-R37: P3-S1-result-7's idle crew line on the raid button ('Idle crew of 3 ready', board 4's notes), which the guard's high-contrast shot now draws because client/tests/shots/screen_result.gd loads a roster with 3 idle. guard.sh at 55716273 failed only 'result/hc: 28 draw calls, recorded 27'. result/100 (89, record 91) and result/200 (95, record 99) keep their records; textures and words below 4.5:1 unchanged.",
+      "request": "S1-R37"
+    },
+    {
+      "approved_by": "lead, cycle 120 (S2-R41)",
+      "date": "2026-11-17",
+      "field": "shots.recorded draw_calls",
+      "figures": {
+        "home/100": "145 -> 148",
+        "home/200": "121 -> 124",
+        "home/hc": "145 -> 148"
+      },
+      "reason": "S2-R41: P3-S2-home-states adds the states the home shot's fixture lacked (board 3's carried note): the Crew tab's idle-crew count badge (KitStatus.badge, +3) and Lantern Vale's locked plate drawn instead of a sixth realm pin (+2 at 100%), whose short form (the lock and '28' on one pill) now shows at 200% instead of hiding (+3). Measured with budget_shots.py --only home/100,home/200,home/hc on e9285afd; guard.sh at 89659437 failed only on these three lines. Textures and words below 4.5:1 unchanged; home stays 2 under the cap of 150. Written by the lead at the merge, in cycle 125.",
+      "request": "S2-R41"
+    },
+    {
+      "approved_by": "lead, cycle 127 (S1-R39)",
+      "date": "2026-11-17",
+      "field": "shots.recorded draw_calls",
+      "figures": {
+        "heist/hc": "121 -> 123",
+        "result/100": "91 -> 103",
+        "result/hc": "28 -> 45"
+      },
+      "reason": "S1-R39: P3-S1-hc-offline-1. heist/hc: the high-contrast plates re-dressed on the near-black card, Get out on the red danger plate and Pause on the light plate (AD-R56). result/100: the offline result's crew card (a glass panel and three KitRing faces of different creatures, which do not batch) and the lead's ring on the Loot tile (AD-R57). result/hc: the same, plus the Loot tile a bug hid in high contrast (fixed). The server state measures 117 and 59, so the offline state stays under it; all stay under the cap of 150. guard.sh at a4dcb52e failed only these three lines. Textures and words below 4.5:1 unchanged. Written by the lead at the merge, in cycle 128.",
+      "request": "S1-R39"
     }
   ],
   "screens": {
@@ -23,7 +133,7 @@
       },
       "client/scripts/character_screen.gd": {
         "draw": 0,
-        "fill": 3,
+        "fill": 0,
         "texture": 0
       },
       "client/scripts/forms_screen.gd": {
@@ -41,29 +151,19 @@
         "fill": 2,
         "texture": 0
       },
-      "client/scripts/home.gd": {
-        "draw": 1,
-        "fill": 0,
-        "texture": 2
-      },
       "client/scripts/observatory_screen.gd": {
         "draw": 0,
         "fill": 0,
         "texture": 2
       },
       "client/scripts/result_screen.gd": {
-        "draw": 5,
-        "fill": 1,
+        "draw": 0,
+        "fill": 0,
         "texture": 0
       },
       "client/scripts/roster_screen.gd": {
         "draw": 0,
         "fill": 2,
-        "texture": 0
-      },
-      "client/scripts/screen_box.gd": {
-        "draw": 1,
-        "fill": 0,
         "texture": 0
       },
       "client/scripts/screen_draw.gd": {
@@ -186,11 +286,6 @@
         "fill": 2,
         "texture": 1
       },
-      "client/world/universe_badge.gd": {
-        "draw": 7,
-        "fill": 0,
-        "texture": 0
-      },
       "client/world/universe_collect.gd": {
         "draw": 3,
         "fill": 0,
@@ -262,9 +357,9 @@
       "client/world/overlay_route.gd": "a rehearsal route drawn from the simulation report (section 13), data that changes with the run"
     },
     "totals": {
-      "draw": 226,
+      "draw": 217,
       "fill": 29,
-      "texture": 27
+      "texture": 25
     }
   },
   "shots": {
@@ -295,42 +390,42 @@
         "words_below": 0
       },
       "heist/200": {
-        "draw_calls": 116,
+        "draw_calls": 118,
         "texture_bytes": 2333376,
         "words_below": 0
       },
       "heist/hc": {
-        "draw_calls": 120,
+        "draw_calls": 123,
         "texture_bytes": 2499264,
         "words_below": 0
       },
       "home/100": {
-        "draw_calls": 119,
+        "draw_calls": 148,
         "texture_bytes": 4723360,
         "words_below": 0
       },
       "home/200": {
-        "draw_calls": 97,
+        "draw_calls": 124,
         "texture_bytes": 4880360,
         "words_below": 0
       },
       "home/hc": {
-        "draw_calls": 119,
+        "draw_calls": 148,
         "texture_bytes": 4723360,
         "words_below": 0
       },
       "result/100": {
-        "draw_calls": 94,
+        "draw_calls": 103,
         "texture_bytes": 580608,
         "words_below": 0
       },
       "result/200": {
-        "draw_calls": 90,
+        "draw_calls": 99,
         "texture_bytes": 580608,
         "words_below": 0
       },
       "result/hc": {
-        "draw_calls": 94,
+        "draw_calls": 45,
         "texture_bytes": 580608,
         "words_below": 0
       },

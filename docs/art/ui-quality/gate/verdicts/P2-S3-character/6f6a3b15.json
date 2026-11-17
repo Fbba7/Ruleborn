@@ -1,0 +1,124 @@
+[
+ {
+  "task_id": "P2-S3-character",
+  "sha": "6f6a3b15",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "advisory": true,
+  "at": "2026-11-13T04:58:00Z",
+  "item": "character at 100% text",
+  "quality": "Hierarchy",
+  "samples": [
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "Three passes of three: the full-width gold Level up bar leads by size, place and saturation; the dark Heist tab, the small arrows and LV badge sit behind it."
+ },
+ {
+  "task_id": "P2-S3-character",
+  "sha": "6f6a3b15",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "advisory": true,
+  "at": "2026-11-13T04:58:00Z",
+  "item": "character at 100% text",
+  "quality": "Display type",
+  "samples": [
+   "fail",
+   "fail",
+   "fail"
+  ],
+  "result": "fail",
+  "critique": "Three fails of three: 'Skyskipper · Carrier' and 'Level 3 of 10' sit on the starfield gradient with no ink outline (word over art without an outline), and the 'NV'/'LV' tag runs over the badge edge. Same as cycle 76's finding. Fix: outline the words over the backdrop, or set them on a plate."
+ },
+ {
+  "task_id": "P2-S3-character",
+  "sha": "6f6a3b15",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "advisory": true,
+  "at": "2026-11-13T04:58:00Z",
+  "item": "character at 100% text",
+  "quality": "Character presence",
+  "samples": [
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "Three passes of three: Skyskipper is large and framed on a lit pedestal, about a third of the screen high, and reads in colour and grayscale in the toon look."
+ },
+ {
+  "task_id": "P2-S3-character",
+  "sha": "6f6a3b15",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "advisory": true,
+  "at": "2026-11-13T04:58:00Z",
+  "item": "character at 200% text, pt_BR",
+  "quality": "Display type",
+  "samples": [
+   "fail",
+   "fail",
+   "fail"
+  ],
+  "result": "fail",
+  "critique": "Three fails of three: 'Skyskipper · Carregador' and 'Nível 3 de 10' sit on the starfield with no outline, the 'NV' tag's dark glyphs merge into the badge, and the 200 price is a flat white figure. Fix: as at 100%, and give the price the display treatment."
+ },
+ {
+  "task_id": "P2-S3-character",
+  "sha": "6f6a3b15",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "advisory": true,
+  "at": "2026-11-13T04:58:00Z",
+  "item": "character at 200% text, pt_BR",
+  "quality": "Hierarchy",
+  "samples": [
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "Three passes of three: the gold 'Subir de nível' card is the largest, brightest and most saturated block; nothing competes with it."
+ },
+ {
+  "task_id": "P2-S3-character",
+  "sha": "6f6a3b15",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "advisory": true,
+  "at": "2026-11-13T04:58:00Z",
+  "item": "character in high contrast",
+  "quality": "Colour roles and value",
+  "samples": [
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "Three passes of three: gold fill only on Level up and the arrows, the selected tab a gold rim on dark, green only for progress, Motion carries its chevron and label; nothing merges on the CVD sheet."
+ },
+ {
+  "task_id": "P2-S3-character",
+  "sha": "6f6a3b15",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "advisory": true,
+  "at": "2026-11-13T04:58:00Z",
+  "item": "character in high contrast",
+  "quality": "Hierarchy",
+  "samples": [
+   "fail",
+   "pass",
+   "pass",
+   "fail",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "Four passes of six (samples 1 to 3 split): Level up leads by size, place and saturation for most samples. Two samples found the bar mid-gray and about half the anchor's height, with the dark ability card about twice its height and heavier in grayscale. Follow-up: give Level up more height or a larger outlined label in high contrast, or lighten the ability card."
+ }
+]

@@ -1,0 +1,96 @@
+{
+ "controls": [
+  {
+   "interactive": false,
+   "name": "set-head 1: Ajustes",
+   "rect": [
+    17.33,
+    47.67,
+    352.44,
+    71.14
+   ]
+  },
+  {
+   "name": "row 2: Jogo Acesso Conta",
+   "rect": [
+    17.33,
+    127.47,
+    352.44,
+    69.33
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "words 3: Acesso",
+   "rect": [
+    30.33,
+    205.47,
+    115.19,
+    52.0
+   ]
+  },
+  {
+   "name": "size-a 4: Texto 200%: menor",
+   "rect": [
+    28.17,
+    274.81,
+    82.33,
+    82.33
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "size-mid 5: 200%",
+   "rect": [
+    133.61,
+    283.83,
+    119.89,
+    47.67
+   ]
+  },
+  {
+   "name": "size-a 6: Texto 200%: maior",
+   "rect": [
+    276.61,
+    274.81,
+    82.33,
+    82.33
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "sample 7: Stillness Anyone standing still for 1.5 seconds becomes invisible to guards and ",
+   "rect": [
+    28.17,
+    365.81,
+    330.78,
+    262.17
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "words 8: Stillness",
+   "rect": [
+    82.33,
+    372.31,
+    265.78,
+    47.67
+   ]
+  },
+  {
+   "name": "back 9: Voltar",
+   "rect": [
+    28.17,
+    723.67,
+    174.06,
+    52.0
+   ]
+  }
+ ],
+ "frame_pt": [
+  390.0,
+  845.0
+ ],
+ "image": "settings-200-pt_BR.png",
+ "text_scale": 2.0
+}

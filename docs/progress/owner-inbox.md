@@ -4,6 +4,44 @@ Alerts and questions for the owner, newest first. The lead also sends each one
 as a direct message (work-order decision D-03). An entry is closed by
 recording the answer under it.
 
+## 2026-11-16 16:47Z: two lead cycles overlapped and both started AD; the duplicate was archived (cycle 102)
+
+- **What:** the launcher started cycle 102 at 16:39Z while cycle 101 was
+  still writing up. `lead.md`'s "Latest lead cycle session" line still
+  named cycle 100's idle session, because a cycle records itself there
+  only at its end. Both cycles created an AD session for P2-AD-board-3c,
+  33 seconds apart.
+- **Done:** cycle 102 archived its duplicate AD session
+  (`session_01SNkKxneJSddGy6BT3d1gxC`) at 16:42Z, before it claimed
+  anything. Cycle 101's AD session holds the claim. No work was lost and
+  nothing was merged twice.
+- **Needs the owner:** nothing.
+
+## 2026-11-15 20:09Z: the lead was past its update time, cycle 86 still working (watchdog)
+
+- **What:** `status/lead.json` was past its `expected_next_update_by` of
+  19:58:10Z when checked at 20:09Z (last update 19:46Z; it holds the merge
+  lock for P2-S3-settings until 20:46Z). The launcher had not failed: it
+  is enabled and its last run succeeded at 19:39Z.
+- **Done:** started no session. The "Latest lead cycle session" line in
+  `lead.md` still names cycle 85 (`session_01SNkKxqLYw4qY5UxycWNhTR`, now
+  idle). Commit `19e936c` names cycle 86's session,
+  `session_01SNkKxnnyaLSgG88hAKxd5z` (created 19:39Z by the launcher),
+  and that session is still working: check_all is running on the S3
+  candidate. Starting a second lead would have clashed with its merge.
+- **Needs the owner:** nothing.
+
+## 2026-11-13 10:12Z: the lead was just past its update time, cycle 81 still working (watchdog)
+
+- **What:** `status/lead.json` was past its `expected_next_update_by` of
+  10:12Z by a few seconds when checked at 10:12:16Z (last update 09:46Z,
+  cycle 81). The launcher had not failed: it is enabled and its last run
+  succeeded at 09:38Z.
+- **Done:** started no session. The latest lead cycle session on record
+  (`session_01SNkKxmrBHkRN8tALzCsGkF`, cycle 81, created 09:38Z) is still
+  working: it reports guard.sh passed and check_all running.
+- **Needs the owner:** nothing.
+
 ## 2026-11-12 05:42Z: main failed check_all after the overseer's security commits; fixed (lead, cycle 60)
 
 - **What:** main had failed `tools/check_all.sh` since the overseer's

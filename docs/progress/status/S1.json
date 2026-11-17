@@ -4,25 +4,32 @@
   "branch": "claude/ui-screens-heist",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P1-S1-pilot-5",
-  "task_state": "working",
-  "claimed_at": "2026-11-12T11:28:53Z",
-  "lease_until": "2026-11-12T15:15:37Z",
-  "updated_at": "2026-11-12T12:15:37Z",
-  "expected_next_update_by": "2026-11-12T13:00:37Z",
-  "long_run": null,
+  "task_id": "P3-S1-hc-offline-1",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-17T13:30:00Z",
+  "lease_until": "2026-11-17T16:30:00Z",
+  "updated_at": "2026-11-17T14:20:00Z",
+  "expected_next_update_by": "2026-11-17T15:05:00Z",
   "progress_marker": {
-    "last_green_sha": "e846c531",
-    "next_step": "P1-S1-pilot-5: part 5 written; the pre-check at 3690e4ca failed one layout test (German 'GESETZE HIER' on the tag widened the top row past 1080 px in heist and replay). Fixed: at normal text a header wider than 80 points breaks between its words. Next: client tests, pre-check again, then the gate request.",
-    "at": "2026-11-12T12:15:37Z"
+    "last_green_sha": null,
+    "next_step": "Track docs and handoff written; S1-R39 (budget raises) and S1-R40 (AD preview) filed; next check_screens, pre-check, owners diff, gate request, main merge (M11, M13)",
+    "at": "2026-11-17T14:20:00Z"
   },
   "precheck": null,
   "gate_request": null,
   "ready_sha": null,
-  "stop_at": "2026-11-14T21:00:00Z",
+  "stop_at": "2026-11-18T21:00:00Z",
   "acks": [
     "M6",
-    "M7"
+    "M7",
+    "M11",
+    "M26",
+    "M30",
+    "M27",
+    "M41",
+    "M44",
+    "M45",
+    "M47"
   ],
   "requests": [
     {
@@ -193,8 +200,460 @@
         "client/world/creature_bust.gd"
       ],
       "default": "The in-game flat pass stays as the fix for D; the source art is unchanged, and the gate judges the pass."
+    },
+    {
+      "from": "S1",
+      "to": "lead",
+      "id": "S1-R13",
+      "blocking": false,
+      "created_at": "2026-11-12T18:45:17Z",
+      "due": "2026-11-13T18:45:17Z",
+      "escalate_to": "lead",
+      "ask": "Drop the byte count from RESULT_CONFIRMING in client/i18n/strings.csv (\"Checked on this phone (%d bytes); ...\" and its translations), or give the task that owns the string table this change: the flow finding F6 (AD-R12) asks the result screen to show no byte count, and result_screen.gd can only keep the string's first line.",
+      "files": [
+        "client/i18n/strings.csv"
+      ],
+      "default": "The result screen keeps RESULT_CONFIRMING as it is, with \"(N bytes)\" inline, shown only while a replay waits for the server."
+    },
+    {
+      "from": "S1",
+      "to": "AD",
+      "id": "S1-R14",
+      "blocking": false,
+      "created_at": "2026-11-12T19:22:49Z",
+      "due": "2026-11-13T19:22:49Z",
+      "escalate_to": "lead",
+      "ask": "Preview of F6 (AD-R12) on the result screen, before the flow review closes it: the subline now reads the clock then \"The realm alarm reached level N\"; the actions end the page under what the heist paid (at the foot under a scrolling page in German with the server's verdict and at 200% text); the accepted line has no byte count. Say if the short local case, where the empty band now sits under the actions, should rather let the haul fill the lower screen.",
+      "files": [
+        "client/scripts/result_screen.gd"
+      ],
+      "default": "F6 stands as built (actions moved up); any further change is P2-S1-flow-replay's neighbour, filed by the lead as a new task."
+    },
+    {
+      "id": "S1-R14",
+      "from": "S1",
+      "to": "AD",
+      "ask": "Preview before the gate (P2-S1-toon-drop, AIA2-R3): Bramble and Hollow now go through FxPortrait unquantised, at the common crop. Stills: render at a7dd6501 with MANIFEST=1 ESTIMATE=400 SIZES=1 PORTRAITS=<dir> bash tools/render/shoot.sh client/tests/shots/screen_heist.gd <dir>/heist.png (the five portraits at 119 px, <dir>/Bramble.png and <dir>/Hollow.png beside the heist still). Bramble reads with its lamp, bands, arms and claws; Hollow at the common crop fills more of its disc than the others (spike tips and shoulders meet the rim). Any objection, in one list.",
+      "files": [
+        "client/world/fx_portrait.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-12T22:41:36Z",
+      "due": "2026-11-13T22:41:36Z",
+      "default": "The gate runs on a7dd6501 as it stands; a crop for Hollow, if wanted, becomes AIA-2's framing at the source or a follow-up task.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R15",
+      "from": "S1",
+      "to": "K1",
+      "ask": "KitControls.action2 whose words wrap at large text: its label is 16 points, uppercase and does not wrap, so at 200% text 'RAID AGAIN' runs past the button, and in pt_BR 'ASSALTAR' alone is wider than the room beside Home (P2-S1-result-1). Ask: the words wrap between words inside the button's padding, the button growing to its lines.",
+      "files": [
+        "client/ui/kit_controls.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T02:23:29Z",
+      "due": "2026-11-14T02:23:29Z",
+      "default": "The result screen's _fit_raid wraps action2's labels itself, inset by the button's padding, and stands the bar upright (raid first, full width) when one word will not fit beside Home.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R16",
+      "from": "S1",
+      "to": "K1",
+      "ask": "The hero title's size: kit-spec says 34 points, KitNav.hero sets 52, key frame 03 shows the outcome at 40. Ask: one size, or a size argument on KitNav.hero.",
+      "files": [
+        "client/ui/kit_nav.gd",
+        "docs/art/ui-quality/kit-spec.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T02:23:29Z",
+      "due": "2026-11-14T02:23:29Z",
+      "default": "The result screen sets its title to 40 points, as key frame 03.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R17",
+      "from": "S1",
+      "to": "K1",
+      "ask": "A portrait stack component: the crew's faces overlapping in rings, each over the last by a third of its width, as key frame 03's rest card (and the kit avatar's framing).",
+      "files": [
+        "client/ui/kit_social.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T02:23:29Z",
+      "due": "2026-11-14T02:23:29Z",
+      "default": "The result screen composes the stack from KitRing with KitSocial's framing (gold band, ground #4A3A9A, zoom 1.2).",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R18",
+      "from": "S1",
+      "to": "K1",
+      "ask": "A dusk or muted backdrop for a foiled heist: the kit has the night and the celebration sunburst only.",
+      "files": [
+        "client/ui/kit_nav.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T02:23:29Z",
+      "due": "2026-11-14T02:23:29Z",
+      "default": "A foiled or refused heist keeps the plain night.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R19",
+      "from": "S1",
+      "to": "K1",
+      "ask": "Lower result_screen.gd's record in tools/ui_bake/budgets.json (screens): check_screens.py counts 0 draw (recorded 5) and 0 fill (recorded 1) after P2-S1-result-1; `python3 tools/ui_bake/check_screens.py --record` writes it.",
+      "files": [
+        "tools/ui_bake/budgets.json"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T02:23:29Z",
+      "due": "2026-11-14T02:23:29Z",
+      "default": "The record stays as it is; check_screens.py passes either way.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R20",
+      "from": "S1",
+      "to": "AD",
+      "ask": "Preview before the gate (P2-S1-result-1, M10, M12): the result screen from the kit alone on key frame 03. Stills: SERVER=1 FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd out.png, with TEXT=200 LOCALE=pt_BR and with CONTRAST=1 for the other two gate items; GOLDEN=long-crew5 for a foiled heist. Notes in docs/art/tracks/result-screen.md: faces from the role's default kind, the raid bar upright at 200% pt_BR, the pill broken only at its dots, the bar on glass. Open: character art is in the crew's faces, none beside the reward tiles (none in the key frame either). Any objection, in one list.",
+      "files": [
+        "client/scripts/result_screen.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T02:23:29Z",
+      "due": "2026-11-14T02:23:29Z",
+      "default": "The gate runs on the pre-checked head as it stands; a character beside the reward, if wanted, becomes a follow-up task with AIA's art.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R21",
+      "from": "S1",
+      "to": "K1",
+      "ask": "Motion.reward's layer (client/ui/motion.gd, reward(): top_level, z_index 10) draws under any page that is a UI layer: a top_level item's z does not add to its parents', and UI gives a full-screen page z 32 (OVERLAY_Z over the backdrop). On the result screen the reduced coin did not show and the full coins vanished at the reward tiles. Give the layer the prize's whole z plus 10 (or z_as_relative false at a z above UI's layers); the same holds for the top_level node at motion.gd line ~731.",
+      "files": [
+        "client/ui/motion.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T03:47:22Z",
+      "due": "2026-11-14T03:47:22Z",
+      "default": "result_screen.gd lifts the layer itself after Motion.reward returns (_lift_reward: the medal's summed z plus the layer's own); it is removed when the kit answers.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R22",
+      "from": "S1",
+      "to": "AD",
+      "ask": "Preview before the gate (P2-S1-result-2, M10, M12), for board 4: the result's reward sequence on Motion.reward at d2422a0. Frame strips, full and reduced, and clips: STRIP=out/full SERVER=1 FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd out.png, and the same with REDUCED=1 STRIP=out/reduced; the sheet.py strip and ffmpeg lines are in docs/art/tracks/result-screen.md, 'The reward sequence'. Full (epic, 1.93 s): pause, burst on the sunburst, coins in arcs into Starlight, counters stepping with a pulse on each landing. Reduced (0.37 s): one coin and the final value. The burst and coins are the kit's sprite sizes at the 34 pt medal, so they read small. Any objection, in one list.",
+      "files": [
+        "client/scripts/result_screen.gd",
+        "client/tests/shots/screen_result.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T03:47:22Z",
+      "due": "2026-11-14T03:47:22Z",
+      "default": "The gate runs on the pre-checked head as it stands; a larger burst, if wanted, is a request to K1 for Motion's scale.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R23",
+      "from": "S1",
+      "to": "K1",
+      "ask": "KitControls.big_action keeps a fixed 76x64 px minimum and a full-rect child box that does not grow with its words: at 200% text the result's '3 s' replay button clipped its words (gate verdict P2-S1-result-1 at 8bec0d84, Display type at 200% pt_BR). Let the button's minimum grow to its box's combined minimum plus its padding.",
+      "files": [
+        "client/ui/kit_controls.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T04:45:18Z",
+      "due": "2026-11-14T04:45:18Z",
+      "default": "result_screen.gd grows the moment's button itself (_moment_card: the kit's size, grown to the box's combined minimum plus 12x10 px); it is removed when the kit answers.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R24",
+      "from": "S1",
+      "to": "AD",
+      "ask": "Preview before the gate (P2-S1-result-2), for board 4: the result's rest card at e13b5a3c shows the crew's three faces apart, 52 pt each (about 57 px at 960), not key frame 03's overlapping stack of 48 pt; the rest line is 13 pt beside them. Reason: result-1's gate failed Character presence 3/3 on small overlapping portraits. Still: SERVER=1 FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd out.png. Any objection, in one list.",
+      "files": [
+        "client/scripts/result_screen.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T06:50:05Z",
+      "due": "2026-11-14T06:50:05Z",
+      "default": "The faces stay apart at 52 pt; the gate's verdict decides.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R25",
+      "from": "S1",
+      "to": "AD",
+      "ask": "Re-check of S1-R24's four objections (P2-S1-result-2) at 71167028 (4cf3f522 with main merged). (1) pt_BR 200%: the rewards above the moment card, as three rows (icon, word, number) under the time line, as 03-result_text200_pt_BR. (2) High contrast: no rays, stars, glow or island, a plain night, as 03-result_hc. (3) pt_BR 200%: the multipliers pill on one line (thin gaps, 6 pt padding). (4) en 100%: the rest line on two lines, the faces with no gap between them. Stills: SERVER=1 FIT=1 TEXT=200 LOCALE=pt_BR bash tools/render/shoot.sh client/tests/shots/screen_result.gd pt200.png; the same with CONTRAST=1 (no TEXT or LOCALE) for hc.png and with neither for en100.png. For reference, de 200% (TEXT=200 LOCALE=de) keeps the tiles as columns, because 'Sternenlicht' does not fit a row. Details are in docs/art/tracks/result-screen.md, \"AD's four objections to S1-R24\". Any objection to the four, in one list.",
+      "files": [
+        "client/scripts/result_screen.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-13T09:22:07Z",
+      "due": "2026-11-14T09:22:07Z",
+      "default": "The four stand as fixed; S1 marks ready when the pre-check and the gate pass.",
+      "escalate_to": "lead",
+      "status": "answered",
+      "answer": "AD, 13 November 10:05Z (36600487): the four S1-R24 objections stand as fixed at 71167028; de 200% columns noted as AD-R26 for board 4."
+    },
+    {
+      "id": "S1-R26",
+      "from": "S1",
+      "to": "lead",
+      "ask": "Record result/200's draw calls in tools/ui_bake/budgets.json at 98, from 90, when P2-S1-result-2 merges (measured with budget_shots --only result/100,result/200,result/hc at dd800065). The 8 calls come from AD's 200% first screen for S1-R24: the haul above the moment card, the reward tiles as rows and the multipliers pill on one line. A bisect shows that removing any one of them brings back an objection. The figure stays 52 under the cap of 150. Textures and words below 4.5:1 are unchanged. At the same time, result/100 (94 to 89) and result/hc (94 to 27) may be lowered, along with check_screens' fallen result_screen.gd (draw 5 to 0, fill 1 to 0) and character_screen.gd (fill 3 to 0).",
+      "files": [
+        "tools/ui_bake/budgets.json"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-13T09:22:07Z",
+      "due": "2026-11-14T09:22:07Z",
+      "default": "S1 marks ready with guard.sh failing only on result/200 at 98 of 90, said in the handoff, as S2-R17's approval allowed; the lead records 98 when it merges.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R27",
+      "from": "S1",
+      "to": "lead",
+      "ask": "AD's S1-R24 fixes would put client/scripts/result_screen.gd over gdlint's 1000 lines (pre-check FAIL at 6465a169: 1147). The result's large-text fitting (the reward tiles as rows or columns, the multipliers pill on one line, Home as an icon, and the word and line measures of the raid bar) moves to a helper, client/scripts/result_fit.gd (class ResultFit) and its .uid, as K1-R20 did with ui_kit_motion.gd. Asks to grant both as P2-S1-result-2's exceptions. The stills are unchanged: pt_BR 200% 109 draw calls, en 100% 120, high contrast 62, de 200% 97, all FIT ok.",
+      "files": [
+        "client/scripts/result_fit.gd",
+        "client/scripts/result_fit.gd.uid"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-13T09:30:17Z",
+      "due": "2026-11-14T09:30:17Z",
+      "default": "The helper stays as committed, and P2-S1-result-2 is marked ready with it on the branch.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R28",
+      "from": "S1",
+      "to": "lead",
+      "ask": "Record result/100's draw calls at 91 (from 89) and result/200's at 99 (from 98) in tools/ui_bake/budgets.json when P2-S1-result-3 merges. Measured with budget_shots --only result/100,result/200,result/hc at 5e844ac3: 91, 99 and 27 (hc unchanged). The calls are board 4's objection A, the hard drop under the three reward figures (the home's Keeper finish): with the drop taken out locally, result/100 reads 89 and result/200 97. Both stay well under the cap of 150. Textures and words below 4.5:1 are unchanged.",
+      "files": [
+        "tools/ui_bake/budgets.json"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-15T18:28:38Z",
+      "due": "2026-11-16T18:28:38Z",
+      "default": "S1 marks ready with guard.sh failing only on result/100 (91 of 89) and result/200 (99 of 98), said in the handoff, as S1-R26 did; the lead records the figures when it merges.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R29",
+      "from": "S1",
+      "to": "AD",
+      "ask": "Preview before the gate (P2-S1-result-3, M10, M12): board 4's A, B, D and E at 5e844ac3. Stills: SERVER=1 FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd out.png, plus TEXT=200 with LOCALE=pt_BR and with LOCALE=de, and CONTRAST=1. Strips: STRIP=out/full SERVER=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd out.png, plus REDUCED=1 and TEXT=200. What changed: (A) the reward figures in the Keeper finish (display face, deep gold on cream or cream on dark, heavy outline, hard drop); (B) at 200% the whole haul above the actions in en, pt_BR and de, with the hero one step down in de only, and the FIT check fails when a reward tile ends under the actions; (D) the coins land on the Starlight icon (above the number at 100%, beside it at 200%), the roll starts on each landing, and no frame has a coin over a rolling figure; (E) at 200%, Home icon-only in every language, with the raid button leading. Details are in docs/art/tracks/result-screen.md, \"Board 4's objections A, B, D and E\". Any objection, in one list.",
+      "files": [
+        "client/scripts/result_screen.gd",
+        "client/scripts/result_fit.gd",
+        "client/tests/shots/screen_result.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-15T18:28:38Z",
+      "due": "2026-11-16T18:28:38Z",
+      "default": "The gate runs on the pre-checked head as it stands.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R30",
+      "from": "S1",
+      "to": "AD",
+      "ask": "Re-check of objection F from S1-R29 (P2-S1-result-3) at 904a3567 (the fix is a5db9545, with main merged as a686d4a7). The first screen now ends on a whole line whenever the bar sits under the page that scrolls. ResultFit.fold grows the corner's clearance under the bar by the line or card the scroll's edge would cut, which lifts the bar and the edge. It is a cut, not a fade, so it adds no draw call. Where the first screen now ends: en 200% on 'Entry fee 2,840 returned', de 200% on 'Eintrittsgebühr 2.840 erstattet', pt_BR 200% on 'Taxa de entrada de' (the rest of that label starts below the edge). The FIT check now fails when the edge cuts a line or card. Stills: SERVER=1 FIT=1 TEXT=200 bash tools/render/shoot.sh client/tests/shots/screen_result.gd out.png, plus CONTRAST=1, LOCALE=pt_BR and LOCALE=de. Draw calls are unchanged (en200 113, hc200 55, pt200 115, de200 114). Details are in docs/art/tracks/result-screen.md, 'Objection F, the fold'. F only; any objection, in one list.",
+      "files": [
+        "client/scripts/result_fit.gd",
+        "client/scripts/result_screen.gd",
+        "client/tests/shots/screen_result.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-15T22:45:50Z",
+      "due": "2026-11-16T22:45:50Z",
+      "default": "The gate runs on the pre-checked head as it stands, and S1 marks ready on a pass.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R31",
+      "from": "S1",
+      "to": "AD",
+      "ask": "Preview before the gate (P2-S1-result-4, M10, M12) at 6fb2e3da. New since 06635883: M30's close point, the words over the sunburst (kicker 'ASSALTO CONCLUÍDO', title, condition, time and alarm line, the lines under the tiles) now carry an ink outline set from the size each is drawn at, so it grows with the text size (1.5 points scaled with the text, 3 in high contrast, or 12% of the face): at pt_BR 200% the 'N' of 'Nenhum' has a 10 px edge, the kicker 9 px; no draw call more. Still in from before: (1) Home and the law pills on the kit's tertiary face (ghost: violet), darker than Raid again in grayscale; (2) your board 4b note (S1-R30): the fold keeps a label of up to three lines whole, so pt_BR 200% ends on the Renome tile; (3) the shot's other states (STATE=confirming, refused with REFUSED=<code>, testing, play), all FIT ok at 200% in en, pt_BR and de (M26). Fit sweep at 3d357ac6: 51 stills fit ok, draw calls unchanged. Stills: SERVER=1 FIT=1 TEXT=200 LOCALE=pt_BR bash tools/render/shoot.sh client/tests/shots/screen_result.gd out.png, plus LOCALE=de, CONTRAST=1, and the states, e.g. SERVER=1 FIT=1 STATE=refused TEXT=200 LOCALE=de, or STATE=testing (without SERVER). The reward tiles keep their currency icons with no character frame: the crew card carries the characters, and character art in the tiles would be a new placement for you and the kit to decide. Any objection, in one list.",
+      "files": [
+        "client/scripts/result_screen.gd",
+        "client/scripts/result_fit.gd",
+        "client/tests/shots/screen_result.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-16T10:17:38Z",
+      "due": "2026-11-17T10:17:38Z",
+      "default": "The gate runs on the pre-checked head as it stands, and S1 marks ready on a pass.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R32",
+      "from": "S1",
+      "to": "K1",
+      "ask": "KitNav.reward(screen, ...) dresses screen's Sky in night_rays whatever the mode, also under Settings.high_contrast, where key frame 03-result_hc and AD's S1-R24 keep the plain night (no rays behind the words). On the result screen the server-checked high-contrast state plays the reward (Starlight 2,310), so after P2-S1-result-5's switch to KitNav.reward its whole backdrop took the rays (SERVER=1 CONTRAST=1 shot of screen_result.gd, measured at 9c258d03 with the screen's fix taken out). Could KitNav.reward (and KitNav.celebrate through it) leave the sky plain under high contrast, or take a flag to skip the backdrop? Either way the result screen then drops its local fix.",
+      "files": [
+        "client/ui/kit_nav.gd",
+        "client/scripts/result_screen.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-16T16:53:03Z",
+      "due": "2026-11-17T16:53:03Z",
+      "default": "result_screen.gd keeps its fix: after KitNav.reward, where the outcome does not celebrate (high contrast), it dresses the sky back in 'night' (RbBox.dress(Sky, \"night\", 0)), as UI.frame made it.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R33",
+      "from": "S1",
+      "to": "K1",
+      "ask": "A draw-call raise for P2-S1-heist-1's gate fixes, logged in tools/ui_bake/budgets.json 'raises': heist/200 116 -> 118 and heist/hc 120 -> 121 (heist/100 stays 120). The two calls are the 'Laws here' badges (FxLawBadge: the school's shape as a frame, a cream disc and the icon at its painted size, for the gate's Painted icons fail; +1 at 200 and hc, 0 at 100 where it replaces the icon_disc) and the crew's inner well (ScreenKit.panel('well') inside the tray, for the Layered materials fail; +1 at each size). Measured at dceed4bf with budget_shots.py --only heist/100,heist/200,heist/hc: 120, 118, 121. Tried first: the names' drop fill removed (-6 at 100), the outlined figures replaced by KitNumerals (+11 -> +0), the portraits' name drawn before their trailing shapes (no change). Textures and contrast unchanged; the heist stays 29 under the cap of 150.",
+      "files": [
+        "tools/ui_bake/budgets.json"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-16T21:24:52Z",
+      "due": "2026-11-17T09:00:00Z",
+      "default": "S1 takes the crew well out (the band's tray alone holds the crew) and draws the badges at large text as the kit's icon_disc with the icon at its painted size, without the school's shape behind it, so heist/200 and heist/hc keep 116 and 120.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R34",
+      "from": "S1",
+      "to": "AD",
+      "ask": "AD preview for P2-S1-heist-1 before ready (M10, M12, M23): the stills docs/art/shots/heist-pilot/part6-h100.png, part6-h200.png and part6-hpt.png on claude/ui-screens-heist at ed766fe9 (heist at 100% text, 200% text en, 200% text pt_BR with no crew plan). Objections, if any, as a list S1 can answer in this task.",
+      "files": [
+        "docs/art/shots/heist-pilot/part6-h100.png",
+        "docs/art/shots/heist-pilot/part6-h200.png",
+        "docs/art/shots/heist-pilot/part6-hpt.png"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-16T22:09:33Z",
+      "due": "2026-11-17T10:09:33Z",
+      "default": "If no answer by the due time, S1 sets ready with the gate passed and the stills named in the handoff; AD's notes, when they come, are answered in a follow-up task.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R35",
+      "from": "S1",
+      "to": "AD",
+      "ask": "AD preview for P2-S1-result-6 before ready (M10, M12, M23): the result screen on claude/ui-screens-heist at c9d70cc3 (screen code as at e4e78070), rendered with 'env SERVER=1 FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd OUT.png' (100% text), 'env TEXT=200 LOCALE=pt_BR SERVER=1 FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd OUT.png', 'env TEXT=200 LOCALE=de SERVER=1 FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd OUT.png' and 'env CONTRAST=1 SERVER=1 FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd OUT.png'. Two departures from key frame 03 to look at: every reward total is the kit's gold numerals (num_gold), not gold for Starlight and cream for the rest, because the gate's Display type gives numbers of one rank one treatment; and all three reward tiles are on parchment, as the design's still 07, not Essence and Renown on glass, because the gold numerals' outline sank on the glass (gate 0/3 at 24cc4d7c, 3/3 at e4e78070). Objections, if any, as a list S1 can answer in this task.",
+      "files": [
+        "client/scripts/result_screen.gd",
+        "client/scripts/result_fit.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T02:17:41Z",
+      "due": "2026-11-17T10:17:41Z",
+      "default": "If no answer by the due time, the task stays ready with the gate passed and the render commands named in the handoff, as heist-1 did with S1-R34: the lead decides whether the merge waits for AD; AD's objections are answered in this task if it is still open, or in a follow-up task.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R36",
+      "from": "S1",
+      "to": "AD",
+      "ask": "AD preview for P3-S1-result-7 before ready (M10, M12, M23): the result screen on claude/ui-screens-heist (the latest commit of this task; the sha is in progress_marker), rendered with 'env SERVER=1 FIT=1 TEXT=200 LOCALE=pt_BR bash tools/render/shoot.sh client/tests/shots/screen_result.gd OUT.png', and the same with LOCALE=de, LOCALE=en, with CONTRAST=1, and at 100% text with LOCALE=pt_BR, LOCALE=de and CONTRAST=1. The answer to the gate's Hierarchy fail at 200% pt_BR (verdict b5843368): with large text the summary line and the alarm line are set at 14 and 13 points in weight 500, under the totals' 24 in 800; Starlight leads the others by size, its total at 1.5 times theirs with its name stacked under it beside a larger icon, so it keeps its lead in every language. The kit has no darker parchment (kit-spec section 1, rule 4: states are drawn, not tinted), so the lead is by size, within AD's accepted parchment departure (S1-R35). Board 4's notes: the shot's fixture now has an idle crew (3, as key frame 03) so the raid's 'Idle crew of N ready' line shows, and FIT checks it. Objections, if any, as a list S1 can answer in this task.",
+      "files": [
+        "client/scripts/result_screen.gd",
+        "client/scripts/result_fit.gd",
+        "client/tests/shots/screen_result.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T07:50:00Z",
+      "due": "2026-11-17T15:50:00Z",
+      "default": "If no answer by the due time, the task stays ready with the gate's answer and the render commands named in the handoff, as result-6 did with S1-R35: the lead decides whether the merge waits for AD; AD's objections are answered in this task if it is still open, or in a follow-up task.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R37",
+      "from": "S1",
+      "to": "K1",
+      "ask": "Raise tools/ui_bake/budgets.json shots.recorded result/hc draw_calls from 27 to 28 (with the lead's approval, as the protocol asks for a guard baseline). bash tools/ui_bake/guard.sh at 55716273 fails one line only: 'FAIL result/hc: 28 draw calls, recorded 27'. The one call is board 4's idle crew line ('Idle crew of 3 ready') on the raid button, which P3-S1-result-7 asks for: the guard's shot runs client/tests/shots/screen_result.gd, whose fixture now loads a roster with 3 idle. result/100 reads 89 (record 91) and result/200 95 (record 99), so those records stay.",
+      "files": [
+        "tools/ui_bake/budgets.json"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T08:12:00Z",
+      "due": "2026-11-17T20:00:00Z",
+      "default": "The lead approves the rise at the merge of P3-S1-result-7 and K1 (or the lead) records 28. If refused, a follow-up task has the guard's high-contrast shot load no roster (IDLE=-1 in its env, K1's file) and the record stays 27.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R38",
+      "from": "S1",
+      "to": "K1",
+      "ask": "For AD-R56 (P3-S1-hc-offline-1): a high-contrast face for the near-black card (panel_dark, #140C2A) with a cream line, as key frame high contrast shows. The heist's plates now take the card look in high contrast (client/scripts/heist_hand.gd, hc_plates), but the atlas face draws the card's high-contrast line in lavender #B8A8D8 (L* about 72), and the shader's line_color cannot change a line the atlas draws. A cream line (the kit's ON_DARK #F3EEFF or the key frame's cream) needs a new or re-baked high-contrast panel_dark face in the kit.",
+      "files": [
+        "client/ui/",
+        "art/ui/"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T13:50:00Z",
+      "due": "2026-11-18T13:50:00Z",
+      "default": "The kit's lavender high-contrast line #B8A8D8 stands on the heist's card plates (dL* about 52 to 56 off the sky, so the plates still read); the task's handoff says so and the cream line goes to a K1 follow-up if AD asks for it.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R39",
+      "from": "S1",
+      "to": "K1",
+      "ask": "With the lead's approval under M33: raise tools/ui_bake/budgets.json shots.recorded draw_calls heist/hc 121 -> 123, result/100 91 -> 103 and result/hc 28 -> 45. guard.sh at a4dcb52e fails only these three lines, each from P3-S1-hc-offline-1's own change. heist/hc: the high-contrast plates re-dressed on the card, Get out on red, Pause on the light plate (AD-R56). result/100: the offline result's crew card (glass panel, three KitRing faces of different creatures, which do not batch) and the lead's ring on the Loot tile (AD-R57). result/hc: the same, plus the Loot tile that a bug hid in high contrast (now fixed). The server state measures 117 and 59 (SERVER=1 budget_shots.py --only result/100,result/hc), so the offline state stays 14 under it; all stay under the cap of 150; textures and words below 4.5:1 are unchanged; result/200 97 (99), home and settings keep their records.",
+      "files": [
+        "tools/ui_bake/budgets.json"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T14:20:00Z",
+      "due": "2026-11-18T14:20:00Z",
+      "default": "The lead approves the three raises at the merge of P3-S1-hc-offline-1 (they close AD-R56 and AD-R57) and records them with a raises entry. If refused, a follow-up S1 task shows the offline crew by role with no faces (result/100 about 92, result/hc about 33) and keeps Pause on the card (heist/hc 122), at the cost of AD-R57's portraits and AD-R56's 20 dL* on Pause.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R40",
+      "from": "S1",
+      "to": "AD",
+      "ask": "Preview of P3-S1-hc-offline-1's stills before ready (the task's done_when). Render them from the branch claude/ui-screens-heist (no stills are committed; docs/art/shots/ is not this task's): heist: env FIT=1 CONTRAST=1 bash tools/render/shoot.sh client/tests/shots/screen_heist.gd heist_hc.png, and the same with TEXT=200 LOCALE=pt_BR; result: env FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd result_off_100.png, the same with SERVER=1, with CONTRAST=1, and with SERVER=1 CONTRAST=1. Judge AD-R56 (the hc plates on the near-black card, Get out red, Pause light; the dL* table in docs/art/tracks/heist-pilot.md part 7; the card's line is the kit's lavender until S1-R38) and AD-R57 (the offline crew card by role and the lead's portrait on the Loot tile; docs/art/tracks/result-screen.md, 'The offline result's crew and portrait'). Also: please add the offline result state to docs/art/ui-quality/gate/shots.md (screen_result.gd with no SERVER, at 100% text and with CONTRAST=1).",
+      "files": [
+        "docs/art/ui-quality/gate/shots.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T14:20:00Z",
+      "due": "2026-11-18T12:00:00Z",
+      "default": "With no answer by the due time, the task stays ready and the lead's gate run judges the stills; any objection AD raises later is answered in a follow-up S1 task.",
+      "escalate_to": "lead"
     }
   ],
-  "answers": [],
-  "next_step": "P1-S1-pilot-5: part 5 written; the pre-check at 3690e4ca failed one layout test (German 'GESETZE HIER' on the tag widened the top row past 1080 px in heist and replay). Fixed: at normal text a header wider than 80 points breaks between its words. Next: client tests, pre-check again, then the gate request."
+  "answers": [
+    {
+      "request_id": "S1-R29",
+      "from": "AD",
+      "at": "2026-11-15T20:32:00Z",
+      "summary": "A, B, D and E met; objection F (the part line at the scroll's foot at 200% en and HC en 200%); notes not objections: crew card under the bar at pt_BR/de 100%, epic burst over the kicker 130 to 200 ms accepted for board 4b.",
+      "where": "claude/ui-ad, docs/progress/status/AD.json"
+    },
+    {
+      "request_id": "S1-R30",
+      "from": "AD",
+      "at": "2026-11-15T23:58:00Z",
+      "answer": "Objection F is met at 904a3567. A, B, D and E still hold, and the result may merge (M20). One note for board 4b, not an objection: at pt_BR 200% the first screen ends on the unfinished phrase 'Taxa de entrada de'. Keeping a label's lines together at the fold would read better, if it costs no draw call. Left for board 4b."
+    },
+    {
+      "request_id": "S1-R33",
+      "from": "lead",
+      "at": "2026-11-16T21:39:00Z",
+      "answer": "Approved under M33 (both calls close failed gate qualities). The lead writes heist/200 118 and heist/hc 121, with a raises entry, in the merge of heist-1.",
+      "where": "docs/progress/lead.md, Now, cycle 106"
+    },
+    {
+      "request_id": "S1-R35",
+      "from": "AD",
+      "at": "2026-11-17T02:32:00Z",
+      "summary": "Both departures from key frame 03 stand (the kit's gold numerals on every reward total; all three reward tiles on parchment). One objection, AD-R46 (H): at 200% German 'Sternenlicht' broke by its letters in the Starlight row and FIT missed it. Answered in P2-S1-result-6 at b5843368: the reward rows are measured at the baked totals' width, and FIT fails a reward word broken inside itself.",
+      "where": "docs/progress/lead.md, Now, cycle 112; docs/art/ui-quality/board-4.md, 'Preview of result-6 (S1-R35)'; docs/art/tracks/result-screen.md, 'AD's objection H, a reward word broken (AD-R46)'"
+    }
+  ],
+  "next_step": "P3-S1-hc-offline-1: FIT series, guard.sh, track docs and handoff, AD preview, pre-check, gate request"
 }

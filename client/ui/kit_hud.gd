@@ -42,7 +42,10 @@ static func keeper(portrait: Texture2D, name: String, level: int, xp: float, ren
 
 
 ## The nearest goal (§14.8) on a card above the tabs: its icon, its words
-## and how far along it is, the count written beside the bar.
+## and how far along it is, the count written beside the bar (none with no
+## count: the words then say what is left). The bar is the key frame's green
+## progress fill (`green_bar`, 01-home.html) in both looks; gold stays on
+## Collect (AD-R59).
 static func goal(icon: String, words: String, done: float, of: float, count: String) -> PanelContainer:
 	var p := UI.panel("card")
 	p.name = "Goal"
@@ -58,7 +61,10 @@ static func goal(icon: String, words: String, done: float, of: float, count: Str
 	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	l.set_meta("bold", true)
 	v.add_child(l)
-	v.add_child(KitStatus.progress(done, of, count, Tokens.color("gold")))
+	var bar := KitStatus.progress(done, of, count, Tokens.color("green_bar"))
+	for n: Label in bar.find_children("*", "Label", false, false):
+		n.visible = count != ""
+	v.add_child(bar)
 	row.add_child(v)
 	p.add_child(row)
 	return p

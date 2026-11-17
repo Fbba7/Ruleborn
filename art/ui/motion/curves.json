@@ -1,0 +1,633 @@
+{
+  "about": "Every interface motion's times and easing (report.md step 8 and section 10.3). Rules from §21.8 (D3 (b)): every step lasts 150 to 250 ms and eases out, nothing overshoots its end value, a press squashes slightly, rewards fly into their counter, shake is never above 4 px. From §20.8: each motion names its reduced form, which drops swoops and particles but keeps one coin landing in its counter, and nothing repeats faster than three times a second. Times are in milliseconds from the motion's start; distances in points (the kit's UI.px turns them into pixels); sprites are pieces of client/ui/art/motion.json. check_curves.py holds this file to these rules.",
+  "version": 1,
+  "rules": {
+    "shortest_ms": 150,
+    "longest_ms": 250,
+    "easings": [
+      "cubic_out"
+    ],
+    "overshoot": false,
+    "flash_hz_most": 3,
+    "shake_px_most": 4,
+    "shake_switchable": true
+  },
+  "easings": {
+    "cubic_out": {
+      "formula": "1 - (1 - t)^3",
+      "godot": {
+        "trans": "TRANS_CUBIC",
+        "ease": "EASE_OUT"
+      },
+      "overshoot": false
+    }
+  },
+  "motions": {
+    "press": {
+      "about": "A button pressed and let go: on touch-down its body sinks travel_points onto its lip (rubric quality 4: 2 to 4 points), squashes slightly and darkens, with a light haptic tap (§21.8); on release it comes back. Nothing grows past its rest size.",
+      "haptic": "light",
+      "full": {
+        "down": [
+          {
+            "name": "sink",
+            "property": "travel_points",
+            "from": 0,
+            "to": 3,
+            "at_ms": 0,
+            "ms": 150,
+            "easing": "cubic_out"
+          },
+          {
+            "name": "squash",
+            "property": "scale",
+            "from": 1.0,
+            "to": 0.96,
+            "at_ms": 0,
+            "ms": 150,
+            "easing": "cubic_out"
+          },
+          {
+            "name": "darken",
+            "property": "self_modulate_value",
+            "from": 1.0,
+            "to": 0.9,
+            "at_ms": 0,
+            "ms": 150,
+            "easing": "cubic_out"
+          }
+        ],
+        "up": [
+          {
+            "name": "rise",
+            "property": "travel_points",
+            "from": 3,
+            "to": 0,
+            "at_ms": 0,
+            "ms": 180,
+            "easing": "cubic_out"
+          },
+          {
+            "name": "recover",
+            "property": "scale",
+            "from": 0.96,
+            "to": 1.0,
+            "at_ms": 0,
+            "ms": 180,
+            "easing": "cubic_out"
+          },
+          {
+            "name": "lighten",
+            "property": "self_modulate_value",
+            "from": 0.9,
+            "to": 1.0,
+            "at_ms": 0,
+            "ms": 180,
+            "easing": "cubic_out"
+          }
+        ]
+      },
+      "reduced": {
+        "form": "Sinks and darkens, no squash.",
+        "down": [
+          {
+            "name": "sink",
+            "property": "travel_points",
+            "from": 0,
+            "to": 3,
+            "at_ms": 0,
+            "ms": 150,
+            "easing": "cubic_out"
+          },
+          {
+            "name": "darken",
+            "property": "self_modulate_value",
+            "from": 1.0,
+            "to": 0.88,
+            "at_ms": 0,
+            "ms": 150,
+            "easing": "cubic_out"
+          }
+        ],
+        "up": [
+          {
+            "name": "rise",
+            "property": "travel_points",
+            "from": 3,
+            "to": 0,
+            "at_ms": 0,
+            "ms": 150,
+            "easing": "cubic_out"
+          },
+          {
+            "name": "lighten",
+            "property": "self_modulate_value",
+            "from": 0.88,
+            "to": 1.0,
+            "at_ms": 0,
+            "ms": 150,
+            "easing": "cubic_out"
+          }
+        ]
+      }
+    },
+    "reward": {
+      "about": "The result screen's reward sequence (rubric quality 5). The prize gathers for the tier's anticipation_ms (0.3 to 1 s, longer for a rarer reward): gather squashes it a little and warm brightens it from the start, and tighten and charge, marked ends_at burst, are placed to end at the burst (they start their ms before), so the prize keeps squashing and glowing into it. The payoff's at_ms count from the burst; its steps with a negative at_ms are the visible gather, run before the burst on the burst's own sprites: dust drawn in from gather_points and absorbed (only in tiers whose anticipation is long enough, gather_dust being 0 elsewhere and the tier's dust count where it runs), then the ring closing in on the prize and the sparkles drawn in to its middle. No gather step starts before its tier's anticipation does. At the burst the rays and ring grow to burst_scale (the 80-point sprites: about a 96-point prize's size in common, half again its size in rare and more than twice it in epic, well out onto the sunburst) and the sparkles and dust fly out to sparkle_points and dust_points; then the reveal, and the coins flying in arcs to their counter, 60 ms apart. Each coin's landing runs on_landing: the counter rolls up by that coin's share and pulses. The pulse changes size, never brightness, so the landings are not flashes (§20.8); the burst is the one flash of a reward. The coins share one sprite strip (face, turn, edge, turn) at frame_ms a frame: a coin turning, at constant brightness. A rarer reward has more particles, a longer anticipation and a brighter, larger, farther-reaching burst (tiers). Values named tier.<key> come from the reward's tier.",
+      "full": {
+        "tiers": {
+          "common": {
+            "anticipation_ms": 300,
+            "sparkles": 4,
+            "dust": 6,
+            "burst_value": 0.75,
+            "burst_scale": 1.15,
+            "sparkle_points": 48,
+            "dust_points": 34,
+            "gather_points": 60,
+            "gather_dust": 0
+          },
+          "rare": {
+            "anticipation_ms": 450,
+            "sparkles": 6,
+            "dust": 8,
+            "burst_value": 0.88,
+            "burst_scale": 1.8,
+            "sparkle_points": 70,
+            "dust_points": 54,
+            "gather_points": 76,
+            "gather_dust": 8
+          },
+          "epic": {
+            "anticipation_ms": 700,
+            "sparkles": 10,
+            "dust": 12,
+            "burst_value": 1.0,
+            "burst_scale": 2.8,
+            "sparkle_points": 104,
+            "dust_points": 84,
+            "gather_points": 96,
+            "gather_dust": 12
+          }
+        },
+        "anticipation": [
+          {
+            "name": "gather",
+            "target": "prize",
+            "property": "scale",
+            "from": 1.0,
+            "to": 0.97,
+            "at_ms": 0,
+            "ms": 150,
+            "easing": "cubic_out"
+          },
+          {
+            "name": "warm",
+            "target": "prize",
+            "property": "self_modulate_value",
+            "from": 1.0,
+            "to": 1.12,
+            "at_ms": 0,
+            "ms": 150,
+            "easing": "cubic_out"
+          },
+          {
+            "name": "tighten",
+            "target": "prize",
+            "property": "scale",
+            "from": 0.97,
+            "to": 0.94,
+            "at_ms": 0,
+            "ms": 150,
+            "easing": "cubic_out",
+            "ends_at": "burst"
+          },
+          {
+            "name": "charge",
+            "target": "prize",
+            "property": "self_modulate_value",
+            "from": 1.12,
+            "to": 1.3,
+            "at_ms": 0,
+            "ms": 150,
+            "easing": "cubic_out",
+            "ends_at": "burst"
+          }
+        ],
+        "payoff": [
+          {
+            "name": "gather_dust",
+            "target": "burst",
+            "sprite": "sparkle__dot__normal",
+            "count": "tier.gather_dust",
+            "property": "offset_points",
+            "from": "tier.gather_points",
+            "to": 4,
+            "at_ms": -450,
+            "ms": 250,
+            "easing": "cubic_out"
+          },
+          {
+            "name": "gather_dust_in",
+            "target": "burst",
+            "sprite": "sparkle__dot__normal",
+            "count": "tier.gather_dust",
+            "property": "alpha",
+            "from": 0.0,
+            "to": 0.8,
+            "at_ms": -450,
+            "ms": 150,
+            "easing": "cubic_out"
+          },
+          {
+            "name": "gather_dust_out",
+            "target": "burst",
+            "sprite": "sparkle__dot__normal",
+            "count": "tier.gather_dust",
+            "property": "alpha",
+            "from": 0.8,
+            "to": 0.0,
+            "at_ms": -250,
+            "ms": 200,
+            "easing": "cubic_out"
+          },
+          {
+            "name": "gather_ring",
+            "target": "burst",
+            "sprite": "burst__ring__normal",
+            "property": "scale",
+            "from": 1.6,
+            "to": 0.3,
+            "at_ms": -250,
+            "ms": 250,
+            "easing": "cubic_out"
+          },
+          {
+            "name": "gather_ring_in",
+            "target": "burst",
+            "sprite": "burst__ring__normal",
+            "property": "alpha",
+            "from": 0.0,
+            "to": 0.55,
+            "at_ms": -250,
+            "ms": 200,
+            "easing": "cubic_out"
+          },
+          {
+            "name": "gather_sparkles",
+            "target": "burst",
+            "sprite": "sparkle__star__normal",
+            "count": "tier.sparkles",
+            "property": "offset_points",
+            "from": "tier.gather_points",
+            "to": 4,
+            "at_ms": -250,
+            "ms": 250,
+            "easing": "cubic_out"
+          },
+          {
+            "name": "gather_sparkles_in",
+            "target": "burst",
+            "sprite": "sparkle__star__normal",
+            "count": "tier.sparkles",
+            "property": "alpha",
+            "from": 0.0,
+            "to": 0.9,
+            "at_ms": -250,
+            "ms": 150,
+            "easing": "cubic_out"
+          },
+          {
+            "name": "burst_rays",
+            "target": "burst",
+            "sprite": "burst__rays__normal",
+            "property": "scale",
+            "from": 0.4,
+            "to": "tier.burst_scale",
+            "at_ms": 0,
+            "ms": 220,
+            "easing": "cubic_out"
+          },
+          {
+            "name": "burst_rays_fade",
+            "target": "burst",
+            "sprite": "burst__rays__normal",
+            "property": "alpha",
+            "from": "tier.burst_value",
+            "to": 0.0,
+            "at_ms": 100,
+            "ms": 250,
+            "easing": "cubic_out"
+          },
+          {
+            "name": "burst_ring",
+            "target": "burst",
+            "sprite": "burst__ring__normal",
+            "property": "scale",
+            "from": 0.3,
+            "to": "tier.burst_scale",
+            "at_ms": 0,
+            "ms": 200,
+            "easing": "cubic_out"
+          },
+          {
+            "name": "burst_ring_fade",
+            "target": "burst",
+            "sprite": "burst__ring__normal",
+            "property": "alpha",
+            "from": "tier.burst_value",
+            "to": 0.0,
+            "at_ms": 50,
+            "ms": 200,
+            "easing": "cubic_out"
+          },
+          {
+            "name": "sparkles",
+            "target": "burst",
+            "sprite": "sparkle__star__normal",
+            "count": "tier.sparkles",
+            "stagger_ms": 30,
+            "property": "offset_points",
+            "from": 0,
+            "to": "tier.sparkle_points",
+            "at_ms": 0,
+            "ms": 250,
+            "easing": "cubic_out"
+          },
+          {
+            "name": "sparkles_fade",
+            "target": "burst",
+            "sprite": "sparkle__star__normal",
+            "count": "tier.sparkles",
+            "stagger_ms": 30,
+            "property": "alpha",
+            "from": 1.0,
+            "to": 0.0,
+            "at_ms": 100,
+            "ms": 200,
+            "easing": "cubic_out"
+          },
+          {
+            "name": "dust",
+            "target": "burst",
+            "sprite": "sparkle__dot__normal",
+            "count": "tier.dust",
+            "stagger_ms": 30,
+            "property": "offset_points",
+            "from": 0,
+            "to": "tier.dust_points",
+            "at_ms": 20,
+            "ms": 220,
+            "easing": "cubic_out"
+          },
+          {
+            "name": "dust_fade",
+            "target": "burst",
+            "sprite": "sparkle__dot__normal",
+            "count": "tier.dust",
+            "stagger_ms": 30,
+            "property": "alpha",
+            "from": 1.0,
+            "to": 0.0,
+            "at_ms": 90,
+            "ms": 150,
+            "easing": "cubic_out"
+          },
+          {
+            "name": "unglow",
+            "target": "prize",
+            "property": "self_modulate_value",
+            "from": 1.3,
+            "to": 1.0,
+            "at_ms": 0,
+            "ms": 200,
+            "easing": "cubic_out"
+          },
+          {
+            "name": "reveal_scale",
+            "target": "prize",
+            "property": "scale",
+            "from": 0.94,
+            "to": 1.0,
+            "at_ms": 0,
+            "ms": 200,
+            "easing": "cubic_out"
+          },
+          {
+            "name": "reveal_rise",
+            "target": "prize",
+            "property": "offset_points",
+            "from": 10,
+            "to": 0,
+            "at_ms": 0,
+            "ms": 220,
+            "easing": "cubic_out"
+          },
+          {
+            "name": "coins_fly",
+            "target": "coin",
+            "sprites": [
+              "coin__face__normal",
+              "coin__turn__normal",
+              "coin__edge__normal",
+              "coin__turn__normal"
+            ],
+            "frame_ms": 62,
+            "count": "coins, at most 8",
+            "stagger_ms": 60,
+            "arc_points": 44,
+            "property": "arc",
+            "from": "prize",
+            "to": "counter",
+            "at_ms": 250,
+            "ms": 250,
+            "easing": "cubic_out"
+          },
+          {
+            "name": "coins_shrink",
+            "target": "coin",
+            "count": "coins, at most 8",
+            "stagger_ms": 60,
+            "property": "scale",
+            "from": 1.0,
+            "to": 0.7,
+            "at_ms": 250,
+            "ms": 250,
+            "easing": "cubic_out"
+          }
+        ],
+        "on_landing": [
+          {
+            "name": "counter_roll",
+            "target": "counter",
+            "property": "value",
+            "from": "shown",
+            "to": "shown + this coin's share",
+            "at_ms": 0,
+            "ms": 150,
+            "easing": "cubic_out"
+          },
+          {
+            "name": "counter_pulse_up",
+            "target": "counter",
+            "restart": "from the current scale",
+            "property": "scale",
+            "from": 1.0,
+            "to": 1.06,
+            "at_ms": 0,
+            "ms": 150,
+            "easing": "cubic_out"
+          },
+          {
+            "name": "counter_pulse_down",
+            "target": "counter",
+            "property": "scale",
+            "from": 1.06,
+            "to": 1.0,
+            "at_ms": 150,
+            "ms": 150,
+            "easing": "cubic_out"
+          }
+        ],
+        "high_contrast": "The same steps with each sprite's _hc twin from motion_hc.webp."
+      },
+      "reduced": {
+        "form": "No anticipation or burst. The prize cross-fades in, one coin lands in its counter (the one particle §20.8 keeps), and the counter shows its new value at once.",
+        "steps": [
+          {
+            "name": "reveal_fade",
+            "target": "prize",
+            "property": "alpha",
+            "from": 0.0,
+            "to": 1.0,
+            "at_ms": 0,
+            "ms": 150,
+            "easing": "cubic_out"
+          },
+          {
+            "name": "coin_land",
+            "target": "coin",
+            "sprite": "coin__face__normal",
+            "count": 1,
+            "property": "offset_points",
+            "from": -10,
+            "to": 0,
+            "at_ms": 150,
+            "ms": 200,
+            "easing": "cubic_out"
+          },
+          {
+            "name": "coin_land_fade",
+            "target": "coin",
+            "sprite": "coin__face__normal",
+            "count": 1,
+            "property": "alpha",
+            "from": 1.0,
+            "to": 0.0,
+            "at_ms": 200,
+            "ms": 150,
+            "easing": "cubic_out"
+          },
+          {
+            "name": "counter_set",
+            "target": "counter",
+            "property": "value",
+            "from": "old",
+            "to": "new",
+            "at_ms": 350,
+            "ms": 0,
+            "easing": "none"
+          }
+        ]
+      }
+    },
+    "shine": {
+      "about": "An idle shine on primary buttons (rubric quality 7): a soft band sweeps across the face once every period_ms, after a first wait, only while the button is enabled and idle. The period is the bob's (tokens bob_ms), so the shine keeps step with the idle bob; once in 2.4 s is far below §20.8's three times a second. Not drawn in high contrast: the band would blur the outline that mode keeps.",
+      "full": {
+        "first_wait_ms": 800,
+        "period_ms": 2400,
+        "steps": [
+          {
+            "name": "sweep",
+            "target": "button",
+            "sprite": "shine__sweep__normal",
+            "property": "x_fraction",
+            "from": -0.3,
+            "to": 1.3,
+            "at_ms": 0,
+            "ms": 250,
+            "easing": "cubic_out"
+          },
+          {
+            "name": "sweep_fade",
+            "target": "button",
+            "sprite": "shine__sweep__normal",
+            "property": "alpha",
+            "from": 0.6,
+            "to": 0.0,
+            "at_ms": 100,
+            "ms": 150,
+            "easing": "cubic_out"
+          }
+        ],
+        "high_contrast": "none"
+      },
+      "reduced": {
+        "form": "None.",
+        "steps": []
+      }
+    },
+    "screen": {
+      "about": "A screen change: the old screen fades out, the new one fades in from 0.985 of its size.",
+      "full": {
+        "out": [
+          {
+            "name": "fade_out",
+            "target": "old_screen",
+            "property": "alpha",
+            "from": 1.0,
+            "to": 0.0,
+            "at_ms": 0,
+            "ms": 160,
+            "easing": "cubic_out"
+          }
+        ],
+        "in": [
+          {
+            "name": "fade_in",
+            "target": "new_screen",
+            "property": "alpha",
+            "from": 0.0,
+            "to": 1.0,
+            "at_ms": 0,
+            "ms": 180,
+            "easing": "cubic_out"
+          },
+          {
+            "name": "grow",
+            "target": "new_screen",
+            "property": "scale",
+            "from": 0.985,
+            "to": 1.0,
+            "at_ms": 0,
+            "ms": 180,
+            "easing": "cubic_out"
+          }
+        ]
+      },
+      "reduced": {
+        "form": "A cross-fade.",
+        "in": [
+          {
+            "name": "fade_in",
+            "target": "new_screen",
+            "property": "alpha",
+            "from": 0.0,
+            "to": 1.0,
+            "at_ms": 0,
+            "ms": 150,
+            "easing": "cubic_out"
+          }
+        ]
+      }
+    }
+  }
+}

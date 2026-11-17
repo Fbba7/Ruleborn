@@ -187,6 +187,12 @@ track's notes (what was done, the evidence, what is still worse, and
    `lease_until` three hours later); commit and push.
 4. If the task has `prior_sha`, merge it first: it is the lapsed claimant's
    work.
+   **A stacked task** (your launch prompt says "stacked on <task>"): one of
+   its `deps` is `ready`, not yet merged. Branch from current main, merge
+   that dep's `ready_sha` into your branch, and build on it. When the dep
+   merges, merge main again; if the dep goes to `resync`, merge main again
+   once it is ready anew. Your change still merges after the dep, with its
+   own full checks.
 5. Set `task_state: working` at your first work commit.
 6. **One task per session**, of at most 4 hours. At 1.5 × the estimate, write
    your handoff and send the lead a request to split the task.
@@ -210,9 +216,42 @@ track's notes (what was done, the evidence, what is still worse, and
 ## Ready, and after
 
 A task is **ready** when, at `ready_sha`, your pre-check passed (recorded in
-`precheck`) and the gate passed every item in the task's `gate_items`. Your
-branch need not contain main's head. Write `task_state: "ready"` and
-`ready_sha`.
+`precheck`) and the gate passed every item in the task's `gate_items`.
+Write `task_state: "ready"` and `ready_sha`.
+
+**Before you mark ready** (phase 1's lessons, in force from UI phase 2):
+
+- **Set up a fresh container first.** In a new container, run the
+  fresh-container setup line, then `bash client/build.sh`, before any
+  check or bake; a missing tool fails the container, not your work.
+- **Merge current main into your branch** before the pre-check
+  (`git merge origin/claude/videogame-project-analysis-ewkkk2`; never rebase a pushed branch), so
+  the pre-check and the guard run on what the candidate will hold. All five
+  of phase 1's first-attempt misses were a list or a baked file out of step
+  with main.
+- **A list change travels with the art.** If your task adds, removes or
+  renames a piece, a skin or a material, the matching entry in its list (the
+  catalogue's `SKINS_OF`, the kit's list of materials) lands with it: in
+  your files, or by a request to the list's owner sent before ready and
+  named in your handoff.
+- **Preview a screen or a board with AD early.** As soon as its first
+  stills exist, even rough, send AD a request with their paths, and keep
+  building: do not wait for the answer. AD answers within one cycle, with
+  every objection in one list; fold them in before the gate request. Send a
+  second preview only if the screen changed in shape since.
+- **Pre-judge the weak spots (optional).** Before the gate request you may
+  run the gate's judge on your own stills: the `ui-judge` agent, one sample,
+  on the stills where phase 2 missed most (text at 200% in pt_BR, and high
+  contrast) with their references and the rubric. It is advisory: it
+  writes no verdict, adds nothing to `attempts`, and the gate still runs in
+  full. Fix what it finds first; skip it on a task with no such still.
+- **Stay out of the gate's verdict folder (M48).** Never commit under
+  `docs/art/ui-quality/gate/verdicts/`: the gate and the lead write it on
+  main, and a builder's copy there conflicts at the merge. Before ready,
+  run `python3 tools/coord/owners.py diff <task_id> origin/claude/videogame-project-analysis-ewkkk2 <ready_sha>`;
+  it must pass, so every file your branch changes is in the task's
+  `files` or its `exceptions`.
+- **Mark ready in the same turn** the gate verdict comes back, and push.
 
 **After marking ready,** write your handoff, set `agent_state: waiting`,
 push, and end the session. Do not poll. The lead merges your change on a
@@ -308,6 +347,17 @@ and mark ready again.
   Keep `docs/progress/status/lead.json` and your handoff; start agents'
   sessions with `create_session`; check daily that the launcher's and the
   watchdog's scheduled tasks are enabled and read their last runs.
+- Before any check in a cycle, run the fresh-container setup line, then
+  `bash client/build.sh` in the candidate's worktree; a missing tool is the
+  container's failure, not the task's.
+- Keep the three building slots full: seed each builder's next task before
+  its current one merges. Estimate a screen or a board with one AD review
+  round included, and make tasks that change the same list (`SKINS_OF`, the
+  kit's materials) depend on each other.
+- Adapt within the phase, not only at its close: when a KPI rates worse or
+  a candidate fails on its first attempt, find the cause the same day, send
+  the rule as a message to the agent that can act on it, and add a row to
+  the program's lessons table for the current phase.
 - You build nothing outside backlog tasks: edits to hotspot files are your
   own backlog tasks, checked like any other. You judge no quality and approve
   no build as "good".

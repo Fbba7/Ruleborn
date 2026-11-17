@@ -17,9 +17,24 @@ const BROWN_INK := Color("#2A1A10")
 ## Each resource's colour and its glyph, so the colour is never alone.
 const RESOURCE := {"star_well": ["#F2B43C", "✦"], "aether_spring": ["#3CC6D8", "◆"], "garden": ["#5CC46A", "❦"]}
 
+## How far a pin may stand from the point it marks, in its own heights: a
+## named pin within `NEAR` of it, so it reads as its island's (S2-R20's first
+## objection); a pin shrunk to its level alone within `FAR`, before it hides.
+const NEAR := 1.25
+const FAR := 3.0
+
 var view: UniverseView
 ## Each pin: {"node": Control, "at": Vector3 or realm id, "realm": id, "lift": metres, "zooms": [levels]}.
 var _pins: Array[Dictionary] = []
+## The most each realm's pin may show (see `_shape`): 0 its icon, name and
+## level; 1 its icon and level; 2 its level alone, a numbered chip. Each pin
+## shows the most that finds a place near its island, down to this; this
+## drops for every realm only where one found none at all. Until the room
+## changes.
+var _mode := 0
+var _room := []
+## The realms whose pins found no place in the last lay, in order.
+var _failed: Array[String] = []
 
 
 func _init(owner_view: UniverseView) -> void:
@@ -90,25 +105,43 @@ func show_pins(universe: Dictionary, extras: Dictionary) -> void:
 		_pins.append({"node": plate, "realm": "heart", "back": true, "zooms": [0, 1], "rank": 1})
 	var open: Variant = universe.get("open")
 	if open is Dictionary and not ((open as Dictionary).get("types", []) as Array).is_empty():
-		# Locked, as the designs' "Opens at Keeper 28" on a dark pill with a
-		# lock; open to buy, its name after a plus.
+		# Locked, as the designs' "Lantern Vale" over "Opens at Keeper 28" on a
+		# dark pill with a lock, and where that finds no room, the lock and
+		# "28" alone (`_brief`), so the lock reads in words at any size (S2-R38,
+		# S2-R40); open to buy, its name after a plus.
 		var plate := _plate(Color("#100A22", 0.94), Color("#C8BEE6", 0.5), false, 1.5, Color(0, 0, 0, 0.45), 3.0)
 		var name := UniversePresenter.realm_name(str((open as Dictionary)["types"][0]))
 		var needs: Dictionary = (open as Dictionary).get("needs", {})
+		var need := -1
+		var why := ""
 		match str((open as Dictionary).get("blocked", "")):
 			"keeper_level":
-				plate.add_child(_with_mark("generalui/lock", _words(Strings.t("HOME_OPENS_KEEPER",
-					int(needs.get("keeper", 0))), Palette.PAPER)))
+				need = int(needs.get("keeper", 0))
+				why = Strings.t("HOME_OPENS_KEEPER", need)
 			"spire_level":
-				plate.add_child(_with_mark("generalui/lock", _words(Strings.t("UNIVERSE_NEEDS_SPIRE",
-					int(needs.get("spire", 0))), Palette.PAPER)))
-			_:
-				plate.add_child(_words("+ " + name, Palette.PAPER))
+				need = int(needs.get("spire", 0))
+				why = Strings.t("UNIVERSE_NEEDS_SPIRE", need)
+		var brief := need >= 0
+		if brief:
+			var both := VBoxContainer.new()
+			both.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			both.add_theme_constant_override("separation", 0)
+			var title := _words(name, Palette.PAPER)
+			title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			both.add_child(title)
+			both.add_child(_with_mark("generalui/lock", _words(why, Palette.PAPER)))
+			plate.add_child(both)
+			var short_form := _with_mark("generalui/lock", _words(str(need), Palette.PAPER))
+			short_form.visible = false
+			plate.add_child(short_form)
+			plate.accessibility_name = "%s, %s" % [name, why]
+		else:
+			plate.add_child(_words("+ " + name, Palette.PAPER))
 		plate.mouse_filter = Control.MOUSE_FILTER_STOP
 		plate.gui_input.connect(func(e: InputEvent) -> void:
 			if _tapped(e):
 				view.next_chosen.emit())
-		_pins.append({"node": plate, "realm": "next:0", "rim": true, "zooms": [0], "rank": 1})
+		_pins.append({"node": plate, "realm": "next:0", "rim": true, "brief": brief, "zooms": [0], "rank": 1})
 	# Each link's kind, at its middle (the design's link icons, :1167).
 	# Drawn by the pins in one run (`_draw`): a paper disc each, then the icons.
 	for l: Dictionary in view.links:
@@ -188,15 +221,23 @@ func _draw() -> void:
 		Color(0.04, 0.02, 0.03, 0.55), UI.px(3.0))
 	for node: Control in plates:
 		plate.draw(ci, Rect2(node.position, node.size))
+	# The icon at the plate's start, the level's disc at its end, both centred
+	# up and down; from the plate's own size, as its row sorts its children a
+	# frame late after `_shape` hides some, which would draw the disc over the
+	# icon on a plate half empty (AD's objection (f) on S2-R25).
 	var parts := func(node: Control, at: int) -> Rect2:
 		var c := node.get_child(0).get_child(at) as Control
-		return Rect2(c.global_position - global_position, c.size)
+		var inner := Rect2(node.position + Vector2(UI.px(4), UI.px(2)), node.size - Vector2(UI.px(8), UI.px(4)))
+		var s := c.get_combined_minimum_size()
+		var x := inner.position.x if at == 0 else inner.end.x - s.x
+		return Rect2(Vector2(x, inner.get_center().y - s.y * 0.5), s)
 	var disc := UniverseHud.baked_box(BROWN_INK, BROWN_INK, 0.0, UI.text_px(POINTS) * 0.6, Color(0, 0, 0, 0), 0)
 	for node: Control in plates:
 		disc.draw(ci, parts.call(node, 2))
 	for node: Control in plates:
-		var r: Rect2 = parts.call(node, 0)
-		draw_texture_rect(node.get_child(0).get_child(0).get_meta("icon"), r, false)
+		var icon := node.get_child(0).get_child(0) as Control
+		if icon.visible:
+			draw_texture_rect(icon.get_meta("icon"), parts.call(node, 0), false)
 	_draw_links()
 	var font := UI.bold_font()
 	var px := UI.text_px(POINTS)
@@ -301,11 +342,65 @@ static func _words(text: String, colour: Color) -> Label:
 
 
 ## Every pin where the camera now shows its point, shown at the zooms it
-## belongs to.
+## belongs to. Where a realm's pin finds no room near its island for its name,
+## every realm's pin shrinks a step together, to its icon and level, then to its
+## level alone, a numbered chip, so the realms are marked in one form (AD's
+## objection (b) on S2-R22). The names come back when the room changes.
 func follow() -> void:
 	if view.camera == null or not view.camera.is_inside_tree():
 		return
 	queue_redraw()
+	var room := [view.size, view.inset, view.zoom, view.keep_clear]
+	if room != _room:
+		_room = room
+		_mode = 0
+	while not _lay(_mode) and _mode < 2:
+		_mode += 1
+	# Even as numbered chips a realm found no place: the pins placed before it
+	# took the room near its island. Laid again with that realm first, the
+	# others find places further round theirs, so the side buttons keep their
+	# edges at large text (AD's objection (g) on S2-R27). Each realm is moved
+	# up once at most.
+	var moved := {}
+	while _mode == 2 and not _failed.is_empty():
+		var id := ""
+		for f in _failed:
+			if not moved.has(f):
+				id = f
+				break
+		if id == "":
+			break
+		moved[id] = true
+		_first(id)
+		_lay(_mode)
+
+
+## True where, even as numbered chips laid with each failing realm first, a
+## realm's pin found no place near its island: only then does home give the
+## side buttons' room to the realms (AD's objection (g) on S2-R27).
+func short() -> bool:
+	return _mode == 2 and not _failed.is_empty()
+
+
+## Realm `id`'s pin moved to lay before the other realms' (the pins are laid
+## in order: the most urgent rank first, then as listed).
+func _first(id: String) -> void:
+	for i in _pins.size():
+		var p: Dictionary = _pins[i]
+		if p.get("front", false) and str(p.get("realm", "")) == id:
+			_pins.remove_at(i)
+			var at := 0
+			while at < _pins.size() and int(_pins[at]["rank"]) < int(p["rank"]):
+				at += 1
+			_pins.insert(at, p)
+			return
+
+
+## The pins laid out once, the realms' in `mode` (see `_mode`); false where a
+## realm's pin that belongs on the screen found no room.
+func _lay(mode: int) -> bool:
+	var every := true
+	_failed.clear()
 	var toward := view.toward()
 	var taken: Array[Rect2] = []
 	# Pins keep clear of the screen's own controls (home's side buttons).
@@ -313,9 +408,8 @@ func follow() -> void:
 	for p: Dictionary in _pins:
 		var node: Control = p["node"]
 		if p.has("at"):
-			node.visible = view.zoom in (p["zooms"] as Array)
-			if node.visible:
-				_place(node, view.camera.unproject_position(p["at"]), taken, taken_by_screen)
+			node.visible = view.zoom in (p["zooms"] as Array) and _spot(node,
+				view.camera.unproject_position(p["at"]), taken, taken_by_screen, view.inset.x, node.size.y * FAR)
 			continue
 		var id := str(p.get("realm", ""))
 		if not view.islands.has(id):
@@ -323,18 +417,10 @@ func follow() -> void:
 			continue
 		var isl: UniverseIsland = view.islands[id]
 		var shown: bool = view.zoom in (p["zooms"] as Array)
-		# Islands small on the screen keep only their names and alarms, and a
-		# name only its realm's icon and level.
+		# Islands small on the screen keep only their realms' pins and alarms.
 		var small := isl.radius / maxf(0.01, view.camera.size) * view.size.y < UI.px(28)
 		if int(p["rank"]) >= 2 or p.get("back", false):
 			shown = shown and not small
-		if p.get("front", false):
-			# A small island's pin is its icon and level; a nearer one's its name
-			# between them.
-			var words := node.get_child(0).get_child(1) as Control
-			if words.visible == small:
-				words.visible = not small
-				node.reset_size()
 		if view.zoom > 0 and id != view.focus_id:
 			shown = false
 		node.visible = shown
@@ -358,55 +444,120 @@ func follow() -> void:
 				node.visible = false
 				continue
 			at = (isl.places[str(p["place"])] as Vector3) + Vector3(0, float(p["lift"]), 0)
-		_place(node, view.camera.unproject_position(at), taken, taken_by_screen)
-
-
-## A pin centred on `s`, kept in the gap between `screen`'s controls on its
-## row (home's side buttons), or below them where it is wider than the gap,
-## unless it would cover one already placed.
-static func _place(node: Control, s: Vector2, taken: Array[Rect2], screen: Array[Rect2]) -> void:
-	node.position = (s - node.size / 2.0).round()
-	var wide := (node.get_parent() as Control).size.x
-	for attempt: int in 4:
-		var lo := UI.px(4)
-		var hi := wide - UI.px(4)
-		var lowest := -1.0
-		var above := INF
-		for r: Rect2 in screen:
-			if r.position.y < node.position.y + node.size.y and r.end.y > node.position.y:
-				# A control across the middle (home's Collect, the raid card):
-				# the pin rises above it.
-				if r.position.x < wide * 0.5 and r.end.x > wide * 0.5:
-					if r.position.x < node.position.x + node.size.x and r.end.x > node.position.x:
-						above = minf(above, r.position.y)
-					continue
-				elif r.get_center().x < wide * 0.5:
-					lo = maxf(lo, r.end.x + UI.px(2))
-				else:
-					hi = minf(hi, r.position.x - UI.px(2))
-				lowest = maxf(lowest, r.end.y)
-		if above < INF:
-			node.position.y = above - node.size.y - UI.px(2)
+		var s := view.camera.unproject_position(at)
+		node.set_meta("anchor", s)
+		if not p.get("front", false):
+			# A locked realm's plate keeps the side buttons' gutter (AD's note on
+			# S2-R36), in its full form and its short one.
+			var side := UI.px(Tokens.number("size", "safe_side_points")) if p.get("brief", false) else UI.px(4)
+			if p.get("brief", false):
+				_brief(node, false)
+			var spotted := _spot(node, s, taken, taken_by_screen, view.inset.x, node.size.y * FAR, side)
+			if not spotted and p.get("brief", false):
+				_brief(node, true)
+				spotted = _spot(node, s, taken, taken_by_screen, view.inset.x, node.size.y * FAR, side)
+			node.visible = spotted
 			continue
-		if hi - lo >= node.size.x:
-			node.position.x = clampf(node.position.x, lo, hi - node.size.x)
-			break
-		if lowest < 0.0 or attempt == 3:
-			# And inside the screen's edges.
-			if wide > node.size.x:
-				node.position.x = clampf(node.position.x, UI.px(4), wide - node.size.x - UI.px(4))
-			break
-		node.position.y = lowest + UI.px(2)
-	# Where it would cover another, a step down or up, else not at all; never
-	# onto the screen's own controls.
-	for step: float in [0.0, 1.0, -1.0]:
-		var box := Rect2(node.position + Vector2(0.0, step * (node.size.y + UI.px(2))), node.size).grow(-UI.px(2))
-		if not taken.any(func(other: Rect2) -> bool: return other.intersects(box)) \
-				and not screen.any(func(other: Rect2) -> bool: return other.intersects(box)):
-			node.position = box.grow(UI.px(2)).position
-			taken.append(box)
-			return
-	node.visible = false
+		# A realm's pin with its name where a place near its island is free,
+		# never over another realm (S2-R20's first objection). Every realm's pin
+		# takes the same form (AD's objection (b) on S2-R22): where one finds no
+		# room, `follow` lays them all again a step smaller.
+		_shape(node, mode)
+		var placed := _spot(node, s, taken, taken_by_screen, view.inset.x, node.size.y * (NEAR if mode < 2 else FAR))
+		node.visible = placed
+		if not placed:
+			_failed.append(id)
+		every = every and placed
+	return every
+
+
+## The pin at the free place nearest the point `s` it marks, within `reach`
+## pixels of it: clear by `pin_gap()` of the pins already placed (`taken`) and of
+## the screen's controls (`screen`: home's side buttons with their badges,
+## Collect, the goal, the raid card), inside the screen's edges and never above
+## `ceiling`, the controls at the top it would slip under. False, and the pin
+## where it was, where no place so near is free. The nearest counts a step
+## aside at half a step up or down, as a pin is wider than it is tall: a pin
+## slides along its island's rim before it leaves it.
+static func _spot(node: Control, s: Vector2, taken: Array[Rect2], screen: Array[Rect2], ceiling: float,
+		reach: float, side: float = UI.px(4)) -> bool:
+	var parent := node.get_parent() as Control
+	var dim := node.size
+	var gap := pin_gap()
+	var lo := Vector2(side, ceiling + UI.px(2))
+	var hi := Vector2(parent.size.x - dim.x - side, parent.size.y - dim.y)
+	if hi.x < lo.x or hi.y < lo.y:
+		return false
+	var centred := (s - dim / 2.0).round()
+	var xs: Array[float] = [centred.x, s.x - dim.x + UI.px(8), s.x - UI.px(8)]
+	var ys: Array[float] = [centred.y, s.y - dim.y, s.y]
+	for r: Rect2 in taken + screen:
+		xs.append(r.end.x + gap)
+		xs.append(r.position.x - dim.x - gap)
+		ys.append(r.end.y + gap)
+		ys.append(r.position.y - dim.y - gap)
+	var best := Vector2.INF
+	var score := INF
+	for y0: float in ys:
+		var y := clampf(y0, lo.y, hi.y)
+		if absf(y + dim.y / 2.0 - s.y) > reach + dim.y:
+			continue
+		for x0: float in xs:
+			var v := Vector2(clampf(x0, lo.x, hi.x), y)
+			var at := Rect2(v, dim)
+			if _off(at, s) > reach:
+				continue
+			var d := at.get_center() - s
+			var cost := d.x * d.x * 0.25 + d.y * d.y
+			if cost >= score:
+				continue
+			var box := at.grow(gap - 0.5)
+			if taken.any(func(o: Rect2) -> bool: return o.intersects(box)) \
+					or screen.any(func(o: Rect2) -> bool: return o.intersects(box)):
+				continue
+			best = v
+			score = cost
+	if score == INF:
+		return false
+	node.position = best
+	taken.append(Rect2(best, dim))
+	return true
+
+
+## The space a pin keeps from the others and from the screen's controls, so
+## numbered chips at large text never touch (S2-R20's fifth objection).
+static func pin_gap() -> float:
+	return UI.px(4)
+
+
+## How far the point `s` lies outside `r`; nothing where `r` holds it.
+static func _off(r: Rect2, s: Vector2) -> float:
+	var dx := maxf(maxf(r.position.x - s.x, s.x - r.end.x), 0.0)
+	var dy := maxf(maxf(r.position.y - s.y, s.y - r.end.y), 0.0)
+	return Vector2(dx, dy).length()
+
+
+## A realm's pin in `form`: 0 its icon, name and level; 1 its icon and level;
+## 2 its level alone, a numbered chip.
+static func _shape(node: Control, form: int) -> void:
+	var row := node.get_child(0)
+	var icon := row.get_child(0) as Control
+	var words := row.get_child(1) as Control
+	if words.visible != (form == 0) or icon.visible != (form < 2):
+		words.visible = form == 0
+		icon.visible = form < 2
+		node.reset_size()
+
+
+## The locked realm's plate in its short form (the lock and the level it
+## opens at) or its full one (the realm's name over the lock and its words).
+static func _brief(node: Control, short_form: bool) -> void:
+	var full := node.get_child(0) as Control
+	var least := node.get_child(1) as Control
+	if full.visible == short_form or least.visible != short_form:
+		full.visible = not short_form
+		least.visible = short_form
+		node.reset_size()
 
 
 ## Where a producer of `kind` stands on its island, its pin over it.

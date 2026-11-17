@@ -174,7 +174,13 @@ PROBLEM_LANDINGBLOCKED,the landing is blocked,the landing is blocked,o desembarq
 PROBLEM_SEALED,no path reaches the Vault,no path reaches the Vault,nenhum caminho chega ao Cofre,nenhum caminho chega ao Cofre,kein Weg führt zum Tresor,aucun chemin ne mène au Coffre
 PROBLEM_EDGECLOSED,a side has fewer than half its edge open to land on,a side has fewer than half its edge open to land on,um lado tem menos da metade da borda aberta para desembarque,um lado tem menos de metade da borda aberta para desembarcar,eine Seite hat weniger als die Hälfte ihres Rands zum Landen frei,un côté a moins de la moitié de son bord ouvert au débarquement
 RESULT_BUILDER,Back to the builder,Back to the builder,Voltar ao construtor,Voltar ao construtor,Zurück zum Editor,Retour au constructeur
-RESULT_CONFIRMING,Checked on this phone (%d bytes); the server confirms it when you are back online.,Checked on this phone (%d bytes); the server confirms it when you are back online.,Conferido neste celular (%d bytes); o servidor confirma quando você voltar a ficar online.,Verificado neste telemóvel (%d bytes); o servidor confirma quando voltares a estar online.,"Auf diesem Handy geprüft (%d Byte); der Server bestätigt es, sobald du wieder online bist.",Vérifié sur ce téléphone (%d octets) ; le serveur confirmera à ton retour en ligne.
+RESULT_CONFIRMING,"Checked on this phone; the server confirms it when you are back online.
+%d-byte replay","Checked on this phone; the server confirms it when you are back online.
+%d-byte replay","Conferido neste celular; o servidor confirma quando você voltar a ficar online.
+replay de %d bytes","Verificado neste telemóvel; o servidor confirma quando voltares a estar online.
+replay de %d bytes","Auf diesem Handy geprüft; der Server bestätigt es, sobald du wieder online bist.
+%d-Byte-Replay","Vérifié sur ce téléphone ; le serveur confirmera à ton retour en ligne.
+Replay de %d octets"
 RESULT_PUBLISH,Publish it,Publish it,Publicar,Publicar,Veröffentlichen,Publier
 RESULT_RATE,Rate this island,Rate this island,Avaliar esta ilha,Avaliar esta ilha,Insel bewerten,Noter cette île
 RESULT_COUNTED,It counts as a completion for its creator,It counts as a completion for its creator,Conta como uma conclusão para quem a criou,Conta como uma conclusão para quem a criou,Zählt als Abschluss für den Ersteller,Ça compte comme une réussite pour son créateur
@@ -784,13 +790,13 @@ HOME_WEAVING,Weave laws,Weave laws,Tecer leis,Tecer leis,Gesetze weben,Tisser de
 WEAVING_TITLE,Weaving,Weaving,Tecelagem,Tecelagem,Weben,Tissage
 WEAVING_AETHER,%s Aether to weave with,%s Aether to weave with,%s de Aether para tecer,%s de Aether para tecer,%s Aether zum Weben,%s d'Aether pour tisser
 WEAVING_STRAIN,"Strain %s: %s of %s stability, %s","Strain %s: %s of %s stability, %s","Tensão %s: %s de %s de estabilidade, %s","Tensão %s: %s de %s de estabilidade, %s","Belastung %s: %s von %s Stabilität, %s","Tension %s : %s sur %s de stabilité, %s"
-WEAVING_BAND_0,Quiet,Quiet,Quiet,Quiet,Quiet,Quiet
-WEAVING_BAND_1,Steady,Steady,Steady,Steady,Steady,Steady
-WEAVING_BAND_2,Humming,Humming,Humming,Humming,Humming,Humming
-WEAVING_BAND_3,Brimming,Brimming,Brimming,Brimming,Brimming,Brimming
-WEAVING_BAND_4,Strained,Strained,Strained,Strained,Strained,Strained
-WEAVING_BAND_5,Cracking,Cracking,Cracking,Cracking,Cracking,Cracking
-WEAVING_BAND_6,Breaking,Breaking,Breaking,Breaking,Breaking,Breaking
+WEAVING_BAND_0,Quiet,Quiet,Calma,Calma,Ruhig,Calme
+WEAVING_BAND_1,Steady,Steady,Estável,Estável,Stabil,Stable
+WEAVING_BAND_2,Humming,Humming,Vibrante,Vibrante,Summend,Vibrante
+WEAVING_BAND_3,Brimming,Brimming,Repleta,Repleta,Randvoll,Débordante
+WEAVING_BAND_4,Strained,Strained,Tensa,Tensa,Angespannt,Tendue
+WEAVING_BAND_5,Cracking,Cracking,Rachando,A rachar,Rissig,Fissurée
+WEAVING_BAND_6,Breaking,Breaking,Rompendo,A romper,Berstend,En rupture
 WEAVING_EFFECT_0,No effect,No effect,Sem efeito,Sem efeito,Keine Wirkung,Aucun effet
 WEAVING_EFFECT_1,+5% production everywhere,+5% production everywhere,+5% de produção em todo lugar,+5% de produção em todo o lado,+5% Produktion überall,+5 % de production partout
 WEAVING_EFFECT_2,+10% production,+10% production,+10% de produção,+10% de produção,+10% Produktion,+10 % de production

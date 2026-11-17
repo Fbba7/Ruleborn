@@ -1,0 +1,22 @@
+[
+ {
+  "task_id": "P2-AIA2-busts",
+  "sha": "13e38050",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "advisory": true,
+  "at": "2026-11-12T19:00:00Z",
+  "item": "heist at 100% text",
+  "quality": "Character presence",
+  "samples": [
+   "fail",
+   "pass",
+   "fail",
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "A split, then a pass: 2 fails of 6 (a fail needs 4). All six samples read Pip, Mo, Bramble, Hollow and the wizard as framed toon figures, and Bramble and Hollow now stand out from their rings as figures with faces, larger and clearer than the pass anchor's crew row (the point left narrow by P1-S1-pilot-5). The two fails were on Ash alone: they read its mottled ember grain and glossy eye highlights as a physically based finish. The four passes read the same grain as stylised ember speckles and the eye highlights as toon catchlights. Ash's surface is the narrow point for the next portrait pass."
+ }
+]

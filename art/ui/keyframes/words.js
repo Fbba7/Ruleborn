@@ -243,7 +243,7 @@ window.WORDS = {
   "TRAIT_HOARDER": "Hoarder",
   "TRAIT_SWIFT": "Swift",
   "UNIVERSE_HEART": "O Coração",
-  "WEAVING_BAND_2": "Humming",
+  "WEAVING_BAND_2": "Vibrante",
   "WEAVING_HOURS_MINUTES": "%d h %d min"
  }
 };

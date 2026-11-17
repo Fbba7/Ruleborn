@@ -1,0 +1,36 @@
+[
+  {
+    "task_id": "P2-S2-home-3",
+    "sha": "c9a89e5a4841f8f66fc9986560fbe455e61d2c58",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-16T04:52:00Z",
+    "item": "home at 100% text",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes of three. In grayscale the gold Collect 3.4k button above the tab bar is the largest light solid block on the screen, on dark ground; the experience panel beside it is the same size but clearly darker and information only, and the cream island-name pills match its value at about a third of its size (ruling v3). That is at least as clear as the pass anchor, where Level up shares its weight with the bright Heist tab bar, and well clear of the fail anchor's split lead."
+  },
+  {
+    "task_id": "P2-S2-home-3",
+    "sha": "c9a89e5a4841f8f66fc9986560fbe455e61d2c58",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-16T04:52:00Z",
+    "item": "home at 100% text",
+    "quality": "Character presence",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes of three. The gold-ringed cat keeper portrait beside 'Keeper 24' is about 105 to 110 px, larger and at least as framed as the pass anchor's 65 to 70 px crew portraits, with toon fur fills and no gloss or grain."
+  }
+]

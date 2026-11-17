@@ -620,3 +620,90 @@ keep a switch off. Request AD-R20 to the lead asks to seed it.
 Board 1 was the board phase 2 waits for (section 3.2 of the report, phase
 1's exit). With this round it stands. The lead checks phase 1's other exit
 conditions and opens phase 2 (request AD-R21).
+
+## Preview of heist-1 (S1-R34)
+
+S1 asked for a preview of P2-S1-heist-1's three stills at `ed766fe9` on
+`claude/ui-screens-heist`: `docs/art/shots/heist-pilot/part6-h100.png`,
+`part6-h200.png` and `part6-hpt.png`. AD judged them by eye against
+the key frames `art/ui/keyframes/02-heist*.png` and the task's done_when,
+and measured cap heights on the full-resolution stills. The heist screen
+records no `shot.json`, so `checks.py` was not run. AD did not rerun the
+fit check; S1's M26 evidence stands for that.
+
+![The three stills](board-1/r5-1-heist-stills.png)
+
+### Ruling, item by item
+
+| Item | Ruling |
+|---|---|
+| 100%, Colour roles | **Met.** P1-S1-pilot-1's fail was "Get out has a red fill while Alarm has none". Now Get out and Alarm share the same leather role, and red is kept for the filling alarm (round 2, E). Cast is the only gold fill. Each crew portrait has a corner mark (triangle, hourglass, square, diamond) as well as its ring, so the marks hold without hue. |
+| 100%, One art-direction idea | **Met.** The hint is a chunky leather pill with a gold rim. The load bar is a dark inked well. The crew bars are green pills with an ink outline. Nothing is thin flat chrome. |
+| 200% en, display type | **Met.** The 2:25 timer and the 0/6 figures are white with an ink outline and a hard drop. "LAWS HERE", VAULT and "Who's there?" sit on plates. |
+| 200% en, portraits and names | **Met.** No portrait overlaps a name. Hollow and Bramble read as dark figures inside their pale discs (round 4, D). |
+| 200% en, painted icons | **Met.** The Bloom chip's icon, the wand on Cast and the door on Get out are painted at full size. |
+| 200% en, layered materials | **Not met: objection 2.** |
+| 200% pt_BR no plan, hierarchy | **Not met: objection 1.** |
+
+### Objections (S1 can answer these in this task)
+
+**1. pt_BR at 200%: Lançar does not lead (Hierarchy).** On the full-resolution
+still, "Lançar" has a cap height of 61 px. "Espaço" and "Restam" are also
+61 px, and "Carregar até 100%" is 64 px. The labels are cream on dark
+leather, which is a higher value than Lançar's ink on gold. The 508 figure
+and the 2:25 timer are baked display numerals and stand larger than
+Lançar's words. The done_when needs the labels and the timer plate "below it
+in size and value", and they are level with it or above it. Key frame
+`02-heist_text200_pt_BR.png` puts the labels in the muted lilac label colour
+at a smaller size.
+- **Fix:** at text above 130%, set the loot panel's labels in the kit's
+  muted label role, at least one type step below Cast's words (cap height
+  ≤ 0.8 of Lançar's).
+- Step the loot figures and the timer plate down one size so neither
+  outweighs Lançar.
+- The same code draws the en 200% still, where 946 and ~2,600 also outweigh
+  Cast, so one change answers both.
+
+![Label and Lançar cap heights](board-1/r5-2-pt-type-sizes.png)
+
+**2. en at 200%: the hint is missing, and the Room panel has no inner well
+(Layered materials).** `_fit_hint` hides the hint at 200%, so the still has
+no hint banner to judge. The Room panel is a single plate: its rows sit on
+the plate, and only the two bars are wells. The done_when asks for "the hint
+banner and the Room panel layered (plate and inner well)".
+- **Fix:** give the Room panel an inner well behind its rows, as the tray has
+  behind the crew.
+- Win back enough height for `_fit_hint` to keep the hint at 200% in en. The
+  tray has room to give: the crew well's right third under "Who's there?" is
+  empty. The pause could also move back to the top column, where the 100%
+  layout has it.
+- If the hint still cannot fit, say so in the handoff. The gate then judges
+  layering on the Room panel and the tray alone.
+
+![100% hint and 200% panels](board-1/r5-3-200-layers.png)
+
+### Notes, not holding
+
+- **pt_BR, no plan:** the pause sits alone in a crew-well row of its own. With
+  no Sage, about a third of the tray left of Lançar is empty leather. Moving
+  the pause into the Sage's empty slot beside Lançar would shorten the tray
+  by one row and return that height to the world.
+- **100%:** Get out's plate sits on the tray's bottom-right rim instead of
+  inside it. The crew's charge badges ride on the tray's top rim at both
+  sizes.
+- **200% en:** the world is hidden between the loot panel and the tray. Only
+  about 230 px of world is left under the tray, and most of that is the 44 pt
+  safe area (§21.1). Objection 2's fix gives some of it back.
+- **Sage:** key frame 02-heist shows the Sage's "12" count beside its disc,
+  and the build shows only the disc. This is not in the done_when.
+- **Law names:** "Bloom" and "Glowing dark" are not translated in pt_BR. This
+  is a strings note and not S1's.
+- **Lançar's wand:** with no casts, the wand is greyed and the words stay, per
+  AD-R15. That is consistent with this ruling.
+
+### What happens next
+
+S1 answers objections 1 and 2 in this task and sends the new stills to AD,
+or sets ready as the task allows. Request AD-R44 asks the lead for a
+follow-up S1 task if S1 sets ready without answering them. If the gate
+passes those items at S1's ready commit, the objections become notes.

@@ -1,0 +1,121 @@
+[
+  {
+    "task_id": "P2-S1-result-1",
+    "sha": "8bec0d84",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-13T04:00:00Z",
+    "item": "result at 100% text",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes of three: RAID AGAIN is the widest, most saturated control at the foot and leads in grayscale; Home, the 3 s replay, the Starlight card and the law pills do not compete."
+  },
+  {
+    "task_id": "P2-S1-result-1",
+    "sha": "8bec0d84",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-13T04:00:00Z",
+    "item": "result at 100% text",
+    "quality": "Display type",
+    "samples": [
+      "fail",
+      "fail",
+      "fail"
+    ],
+    "result": "fail",
+    "critique": "Three fails of three: HEIST COMPLETE, 'Clean', the subtitle lines and the Entry fee / Re-simulated lines sit straight on the sky art with no ink outline ('Clean' has only a soft drop, which does not count), and the reward totals +2,310 / +805 / +15 are flat fills with no outline, hard drop or gradient (+2,310 is also dark on cream while the others are cream on dark). Narrow point: outline every word over art and give the headline numbers the display treatment."
+  },
+  {
+    "task_id": "P2-S1-result-1",
+    "sha": "8bec0d84",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-13T04:00:00Z",
+    "item": "result at 100% text",
+    "quality": "Character presence",
+    "samples": [
+      "fail",
+      "fail",
+      "fail"
+    ],
+    "result": "fail",
+    "critique": "Three fails of three: the crew strip shows three overlapping portraits of about 45 px at 960 in a secondary strip near the foot, the pale one blending into its lavender ring, and the reward cards hold no character art; the pass anchor shows five separate portraits of about 60 px. Narrow point: give the crew separate, larger portraits (or put a character on the reward) so the screen has a character presence at the anchor's scale."
+  },
+  {
+    "task_id": "P2-S1-result-1",
+    "sha": "8bec0d84",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-13T04:00:00Z",
+    "item": "result at 200% text, pt_BR",
+    "quality": "Display type",
+    "samples": [
+      "fail",
+      "fail",
+      "fail"
+    ],
+    "result": "fail",
+    "critique": "Three fails of three: 'ASSALTO CONCLUÍDO' sits on the starburst with no ink outline, 'Limpo' has only a drop shadow, and the '3 s' replay chip is clipped and loses glyphs. Narrow point: outline the header and rank word, and let the 3 s chip grow with the text."
+  },
+  {
+    "task_id": "P2-S1-result-1",
+    "sha": "8bec0d84",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-13T04:00:00Z",
+    "item": "result at 200% text, pt_BR",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes of three: ASSALTAR DE NOVO is the largest, most saturated control at the foot; Início is about half its height and the 3 s chip a minor second."
+  },
+  {
+    "task_id": "P2-S1-result-1",
+    "sha": "8bec0d84",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-13T04:00:00Z",
+    "item": "result in high contrast",
+    "quality": "Colour roles and value",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes of three: gold fills only actions (RAID AGAIN and the 3 s replay), gold elsewhere is rim; green means success only; the currencies differ by shape on all three colour-blindness sheets. Closest point: the gold 3 s replay is a second gold-filled action."
+  },
+  {
+    "task_id": "P2-S1-result-1",
+    "sha": "8bec0d84",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-13T04:00:00Z",
+    "item": "result in high contrast",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes of three: RAID AGAIN spans most of the width at the foot and leads by size and place; the light cards are light by the mode's design."
+  }
+]

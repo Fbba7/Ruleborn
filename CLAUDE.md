@@ -27,15 +27,32 @@ the status files, requests and scheduled-task prompts.
 - **11 November 2026, about 01:00 UTC:** the owner restarted it ("We still
   need to keep the UI process we were doing with the phases running as it
   was", then "Make sure it is running now"), in the chat of the overseer
-  session. **The program runs**, on Fable 5.2 only (order 4) until the
+  session. The program ran, on Fable 5.2 only (order 4) until the
   switch of 11 November 2026, about 19:50 UTC, and on Opus 5.5 at effort
-  high since then (order 5). Order 3's "keep working" applies again.
+  high from then until the stop of 13 November.
   - **A new launcher and a new watchdog**, created after this restart was
     on main, start the lead's cycles. Their IDs are in
     [`docs/progress/lead.md`](docs/progress/lead.md), "The program's
     scheduled tasks and sessions".
   - **Where the work stood at the restart** is in the same file, "Now",
     entries "Restart, 11 November 2026", "After the stop" and "The stop".
+- **13 November 2026, about 13:16 UTC:** the owner stopped it again
+  ("Stop cleanly"), in the chat of the overseer session. **The program is
+  stopped.** The overseer disabled the watchdog and its own hourly report
+  check-in, interrupted the running lead cycle (cycle 84, which merged
+  nothing and started nothing) and cleared its merge lock. The program
+  did not run from then until the restart of 15 November.
+- **15 November 2026, about 17:10 UTC:** the owner restarted it
+  ("Continue"), in the chat of the overseer session. **The program
+  runs**, on Opus 5.5 at effort high (order 5), with the cap of four
+  builders (order 3). Order 3's "keep working" applies again.
+  - **The launcher and the watchdog of 11 November** start the lead's
+    cycles again: the launcher stayed enabled through the stop, and the
+    overseer re-enabled the watchdog. Their IDs are in
+    [`docs/progress/lead.md`](docs/progress/lead.md), "The program's
+    scheduled tasks and sessions".
+  - **Where the work stood at the restart** is in the same file, "Now",
+    entry "Stopped here".
 
 A session that is in the middle of a turn when the program is stopped
 finishes cleanly, so no work is lost: commit and push what it has to its
@@ -88,7 +105,15 @@ be the logic."
   the lead keeps building as the protocol describes: D-11's and report.md
   section 3.9's rule "start no building session while the bar reads
   `allowed_warning`" no longer applies. D13's answer (c) still sets the
-  pace: at most three UI builders at once, icon batches 3 and 4 deferred.
+  pace, with the cap raised to four (below): at most four UI builders at
+  once, icon batches 3 and 4 deferred.
+- **The cap is four UI builders.** On 12 November 2026, at about 20:00
+  UTC, the owner ordered, in the chat of the overseer session: "Yes, raise
+  it to 4 builders." This raises D13 (c)'s cap from three to four, to give
+  phase 2 slack before its 14 November stop. While the seven-day bar reads
+  `allowed_warning`, the cap drops back to three on its own: the lead
+  starts no fourth builder then, and lets a running fourth one finish its
+  task. The lead and the gate's short runs stay outside the cap.
 - **Phase 1 starts now, not after the reset.** The lead seeds phase 1's
   tasks, starts K1 on P0-K1-kitspec-3 and the other agents as their tasks
   open, and sets a new `stop_at` for phase 1. A wave's `stop_at` passing
@@ -148,7 +173,7 @@ high." This order replaces order 4.
   Fable 5.2 sessions of 9 to 11 November 2026: the launcher, the watchdog,
   the lead's cycles and the builders K1, S1 and AIA. Their work is on their
   branches. A fresh session on Opus 5.5 takes each unfinished task: the
-  lead starts the builders anew, within the cap of three.
+  lead starts the builders anew, within the cap of order 3.
 - **Why the switch:** from about 05:30 UTC on 11 November 2026 every
   Fable 5.2 session of the program stood still, its seven-day limit
   reading `rejected`. The overseer interrupted them and disabled their

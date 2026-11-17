@@ -1,0 +1,121 @@
+[
+ {
+  "task_id": "P2-S2-home-1",
+  "sha": "977edd5b",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "advisory": true,
+  "at": "2026-11-13T04:56:00Z",
+  "item": "home at 100% text",
+  "quality": "Hierarchy",
+  "samples": [
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "Three passes of three: Collect is the largest, lightest saturated control and leads; the XP panel, currency strip and island pills sit behind it."
+ },
+ {
+  "task_id": "P2-S2-home-1",
+  "sha": "977edd5b",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "advisory": true,
+  "at": "2026-11-13T04:56:00Z",
+  "item": "home at 100% text",
+  "quality": "Display type",
+  "samples": [
+   "fail",
+   "fail",
+   "fail"
+  ],
+  "result": "fail",
+  "critique": "Three fails of three: the headline currency counts (1,460 / 142.0k / 31.4k / 61.0k) are flat cream Manrope on dark plates, with no outline, hard drop or gradient. Fix: give the counts the display treatment (ink outline and hard drop, or a gradient fill)."
+ },
+ {
+  "task_id": "P2-S2-home-1",
+  "sha": "977edd5b",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "advisory": true,
+  "at": "2026-11-13T04:56:00Z",
+  "item": "home at 100% text",
+  "quality": "Character presence",
+  "samples": [
+   "fail",
+   "fail",
+   "fail"
+  ],
+  "result": "fail",
+  "critique": "Three fails of three: the only character is the small Keeper avatar badge (about 65 to 75 px), pale and soft against its ring, against the anchor's framed portrait band. Fix: put a larger, outlined character on home."
+ },
+ {
+  "task_id": "P2-S2-home-1",
+  "sha": "977edd5b",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "advisory": true,
+  "at": "2026-11-13T04:56:00Z",
+  "item": "home at 200% text, pt_BR",
+  "quality": "Display type",
+  "samples": [
+   "fail",
+   "fail",
+   "fail"
+  ],
+  "result": "fail",
+  "critique": "Three fails of three: the currency counts stay flat cream with no outline or drop, and the 'Guardião 24' header sits over the starfield with only a soft shadow, no ink outline. Fix: as at 100%, and outline the header."
+ },
+ {
+  "task_id": "P2-S2-home-1",
+  "sha": "977edd5b",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "advisory": true,
+  "at": "2026-11-13T04:56:00Z",
+  "item": "home at 200% text, pt_BR",
+  "quality": "Hierarchy",
+  "samples": [
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "Three passes of three: 'Coletar 3,4 mil' is the lightest, largest filled control and leads; the Home tab is under half its size."
+ },
+ {
+  "task_id": "P2-S2-home-1",
+  "sha": "977edd5b",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "advisory": true,
+  "at": "2026-11-13T04:56:00Z",
+  "item": "home in high contrast",
+  "quality": "Colour roles and value",
+  "samples": [
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "Three passes of three: gold fill only on Collect, red only on attention badges, resource bars in their resources' colours with icons, school pips distinct on all three colour-blindness views."
+ },
+ {
+  "task_id": "P2-S2-home-1",
+  "sha": "977edd5b",
+  "rubric_version": 3,
+  "judge": "Opus 5.5",
+  "advisory": true,
+  "at": "2026-11-13T04:56:00Z",
+  "item": "home in high contrast",
+  "quality": "Hierarchy",
+  "samples": [
+   "pass",
+   "pass",
+   "pass"
+  ],
+  "result": "pass",
+  "critique": "Three passes of three: Collect is the largest solid light control and the only saturated gold block; the gold tabs are half its size or less."
+ }
+]

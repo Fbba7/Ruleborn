@@ -3,8 +3,9 @@ extends RefCounted
 ## The interface kit (§21.8, §20.8): every material, gradient, type role and
 ## font the tokens name resolves; a dressed control keeps its own size and
 ## says what its words sit on; the three faces load with tabular figures
-## where numbers change; every icon in the manifest loads; a button squashes
-## when pressed and changes at once under reduced motion; and every control
+## where numbers change; every icon in the manifest loads; Motion's press,
+## reward, shine and screen change keep to the baked curves, each with its
+## reduced form (tests/shots/ui_kit_motion.gd); and every control
 ## the kit makes meets §21.1's 48 points. Every material maps onto one of the
 ## kit's 35 skins, every skin's switch is off as shipped, a skin switched on
 ## draws from the atlas, and a piece the atlas lacks falls back to the
@@ -20,6 +21,8 @@ const Art := preload("res://tests/shots/ui_kit_catalogue_art.gd")
 const Rest := preload("res://tests/shots/ui_kit_rest.gd")
 const Round := preload("res://tests/shots/ui_kit_round.gd")
 const Heist := preload("res://tests/shots/ui_kit_heist.gd")
+const MotionKit := preload("res://tests/shots/ui_kit_motion.gd")
+const Tabs := preload("res://tests/shots/ui_kit_tabs.gd")
 ## The components whose baked faces are skins, and those skins' faces: once a
 ## skin has art, each of the component's baked states is a piece of it.
 ## The bar's pieces are K46's (N RM), the component built from them: K25's
@@ -44,15 +47,12 @@ const SKINS_OF := {
 	"K17": ["popup__box"],
 	"K18": ["header__box", "header__name_plate"],
 	"K19": ["ribbon__box", "ribbon__frame", "ribbon__chapter"],
-	"K23": ["pill__box"],
-	"K24": ["num_gold"],
+	"K23": ["pill__box"], "K24": ["num_gold"],
 	"K27": ["badge__box", "badge__dot"],
 	"K28": ["success__box", "tag__box", "tag__tag_violet", "tag__tag_warn", "tag__tag", "tag__island_label",
 		"panel_dark__plate"],
-	"K29": ["success__box", "success__banner_success"],
-	"K31": ["num_timer", "num_timer_red"],
-	"K33": ["panel_glass__box"],
-	"K34": ["spinner__ring"],
+	"K29": ["success__box", "success__banner_success"], "K31": ["num_timer", "num_timer_red"],
+	"K33": ["panel_glass__box"], "K34": ["spinner__ring"],
 	"K38": ["disc__level_disc", "num_white"],
 	"K39": ["tile__reward_sky", "tile__reward_pink"],
 	"K42": ["tile__day_done", "tile__day_today", "tile__day_later", "tile__week_day", "tile__week_today"],
@@ -86,10 +86,16 @@ func run() -> void:
 	_fonts()
 	await _boxes()
 	await _press()
+	await Tabs.tap_once(tree, check)
+	await preload("res://tests/shots/ui_kit_gaps.gd").run(tree, check)
 	_motion()
+	await _reward()
+	await _shine()
+	await _screens()
 	_icons()
 	await _tab_words()
 	await _small_disc()
+	await preload("res://tests/shots/ui_kit_polish.gd").run(tree, check)
 	await _pieces()
 	_skins()
 	await _switch()
@@ -102,6 +108,7 @@ func run() -> void:
 	await _numerals()
 	_pages()
 	_skies()
+	await preload("res://tests/shots/ui_kit_grow.gd").run(tree, check)
 	await _catalogue()
 
 
@@ -180,36 +187,39 @@ func _boxes() -> void:
 
 
 func _press() -> void:
-	var b := UI.button("press", func() -> void: pass)
-	tree.root.add_child(b)
-	await tree.process_frame
-	Settings.reduced_motion = true
-	Motion.press(b, true)
-	var at_once := RbBox.of(b).press == 1.0 and b.scale == Vector2.ONE
-	Motion.press(b, false)
-	Settings.reduced_motion = false
-	Motion.press(b, true)
-	await tree.create_timer(0.3).timeout
-	var squashed := b.scale.x < 1.0 and b.scale.x >= Tokens.number("motion", "press_squash") - 0.001
-	Motion.press(b, false)
-	await tree.create_timer(0.3).timeout
-	var back := b.scale.is_equal_approx(Vector2.ONE) and is_zero_approx(RbBox.of(b).press)
-	b.queue_free()
-	var bounded := Tokens.number("motion", "press_ms") <= Tokens.number("motion", "longest_ms") \
-		and Tokens.number("motion", "pop_ms") <= Tokens.number("motion", "longest_ms")
-	check.call("a pressed button squashes slightly and sinks onto its drop within 250 ms, easing out, and back; "
-			+ "under reduced motion the change is immediate (§21.8, §20.8)", at_once and squashed and back and bounded,
-		"%s %s %s %s" % [at_once, squashed, back, bounded])
+	var bad: Array = await MotionKit.press(tree)
+	check.call("a press sinks onto its drop, squashes to 0.96 and darkens to 0.9 over the baked 150 ms, and recovers "
+			+ "over 180 ms, easing out from the first frame, never past its rest size; under reduced motion it sinks "
+			+ "and darkens to 0.88 with no squash (motion.json press; §21.8, §20.8; AIA-R24)", bad.is_empty(),
+			"; ".join(bad))
 
 
 func _motion() -> void:
-	var bad := []
-	for name: String in ["fade_ms", "rise_ms", "pop_ms", "sheet_ms", "press_ms", "screen_fade_ms", "bar_fill_ms"]:
-		var seconds := Motion._ms(name)
-		if seconds < 0.15 - 0.0001 or seconds > 0.25 + 0.0001:
-			bad.append("%s %.0f ms" % [name, seconds * 1000.0])
-	check.call("every interface movement the kit makes takes 150 to 250 ms (§21.8), a bar's fill included",
-		bad.is_empty(), "; ".join(bad))
+	var bad: Array = MotionKit.curves()
+	check.call("every interface movement takes 150 to 250 ms (or sets its value at once) and eases out with no "
+			+ "overshoot; Motion reads the baked curves and sprites of motion.json, and the tokens stand in when "
+			+ "a curve is absent (§21.8; report.md step 8)", bad.is_empty(), "; ".join(bad))
+
+
+func _reward() -> void:
+	var bad: Array = await MotionKit.reward(tree)
+	check.call("the reward sequence draws its baked sprites, more for a rarer tier: the prize gathers and is "
+			+ "revealed, the burst, the coins fly to the counter, which rolls up and pulses to 1.06, nothing past "
+			+ "its rest size, and the layer is freed; under reduced motion one coin lands and the counter shows its "
+			+ "new value at 350 ms (motion.json reward; §21.8, §20.8)", bad.is_empty(), "; ".join(bad))
+
+
+func _shine() -> void:
+	var bad: Array = await MotionKit.shine(tree)
+	check.call("a primary button's idle shine waits, sweeps the baked band across its face at most 0.6 bright once "
+			+ "a period, and shows on no disabled button, under reduced motion or in high contrast (motion.json "
+			+ "shine; §20.8)", bad.is_empty(), "; ".join(bad))
+
+
+func _screens() -> void:
+	var bad: Array = await MotionKit.screens(tree)
+	check.call("a screen arrives fading in from 0.985 of its size and leaves fading out; under reduced motion it only "
+			+ "fades (motion.json screen; §21.8, §20.8)", bad.is_empty(), "; ".join(bad))
 
 
 func _icons() -> void:
@@ -224,11 +234,18 @@ func _icons() -> void:
 		"%d missing %s, known %s" % [missing.size(), missing.slice(0, 5), known])
 
 
+## Also board 3's objection D (AD-R25): a name shown sits under its tile's
+## gold rim (the chosen tile, the Heist's ring), or inside it with clear
+## space, never across it.
 func _tab_words() -> void:
 	var bad := []
+	var rims := []
+	var heads := []
 	var was := Settings.text_scale
 	var locale := TranslationServer.get_locale()
-	for case: Array in [[100, "en"], [150, "en"], [200, "en"], [100, "de"], [150, "pt_BR"], [200, "de"]]:
+	var clear := float(UI.px(KitTabs.RIM))
+	for case: Array in [[100, "en"], [150, "en"], [200, "en"], [100, "de"], [150, "pt_BR"], [200, "de"],
+			[100, "pt_BR"], [200, "pt_BR"]]:
 		var scale: int = case[0]
 		Strings.set_locale(str(case[1]))
 		Settings.text_scale = scale
@@ -241,6 +258,7 @@ func _tab_words() -> void:
 		column.add_child(tabs)
 		for i: int in 4:
 			await tree.process_frame
+		var tiles := 0
 		for id: String in tabs.buttons:
 			var b: Button = tabs.buttons[id]
 			var r := b.get_global_rect()
@@ -249,8 +267,21 @@ func _tab_words() -> void:
 			var l: Label = tabs._labels[id]
 			if l.is_visible_in_tree() and tabs._need(l) > l.size.x + 1.0:
 				bad.append("%d%% %s cut (%.0f in %.0f)" % [scale, id, tabs._need(l), l.size.x])
-			if scale == 100 and case[1] == "en" and not l.is_visible_in_tree():
-				bad.append("100%% %s hidden" % id)
+			if scale == 100 and case[1] != "de" and not l.is_visible_in_tree():
+				bad.append("100%% %s %s hidden" % [case[1], id])
+			var tile: Control = tabs._tiles[id]
+			if not RbBox.of(tile).is_visible_in_tree():
+				continue
+			tiles += 1
+			var rim := tile.get_global_rect()
+			var words := l.get_global_rect()
+			if l.is_visible_in_tree() and (not (words.position.y >= rim.end.y + clear - 0.5
+					or rim.grow(-clear).encloses(words)) or words.end.y > r.end.y + 0.5):
+				rims.append("%d%% %s %s's name (%.0f to %.0f) across its tile (%.0f to %.0f) or below its tab" % [
+					scale, case[1], id, words.position.y, words.end.y, rim.position.y, rim.end.y])
+		if tiles != 2:
+			rims.append("%d%% %s %d tiles drawn, not the chosen one and the Heist's" % [scale, case[1], tiles])
+		heads.append_array(Tabs.heads(tabs, "%d%% %s" % [scale, case[1]], scale == 100))
 		var chosen: Label = tabs._labels["friends"]
 		if not chosen.is_visible_in_tree():
 			bad.append("%d%% %s the chosen tab's word hidden" % [scale, case[1]])
@@ -260,9 +291,13 @@ func _tab_words() -> void:
 		await tree.process_frame
 	Settings.text_scale = was
 	Strings.set_locale(locale)
-	check.call("the tab bar shows every name whole at 100% text, and at 150% and 200% each name whole or not at all, "
-			+ "the chosen tab's kept at 150% or more, every tab on the screen, in English, German and Portuguese "
-			+ "(§20.8, §21.8, §20.6)", bad.is_empty(), "; ".join(bad))
+	check.call("the tab bar shows every name whole at 100% text (English and Portuguese, AD-R24), and at 150% and "
+			+ "200% each name whole or not at all, the chosen tab's kept at 150% or more, every tab on the screen, in "
+			+ "English, German and Portuguese (§20.8, §21.8, §20.6)", bad.is_empty(), "; ".join(bad))
+	check.call("no tab's name crosses its tile's gold rim: each sits under the chosen tile and the Heist's ring, or "
+			+ "inside with clear space, at 100%, 150% and 200% text in English, German and Portuguese (board 3's "
+			+ "objection D, AD-R25)", rims.is_empty(), "; ".join(rims))
+	Tabs.say(check, heads)
 
 
 func _small_disc() -> void:
