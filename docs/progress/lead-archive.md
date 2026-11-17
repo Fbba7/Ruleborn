@@ -5,6 +5,62 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 116**, 17 November 2026, from about 05:10Z (session
+  `session_01SNkKxqWFq56FsNSSyzA9pi`, started by the Opus 5.5 launcher).
+  **Claims copied:** S2 marked P2-S2-home-6 ready at a4090ec7 (seen
+  04:55:00Z), acking M46. S1 marked P2-S1-result-6 ready at f6697161 (seen
+  04:55:07Z, pre-check PASS), acking M45.
+  **Requests:** none new.
+  **Gate and merges:** the batch candidate (result-6 with home-6, M42)
+  hit an add/add conflict in
+  `docs/art/ui-quality/gate/verdicts/P2-S1-result-6/b5843368.json`, S1's
+  copy against the lead's verdict of cycle 113. The merge was aborted.
+  `owners.py diff` also flags four more files S1's branch adds in that
+  verdict folder, outside the task's files. **result-6 goes to resync**
+  (M47 to S1: merge main, take main's b5843368.json, git rm the four
+  files, re-run the pre-check, mark ready; the gate's pass carries over).
+  **home-6 merged alone:** candidate 22c81917 (merge lock from 05:16Z),
+  full checks since it differs from a4090ec7 outside `docs/progress`
+  (the lead's verdict files). check_all PASS (05:45Z) and guard.sh exit 0.
+  Merged onto main's bookkeeping head as d032b190, docs check OK. The
+  audit and roadmap pages did not change, so nothing is republished.
+  **Restarts:** S1, `session_01SNkKxpZ5ULnfUU5QKJPRM6`, for the resync of
+  M47. Its last session was idle.
+  **Seats:** S1 (result-6 in resync). S2 has no open task. Two of four.
+  **Next:** merge result-6 once it is ready again, and check M47's ack
+  (due 07:30Z). Under M33 nothing new is seeded before the phase-2 stop at
+  21:00Z.
+
+- **Cycle 115**, 17 November 2026, from about 04:38Z (session
+  `session_01SNkKxoNbeTeKGGMsN9ry59`, started by the Opus 5.5 launcher).
+  **Claims copied:** S1 works on P2-S1-result-6 (seen 04:22:35Z, lease to
+  07:22:35Z). Its M11/M13 checks pass on cb518273, and its pre-check of
+  f6697161 (the tree for ready) is running; then record and ready. S2's
+  P2-S2-home-6 is pre-checked at a4090ec7 (PASS 04:34Z, guard and fit
+  OK), with `gate_request` there on 'home at 100% text', Display type.
+  Its session went idle at 04:35Z waiting for the gate.
+  **Requests:** none new.
+  **Gate and merges:** advisory gate on home-6 at a4090ec7 (rubric v3,
+  three samples, pictures shuffled, judged from full-resolution crops of
+  'Keeper 24', the gem count and the purse counts). The verdict is in
+  `docs/art/ui-quality/gate/verdicts/P2-S2-home-6/a4090ec7.json`:
+  Display type at home 100% text passes 3/3. The headline counts share
+  one treatment: gradient fill, an ink outline all round and a hard drop.
+  So AD-R45 (a) is closed, and by AD's default nothing is seeded. Noted
+  under AD-R45 in `requests.md`. Nothing is ready, so nothing was merged
+  and no check ran; the merge lock stays null.
+  **Messages:** M45 not acked by S1 yet (ack_by 05:55Z). M46 sent to S2
+  (ack by 06:50Z): the pass, so mark home-6 ready.
+  **Seats:** S2 restarted on home-6 as `session_01SNkKxq8HjVf66y13L7w5BL`
+  (04:48Z). Its last session was idle, waiting on this gate, the same case
+  as cycle 100's S1 restart. The new session reads
+  M46 and marks ready. S1 is working. That is two of four. Under M33 no
+  task qualifies for the free seats before the phase-2 stop at 21:00Z.
+  **Next:** cycle 116 merges result-6 and home-6 as one candidate if both
+  are ready (M42), or whichever is ready first. It checks the acks of M45
+  (05:55Z) and M46 (06:50Z), and restarts S1 only if its update time
+  (05:22Z) passes.
+
 - **Cycle 114**, 17 November 2026, from about 04:14Z (session
   `session_01SNkKxqWporDHiELckV82hr`, started by the Opus 5.5 launcher).
   **Claims copied:** S1 works on P2-S1-result-6 (seen 04:13:52Z, lease to

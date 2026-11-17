@@ -1,8 +1,8 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-17T07:00:00Z",
-  "expected_next_update_by": "2026-11-17T10:00:00Z",
-  "cycle": 117,
+  "updated_at": "2026-11-17T07:55:00Z",
+  "expected_next_update_by": "2026-11-17T10:55:00Z",
+  "cycle": 119,
   "merging": null,
   "last_merged": {
     "task_id": "P2-S1-result-6",
@@ -29,7 +29,9 @@
     "M37",
     "M38",
     "M39",
-    "M42"
+    "M42",
+    "M48",
+    "M49"
   ],
   "alerts": [
     "Owner's order 5 of 11 November 2026, about 19:50Z (\"Let's switch to Opus 5.5 everywhere again, effort high\"): every session runs on Opus 5.5 at effort high; never Fable 5.1 (order 2). Launcher trig_01T7B65veojXUDAKzLK3FFBP and watchdog trig_01A1NwZvKD6MDUosh4jyvqqr, created at 19:50Z after order 5 was on main. The Fable 5.2 pair (trig_01U7kEeot7dmuJuNZVQJ7Bhm, trig_0195QvFjjm2oUgeCeyhU4bp4), disabled at 19:49Z, and every older scheduled task stay disabled and are never re-enabled. No Fable 5.2 session is reused.",
@@ -38,9 +40,9 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Phase 2's tasks are all merged: P2-S1-result-6 merged as 1858a668 (main c6262802) in cycle 117, after P2-S2-home-6 in cycle 116. No builder has an open task. Under M33 nothing new is seeded before the phase-2 stop at 21:00Z; once stop_at passes, the lead seeds phase 3. Until then a cycle copies claims and requests, answers any new request, and merges nothing. When running guard.sh in a fresh candidate worktree, copy client/goldens/ (generated, gitignored) in first, or the result shots draw a refused replay.",
+  "next_step": "Cycle 119 copied the four phase-3 claims (AD on P3-AD-audit-1, K1 on P3-K1-polish-1, S1 on P3-S1-result-7, S2 on P3-S2-home-states) and answered S2-R36 to S2-R40. S2-R36 went to AD, who answers after the audit's blind labelling, or S2's default stands at 16:00Z. S2-R38 and S2-R40 are granted in home-states: universe_pins.gd joins its files (M50). No gate and no merge. The seven-day bar reads allowed_warning, so order 3's cap is three: the four running builders finish their tasks, and no builder starts while three or more run. Next: gate and merge what is marked ready. When P3-K1-polish-1 merges and the seats allow, start K1 on P3-K1-polish-2, then S3 on P3-S3-character-5. P3-AD-flow-2 follows the audit's merge.",
   "seen": {
-    "at": "2026-11-17T06:56:37Z",
+    "at": "2026-11-17T07:45:37Z",
     "heads": {
       "claude/3d-character-screens": "6053b249bee313648da3509142eeb2ba738bb62f",
       "claude/3d-characters": "35d6ae8f5b84a4d75636f68270848b0949c111f3",
@@ -58,17 +60,17 @@
       "claude/plan-v3": "57893713636b7753d0b790c5a9dc35c3b126770a",
       "claude/security-review": "dd1e90f06b512b25a74f3f3f73ace84b3969cce9",
       "claude/server-decisions": "502b63bbf1506801a7060547f6fb225adcbf8f51",
-      "claude/ui-ad": "f826d86dc7acdb6f3b46bd313293ffb64a235335",
+      "claude/ui-ad": "e5c784cf90609a9c9564bb9cc59a2a49a51bcd2a",
       "claude/ui-artist": "45c6366cb2e0f9dcb5aaa428d17c017576beff5d",
       "claude/ui-artist-icons": "a8b06f687a9fbb1048c426157f2336cda5f44202",
-      "claude/ui-bake": "c2a34c1bfef1d6564d134311baad482b164be2a6",
+      "claude/ui-bake": "4027aaa9598e3be4e73c72807b06cfcfd320f6bb",
       "claude/ui-gate-runs": "0e78b6ceace032f62427a1c8e89dd9ee6186a5c0",
       "claude/ui-kit": "17b900ebdc371f05244d4658850a77460f6090c0",
       "claude/ui-plan": "f1affcea749d007fe1a67931bd3c1f7359d98c44",
       "claude/ui-research": "f19d5d4e5eaffff8869da3b91124d111cf1259a6",
       "claude/ui-screens": "dceb6bfcbc6c5da4e261674fe9301e1854f0aa65",
-      "claude/ui-screens-heist": "9137832e63346b523cf4aff5aee9521b0034acc7",
-      "claude/ui-screens-home": "faafce09365cccebfcb25a1f37291a327789b629",
+      "claude/ui-screens-heist": "77e76120486099d69c6e73451e684c23b8754bf4",
+      "claude/ui-screens-home": "41b7b772ebe46169aa294c350df15b96c536f8f5",
       "claude/ui-screens-meta": "7d19eeda3a6d1b6f349f453f85365203604f4431",
       "lead/candidate-573416ab12761b92becf0c1d3d7d7bd03e9cf7d1": "573416ab12761b92becf0c1d3d7d7bd03e9cf7d1",
       "lead/candidate-714b24ed52f56133bccc18c82cc879938b53f296": "714b24ed52f56133bccc18c82cc879938b53f296",
