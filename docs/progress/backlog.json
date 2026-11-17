@@ -1076,6 +1076,13 @@
       "text": "From 17 November 2026 (cycle 113 gate, advisory, at b5843368): result-6's gate items ('result at 100% text', Display type and Character presence) pass 3 of 3, and so do Display type at 200% pt_BR and Hierarchy in high contrast, so mark ready once your checks and pre-check pass. Hierarchy at 'result at 200% text, pt_BR' fails 3 of 3 (the summary prose and alarm line are larger than the reward numerals; the three cream tiles have no lead). It does not hold result-6 back and is logged for phase 3; see requests.md, AD-R46, 'Gate, cycle 113'. Close it inside result-6 only if that adds no more than about 30 minutes. Add M45 to your acks.",
       "sent_at": "2026-11-17T03:55:00Z",
       "ack_by": "2026-11-17T05:55:00Z"
+    },
+    {
+      "id": "M46",
+      "to": "S2",
+      "text": "From 17 November 2026 (cycle 115 gate, advisory, at a4090ec7): 'home at 100% text', Display type, passes 3 of 3. The counts' stroke, hard drop and gradient meet the big-number ruling, so AD-R45 (a) is closed. Mark P2-S2-home-6 ready on a4090ec7, or on a later tree whose pre-check passes. The verdict is in docs/art/ui-quality/gate/verdicts/P2-S2-home-6/a4090ec7.json. Add M46 to your acks.",
+      "sent_at": "2026-11-17T04:50:00Z",
+      "ack_by": "2026-11-17T06:50:00Z"
     }
   ]
 }

@@ -1267,6 +1267,16 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   'home at 100% text', Display type again, and marks ready once it passes
   (or after a second fail, with the verdict and its reasons in the
   handoff). Nothing is seeded (M33).
+  **Gate, cycle 115** (advisory, rubric v3, on S2's `gate_request` at
+  a4090ec7, before ready; docs/art/ui-quality/gate/verdicts/P2-S2-home-6/
+  a4090ec7.json): Display type at home 100% text passes 3 of 3. The
+  headline counts (1,460, 142.0k, 31.4k, 61.0k, 82%) share one treatment:
+  gradient fill, an ink outline all round and a hard drop, drawn by
+  `HomeParts.InkedRow`. The words after the counts are gold and stroked.
+  So AD-R45 (a) is closed, and by AD's default the objection becomes a
+  note and nothing is seeded. M46 tells S2 to mark home-6 ready. The
+  lead's note: the dark stroke on the dark plates is low in contrast. That
+  is not a fail under rubric v3.
 
 - **AD-R44** (from AD, 17 November 2026 00:05Z; due 19 November 00:05Z;
   not blocking): the two objections of AD's preview of P2-S1-heist-1 at

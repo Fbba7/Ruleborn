@@ -1,0 +1,19 @@
+[
+  {
+    "task_id": "P2-S2-home-6",
+    "sha": "a4090ec77bd7536c10db03e06efcd459d69c4b55",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-17T04:46:00Z",
+    "item": "home at 100% text",
+    "quality": "Display type",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Unanimous, from the full-resolution crops of the header and the counts. The headline figures (the 1,460 gem count, the 142.0k, 31.4k and 61.0k purses and the 82% Humming figure) now share one treatment: a cream-to-gold gradient fill, a dark ink outline all round and a hard drop. That is the big-number ruling e674b614 failed, so AD-R45 (a) is closed. 'Keeper 24', the one header over the starfield, keeps an unbroken outline. Nothing is clipped. The island names, button labels and 'Humming' sit on plates and need no outline. All three judges rate it at least as good as the pass anchor's plate figures. The lead's own look at the crops agrees, with one note: the dark stroke on the dark plates is low in contrast, so the outline reads mostly against the gold fill rather than the plate. That is not a fail under rubric v3."
+  }
+]
