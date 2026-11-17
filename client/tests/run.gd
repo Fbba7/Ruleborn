@@ -17,6 +17,10 @@ const SCREENS := ["home", "heist_screen", "result_screen", "replay_screen", "set
 	"codex", "harmony", "observatory", "scout", "lab", "defences", "law", "profile", "planner", "map", "realm", "share",
 	"first", "curation"]
 
+## The tab routes whose screen shows no tab bar: the Observatory is an
+## overlay, its top bar's back arrow going home (OverlayTop).
+const WITHOUT_TABS := [&"observatory"]
+
 var _n := 0
 var _failed := 0
 
@@ -159,6 +163,95 @@ func _mount(scene: String) -> Control:
 	return node
 
 
+## AD-R47 (flow board 2's F1): each tab's route opened through router.go, its
+## scene swapped in as a player's move swaps it, at 100% and 200% text and in
+## high contrast. Once laid out, its bob running, the chosen tab's picture
+## stands in its tile: across it, its foot inside the tile and no further
+## from the tile's foot than it rests and bobs; at larger text all of it
+## inside the tile (AD-R38).
+func _tab_routes() -> void:
+	var router := App.services.router
+	var was := router.change
+	# The router's own change (`change_scene_to_file`): the screen enters the
+	# tree before its first layout, as on the phone, where F1 showed.
+	router.change = func(path: String) -> void:
+		change_scene_to_file(path)
+	var moving := Settings.reduced_motion
+	Settings.reduced_motion = false
+	var misses: Array[String] = []
+	for look: Array in [[100, false], [200, false], [100, true]]:
+		Settings.text_scale = look[0]
+		Settings.high_contrast = look[1]
+		Settings.apply()
+		for tab: String in Router.TABS:
+			router.go(Router.TABS[tab])
+			await create_timer(0.3).timeout
+			await process_frame
+			var bars := _bars(current_scene)
+			if bars.is_empty() != (Router.TABS[tab] in WITHOUT_TABS):
+				misses.append("%s at %d%%: %s tab bar" % [tab, look[0], "a" if bars else "no"])
+			for bar: KitTabs in bars:
+				var miss := _out_of_tile(bar)
+				if miss != "":
+					misses.append("%s (%s) at %d%%%s: %s" % [Router.TABS[tab], bar.active, look[0],
+						" hc" if look[1] else "", miss])
+	unload_current_scene()
+	await process_frame
+	Settings.text_scale = 100
+	Settings.high_contrast = false
+	Settings.apply()
+	Settings.reduced_motion = moving
+	router.change = was
+	check("AD-R47: on every tab route the router opens, at 100% and 200% text and in high contrast, the chosen "
+		+ "tab's picture stands in its tile", misses.is_empty(), "; ".join(misses))
+
+
+func _bars(n: Node) -> Array[KitTabs]:
+	var found: Array[KitTabs] = []
+	if n is KitTabs:
+		found.append(n as KitTabs)
+	for c: Node in n.get_children():
+		found.append_array(_bars(c))
+	return found
+
+
+## Where the chosen tab's picture leaves its tile, or "" where it stands in it.
+func _out_of_tile(bar: KitTabs) -> String:
+	var pic := bar.picture_of(bar.active).get_global_rect()
+	var tile := bar.tile_of(bar.active).get_global_rect()
+	var slack := 1.0
+	var rests := KitTabs.rest(true) + UI.PX_PER_POINT * KitTabs.BOB + slack
+	var foot := tile.end.y - pic.end.y
+	if pic.position.x < tile.position.x - slack or pic.end.x > tile.end.x + slack:
+		return "picture %s across tile %s" % [pic, tile]
+	if foot < -slack or foot > rests:
+		return "picture's foot %.0f px over the tile's foot (%s in tile %s)" % [foot, pic, tile]
+	if not KitTabs.lifts() and pic.position.y < tile.position.y - slack:
+		return "picture %s over the top of tile %s" % [pic, tile]
+	return ""
+
+
+## AD-R59 (audit 1 row 18): the goal card's bar is the key frame's green
+## progress fill in both looks, never gold (gold stays on Collect).
+func _goal_bar() -> void:
+	var tones: Array[Color] = []
+	for hc: bool in [false, true]:
+		Tokens.high_contrast = hc
+		var card := KitHud.goal("", "Raise the Star Well", 2, 3, "")
+		var bar: KitBar = null
+		for n: Node in card.find_children("*", "Control", true, false):
+			if n is KitBar:
+				bar = n
+		tones.append(bar._bottom if bar != null else Color())
+		var counts := card.find_child("Progress", true, false).find_children("*", "Label", false, false)
+		tones.append(Color.BLACK if counts.any(func(l: Label) -> bool: return l.visible) else Color.WHITE)
+		card.free()
+	Tokens.high_contrast = false
+	var green := Tokens.color("green_bar")
+	check("AD-R59: the goal card's bar is the green progress fill in both looks, and no count is written "
+		+ "where none is given", tones == [green, Color.WHITE, green, Color.WHITE], str(tones))
+
+
 func _run() -> void:
 	# The offline tests first, with no server; status.py names one for the end.
 	var server_url := OS.get_environment("RULEBORN_SERVER")
@@ -193,6 +286,8 @@ func _run() -> void:
 	await A11yTests.new(self, check, _mount, _control_problems, SCREENS).run()
 	StageHeroTests.new(check).run()
 	await UiKitTests.new(self, check).run()
+	await _tab_routes()
+	_goal_bar()
 
 	# The game's languages (§20.6 and the owner's, D99): every key a script
 	# asks for is in the catalogue, in every language, with the same
