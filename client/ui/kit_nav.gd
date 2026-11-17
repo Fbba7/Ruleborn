@@ -193,12 +193,15 @@ static func hero(kicker: String, title: String, line := "", pill := "") -> VBoxC
 ## on the motion sprites (Motion.reward: anticipation, burst, reveal, coin
 ## flight, counter roll from `from_value` to `to_value`, `show` writing each
 ## value). Under reduced motion the prize fades in, one coin lands and the
-## counter shows `to_value` at once. Returns the sequence's tween, or null
-## when there is no prize to play it on.
+## counter shows `to_value` at once; under high contrast the sky is left as
+## it is. Returns the sequence's tween, or null when there is no prize to
+## play it on.
 static func reward(screen: Control, prize: Control = null, counter: Control = null, from_value := 0,
 		to_value := 0, tier := "common", show := Callable()) -> Tween:
+	# Under high contrast the sky stays plain: no rays behind the words
+	# (S1-R32; §20.8).
 	var sky := screen.get_node_or_null("Sky") as Control
-	if sky != null:
+	if sky != null and not (Settings.high_contrast or Tokens.high_contrast):
 		RbBox.dress(sky, "night_rays", 0)
 	if prize == null or counter == null or not prize.is_inside_tree():
 		return null

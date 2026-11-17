@@ -10,6 +10,21 @@ const FULL_LARGE_POINTS := 11.0
 ## The least share of their size the goal's words take with large text, to
 ## break after the dot on two lines (break_goal).
 const GOAL_LEAST := 0.85
+## How far Full hangs above its pill's edge at 100%, beyond half its plate:
+## clear of the baked figures' tops, which stand on the amount's cap height.
+const FULL_LIFT := 8.0
+## Home's figures: the kit's white baked numerals in the small display
+## role's slot (kit-spec.md section 2.2, T3), and its words' T2 drawn half
+## again as heavy as the role's theme (`inked`).
+const FIGURE_FINISH := "num_white"
+const FIGURE_ROLE := "display_s"
+const INK_HEAVIER := 1.5
+## The baked figures' share of the role's line: their cells hold the glyph's
+## stroke and drop round its body, so at the full line the figures stand
+## taller and higher than the live words beside them (the "k") and meet the
+## Full tag over the pill; at this share, foot to the line's foot, their
+## bodies match the live face's and sit on its baseline.
+const FIGURE_LINE := 0.9
 
 
 ## Large text (§20.8): strain in the purse's fourth place in the two lines the
@@ -29,8 +44,9 @@ static func large_strain(pill: PanelContainer, pct: int, named: String) -> void:
 	var share := UI.label("%d%%" % pct, 18)
 	share.name = "Share"
 	share.set_meta("bold", true)
-	Home.home_figure(share, 18)
 	lines.add_child(share)
+	# In its place first: `figures` sets the baked row beside the label.
+	Home.home_figure(share, 18)
 	# The band's name tucked under the share's figures, not a whole line below.
 	lines.add_theme_constant_override("separation", -int(below(share)))
 	var band := UI.label(named, 14)
@@ -89,7 +105,7 @@ static func hang_full(pill: PanelContainer) -> void:
 	hold.add_child(tag)
 	var hang := func() -> void:
 		tag.size = tag.get_combined_minimum_size()
-		tag.position = Vector2(hold.size.x - tag.size.x, -hold.position.y - tag.size.y * 0.5)
+		tag.position = Vector2(hold.size.x - tag.size.x, -hold.position.y - tag.size.y * 0.5 - UI.px(FULL_LIFT))
 	hold.resized.connect(hang)
 	tag.minimum_size_changed.connect(hang)
 	tag.visibility_changed.connect(hang)
@@ -305,3 +321,147 @@ class Raids:
 		UI.set_status(headline, "alarm", said)
 		panel.accessibility_name = "%s. %s" % [said, Strings.t("HOME_RAID_LINE")]
 		(panel.get_node("Row") as Control).queue_sort()
+
+
+## T2 on `l` where the role's theme draws it too lightly to see: the role's
+## outline is 2 points and its drop 1.5 with no outline of its own, so the
+## stroke covers the drop (P2-S2-home-5: the purse's counts read flat cream).
+## The outline here is half again as thick, and the drop is the glyph's own
+## shadow set down by the outline and the role's drop, so it shows below the
+## stroke. A shadow with an outline of its own would draw it in one more call
+## per label, which takes home over §21.3's 150.
+static func inked(l: Label) -> void:
+	var t := Tokens.type_role(FIGURE_ROLE)
+	var outline := UI.px(float(t["outline"]) * INK_HEAVIER)
+	l.add_theme_color_override("font_color", Tokens.color("cream"))
+	l.add_theme_color_override("font_outline_color", Tokens.color("ink_line"))
+	l.add_theme_constant_override("outline_size", outline)
+	l.add_theme_color_override("font_shadow_color", Tokens.color("drop"))
+	l.add_theme_constant_override("shadow_offset_x", 0)
+	l.add_theme_constant_override("shadow_offset_y", outline + maxi(1, UI.px(float(t["drop"]) * INK_HEAVIER)))
+	l.add_theme_constant_override("shadow_outline_size", 0)
+
+
+## `text` cut where the baked numerals end: [the figures, the words after
+## them] ("142.0k" is ["142.0", "k"], "142,0 mil" is ["142,0", " mil"]).
+## No figures where the text does not start with one ("–", "Keeper 24").
+static func figures_cut(text: String) -> PackedStringArray:
+	var cut := 0
+	while cut < text.length() and KitNumerals.GLYPHS.has(text[cut]):
+		cut += 1
+	var digits := text.substr(0, cut)
+	var gap := ""
+	while digits != "" and KitNumerals.GLYPHS[digits[digits.length() - 1]] == "space":
+		digits = digits.substr(0, digits.length() - 1)
+		gap = " "
+	if digits.strip_edges() == "":
+		return PackedStringArray(["", text])
+	var rest := text.substr(cut)
+	return PackedStringArray([digits, gap + rest if rest != "" else ""])
+
+
+## `l`'s figures in the kit's baked numerals (T3: a gradient fill, a thick
+## ink stroke and a hard drop), in a row that takes the label's place beside
+## it, the words after them ("k", " mil") in live T2 type at the label's
+## size. Called again when the label's words or size change; while the
+## numerals' skin is off, or a figure has no glyph, the label shows itself.
+## The hidden label keeps its words, so a screen reader and `Home._fit_amounts`
+## still read them.
+static func figures(l: Label) -> void:
+	var px := l.get_theme_font_size("font_size")
+	var shown := "%s|%d|%s" % [l.text, px, l.get_meta("live", false)]
+	var old: Control = l.get_meta("figures") if l.has_meta("figures") else null
+	if old != null and is_instance_valid(old):
+		if str(old.get_meta("shown", "")) == shown and old.get_parent() == l.get_parent():
+			return
+		if old.get_parent() != null:
+			old.get_parent().remove_child(old)
+		old.queue_free()
+	l.remove_meta("figures")
+	l.visible = true
+	var cut := figures_cut(l.text)
+	if cut[0] == "" or l.get_parent() == null or l.get_meta("live", false):
+		return
+	var digits := KitNumerals.make(cut[0], FIGURE_FINISH, FIGURE_ROLE, l.text)
+	if not digits is KitNumerals.Row:
+		digits.free()
+		return
+	var line := RbTheme.role_font(FIGURE_ROLE).get_height(px)
+	(digits as KitNumerals.Row).height = floorf(line * FIGURE_LINE)
+	digits.size_flags_vertical = Control.SIZE_SHRINK_END
+	# One layer above the words: every baked row then draws in one call from
+	# the numerals' atlas page, not splitting the art's or the words' batches.
+	digits.z_index = UI.WORDS_Z + 1
+	digits.update_minimum_size()
+	var box := HBoxContainer.new()
+	box.name = String(l.name) + "Figures"
+	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	box.add_theme_constant_override("separation", 0)
+	box.size_flags_horizontal = l.size_flags_horizontal
+	box.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	box.alignment = BoxContainer.ALIGNMENT_END if l.horizontal_alignment == HORIZONTAL_ALIGNMENT_RIGHT \
+			else BoxContainer.ALIGNMENT_CENTER if l.horizontal_alignment == HORIZONTAL_ALIGNMENT_CENTER \
+			else BoxContainer.ALIGNMENT_BEGIN
+	box.accessibility_name = l.text
+	box.custom_minimum_size.y = ceilf(line)
+	box.add_child(digits)
+	if cut[1] != "":
+		var after := UI.label(cut[1], float(l.get_meta("points", 18.0)))
+		after.name = "After"
+		after.theme_type_variation = "Display"
+		after.add_theme_font_size_override("font_size", px)
+		after.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		inked(after)
+		box.add_child(after)
+	box.set_meta("shown", shown)
+	l.add_sibling(box)
+	l.visible = false
+	l.set_meta("figures", box)
+
+
+## What `l` shows: its baked figures' row where it has one, else itself.
+static func shown_as(l: Label) -> Control:
+	var box: Control = l.get_meta("figures") if l.has_meta("figures") else null
+	return box if box != null and is_instance_valid(box) and box.get_parent() != null else l
+
+
+## How wide `text` is drawn as `figures` draws it at `px`: the baked
+## figures' fixed advances and the words after them in the display face; the
+## live face's width where the figures cannot be baked.
+static func figures_width(l: Label, text: String, px: int) -> float:
+	var cut := figures_cut(text)
+	var face := l.get_theme_font("font")
+	var cells: Array[Dictionary] = []
+	for ch: String in cut[0]:
+		var p := KitSkin.numeral("%s_%s" % [FIGURE_FINISH, KitNumerals.GLYPHS[ch]])
+		if p.is_empty():
+			cells.clear()
+			break
+		cells.append(p)
+	if cells.is_empty():
+		return face.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, px).x
+	var tallest := 1.0
+	var across := 0.0
+	for p: Dictionary in cells:
+		tallest = maxf(tallest, float(p["h"]))
+		across += float(p.get("advance", p["w"]))
+	var w := ceilf(across * floorf(RbTheme.role_font(FIGURE_ROLE).get_height(px) * FIGURE_LINE) / tallest)
+	if cut[1] != "":
+		w += face.get_string_size(cut[1], HORIZONTAL_ALIGNMENT_LEFT, -1, px).x
+	return w
+
+
+## The row's amounts at full size against `room`, the purse's width less its
+## gaps, read from the face and the baked figures (`baked`) or the live face,
+## not from the labels as they are now: x, the amounts' widths; y, how far
+## the row's pills run over `room`.
+static func amounts_over(amounts: Array, held: Array[Control], room: float, baked: bool) -> Vector2:
+	var words := 0.0
+	var rest := 0.0
+	for i in amounts.size():
+		var l := amounts[i] as Label
+		var full := UI.text_px(float(l.get_meta("points")))
+		words += figures_width(l, l.text, full) if baked \
+				else l.get_theme_font("font").get_string_size(l.text, HORIZONTAL_ALIGNMENT_LEFT, -1, full).x
+		rest += held[i].get_combined_minimum_size().x - shown_as(l).get_combined_minimum_size().x
+	return Vector2(words, words + rest - room)
