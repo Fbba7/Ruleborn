@@ -585,6 +585,20 @@
       "due": "2026-11-17T16:00:00Z",
       "default": "Home shows only the counts the store holds (Defence raids, Season '!', Crew idle); each other count comes with the task that adds its source to the store.",
       "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R40",
+      "from": "S2",
+      "to": "lead",
+      "ask": "For the lead, who owns client/world/universe_pins.gd (no task in flight). At 200% text (en, pt_BR, de; FIT still 'fit ok') the locked realm's plate 'Opens at Keeper 28' finds no place within reach of Lantern Vale's rim (the island sits by the left side buttons, and the plate at 200% is about as wide as the free band) and is hidden, so the locked realm reads only as a dark, bare island: carried by colour alone, which the task forbids. The realms' pins shrink to their level chips there; the locked plate has no smaller form. Ask: a follow-up task on universe_pins.gd giving the locked plate a short form (the lock and '28' on the same dark pill) that it takes before it hides, as the realm pins do (`_shape`). Reproduce: `FIT=1 TEXT=200 [LOCALE=pt_BR|de] bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`.",
+      "files": [
+        "client/world/universe_pins.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T07:55:00Z",
+      "due": "2026-11-17T16:00:00Z",
+      "default": "The plate stays as it is: at 200% text it hides where it finds no room, and the locked state shows at 100% and 150% only (home-screen.md Part 7 says so).",
+      "escalate_to": "lead"
     }
   ],
   "answers": [],
