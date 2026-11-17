@@ -105,25 +105,43 @@ func show_pins(universe: Dictionary, extras: Dictionary) -> void:
 		_pins.append({"node": plate, "realm": "heart", "back": true, "zooms": [0, 1], "rank": 1})
 	var open: Variant = universe.get("open")
 	if open is Dictionary and not ((open as Dictionary).get("types", []) as Array).is_empty():
-		# Locked, as the designs' "Opens at Keeper 28" on a dark pill with a
-		# lock; open to buy, its name after a plus.
+		# Locked, as the designs' "Lantern Vale" over "Opens at Keeper 28" on a
+		# dark pill with a lock, and where that finds no room, the lock and
+		# "28" alone (`_brief`), so the lock reads in words at any size (S2-R38,
+		# S2-R40); open to buy, its name after a plus.
 		var plate := _plate(Color("#100A22", 0.94), Color("#C8BEE6", 0.5), false, 1.5, Color(0, 0, 0, 0.45), 3.0)
 		var name := UniversePresenter.realm_name(str((open as Dictionary)["types"][0]))
 		var needs: Dictionary = (open as Dictionary).get("needs", {})
+		var need := -1
+		var why := ""
 		match str((open as Dictionary).get("blocked", "")):
 			"keeper_level":
-				plate.add_child(_with_mark("generalui/lock", _words(Strings.t("HOME_OPENS_KEEPER",
-					int(needs.get("keeper", 0))), Palette.PAPER)))
+				need = int(needs.get("keeper", 0))
+				why = Strings.t("HOME_OPENS_KEEPER", need)
 			"spire_level":
-				plate.add_child(_with_mark("generalui/lock", _words(Strings.t("UNIVERSE_NEEDS_SPIRE",
-					int(needs.get("spire", 0))), Palette.PAPER)))
-			_:
-				plate.add_child(_words("+ " + name, Palette.PAPER))
+				need = int(needs.get("spire", 0))
+				why = Strings.t("UNIVERSE_NEEDS_SPIRE", need)
+		var brief := need >= 0
+		if brief:
+			var both := VBoxContainer.new()
+			both.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			both.add_theme_constant_override("separation", 0)
+			var title := _words(name, Palette.PAPER)
+			title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			both.add_child(title)
+			both.add_child(_with_mark("generalui/lock", _words(why, Palette.PAPER)))
+			plate.add_child(both)
+			var short_form := _with_mark("generalui/lock", _words(str(need), Palette.PAPER))
+			short_form.visible = false
+			plate.add_child(short_form)
+			plate.accessibility_name = "%s, %s" % [name, why]
+		else:
+			plate.add_child(_words("+ " + name, Palette.PAPER))
 		plate.mouse_filter = Control.MOUSE_FILTER_STOP
 		plate.gui_input.connect(func(e: InputEvent) -> void:
 			if _tapped(e):
 				view.next_chosen.emit())
-		_pins.append({"node": plate, "realm": "next:0", "rim": true, "zooms": [0], "rank": 1})
+		_pins.append({"node": plate, "realm": "next:0", "rim": true, "brief": brief, "zooms": [0], "rank": 1})
 	# Each link's kind, at its middle (the design's link icons, :1167).
 	# Drawn by the pins in one run (`_draw`): a paper disc each, then the icons.
 	for l: Dictionary in view.links:
@@ -429,7 +447,13 @@ func _lay(mode: int) -> bool:
 		var s := view.camera.unproject_position(at)
 		node.set_meta("anchor", s)
 		if not p.get("front", false):
-			node.visible = _spot(node, s, taken, taken_by_screen, view.inset.x, node.size.y * FAR)
+			if p.get("brief", false):
+				_brief(node, false)
+			var spotted := _spot(node, s, taken, taken_by_screen, view.inset.x, node.size.y * FAR)
+			if not spotted and p.get("brief", false):
+				_brief(node, true)
+				spotted = _spot(node, s, taken, taken_by_screen, view.inset.x, node.size.y * FAR)
+			node.visible = spotted
 			continue
 		# A realm's pin with its name where a place near its island is free,
 		# never over another realm (S2-R20's first objection). Every realm's pin
@@ -519,6 +543,17 @@ static func _shape(node: Control, form: int) -> void:
 	if words.visible != (form == 0) or icon.visible != (form < 2):
 		words.visible = form == 0
 		icon.visible = form < 2
+		node.reset_size()
+
+
+## The locked realm's plate in its short form (the lock and the level it
+## opens at) or its full one (the realm's name over the lock and its words).
+static func _brief(node: Control, short_form: bool) -> void:
+	var full := node.get_child(0) as Control
+	var least := node.get_child(1) as Control
+	if full.visible == short_form or least.visible != short_form:
+		full.visible = not short_form
+		least.visible = short_form
 		node.reset_size()
 
 
