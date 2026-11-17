@@ -2,7 +2,7 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026. Phase 2 started on 12 November 2026 (lead cycle 70): P1-AD-board-1d let board 1 stand and phase 1's other exit criteria hold (report.md section 3.2); its first tasks are the flow findings (S1, S2) and board 1's note G (AIA-2), within the same cap of three. Since 12 November 2026, about 20:00Z, the cap is four UI builders by the owner's order (CLAUDE.md order 3; three while the seven-day bar reads allowed_warning). Phase 3 (polish and harden, report.md step 12) started on 17 November 2026 (lead cycle 118) under M49: every phase 2 task was merged by 06:55Z, the exit review ran in cycle 118 (boards 3, 4 and 5 stand, board 2 waits on the deferred icon batch 4 by D13 (c), the exceptions queue is empty, every screen passes the gate but result at 200% pt_BR, Hierarchy, which P3-S1-result-7 takes), and the first blind audit (O6) is carried into phase 3 as P3-AD-audit-1. Phase 3 draws from the 20-hour reserve; it exits when no board has an open objection, the second blind audit is done and the wave board (O7) stands.",
   "wave": "UI wave",
   "phase": 3,
-  "updated_at": "2026-11-17T23:00:00Z",
+  "updated_at": "2026-11-17T23:25:00Z",
   "updated_by": "lead (cycle 139)",
   "stop_at": "2026-11-18T21:00:00Z",
   "lease_hours": 3,
@@ -46,107 +46,6 @@
   },
   "strings_owner": "lead",
   "tasks": [
-    {
-      "id": "P3-K1-tabs-1",
-      "title": "The chosen tab's picture inside its tile on every router-opened screen (AD-R47, flow board 2's F1), and the goal card's XP bar in the green progress fill (AD-R59)",
-      "phase": 3,
-      "role": "K1",
-      "model": "Opus 5.5",
-      "assigned_to": "K1",
-      "files": [
-        "client/ui/kit_tabs.gd",
-        "client/ui/kit_hud.gd",
-        "client/tests/ui_kit_tests.gd",
-        "client/tests/shots/ui_kit_polish.gd"
-      ],
-      "deps": [
-        "P3-K1-polish-2"
-      ],
-      "done_when": [
-        "AD-R47 (flow board 2's F1, granted in cycle 123): on every tab route the router opens, the chosen tab's picture lies inside its tile at rest (KitTabs.choose starts Motion.bob only once the tile has its layout, or bobs about the laid-out place), at 100% and 200% text and in high contrast",
-        "a mount test in client/tests/run.gd that opens each tab route through router.go, waits for layout, and asserts the chosen tab's picture rect lies inside its tile's rect",
-        "AD-R59 (audit 1 row 18, granted in cycle 125): KitHud.goal's progress uses the key frame's green progress fill in both looks; gold stays on Collect; a test in the kit's tests (client/tests/ui_kit_tests.gd is at gdlint's 1000-line limit: make room or put the test beside the mount test, and say where in the handoff)",
-        "the catalogue's shots unchanged apart from the chosen tab and the goal bar, each change named in the handoff; the handoff says what home.gd's caller of KitHud.goal can drop for S2's next home task",
-        "bash tools/ui_bake/guard.sh",
-        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
-        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed under docs/art/ui-quality/gate/verdicts/ or outside the task's files (M48)",
-        "bash tools/check_all.sh"
-      ],
-      "gate_items": [],
-      "attempts": 0,
-      "estimate_h": 1.5,
-      "tier": 2,
-      "critical": false,
-      "state": "merged",
-      "claim": null,
-      "prior_branch": null,
-      "prior_sha": null,
-      "ready_sha": "22fae4b7d9e878a65ce98a2b93762faa403c9217",
-      "merged_sha": "e3364018",
-      "updated_at": "2026-11-17T15:45:00Z",
-      "updated_by": "lead (cycle 128)",
-      "exceptions": [
-        "client/tests/run.gd"
-      ]
-    },
-    {
-      "id": "P3-S3-character-5",
-      "title": "Character screen, part 5: the local fixes for S3-R9 to S3-R14 dropped where P3-K1-polish-2's kit features cover them",
-      "phase": 3,
-      "role": "S3",
-      "model": "Opus 5.5",
-      "assigned_to": "S3",
-      "files": [
-        "client/scripts/character_screen.gd",
-        "client/tests/shots/screen_character.gd",
-        "docs/art/tracks/menu-screens.md"
-      ],
-      "deps": [
-        "P3-K1-polish-2"
-      ],
-      "done_when": [
-        "_tabs, the ability card's measures, _blend_foot, the hex's scaled size, _compact and _untrack_when_tight replaced by the kit's calls where K1's handoff for P3-K1-polish-2 says the kit covers them, each named in the handoff",
-        "the character screen's stills at 100% and 200% text (en, pt_BR, de) and in high contrast unchanged in substance, or each change named; board 5 still stands",
-        "AD-R53 (flow board 2's F7, granted in cycle 123): the character's offline notice ('The roster did not change: no server is set', ERR_OFFLINE) uses the roster's cream notice, not red, so the same notice reads the same one tap apart",
-        "AD-R58 (audit 1 row 14, granted in cycle 125): at 200% pt_BR the character's display words carry an outward outline of at least 12% of the size they render at, computed after the text scale and _wrap_in's shrink (not from the theme size, as _ink_large does now)",
-        "AD previews the stills before ready (M10, M12, M23): the builder sends them to AD while the work can still change, and AD's objections are answered in this task",
-        "python3 tools/ui_bake/check_screens.py",
-        "bash tools/ui_bake/guard.sh",
-        "gate: Screen",
-        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
-        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed under docs/art/ui-quality/gate/verdicts/ or outside the task's files (M48)",
-        "bash tools/check_all.sh"
-      ],
-      "gate_items": [
-        {
-          "item": "character at 200% text, pt_BR",
-          "qualities": [
-            "Hierarchy"
-          ]
-        }
-      ],
-      "attempts": 0,
-      "estimate_h": 1.0,
-      "tier": 2,
-      "critical": false,
-      "state": "merged",
-      "claim": {
-        "agent": "S3",
-        "branch": "claude/ui-screens-meta",
-        "claimed_at": "2026-11-17T13:05:00Z",
-        "seen_at": "2026-11-17T16:56:00Z",
-        "lease_until": "2026-11-17T19:56:00Z"
-      },
-      "prior_branch": null,
-      "prior_sha": null,
-      "ready_sha": "3053cf6d",
-      "merged_sha": "c848afc3",
-      "updated_at": "2026-11-17T18:25:00Z",
-      "updated_by": "lead (cycle 131)",
-      "exceptions": [
-        "docs/art/shots/menu-screens/**"
-      ]
-    },
     {
       "assigned_to": "S3",
       "attempts": 0,
@@ -209,103 +108,6 @@
       "title": "Character and roster, navigation and the offline notice: ScreenNav's back (AD-R50), the roster keeps its scroll and stage (AD-R51), the offline notice as info in one line at large text (AD-R63, AD-R64)",
       "updated_at": "2026-11-17T21:15:00Z",
       "updated_by": "lead (cycle 136)"
-    },
-    {
-      "id": "P3-AD-preview-1",
-      "title": "S1-R40 and S3-R34: P3-S1-hc-offline-1's merged stills and the gate's Colour roles fail looked at, P3-S3-character-5's stills previewed, and the offline result state in the gate's shot list",
-      "phase": 3,
-      "role": "AD",
-      "model": "Opus 5.5",
-      "assigned_to": "AD",
-      "files": [
-        "docs/art/ui-quality/gate/**",
-        "!docs/art/ui-quality/gate/verdicts/**",
-        "tools/ui_gate/**"
-      ],
-      "deps": [
-        "P3-S1-hc-offline-1"
-      ],
-      "done_when": [
-        "S1-R40: docs/art/ui-quality/gate/shots.md lists the result screen's offline state (screen_result.gd's default) beside its server state (SERVER=1), with the environment each still needs, as P3-S1-hc-offline-1's handoff says",
-        "P3-S1-hc-offline-1's stills rendered again on main's build at the task's start (heist in high contrast; result at 100% text, offline and server) and looked at against the advisory gate verdict docs/art/ui-quality/gate/verdicts/P3-S1-hc-offline-1/a4ed000e.json: Colour roles and value failed 5 of 6 (main-action gold fill on the disabled 'No casts' control; gold on the stats values; 'Get out' in the same red as the 'Intruder!' alarm), Character presence passed 4 of 6 (two samples saw photographic grain on the Breaker's rock body). AD rules on each point, and on whether 'Get out' keeps AD-R56's red danger plate or takes its own exit colour. Every fault AD keeps goes to the lead as a request with a default, naming the screen, the file and its owner, for P3-S1-hc-offline-2 (S1's follow-up, which waits on this task) or for the Breaker's owner",
-        "S3-R34: P3-S3-character-5's stills previewed at S3's current sha (the kit's calls, AD-R53's cream notice, AD-R58's outline measured) if S3 has not marked ready, or re-checked on main if it has merged; every objection in one round (M12, M23), each kept one going to the lead as a request with a default",
-        "bash tools/check_all.sh"
-      ],
-      "gate_items": [],
-      "attempts": 0,
-      "estimate_h": 1.5,
-      "tier": 2,
-      "critical": false,
-      "state": "merged",
-      "claim": {
-        "agent": "AD",
-        "branch": "claude/ui-ad",
-        "claimed_at": "2026-11-17T15:36:00Z",
-        "seen_at": "2026-11-17T15:58:00Z",
-        "lease_until": "2026-11-17T18:58:00Z"
-      },
-      "prior_branch": null,
-      "prior_sha": null,
-      "ready_sha": "885fae50",
-      "merged_sha": "2eff5f43",
-      "updated_at": "2026-11-17T17:18:00Z",
-      "updated_by": "lead (cycle 130)",
-      "exceptions": []
-    },
-    {
-      "id": "P3-S1-hc-offline-2",
-      "title": "Heist in high contrast: one role per colour (the gate's Colour roles and value fail, 5 of 6, at a4ed000e) as AD rules in P3-AD-preview-1",
-      "phase": 3,
-      "role": "S1",
-      "model": "Opus 5.5",
-      "assigned_to": "S1",
-      "files": [
-        "client/scripts/heist_hand.gd",
-        "client/scripts/heist_hud.gd",
-        "client/tests/shots/screen_heist.gd",
-        "docs/art/tracks/heist-pilot.md"
-      ],
-      "deps": [
-        "P3-AD-preview-1"
-      ],
-      "done_when": [
-        "the gate's advisory Colour roles and value fail at a4ed000e (docs/art/ui-quality/gate/verdicts/P3-S1-hc-offline-1/a4ed000e.json) answered as AD ruled in P3-AD-preview-1 (docs/art/ui-quality/gate/boards/preview-1.md): AD-R60, with no casts left HeistHand.show_state dresses the cast control in the leather secondary plate (the wand at 0.4, the words in text_on_leather, still tappable), flat leather_light #6A3E52 in high contrast, gold returning when casts are left; AD-R61, in high contrast hc_plates gives Get out 'leather', flat leather_light #6A3E52 with the amber rim, not AD-R56's red danger plate, which stays the alarm's alone, and no fifth button style; AD-R62, under Tokens.high_contrast heist_hud.gd sets the loot figures (Room, Vault, '?') in Tokens.color('cream') #FFF3CC, KitHud.loot_fit in client/ui/kit_hud.gd unchanged; each control still at least dL* 20 off its local ground (AD-R56), each pair's dL* listed in the handoff",
-        "'heist at 100% text', 'heist at 200% text, pt_BR' and 'heist in high contrast' still passing; FIT=1 runs of the heist shot at 200% text in en, pt_BR and de and in high contrast all passing, each run listed in the handoff",
-        "AD previews the stills before ready (M10, M12, M23): the builder sends them to AD while the work can still change, and AD's objections are answered in this task",
-        "python3 tools/ui_bake/check_screens.py",
-        "bash tools/ui_bake/guard.sh",
-        "gate: Screen",
-        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
-        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed under docs/art/ui-quality/gate/verdicts/ or outside the task's files (M48)",
-        "bash tools/check_all.sh"
-      ],
-      "gate_items": [
-        {
-          "item": "heist in high contrast",
-          "qualities": [
-            "Colour roles and value"
-          ]
-        }
-      ],
-      "attempts": 0,
-      "estimate_h": 1.5,
-      "tier": 2,
-      "critical": false,
-      "state": "ready",
-      "claim": {
-        "agent": "S1",
-        "branch": "claude/ui-screens-heist",
-        "claimed_at": "2026-11-17T17:22:00Z",
-        "seen_at": "2026-11-17T20:45:00Z",
-        "lease_until": "2026-11-17T21:25:00Z"
-      },
-      "prior_branch": null,
-      "prior_sha": null,
-      "ready_sha": "788eaaf4d5a46f9cde43ab603446e40b23665715",
-      "merged_sha": null,
-      "updated_at": "2026-11-17T21:15:00Z",
-      "updated_by": "lead (cycle 136)",
-      "exceptions": []
     },
     {
       "id": "P3-S2-home-7",
@@ -550,53 +352,6 @@
       "title": "Settings remembers its tab for the session (AD-R52): it reopens on the tab last shown, with a mount test",
       "updated_at": "2026-11-17T23:00:00Z",
       "updated_by": "lead (cycle 139)"
-    },
-    {
-      "assigned_to": "AIA-2",
-      "attempts": 0,
-      "claim": {
-        "agent": "AIA-2",
-        "branch": "claude/ui-artist-icons",
-        "claimed_at": "2026-11-17T20:10:00Z",
-        "seen_at": "2026-11-17T21:20:00Z",
-        "lease_until": "2026-11-17T23:10:00Z"
-      },
-      "critical": true,
-      "deps": [],
-      "done_when": [
-        "S2-R45 (cycle 133) and the lead's guard run of cycle 134: tools/ui_bake/guard.sh's byte-for-byte rebake fails on client/ui/art/icons_256.webp in some containers (S2's, and the lead's of cycle 134 on an Intel Xeon with avx512f) on a tree whose bake inputs and outputs are main's, and passes in others (the lead's of cycle 131). art/ui/icons/studio/bake_icons.js draws through Chromium's SwiftShader (--use-angle=swiftshader), whose output depends on the CPU. The fix makes the bake give the same bytes on every x86-64 machine",
-        "the guard is not loosened: the rebake stays byte for byte, with no pixel tolerance and no skipped family; the fix is in how the icons are drawn or finished (for example a drawing path whose arithmetic does not depend on the CPU's vector units, or a finish that brings every pixel to a value that no CPU-dependent rounding can move), and it is said in docs/progress/AIA-2.md why it cannot depend on the machine",
-        "both icon families, icons_256 and icons_48, colour and high contrast, rebaked with the fix and committed with their manifests (client/ui/art/icons_256*, client/ui/art/icons_48*); python3 art/ui/icons/studio/check_icons.py icons_48 icons_256 passes",
-        "proof across machines: the bake run twice in the builder's container gives the same bytes, and the bake run with the CPU's wider vector units turned off for SwiftShader (or by a second route the handoff names) gives those same bytes again; the lead's guard run on the candidate, in another container, passes the rebake",
-        "the icons look as they did: a contact sheet (python3 tools/ui_gate/sheet.py contact) of the old and the new atlas, colour and grayscale, side by side in the handoff; any piece whose pixels change beyond edge antialiasing is named, with a request to AD through the lead",
-        "nothing under tools/ui_bake/** changes (K1's): if the fix needs bake.js or families.json, that part is a request to K1 through the lead, with a default",
-        "bash tools/ui_bake/guard.sh",
-        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
-        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed under docs/art/ui-quality/gate/verdicts/ or outside the task's files (M48)",
-        "bash tools/check_all.sh"
-      ],
-      "estimate_h": 2,
-      "exceptions": [],
-      "files": [
-        "art/ui/icons/studio/**",
-        "client/ui/art/icons_256*",
-        "client/ui/art/icons_48*",
-        "art/ui/icons/README.md"
-      ],
-      "gate_items": [],
-      "id": "P3-AIA2-bake-1",
-      "merged_sha": "a957e73b",
-      "model": "Opus 5.5",
-      "phase": 3,
-      "prior_branch": null,
-      "prior_sha": null,
-      "ready_sha": "75798143c332d2674e426f160ebce9e798f670fe",
-      "role": "AIA-2",
-      "state": "merged",
-      "tier": 2,
-      "title": "An icon bake that gives the same bytes on every machine, so the guard's byte-for-byte rebake passes in any container (S2-R45)",
-      "updated_at": "2026-11-17T20:00:00Z",
-      "updated_by": "lead (cycle 134)"
     },
     {
       "id": "SV-B10",
