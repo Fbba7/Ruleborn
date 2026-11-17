@@ -8,8 +8,8 @@
   "task_state": "working",
   "claimed_at": "2026-11-17T12:08:00Z",
   "lease_until": "2026-11-17T15:20:00Z",
-  "updated_at": "2026-11-17T12:28:52Z",
-  "expected_next_update_by": "2026-11-17T13:13:52Z",
+  "updated_at": "2026-11-17T12:30:31Z",
+  "expected_next_update_by": "2026-11-17T13:15:31Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "808e42cf710668864502025b276f3afc7b182c05",
@@ -974,5 +974,5 @@
     }
   ],
   "next_step": "P3-AD-audit-1b: the six misses re-rendered on main (rows 1, 14, 18 and the offline result still fail; 16 fixed); writing audit-1-misses.md and golden v2",
-  "last_update": "P3-AD-audit-1b: misses re-rendered and labelled on main (4 hold, filed AD-R56 to AD-R59; row 16 fixed), judge-vs-AD lines written, golden set version 2 joined (79 items, held-out third unchanged). Next: pre-check and ready."
+  "last_update": "P3-AD-audit-1b done at d2b01e18 (integration dc565807 merged); pre-check running; owners.py diff passes. Next: record the pre-check, then ready."
 }
