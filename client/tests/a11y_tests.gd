@@ -35,6 +35,8 @@ func run() -> void:
 	await _haptics()
 	await _banners()
 	_grayscale_island()
+	await _ink_outlines()
+	await _back_value()
 
 
 func _set_contrast(on: bool) -> void:
@@ -543,3 +545,97 @@ func _grayscale_island() -> void:
 	check.call("the island keeps its figures by value: every feature that changes a route, each guard and the "
 			+ "outlines of wards, the Vault and the crew stand 3:1 from every ground, and water's ripples from "
 			+ "water, in both contrast modes (§21.10)", bad.is_empty(), "; ".join(bad))
+
+
+## S3-R35: Godot draws a quarter of a label's outline_size on each side, so
+## every word the HUD strokes in ink to read against the stroke (the tip, an
+## inked crew name, the large clock, a quest's count on its fill) has an
+## outline_size of at least four times §21.8's least a side, max(1.5 pt,
+## 12% of its size), read here from the font as drawn.
+func _ink_outlines() -> void:
+	var bad := []
+	var none := func() -> void: pass
+	var parts := {
+		"the tip": KitHud.tip("Tap crew, then ground"),
+		"an inked crew name": KitHud.crew(PlaceholderTexture2D.new(), "Pip", 0.8, 1, none, "motion", true),
+		"the large clock": KitHud.clock_large("03:42"),
+		"a quest's count on its fill": KitPanels.quest("screens/heist", "Collect", 2, 3, "+40",
+			"currencies/seasonstars", "Claim", none),
+	}
+	for name: String in parts:
+		var part: Control = parts[name]
+		tree.root.add_child(part)
+		await tree.process_frame
+		var inked := 0
+		for l: Label in part.find_children("*", "Label", true, false):
+			var size := l.get_theme_constant("outline_size")
+			if size <= 0 or not l.has_theme_color_override("font_outline_color"):
+				continue
+			inked += 1
+			var font_px := float(l.get_theme_font_size("font_size"))
+			var side := maxf(UI.px(1.5), 0.12 * font_px)
+			if size / 4.0 < side:
+				bad.append("%s's \"%s\": outline_size %d draws %.2f px a side, §21.8 asks %.2f" % [name, l.text, size,
+					size / 4.0, side])
+		if inked == 0:
+			bad.append("%s strokes no word in ink" % name)
+		part.queue_free()
+	# The reading itself: outline_size 12 is one point a side; the old reading
+	# (a whole side per outline_size) no longer counts.
+	if not is_equal_approx(KitHud.ink_side(12), 1.0):
+		bad.append("outline_size 12 reads %.2f pt a side, not 1" % KitHud.ink_side(12))
+	if KitHud.ink_counts(UI.px(maxf(1.5, 0.12 * 15.0) + 0.5), 15.0):
+		bad.append("an outline_size of a whole side still counts as the stroke")
+	check.call("every word the HUD strokes in ink to read against the stroke has an outline_size of four times "
+			+ "§21.8's least a side (max 1.5 pt, 12% of its size) and its soft edge, as Godot draws a quarter a side "
+			+ "(S3-R35)", bad.is_empty(), "; ".join(bad))
+
+
+## S3-R41: the back button's leather face, as a ScreenNav dock draws it (the
+## atlas piece by the box's modulate), stands two value steps (20 L*) off
+## each stop of the night it docks on, in both contrast modes.
+func _back_value() -> void:
+	var bad := []
+	for hc: bool in [false, true]:
+		_set_contrast(hc)
+		var dock := ScreenNav.dock(&"profile")
+		tree.root.add_child(dock)
+		await tree.process_frame
+		var back: Control = null
+		for b: Button in dock.find_children("*", "Button", true, false):
+			if b.has_meta("back"):
+				back = b
+		var box := RbBox.of(back) if back != null else null
+		var p := box.piece() if box != null else {}
+		if p.is_empty():
+			bad.append("the dock's back button draws no atlas piece%s" % (" (hc)" if hc else ""))
+		else:
+			var face := _face_lightness(p, box.modulate)
+			for stop: String in ["night_top", "night_mid", "night_bottom"]:
+				var night := ColourCheck._lab(Tokens.color(stop)).x
+				if absf(face - night) < 20.0:
+					bad.append("the back's face at L* %.1f on %s at %.1f%s" % [face, stop, night, " (hc)" if hc else ""])
+		dock.queue_free()
+	_set_contrast(false)
+	check.call("the back button's leather face on a ScreenNav dock stands 20 L* off every stop of the night, "
+			+ "in both contrast modes (S3-R41)", bad.is_empty(), "; ".join(bad))
+
+
+## The median L* of a piece's face (its middle half, where it is opaque) as
+## drawn by `tint`.
+static func _face_lightness(p: Dictionary, tint: Color) -> float:
+	var img := KitSkin.texture(p).get_image()
+	if img.is_compressed():
+		img.decompress()
+	var r := KitSkin.region(p)
+	var ls: Array[float] = []
+	for y: int in range(int(r.position.y + r.size.y / 4.0), int(r.end.y - r.size.y / 4.0), 2):
+		for x: int in range(int(r.position.x + r.size.x / 4.0), int(r.end.x - r.size.x / 4.0), 2):
+			var c := img.get_pixel(x, y)
+			if c.a > 0.5:
+				var lit := Color(minf(c.r * tint.r, 1.0), minf(c.g * tint.g, 1.0), minf(c.b * tint.b, 1.0))
+				ls.append(ColourCheck._lab(lit).x)
+	if ls.is_empty():
+		return 0.0
+	ls.sort()
+	return ls[ls.size() / 2]

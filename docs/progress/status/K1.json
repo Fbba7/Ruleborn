@@ -8,8 +8,8 @@
   "task_state": "working",
   "claimed_at": "2026-11-17T21:10:20Z",
   "lease_until": "2026-11-18T00:10:20Z",
-  "updated_at": "2026-11-17T21:45:00Z",
-  "expected_next_update_by": "2026-11-17T22:30:00Z",
+  "updated_at": "2026-11-17T22:09:22Z",
+  "expected_next_update_by": "2026-11-17T22:54:22Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": null,
@@ -449,5 +449,5 @@
       "at": "2026-11-17T08:15:00Z"
     }
   ],
-  "next_step": "P3-K1-outline-1: S3-R37 done; S3-R35 outline rule in KitHud with ink_counts; S3-R41 measured (back face 24.9 on night 27.5 on every dock screen, 13.6 on the character): choosing the scoped lift"
+  "next_step": "P3-K1-outline-1: S3-R37 done; S3-R35 outline rule in KitHud (tests fail on the old reading); S3-R41 back face lifted (2.4 standard, 1.45 high contrast) with its a11y test; 432 of 434 client tests: the two left fail on outline sites outside K1's files, request to the lead next"
 }
