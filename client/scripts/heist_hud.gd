@@ -245,6 +245,13 @@ static func _sync(l: Label, finish := "") -> void:
 	# them, and the alarm's column keeps a law's two words on one line.
 	var row := KitNumerals.make(text.replace(" ", ""), finish, "number", l.text)
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	# A figure tinted (the loot's cream in high contrast, AD-R62): the white
+	# glyphs take it, their ink line stays dark.
+	if l.has_meta("tint"):
+		if row is Label:
+			row.add_theme_color_override("font_color", l.get_meta("tint"))
+		else:
+			row.modulate = l.get_meta("tint")
 	box.add_child(row)
 	_through(box)
 
@@ -394,11 +401,12 @@ func _build_loot(rows: Array, bags: float, load_words: String, vault: Array) -> 
 	# figures rather than flat gold words on the plate.
 	# In high contrast the figures are information, not an order: cream, as
 	# the clock's, never the kit's gold, which says "act here" (AD-R62);
-	# baked, with §20.8's large text, in the numerals' white.
+	# baked, with §20.8's large text, in the numerals' white tinted cream.
 	_tight(piece, true, 10.0)
 	for n: Variant in piece.get_meta("numbers", []):
 		if Tokens.high_contrast:
 			(n as Label).add_theme_color_override("font_color", Tokens.color("cream"))
+			(n as Label).set_meta("tint", Tokens.color("cream"))
 		_bake(n as Label, "num_white" if Tokens.high_contrast else "num_gold")
 	_swap(loot_panel, piece)
 	loot_panel = piece
