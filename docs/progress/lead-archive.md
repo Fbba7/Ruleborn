@@ -5,6 +5,68 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 121**, 17 November 2026, from about 08:40Z (session
+  `session_01SNkKxmiG2fJkzw87V4rNvc`, started by the Opus 5.5 launcher).
+  **Claims copied:** AD marked P3-AD-audit-1 ready at 24965010 (19 items,
+  43 rows labelled blind: 30 pass, 13 fail) and S1 marked P3-S1-result-7
+  ready at 55716273. K1 on P3-K1-polish-1 and S2 on P3-S2-home-states are
+  unchanged. No lease has lapsed, and `owners.py diff` and `owners.py
+  claims` pass.
+  **Requests:** none new. S1-R37 is written at the merge as approved in
+  cycle 120: `tools/ui_bake/budgets.json` result/hc draw calls 27 to 28,
+  with a raises entry (guard.sh at 55716273 failed only on that line).
+  S1-R36 is closed by result-7's merge. S2-R42 goes to AD's new session,
+  with S2's default at 16:00Z.
+  **Gate and merges:** the gate ran on result-7, result at 200% text,
+  pt_BR, Hierarchy: 3 of 3 samples pass against kf-character-text200
+  (pass) and today-heist (fail). The gold Raid again leads in grayscale,
+  and the summary and alarm lines now sit below the totals and the button,
+  which answers the fail at b5843368. The verdict is at
+  `gate/verdicts/P3-S1-result-7/55716273.json`. audit-1 has no gate item.
+  The two tasks, S1-R37's record and the verdict were batched as
+  dbc1cd42: full checks passed (bwrap, 09:29Z) and guard.sh reported
+  `ui guard: OK`, with audit-1 alone (6a4fa7c9) also passing the guard as
+  the fallback. Both merged as 1abc52ba, and the merge lock is released.
+  The audit and roadmap pages are republished.
+  **Starts:** AD on P3-AD-flow-2 (`session_01SNkKxpbxrV1iLPXhx2VvJB`),
+  opened by audit-1's merge, with S2-R42's preview first.
+  **Seats:** at the start, AD's and S1's sessions were idle with their
+  tasks merged, K1's was idle waiting on the merge queue and S2's was
+  waiting on its pre-check. With AD's new session, two builders are
+  working (AD, S2) under a cap of three, since the seven-day bar reads
+  `allowed_warning`.
+  **Next:** K1 marked P3-K1-polish-1 ready at 57ea213c (pre-check exit 0
+  at 09:28Z, guard OK) after this cycle's heads were read. Main moved
+  under it, so it needs a candidate with full checks; `git merge-tree`
+  shows no conflict with 1abc52ba. Merge it, then start K1 on polish-2
+  and, after that, S3 on character-5. Score audit-1's misses against the
+  gate's verdicts (its done_when). S2's home-states comes when it marks
+  ready, writing S2-R41's three records at its merge.
+
+- **Cycle 120**, 17 November 2026, from about 08:05Z (session
+  `session_01SNkKxnVWqySe65bs6CXACW`, started by the Opus 5.5 launcher).
+  **Claims copied:** unchanged: AD on P3-AD-audit-1, K1 on
+  P3-K1-polish-1, S1 on P3-S1-result-7 and S2 on P3-S2-home-states. No
+  lease has lapsed, and `owners.py claims` passes.
+  **Requests:** K1-R25, S1-R36, S1-R37, S2-R41 and S2-R42 copied, with
+  AD's answer to S2-R36 (no objection at 5d25f9cb; two notes on the
+  plate's left gutter and the Defence badge at 200%). K1-R25 is granted
+  now, not at the merge: `client/tests/shots/ui_kit_polish.gd` and its
+  `.uid` are P3-K1-polish-1's exceptions, so `owners.py diff` passes and
+  K1 can mark ready (M51). S1-R37 (result/hc 27 to 28) and S2-R41 (home's
+  three draw-call records) are approved; `budgets.json` is in polish-1's
+  files, so the lead writes them at each task's merge with a raises entry.
+  S1-R36 and S2-R42, two previews, go to AD, whose blind labelling for
+  audit-1 is written (24965010). M50 acked by S2.
+  **Gate and merges:** none. Nothing is ready, and no gate request is
+  open.
+  **Starts:** none. Four builders run, each session working.
+  **Seats:** four of four. The seven-day bar reads `allowed_warning`, so
+  order 3's cap is three: no builder starts until fewer than three run.
+  **Next:** gate and merge what is marked ready. When K1's polish-1
+  merges, start K1 on polish-2 if fewer than three builders run; S3 on
+  character-5 after it, and P3-AD-flow-2 after the audit's merge.
+
 - **Cycle 119**, 17 November 2026, from about 07:40Z (session
   `session_01SNkKxqCqKwynFeQfEP4pR3`, started by the Opus 5.5 launcher).
   **Claims copied:** AD on P3-AD-audit-1 (07:30Z), K1 on P3-K1-polish-1

@@ -2,7 +2,7 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026. Phase 2 started on 12 November 2026 (lead cycle 70): P1-AD-board-1d let board 1 stand and phase 1's other exit criteria hold (report.md section 3.2); its first tasks are the flow findings (S1, S2) and board 1's note G (AIA-2), within the same cap of three. Since 12 November 2026, about 20:00Z, the cap is four UI builders by the owner's order (CLAUDE.md order 3; three while the seven-day bar reads allowed_warning). Phase 3 (polish and harden, report.md step 12) started on 17 November 2026 (lead cycle 118) under M49: every phase 2 task was merged by 06:55Z, the exit review ran in cycle 118 (boards 3, 4 and 5 stand, board 2 waits on the deferred icon batch 4 by D13 (c), the exceptions queue is empty, every screen passes the gate but result at 200% pt_BR, Hierarchy, which P3-S1-result-7 takes), and the first blind audit (O6) is carried into phase 3 as P3-AD-audit-1. Phase 3 draws from the 20-hour reserve; it exits when no board has an open objection, the second blind audit is done and the wave board (O7) stands.",
   "wave": "UI wave",
   "phase": 3,
-  "updated_at": "2026-11-17T10:20:00Z",
+  "updated_at": "2026-11-17T12:58:00Z",
   "updated_by": "lead (cycle 119)",
   "stop_at": "2026-11-18T21:00:00Z",
   "lease_hours": 3,
@@ -47,46 +47,6 @@
   "strings_owner": "lead",
   "tasks": [
     {
-      "id": "P3-AD-audit-1",
-      "title": "The first blind audit (O6, phase 2's exit carried into phase 3): AD labels the 19 items of gate/audit/audit-1.md without the gate's verdicts",
-      "phase": 3,
-      "role": "AD",
-      "model": "Opus 5.5",
-      "assigned_to": "AD",
-      "files": [
-        "docs/art/ui-quality/gate/**",
-        "!docs/art/ui-quality/gate/verdicts/**",
-        "tools/ui_gate/**"
-      ],
-      "deps": [],
-      "done_when": [
-        "a fresh AD session, which opens no file under docs/art/ui-quality/gate/verdicts/, no verdict line of a board, no 'Gate' paragraph of docs/progress/requests.md and no lead note on these items until every row is labelled",
-        "every one of audit-1.md's 43 rows labelled pass, fail or n/a with a one-line critique, each item rendered at its commit as the form's header says (git worktree, bash tools/render/shoot.sh, the screen's shot script)",
-        "the form committed with the labels and the time spent; the lead scores the misses against the verdicts in the cycle after the merge",
-        "bash tools/check_all.sh"
-      ],
-      "gate_items": [],
-      "attempts": 0,
-      "estimate_h": 1.5,
-      "tier": 2,
-      "critical": false,
-      "state": "merged",
-      "claim": {
-        "agent": "AD",
-        "branch": "claude/ui-ad",
-        "claimed_at": "2026-11-17T07:30:00Z",
-        "seen_at": "2026-11-17T07:50:00Z",
-        "lease_until": "2026-11-17T10:30:00Z"
-      },
-      "prior_branch": null,
-      "prior_sha": null,
-      "ready_sha": "24965010ad39e1f2fd20766476a5d1a316ec5a3e",
-      "merged_sha": "1abc52ba",
-      "updated_at": "2026-11-17T09:35:00Z",
-      "updated_by": "lead (cycle 119)",
-      "exceptions": []
-    },
-    {
       "id": "P3-AD-flow-2",
       "title": "Phase 2's flow review (report.md 3.3, AD's flow reviews): AD walks the end-to-end flows across heist, result, home, character and settings on the integrated build",
       "phase": 3,
@@ -111,7 +71,7 @@
       "estimate_h": 1.0,
       "tier": 2,
       "critical": false,
-      "state": "claimed",
+      "state": "merged",
       "claim": {
         "agent": "AD",
         "branch": "claude/ui-ad",
@@ -120,10 +80,10 @@
       },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null,
-      "updated_at": "2026-11-17T10:20:00Z",
-      "updated_by": "lead (cycle 122)",
+      "ready_sha": "808e42cf710668864502025b276f3afc7b182c05",
+      "merged_sha": "744390e1",
+      "updated_at": "2026-11-17T12:06:00Z",
+      "updated_by": "lead (cycle 124)",
       "exceptions": []
     },
     {
@@ -195,15 +155,66 @@
       "estimate_h": 2.5,
       "tier": 2,
       "critical": false,
+      "state": "merged",
+      "claim": {
+        "agent": "K1",
+        "branch": "claude/ui-bake",
+        "claimed_at": "2026-11-17T10:20:00Z",
+        "seen_at": "2026-11-17T11:23:00Z",
+        "lease_until": "2026-11-17T16:40:00Z"
+      },
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": "6ecdecf3",
+      "updated_at": "2026-11-17T12:58:00Z",
+      "updated_by": "lead (cycle 125)",
+      "exceptions": [
+        "client/tests/shots/ui_kit_polish.gd"
+      ]
+    },
+    {
+      "id": "P3-K1-tabs-1",
+      "title": "The chosen tab's picture inside its tile on every router-opened screen (AD-R47, flow board 2's F1), and the goal card's XP bar in the green progress fill (AD-R59)",
+      "phase": 3,
+      "role": "K1",
+      "model": "Opus 5.5",
+      "assigned_to": "K1",
+      "files": [
+        "client/ui/kit_tabs.gd",
+        "client/ui/kit_hud.gd",
+        "client/tests/ui_kit_tests.gd",
+        "client/tests/shots/ui_kit_polish.gd"
+      ],
+      "deps": [
+        "P3-K1-polish-2"
+      ],
+      "done_when": [
+        "AD-R47 (flow board 2's F1, granted in cycle 123): on every tab route the router opens, the chosen tab's picture lies inside its tile at rest (KitTabs.choose starts Motion.bob only once the tile has its layout, or bobs about the laid-out place), at 100% and 200% text and in high contrast",
+        "a mount test in client/tests/run.gd that opens each tab route through router.go, waits for layout, and asserts the chosen tab's picture rect lies inside its tile's rect",
+        "AD-R59 (audit 1 row 18, granted in cycle 125): KitHud.goal's progress uses the key frame's green progress fill in both looks; gold stays on Collect; a test in the kit's tests (client/tests/ui_kit_tests.gd is at gdlint's 1000-line limit: make room or put the test beside the mount test, and say where in the handoff)",
+        "the catalogue's shots unchanged apart from the chosen tab and the goal bar, each change named in the handoff; the handoff says what home.gd's caller of KitHud.goal can drop for S2's next home task",
+        "bash tools/ui_bake/guard.sh",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed under docs/art/ui-quality/gate/verdicts/ or outside the task's files (M48)",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 1.5,
+      "tier": 2,
+      "critical": false,
       "state": "open",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-17T07:20:00Z",
-      "updated_by": "lead (cycle 118)",
-      "exceptions": []
+      "updated_at": "2026-11-17T12:57:00Z",
+      "updated_by": "lead (cycle 125)",
+      "exceptions": [
+        "client/tests/run.gd"
+      ]
     },
     {
       "id": "P3-S3-character-5",
@@ -223,6 +234,8 @@
       "done_when": [
         "_tabs, the ability card's measures, _blend_foot, the hex's scaled size, _compact and _untrack_when_tight replaced by the kit's calls where K1's handoff for P3-K1-polish-2 says the kit covers them, each named in the handoff",
         "the character screen's stills at 100% and 200% text (en, pt_BR, de) and in high contrast unchanged in substance, or each change named; board 5 still stands",
+        "AD-R53 (flow board 2's F7, granted in cycle 123): the character's offline notice ('The roster did not change: no server is set', ERR_OFFLINE) uses the roster's cream notice, not red, so the same notice reads the same one tap apart",
+        "AD-R58 (audit 1 row 14, granted in cycle 125): at 200% pt_BR the character's display words carry an outward outline of at least 12% of the size they render at, computed after the text scale and _wrap_in's shrink (not from the theme size, as _ink_large does now)",
         "AD previews the stills before ready (M10, M12, M23): the builder sends them to AD while the work can still change, and AD's objections are answered in this task",
         "python3 tools/ui_bake/check_screens.py",
         "bash tools/ui_bake/guard.sh",
@@ -249,8 +262,8 @@
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-17T07:20:00Z",
-      "updated_by": "lead (cycle 118)",
+      "updated_at": "2026-11-17T12:57:00Z",
+      "updated_by": "lead (cycle 125)",
       "exceptions": []
     },
     {
@@ -306,20 +319,20 @@
       "estimate_h": 2.0,
       "tier": 2,
       "critical": false,
-      "state": "claimed",
+      "state": "merged",
       "claim": {
         "agent": "S2",
         "branch": "claude/ui-screens-home",
-        "claimed_at": "2026-11-17T07:30:00Z",
-        "seen_at": "2026-11-17T07:50:00Z",
-        "lease_until": "2026-11-17T10:30:00Z"
+        "claimed_at": "2026-11-17T10:50:00Z",
+        "seen_at": "2026-11-17T11:23:00Z",
+        "lease_until": "2026-11-17T13:50:00Z"
       },
-      "prior_branch": null,
-      "prior_sha": null,
+      "prior_branch": "claude/ui-screens-home",
+      "prior_sha": "0f3a7a687c9fdf9efb87647c33afb88361681ea5",
       "ready_sha": null,
-      "merged_sha": null,
-      "updated_at": "2026-11-17T07:50:00Z",
-      "updated_by": "lead (cycle 119)",
+      "merged_sha": "6ecdecf3",
+      "updated_at": "2026-11-17T12:58:00Z",
+      "updated_by": "lead (cycle 125)",
       "exceptions": []
     },
     {

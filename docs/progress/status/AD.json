@@ -4,21 +4,21 @@
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P3-AD-audit-1",
+  "task_id": "P3-AD-flow-2",
   "task_state": "claimed",
-  "claimed_at": "2026-11-17T07:30:00Z",
-  "lease_until": "2026-11-17T10:30:00Z",
-  "updated_at": "2026-11-17T07:52:00Z",
-  "expected_next_update_by": "2026-11-17T08:35:00Z",
+  "claimed_at": "2026-11-17T09:35:00Z",
+  "lease_until": "2026-11-17T12:35:00Z",
+  "updated_at": "2026-11-17T10:08:23Z",
+  "expected_next_update_by": "2026-11-17T10:53:23Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "055840f7c59c5600ef0fb907fc2607ee69a9e9f7",
-    "next_step": "Audit labelled and pushed; read requests.md for AD messages, run the pre-check and set ready."
+    "last_green_sha": "24965010ad39e1f2fd20766476a5d1a316ec5a3e",
+    "next_step": "P3-AD-flow-2: flow-2.md written, AD-R47 to AD-R55 filed; committing, then pre-check and ready."
   },
   "precheck": {
-    "sha": "055840f7c59c5600ef0fb907fc2607ee69a9e9f7",
+    "sha": "24965010ad39e1f2fd20766476a5d1a316ec5a3e",
     "exit": 0,
-    "finished_at": "2026-11-16T17:17:47Z",
+    "finished_at": "2026-11-17T08:20:24Z",
     "summary": "All checks passed."
   },
   "gate_request": null,
@@ -634,6 +634,153 @@
       "due": "2026-11-19T02:58:18Z",
       "default": "S1 fixes H in P2-S1-result-6 before it merges. If result-6 merges first (the lead's cycle 111 rule: the merge does not wait for AD), the lead opens a follow-up S1 task, done when every reward word stands whole at 4x at 200% en, pt_BR, de and 150% de, German 200% shows 'Sternenlicht' on one line beside its total with all three rewards above the first screen's edge, FIT=1 prints 'fit ok' with a check that fails on a reward word broken inside a word, and the result's draw calls stay at 150 or under. No AD round needed.",
       "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R47",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Flow board 2 (P3-AD-flow-2, main 44c43c4f). F1 (kit, highest): on every screen the router opens (home, the roster; seen in en, 200% pt_BR and high contrast) the chosen tab's tile is blank and its picture floats about 180 render px above it, over home's XP strip or the roster's collection card 3. Home's own shot mounts home directly and hides it, so board 3 never saw it. Probable cause: KitTabs.choose starts Motion.bob (relative position:y tweens) before the new scene is laid out. Please open a kit task. Write-up and stills: docs/art/ui-quality/gate/boards/flow-2.md.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/flow-2.md",
+        "client/ui/kit_tabs.gd",
+        "client/ui/motion.gd",
+        "client/tests/run.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T10:08:23Z",
+      "due": "2026-11-19T10:08:23Z",
+      "default": "A lead-assigned kit task, done when the chosen picture stands in its tile on every tab route reached through router.go at 100%, 200% and high contrast, with a mount test in client/tests/run.gd that opens each tab route through router.go, settles, and asserts the chosen picture's global rect lies inside its tile's rect. Scripted test: that mount test. No AD round needed beyond the stills.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R48",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Flow board 2 (P3-AD-flow-2, main 44c43c4f). F2 (navigation): no system back. No script handles NOTIFICATION_WM_GO_BACK_REQUEST or ui_cancel, and project.godot leaves quit_on_go_back at its default (true), so Android's back quits the app from the character, settings, the result or the roster. Please open a task. Write-up and stills: docs/art/ui-quality/gate/boards/flow-2.md.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/flow-2.md",
+        "client/app/router.gd",
+        "client/project.godot",
+        "client/tests/core_tests.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T10:08:23Z",
+      "due": "2026-11-19T10:08:23Z",
+      "default": "One go-back handler at the router: quit_on_go_back off, each non-home route goes to its back route (character to roster, settings and the menu's screens to home, result to home), home asks before quitting. Scripted test: in client/tests/core_tests.gd beside _router() (the router.change recorder), send a go-back on the character, settings, the result and the roster and assert each lands on its back route and nothing quits.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R49",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Flow board 2 (P3-AD-flow-2, main 44c43c4f). F3 (navigation, kit drift): three tab-bar builders with three route tables and two label rules. ScreenNav.bar routes by Router.TABS and hides words above 125%; StageHeroKit.tab_bar copies the table; home has its own TAB_ROUTES and its Heist tab starts a heist, where Heist opens the observatory everywhere else; home hides words by fit, so at 125% home drops them and the roster keeps them. Whether home's Heist starts a heist is a design call (M40); the duplicate tables are not. Write-up and stills: docs/art/ui-quality/gate/boards/flow-2.md.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/flow-2.md",
+        "client/scripts/home.gd",
+        "client/world/stage_hero_kit.gd",
+        "client/scripts/screen_nav.gd",
+        "client/tests/core_tests.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T10:08:23Z",
+      "due": "2026-11-19T10:08:23Z",
+      "default": "Every bar routes by Router.TABS (home's Heist keeps starting the heist as the one listed exception until the design says otherwise) and every bar uses ScreenNav's label rule (words up to 125%, chosen word only above). Home's part goes to S2 inside or after P3-S2-home-states; the rest to a lead-assigned task. Scripted test: a core test that builds each bar, presses every tab with the router recorder and asserts each id routes to Router.TABS[id] or to the listed exception.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R50",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Flow board 2 (P3-AD-flow-2, main 44c43c4f). F4 (navigation, kit drift): the character's back is not the kit's back. It is KitControls.icon_button('generalui/back', HOME_ROSTER, ...) at character_screen.gd:111, a 56-point parchment '<' inside the level-up card, named 'Roster' with no 'back' meta, where every other screen uses ScreenNav.back_button ('« Back' in the dock). Write-up and stills: docs/art/ui-quality/gate/boards/flow-2.md.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/flow-2.md",
+        "client/scripts/character_screen.gd",
+        "client/tests/run.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T10:08:23Z",
+      "due": "2026-11-19T10:08:23Z",
+      "default": "The character uses ScreenNav.back_button routed to the roster. Scripted test: a mount test in client/tests/run.gd that opens every non-tab route through router.go and asserts exactly one visible button with meta 'back' that routes to its back route.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R51",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Flow board 2 (P3-AD-flow-2, main 44c43c4f). F5 (state, navigation): the roster forgets its scroll and stage across the character. The router rebuilds the roster, so a scroll of 400 comes back as 0 (all three cases) and the picked stage comes back as the first. Write-up and stills: docs/art/ui-quality/gate/boards/flow-2.md.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/flow-2.md",
+        "client/scripts/roster_screen.gd",
+        "client/app/router.gd",
+        "client/tests/run.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T10:08:23Z",
+      "due": "2026-11-19T10:08:23Z",
+      "default": "The roster keeps its scroll and stage in the store (or as route args) and restores them on mount. Scripted test: a mount test that sets the roster's scroll and stage, goes to a character, presses its back and asserts both are the same.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R52",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Flow board 2 (P3-AD-flow-2, main 44c43c4f). F6 (state, M40): settings reopens on Game (settings_screen.gd:68, tab_shown := 'game'), not on the tab last shown, every case. The text size itself carries (100 to 125, back on home at 125). Write-up and stills: docs/art/ui-quality/gate/boards/flow-2.md.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/flow-2.md",
+        "client/scripts/settings_screen.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T10:08:23Z",
+      "due": "2026-11-19T10:08:23Z",
+      "default": "Settings remembers its last tab for the session (not saved to disk). If the design wants settings always to open on Game, close this with no change.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R53",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Flow board 2 (P3-AD-flow-2, main 44c43c4f). F7 (kit drift): the same offline notice ('The roster did not change: no server is set', ERR_OFFLINE) is cream on the roster and red on the character, one tap apart. Write-up and stills: docs/art/ui-quality/gate/boards/flow-2.md.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/flow-2.md",
+        "client/scripts/character_screen.gd",
+        "client/scripts/roster_screen.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T10:08:23Z",
+      "due": "2026-11-19T10:08:23Z",
+      "default": "Both use the roster's cream notice (offline is information, not an error), in the next task that touches either screen.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R54",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Flow board 2 (P3-AD-flow-2, main 44c43c4f). F8 (content): law names and rules are English in pt_BR (and every locale): the heist's chips 'Haste', 'Brittle stone', 'Glowing dark' and the Access tab's Stillness card. content.csv holds English in every locale column for the LAW_* keys (e.g. LAW_BRITTLE_STONE, LAW_GLOWING_DARK, LAW_STILLNESS, LAW_RULE_STILLNESS). Write-up and stills: docs/art/ui-quality/gate/boards/flow-2.md.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/flow-2.md",
+        "client/i18n/content.csv"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T10:08:23Z",
+      "due": "2026-11-19T10:08:23Z",
+      "default": "A lead-assigned translation task fills pt_BR, pt_PT, de and fr for every LAW_* key, with a check that no content key's locale column equals its en text unless listed as a proper name.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R55",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Flow board 2 (P3-AD-flow-2, main 44c43c4f). F9 (kit drift): at 200% pt_BR the heist's loot panel grows down over the map and a map marker (the hourglass at the top of a sentry's beam) draws over its first word, so 'Espaço' reads '?spaço'. At 100% and in high contrast the marker sits on the map. The map's markers draw above the HUD. Write-up and stills: docs/art/ui-quality/gate/boards/flow-2.md.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/flow-2.md",
+        "client/scripts/heist_screen.gd",
+        "client/scripts/heist_hud.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T10:08:23Z",
+      "due": "2026-11-19T10:08:23Z",
+      "default": "The HUD draws above every map marker (layer order), in the next heist task. No AD round needed.",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
@@ -756,8 +903,18 @@
       "request_id": "S1-R35",
       "at": "2026-11-17T02:58:18Z",
       "answer": "Preview of P2-S1-result-6 at 16515088 (screen code as at e4e78070). 8 renders (100% en, pt_BR, hc, hc pt_BR; 200% en, pt_BR, de, hc) all print 'fit ok'; draw calls 42 to 118. Rulings on the two departures: (1) every reward total in the kit's gold numerals stands: one rank, one treatment; the outline, drop and gold ramp read on parchment at 1x and 4x and hold in high contrast; '+2,310' stays the heaviest figure (wider tile, crew ring); (2) all three tiles on parchment stands: it is still 07's own frame for this screen, and the gate's record (gold on glass 0/3 at 24cc4d7c, white on glass split) rules glass out. One objection, not depending on the screen's final shape (M40): (H) at 200% German the Starlight row breaks 'Sternenlicht' by its letters ('Sternenlich' / 't'), the very case ResultFit.reward_rows exists to prevent, while FIT says ok. New in result-6: at result-4 the row held '+2.310 Sternenlicht' on one line; the baked gold total is now drawn wider. Fix in result_fit.gd: reward_rows measures the total as drawn (the label's combined minimum size after bake_totals), not the live font's width; keep the row (objection B), preferably by bringing the baked total back inside result-4's width; columns only as a last resort, with every tile still above the first screen's edge; FIT fails when a reward word breaks inside a word. Done when every reward word stands whole at 4x at 200% en, pt_BR, de and 150% de, German 200% shows 'Sternenlicht' on one line beside its total, FIT=1 prints 'fit ok' and draw calls stay at 150 or under. S1 can fix H in this task before merge; otherwise AD-R46 carries the follow-up. Notes, not holding: the cream tiles are the lightest mass in the 100% squint (L* 93-94 against Raid again's 85.6) but are information, and Hierarchy passes; still 07's gold and green tile edges need kit materials (only reward_sky and reward_pink are edged parchment), a kit follow-up the lead may queue after phase 2; the fee line at 200% pt_BR and de sits under the scroll's edge (objection F's cut, as written); the crew card at the fold in pt_BR 100% carries over. Write-up and stills: docs/art/ui-quality/gate/boards/board-4.md, 'Preview of result-6 (S1-R35)'."
+    },
+    {
+      "request_id": "S2-R36",
+      "at": "2026-11-17T08:05:00Z",
+      "answer": "AD previewed P3-S2-home-states at 5d25f9cb (the state of 4797b5c3, before S2-R38 and S2-R40). All 7 cases fit ok: en, pt_BR and de at 100% and 200%, and high contrast at 100%. Board 3's objection B holds in every case: the Crew tab's '4' and the Defence badge '2' are clear of the pins and the side buttons, and the locked plate at 100% is clear of the Lab button and every pin. No objection at this commit. Notes, not holding: (1) the locked plate sits about 6 px from the left edge at 100%, inside the 16 pt gutter; when S2-R38 adds the realm's name, keep it at 16 pt or more. (2) At 200% the Defence badge's top touches the foot of the 61.0k plate; if moved, drop it 2 to 4 pt. (3) At 200% the plate hides (S2-R40), and Lantern Vale then has no pin and no lock; the granted short form fixes it. AD previews the commit S2 names for S2-R38 and S2-R40 before ready. Write-up: docs/art/ui-quality/gate/boards/board-3.md, 'Preview of home-states (S2-R36)'. Default if S2 disagrees with a note: S2's stills stand."
+    },
+    {
+      "request_id": "S2-R42",
+      "at": "2026-11-17T09:42:24Z",
+      "answer": "AD previewed P3-S2-home-states at e9285afd. All 8 cases fit ok: en, pt_BR and de at 100% and 200%, and high contrast at 100% and 200%. Board 3's objection B holds in every case: the Crew tab's '4' and the Defence badge '2' are clear of the pins and the side buttons; the locked plate ('Lantern Vale' / 'Opens at Keeper 28') at 100% now starts about 24 px from the left edge (S2-R36 note 1 met) and sits about 6 px below the LAB label, clear of the Lab button and every pin; the 200% short form (lock and '28' on one pill) is clear of the Lab button and every pin in all four 200% cases, so Lantern Vale says 'locked' at every size (S2-R36 note 3 closed). Nothing by colour alone. No objection at this commit; S2 may mark ready. Notes, not holding and not depending on the final shape (M40): (1) at 200% the Defence badge's top still overlaps the 61.0k plate's foot by 1 to 3 px, clear of the gauge fill (S2-R36 note 2, unchanged; if moved, drop it 2 to 4 pt); (2) at 200% pt_BR and de the pill sits about 7 px from the '6' pin; if the map loses more height, anchor it under the island. Write-up and stills: docs/art/ui-quality/gate/boards/board-3.md, 'Preview of home-states, second look (S2-R42)'. Default if S2 disagrees with a note: S2's stills stand."
     }
   ],
-  "next_step": "Audit labelled and pushed; read requests.md for AD messages, run the pre-check and set ready.",
-  "last_update": "2026-11-17T07:52Z: P3-AD-audit-1: all 19 items rendered at their commits; all 43 rows labelled (30 pass, 13 fail), blind, and pushed."
+  "next_step": "P3-AD-flow-2: flow-2.md written, AD-R47 to AD-R55 filed; committing, then pre-check and ready.",
+  "last_update": "P3-AD-audit-1 ready: 43 rows labelled (30 pass, 13 fail), pre-check PASS at 24965010, owners.py diff passes. S2-R36 answered: no objection, three notes."
 }
