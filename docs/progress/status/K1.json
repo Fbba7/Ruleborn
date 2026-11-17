@@ -4,16 +4,16 @@
   "branch": "claude/ui-bake",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P3-K1-polish-2",
-  "task_state": "in_progress",
-  "claimed_at": "2026-11-17T10:20:00Z",
-  "lease_until": "2026-11-17T13:20:00Z",
-  "updated_at": "2026-11-17T10:40:00Z",
-  "expected_next_update_by": "2026-11-17T11:25:00Z",
+  "task_id": "P3-K1-tabs-1",
+  "task_state": "working",
+  "claimed_at": "2026-11-17T13:05:00Z",
+  "lease_until": "2026-11-17T16:05:00Z",
+  "updated_at": "2026-11-17T14:17:00Z",
+  "expected_next_update_by": "2026-11-17T15:02:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": null,
-    "next_step": "read character_screen.gd local fixes for S3-R9 to S3-R14"
+    "last_green_sha": "6fcf88ba",
+    "next_step": "pre-check on the handoff commit, owners.py diff, ready"
   },
   "precheck": null,
   "gate_request": null,
@@ -449,5 +449,5 @@
       "at": "2026-11-17T08:15:00Z"
     }
   ],
-  "next_step": "ready at 57ea213c: the merge queue (no gate items). P3-K1-polish-2 is for a later session"
+  "next_step": "P3-K1-tabs-1: on the merge 6fcf88ba check_all All checks passed (client 432 of 432, AD-R47 and AD-R59 tests pass) and guard.sh ui guard: OK; handoff written; next the pre-check, owners.py diff and ready"
 }
