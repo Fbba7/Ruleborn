@@ -3,21 +3,26 @@
   "role": "K1",
   "branch": "claude/ui-bake",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P3-K1-polish-1",
-  "task_state": "claimed",
+  "task_state": "ready",
   "claimed_at": "2026-11-17T07:25:00Z",
   "lease_until": "2026-11-17T10:45:00Z",
-  "updated_at": "2026-11-17T08:58:00Z",
-  "expected_next_update_by": "2026-11-17T09:43:00Z",
+  "updated_at": "2026-11-17T09:31:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "050be78b",
-    "next_step": "pre-check running at 57ea213c (check_all and guard.sh pass on the merge 850abe31); ready once K1-R25 adds the helper's two paths to the task's exceptions (M48)"
+    "last_green_sha": "57ea213c",
+    "next_step": "ready: the merge queue"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "57ea213c67792580dbc71ed8fd86785ad007fa95",
+    "exit": 0,
+    "finished_at": "2026-11-17T09:28:39Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "57ea213c",
   "stop_at": "2026-11-18T21:00:00Z",
   "acks": [
     "M2",
@@ -378,7 +383,7 @@
       "blocking": true,
       "created_at": "2026-11-17T08:15:00Z",
       "due": "2026-11-17T14:15:00Z",
-      "default": "granted: the two paths join P3-K1-polish-1's exceptions at the merge",
+      "default": "Granted by the lead in cycle 120: the two paths are P3-K1-polish-1's exceptions in backlog.json",
       "escalate_to": "lead"
     }
   ],
@@ -434,5 +439,5 @@
       "at": "2026-11-17T08:15:00Z"
     }
   ],
-  "next_step": "pre-check running at 57ea213c (check_all and guard.sh pass on the merge 850abe31); ready once K1-R25 adds the helper's two paths to the task's exceptions (M48)"
+  "next_step": "ready at 57ea213c: the merge queue (no gate items). P3-K1-polish-2 is for a later session"
 }
