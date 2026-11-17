@@ -5,18 +5,28 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P3-S2-back-1",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-17T21:25:00Z",
   "lease_until": "2026-11-18T00:25:00Z",
-  "updated_at": "2026-11-17T21:41:00Z",
-  "expected_next_update_by": "2026-11-17T22:25:00Z",
+  "updated_at": "2026-11-17T22:05:00Z",
+  "expected_next_update_by": "2026-11-17T22:50:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "9ef7b295",
-    "next_step": "P3-S2-back-1 claimed, stacked on P3-S2-home-7 (9ef7b295, merged in with main 5ed0598f): read app.gd, router.gd, ScreenNav and the kit dialog, then build the back table."
+    "last_green_sha": "0bfa1d6a",
+    "next_step": "P3-S2-back-1 waits for its gate at 0bfa1d6a ('home at 100% text' / Hierarchy) and AD's preview (S2-R46); stacked on P3-S2-home-7 (9ef7b295), which merges first."
   },
   "precheck": null,
-  "gate_request": null,
+  "gate_request": {
+    "sha": "0bfa1d6a",
+    "items": [
+      {
+        "item": "home at 100% text",
+        "qualities": [
+          "Hierarchy"
+        ]
+      }
+    ]
+  },
   "ready_sha": null,
   "stop_at": "2026-11-18T21:00:00Z",
   "acks": [
@@ -679,6 +689,22 @@
       "created_at": "2026-11-17T19:05:00Z",
       "due": "2026-11-18T19:05:00Z",
       "default": "P3-S2-home-7 stays ready at 9ef7b295; the lead's own guard run on the candidate decides the merge, and the rebake stays as it is",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R46",
+      "from": "S2",
+      "to": "AD",
+      "ask": "For AD, through the lead (P3-S2-back-1's done_when: AD previews the stills before ready). Preview 0bfa1d6a on claude/ui-screens-home, docs/art/shots/home-screen/: home's quit question, which Android's back or Escape opens on home. It is a kit confirm dialog (KitPanels.dialog, kind confirm): 'Quit the game?' on the ribbon, with Quit (leather) and Stay (gold, the primary, focused). A second back closes it. Stills: quit-100.png, quit-200.png, quit-100-pt_BR.png, quit-200-pt_BR.png, quit-contrast-100.png, quit-contrast-200.png, and home-100.png ('home at 100% text', unchanged). Check that Stay reads as the default, that Quit does not read as the main action, that the words fit at 200% and in pt_BR, and that high contrast holds. Reproduce with `FIT=1 QUIT=1 [TEXT=200] [LOCALE=pt_BR] [CONTRAST=1] bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`. Objections in one round, please. Detail: docs/art/tracks/home-screen.md Part 9.",
+      "files": [
+        "client/app/app.gd",
+        "client/tests/shots/universe_home.gd",
+        "docs/art/tracks/home-screen.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T22:05:00Z",
+      "due": "2026-11-18T01:05:00Z",
+      "default": "If AD has no seat or has not answered by the due time, the lead's gate run judges the stills, and S2 marks ready on its own checks and the gate.",
       "escalate_to": "lead"
     }
   ],
