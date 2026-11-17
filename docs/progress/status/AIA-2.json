@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-17T20:10:00Z",
   "lease_until": "2026-11-17T23:10:00Z",
-  "updated_at": "2026-11-17T20:22:00Z",
-  "expected_next_update_by": "2026-11-17T21:05:00Z",
+  "updated_at": "2026-11-17T20:45:00Z",
+  "expected_next_update_by": "2026-11-17T21:30:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": null,
-    "next_step": "the bake now draws in Node by plain arithmetic (studio/raster.js, studio/picture.js; no browser); compare against the committed atlas, prove two runs and a second route give the same bytes, rebake"
+    "next_step": "the --jitless proof run, then merge main, the setup line, client/build.sh, check_all.sh, guard.sh, the pre-check and owners.py diff"
   },
   "precheck": null,
   "gate_request": null,
@@ -67,9 +67,40 @@
       "due": "2026-11-13T18:05:00Z",
       "default": "The lead or S1 drops the two kinds from FxPortrait.TOON in a follow-up task after P2-AIA2-busts merges; until then the painted busts go through the toon pass as they are.",
       "escalate_to": "lead",
+      "state": "done in fad94652 (Bramble and Hollow out of FxPortrait.TOON)"
+    },
+    {
+      "id": "AIA2-R4",
+      "from": "AIA-2",
+      "to": "AD",
+      "ask": "P3-AIA2-bake-1 changes one piece beyond edge antialiasing: crew__pip__normal in icons_48_hc. Its ink ring was an octagon in the committed atlas and is round after the rebake (alpha mean 8.4 levels, 2814 pixels over 8). The octagon was machine output: a Chromium rebake of the old route in AIA-2's container also gives the round ring. Contact sheet: art/ui/icons/studio/proof_bake/icons_48_hc_old_new.png, the crew__pip old and new columns. Keep the round ring?",
+      "files": [
+        "art/ui/icons/crew/pip.js",
+        "client/ui/art/icons_48_hc.webp"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T20:45:00Z",
+      "due": "2026-11-18T20:45:00Z",
+      "default": "The ring stays round, as the grow has intended since the pixel grow of 9 November; no change to crew/pip.js.",
+      "escalate_to": "lead",
+      "state": "open"
+    },
+    {
+      "id": "AIA2-R5",
+      "from": "AIA-2",
+      "to": "lead",
+      "ask": "art/ui/icons/README.md is outside P3-AIA2-bake-1's files. Two places there now describe the old Chromium route: line 37 ('the bake stays Chromium only and byte for byte') and lines 76 to 82 ('loads studio/page.html in the container's Chromium, renders with SwiftShader', and AIA2-R1 as still open). Please change them to say the bake is plain arithmetic in Node and point at art/ui/icons/studio/README.md, or grant this task the exception art/ui/icons/README.md and AIA-2 will.",
+      "files": [
+        "art/ui/icons/README.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T20:45:00Z",
+      "due": "2026-11-18T20:45:00Z",
+      "default": "The lead adds the two corrections in its merge commit of P3-AIA2-bake-1 or folds them into AIA-2's next task; until then studio/README.md is the current description.",
+      "escalate_to": "lead",
       "state": "open"
     }
   ],
   "answers": [],
-  "note": "P3-AIA2-bake-1 working: the icon bake moves off Chromium and SwiftShader to plain arithmetic in Node."
+  "note": "P3-AIA2-bake-1 working: the icon bake draws in Node by plain arithmetic, with no browser; two runs and a vector-units-off run give the same bytes; icons_48 and icons_256 rebaked, check_icons all ok."
 }
