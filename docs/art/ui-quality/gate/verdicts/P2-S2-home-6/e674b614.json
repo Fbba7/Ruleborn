@@ -1,0 +1,104 @@
+[
+  {
+    "task_id": "P2-S2-home-6",
+    "sha": "e674b614a15302227eb9ee9d5d8ba7e9cac8ce14",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-17T02:52:00Z",
+    "item": "home at 100% text",
+    "quality": "Display type",
+    "samples": [
+      "fail",
+      "fail",
+      "fail"
+    ],
+    "result": "fail",
+    "critique": "All three samples fail on the big-number ruling. At 100% the headline currency counts (the 1,460 gem count and the 142.0k, 31.4k and 61.0k purses) are flat gold fills on dark plates, with no ink outline, no hard drop and no gradient, while 'Keeper 24' beside them carries the stroked treatment, so one rank does not match. The lead's own look at the crop agrees. This is AD-R45 (a), still open at e674b614: in client/scripts/home_parts.gd `inked`, the plated branch should set shadow_outline_size to the outline and shadow_offset_y to the drop, and the After label in figures() should use Tokens.color('gold'). At 200% pt_BR the same counts pass, so the fix is the 100% path."
+  },
+  {
+    "task_id": "P2-S2-home-6",
+    "sha": "e674b614a15302227eb9ee9d5d8ba7e9cac8ce14",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-17T02:52:00Z",
+    "item": "home at 100% text",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Unanimous: the gold 'Collect 3.4k' button at the bottom right is the largest, most saturated control and leads by size, place and weight, like Level up on the pass anchor. The dark XP panel, the currency strip, the small cream island pills and the unhighlighted tabs stay quieter."
+  },
+  {
+    "task_id": "P2-S2-home-6",
+    "sha": "e674b614a15302227eb9ee9d5d8ba7e9cac8ce14",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-17T02:52:00Z",
+    "item": "home at 100% text",
+    "quality": "Character presence",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Unanimous: the keeper portrait in the gold ring beside 'Keeper 24' is about a fifth of the screen wide, reads clearly against its mauve fill, and is soft toon fur with no photographic grain or sheen; it is more readable than the pass anchor's small crew portraits. Two judges noted they judged from the still without a full-resolution crop."
+  },
+  {
+    "task_id": "P2-S2-home-6",
+    "sha": "e674b614a15302227eb9ee9d5d8ba7e9cac8ce14",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-17T02:52:00Z",
+    "item": "home at 200% text, pt_BR",
+    "quality": "Display type",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Unanimous: 'Guardião 24' over the sky has a dark outline all round plus a hard drop, and the headline counts (1.460, 142,0 / 31,4 / 61,0 mil, 82%) share one gold-gradient fill with a hard dark drop on their plates. Close call noted by two judges: on the near-black plates a dark stroke on the numbers cannot be seen, as with the pass anchor's light timer on its dark plate."
+  },
+  {
+    "task_id": "P2-S2-home-6",
+    "sha": "e674b614a15302227eb9ee9d5d8ba7e9cac8ce14",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-17T02:52:00Z",
+    "item": "home at 200% text, pt_BR",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Unanimous: at 200% text in pt_BR the Collect button still leads by size, saturation and place over the panels and the island pills."
+  },
+  {
+    "task_id": "P2-S2-home-6",
+    "sha": "e674b614a15302227eb9ee9d5d8ba7e9cac8ce14",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-17T02:52:00Z",
+    "item": "home in high contrast",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Unanimous: in high contrast the gold Collect button stays the largest and most saturated control; the XP panel holds no action, the outlined Islands tab is under half its size and the island pills read as map labels. One judge noted no grayscale still was supplied and judged grayscale by eye."
+  }
+]

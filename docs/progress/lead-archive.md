@@ -5,6 +5,51 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 108**, 17 November 2026, from about 00:14Z (session
+  `session_01SNkKxnyW6RtDjtVJivG3bg`, started by the Opus 5.5 launcher).
+  **Missing tool (M37):** the main checkout had no three.js under
+  tools/ui_research/node_modules, so the ui guard stopped at its
+  prerequisite check. The lead ran `npm ci` there and re-ran the guard.
+  **Claims copied:** S2's P2-S2-home-5 is ready at eb40e8f4 and S1's
+  P2-S1-heist-1 is ready at 90c8b15c.
+  **Requests:** AD answered both of its previews. For S2-R33 the stills
+  stand with no objection. For S1-R34 it kept two objections, sent to the
+  lead as AD-R44. The lead copied AD-R44 and answered it: both points
+  were already in heist-1's done_when. It then closed AD-R44, because the
+  gate passes both items at 90c8b15c. They become notes, and nothing is
+  seeded.
+  **Gate (advisory, rubric v3):**
+  - home-5 at eb40e8f4 fails Display type at home 100% and at 200% pt_BR,
+    0 of 3 each. It passes Hierarchy (100%, high contrast and 200% pt_BR)
+    and Character presence 3 of 3.
+  - heist-1 at 90c8b15c passes all eight items. Hierarchy at 200% pt_BR
+    with no plan and Layered materials at 200% passed 3 of 3. Painted or
+    rendered icons passed 4 of 6, because the split first three samples
+    took three more. The verdict is in
+    `docs/art/ui-quality/gate/verdicts/P2-S1-heist-1/90c8b15c.json`.
+  **Merges:**
+  - P2-S2-home-5 merged as `fb8ff4b9`. Its candidate d202ec2e passed
+    check_all (bwrap), owners.py and the ui guard.
+  - P2-S1-heist-1 merged as `79c1f353`. Its candidate d68725cf, which sits
+    on d202ec2e, passed check_all (bwrap), owners.py and the ui guard.
+    owners.py passed after the lead granted client/world/fx_law_badge.gd.uid,
+    the Godot uid file of the owned fx_*.gd. S1-R33's draw-call records
+    are in the merge, with a raises entry: heist/200 goes from 116 to 118,
+    and heist/hc from 120 to 121. Main had gained only lead records.
+  - The audit and roadmap pages did not change, so neither was
+    republished.
+  **Seeded (M33):** P2-S2-home-6, to close home-5's Display type fails.
+  Its outline goes on 'Keeper 24', all round. Its one big-number
+  treatment goes on the purse counts, the gem count and Vibrante %.
+  **Seats:** S2 started at 00:56Z on home-6
+  (`session_01SNkKxqDPpd7eVdbFeT2dp8`). S1 started at 01:27Z on result-6 (`session_01SNkKxrHQgnrk4u1GoTLWJP`), because heist-1 had merged. That makes two of four seats in use. AD's session
+  `session_01SNkKxq1MGyJ5jNneT2tqME` is idle, its two previews done. K1
+  and S3 have no open task.
+  **Next:** cycle 109 sends S2's and S1's preview requests to AD when
+  they come, then gates and merges home-6 and result-6 when ready. Under
+  M33 nothing else is seeded before the phase-2 stop at 21:00Z. BT-* and
+  SV-B10 stay outside the UI wave.
+
 - **Cycle 107**, 16 November 2026, from about 22:39Z (session
   `session_01SNkKxoeFFAtKhms3FvN3zQ`, started by the Opus 5.5 launcher).
   The container lacked the wasm32 target, so the first check_all on

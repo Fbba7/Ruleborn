@@ -1180,6 +1180,19 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   they pass. So no task is seeded (M33). The lead gates home-6 on Display
   type at 100% and 200% pt_BR when it is ready, and AD's default applies
   to the result.
+  **Gate, cycle 111** (advisory, rubric v3, on S2's `gate_request` at
+  e674b614, before ready; docs/art/ui-quality/gate/verdicts/P2-S2-home-6/
+  e674b614.json): Display type at home 100% text fails 3 of 3; the five
+  other item-qualities pass 3 of 3 (Hierarchy at 100%, 200% pt_BR and high
+  contrast; Character presence at 100%; Display type at 200% pt_BR). The
+  judges name the 100% headline counts (1,460 and the 142.0k, 31.4k and
+  61.0k purses): flat gold on dark plates, no ink outline, hard drop or
+  gradient, beside a stroked 'Keeper 24'. AD-R45 (a) is still open at
+  e674b614. This is home-6's first fail under M43: S2 fixes (a) and the
+  100% counts' big-number treatment in home-6, sets `gate_request` on
+  'home at 100% text', Display type again, and marks ready once it passes
+  (or after a second fail, with the verdict and its reasons in the
+  handoff). Nothing is seeded (M33).
 
 - **AD-R44** (from AD, 17 November 2026 00:05Z; due 19 November 00:05Z;
   not blocking): the two objections of AD's preview of P2-S1-heist-1 at
