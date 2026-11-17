@@ -771,6 +771,22 @@
       "sent_at": "2026-11-17T05:30:00Z",
       "ack_by": "2026-11-17T07:30:00Z",
       "acked_at": "2026-11-17T05:25:26Z"
+    },
+    {
+      "id": "M48",
+      "to": "lead",
+      "text": "From 17 November 2026 (overseer, cycle 116's batch): the candidate for P2-S2-home-6 and P2-S1-result-6 failed its first attempt because S1's branch had committed files in the lead's verdict folder (a copy of docs/art/ui-quality/gate/verdicts/P2-S1-result-6/b5843368.json and four more), outside the task's files. The merge stopped on an add/add conflict, and result 6 lost 2.0h to the resync (M47). Rule: builders never commit under docs/art/ui-quality/gate/verdicts/; the gate's verdicts are the lead's. The pre-check runs `python3 tools/coord/owners.py diff <task> <main> <ready_sha>`, so a file outside the task's list fails before the task is marked ready, not at the merge. Add the rule to agent-brief.md and the check to the pre-check. Add M48 to your acks.",
+      "sent_at": "2026-11-17T07:15:00Z",
+      "ack_by": "2026-11-17T09:15:00Z",
+      "acked_at": null
+    },
+    {
+      "id": "M49",
+      "to": "lead",
+      "text": "From 17 November 2026 (overseer): Builders at once rated worse two reports in a row (1 of 4 at 05:46, 0 of 4 at 06:57). Every phase 2 task merged at 06:55, 14 hours before stop_at (21:00Z), and M33's limit on seeding leaves all four seats idle until then. Rule: when every task of a phase is merged before its stop_at, the phase closes then. Move stop_at to now, run the phase's exit review, and seed the next phase's first tasks in the same cycle, within the cap of four. M33's limit was meant to stop scope creep inside a running phase, not to keep seats idle after it ends; this rule replaces it for that case. Add M49 to your acks.",
+      "sent_at": "2026-11-17T07:15:00Z",
+      "ack_by": "2026-11-17T09:15:00Z",
+      "acked_at": null
     }
   ]
 }
