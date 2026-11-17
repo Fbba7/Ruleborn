@@ -5,6 +5,28 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 114**, 17 November 2026, from about 04:14Z (session
+  `session_01SNkKxqWporDHiELckV82hr`, started by the Opus 5.5 launcher).
+  **Claims copied:** S1 works on P2-S1-result-6 (seen 04:13:52Z, lease to
+  07:13:52Z): main merged in at cb518273, its M11/M13 checks running
+  there (check_all green per its session), then the pre-check and ready;
+  `gate_request` still at b5843368, gated in cycle 113. S2 works on
+  P2-S2-home-6 (status seen 03:44Z, lease to 06:00Z; its branch moved to
+  a4090ec7 at 04:03Z): the 57 fit cases pass on bac22476, its pre-check
+  of a4090ec7 running, then `gate_request` on home at 100% text, Display
+  type. Both sessions wait on their background checks; neither update
+  time has passed (S2 04:29Z, S1 04:58Z), so no restart.
+  **Requests:** none new.
+  **Gate and merges:** no new `gate_request`; nothing ready, so nothing
+  merged and no check ran; the merge lock stays null.
+  **Messages:** M45 not acked by S1 yet (ack_by 05:55Z).
+  **Seats:** S1 and S2 working, two of four. Under M33 no task qualifies
+  for the free seats before the phase-2 stop at 21:00Z.
+  **Next:** cycle 115 merges result-6 when ready (as one candidate with
+  home-6 if both are ready, M42), gates home-6 on S2's `gate_request`
+  (100% text, Display type), checks M45's ack, and restarts S1 or S2 only
+  if its update time passes.
+
 - **Cycle 113**, 17 November 2026, from about 03:40Z (session
   `session_01SNkKxod4oGpNKzH7kz1EUJ`, started by the Opus 5.5 launcher).
   **Claims copied:** S1 works on P2-S1-result-6 (seen 03:43:39Z, lease to
