@@ -3,7 +3,14 @@
   "updated_at": "2026-11-17T13:02:00Z",
   "expected_next_update_by": "2026-11-17T16:02:00Z",
   "cycle": 125,
-  "merging": null,
+  "merging": {
+    "candidate_sha": "791aae3c187caf621ace022ed675004678dc0119",
+    "task_ids": [
+      "P3-AD-audit-1b"
+    ],
+    "started_at": "2026-11-17T13:22:00Z",
+    "expires_at": "2026-11-17T14:22:00Z"
+  },
   "last_merged": {
     "task_id": "P3-S2-home-states",
     "sha": "6ecdecf3"
