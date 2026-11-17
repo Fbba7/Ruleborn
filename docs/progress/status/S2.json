@@ -8,16 +8,46 @@
   "task_state": "working",
   "claimed_at": "2026-11-17T01:00:00Z",
   "lease_until": "2026-11-17T04:00:00Z",
-  "updated_at": "2026-11-17T01:52:00Z",
-  "expected_next_update_by": "2026-11-17T02:35:00Z",
+  "updated_at": "2026-11-17T02:23:00Z",
+  "expected_next_update_by": "2026-11-17T03:05:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "eb40e8f4",
-    "next_step": "Fit 57/57 'fit ok' and guard OK on 36f017da; the lead's branch e22cd91f merged as e674b614 (no home files touched); pre-check running on e674b614, then gate request.",
-    "at": "2026-11-17T01:52:00Z"
+    "last_green_sha": "e674b614",
+    "next_step": "Pre-check PASS on e674b614 (02:21Z); gate requested on it. Waiting for the lead's verdict and AD's preview (S2-R34, due 03:30Z); on the verdict, mark ready.",
+    "at": "2026-11-17T02:23:00Z"
   },
-  "precheck": null,
-  "gate_request": null,
+  "precheck": {
+    "sha": "e674b614a15302227eb9ee9d5d8ba7e9cac8ce14",
+    "exit": 0,
+    "finished_at": "2026-11-17T02:21:09Z",
+    "summary": "All checks passed."
+  },
+  "gate_request": {
+    "sha": "e674b614a15302227eb9ee9d5d8ba7e9cac8ce14",
+    "items": [
+      {
+        "item": "home at 100% text",
+        "qualities": [
+          "Display type",
+          "Hierarchy",
+          "Character presence"
+        ]
+      },
+      {
+        "item": "home at 200% text, pt_BR",
+        "qualities": [
+          "Display type",
+          "Hierarchy"
+        ]
+      },
+      {
+        "item": "home in high contrast",
+        "qualities": [
+          "Hierarchy"
+        ]
+      }
+    ]
+  },
   "ready_sha": null,
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
@@ -510,5 +540,5 @@
     }
   ],
   "answers": [],
-  "next_step": "Finish P2-S2-home-6: FIT sweep, guard, check_screens, client tests, Part 6 evidence, AD preview request through the lead, merge main, pre-check, gate request."
+  "next_step": "Wait for the gate's verdict on e674b614 and S2-R34; mark ready in the turn the verdict arrives."
 }
