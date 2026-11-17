@@ -3,28 +3,22 @@
   "role": "S2",
   "branch": "claude/ui-screens-home",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "P2-S2-home-6",
-  "task_state": "ready",
-  "claimed_at": "2026-11-17T01:00:00Z",
-  "lease_until": "2026-11-17T06:00:00Z",
-  "updated_at": "2026-11-17T04:55:00Z",
-  "expected_next_update_by": "2026-11-17T07:55:00Z",
+  "agent_state": "active",
+  "task_id": "P3-S2-home-states",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-17T07:30:00Z",
+  "lease_until": "2026-11-17T10:30:00Z",
+  "updated_at": "2026-11-17T07:30:00Z",
+  "expected_next_update_by": "2026-11-17T08:15:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "a4090ec7",
-    "next_step": "Ready at a4090ec7: pre-check PASS 04:34Z; the lead's advisory gate (cycle 115, M46) passes 'home at 100% text', Display type, 3/3 (verdicts/P2-S2-home-6/a4090ec7.json), AD-R45 (a) closed; the other five item-qualities passed at e674b614. On resync: merge the lead's branch, re-run the fit cases and the pre-check, mark ready again.",
-    "at": "2026-11-17T04:55:00Z"
+    "next_step": "Claimed P3-S2-home-states: add badges, shield and locked Lantern Vale to keyframe(), shoot, fix, preview with AD."
   },
-  "precheck": {
-    "sha": "a4090ec77bd7536c10db03e06efcd459d69c4b55",
-    "exit": 0,
-    "finished_at": "2026-11-17T04:34:28Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
-  "ready_sha": "a4090ec77bd7536c10db03e06efcd459d69c4b55",
-  "stop_at": "2026-11-17T21:00:00Z",
+  "ready_sha": null,
+  "stop_at": "2026-11-18T21:00:00Z",
   "acks": [
     "M13",
     "M28",
@@ -533,5 +527,5 @@
     }
   ],
   "answers": [],
-  "next_step": "Ready at a4090ec7: pre-check PASS 04:34Z; the lead's advisory gate (cycle 115, M46) passes 'home at 100% text', Display type, 3/3 (verdicts/P2-S2-home-6/a4090ec7.json), AD-R45 (a) closed; the other five item-qualities passed at e674b614. On resync: merge the lead's branch, re-run the fit cases and the pre-check, mark ready again."
+  "next_step": "Claimed P3-S2-home-states: add badges, shield and locked Lantern Vale to keyframe(), shoot, fix, preview with AD."
 }
