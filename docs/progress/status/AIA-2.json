@@ -3,37 +3,22 @@
   "role": "AIA-2",
   "branch": "claude/ui-artist-icons",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "P2-AIA2-busts",
-  "task_state": "ready",
-  "claimed_at": "2026-11-12T17:55:00Z",
-  "lease_until": "2026-11-12T21:05:00Z",
-  "updated_at": "2026-11-12T18:40:00Z",
-  "expected_next_update_by": null,
+  "agent_state": "active",
+  "task_id": "P3-AIA2-bake-1",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-17T20:10:00Z",
+  "lease_until": "2026-11-17T23:10:00Z",
+  "updated_at": "2026-11-17T20:10:00Z",
+  "expected_next_update_by": "2026-11-17T20:55:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "13e38050d64076dd8774a1785e926781e436286a",
-    "next_step": "the lead runs the gate on heist at 100% text (Character presence) and merges; on a fail, rework PAINTED in creature_bust.gd on the gate's notes"
+    "last_green_sha": null,
+    "next_step": "reproduce the CPU-dependent rebake of icons_256, find the stage that depends on the CPU, and move it to a drawing path that does not"
   },
-  "precheck": {
-    "sha": "13e38050d64076dd8774a1785e926781e436286a",
-    "exit": 0,
-    "finished_at": "2026-11-12T18:37:37Z",
-    "summary": "All checks passed."
-  },
-  "gate_request": {
-    "sha": "13e38050d64076dd8774a1785e926781e436286a",
-    "items": [
-      {
-        "item": "heist at 100% text",
-        "qualities": [
-          "Character presence"
-        ]
-      }
-    ]
-  },
-  "ready_sha": "13e38050d64076dd8774a1785e926781e436286a",
-  "stop_at": "2026-11-14T21:00:00Z",
+  "precheck": null,
+  "gate_request": null,
+  "ready_sha": null,
+  "stop_at": "2026-11-18T21:00:00Z",
   "acks": [],
   "requests": [
     {
@@ -56,7 +41,7 @@
       "id": "AIA2-R2",
       "from": "AIA-2",
       "to": "lead",
-      "ask": "list.md batch 1b names currencies/insight, but the design has no Insight (\u00a711.7) and no client code uses the icon. Batch 1b ships five new icons plus Starlight. Drop insight, or name a replacement?",
+      "ask": "list.md batch 1b names currencies/insight, but the design has no Insight (§11.7) and no client code uses the icon. Batch 1b ships five new icons plus Starlight. Drop insight, or name a replacement?",
       "files": [
         "art/ui/icons/list.md"
       ],
@@ -84,5 +69,5 @@
     }
   ],
   "answers": [],
-  "note": "P2-AIA2-busts ready at 13e38050: Bramble and Hollow painted flat at the source; guard.sh OK, heist screens within their draw-call records; pre-check PASS; the gate is requested. AIA2-R3 (non-blocking) asks to drop both kinds from FxPortrait.TOON after the merge. Session ended."
+  "note": "P3-AIA2-bake-1 claimed (S2-R45: the icon bake gives different bytes on different machines)."
 }
