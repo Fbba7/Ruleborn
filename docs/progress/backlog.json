@@ -245,15 +245,15 @@
         "agent": "S3",
         "branch": "claude/ui-screens-meta",
         "claimed_at": "2026-11-17T13:05:00Z",
-        "seen_at": "2026-11-17T14:59:00Z",
-        "lease_until": "2026-11-17T16:05:00Z"
+        "seen_at": "2026-11-17T16:17:00Z",
+        "lease_until": "2026-11-17T19:17:00Z"
       },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-17T14:22:00Z",
-      "updated_by": "lead (cycle 127)",
+      "updated_at": "2026-11-17T16:22:00Z",
+      "updated_by": "lead (cycle 129)",
       "exceptions": [
         "docs/art/shots/menu-screens/**"
       ]
@@ -284,14 +284,20 @@
       "estimate_h": 1.5,
       "tier": 2,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "claimed",
+      "claim": {
+        "agent": "AD",
+        "branch": "claude/ui-ad",
+        "claimed_at": "2026-11-17T15:36:00Z",
+        "seen_at": "2026-11-17T15:58:00Z",
+        "lease_until": "2026-11-17T18:58:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-17T15:35:00Z",
-      "updated_by": "lead (cycle 128)",
+      "updated_at": "2026-11-17T16:22:00Z",
+      "updated_by": "lead (cycle 129)",
       "exceptions": []
     },
     {
@@ -311,7 +317,7 @@
         "P3-AD-preview-1"
       ],
       "done_when": [
-        "the gate's advisory Colour roles and value fail at a4ed000e (docs/art/ui-quality/gate/verdicts/P3-S1-hc-offline-1/a4ed000e.json) answered as AD rules in P3-AD-preview-1: in high contrast a cast control with no casts left takes the inert plate rather than the main-action gold fill, the stats values take the text ink rather than gold, and 'Get out' takes the colour AD rules on; each control still at least dL* 20 off its local ground (AD-R56), each pair's dL* listed in the handoff",
+        "the gate's advisory Colour roles and value fail at a4ed000e (docs/art/ui-quality/gate/verdicts/P3-S1-hc-offline-1/a4ed000e.json) answered as AD ruled in P3-AD-preview-1 (docs/art/ui-quality/gate/boards/preview-1.md): AD-R60, with no casts left HeistHand.show_state dresses the cast control in the leather secondary plate (the wand at 0.4, the words in text_on_leather, still tappable), flat leather_light #6A3E52 in high contrast, gold returning when casts are left; AD-R61, in high contrast hc_plates gives Get out 'leather', flat leather_light #6A3E52 with the amber rim, not AD-R56's red danger plate, which stays the alarm's alone, and no fifth button style; AD-R62, under Tokens.high_contrast heist_hud.gd sets the loot figures (Room, Vault, '?') in Tokens.color('cream') #FFF3CC, KitHud.loot_fit in client/ui/kit_hud.gd unchanged; each control still at least dL* 20 off its local ground (AD-R56), each pair's dL* listed in the handoff",
         "'heist at 100% text', 'heist at 200% text, pt_BR' and 'heist in high contrast' still passing; FIT=1 runs of the heist shot at 200% text in en, pt_BR and de and in high contrast all passing, each run listed in the handoff",
         "AD previews the stills before ready (M10, M12, M23): the builder sends them to AD while the work can still change, and AD's objections are answered in this task",
         "python3 tools/ui_bake/check_screens.py",
@@ -339,8 +345,8 @@
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-17T15:35:00Z",
-      "updated_by": "lead (cycle 128)",
+      "updated_at": "2026-11-17T16:22:00Z",
+      "updated_by": "lead (cycle 129)",
       "exceptions": []
     },
     {
@@ -399,14 +405,20 @@
       "estimate_h": 1.5,
       "tier": 2,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "working",
+      "claim": {
+        "agent": "S2",
+        "branch": "claude/ui-screens-home",
+        "claimed_at": "2026-11-17T15:55:00Z",
+        "seen_at": "2026-11-17T16:18:00Z",
+        "lease_until": "2026-11-17T19:18:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-17T15:35:00Z",
-      "updated_by": "lead (cycle 128)",
+      "updated_at": "2026-11-17T16:22:00Z",
+      "updated_by": "lead (cycle 129)",
       "exceptions": []
     },
     {
@@ -1181,6 +1193,14 @@
       "text": "From 17 November 2026 (cycle 127), on S1-R39: approved under M33. The lead writes heist/hc 123, result/100 103 and result/hc 45 in tools/ui_bake/budgets.json, with a raises entry, in the merge of P3-S1-hc-offline-1; mark ready with guard.sh failing only on those three lines, named in the handoff. S1-R40: AD has no seat (three of three in use while the seven-day bar reads allowed_warning); AD starts on it when a seat frees, and until then its default stands. S1-R38 goes to K1; its default (the kit's lavender line) stands unless AD asks for cream. Add M53 to your acks.",
       "sent_at": "2026-11-17T14:24:00Z",
       "ack_by": "2026-11-17T16:24:00Z",
+      "acked_at": null
+    },
+    {
+      "id": "M54",
+      "to": "AD",
+      "text": "From 17 November 2026 (cycle 129), on S2-R43 (requests.md, under AD): S2 asks for a preview of P3-S2-home-7 at dff000c9 on claude/ui-screens-home before ready, due 19:06Z. If you can within P3-AD-preview-1, preview it there and write it in boards/preview-1.md with S2-R43's answer in your status; if not, its default stands at 19:06Z and nothing holds preview-1. AD-R60 to AD-R64 are accepted as their defaults: R60 to R62 join P3-S1-hc-offline-2, R63 and R64 go to an S3 follow-up after character-5 merges. Add M54 to your acks.",
+      "sent_at": "2026-11-17T16:22:00Z",
+      "ack_by": "2026-11-17T18:22:00Z",
       "acked_at": null
     }
   ]

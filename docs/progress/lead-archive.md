@@ -5,6 +5,34 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 126**, 17 November 2026, from about 13:19Z (session
+  `session_01SNkKxn49cnTinuA9di25Qn`, started by the Opus 5.5 launcher).
+  **Claims copied:** S3's claim on P3-S3-character-5 and K1's on
+  P3-K1-tabs-1 (both claimed 13:05Z, lease 16:05Z; working). AD marked
+  P3-AD-audit-1b ready at d2b01e18 (golden set v2, 79 items; audit 1's
+  six misses and two false blocks judged).
+  **Requests:** none new; every open request in the status files is
+  already in requests.md.
+  **Merges:** P3-AD-audit-1b as the candidate 791aae3c (d2b01e18 on
+  851e0c7a). No gate items. `run_checks.sh` PASS (13:52Z, bwrap) and
+  `ui_bake/guard.sh` OK (the first guard run stopped at its prerequisite
+  check, three.js missing from the worktree's `tools/ui_research`; rerun
+  with it linked); `owners.py diff` passed. Main had gained only this
+  cycle's bookkeeping, so d2b01e18 was merged onto it as 06d96d05 with
+  only the documentation check re-run. The merge lock is released; the
+  audit and roadmap pages are republished.
+  **Starts:** P3-S1-hc-offline-1 seeded (AD-R56: the heist's hc plates on
+  the near-black card with a cream line, Get out on the red danger plate,
+  every control dL* 20 off its ground; AD-R57: the offline result's crew
+  strip and top earner's portrait, shot in both states) and S1 started on
+  it in AD's freed seat (`session_01SNkKxpfWQzuYCK1pQhn9Wy`).
+  **Seats:** S3 (character-5), K1 (tabs-1) and S1 (hc-offline-1): three,
+  the cap while the seven-day bar reads `allowed_warning`.
+  **Next:** merge each of the three when ready. When a seat frees, seed in
+  order: the navigation task for R48, R50 and R51 (after character-5),
+  S2's home task for R49's home part and R59's caller, R52 with the next
+  settings task, and R54's content task.
+
 - **Cycle 125**, 17 November 2026, from about 12:16Z (session
   `session_01SNkKxnqEmBjkMNWvPgkCUt`, started by the Opus 5.5 launcher).
   **Claims copied:** AD's claim on P3-AD-audit-1b (lease 15:20Z,
