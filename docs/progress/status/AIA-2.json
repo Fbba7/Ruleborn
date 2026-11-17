@@ -5,21 +5,23 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P3-AIA2-bake-1",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-17T20:10:00Z",
   "lease_until": "2026-11-17T23:10:00Z",
-  "updated_at": "2026-11-17T20:10:00Z",
-  "expected_next_update_by": "2026-11-17T20:55:00Z",
+  "updated_at": "2026-11-17T20:22:00Z",
+  "expected_next_update_by": "2026-11-17T21:05:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": null,
-    "next_step": "reproduce the CPU-dependent rebake of icons_256, find the stage that depends on the CPU, and move it to a drawing path that does not"
+    "next_step": "the bake now draws in Node by plain arithmetic (studio/raster.js, studio/picture.js; no browser); compare against the committed atlas, prove two runs and a second route give the same bytes, rebake"
   },
   "precheck": null,
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-18T21:00:00Z",
-  "acks": [],
+  "acks": [
+    "M14"
+  ],
   "requests": [
     {
       "id": "AIA2-R1",
@@ -69,5 +71,5 @@
     }
   ],
   "answers": [],
-  "note": "P3-AIA2-bake-1 claimed (S2-R45: the icon bake gives different bytes on different machines)."
+  "note": "P3-AIA2-bake-1 working: the icon bake moves off Chromium and SwiftShader to plain arithmetic in Node."
 }

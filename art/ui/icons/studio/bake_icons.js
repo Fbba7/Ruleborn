@@ -10,11 +10,15 @@
 // not groups) whose `families` lists the family becomes the piece
 // `<group>__<name>__normal`, px x px, in <family>.webp and its high-contrast
 // twin in <family>_hc.webp.
+//
+// The icons are drawn in Node by plain arithmetic (studio/raster.js and
+// studio/picture.js), with no browser, GPU or canvas: the same bytes on
+// every machine (README.md, "Why the bake is plain arithmetic").
 'use strict';
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const http = require('http');
+const { pathToFileURL } = require('url');
 const { execFileSync } = require('child_process');
 
 const ROOT = path.resolve(__dirname, '../../../..');
@@ -22,20 +26,6 @@ const BAKE = path.join(ROOT, 'tools/ui_bake');
 const { manifestText, sourcesHash, layout, loadConfig, listFiles } = require(path.join(BAKE, 'bake.js'));
 const ICONS = path.join(ROOT, 'art/ui/icons');
 const RESERVED = new Set(['studio', 'renders']);
-const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.json': 'application/json', '.png': 'image/png' };
-
-function serve() {
-  const server = http.createServer((req, res) => {
-    const rel = decodeURIComponent(new URL(req.url, 'http://x').pathname);
-    const file = path.join(ROOT, rel);
-    if (!file.startsWith(ROOT + path.sep) || !fs.existsSync(file) || !fs.statSync(file).isFile()) {
-      res.writeHead(404); res.end(); return;
-    }
-    res.writeHead(200, { 'content-type': TYPES[path.extname(file)] || 'application/octet-stream' });
-    res.end(fs.readFileSync(file));
-  });
-  return new Promise((ok) => server.listen(0, '127.0.0.1', () => ok(server)));
-}
 
 // The icon modules: `<group>/<name>`, sorted.
 function modules() {
@@ -53,60 +43,57 @@ async function main(argv) {
   }
   const cfg = loadConfig(path.join(BAKE, 'families.json'));
   const families = fams.length ? fams : Object.keys(cfg.families).filter((f) => cfg.families[f].kind === 'scene').sort();
-  const server = await serve();
-  const { chromium } = require('playwright');
-  const browser = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
+  const { finish, shotOf, SHOWN_PT } = await import(pathToFileURL(path.join(__dirname, 'finish.js')).href);
+  for (const family of families) {
+    const fam = cfg.families[family];
+    if (!fam || fam.kind !== 'scene') throw new Error(`${family} is not a scene family`);
+  }
+  const work = Object.fromEntries(families.map((f) => [f, fs.mkdtempSync(path.join(os.tmpdir(), 'icons-'))]));
+  const pieces = Object.fromEntries(families.map((f) => [f, []]));
   try {
-    const tab = await browser.newPage();
-    tab.on('pageerror', (e) => console.error('page: ' + e.message));
-    await tab.goto(`http://127.0.0.1:${server.address().port}/art/ui/icons/studio/page.html`);
-    await tab.waitForFunction(() => window.ready === true);
-    for (const family of families) {
-      const fam = cfg.families[family];
-      if (!fam || fam.kind !== 'scene') throw new Error(`${family} is not a scene family`);
-      const work = fs.mkdtempSync(path.join(os.tmpdir(), 'icons-'));
-      try {
-        const pieces = [];
-        for (const name of modules()) {
-          const fams = await tab.evaluate(async (n) => (await import(`/art/ui/icons/${n}.js`)).default.families, name);
-          if (!fams.includes(family)) continue;
-          const piece = name.replace('/', '__') + '__normal';
-          for (const mode of ['normal', 'hc']) {
-            const url = await tab.evaluate(([n, f, px, m]) => window.finish(n, f, px, m), [name, family, fam.px, mode]);
-            fs.mkdirSync(path.join(work, mode), { recursive: true });
-            fs.writeFileSync(path.join(work, mode, piece + '.png'), Buffer.from(url.split(',')[1], 'base64'));
-          }
-          pieces.push({ name: piece, w: fam.px, h: fam.px });
+    // One render a module, finished for every family and mode that lists it.
+    for (const name of modules()) {
+      const icon = (await import(pathToFileURL(path.join(ICONS, name + '.js')).href)).default;
+      const fams = families.filter((f) => icon.families.includes(f));
+      if (!fams.length) continue;
+      const shot = await shotOf(icon);
+      const piece = name.replace('/', '__') + '__normal';
+      for (const family of fams) {
+        const fam = cfg.families[family];
+        for (const mode of ['normal', 'hc']) {
+          fs.mkdirSync(path.join(work[family], mode), { recursive: true });
+          fs.writeFileSync(path.join(work[family], mode, piece + '.png'), finish(icon, shot, fam.px, mode, SHOWN_PT[family]));
         }
-        if (!pieces.length) throw new Error(`${family}: no icon module lists it`);
-        const lay = layout(pieces, fam.width || 1024);
-        const manifest = {
-          format: 1,
-          family,
-          sources_hash: sourcesHash(cfg, family, path.join(ROOT, 'art/ui')),
-          atlas: { normal: family + '.webp', high_contrast: family + '_hc.webp', width: lay.width, height: lay.height },
-          px_per_point: null,
-          pieces: {},
-        };
-        fs.mkdirSync(out, { recursive: true });
-        for (const [mode, file] of [['normal', family + '.webp'], ['hc', family + '_hc.webp']]) {
-          const job = {
-            out: path.join(out, file), width: lay.width, height: lay.height,
-            pieces: pieces.map((p) => [path.join(work, mode, p.name + '.png'), lay.places[p.name].x, lay.places[p.name].y, p.w, p.h]),
-          };
-          execFileSync('python3', [path.join(BAKE, 'pack.py')], { input: JSON.stringify(job) });
-        }
-        for (const p of pieces) manifest.pieces[p.name] = { x: lay.places[p.name].x, y: lay.places[p.name].y, w: p.w, h: p.h, slice: null, tint: false };
-        fs.writeFileSync(path.join(out, family + '.json'), manifestText(manifest));
-        if (process.env.KEEP_PNG) fs.cpSync(work, path.join(process.env.KEEP_PNG, family), { recursive: true });
-        console.log(`baked ${family}: ${pieces.length} pieces twice into ${lay.width}x${lay.height}`);
-      } finally {
-        fs.rmSync(work, { recursive: true, force: true });
+        pieces[family].push({ name: piece, w: fam.px, h: fam.px });
       }
     }
+    for (const family of families) {
+      const fam = cfg.families[family], list = pieces[family], dir = work[family];
+      if (!list.length) throw new Error(`${family}: no icon module lists it`);
+      const lay = layout(list, fam.width || 1024);
+      const manifest = {
+        format: 1,
+        family,
+        sources_hash: sourcesHash(cfg, family, path.join(ROOT, 'art/ui')),
+        atlas: { normal: family + '.webp', high_contrast: family + '_hc.webp', width: lay.width, height: lay.height },
+        px_per_point: null,
+        pieces: {},
+      };
+      fs.mkdirSync(out, { recursive: true });
+      for (const [mode, file] of [['normal', family + '.webp'], ['hc', family + '_hc.webp']]) {
+        const job = {
+          out: path.join(out, file), width: lay.width, height: lay.height,
+          pieces: list.map((p) => [path.join(dir, mode, p.name + '.png'), lay.places[p.name].x, lay.places[p.name].y, p.w, p.h]),
+        };
+        execFileSync('python3', [path.join(BAKE, 'pack.py')], { input: JSON.stringify(job) });
+      }
+      for (const p of list) manifest.pieces[p.name] = { x: lay.places[p.name].x, y: lay.places[p.name].y, w: p.w, h: p.h, slice: null, tint: false };
+      fs.writeFileSync(path.join(out, family + '.json'), manifestText(manifest));
+      if (process.env.KEEP_PNG) fs.cpSync(dir, path.join(process.env.KEEP_PNG, family), { recursive: true });
+      console.log(`baked ${family}: ${list.length} pieces twice into ${lay.width}x${lay.height}`);
+    }
   } finally {
-    await browser.close();
-    server.close();
+    for (const dir of Object.values(work)) fs.rmSync(dir, { recursive: true, force: true });
   }
 }
 
