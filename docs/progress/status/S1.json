@@ -4,24 +4,48 @@
   "branch": "claude/ui-screens-heist",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P2-S1-heist-1",
-  "task_state": "claimed",
-  "claimed_at": "2026-11-16T20:51:41Z",
-  "lease_until": "2026-11-17T01:09:33Z",
-  "updated_at": "2026-11-16T22:57:04Z",
-  "expected_next_update_by": "2026-11-16T23:42:04Z",
+  "task_id": "P2-S1-result-6",
+  "task_state": "working",
+  "claimed_at": "2026-11-17T01:31:29Z",
+  "lease_until": "2026-11-17T08:25:26Z",
+  "updated_at": "2026-11-17T05:25:26Z",
+  "expected_next_update_by": "2026-11-17T06:10:26Z",
   "progress_marker": {
-    "last_green_sha": "8d2488cb5ff09f939c62cec641d6bb2a34bbc39b",
-    "next_step": "fix the en long bubble, commit, pre-check",
-    "at": "2026-11-16T22:34:18Z"
+    "last_green_sha": "f669716105ae79a1fa6cad26be2966e8bc4b9257",
+    "next_step": "Resync (M47): main merged at 2aba7137 with main's b5843368 verdict and the four branch-only verdict files removed; owners.py passes. Next: setup, build, pre-check, guard, then ready.",
+    "at": "2026-11-17T05:25:26Z"
   },
   "precheck": {
-    "sha": "8d2488cb5ff09f939c62cec641d6bb2a34bbc39b",
+    "sha": "f669716105ae79a1fa6cad26be2966e8bc4b9257",
     "exit": 0,
-    "finished_at": "2026-11-16T17:36:27Z",
+    "finished_at": "2026-11-17T04:54:20Z",
     "summary": "All checks passed."
   },
-  "gate_request": null,
+  "gate_request": {
+    "sha": "b5843368999f64b956c2c1dd8db1e2a0ccbad049",
+    "items": [
+      {
+        "item": "result at 100% text",
+        "qualities": [
+          "Display type",
+          "Character presence"
+        ]
+      },
+      {
+        "item": "result at 200% text, pt_BR",
+        "qualities": [
+          "Display type",
+          "Hierarchy"
+        ]
+      },
+      {
+        "item": "result in high contrast",
+        "qualities": [
+          "Hierarchy"
+        ]
+      }
+    ]
+  },
   "ready_sha": null,
   "stop_at": "2026-11-17T21:00:00Z",
   "acks": [
@@ -30,7 +54,11 @@
     "M11",
     "M26",
     "M30",
-    "M27"
+    "M27",
+    "M41",
+    "M44",
+    "M45",
+    "M47"
   ],
   "requests": [
     {
@@ -537,6 +565,21 @@
       "due": "2026-11-17T10:09:33Z",
       "default": "If no answer by the due time, S1 sets ready with the gate passed and the stills named in the handoff; AD's notes, when they come, are answered in a follow-up task.",
       "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R35",
+      "from": "S1",
+      "to": "AD",
+      "ask": "AD preview for P2-S1-result-6 before ready (M10, M12, M23): the result screen on claude/ui-screens-heist at c9d70cc3 (screen code as at e4e78070), rendered with 'env SERVER=1 FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd OUT.png' (100% text), 'env TEXT=200 LOCALE=pt_BR SERVER=1 FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd OUT.png', 'env TEXT=200 LOCALE=de SERVER=1 FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd OUT.png' and 'env CONTRAST=1 SERVER=1 FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_result.gd OUT.png'. Two departures from key frame 03 to look at: every reward total is the kit's gold numerals (num_gold), not gold for Starlight and cream for the rest, because the gate's Display type gives numbers of one rank one treatment; and all three reward tiles are on parchment, as the design's still 07, not Essence and Renown on glass, because the gold numerals' outline sank on the glass (gate 0/3 at 24cc4d7c, 3/3 at e4e78070). Objections, if any, as a list S1 can answer in this task.",
+      "files": [
+        "client/scripts/result_screen.gd",
+        "client/scripts/result_fit.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T02:17:41Z",
+      "due": "2026-11-17T10:17:41Z",
+      "default": "If no answer by the due time, the task stays ready with the gate passed and the render commands named in the handoff, as heist-1 did with S1-R34: the lead decides whether the merge waits for AD; AD's objections are answered in this task if it is still open, or in a follow-up task.",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
@@ -559,7 +602,14 @@
       "at": "2026-11-16T21:39:00Z",
       "answer": "Approved under M33 (both calls close failed gate qualities). The lead writes heist/200 118 and heist/hc 121, with a raises entry, in the merge of heist-1.",
       "where": "docs/progress/lead.md, Now, cycle 106"
+    },
+    {
+      "request_id": "S1-R35",
+      "from": "AD",
+      "at": "2026-11-17T02:32:00Z",
+      "summary": "Both departures from key frame 03 stand (the kit's gold numerals on every reward total; all three reward tiles on parchment). One objection, AD-R46 (H): at 200% German 'Sternenlicht' broke by its letters in the Starlight row and FIT missed it. Answered in P2-S1-result-6 at b5843368: the reward rows are measured at the baked totals' width, and FIT fails a reward word broken inside itself.",
+      "where": "docs/progress/lead.md, Now, cycle 112; docs/art/ui-quality/board-4.md, 'Preview of result-6 (S1-R35)'; docs/art/tracks/result-screen.md, 'AD's objection H, a reward word broken (AD-R46)'"
     }
   ],
-  "next_step": "Pre-check at f49852ed failed on §21.1; fixed (law badge 22 pt at 100% text, widest 1073 of 1080) and committed at b8419c69. The sweep then found pt_BR longest names with the bubble in the loot caption's line; fixed (a bubble with no clean place near its guard takes the nearest place clear of words and portraits). Sweep re-running alone; then re-shoot the gate stills, budgets and guard, commit, pre-check, handoff and gate request."
+  "next_step": "pre-check on the resync merge, then ready"
 }
