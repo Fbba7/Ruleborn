@@ -13,6 +13,8 @@ extends SceneTree
 ## at 200% the four side buttons and the realms' chips in pt_BR, pt_PT and fr
 ## with and without NOTICE, in en and de with it, and in en at TALL=900; and
 ## M26's states (MOST, EMPTY, RAIDS=99) at 200% in en, pt_BR and de.
+## QUIT shows the question the phone's back asks on home (App.GoBack), and
+## FIT then checks it too (`asked`).
 
 
 func _initialize() -> void:
@@ -54,6 +56,15 @@ func _go() -> void:
 		screen.world.show_whole()
 	for i in maxi(4, int(float(env.call("TIME", "1.5")) * 30.0)):
 		await process_frame
+	var go_back: App.GoBack = null
+	if env.call("QUIT", "") != "":
+		current_scene = screen
+		go_back = App.GoBack.new()
+		root.add_child(go_back)
+		await process_frame
+		go_back.back()
+		for i in 20:
+			await process_frame
 	# HIDE: "world" or "ui", to read what each costs of the frame's budget.
 	match env.call("HIDE", ""):
 		"world":
@@ -130,6 +141,8 @@ func _go() -> void:
 		await RenderingServer.frame_post_draw
 	if env.call("FIT", "") != "":
 		var bad := fit(screen)
+		if go_back != null:
+			bad.append_array(asked(go_back))
 		for b: String in bad:
 			print("fit FAIL ", b)
 		print("fit ", "ok" if bad.is_empty() else "FAIL")
@@ -397,4 +410,33 @@ static func kept(screen: Home) -> Array[String]:
 				rows[roundi(pill.get_global_rect().position.y)] = k
 		if rows.size() > 1:
 			bad.append("the purse in %d rows at 100%% text: %s" % [rows.size(), rows])
+	return bad
+
+
+## The question the phone's back asks on home, once it shows: its Quit and
+## Stay on the screen, each a whole touch target, side by side, Stay the
+## primary and focused. One line each that fails.
+static func asked(go_back: App.GoBack) -> Array[String]:
+	var bad: Array[String] = []
+	if not is_instance_valid(go_back.question):
+		return ["no question"]
+	var whole := Rect2(Vector2.ZERO, go_back.question.get_viewport_rect().size)
+	var keys := {}
+	for key: String in ["Quit", "Stay"]:
+		var b := go_back.question.find_child(key, true, false) as Button
+		if b == null or not b.is_visible_in_tree():
+			bad.append("no %s" % key)
+			continue
+		keys[key] = b
+		var at := b.get_global_rect()
+		if not whole.grow(1.0).encloses(at):
+			bad.append("%s %s off the screen" % [key, at])
+		if at.size.y < UI.px(UI.CONTROL_POINTS) - 0.5 or at.size.x < UI.px(UI.CONTROL_POINTS) - 0.5:
+			bad.append("%s %s under a touch target" % [key, at.size])
+	if keys.size() == 2:
+		var stay := keys["Stay"] as Button
+		if not stay.get_meta("primary", false) or go_back.question.get_viewport().gui_get_focus_owner() != stay:
+			bad.append("Stay not the primary and focused")
+		if absf(stay.get_global_rect().position.y - (keys["Quit"] as Control).get_global_rect().position.y) > 1.0:
+			bad.append("Quit and Stay not side by side")
 	return bad

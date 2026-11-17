@@ -1537,6 +1537,9 @@ HOME_RAIDED_CLOSE,Dismiss,Dismiss,Dispensar,Dispensar,Schließen,Fermer
 HOME_COLLECT,Collect all,Collect all,Coletar tudo,Recolher tudo,Alles einsammeln,Tout récolter
 HOME_COLLECT_AMOUNT,Collect %s,Collect %s,Coletar %s,Recolher %s,%s einsammeln,Récolter %s
 HOME_COLLECT_SPOKEN,Collect all: %s waiting,Collect all: %s waiting,Coletar tudo: %s esperando,Recolher tudo: %s à espera,Alles einsammeln: %s bereit,Tout récolter : %s en attente
+HOME_QUIT_TITLE,Quit the game?,Quit the game?,Sair do jogo?,Sair do jogo?,Spiel beenden?,Quitter le jeu ?
+HOME_QUIT,Quit,Quit,Sair,Sair,Beenden,Quitter
+HOME_STAY,Stay,Stay,Ficar,Ficar,Bleiben,Rester
 LANDING_FAULT_NAME,Fault,Fault,Falha,Falha,Riss,Faille
 LANDING_EDGE_NAME,%s edge,%s edge,Borda %s,Orla %s,Rand %s,Bord %s
 LANDING_SPOT_OF,Spot %d of %d,Spot %d of %d,Ponto %d de %d,Ponto %d de %d,Platz %d von %d,Point %d sur %d
