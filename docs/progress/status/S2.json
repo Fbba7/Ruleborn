@@ -8,12 +8,12 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-17T07:30:00Z",
   "lease_until": "2026-11-17T10:30:00Z",
-  "updated_at": "2026-11-17T07:47:00Z",
-  "expected_next_update_by": "2026-11-17T08:45:00Z",
+  "updated_at": "2026-11-17T07:52:00Z",
+  "expected_next_update_by": "2026-11-17T08:50:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "a4090ec7",
-    "next_step": "All 57 fit cases 'fit ok' on 4797b5c3; draw calls 148/121/148 against records 145/121/145 (S2-R41). Next: merge main, check_all, guard and the pre-check; then ready."
+    "next_step": "ad6c25e7: the locked plate names Lantern Vale and takes a short form ('28') at 200% (S2-R38, S2-R40, granted in cycle 119); draw calls 148/124/148 (S2-R41 updated); AD asked to preview ad6c25e7 (S2-R42). Running the 57 fit cases on ad6c25e7; then check_all, guard and the pre-check on the main merge; then ready."
   },
   "precheck": null,
   "gate_request": null,
@@ -26,7 +26,8 @@
     "M25",
     "M33",
     "M43",
-    "M46"
+    "M46",
+    "M50"
   ],
   "requests": [
     {
@@ -604,17 +605,34 @@
       "id": "S2-R41",
       "from": "S2",
       "to": "lead",
-      "ask": "Record home's draw calls in tools/ui_bake/budgets.json (K1's file, written at the merge as for S2-R17 and S2-R30) when P3-S2-home-states merges: home/100 145 -> 148, home/hc 145 -> 148; home/200 stays 121 (measured 121). Measured with `python3 tools/ui_bake/budget_shots.py --only home/100,home/200,home/hc` on 4797b5c3; textures (4.7 MiB) and words below 4.5:1 (0) unchanged; still 2 under §21.3's cap of 150. The 3 calls are the states the task adds to the fixture, which the records never saw: the Crew tab's count badge costs 3 (KitTabs' own badge, KitStatus.badge: 146 with OUTER=6 against 143 with the badge taken out), and Lantern Vale's locked plate, drawn instead of a sixth realm pin, costs 2 (148 against 146). At 200% the locked plate hides (S2-R40), so home/200 holds at 121. Home adds no drawing of its own; a cheaper badge (drawn in the tab row's batch) would be K1's.",
+      "ask": "Record home's draw calls in tools/ui_bake/budgets.json (K1's file, written at the merge as for S2-R17 and S2-R30) when P3-S2-home-states merges: home/100 145 -> 148, home/200 121 -> 124, home/hc 145 -> 148. Measured with `python3 tools/ui_bake/budget_shots.py --only home/100,home/200,home/hc` on ad6c25e7; textures and words below 4.5:1 (0) pass their records; still 2 under §21.3's cap of 150. The calls are the states the task adds to the fixture, which the records never saw: the Crew tab's count badge costs 3 (KitTabs' own badge, KitStatus.badge: 146 with OUTER=6 against 143 with the badge taken out); Lantern Vale's locked plate, drawn instead of a sixth realm pin, costs 2 at 100% (148 against 146; its name, S2-R38, batches with its words); at 200% the plate used to hide and now shows its short form (S2-R40), 3 calls (124 against 121 on 4797b5c3). A cheaper badge (drawn in the tab row's batch) would be K1's.",
       "files": [
         "tools/ui_bake/budgets.json"
       ],
       "blocking": true,
       "created_at": "2026-11-17T07:47:00Z",
       "due": "2026-11-17T14:30:00Z",
-      "default": "Approved as for S2-R17 and S2-R30: the lead records home/100 and home/hc at 148 with a raises entry when it merges P3-S2-home-states; S2 marks ready with guard.sh failing only on those two draw-call lines, said in the handoff.",
+      "default": "Approved as for S2-R17 and S2-R30: the lead records home/100 148, home/200 124 and home/hc 148 with a raises entry when it merges P3-S2-home-states; S2 marks ready with guard.sh failing only on those three draw-call lines, said in the handoff.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R42",
+      "from": "S2",
+      "to": "AD",
+      "ask": "For AD, through the lead, following S2-R36 (answered in cycle 119: AD previews the commit S2 names once the plate changes under S2-R38 and S2-R40). The commit to preview is now ad6c25e7 on claude/ui-screens-home. Since 4797b5c3 the locked plate reads 'Lantern Vale' over the lock and 'Opens at Keeper 28' on the map's dark pill, and at 200% text, where that finds no room, it shows the lock and '28' on the same pill instead of hiding. Check, as in S2-R36, at 100% and 200% text in en, pt_BR and de, and in high contrast: the Crew tab's '4', the Defence badge '2' and the plate clear of the pins and the side buttons (board 3's objection B), nothing by colour alone. Reproduce with `FIT=1 [TEXT=200] [LOCALE=<loc>] [CONTRAST=1] bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`. Detail: docs/art/tracks/home-screen.md Part 7.",
+      "files": [
+        "client/world/universe_pins.gd",
+        "client/tests/shots/universe_home.gd",
+        "client/scripts/home_parts.gd",
+        "docs/art/tracks/home-screen.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T07:52:00Z",
+      "due": "2026-11-17T16:00:00Z",
+      "default": "As S2-R36's: if AD has not answered by 16:00Z, the stills stand and S2 marks ready on its own checks; the gate judges them.",
       "escalate_to": "lead"
     }
   ],
   "answers": [],
-  "next_step": "All 57 fit cases 'fit ok' on 4797b5c3; draw calls 148/121/148 against records 145/121/145 (S2-R41). Next: merge main, check_all, guard and the pre-check; then ready."
+  "next_step": "ad6c25e7: the locked plate names Lantern Vale and takes a short form ('28') at 200% (S2-R38, S2-R40, granted in cycle 119); draw calls 148/124/148 (S2-R41 updated); AD asked to preview ad6c25e7 (S2-R42). Running the 57 fit cases on ad6c25e7; then check_all, guard and the pre-check on the main merge; then ready."
 }
