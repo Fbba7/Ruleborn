@@ -7,13 +7,13 @@
   "task_id": "P2-S1-result-6",
   "task_state": "working",
   "claimed_at": "2026-11-17T01:31:29Z",
-  "lease_until": "2026-11-17T07:13:52Z",
-  "updated_at": "2026-11-17T04:13:52Z",
-  "expected_next_update_by": "2026-11-17T04:58:52Z",
+  "lease_until": "2026-11-17T07:22:35Z",
+  "updated_at": "2026-11-17T04:22:35Z",
+  "expected_next_update_by": "2026-11-17T05:22:35Z",
   "progress_marker": {
-    "last_green_sha": "c9d70cc3b3de8566cdf427cb73d2e4fbdfca3994",
-    "next_step": "H fixed at b5843368; gate re-run at b5843368: all five checks pass (Character presence split 3-3, a pass on the next board). Main merged at cb518273; M11/M13 checks running; then commit the track, verdict and handoff, pre-check, ready.",
-    "at": "2026-11-17T04:13:52Z"
+    "last_green_sha": "cb518273",
+    "next_step": "M11/M13 checks on cb518273 all exit 0; pre-check running on f6697161 (the final tree for ready); then record and mark ready.",
+    "at": "2026-11-17T04:22:35Z"
   },
   "precheck": {
     "sha": "c9d70cc3b3de8566cdf427cb73d2e4fbdfca3994",
@@ -609,5 +609,5 @@
       "where": "docs/progress/lead.md, Now, cycle 112; docs/art/ui-quality/board-4.md, 'Preview of result-6 (S1-R35)'; docs/art/tracks/result-screen.md, 'AD's objection H, a reward word broken (AD-R46)'"
     }
   ],
-  "next_step": "M11/M13 checks on cb518273, then the pre-check and ready"
+  "next_step": "the pre-check on f6697161, then ready"
 }
