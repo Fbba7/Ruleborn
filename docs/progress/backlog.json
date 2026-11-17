@@ -111,7 +111,7 @@
       "estimate_h": 1.0,
       "tier": 2,
       "critical": false,
-      "state": "claimed",
+      "state": "merged",
       "claim": {
         "agent": "AD",
         "branch": "claude/ui-ad",
@@ -120,10 +120,10 @@
       },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null,
-      "updated_at": "2026-11-17T10:20:00Z",
-      "updated_by": "lead (cycle 122)",
+      "ready_sha": "808e42cf710668864502025b276f3afc7b182c05",
+      "merged_sha": "744390e1",
+      "updated_at": "2026-11-17T12:06:00Z",
+      "updated_by": "lead (cycle 124)",
       "exceptions": []
     },
     {
