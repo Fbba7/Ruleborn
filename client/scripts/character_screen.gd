@@ -296,9 +296,10 @@ static func _stroke(l: Label) -> void:
 ## the words' size wide on each side, at the size they are shown, after the
 ## text scale and `_wrap_in`'s shrink. Godot draws a quarter of
 ## `outline_size` on each side (`OUTLINE_PER_SIDE`), so it is four times
-## that. It was twice that, about 6% a side, which read as 5% in audit 1
-## (row 14, AD-R58), and before that 12% in all, which read as a drop alone
-## over the stars (the gate's display-type check at a6d5f2fb).
+## that, with the soft edge's pixel added (`OUTLINE_EDGE_PX`). It was
+## twice that, about 6% a side, which read as 5% in audit 1 (row 14,
+## AD-R58), and before that 12% in all, which read as a drop alone over the
+## stars (the gate's display-type check at a6d5f2fb).
 static func _outline_px(l: Label) -> int:
 	var size := float(l.get_theme_font_size("font_size"))
 	var side := maxf(UI.px(OUTLINE_POINTS), size * OUTLINE_SHARE)
