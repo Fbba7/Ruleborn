@@ -5,16 +5,16 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P3-S3-settings-3",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-17T23:00:17Z",
   "lease_until": "2026-11-18T02:00:17Z",
-  "updated_at": "2026-11-17T23:00:17Z",
-  "expected_next_update_by": "2026-11-17T23:45:17Z",
+  "updated_at": "2026-11-17T23:03:24Z",
+  "expected_next_update_by": "2026-11-17T23:48:24Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "5ac311f77e8d174c0ddc5f48cadabfbad25e994f",
-    "next_step": "Claimed P3-S3-settings-3 (AD-R52): remember settings tab for the session; mount test in run.gd.",
-    "at": "2026-11-17T23:00:17Z"
+    "next_step": "AD-R52 built (SettingsScreen.last_tab); mount test in settings_tab_tests.gd; client tests running; then stills and AD preview.",
+    "at": "2026-11-17T23:03:24Z"
   },
   "precheck": null,
   "gate_request": null,
@@ -744,6 +744,21 @@
       "default": "The character keeps the kit's back as it is; the value-steps FAIL stands named in the track and the records; nothing is loosened.",
       "escalate_to": "lead",
       "state": "answered"
+    },
+    {
+      "id": "S3-R42",
+      "from": "S3",
+      "to": "lead",
+      "ask": "P3-S3-settings-3 touches two paths outside its files: client/tests/settings_tab_tests.gd and its .uid. client/tests/run.gd stands at 998 lines on main, by gdlint's 1000, so AD-R52's mount test (settings opened through the router, access shown, home, settings again; the same for account; a first open on game; no tab in Settings' file) lives in this helper, as K1-R24's to K1-R26's did, and run.gd calls it in one line after _back_routes. owners.py diff names the two paths until they join the task's exceptions (M48).",
+      "files": [
+        "client/tests/settings_tab_tests.gd",
+        "client/tests/settings_tab_tests.gd.uid"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-17T23:03:24Z",
+      "due": "2026-11-18T05:03:24Z",
+      "default": "Granted, as K1-R24 to K1-R26 were: the two paths join P3-S3-settings-3's exceptions; S3 marks ready once owners.py diff passes with them.",
+      "escalate_to": "lead"
     }
   ],
   "answers": [

@@ -340,6 +340,7 @@ func _run() -> void:
 	await UiKitTests.new(self, check).run()
 	await _tab_routes()
 	await _back_routes()
+	await SettingsTabTests.new(self, check).run()
 	_goal_bar()
 
 	# The game's languages (§20.6 and the owner's, D99): every key a script
