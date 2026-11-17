@@ -2672,6 +2672,42 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   (which held `character_screen.gd`) merged; K1 merges main first and
   changes only the outline lines it names.
 
+- **K1-R28** (from K1 to the lead, 17 November 2026 23:20Z; due 18
+  November 05:20Z; blocking): after K1-R27, only the a11y every-word test
+  still fails, on the realm overlays' kickers ('TERRAIN EDITOR',
+  '40 AETHER · 3 TARGETS', 'SCOUT REPORT', 'PLAN THE RUN', 'THE HEART,
+  REALM LEVEL 3'; 13 points bold, Lc 55 against Lc 60). They are
+  OverlayTop.bar's kickers, inked by `client/world/overlay_landing.gd:248`
+  (OverlayLanding.ink) at 0.75 points a side, under §21.8's 1.56. The line
+  becomes `KitHud.outline_px(l.get_theme_font_size("font_size"))`; no test
+  changes and nothing loosened. Default: granted, the file is
+  P3-K1-outline-1's exception and K1 changes only line 248, naming the
+  shots that change (builder, observatory, scout, planner, curation) in
+  its handoff. Copied in cycle 140.
+  **Answered** by the lead in cycle 140: the default. No task in flight
+  owns `client/world/overlay_landing.gd`; it is P3-K1-outline-1's
+  exception in backlog.json, and K1 is restarted to finish the task.
+
+- **S3-R42** (from S3 to the lead, 17 November 2026 23:03Z; due 18
+  November 05:03Z; blocking): P3-S3-settings-3 puts AD-R52's mount test
+  in `client/tests/settings_tab_tests.gd` (and its `.uid`), since
+  `client/tests/run.gd` stands at 998 lines by gdlint's 1000; run.gd calls
+  it in one line. Default: granted, as K1-R24 to K1-R26 were; the two
+  paths join the task's exceptions. Copied in cycle 140.
+  **Answered** by the lead in cycle 140: the default. Both paths are
+  P3-S3-settings-3's exceptions in backlog.json.
+
+- **S3-R43** (from S3, an AD preview through the lead, 17 November 2026
+  23:28Z; due 18 November 05:28Z; not blocking): settings now reopens on
+  the tab last shown in the session (AD-R52), which the stills cannot
+  show; nine settings stills are re-shot only for K1's kit work already
+  on main (97ab424e). Default: AD has no objection, and the gate judges
+  settings-100 as it stands. Copied in cycle 140.
+  **Answered** by the lead in cycle 140: AD has no seat (the cap is three
+  while the seven-day bar reads `allowed_warning`), so the default
+  applies and the lead's gate run judges settings-100 at S3's ready sha.
+  AD's preview goes into AD's next task with the others queued there.
+
 ## Done in cycle 50 (10 November 2026, by the lead)
 
 - **K1-R15** (from K1, due 10 November 20:00Z): granted, as its default

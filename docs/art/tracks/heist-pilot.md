@@ -506,3 +506,53 @@ Each still was shot with `FIT=1`, all exit 0, "fit ok":
 `heist_hc.png` is the still for the gate's "heist in high contrast" (Colour roles and value). The stills are not committed (this task's files hold no stills); the commands above render them from the ready commit.
 
 **The guard's draw calls.** guard.sh at `a4dcb52e` measures heist/hc at 123 against its record of 121; heist/100 and heist/200 keep their records. The two calls are the re-dressed plates: the card face differs from the leather face it replaces, and Pause's light plate with its inked icon breaks the batch that the dark plates share. Pause on the card would save one call but stand only 18 off the sky, under AD-R56's 20. The raise, 121 -> 123, is requested of the lead under M33 (S1-R39). It closes AD-R56's objection.
+
+## Part 8: one role per colour in high contrast (P3-S1-hc-offline-2, AD-R60 to AD-R62)
+
+AD's preview of part 7 (`docs/art/ui-quality/gate/boards/preview-1.md`, R-a to R-c) kept three faults: "No casts" in gold, Get out in the alarm's red, and the loot figures in gold. Gold says "act here", red is the alarm's alone, and figures are information.
+
+**What changed:**
+
+- **AD-R60, Cast with no casts left** (`client/scripts/heist_hand.gd`, `show_state` and `_dress_cast`). With every cast used, the cast control takes the kit's leather secondary plate through `UI.dress`. The wand stays at 0.4, the words take the plate's `text_on_leather`, and the control stays tappable. Its own look (gold, from `_dress_hand`) is kept on the control as meta `look` and comes back when a cast is left. In high contrast `hc_plates` leaves it on leather, never the card.
+- **AD-R61, Get out** (`hc_plates`). In high contrast Get out takes "leather", not "red". No fifth button style is added.
+- **AD-R62, the loot figures** (`client/scripts/heist_hud.gd`, `_build_loot`). Under `Tokens.high_contrast`, Room, Vault and "?" take `Tokens.color("cream")` (#FFF3CC) before they are baked. `KitHud.loot_fit` and the heist at 100% are unchanged.
+
+**The leather is the kit's high-contrast face, #7A4660, not #6A3E52.** The kit's atlas draws the leather plate in high contrast as a flat mauve, #7A4660 (L* 36.7), inside a black ink line. The amber rim is not drawn, and the shader cannot change a face the atlas draws (as with the card's line in part 7). AD's #6A3E52 (L* 32.1) was the token's first stop. The kit's face stands 4.6 further off the tray than that. An exact #6A3E52 with the amber rim needs a high-contrast leather face in the kit, K1's. S1-R41 offers it to AD, and its default keeps the kit's face.
+
+**At 200% the figures are baked, so the cream is a tint.** At 200% text the loot figures are drawn by the kit's baked numerals (`KitNumerals`), which ignore `font_color`. In high contrast they are baked in the white finish (`num_white`), and `_sync` tints the baked row with the cream it finds in the label's meta `tint`. Only the white glyphs take it, and their ink line stays dark. Measured on the 200% pt_BR still, "508" reads #FCEFCC (L* 94.6), cream, where before the tint it read #FCFBFF.
+
+### The controls' value steps (AD-R56, AD-R60, AD-R61)
+
+The table measures each control's face against the ground right around it, in L*, on the high-contrast still at 100% text (`heist_hc.png`). Faces are the crop's most common colour.
+
+| Control | Face | Face L* | Ground | Ground L* | dL* |
+|---|---|---:|---|---:|---:|
+| Pause (light plate) | #FFFFFF | 100 | night sky | 23.1 | 76.9 |
+| Walk (card) | #140C2A | 5.2 | sky and world, left | 34.2 | 29.0 |
+| The hint's plate (card) | #140C2A | 5.2 | grass | 51.1 | 45.9 |
+| Cast, no casts left (leather, AD-R60) | #7A4660 | 36.7 | the tray (card) | 5.2 | 31.5 |
+| Cast, no casts left (leather) | #7A4660 | 36.7 | the crew's well | 0 | 36.7 |
+| Get out (leather, AD-R61) | #7A4660 | 36.7 | the tray (card) | 5.2 | 31.5 |
+| Get out (leather) | #7A4660 | 36.7 | the crew's well | 0 | 36.7 |
+| Cast, a cast left (gold, `MANIFEST=1`) | gold | 80.5 | the tray (card) | 5.2 | 75.3 |
+
+Every control is 20 or more off its ground. The lowest is Walk, 29.0. Get out and the spent Cast now share the tray's lowest step, 31.5, where Get out's red gave 25.2. The words on the leather are `text_on_leather` #F6E6C8. At 200% text in pt_BR, "Lançar" and "Fugir" stand on the tray at the same 31.5.
+
+**The figures.** Room 508, Vault 0% and "?" are cream, #FFF3CC (L* 95.9) at 100% text and #FCEFCC (L* 94.6) at 200%, on the card (5.2): 90.7 and 89.4 off it. They are no longer the gold of a live action.
+
+### Evidence
+
+Each still was shot with `FIT=1`. Every run exited 0 and printed "fit ok":
+
+    env FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_heist.gd heist_100.png
+    env FIT=1 TEXT=200 LOCALE=en bash tools/render/shoot.sh client/tests/shots/screen_heist.gd heist_200_en.png
+    env FIT=1 TEXT=200 LOCALE=pt_BR bash tools/render/shoot.sh client/tests/shots/screen_heist.gd heist_200_pt_BR.png
+    env FIT=1 TEXT=200 LOCALE=de bash tools/render/shoot.sh client/tests/shots/screen_heist.gd heist_200_de.png
+    env FIT=1 CONTRAST=1 bash tools/render/shoot.sh client/tests/shots/screen_heist.gd heist_hc.png
+    env FIT=1 CONTRAST=1 TEXT=200 LOCALE=en bash tools/render/shoot.sh client/tests/shots/screen_heist.gd heist_hc_200_en.png
+    env FIT=1 CONTRAST=1 TEXT=200 LOCALE=pt_BR bash tools/render/shoot.sh client/tests/shots/screen_heist.gd heist_hc_200_pt_BR.png
+    env FIT=1 CONTRAST=1 TEXT=200 LOCALE=de bash tools/render/shoot.sh client/tests/shots/screen_heist.gd heist_hc_200_de.png
+    env FIT=1 MANIFEST=1 bash tools/render/shoot.sh client/tests/shots/screen_heist.gd heist_man_100.png
+    env FIT=1 MANIFEST=1 CONTRAST=1 bash tools/render/shoot.sh client/tests/shots/screen_heist.gd heist_man_hc.png
+
+`heist_hc.png` is the still for the gate's "heist in high contrast" (Colour roles and value). The `MANIFEST=1` stills show the gold coming back with a cast left. At 100% text, "No casts" and Get out are on the leather with its amber rim, and the loot keeps its gold (`KitHud.loot_fit`), as the key frame has it. The stills are not committed, because this task's files hold no stills. The commands above render them from the ready commit.
