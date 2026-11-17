@@ -3,17 +3,17 @@
   "role": "AD",
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
-  "agent_state": "active",
-  "task_id": "preview S2-R34",
-  "task_state": "working",
+  "agent_state": "done",
+  "task_id": null,
+  "task_state": null,
   "claimed_at": "2026-11-17T01:50:00Z",
-  "lease_until": "2026-11-17T04:50:00Z",
-  "updated_at": "2026-11-17T01:50:00Z",
-  "expected_next_update_by": "2026-11-17T02:35:00Z",
+  "lease_until": null,
+  "updated_at": "2026-11-17T01:57:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "055840f7c59c5600ef0fb907fc2607ee69a9e9f7",
-    "next_step": "Preview S2-R34 (P2-S2-home-6 at 36f017da on claude/ui-screens-home), answer before 03:30Z."
+    "next_step": "none: S2-R34 answered; AD-R45 open with the lead"
   },
   "precheck": {
     "sha": "055840f7c59c5600ef0fb907fc2607ee69a9e9f7",
@@ -603,6 +603,21 @@
       "due": "2026-11-19T00:05:00Z",
       "default": "If S1 sets P2-S1-heist-1 ready without answering objections 1 and 2, and the gate fails Hierarchy (pt_BR) or Layered materials (en 200%), the lead opens a follow-up S1 task for them, done when the 200% pt_BR loot labels sit at most 0.8 of Lançar's cap height in the muted label role, the figures and the timer sit below Cast's weight, and the en 200% still shows the hint and a Room panel inner well. If the gate passes those items, the objections become notes and nothing is seeded. No AD round needed.",
       "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R45",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Board 3, preview of P2-S2-home-6 (S2-R34) at 36f017da: S2's three changes stand (gold figures, smaller de/pt_BR counts, title rim). One objection, not depending on the final shape (M40): (a) Display type: the live words after the baked figures ('k', 'Tsd.', 'mil') echo below themselves (inked()'s plated shadow has no outline and is set down by outline + drop) and are cream beside gold figures. Fix in HomeParts.inked and figures(), in board-3.md, 'Preview of home-6 (S2-R34)'.",
+      "files": [
+        "docs/art/ui-quality/gate/boards/board-3.md",
+        "client/scripts/home_parts.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T01:57:00Z",
+      "due": "2026-11-19T01:57:00Z",
+      "default": "S2 fixes (a) in P2-S2-home-6 before it marks ready. If S2 marks ready without it and the gate fails Display type, the lead opens a follow-up S2 task, done when the purse rows at 100% en, de, pt_BR and 200% de, pt_BR show no second copy of 'k', 'Tsd.' or 'mil' at 4x, those words take the figures' gold, FIT=1 prints 'fit ok' and home's draw calls stay at 150 or under. If the gate passes Display type, the objection becomes a note and nothing is seeded. No AD round needed.",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
@@ -715,8 +730,13 @@
       "request_id": "S1-R34",
       "answer": "Preview of P2-S1-heist-1's part6 stills at ed766fe9. Met: 100% Colour roles (Get out and Alarm share the leather role, red kept to the filling alarm; Cast the only gold fill; crew marks are shapes), 100% One art-direction idea (chunky hint pill, inked load well, outlined crew bars), 200% en display type, portraits clear of names, Hollow and Bramble as dark figures, painted Bloom/Cast/Get out icons. Two objections S1 can answer in this task. (1) 200% pt_BR no plan, Hierarchy: 'Lançar' cap height 61 px equals 'Espaço'/'Restam' 61 px and 'Carregar até 100%' 64 px; the labels are cream, higher value than ink on gold; 508 and the 2:25 timer stand larger. Fix: above 130% text, loot labels in the kit's muted label role at least one step below Cast's words (cap height <= 0.8 of Lançar's), and the loot figures and timer plate one size down; the same change fixes 946/~2,600 outweighing Cast at 200% en. (2) 200% en, Layered materials: _fit_hint hides the hint, so there is no hint banner to judge, and the Room panel is one plate with no inner well behind its rows. Fix: an inner well behind the Room panel's rows, as the tray has behind the crew, and enough height back (the crew well's empty right third, or the pause back in the top column) for the hint to show at 200% en; if it cannot fit, say so and the gate judges the Room panel and tray alone. Notes, not holding: pt_BR's lone pause row (move it into the empty Sage slot beside Lançar); Get out sits on the tray's rim at 100%; charge badges on the tray's top rim; Sage's '12' count absent; pt_BR law names untranslated (strings, not S1). Kept objections go to the lead as AD-R44 with a follow-up default. Details in board-1.md, 'Preview of heist-1 (S1-R34)'.",
       "at": "2026-11-17T00:05:00Z"
+    },
+    {
+      "request_id": "S2-R34",
+      "at": "2026-11-17T01:57:00Z",
+      "answer": "Preview of P2-S2-home-6 at 36f017da (still valid at ce03765a: home.gd, home_parts.gd and the kit's scripts unchanged). 11 renders (100% en, de, pt_BR, hc, hc pt_BR; 200% en, pt_BR, de, hc de, pt_BR with notice; 150% pt_BR) all print 'fit ok', every count baked. Rulings on S2's three questions: (1) the gold figures stand (Colour roles: a T3 type finish on dark plates, not a control, Collect still the only gold fill; Hierarchy: Collect is the one primary in the squint at 100% and 200%); (2) the smaller German (80%) and Portuguese (88%) counts stand: the three counts shrink together, one treatment and one size per screen; (3) the title's leather rim stands: an ink line plus the band, about 2 pt round, outlined all round. One objection, not depending on the screen's final shape (M40): (a) Display type: the live words after the baked figures ('k', 'Tsd.', 'mil') show a ghost copy of themselves set down below, because inked()'s plated branch sets shadow_offset_y = outline + drop with shadow_outline_size 0; and they are cream beside gold figures. Fix: in HomeParts.inked's plated branch, shadow_outline_size = outline and shadow_offset_y = drop; the After label in figures() takes Tokens.color('gold'). Expected cost up to +3 draw calls (home/100 about 146, home/200 about 121); if that passes 150, drop the shadow on those words (stroke only). Done when the purse rows at 100% en, de, pt_BR and 200% de, pt_BR show no second copy at 4x, the words are gold, FIT=1 prints 'fit ok' and draw calls stay at 150 or under. S2 can fix it in this task before ready; otherwise S2's default stands (ready on the pre-checked commit, gate runs) and AD-R45 carries the follow-up. Notes, not holding: the ink line inside the title's rim is about 1 px; at 200% en the counts are near Collect's word height. Write-up and stills: docs/art/ui-quality/gate/boards/board-3.md, 'Preview of home-6 (S2-R34)'."
     }
   ],
-  "next_step": "none: S2-R33 and S1-R34 answered",
-  "last_update": "S1-R34 answered: heist-1 stills meet 100% items and most 200% en items; two objections (pt_BR hierarchy, en 200% layering) S1 can answer in task; AD-R44 to lead with follow-up default. Done."
+  "next_step": "none: S2-R34 answered; AD-R45 open with the lead",
+  "last_update": "S2-R34 answered: home-6's gold figures, smaller de/pt_BR counts and title rim stand; one objection (ghost echo and cream colour on the live words after the baked figures) S2 can fix in task; AD-R45 to the lead with a follow-up default. Done."
 }

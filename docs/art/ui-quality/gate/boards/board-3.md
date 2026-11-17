@@ -621,3 +621,181 @@ English 200% (baked).
   plate at large text, and its top edge at 100%. It sits as a badge and
   covers no figure.
 - The notes carried from round 3 still stand.
+
+## Preview of home-6 (S2-R34)
+
+AD previewed P2-S2-home-6 at `36f017da` on `claude/ui-screens-home` on
+17 November 2026. The branch's head is now `ce03765a`. The commits since then merge main
+and the lead's branch, and on the client they change only
+`heist_hud.gd` and `heist_screen.gd`. `home.gd`, `home_parts.gd` and the
+kit's scripts are the same, so these stills hold at the new head too.
+
+The task does three things:
+
+- It puts every headline count in the kit's gold baked numerals
+  (`num_gold`, T3): the purse's three counts, the renown "1,460" and the
+  strain share "82%".
+- It shrinks baked counts to fit, never under 78% (`BAKED_LEAST`), rather
+  than switching them to live type.
+- It sets a band of the plates' leather rim round the ink outline of
+  "Keeper 24".
+
+Each case was rendered with
+`FIT=1 [TEXT=150|200] [LOCALE=<loc>] [CONTRAST=1] [NOTICE=1] bash tools/render/shoot.sh client/tests/shots/universe_home.gd`.
+The stills were then read at full resolution, at 2× to 6×. The answer to
+home-5 has a lesson: that preview let the counts stand, and the judge
+then failed them.
+
+**All 11 cases print "fit ok":**
+
+- At 100%: English, German, pt_BR, high contrast and high contrast pt_BR.
+- At 200%: English, pt_BR, German, high contrast German and pt_BR with
+  the notice.
+- At 150%: pt_BR.
+
+Every count stays baked in every case. No count falls back to live type.
+
+**Ruling: S2's three changes stand, and one objection is kept.** The
+objection is (a): the live words after the baked figures ("k", "Tsd.",
+"mil"). It goes to the lead as AD-R45, and S2 can fix it in this task.
+
+### S2's three questions
+
+- **The gold figures (Colour roles, Hierarchy): they stand.**
+  - Rubric quality 8 reserves gold for main actions as fills, rings and
+    marks (§21.8). The gold of the T3 finish is a type finish that the
+    kit bakes for counts (kit-spec.md section 2.2, T3, and K24, the
+    proof's loot count), and every count sits on a dark plate. No count is a
+    control, and nothing gold reads as a button. Collect is still the
+    only gold fill on the screen.
+  - The gradient fill now shows at phone size, light at the top and
+    deeper at the foot. That answers home-5's advisory note that the
+    counts read as "flat pale fills".
+  - In the grayscale squint (§21.10), Collect is the one large light
+    block at 100%, and at 200% in every language.
+  - At 200% English, "1,460" is about as tall as Collect's words, but it
+    is words on a dark plate, while Collect's gold plate is about six
+    times its area. Hierarchy holds.
+- **The smaller German and Portuguese counts: they stand.**
+  - At 100%, the German counts are baked at 80% and the pt_BR counts at
+    88%. The three counts in a row shrink together, so each screen
+    draws one treatment and one size.
+  - The renown and the counts now share one numeral face in every
+    language. That closes home-5's note about two faces in one header.
+  - At 200% German and at high contrast German, the counts are still
+    baked and still clear.
+- **The title's rim: it stands.** "Keeper 24", "Hüter 24" and
+  "Guardião 24" now show a ring all round at phone size: an ink line,
+  then the leather band, against the night. They no longer read as a
+  drop alone.
+  - Measured on the 100% English still, across the K's stem and the
+    letters' tops: the ink line is about 1 px and the leather band about
+    2 px. The ring is about 3 px (about 2 pt), over the 1.5-point floor.
+  - The ink alone is thinner than the leather. See the notes.
+
+### Objection, not depending on the screen's final shape
+
+**(a) The words after the baked figures echo below themselves, and they
+are cream beside gold figures.** This is quality 2, display type: one
+consistent heavy treatment for the count.
+
+- **The echo.** On a plate, `HomeParts.inked` sets the label's shadow
+  down by the outline plus the drop (`shadow_offset_y = outline + drop`),
+  with no shadow outline. The shadow is the bare glyph, thinner than the
+  stroked letter above it. It shows as a second, darker copy of the
+  letter, set below it with a gap: a ghost "k" under "142.0k", and
+  "Tsd." and "mil" doubled.
+  - It shows in every case: 100% and 200% en, de and pt_BR, at 150%, and
+    in high contrast.
+  - The baked figures beside these words have a tight drop that hugs
+    their stroke, so the two halves of one count look made two ways.
+  - The same branch draws a count that falls back to live type, so a
+    fallback would echo too. No count falls back in these stills.
+- **The colour.** The figures are now gold and the words after them stay
+  `cream`, so "142.0" and "k" read as two colours in one amount.
+- **The fix, in `HomeParts.inked`'s plated branch and in `figures()`:**
+  - Give the shadow an outline as thick as the stroke
+    (`shadow_outline_size = outline`), and set it down by the drop only
+    (`shadow_offset_y = drop`). The drop is then the stroke's own foot,
+    as the baked figures draw theirs.
+  - Give the "After" label the figures' gold: `gold` (#E9B65C), the
+    middle stop of the gold finish's gradient.
+- **The cost.** In home-5, a shadow outline cost one draw call per
+  label (home-screen.md, Part 5). Three suffix labels take home/100 from
+  143 to about 146 and home/200 from 118 to about 121, both under §21.3's
+  cap of 150.
+- **If the cap is hit:** turn the shadow off on those words (no drop,
+  the stroke only). On the dark plate an echo is worse than no drop.
+- **Done when:** the purse rows at 100% en, de and pt_BR and at 200% de
+  and pt_BR show no second copy of "k", "Tsd." or "mil" at 4×, the words
+  after the figures are gold, `FIT=1` still prints "fit ok", and the
+  draw calls stay at 150 or under.
+
+**M40 (does it depend on the screen's final shape?):** No. The fix is in
+how the count's words are drawn, wherever the count sits. A later layout
+change does not undo it or replace it. None of S2's three changes depends
+on the final shape either: they are type treatments.
+
+### The rest of board 3's list
+
+These are unchanged from home-5 and are judged on these stills.
+
+- **Layered materials (1):** the plates, the leather rims and the dock
+  are as in home-5. No change.
+- **Display type (2):** passes, except for objection (a).
+  - The baked gold counts and "82%" have a gradient fill, an ink stroke
+    and a hard drop.
+  - The title is outlined all round.
+  - The live labels ("Humming", the chips, Collect, the goal card) keep
+    their roles.
+- **Painted icons (3):** the currency icons, the side buttons and the
+  dock are as in home-5. No change.
+- **Hierarchy (6):** passes. Collect, or the full-width "einsammeln" and
+  "Coletar" in de and pt_BR, is the one primary in the squint at 100% and
+  200%.
+- **Colour roles (8):** passes, as ruled above. Gold fills are only
+  Collect and the chosen tab. Red is only the alarm marks and the Full
+  chip.
+- **Light (9):** unchanged.
+- **One art-direction idea (13):** the gold numerals bring home's counts
+  into the kit's numeral family, which the heist's loot count shares. It
+  reads as one game.
+- **Character (14):** the keeper's portrait is unchanged. Home-5's judge
+  passed it 3 of 3.
+- **High contrast:** the plates take their light rims, and the gold
+  counts stay legible on black. Hierarchy holds.
+
+From left: English, German, pt_BR and high contrast at 100%.
+
+![100%: en, de, pt_BR, high contrast](board-3/r9-home-100.png)
+
+From left: English, pt_BR and German at 200%, then high contrast German
+at 200%.
+
+![200%: en, pt_BR, de, high contrast de](board-3/r9-home-large.png)
+
+The purse at 2×, from the top: English 100%, German 100%, pt_BR 200%,
+German 200% and high contrast German 200%. Look under each "k", "Tsd."
+and "mil" for the echo (objection a), and compare the cream words with
+the gold figures.
+
+![purse rows at 2×: echo under the words after the figures](board-3/r9-home-purse.png)
+
+"Keeper 24" at 6×: the cream letters, the ink line, then the leather band.
+
+![Keeper 24 at 6×: ink line and leather rim](board-3/r9-home-name.png)
+
+### Notes, not holding
+
+- **The ink line inside the title's rim is about 1 px on the
+  540-wide still.** The leather band does most of the outline's work.
+  The ring reads as an outline at phone size. If a judge reads the name
+  as "rimmed, not inked", thicken the ink stroke by one step before the
+  rim, and the rim follows it.
+- **At 200% English, the counts are close to Collect's words in height.**
+  Hierarchy holds by Collect's plate and value. If the counts grow
+  later, keep them at most the height of Collect's words.
+- **AD missed the echo in the home-5 preview.** The live "mil" at pt_BR
+  150% had it then. It is recorded in AD.md, "Tried and failed".
+- The notes carried from home-5 and round 3 still stand, except home-5's
+  note about two numeral faces, which this task closes.
