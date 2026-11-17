@@ -515,6 +515,29 @@ AD previewed e9285afd and had no objection: all 8 cases fit, board 3's objection
 - **At 200% the Defence badge's top overlapped the 61.0k plate's foot by 1 to 3 px.** Left as it is, AD's default. The drop AD suggested was tried: at large text the left edge's disc, when it carries a badge, stood in a holder taller than itself (`home.gd`, `_side`). With 8 pt, the extra height makes `_fit_edges` hide the whole left edge at 200% with the notice in pt_BR, pt_PT and fr (`fit FAIL side button defences hidden`, the same for lab). With 6 pt and 4 pt, pt_BR and pt_PT fit again but fr still loses the edge. A 1 to 3 px touch on a plate's foot costs less than losing Defence and Lab, so the drop was reverted (09f0f119). If the band gains height later, a 4 pt drop that applies only when the band has room is the way back.
 - **At 200% in pt_BR and de the short form sits about 7 px from the Heart's "6" pin.** Left as it is: it is clear, and the pin is the Heart's own. AD's advice, should the map lose more height, is to anchor the pill under the island instead of beside the Heart.
 
+## Part 8: the tabs by the router's table, the label rule, the green goal bar (P3-S2-home-7)
+
+P3-K1-tabs-1 gave ScreenNav the bar's rules: it routes by `Router.TABS`, and the tabs not chosen show their names up to `ScreenNav.LABELS_UP_TO` (125% text) and their icons alone above it. Home builds its own bar, so this part brings home onto the same rules, and gives the goal bar back its labels.
+
+**What changed.**
+
+- **Home routes its tabs by the router's table.** `home.gd` drops its own `TAB_ROUTES`: a tap on a tab goes where `Router.TABS` sends it, as `ScreenNav.bar` routes it (AD-R49), through `HomeParts.tab_route`. Two tabs stay home's own, named in one place, `TABS_HOME_KEEPS`, with the reason: Islands is home's tab (a tap shows the whole world), and the Heist starts a heist from home, the bar's lead action, rather than opening the Observatory.
+- **A test ties the tabs to the routes.** `core_tests.gd` (`_tabs`, "every tab has a route in Router.TABS, and home's tabs go where it says, Islands and the Heist excepted") checks every `KitTabs` id has a route in `Router.TABS`, and that `HomeParts.tab_route` gives each tab the router's route except the two home keeps.
+- **ScreenNav's label rule.** The chosen tab's word always shows. The other tabs show their names up to 125% text and their icons alone above it, each still named aloud (the kit's spoken names). Up to 125% a name that would be cut shrinks, all the others with it so they stay one size, but never below the size the names have at 100% (13 pt; at 100% that is the names' own size, so they do not shrink there). Where they still do not fit, the bar gives way to its icons alone. Before this, the floor (11 pt scaled by the text size) stood above 13 pt at 125%, so every locale lost its names there.
+- **The goal bar's labels show again, on green.** `_show_goal` drops the loop that hid the goal bar's "Progress" labels. Its fill is green in both looks; gold stays on Collect, so the bar's progress and the action to collect do not share a colour.
+
+**Where a word still shrinks.**
+
+TAB_SHRINK
+
+**Not this task's: the purse at 125% in German.** PURSE_NOTE
+
+**AD's preview** (S2-R43): pending.
+
+**Evidence.**
+
+FIT_EVIDENCE
+
 ## Left for other tasks
 
 These widgets are no longer used by home, but they are outside this task's files:
