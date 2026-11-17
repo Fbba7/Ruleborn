@@ -72,6 +72,8 @@ var _line_px := 0.0
 var _shader := ShaderMaterial.new()
 var _face: Control = null
 var _faces: Dictionary = {}
+## What the face drew last, in its own space: the rect it is culled by.
+var _drawn := Rect2()
 ## The colour a neutral piece is tinted by when the use has refilled the box
 ## (`tint`), else null: the material's own fill tints it.
 var _tint: Variant = null
@@ -335,6 +337,16 @@ func _shown() -> bool:
 ## (`tint`) or its material's fill, under its skin's untinted frame at the
 ## same rect; the selected rim is drawn over them.
 func _draw_face() -> void:
+	_drawn = Rect2()
+	_draw_face_pieces()
+	# The renderer culls the face by the rect it works out from the face's
+	# commands, and that rect missed the scaled 9-slice once the host's top
+	# was above the screen: a long panel scrolled to its end lost its whole
+	# face. The face names the rect it drew instead.
+	RenderingServer.canvas_item_set_custom_rect(_face.get_canvas_item(), _drawn.has_area(), _drawn)
+
+
+func _draw_face_pieces() -> void:
 	if not _shown():
 		return
 	var p := piece()
@@ -390,11 +402,18 @@ func _draw_piece(p: Dictionary, hue: Color) -> void:
 			sb.texture_margin_bottom = float(slice["b"])
 			_faces[key] = sb
 		_face.draw_style_box(_faces[key], at)
+		_cover(Rect2(r.position + at.position * s, at.size * s))
 	else:
 		var k := r.size.x / maxf(1.0, region.size.x - 2.0 * edge)
 		_face.draw_set_transform(r.position - Vector2.ONE * edge * k, 0.0, Vector2(k, k))
 		_face.draw_texture_rect_region(tex, Rect2(Vector2.ZERO, region.size), region, hue)
+		_cover(Rect2(r.position - Vector2.ONE * edge * k, region.size * k))
 	_face.draw_set_transform(Vector2.ZERO)
+
+
+## Adds `rect`, in the face's space, to what the face drew this time.
+func _cover(rect: Rect2) -> void:
+	_drawn = rect if not _drawn.has_area() else _drawn.merge(rect)
 
 
 func _draw() -> void:

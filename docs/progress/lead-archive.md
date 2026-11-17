@@ -5,6 +5,88 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 120**, 17 November 2026, from about 08:05Z (session
+  `session_01SNkKxnVWqySe65bs6CXACW`, started by the Opus 5.5 launcher).
+  **Claims copied:** unchanged: AD on P3-AD-audit-1, K1 on
+  P3-K1-polish-1, S1 on P3-S1-result-7 and S2 on P3-S2-home-states. No
+  lease has lapsed, and `owners.py claims` passes.
+  **Requests:** K1-R25, S1-R36, S1-R37, S2-R41 and S2-R42 copied, with
+  AD's answer to S2-R36 (no objection at 5d25f9cb; two notes on the
+  plate's left gutter and the Defence badge at 200%). K1-R25 is granted
+  now, not at the merge: `client/tests/shots/ui_kit_polish.gd` and its
+  `.uid` are P3-K1-polish-1's exceptions, so `owners.py diff` passes and
+  K1 can mark ready (M51). S1-R37 (result/hc 27 to 28) and S2-R41 (home's
+  three draw-call records) are approved; `budgets.json` is in polish-1's
+  files, so the lead writes them at each task's merge with a raises entry.
+  S1-R36 and S2-R42, two previews, go to AD, whose blind labelling for
+  audit-1 is written (24965010). M50 acked by S2.
+  **Gate and merges:** none. Nothing is ready, and no gate request is
+  open.
+  **Starts:** none. Four builders run, each session working.
+  **Seats:** four of four. The seven-day bar reads `allowed_warning`, so
+  order 3's cap is three: no builder starts until fewer than three run.
+  **Next:** gate and merge what is marked ready. When K1's polish-1
+  merges, start K1 on polish-2 if fewer than three builders run; S3 on
+  character-5 after it, and P3-AD-flow-2 after the audit's merge.
+
+- **Cycle 119**, 17 November 2026, from about 07:40Z (session
+  `session_01SNkKxqCqKwynFeQfEP4pR3`, started by the Opus 5.5 launcher).
+  **Claims copied:** AD on P3-AD-audit-1 (07:30Z), K1 on P3-K1-polish-1
+  (07:45Z), S1 on P3-S1-result-7 (07:26:30Z) and S2 on P3-S2-home-states
+  (07:30Z). Each lease is three hours, and none has lapsed.
+  **Requests:** S2-R36 to S2-R40 copied. S2-R36 (a preview of home-states
+  at 4797b5c3) goes to AD, who answers once its blind labelling for
+  audit-1 is written; if AD has not answered by 16:00Z, S2's default
+  stands. S2-R37 is confirmed: home has no shield timer, because
+  home-screen.md outranks the key frame. For S2-R39 the default stands:
+  home shows only the counts the store holds. S2-R38 and S2-R40 are
+  granted in this task. `client/world/universe_pins.gd` is the lead's
+  file and has no task in flight, so it joins P3-S2-home-states' files,
+  with a done_when line: the locked plate carries the realm's name, and at
+  large text it takes a short form before it hides. Without that, the lock
+  would read by colour alone at 200%. The estimate moves to 2.0h, and
+  `owners.py claims` passes. M50 tells S2.
+  **Gate and merges:** none. Nothing is ready, and no gate request is
+  open.
+  **Starts:** none. Four builders run.
+  **Seats:** four of four. The seven-day bar reads `allowed_warning` in
+  this cycle, so order 3 drops the cap to three. The four running builders
+  finish their tasks, and no builder starts until fewer than three run.
+  **Next:** when K1's polish-1 merges, start K1 on polish-2, but only if
+  fewer than three builders run while the bar reads `allowed_warning`.
+  S3 starts on character-5 after polish-2, and P3-AD-flow-2 after the
+  audit's merge.
+
+- **Cycle 118**, 17 November 2026, from about 07:14Z (session
+  `session_01SNkKxpjRpZTfmY8CdqhAf9`, started by the Opus 5.5 launcher).
+  **Claims copied:** none; no builder session was running.
+  **Requests:** none new.
+  **Phase 2 closed under M49:** every phase-2 task is merged before its
+  stop_at (21:00Z), so the exit review ran now. Boards 3, 4 and 5 stand;
+  board 2 stays deferred under D13 (c); the exceptions queue is empty;
+  every screen item passes the gate except result at 200% text, pt_BR,
+  Hierarchy, carried as P3-S1-result-7. O6, the first blind audit, is
+  carried into phase 3 as P3-AD-audit-1, its form at
+  `docs/art/ui-quality/gate/audit/audit-1.md` (43 rows over 19 items).
+  M48 and M49 acked at 07:20Z.
+  **Phase 3 seeded** (stop_at 2026-11-18T21:00:00Z, commit f1828e4e):
+  P3-AD-audit-1, P3-AD-flow-2, P3-K1-polish-1, P3-K1-polish-2,
+  P3-S3-character-5, P3-S1-result-7 and P3-S2-home-states, each with the
+  M48 `owners.py diff` line in its done_when. M48 is in the brief
+  (`docs/guides/agent-brief.md`) and in each prompt; `tools/run_checks.sh`
+  is unchanged, since it does not know the task ID.
+  **Gate and merges:** none.
+  **Starts:** AD on P3-AD-audit-1, K1 on P3-K1-polish-1, S1 on
+  P3-S1-result-7 and S2 on P3-S2-home-states, all on Opus 5.5 at effort
+  high (07:25Z). Every agent's last session was idle with its task
+  merged.
+  **Seats:** four of four (AD, K1, S1, S2). S3 waits on
+  P3-K1-polish-2.
+  **Next:** copy the four claims; route S1's and S2's preview requests to
+  AD, which AD answers between audit rows without opening the audit's
+  verdicts; when K1's polish-1 merges, start K1 on polish-2, then S3 on
+  character-5 after it.
+
 - **Cycle 117**, 17 November 2026, from about 06:15Z (session
   `session_01SNkKxqbBzHeQrccHM7ZD6p`, started by the Opus 5.5 launcher).
   **Claims copied:** S1 marked P2-S1-result-6 ready again at 32f97a08
