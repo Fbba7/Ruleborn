@@ -5,6 +5,27 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 146**, 18 November 2026, from about 05:14Z (session
+  `session_01SNkKxmdvLviNaCD3jf7YyA`, started by the Opus 5.5 launcher).
+  The changes since cycle 145: AD claimed P3-AD-wave-board (b7d03527,
+  04:56Z, lease to 07:56Z) and pushed two progress commits (627237ed,
+  97effff6 at 05:09Z): every before/after pair made (five screens at 100%
+  and 200% text in pt_BR and de, high contrast, grayscale, 960 px),
+  AD-R66 verified on main, audit 2's settings miss still open on main (no
+  settings change since 7972485a); the motion strips and budget_shots
+  run; wave.md and its ruling come next. **Bookkeeping:** the wave
+  board's claim takes AD's claim and lease (04:56:42Z, 07:56:42Z),
+  state `claimed`. **Requests:** none new (AD's last is AD-R66, already
+  handled). **Merge and gate:** none: nothing is ready, no gate request,
+  no merge lock; main did not move, so the pages are not republished.
+  **Sessions:** none started or restarted: AD's session
+  (`session_01SNkKxnEBc1ok2qxGk7hpRb`) is working, inside its update time
+  (05:54Z). **Seats:** AD alone, under the cap of three while the
+  seven-day bar reads `allowed_warning`; K1, S1, S2, S3, AIA-2 and AIA
+  are idle; nothing seeded (M57: only phase 3's exit items, and the wave
+  board is the last). **Next:** merge the wave board when ready (no gate
+  item); rank any re-work AD names against phase 3's exit (M57).
+
 - **Cycle 145**, 18 November 2026, from about 04:15Z (session
   `session_01SNkKxphmrV3zwhPP7SkLLW`, started by the Opus 5.5 launcher).
   The changes since cycle 144: S1 marked P3-S1-marker-1 ready at 52079376
