@@ -3,36 +3,21 @@
   "role": "S1",
   "branch": "claude/ui-screens-heist",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "P3-S1-hc-offline-2",
-  "task_state": "ready",
-  "claimed_at": "2026-11-17T17:22:00Z",
-  "lease_until": "2026-11-17T20:22:00Z",
-  "updated_at": "2026-11-17T20:38:00Z",
-  "expected_next_update_by": "2026-11-17T18:35:00Z",
+  "agent_state": "active",
+  "task_id": "P3-S1-marker-1",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-18T00:30:00Z",
+  "lease_until": "2026-11-18T03:30:00Z",
+  "updated_at": "2026-11-18T00:30:00Z",
+  "expected_next_update_by": "2026-11-18T01:15:00Z",
   "progress_marker": {
-    "last_green_sha": "788eaaf4d5a46f9cde43ab603446e40b23665715",
-    "next_step": "ready at 788eaaf4 (main dee23618 merged as e70ce880; pre-check PASS 20:35:23Z; owners diff exit 0); main's later commits 3fb2a0eb..18e3740d touch only docs/progress/. Gate request: heist in high contrast / Colour roles and value; the lead's gate run judges the stills (S1-R41).",
-    "at": "2026-11-17T20:38:00Z"
+    "last_green_sha": null,
+    "next_step": "claimed; main 7ad5e07f merged as 2864b559; find why FxAnchors' marks draw above HeistHud and set the order in heist_screen.gd's layers",
+    "at": "2026-11-18T00:30:00Z"
   },
-  "precheck": {
-    "sha": "788eaaf4d5a46f9cde43ab603446e40b23665715",
-    "exit": 0,
-    "finished_at": "2026-11-17T20:35:23Z",
-    "summary": "All checks passed."
-  },
-  "gate_request": {
-    "sha": "788eaaf4d5a46f9cde43ab603446e40b23665715",
-    "items": [
-      {
-        "item": "heist in high contrast",
-        "qualities": [
-          "Colour roles and value"
-        ]
-      }
-    ]
-  },
-  "ready_sha": "788eaaf4d5a46f9cde43ab603446e40b23665715",
+  "precheck": null,
+  "gate_request": null,
+  "ready_sha": null,
   "stop_at": "2026-11-18T21:00:00Z",
   "acks": [
     "M6",
