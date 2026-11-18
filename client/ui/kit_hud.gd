@@ -5,6 +5,14 @@ class_name KitHud
 ## the alarm meter with its count written, and the clock. Each writes its
 ## number; colour is never the only sign (§20.8).
 
+## §21.8's least ink outline a side: 1.5 points or 12% of the words' size.
+const OUTLINE_POINTS := 1.5
+const OUTLINE_SHARE := 0.12
+## Godot draws a quarter of a label's `outline_size` on each side.
+const OUTLINE_PER_SIDE := 4.0
+## The outline's soft edge, in pixels a side, which reads as no ink.
+const OUTLINE_EDGE_PX := 2.0
+
 
 ## The Keeper's badge at the home screen's top left: the portrait in a ring
 ## that fills with experience, the level on a plate, the name in Marcellus
@@ -314,7 +322,7 @@ static func crew(picture: Texture2D, name: String, health: float, uses: int, pre
 	n.add_theme_font_override("font", UI.bold_font())
 	n.add_theme_color_override("font_color", Tokens.color("text_on_night"))
 	n.add_theme_color_override("font_outline_color", Tokens.color("ink_line"))
-	n.add_theme_constant_override("outline_size", _ink(14) if inked else UI.px(2))
+	n.add_theme_constant_override("outline_size", ink_px(14) if inked else UI.px(2))
 	n.set_meta("bold", true)
 	v.add_child(n)
 	return v
@@ -445,7 +453,7 @@ static func clock_large(text: String, alarmed := false) -> PanelContainer:
 	l.add_theme_font_override("font", Tokens.font("display", 400, true))
 	l.add_theme_color_override("font_color", Tokens.color("on_alarm" if alarmed else "cream"))
 	l.add_theme_color_override("font_outline_color", Tokens.color("ink_line"))
-	l.add_theme_constant_override("outline_size", _ink(26))
+	l.add_theme_constant_override("outline_size", ink_px(26))
 	l.add_theme_color_override("font_shadow_color", Tokens.color("drop"))
 	l.add_theme_constant_override("shadow_offset_x", 0)
 	l.add_theme_constant_override("shadow_offset_y", UI.px(1.5))
@@ -673,16 +681,48 @@ static func tip(text: String) -> PanelContainer:
 	l.add_theme_font_override("font", UI.bold_font())
 	l.add_theme_color_override("font_color", Tokens.color("cream"))
 	l.add_theme_color_override("font_outline_color", Tokens.color("ink_line"))
-	l.add_theme_constant_override("outline_size", _ink(15))
+	l.add_theme_constant_override("outline_size", ink_px(15))
 	l.set_meta("bold", true)
 	p.add_child(l)
 	return p
 
 
-## An ink outline, in pixels, wide enough to count all round for words
-## `points` tall (§21.8: 1.5 points or 12% of their size).
-static func _ink(points: float) -> int:
-	return UI.px(maxf(1.5, 0.12 * points) + 0.5)
+## An ink outline, as `outline_size`, wide enough to count all round for
+## words `points` tall at the text size shown (`ink_side` reads it back).
+static func ink_px(points: float) -> int:
+	return outline_px(UI.text_px(points))
+
+
+## §21.8's outline all round: at least 1.5 points or 12% of the words' size
+## wide on each side, for words `font_px` pixels tall. Godot draws a quarter
+## of `outline_size` on each side (`OUTLINE_PER_SIDE`), so it is four times
+## that, with the soft edge's pixels added (`OUTLINE_EDGE_PX`), as the
+## character screen's large text does (S3-R35). It was the least a side
+## itself, which drew about a quarter of it.
+static func outline_px(font_px: float) -> int:
+	return side_px(maxf(UI.px(OUTLINE_POINTS), font_px * OUTLINE_SHARE))
+
+
+## The `outline_size` that draws `side_points` of ink on each side of the
+## words: four times the side, with the soft edge's pixels added (S3-R35).
+## For an outline a material or a type role names by its side (K1-R27).
+static func stroke_px(side_points: float) -> int:
+	return side_px(side_points * UI.PX_PER_POINT)
+
+
+static func side_px(side: float) -> int:
+	return ceili((side + OUTLINE_EDGE_PX) * OUTLINE_PER_SIDE)
+
+
+## How wide, in points, an `outline_size` draws on each side of the words.
+static func ink_side(outline_size: int) -> float:
+	return outline_size / OUTLINE_PER_SIDE / UI.PX_PER_POINT
+
+
+## Whether an outline `outline_size` wide counts all round for words
+## `points` tall (§21.8: 1.5 points or 12% of their size, on each side).
+static func ink_counts(outline_size: int, points: float) -> bool:
+	return ink_side(outline_size) >= maxf(OUTLINE_POINTS, OUTLINE_SHARE * points)
 
 
 ## How wide words stand in the kit's bold face (measured before the piece

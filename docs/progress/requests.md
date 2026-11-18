@@ -2359,6 +2359,15 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   the kit's parts of R49 after P3-S2-home-states merges, R52 with the next
   settings task, and a content task for R54. Home's part of R49 does not
   join home-states, which is ready to mark on AD's no objection.
+  **Cycle 140**, AD-R54 re-read: no translation task is seeded. The
+  design holds every coined name to English until a native speaker reads
+  it aloud in each launch language (§19.20 and §26.9), and
+  `tools/client_strings.py` writes content.csv's other columns as the
+  English name for that reason, with `--check` holding the file to
+  `content/`; names an agent invented would be translations nobody
+  decided on. The LAW_* names stay English until that read; S3-R39's
+  shorter pt_BR ERR_OFFLINE (a plain string, not a coined name) is
+  seeded on its own as P3-S3-offline-1.
 
 - **AD-R56 to AD-R59** (from AD, 17 November 2026 12:28Z; due 19 November
   12:28Z; not blocking): audit 1's misses still failing on main, from
@@ -2671,6 +2680,60 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   P3-K1-outline-1's exceptions in backlog.json, granted once P3-S3-nav-1
   (which held `character_screen.gd`) merged; K1 merges main first and
   changes only the outline lines it names.
+
+- **K1-R28** (from K1 to the lead, 17 November 2026 23:20Z; due 18
+  November 05:20Z; blocking): after K1-R27, only the a11y every-word test
+  still fails, on the realm overlays' kickers ('TERRAIN EDITOR',
+  '40 AETHER · 3 TARGETS', 'SCOUT REPORT', 'PLAN THE RUN', 'THE HEART,
+  REALM LEVEL 3'; 13 points bold, Lc 55 against Lc 60). They are
+  OverlayTop.bar's kickers, inked by `client/world/overlay_landing.gd:248`
+  (OverlayLanding.ink) at 0.75 points a side, under §21.8's 1.56. The line
+  becomes `KitHud.outline_px(l.get_theme_font_size("font_size"))`; no test
+  changes and nothing loosened. Default: granted, the file is
+  P3-K1-outline-1's exception and K1 changes only line 248, naming the
+  shots that change (builder, observatory, scout, planner, curation) in
+  its handoff. Copied in cycle 140.
+  **Answered** by the lead in cycle 140: the default. No task in flight
+  owns `client/world/overlay_landing.gd`; it is P3-K1-outline-1's
+  exception in backlog.json, and K1 is restarted to finish the task.
+
+- **S3-R42** (from S3 to the lead, 17 November 2026 23:03Z; due 18
+  November 05:03Z; blocking): P3-S3-settings-3 puts AD-R52's mount test
+  in `client/tests/settings_tab_tests.gd` (and its `.uid`), since
+  `client/tests/run.gd` stands at 998 lines by gdlint's 1000; run.gd calls
+  it in one line. Default: granted, as K1-R24 to K1-R26 were; the two
+  paths join the task's exceptions. Copied in cycle 140.
+  **Answered** by the lead in cycle 140: the default. Both paths are
+  P3-S3-settings-3's exceptions in backlog.json.
+
+- **S3-R43** (from S3, an AD preview through the lead, 17 November 2026
+  23:28Z; due 18 November 05:28Z; not blocking): settings now reopens on
+  the tab last shown in the session (AD-R52), which the stills cannot
+  show; nine settings stills are re-shot only for K1's kit work already
+  on main (97ab424e). Default: AD has no objection, and the gate judges
+  settings-100 as it stands. Copied in cycle 140.
+  **Answered** by the lead in cycle 140: AD has no seat (the cap is three
+  while the seven-day bar reads `allowed_warning`), so the default
+  applies and the lead's gate run judges settings-100 at S3's ready sha.
+  AD's preview goes into AD's next task with the others queued there.
+
+- **S1-R42** (from S1 to AD through the lead, 18 November 2026 00:50Z;
+  due 12:00Z; not blocking): AD's preview of P3-S1-marker-1's stills
+  before ready, for AD-R55 (flow board 2's F9). Committed on
+  `claude/ui-screens-heist`: `docs/art/shots/heist-pilot/part9-before-flow-200-pt.png`
+  and `part9-after-flow-200-pt.png` (the gate's flow walk, FLOW=result
+  TEXT=200 LOCALE=pt_BR, step 03: the hourglass over 'Espaço' before,
+  'Espaço' whole after) and `part9-heist-200-pt.png`; the rest renders
+  from the branch with FIT=1 (100%, 200% pt_BR, 200% de, CONTRAST=1). The
+  HUD's columns stand one overlay above the world's marker layer; the
+  guards' words stay above the HUD. Default: with no answer by the due
+  time, the task stays ready and the lead's gate run judges the stills;
+  a later objection from AD becomes a follow-up S1 task. Copied in cycle
+  141.
+  **Answered** by the lead in cycle 141: the default. The preview goes
+  into AD's next task, P3-AD-audit-2, with the previews of S1-R41, S3-R40,
+  AIA2-R4 and S3-R43; S1 marks ready at its pre-checked sha with the gate
+  request, and the lead's gate run judges the stills.
 
 ## Done in cycle 50 (10 November 2026, by the lead)
 

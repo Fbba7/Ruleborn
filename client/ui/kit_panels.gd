@@ -406,7 +406,7 @@ static func quest(icon: String, title: String, done: int, of: int, reward: Strin
 	if float(done) / maxf(of, 1) >= 0.5:
 		count.add_theme_color_override("font_color", Tokens.color("cream"))
 		count.add_theme_color_override("font_outline_color", Tokens.color("ink_line"))
-		count.add_theme_constant_override("outline_size", maxi(UI.px(2.5), ceili(UI.text_px(13) * 0.2)))
+		count.add_theme_constant_override("outline_size", KitHud.ink_px(13))
 	else:
 		count.add_theme_color_override("font_color", Tokens.color("parchment_ink"))
 		count.add_theme_constant_override("outline_size", 0)

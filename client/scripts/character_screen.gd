@@ -284,7 +284,7 @@ static func _over_stage(l: Label) -> Label:
 ## words have their size in the tree (AD-R58).
 static func _stroke(l: Label) -> void:
 	var role := Tokens.type_role("display_s")
-	var width := UI.px(float(role["outline"]) * 1.5)
+	var width := KitHud.stroke_px(float(role["outline"]) * 1.5)
 	if _large():
 		width = maxi(width, _outline_px(l))
 		if not l.is_inside_tree():

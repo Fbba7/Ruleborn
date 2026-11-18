@@ -56,11 +56,55 @@ const HUBS := {
 		{"route": &"sages", "words": "HUB_SAGES", "icon": "screens/sagehall"},
 		{"route": &"forms", "words": "HUB_FORMS", "icon": "screens/formsalbum"}],
 }
+## Where the phone's back (and Escape) goes from each route: the one back
+## table, so no screen keeps its own. A screen below a tab goes where its own
+## back control does; a tab or a hub's segment goes home; home asks before
+## the game quits (`go_back`). A route that names itself has no way back
+## while it lasts (the heist leaves through its result, the age gate and the
+## first screen through their answers), so the back does nothing there.
+const BACK := {
+	&"home": &"home",
+	&"age": &"age",
+	&"heist": &"heist",
+	&"result": &"home",
+	&"replay": &"home",
+	&"settings": &"home",
+	&"builder": &"home",
+	&"track": &"home",
+	&"shop": &"home",
+	&"social": &"home",
+	&"friends": &"home",
+	&"workshop": &"home",
+	&"universe": &"home",
+	&"roster": &"home",
+	&"character": &"roster",
+	&"sages": &"home",
+	&"forms": &"home",
+	&"hatch": &"home",
+	&"weaving": &"home",
+	&"codex": &"home",
+	&"harmony": &"home",
+	&"observatory": &"home",
+	&"lab": &"home",
+	&"curation": &"map",
+	&"law": &"codex",
+	&"profile": &"home",
+	&"planner": &"scout",
+	&"map": &"home",
+	&"realm": &"map",
+	&"share": &"home",
+	&"first": &"first",
+	&"defences": &"home",
+	&"scout": &"observatory",
+}
 
 var store: Store
 ## How a scene is shown; a test replaces it.
 var change: Callable = func(path: String) -> void:
 	(Engine.get_main_loop() as SceneTree).change_scene_to_file(path)
+## How the game quits, once the player says so; a test replaces it.
+var quit: Callable = func() -> void:
+	(Engine.get_main_loop() as SceneTree).quit()
 
 
 func _init(s: Store) -> void:
@@ -78,3 +122,21 @@ func go(name: StringName, params := {}) -> void:
 
 func current() -> StringName:
 	return store.get_slice(AppState.ROUTE)["name"]
+
+
+## The route the back leaves `name` for (BACK).
+func back_route(name: StringName) -> StringName:
+	return BACK.get(name, &"home")
+
+
+## The phone's back, or Escape (App.GoBack): a route with no way back stays,
+## and any other goes to its back route. On home it goes nowhere and answers
+## true: home asks before the game quits, and only its Quit calls `quit`.
+func go_back() -> bool:
+	var here := current()
+	if here == &"" or here == &"home":
+		return true
+	var to := back_route(here)
+	if to != here:
+		go(to)
+	return false

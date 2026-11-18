@@ -3,42 +3,29 @@
   "role": "S2",
   "branch": "claude/ui-screens-home",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "P3-S2-home-7",
+  "agent_state": "active",
+  "task_id": "P3-S2-back-1",
   "task_state": "working",
-  "claimed_at": "2026-11-17T15:55:00Z",
-  "lease_until": "2026-11-17T19:06:28Z",
-  "updated_at": "2026-11-17T17:32:10Z",
-  "expected_next_update_by": "2026-11-17T18:34:05Z",
+  "claimed_at": "2026-11-17T21:25:00Z",
+  "lease_until": "2026-11-18T02:00:00Z",
+  "updated_at": "2026-11-17T23:00:00Z",
+  "expected_next_update_by": "2026-11-17T23:45:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "c58d49c0",
-    "next_step": "Checks pass on c58d49c0 (check_all, guard, check_screens, owners.py diff, pre-check); 61 of 63 fit cases ok, the two 125% de failures pre-existing (S2-R44). Waiting on the gate at c58d49c0 and AD's S2-R43; mark ready once the gate passes."
+    "last_green_sha": "0bfa1d6a",
+    "next_step": "main 443a5cf5 merged (b8cc234); fresh-container setup, build.sh, pre-check and guard on the merge, then ready."
   },
   "precheck": {
-    "sha": "c58d49c0a07af5ebc5e2cc1c848ee1de626efce8",
+    "sha": "0bfa1d6a3e794bdae4d65b68e9fdb0a2da4331dd",
     "exit": 0,
-    "finished_at": "2026-11-17T17:31:36Z",
+    "finished_at": "2026-11-17T22:18:03Z",
     "summary": "All checks passed."
   },
   "gate_request": {
-    "sha": "c58d49c0",
+    "sha": "0bfa1d6a",
     "items": [
       {
         "item": "home at 100% text",
-        "qualities": [
-          "Hierarchy",
-          "Display type"
-        ]
-      },
-      {
-        "item": "home at 200% text, pt_BR",
-        "qualities": [
-          "Hierarchy"
-        ]
-      },
-      {
-        "item": "home in high contrast",
         "qualities": [
           "Hierarchy"
         ]
@@ -692,8 +679,40 @@
       "due": "2026-11-18T16:22:30Z",
       "default": "S2 leaves both as they are, named in Part 8, and marks P3-S2-home-7 ready on its own checks; a later home task (or this one's follow-up) lets the purse take two rows from 125% in long locales and adds 125% to M26's cases.",
       "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R45",
+      "from": "S2",
+      "to": "lead",
+      "ask": "guard.sh's first step, the byte-for-byte rebake, fails in this container: 'client/ui/art/icons_256.webp is not what its sources bake to' (and icons_256_hc.webp). It fails the same way on main e0644c93 here: a worktree of main bakes the very bytes this branch bakes. P3-S2-home-7 changes nothing under client/ui/art, art/ui or tools/ui_bake. art/ui/icons/studio/bake_icons.js draws through Chromium 1243's software GL (SwiftShader, playwright 1.63.0). Here its output is the same on every run but not the committed bytes, so the bake depends on the machine. Side by side, the 11 icons look the same. Every other guard step passes on 9ef7b295 (bake --check, curves, check_screens, budget_shots OK). The studio, the atlas and the guard have no owner in flight, so this goes to the lead. Please file a fix, for example a bake that is the same on every machine, or a rebake check with a pixel tolerance for the scene families.",
+      "files": [
+        "art/ui/icons/studio/bake_icons.js",
+        "tools/ui_bake/guard.sh",
+        "client/ui/art/icons_256.webp"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T19:05:00Z",
+      "due": "2026-11-18T19:05:00Z",
+      "default": "P3-S2-home-7 stays ready at 9ef7b295; the lead's own guard run on the candidate decides the merge, and the rebake stays as it is",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R46",
+      "from": "S2",
+      "to": "AD",
+      "ask": "For AD, through the lead (P3-S2-back-1's done_when: AD previews the stills before ready). Preview 0bfa1d6a on claude/ui-screens-home, docs/art/shots/home-screen/: home's quit question, which Android's back or Escape opens on home. It is a kit confirm dialog (KitPanels.dialog, kind confirm): 'Quit the game?' on the ribbon, with Quit (leather) and Stay (gold, the primary, focused). A second back closes it. Stills: quit-100.png, quit-200.png, quit-100-pt_BR.png, quit-200-pt_BR.png, quit-contrast-100.png, quit-contrast-200.png, and home-100.png ('home at 100% text', unchanged). Check that Stay reads as the default, that Quit does not read as the main action, that the words fit at 200% and in pt_BR, and that high contrast holds. Reproduce with `FIT=1 QUIT=1 [TEXT=200] [LOCALE=pt_BR] [CONTRAST=1] bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`. Objections in one round, please. Detail: docs/art/tracks/home-screen.md Part 9.",
+      "files": [
+        "client/app/app.gd",
+        "client/tests/shots/universe_home.gd",
+        "docs/art/tracks/home-screen.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T22:05:00Z",
+      "due": "2026-11-18T01:05:00Z",
+      "default": "If AD has no seat or has not answered by the due time, the lead's gate run judges the stills, and S2 marks ready on its own checks and the gate.",
+      "escalate_to": "lead"
     }
   ],
   "answers": [],
-  "next_step": "Pre-check PASS 17:31Z on c58d49c0. Waiting on the gate at c58d49c0 (home at 100% text; at 200% text, pt_BR; in high contrast) and AD's S2-R43 (default 19:06Z: the stills stand). On a pass: ready_sha c58d49c0, task_state ready. On a fail: rework from the verdict. Handoff in docs/progress/S2.md."
+  "next_step": "Gate passed at 0bfa1d6a (Hierarchy 3 of 3); S2-R46 answered with the default. Merged main 443a5cf5; rerunning the setup line, build.sh, check_all and guard on the merge, then ready."
 }
