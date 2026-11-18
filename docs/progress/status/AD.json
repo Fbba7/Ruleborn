@@ -3,21 +3,26 @@
   "role": "AD",
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P3-AD-wave-board",
-  "task_state": "claimed",
+  "task_state": "ready",
   "claimed_at": "2026-11-18T04:56:42Z",
   "lease_until": "2026-11-18T07:56:42Z",
-  "updated_at": "2026-11-18T05:15:11Z",
-  "expected_next_update_by": "2026-11-18T06:00:11Z",
+  "updated_at": "2026-11-18T05:43:45Z",
+  "expected_next_update_by": "2026-11-18T06:29:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "21c0bc04ebe39c87cb385ed96ca2d41e12a607c6",
-    "next_step": "wave.md written with its ruling (the wave stands but for one exit re-work, AD-R67: settings at 100%, Hierarchy, audit 2's miss); budgets OK on all 15 shots; motion strips ok; next: merge main, owners diff, pre-check, ready"
+    "last_green_sha": "baa01a1c27ec54d5791e0c05fff6558eb7921bdd",
+    "next_step": "ready: wave.md's ruling stands but for AD-R67 (settings at 100%, Hierarchy; S3 on settings_screen.gd, rank 1 under M57); AD previews the re-work's stills when its task runs"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "baa01a1c27ec54d5791e0c05fff6558eb7921bdd",
+    "exit": 0,
+    "finished_at": "2026-11-18T05:43:17Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "baa01a1c27ec54d5791e0c05fff6558eb7921bdd",
   "stop_at": "2026-11-18T21:00:00Z",
   "acks": [
     "M12",
