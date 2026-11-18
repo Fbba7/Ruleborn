@@ -5,7 +5,7 @@
    "name": "words 1: Sehen und Komfort",
    "rect": [
     30.33,
-    217.03,
+    204.75,
     326.44,
     105.08
    ]
@@ -14,7 +14,7 @@
    "name": "switch-row 2: Hoher Kontrast: aus",
    "rect": [
     17.33,
-    330.78,
+    318.5,
     352.44,
     153.83
    ]
@@ -23,13 +23,22 @@
    "name": "switch-row 3: Bewegung: voll",
    "rect": [
     17.33,
-    493.28,
+    481.0,
     352.44,
     106.17
    ]
   },
   {
-   "name": "back 4: Zurück",
+   "name": "switch-row 4: Vibration: an",
+   "rect": [
+    17.33,
+    595.83,
+    352.44,
+    58.5
+   ]
+  },
+  {
+   "name": "back 5: Zurück",
    "rect": [
     28.17,
     723.67,

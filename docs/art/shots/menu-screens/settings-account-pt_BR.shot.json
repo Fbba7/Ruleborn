@@ -1,0 +1,67 @@
+{
+ "controls": [
+  {
+   "interactive": false,
+   "name": "set-head 1: Ajustes",
+   "rect": [
+    17.33,
+    47.67,
+    355.33,
+    52.0
+   ]
+  },
+  {
+   "name": "row 2: Jogo Acesso Conta",
+   "rect": [
+    17.33,
+    108.33,
+    355.33,
+    56.33
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "words 3: Conta",
+   "rect": [
+    30.33,
+    173.33,
+    65.36,
+    32.86
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "words 4: ›",
+   "rect": [
+    346.31,
+    433.33,
+    15.53,
+    32.86
+   ]
+  },
+  {
+   "name": "button 5: Perfil e estatísticas",
+   "rect": [
+    17.33,
+    419.61,
+    355.33,
+    60.67
+   ]
+  },
+  {
+   "name": "back 6: Voltar",
+   "rect": [
+    28.17,
+    723.67,
+    130.0,
+    52.0
+   ]
+  }
+ ],
+ "frame_pt": [
+  390.0,
+  845.0
+ ],
+ "image": "settings-account-pt_BR.png",
+ "text_scale": 1.0
+}

@@ -7,14 +7,14 @@
     17.33,
     47.67,
     352.44,
-    50.56
+    52.0
    ]
   },
   {
    "name": "row 2: Game Access Account",
    "rect": [
     17.33,
-    106.89,
+    108.33,
     352.44,
     56.33
    ]
@@ -24,7 +24,7 @@
    "name": "words 3: Access",
    "rect": [
     30.33,
-    171.89,
+    173.33,
     70.06,
     32.86
    ]
@@ -33,7 +33,7 @@
    "name": "size-a 4: Text 100%: smaller",
    "rect": [
     28.17,
-    222.08,
+    223.53,
     69.33,
     52.0
    ]
@@ -43,7 +43,7 @@
    "name": "size-mid 5: 100%",
    "rect": [
     152.03,
-    223.53,
+    224.97,
     82.69,
     32.86
    ]
@@ -52,7 +52,7 @@
    "name": "size-a 6: Text 100%: larger",
    "rect": [
     289.61,
-    222.08,
+    223.53,
     69.33,
     52.0
    ]
@@ -62,7 +62,7 @@
    "name": "sample 7: Stillness Anyone standing still for 1.5 seconds becomes invisible to guards and ",
    "rect": [
     28.17,
-    282.75,
+    284.19,
     330.78,
     85.22
    ]
@@ -72,7 +72,7 @@
    "name": "words 8: Stillness",
    "rect": [
     82.33,
-    289.25,
+    290.69,
     265.78,
     29.97
    ]
@@ -82,7 +82,7 @@
    "name": "shapes 9: Time Motion Matter Energy Life Spirit Each school keeps its own shape in every m",
    "rect": [
     17.33,
-    385.31,
+    386.75,
     352.44,
     111.58
    ]
@@ -92,7 +92,7 @@
    "name": "words 10: Seeing and comfort",
    "rect": [
     30.33,
-    505.56,
+    507.0,
     211.97,
     32.86
    ]
@@ -101,7 +101,7 @@
    "name": "switch-row 11: High contrast: off",
    "rect": [
     17.33,
-    547.08,
+    548.53,
     352.44,
     52.0
    ]
@@ -110,7 +110,7 @@
    "name": "switch-row 12: Motion: full",
    "rect": [
     17.33,
-    607.75,
+    609.19,
     352.44,
     52.0
    ]

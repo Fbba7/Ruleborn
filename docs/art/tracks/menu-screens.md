@@ -641,8 +641,57 @@ Evidence: rendered with `FIT=1 RECORD=1` and the env below, every still printed 
 | 200%, de, scrolled | 27.2 and 23.1 | – | – | – |
 | 200%, de, high contrast, scrolled | 83.3, 79.5 and 76.5 | – | – | 96.2 |
 
+### AD's preview 3: the title leads, not the tab strip (P3-S3-settings-4, AD-R68)
+
+AD's preview 3 (objection A) kept one fault at 100% text: in the squint the cream tab strip was the heaviest slab under the title. It offered two roads: drop the strip to a mid value with kit looks only (the track on `ghost`, the unchosen tabs clear, the chosen tab on its dark leather), each tab passing value steps on its own ground; or, if no kit strip passes there, audit 2's road for the title, heavier and in the display face with its outline, so it outweighs the strip by size and weight. **S3 took the title road.** The strip stays as it is.
+
+- **The mid strip was tried, and fails value steps.** With the track on `ghost` and the unchosen tabs clear with cream words, the strip stood 35.7 ΔL* off the night, which passes. The chosen tab did not: its dark leather (`seg_on_light`, median L* 27.3) sits 17.7 ΔL* from the ghost track (L* 45), 1.8 of the 2 steps needed. Other kit looks at a mid value over the night are no better for a strip: `chip` (L* 38.4) puts the leather 11 off it, and `tab_active` (46.4) and `disc` (51.4) are not strips. The next lighter kit strip, `bar_track_light` (61.8), is the light family again. So no kit strip passes at a mid value, and `_tabs()` is back to `seg_track_light` with `seg_light` tabs and the chosen tab on `seg_on_light`, as on main. (The try was WIP commit 4bd849ed; it is undone.)
+- **The title is in the kit's largest display slot.** `_head()` sets SETTINGS_TITLE in `display_xl` (Lilita One, 44 points, a 4-point ink outline and a 3-point hard drop), not `hero` (Marcellus, 34). It stays on its card (`card_gold`) with the gear. Its strokes are heavy where Marcellus's were hairlines. Over the head plate's box on the 100% English still, 5,408 pixels are lighter than L* 85, against 1,212 before, and in an 8-pixel grayscale blur the box averages L* 26.4 (p90 58.8) where it averaged 17.8 (p90 27.8). In German, with the longer word, the same counts are 7,958 against 2,111, and L* 32.7 (p90 61.6) against 19.6 (p90 30.2). The strip is the same as before (en: L* 59.0, p90 82.0, 18,241 light pixels): it is still the larger light area, and the title does not try to out-light it. What changes is the figure. The title's values now spread wider than the strip's (standard deviation of L* 31.2 against 28.8 in English, 36.6 against 28.7 in German), the word is the largest on the screen, and its ink outline and drop cut it off the card, so the bright, edged word is the figure at the top of the squint, and the strip reads as a ground under it.
+- **The title keeps its room.** The display face's line box stands well clear of its words. It is trimmed by 15% of the title's size over the caps and 13% under the words (`TITLE_TRIM_TOP`, `TITLE_TRIM_BOTTOM`, a FontVariation's top and bottom spacing). Untrimmed, the heavier title pushed the High contrast row off the first screen at 100% in German (objection J). Trimmed, the rows below sit where they were on main in German and 1.5 points lower in English and pt_BR, and the High contrast row is on the first screen in every language. The outline meets the plate's rim, and under the "g" of "Settings" and "Einstellungen" it runs a pixel or two onto the rim's dark edge. Three other trims were tried. At 18% and 14%, the outline ran over the top rim. At 12% and 8%, the rows sat 5 points lower, and at 15% and 11%, 2.2 points lower (1.1 in German). Each was enough to fail value steps that pass on main: at 12% and 8%, the pt_BR High contrast row (19.7) and the German "Alle anderen Geräte abmelden" button (18.0); at 15% and 11%, that button again (18.0). Each of those controls' rings is about half the row's dark drop shadow and half the night, so its median flips with a point or two of shift (see "What is still worse than before"). At 200%, as before, a word too long for the row ("Einstellungen") shrinks the title until it fits; the room it checks now leaves out the outline on both sides.
+- **High contrast and Back are as they were.** High contrast keeps the light strip and the gold As. Its title is the same display title. Back is unchanged.
+
+Evidence: every still below was rendered with `FIT=1 RECORD=1` and the env shown, and printed `fit ok`.
+
+| Still | Env | What changed |
+|---|---|---|
+| `settings-100`, `settings-pt_BR`, `settings-de` | `TAB=access`, with `LOCALE=pt_BR` or `LOCALE=de` | The title in the display face; the rows 1.5 points lower in en and pt_BR, where they were in de |
+| `settings-game-100`, `settings-game-pt_BR`, `settings-game-de` | `TAB=game`, with the locale | New stills and records, for AD's check of the Game tab |
+| `settings-account-100`, `settings-account-de` | `TAB=account`, with the locale | The title |
+| `settings-account-pt_BR` | `TAB=account LOCALE=pt_BR` | New still and record, for AD's check |
+| `settings-account-signed-100`, `settings-account-signed-de` | `TAB=account SIGNED=1`, with the locale | The title |
+| `settings-hc`, `settings-hc-pt_BR` | `TAB=access HC=1`, with the locale | The title; the strip, the As and Back as they were |
+| `settings-200-pt_BR`, `settings-200-de` | `TAB=access TEXT=200`, with the locale | The title (shrunk to fit in German, "Einstellungen") |
+| `settings-200-pt_BR-comfort`, `settings-200-de-comfort`, `settings-200-hc-de-comfort` | `TAB=access TEXT=200 SCROLL=2400`, with the locale (and `HC=1`) | The rows a little lower under the scroll |
+| `settings-200-de-account-signed`, `-900`, `-1800` | `TAB=account TEXT=200 LOCALE=de SIGNED=1`, `SCROLL=900` or `1800` | The title; these have no record, as before |
+
+`checks.py value-steps`, ΔL* off the ground:
+
+| Still | Tab strip | A / A | Switch rows | Buttons | Back |
+|---|---|---|---|---|---|
+| `settings-100` (Access, 100%, en) | 71.5 | 57.9, 57.0 | 39.5, 39.5 | – | 83.6 |
+| `settings-pt_BR` (Access, 100%, pt_BR) | 71.5 | 57.9, 57.0 | 30.4 | – | 83.6 |
+| `settings-de` (Access, 100%, de) | 71.5 | 57.9, 57.1 | 30.4 | – | 83.5 |
+| `settings-game-100` (Game, 100%, en) | 71.2 | – | 31.5 | 76.5, 6.6 (fail), 7.0 (fail), 7.5 (fail), 8.8 (fail), 10.4 (fail), 10.8 (fail) | 83.6 |
+| `settings-game-pt_BR` (Game, 100%, pt_BR) | 71.2 | – | 31.5 | 76.3, 6.6 (fail), 7.0 (fail), 7.5 (fail), 8.8 (fail), 10.4 (fail), 10.8 (fail) | 83.6 |
+| `settings-game-de` (Game, 100%, de) | 71.2 | – | 31.5 | 76.3, 6.6 (fail), 7.0 (fail), 7.5 (fail), 8.8 (fail), 10.4 (fail), 10.8 (fail) | 83.5 |
+| `settings-account-100` (Account, 100%, en) | 71.5 | – | – | 72.7 | 83.6 |
+| `settings-account-pt_BR` (Account, 100%, pt_BR) | 71.5 | – | – | 72.7 | 83.6 |
+| `settings-account-de` (Account, 100%, de) | 71.5 | – | – | 72.2 | 83.5 |
+| `settings-account-signed-100` (Account, signed in, 100%, en) | 71.5 | – | – | 32.1, 31.7, 24.1, 50.0 | 83.6 |
+| `settings-account-signed-de` (Account, signed in, 100%, de) | 71.5 | – | – | 32.5, 32.1, 25.3, 50.0 | 83.5 |
+| `settings-hc` (Access, high contrast, en) | 90.5 | 75.3, 75.3 | 77.0, 75.5 | – | 96.2 |
+| `settings-hc-pt_BR` (Access, high contrast, pt_BR) | 90.8 | 75.3, 75.3 | 75.0 | – | 96.2 |
+| `settings-200-pt_BR` (Access, 200%, pt_BR) | 51.4 | 58.8, 58.8 | – | – | 79.1 |
+| `settings-200-de` (Access, 200%, de) | 53.7 | 58.8, 58.8 | – | – | 78.8 |
+| `settings-200-pt_BR-comfort` (Access, 200%, pt_BR, scrolled) | – | – | 28.8, 24.6, 21.7 | – | 79.1 |
+| `settings-200-de-comfort` (Access, 200%, de, scrolled) | – | – | 27.3, 23.3, 31.0 | – | 78.8 |
+| `settings-200-hc-de-comfort` (Access, 200%, de, high contrast, scrolled) | – | – | 83.5, 79.9, 77.0 | – | 96.2 |
+
+Each value is within 0.6 of the same still before this change (this task's first pass, at 4a998521). The scrolled 200% stills in pt_BR and German now hold a third switch row in the frame (21.7 and 31.0), which passes. The only fails are the Game tab's six stepper discs (6.6 to 10.8), which fail the same way on main's Game record (`after-settings-100-game.shot.json`): this task does not touch them.
+
 ### What is still worse than before
 
+- **Value steps on a row that sits on a shadow** (P3-S3-settings-4, AD-R68). The rings of a few controls, such as the pt_BR High contrast row and the German "Alle anderen Geräte abmelden" button, are about half the row's dark drop shadow (L* about 5) and half the night (L* about 25). Their ring median falls on whichever half is a few pixels larger, so a shift of a few points can flip a pass to a fail. They pass at today's layout. A steadier ring is the gate's work (`tools/ui_gate/checks.py`), not this screen's.
 - **The switch rows** (superseded by P3-S3-settings-4, above: the rows are ghost, with cream words, outside high contrast). In grayscale the cream switch rows still weighed about as much as the headings above them.
 - **The tab and back words.** Key frame 05 sets them in capitals. The screen keeps the kit's sentence case (`Tokens.type_role`). Capitals would be a change to the kit's type roles, which is K1's work.
 - **The shapes in pt_BR.** At 100% text, the longer Portuguese names (Movimento, Matéria) put the six coins three to a line, not the key frame's six in one row.
