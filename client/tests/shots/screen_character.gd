@@ -2,7 +2,8 @@ extends SceneTree
 ## The Character screen for one of ShotData's roster (tools/render/shoot.sh):
 ## ID picks the character (5, a Skyskipper, by default); TAB the tab (0
 ## Heist, 1 Stats, 2 Compare); SCROLL scrolls; LOCALE picks the words
-## (pt_BR); FIT=1 fails the run if any words do not fit
+## (pt_BR); OFFLINE=1 fails the roster's load after it, as "no server is
+## set" does, to show the offline notice; FIT=1 fails the run if any words do not fit
 ## (and writes what it found to the still's .fit.txt); RECORD=1 writes
 ## the still's shot record beside it (docs/art/ui-quality/gate/shots.md).
 func _initialize() -> void:
@@ -20,6 +21,8 @@ func _go() -> void:
 	Settings.apply()
 	App.services = Fixtures.answered(Services.build(root, "", null, "user://outbox-shot.json"))
 	App.services.store.dispatch(&"roster_loaded", {"view": ShotData.roster()})
+	if OS.get_environment("OFFLINE") != "":
+		App.services.store.dispatch(&"roster_failed", {"code": "offline"})
 	var id := int(OS.get_environment("ID")) if OS.get_environment("ID") != "" else 5
 	App.services.router.go(&"character", {"id": id})
 	await process_frame
@@ -144,7 +147,7 @@ static func write_record(screen: CharacterScreen, shot: String) -> void:
 					name = l.text
 			if name == "":
 				name = c.tooltip_text
-			if name == Strings.t("HOME_ROSTER"):
+			if c.get_meta("back", false):
 				kind = "back"
 		elif c is Label and (c as Label).get_theme_font_size("font_size") >= UI.text_px(20):
 			kind = "words"

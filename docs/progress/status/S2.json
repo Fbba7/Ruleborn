@@ -4,24 +4,34 @@
   "branch": "claude/ui-screens-home",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P3-S2-home-states",
+  "task_id": "P3-S2-back-1",
   "task_state": "working",
-  "claimed_at": "2026-11-17T10:50:00Z",
-  "lease_until": "2026-11-17T13:50:00Z",
-  "updated_at": "2026-11-17T11:20:00Z",
-  "expected_next_update_by": "2026-11-17T12:05:00Z",
+  "claimed_at": "2026-11-17T21:25:00Z",
+  "lease_until": "2026-11-18T02:00:00Z",
+  "updated_at": "2026-11-17T23:00:00Z",
+  "expected_next_update_by": "2026-11-17T23:45:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "a4090ec7",
-    "next_step": "f0092fee: AD's note 1 fixed (Defence disc drops 4 pt at large text). Main merged (8ac36c59). Running: check_all and the large-text fit cases; then guard, check_screens, pre-check, owners.py diff, gate_request, ready."
+    "last_green_sha": "0bfa1d6a",
+    "next_step": "main 443a5cf5 merged (b8cc234); fresh-container setup, build.sh, pre-check and guard on the merge, then ready."
   },
   "precheck": {
-    "sha": "488c8b5a54e3a49a60f723436d20647395e8a0a2",
+    "sha": "0bfa1d6a3e794bdae4d65b68e9fdb0a2da4331dd",
     "exit": 0,
-    "finished_at": "2026-11-17T09:39:03Z",
+    "finished_at": "2026-11-17T22:18:03Z",
     "summary": "All checks passed."
   },
-  "gate_request": null,
+  "gate_request": {
+    "sha": "0bfa1d6a",
+    "items": [
+      {
+        "item": "home at 100% text",
+        "qualities": [
+          "Hierarchy"
+        ]
+      }
+    ]
+  },
   "ready_sha": null,
   "stop_at": "2026-11-18T21:00:00Z",
   "acks": [
@@ -635,9 +645,74 @@
       "created_at": "2026-11-17T07:52:00Z",
       "due": "2026-11-17T16:00:00Z",
       "default": "As S2-R36's: if AD has not answered by 16:00Z, the stills stand and S2 marks ready on its own checks; the gate judges them.",
+      "escalate_to": "lead",
+      "answered": "AD previewed e9285afd (board-3.md, second look): no objection. Note 1 tried (f0092fee) and reverted (09f0f119), as the taller holder hides the left edge at 200% with the notice in pt_BR, pt_PT and fr; note 2 left. home-screen.md, \"AD's preview, second look\"."
+    },
+    {
+      "id": "S2-R43",
+      "from": "S2",
+      "to": "AD",
+      "ask": "For AD, through the lead (P3-S2-home-7's done_when: AD previews the stills before ready). Preview dff000c9 on claude/ui-screens-home. What changed: (1) the tab bar routes by Router.TABS, as ScreenNav.bar does; Islands and the Heist stay home's own (Islands shows the world, the Heist starts a heist), named in home.gd's TABS_HOME_KEEPS. (2) ScreenNav's label rule: the tabs not chosen show their names up to 125% text and icons alone above it, each named aloud; the chosen tab's word always shows. At 125% the names shrink no lower than their 100% size (13 pt) and give way to icons where they still do not fit (125% pt_BR does; en keeps them). (3) The goal bar's 'Progress' labels show again and its fill is green in both looks; gold stays on Collect. Check at 100%, 125% and 200% text in en, pt_BR and de, and in high contrast: the chosen tab's word, the other names or icons, the goal bar's green against the Collect gold, nothing by colour alone. Reproduce with `FIT=1 [TEXT=125|200] [LOCALE=<loc>] [CONTRAST=1] bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`. Objections in one round, please. Detail: docs/art/tracks/home-screen.md Part 8.",
+      "files": [
+        "client/scripts/home.gd",
+        "client/scripts/home_parts.gd",
+        "client/tests/shots/universe_home.gd",
+        "docs/art/tracks/home-screen.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T16:06:28Z",
+      "due": "2026-11-17T19:06:28Z",
+      "default": "If AD has not answered by the due time, the stills stand and S2 marks ready on its own checks; the gate judges them.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R44",
+      "from": "S2",
+      "to": "lead",
+      "ask": "For the lead to rule, no answer needed if the default suits. P3-S2-home-7 adds 125% text to home's FIT=1 runs (the tab names' rule turns at 125%). Two of those cases fail, and fail the same on main's code (53e18516), so this task did not cause them: at 125% in German the purse's three pills wrap to two rows (universe_home.gd's check holds the purse to one row below 150%, and home.gd's _fit_amounts lays a row of three below 150%), and with the raid notice the check also finds no realm marked over the whole universe. Reproduce: `FIT=1 TEXT=125 LOCALE=de [NOTICE=1] bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`. Neither is in this task's done_when; M26's cases (100%, 150%, 200%) all pass. Detail: docs/art/tracks/home-screen.md Part 8, 'Not this task's'.",
+      "files": [
+        "client/scripts/home.gd",
+        "client/tests/shots/universe_home.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T16:22:30Z",
+      "due": "2026-11-18T16:22:30Z",
+      "default": "S2 leaves both as they are, named in Part 8, and marks P3-S2-home-7 ready on its own checks; a later home task (or this one's follow-up) lets the purse take two rows from 125% in long locales and adds 125% to M26's cases.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R45",
+      "from": "S2",
+      "to": "lead",
+      "ask": "guard.sh's first step, the byte-for-byte rebake, fails in this container: 'client/ui/art/icons_256.webp is not what its sources bake to' (and icons_256_hc.webp). It fails the same way on main e0644c93 here: a worktree of main bakes the very bytes this branch bakes. P3-S2-home-7 changes nothing under client/ui/art, art/ui or tools/ui_bake. art/ui/icons/studio/bake_icons.js draws through Chromium 1243's software GL (SwiftShader, playwright 1.63.0). Here its output is the same on every run but not the committed bytes, so the bake depends on the machine. Side by side, the 11 icons look the same. Every other guard step passes on 9ef7b295 (bake --check, curves, check_screens, budget_shots OK). The studio, the atlas and the guard have no owner in flight, so this goes to the lead. Please file a fix, for example a bake that is the same on every machine, or a rebake check with a pixel tolerance for the scene families.",
+      "files": [
+        "art/ui/icons/studio/bake_icons.js",
+        "tools/ui_bake/guard.sh",
+        "client/ui/art/icons_256.webp"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T19:05:00Z",
+      "due": "2026-11-18T19:05:00Z",
+      "default": "P3-S2-home-7 stays ready at 9ef7b295; the lead's own guard run on the candidate decides the merge, and the rebake stays as it is",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S2-R46",
+      "from": "S2",
+      "to": "AD",
+      "ask": "For AD, through the lead (P3-S2-back-1's done_when: AD previews the stills before ready). Preview 0bfa1d6a on claude/ui-screens-home, docs/art/shots/home-screen/: home's quit question, which Android's back or Escape opens on home. It is a kit confirm dialog (KitPanels.dialog, kind confirm): 'Quit the game?' on the ribbon, with Quit (leather) and Stay (gold, the primary, focused). A second back closes it. Stills: quit-100.png, quit-200.png, quit-100-pt_BR.png, quit-200-pt_BR.png, quit-contrast-100.png, quit-contrast-200.png, and home-100.png ('home at 100% text', unchanged). Check that Stay reads as the default, that Quit does not read as the main action, that the words fit at 200% and in pt_BR, and that high contrast holds. Reproduce with `FIT=1 QUIT=1 [TEXT=200] [LOCALE=pt_BR] [CONTRAST=1] bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`. Objections in one round, please. Detail: docs/art/tracks/home-screen.md Part 9.",
+      "files": [
+        "client/app/app.gd",
+        "client/tests/shots/universe_home.gd",
+        "docs/art/tracks/home-screen.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T22:05:00Z",
+      "due": "2026-11-18T01:05:00Z",
+      "default": "If AD has no seat or has not answered by the due time, the lead's gate run judges the stills, and S2 marks ready on its own checks and the gate.",
       "escalate_to": "lead"
     }
   ],
   "answers": [],
-  "next_step": "Blocked on S2-R42 alone (AD's preview of e9285afd; due 16:00Z; default: the stills stand). Everything else is green on 488c8b5a: pre-check PASS (09:39Z, recorded), check_all PASS, check_screens OK, owners.py diff OK, 57 of 57 fit ok on e9285afd; guard fails only on the three S2-R41 lines (148/124/148, approved in cycle 120, the lead records them at merge). On restart: act on AD's notes if any; merge the integration branch (clean at 44c43c4f; only S1-R37's budgets.json entry touches a shared file); the setup line, bash client/build.sh, check_all, guard and the pre-check on the merge (run_checks.sh start, wait, record); owners.py diff at ready_sha; set gate_request (home at 100% text: Hierarchy, Display type; home at 200% text, pt_BR: Hierarchy; home in high contrast: Hierarchy), ready_sha and task_state ready; push."
+  "next_step": "Gate passed at 0bfa1d6a (Hierarchy 3 of 3); S2-R46 answered with the default. Merged main 443a5cf5; rerunning the setup line, build.sh, check_all and guard on the merge, then ready."
 }

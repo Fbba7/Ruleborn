@@ -28,6 +28,12 @@ const TAB_ICONS := ["screens/heist", "realmactions/upgrade", "screens/roster"]
 ## text: 1.5 points, or 12% of their size if that is more.
 const OUTLINE_POINTS := 1.5
 const OUTLINE_SHARE := 0.12
+## Godot draws a quarter of a label's `outline_size` outward on each side
+## (measured in the renderer the stills use, at 540 and 1080 pixels wide).
+const OUTLINE_PER_SIDE := 4.0
+## The outline's soft edge, a pixel of the half-size still in the window's
+## pixels, added so the solid ink measures the least a side there too.
+const OUTLINE_EDGE_PX := 2.0
 
 var controller: RosterController
 var id := 0
@@ -52,6 +58,9 @@ var versus := 0
 ## The spend tapped once, by its key: the next tap on it spends.
 var confirm := ""
 var clock: Callable = func() -> int: return int(Time.get_unix_time_from_system() * 1000)
+## The roster as the player left it (its stage, filter and scroll), carried
+## in the route args and handed back to it by the back button (AD-R51).
+var roster := {}
 ## The last success the stage celebrated, so a refresh does not repeat it.
 var _cheered := ""
 
@@ -59,7 +68,9 @@ var _cheered := ""
 func _ready() -> void:
 	App.ready(self)
 	controller = App.services.roster_flow
-	id = int(App.services.store.get_slice(AppState.ROUTE)["params"].get("id", 0))
+	var params: Dictionary = App.services.store.get_slice(AppState.ROUTE)["params"]
+	id = int(params.get("id", 0))
+	roster = params.get("roster", {})
 	_build()
 	App.services.store.changed.connect(_on_changed)
 	_refresh()
@@ -80,8 +91,10 @@ func _build() -> void:
 	var safe := column.get_parent() as MarginContainer
 	for side: String in ["margin_left", "margin_right", "margin_top"]:
 		safe.add_theme_constant_override(side, 0)
+	# The roster's cream notice (flow board 2's F7, AD-R53): a failed load,
+	# as "no server is set", reads as a note on parchment, not an alarm.
 	status_label = UI.status("info", "")
-	column.add_child(_padded(UI.plate(status_label, "glass")))
+	column.add_child(_padded(StageHeroSkin.plate(status_label)))
 	body = UI.scroll(column)
 	body.add_theme_constant_override("separation", UI.px(8))
 	stage = StageHero.new()
@@ -90,10 +103,11 @@ func _build() -> void:
 	stage.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	# Clear of the place and state pills over the stage's top.
 	stage.headroom = 0.08
+	# The stage's foot fades to the menus' night where the stage ends on the
+	# screen, so its sky runs on into the backdrop with no edge (board 5's
+	# objection G; the kit's since S3-R11).
+	stage.blend_foot = true
 	body.add_child(stage)
-	stage.item_rect_changed.connect(_blend_foot)
-	(body.get_parent() as ScrollContainer).get_v_scroll_bar().value_changed.connect(func(_v: float) -> void:
-		_blend_foot())
 	# The name in the display face on the kit's dark plate at the stage's
 	# foot, as the design's; the plate's material sets its ink.
 	title_label = UI.label("", 24)
@@ -106,10 +120,9 @@ func _build() -> void:
 	forms.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var bottom := HBoxContainer.new()
 	bottom.add_theme_constant_override("separation", UI.px(8))
-	# Back to the roster: the kit's round back button, named for a screen
-	# reader, in the lowest row as §21.1 keeps it.
-	bottom.add_child(KitControls.icon_button("generalui/back", Strings.t("HOME_ROSTER"),
-		func() -> void: App.services.router.go(&"roster"), "parchment", 56.0))
+	# Back to the roster: the kit's back button, as on every sub-screen
+	# (AD-R50), first in the lowest row as §21.1 keeps it.
+	bottom.add_child(_back())
 	actions = UI.row(-1.0, true)
 	actions.alignment = FlowContainer.ALIGNMENT_CENTER
 	actions.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -129,24 +142,6 @@ func _build() -> void:
 	lift.add_theme_constant_override("margin_bottom", UI.px(20))
 	lift.add_child(tray)
 	column.add_child(_padded(lift))
-
-
-## The stage's foot fades to the menus' night where the stage ends on the
-## screen, so its sky runs on into the backdrop with no edge (board 5's
-## objection G): the stage fades to the night's darkest point, a third of
-## the way down the screen the backdrop is lighter. Asked of the stage in
-## S3-R11 (docs/progress/status/S3.json).
-func _blend_foot() -> void:
-	if not stage.is_inside_tree():
-		return
-	var at := clampf(stage.get_global_rect().end.y / maxf(1.0, get_viewport_rect().size.y), 0.0, 1.0)
-	var night := Tokens.gradient("night").sample(at)
-	for n: Node in stage.get_children():
-		if n is TextureRect and (n as TextureRect).texture is GradientTexture2D:
-			var ramp := ((n as TextureRect).texture as GradientTexture2D).gradient
-			if ramp.get_color(1) != night:
-				ramp.set_color(0, Color(night, 0.0))
-				ramp.set_color(1, night)
 
 
 ## `what` held in from the screen's sides by the safe area's margin.
@@ -176,8 +171,9 @@ func _refresh() -> void:
 	var slice: Dictionary = App.services.store.get_slice(RosterState.ROSTER)
 	var words: Dictionary = App.services.store.get_slice(WorkshopState.WORKSHOP)["words"]
 	var c := RosterPresenter.character(slice, id, clock.call(), words)
+	RosterScreen.plain(status_label)
 	if c["error"] != "":
-		UI.set_status(status_label, "alarm", c["error"])
+		RosterScreen.failed(status_label, str(slice["error"]), c["error"])
 	elif c["missing"]:
 		UI.set_status(status_label, "alarm", Strings.t("CHARACTER_MISSING"))
 	elif c["said"] != "":
@@ -213,7 +209,12 @@ func _refresh() -> void:
 	var options: Array = []
 	for i: int in TABS.size():
 		options.append([Strings.t(TABS[i]), TAB_ICONS[i]])
-	cards.add_child(_tabs(options))
+	# The kit's segmented tabs in key frame 04's two forms: at body size each
+	# icon inline before its word, one line tall; at large text all three on
+	# one line, the open tab in words and the others as their icons, named
+	# for a screen reader (board 5's objections B and C; the kit's since
+	# S3-R9).
+	cards.add_child(KitNav.segmented(options, tab, _pick_tab, true, true))
 	match tab:
 		0:
 			_heist_tab(c, me)
@@ -227,56 +228,6 @@ func _refresh() -> void:
 			if b.get_meta("item", "") == focus_item and b.is_visible_in_tree():
 				b.grab_focus.call_deferred()
 				break
-
-
-## The kit's segmented tabs, as key frame 04's: at body size each icon
-## inline before its word, one line tall; at large text all three on one
-## line, the open tab in words and the others as their icons, named for a
-## screen reader (the board-5 objections B and C; the kit's own forms are
-## requested in S3-R9, docs/progress/status/S3.json).
-func _tabs(options: Array) -> Control:
-	var strip := KitNav.segmented(options, tab, _pick_tab, true)
-	var large := _large()
-	if strip.get_child(0) is GridContainer:
-		(strip.get_child(0) as GridContainer).columns = options.size()
-	var buttons := strip.find_children("*", "Button", true, false)
-	for i: int in buttons.size():
-		var b := buttons[i] as Button
-		var v: VBoxContainer = null
-		for n in b.get_children():
-			if n is VBoxContainer:
-				v = n
-		if v == null or v.get_child_count() < 2:
-			continue
-		var icon := v.get_child(0) as Control
-		var l := v.get_child(1) as Label
-		var line := l.get_theme_font("font").get_height(l.get_theme_font_size("font_size"))
-		if large:
-			l.visible = i == tab
-			icon.visible = i != tab
-			if i != tab:
-				b.custom_minimum_size.x = UI.px(UI.CONTROL_POINTS)
-				icon.custom_minimum_size = Vector2.ONE * UI.px(32)
-			b.custom_minimum_size.y = maxf(UI.px(48), line + UI.px(16))
-			continue
-		var h := HBoxContainer.new()
-		h.set_anchors_preset(Control.PRESET_FULL_RECT)
-		h.alignment = BoxContainer.ALIGNMENT_CENTER
-		h.add_theme_constant_override("separation", UI.px(5))
-		h.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		v.remove_child(icon)
-		v.remove_child(l)
-		icon.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		h.add_child(icon)
-		l.clip_text = false
-		l.text_overrun_behavior = TextServer.OVERRUN_NO_TRIMMING
-		l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		h.add_child(l)
-		b.remove_child(v)
-		v.queue_free()
-		b.add_child(h)
-		b.custom_minimum_size.y = maxf(UI.px(UI.CONTROL_POINTS), line + UI.px(16))
-	return strip
 
 
 func _pick_tab(i: int) -> void:
@@ -328,10 +279,16 @@ static func _over_stage(l: Label) -> Label:
 	return l
 
 
-## The display type's ink stroke and hard drop, as Level up's title wears.
+## The display type's ink stroke and hard drop, as Level up's title wears;
+## at large text at least §21.8's outline (`_outline_px`), measured once the
+## words have their size in the tree (AD-R58).
 static func _stroke(l: Label) -> void:
 	var role := Tokens.type_role("display_s")
 	var width := UI.px(float(role["outline"]) * 1.5)
+	if _large():
+		width = maxi(width, _outline_px(l))
+		if not l.is_inside_tree():
+			l.tree_entered.connect(func() -> void: _stroke(l), CONNECT_ONE_SHOT)
 	l.add_theme_color_override("font_outline_color", Tokens.color("ink_line"))
 	l.add_theme_constant_override("outline_size", width)
 	l.add_theme_color_override("font_shadow_color", Tokens.color("ink_line"))
@@ -341,14 +298,24 @@ static func _stroke(l: Label) -> void:
 
 
 ## §21.8's outline all round at large text: at least 1.5 points or 12% of
-## the words' size wide on each side, at the size they are shown (`_wrap_in`
-## may make them smaller). Godot's `outline_size` spans both sides, so it is
-## twice that. The outline once spanned 12% in all, 6% a side, which read as
-## a drop alone over the stars (the gate's display-type check at a6d5f2fb).
-static func _ink_large(l: Label) -> void:
+## the words' size wide on each side, at the size they are shown, after the
+## text scale and `_wrap_in`'s shrink. Godot draws a quarter of
+## `outline_size` on each side (`OUTLINE_PER_SIDE`), so it is four times
+## that, with the soft edge's pixel added (`OUTLINE_EDGE_PX`). It was
+## twice that, about 6% a side, which read as 5% in audit 1 (row 14,
+## AD-R58), and before that 12% in all, which read as a drop alone over the
+## stars (the gate's display-type check at a6d5f2fb).
+static func _outline_px(l: Label) -> int:
 	var size := float(l.get_theme_font_size("font_size"))
 	var side := maxf(UI.px(OUTLINE_POINTS), size * OUTLINE_SHARE)
-	var width := roundi(side * 2.0)
+	return ceili((side + OUTLINE_EDGE_PX) * OUTLINE_PER_SIDE)
+
+
+static func _ink_large(l: Label) -> void:
+	# Off the tree the words have no theme to size them by yet.
+	if not l.is_inside_tree():
+		l.tree_entered.connect(func() -> void: _ink_large(l), CONNECT_ONE_SHOT)
+	var width := _outline_px(l)
 	l.add_theme_color_override("font_outline_color", Tokens.color("ink_line"))
 	l.add_theme_constant_override("outline_size", width)
 	l.add_theme_color_override("font_shadow_color", Tokens.color("ink_line"))
@@ -398,10 +365,10 @@ static func _wrap_in(l: Label, room: Control, inset: float, least := 0.0) -> voi
 func _level_row(level: int, top: int, health: int) -> Control:
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", UI.px(10))
-	# The kit's hexagon is 52 points tall for 22-point figures; it grows with
-	# the player's text so its kicker stays inside it at every size.
-	var hex := KitHex.make(Strings.t("CHARACTER_LEVEL_SHORT"), str(level),
-		52.0 * maxf(1.0, float(UI.text_px(22)) / UI.px(22)))
+	# The kit's hexagon, 52 points tall for 22-point figures; the kit grows it
+	# with the player's text so its kicker stays inside it at every size
+	# (S3-R12).
+	var hex := KitHex.make(Strings.t("CHARACTER_LEVEL_SHORT"), str(level))
 	hex.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	row.add_child(hex)
 	var v := VBoxContainer.new()
@@ -439,18 +406,18 @@ func _heist_tab(c: Dictionary, me: Dictionary) -> void:
 	var kind := str(me.get("kind", ""))
 	var frame := VBoxContainer.new()
 	frame.add_theme_constant_override("separation", UI.px(8))
+	# With key frame 04's measures (the kit's since S3-R10 and S3-R14): its
+	# padding and the icon's square, the gaps on the kicker's line, and the
+	# kicker untracked when it and its tag are wider than their line, so
+	# what it does takes two lines there, not three (board 5's C).
 	var ability := KitCards.ability("heistcontrols/ability", str(c["school"]), Strings.t("CHARACTER_KICK_ABILITY"),
-		Strings.term("ABILITY_USES", kind), Strings.term("ABILITY_DOES", kind), "")
+		Strings.term("ABILITY_USES", kind), Strings.term("ABILITY_DOES", kind), "", true)
 	for l: Label in ability.find_children("*", "Label", true, false):
 		if l.text == "":
 			l.visible = false
 		elif l.get_parent().name == "Tag":
 			# Its kind of use, broken when larger words do not fit beside it.
 			_wrap_in(l, l.get_parent().get_parent(), 16.0)
-			# On the kicker's line, as key frame 04's card: the kit's gaps
-			# leave the English tag 2 points short of it (S3-R10).
-			(l.get_parent().get_parent() as HFlowContainer).add_theme_constant_override("h_separation", UI.px(4))
-			(ability.get_child(0) as HBoxContainer).add_theme_constant_override("separation", UI.px(8))
 		elif l.theme_type_variation == "Heading":
 			# What it does in the body face at 16 points, as key frame 04's
 			# card: the kit's 20-point serif made the card outweigh Level up
@@ -468,14 +435,7 @@ func _heist_tab(c: Dictionary, me: Dictionary) -> void:
 			# gate's display-type check at a6d5f2fb).
 			if _large():
 				_stroke(l)
-			var head := l.get_parent() as HFlowContainer
-			if head.get_child_count() > 1:
-				_untrack_when_tight(l, head, head.get_child(1) as Control, UI.px(4))
-	# The icon's square and the card's sides as key frame 04's, so what it
-	# does takes two lines there, not three (board 5's C, S3-R10).
-	_pad(ability, 8.0, 8.0)
 	var square := ability.get_child(0).get_child(0) as PanelContainer
-	_pad(square, 4.0, 4.0)
 	# At large text the icon heads the card beside its kicker, as key frame
 	# 04's header does, so it stands above the actions (board 5's B); the
 	# kit centres it on the card, which grows past the first screen there.
@@ -494,7 +454,9 @@ func _heist_tab(c: Dictionary, me: Dictionary) -> void:
 		[_icon("realmactions/assignworker", "hud/star"), Strings.t("CHARACTER_KICK_BEST"),
 			Strings.term("BEST_AT", kind)],
 	]:
-		var tile := _compact(KitCards.fact(f[0], f[1], f[2]))
+		# Key frame 04's compact tile, so all four stand on the first screen
+		# at 100% text (board 5's C; the kit's since S3-R13 and S3-R14).
+		var tile := KitCards.fact(f[0], f[1], f[2], "", true)
 		for l: Label in tile.find_children("*", "Label", true, false):
 			l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 			l.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
@@ -532,54 +494,6 @@ func _heist_tab(c: Dictionary, me: Dictionary) -> void:
 	_dress(send, "leather")
 	work.add_child(send)
 	cards.add_child(_card(Strings.t("ROSTER_STATE_WORKING"), work))
-
-
-## A fact as key frame 04's, so all four stand on the first screen at 100%
-## text (board 5's C): its disc beside the kicker, the words under both
-## across the card at 13 points in the body face, and 6 points of padding;
-## the kit's fact sets the words in a column beside its disc (S3-R13).
-static func _compact(tile: PanelContainer) -> PanelContainer:
-	_pad(tile, 6.0, 6.0)
-	var row := tile.get_child(0) as HBoxContainer
-	var v := row.get_child(1) as VBoxContainer
-	var words := v.get_child(1) as Label
-	var stack := VBoxContainer.new()
-	stack.add_theme_constant_override("separation", UI.px(2))
-	tile.remove_child(row)
-	v.remove_child(words)
-	stack.add_child(row)
-	stack.add_child(words)
-	tile.add_child(stack)
-	row.add_theme_constant_override("separation", UI.px(4))
-	_pad(row.get_child(0) as PanelContainer, 1.5, 1.5)
-	v.alignment = BoxContainer.ALIGNMENT_CENTER
-	words.theme_type_variation = ""
-	words.add_theme_font_size_override("font_size", UI.text_px(13))
-	words.set_meta("points", 13.0)
-	words.set_meta("bold", false)
-	_untrack_when_tight(v.get_child(0) as Label, v)
-	return tile
-
-
-## Sets `kicker` in capitals without its tracking (as the kit's tags are)
-## once its longest word, or the whole kicker and `beside` after it, is wider
-## than `room`, so German "EIGENSCHAFTEN" stands whole rather than breaking
-## inside the word, and Portuguese "HABILIDADE" keeps its tag on its line
-## (board 5's C).
-static func _untrack_when_tight(kicker: Label, room: Control, beside: Control = null, gap := 0.0) -> void:
-	room.resized.connect(func() -> void:
-		if room.size.x <= 0.0:
-			return
-		var size := kicker.get_theme_font_size("font_size")
-		var font := RbTheme.role_font("kicker")
-		var need := 0.0
-		if beside != null:
-			need = font.get_string_size(kicker.text.to_upper(), HORIZONTAL_ALIGNMENT_LEFT, -1, size).x
-			need += gap + beside.get_combined_minimum_size().x
-		else:
-			for word: String in kicker.text.to_upper().split(" "):
-				need = maxf(need, font.get_string_size(word, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x)
-		kicker.theme_type_variation = "BodyBold" if need > room.size.x else "Kicker")
 
 
 ## Sets the padding of `box`, a kit panel, to `side` and `top` points.
@@ -913,6 +827,10 @@ func _stand(kind: String, c: Dictionary, slice: Dictionary, words: Dictionary) -
 	var ids: Array = RosterScreen.kinds_of(slice).keys()
 	var at := ids.find(id)
 	var plate := UI.plate(title_label, "plate_dark")
+	# At large text the name wears the backdrop words' outline too, on the
+	# stage's art round its plate (audit 1's row 14, AD-R58).
+	if _large():
+		_ink_large(title_label)
 	var foot := MarginContainer.new()
 	foot.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	foot.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -941,9 +859,23 @@ func _stand(kind: String, c: Dictionary, slice: Dictionary, words: Dictionary) -
 			var to: int = ids[posmod(at + step, ids.size())]
 			var b := KitControls.icon_button("hud/prev" if step < 0 else "hud/next",
 				Strings.t("CHARACTER_PREVIOUS" if step < 0 else "CHARACTER_NEXT", str(named.get(to, ""))),
-				func() -> void: App.services.router.go(&"character", {"id": to}), "gold_round", 48.0)
+				func() -> void: App.services.router.go(&"character", {"id": to, "roster": roster}), "gold_round",
+				48.0)
 			b.set_meta("item", "step:%d" % step)
 			StageHeroSkin.on_stage(top, b, Control.PRESET_CENTER_LEFT if step < 0 else Control.PRESET_CENTER_RIGHT)
+
+
+## ScreenNav's back button to the roster (AD-R50), handing the roster back
+## the stage, filter and scroll it was left with (AD-R51). ScreenNav's takes
+## no route args (S3-R37), so its last handler, the router's go to the
+## roster, is swapped for one that carries them; the kit's own handlers
+## before it (the tap's haptic) stay.
+func _back() -> Button:
+	var b := ScreenNav.back_button(&"roster")
+	var handlers := b.pressed.get_connections()
+	b.pressed.disconnect(handlers[-1]["callable"])
+	b.pressed.connect(func() -> void: App.services.router.go(&"roster", {"roster": roster}))
+	return b
 
 
 ## A spend's button on `kind`: the first tap shows the price to confirm; the

@@ -515,6 +515,79 @@ AD previewed e9285afd and had no objection: all 8 cases fit, board 3's objection
 - **At 200% the Defence badge's top overlapped the 61.0k plate's foot by 1 to 3 px.** Left as it is, AD's default. The drop AD suggested was tried: at large text the left edge's disc, when it carries a badge, stood in a holder taller than itself (`home.gd`, `_side`). With 8 pt, the extra height makes `_fit_edges` hide the whole left edge at 200% with the notice in pt_BR, pt_PT and fr (`fit FAIL side button defences hidden`, the same for lab). With 6 pt and 4 pt, pt_BR and pt_PT fit again but fr still loses the edge. A 1 to 3 px touch on a plate's foot costs less than losing Defence and Lab, so the drop was reverted (09f0f119). If the band gains height later, a 4 pt drop that applies only when the band has room is the way back.
 - **At 200% in pt_BR and de the short form sits about 7 px from the Heart's "6" pin.** Left as it is: it is clear, and the pin is the Heart's own. AD's advice, should the map lose more height, is to anchor the pill under the island instead of beside the Heart.
 
+## Part 8: the tabs by the router's table, the label rule, the green goal bar (P3-S2-home-7)
+
+P3-K1-tabs-1 gave ScreenNav the bar's rules: it routes by `Router.TABS`, and the tabs not chosen show their names up to `ScreenNav.LABELS_UP_TO` (125% text) and their icons alone above it. Home builds its own bar, so this part brings home onto the same rules, and gives the goal bar back its labels.
+
+**What changed.**
+
+- **Home routes its tabs by the router's table.** `home.gd` drops its own `TAB_ROUTES`: a tap on a tab goes where `Router.TABS` sends it, as `ScreenNav.bar` routes it (AD-R49), through `HomeParts.tab_route`. Two tabs stay home's own, named in one place, `TABS_HOME_KEEPS`, with the reason: Islands is home's tab (a tap shows the whole world), and the Heist starts a heist from home, the bar's lead action, rather than opening the Observatory.
+- **A test ties the tabs to the routes.** `core_tests.gd` (`_tabs`, "every tab has a route in Router.TABS, and home's tabs go where it says, Islands and the Heist excepted") checks every `KitTabs` id has a route in `Router.TABS`, and that `HomeParts.tab_route` gives each tab the router's route except the two home keeps.
+- **ScreenNav's label rule.** The chosen tab's word always shows. The other tabs show their names up to 125% text and their icons alone above it, each still named aloud (the kit's spoken names). Up to 125% a name that would be cut shrinks, all the others with it so they stay one size, down to `TAB_WORD_LEAST` (11 pt scaled by the text size) but never below 13 pt, the names' own size at 100% (`_fit_tab_words`). Where they still do not fit, the bar gives way to its icons alone. Before this, the floor at 125% was 11 pt scaled, about 13.75 pt, above the 13 pt even "FRIENDS" fits at, so every locale lost its names there.
+- **The goal bar's labels show again, on green.** `_show_goal` drops the loop that hid the goal bar's "Progress" labels. Its fill is green in both looks; gold stays on Collect, so the bar's progress and the action to collect do not share a colour.
+
+**Where a word still shrinks.**
+
+Measured with a print in `_fit_tab_words` on dff000c9 (not committed), at 1080 wide, where 1 pt is 3 px; each case is the still `FIT=1 [TEXT=<t>] LOCALE=<loc> bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png` makes.
+
+| Text | Locale | The other tabs' names | The chosen tab's word |
+|---|---|---|---|
+| 100% | en, fr | 13 pt (39 px), their own size | its own size |
+| 100% | pt_BR, pt_PT | shrink to 12 pt (36 px) | its own size |
+| 100% | de | shrink to 11 pt (33 px) | its own size |
+| 100% | high contrast (en) | 13 pt | its own size |
+| 125% | en | shrink to 13 pt (39 px, from 48) | its own size |
+| 125% | fr | shrink to 15 pt (45 px, from 48) | its own size |
+| 125% | pt_BR, pt_PT, de | icons alone: they would need 12 pt (pt) and 11.3 pt (de), under the 13 pt floor | its own size |
+| 200% | all five, and high contrast | icons alone (the rule) | shrinks by 1 to 2 px, under 1 pt, to keep inside its tab: en 85 to 84 px, pt_BR and pt_PT 90 to 88 (87 in a later layout pass), de 90 to 88 |
+
+At 200% the run's first layout passes, before the bar settles at its width, also print smaller sizes for the chosen word (en down to 51 px, de 66 px); the stills show the settled size.
+
+**Not this task's: the purse at 125% in German.** At 125% text in German the purse's three pills take two rows ("the purse in 2 rows at 100% text: { 419: "aether", 545: "essence" }"), and with the raid notice the fit check also finds "no realm marked over the whole universe". Both fail the same way on main's code (53e18516's tree, before this task), so this task did not cause them: M26's cases never ran at 125%, which this task adds to the fit runs for the tab names. The purse (`_fit_amounts`, a row of three below 150% text) is outside this task's done_when; S2 names it for the lead (S2-R44) rather than change it here.
+
+**AD's preview** (S2-R43): pending.
+
+**Evidence.**
+
+- **Fit.** 63 cases with `FIT=1` on dff000c9: M26's set (100%, 150% and 200% text in en, pt_BR, pt_PT, fr and de, with and without the raid notice, high contrast, 900 and 960 tall, the widest amounts, 99 raids, an empty home, no or six outer realms) and, new, 125% in all five locales, 125% with the notice in en, pt_BR and de, and 125% in high contrast. 61 print "fit ok". All the task's own cases pass: 200% text in en, pt_BR and de, and high contrast at 100% and 200%. The two that fail are 125% in German, with and without the notice, on the purse, as above, and fail the same on main.
+- **The tabs' routes.** `core_tests.gd` passes, its new check included ("ok 13 - every tab has a route in Router.TABS, and home's tabs go where it says, Islands and the Heist excepted").
+- **The stills.** The chosen tab's word shows at every size and locale; the other names show at 100% and at 125% in en and fr, and icons stand alone at 200% and at 125% in pt_BR, pt_PT and de. The goal bar's "Progress" labels show, on the green fill, and Collect keeps its gold, in both looks.
+
+## Part 9: the phone's back (P3-S2-back-1)
+
+**What changed.**
+
+- **One go-back for the whole app.** Android's back button and Escape both reach `App.GoBack`, a node `client/app/app.gd` adds at start. That node hands them to the router (`Router.go_back`). The game no longer quits on Android's back (`set_quit_on_go_back(false)`).
+- **The back table.** `Router.BACK` in `client/app/router.gd` names, for each route, the route that go-back opens:
+  - Every non-tab route goes where its own back button goes: the character to the roster, curation and the realm to the map, a law to the codex, the planner to the scout, and the scout to the observatory.
+  - Every tab other than home goes to home.
+  - A route with no way back stays where it is: the age, the heist and the first run.
+  - No screen keeps a copy of the table, and `Router.ROUTES` and `Router.TABS` are unchanged.
+- **Home asks before quitting.** On home, go-back opens a kit dialog (`KitPanels.dialog`, kind `confirm`): "Quit the game?" with Quit and Stay. Stay is the primary action and takes the focus, so a stray press keeps the player in the game. A second go-back closes the question, and so does Stay. Only Quit ends the game. If the universe menu is open, go-back closes it first. The words are `HOME_QUIT_TITLE`, `HOME_QUIT` and `HOME_STAY` in `client/i18n/strings.csv`, in every locale.
+- **Home itself is unchanged.** `client/scripts/home.gd` is untouched, so the still 'home at 100% text' is the same as Part 8's.
+
+**The check.** `client/tests/core_tests.gd` (`_back`) checks three things:
+
+- Every route has a back route, and that back route is itself a route. Tabs and the hub's segments go to home.
+- On each of the 21 non-tab routes that has a way back, the screen's own back control and the router's go-back open the same route.
+- On home, go-back opens the question. Stay is the primary action and has the focus, and a second go-back closes the question. The game quits on neither.
+
+**The stills.** The shot's new `QUIT=1` (`client/tests/shots/universe_home.gd`) opens the question over home. With `FIT=1` it checks home as before, plus the question (`asked`): Quit and Stay on screen, side by side, each at least a whole touch target, and Stay the primary action with the focus. Every still below prints "fit ok". They are in `docs/art/shots/home-screen/`:
+
+| Still | Flags |
+|---|---|
+| `home-100.png` | (none): 'home at 100% text' |
+| `quit-100.png` | `QUIT=1` |
+| `quit-200.png` | `QUIT=1 TEXT=200` |
+| `quit-100-pt_BR.png` | `QUIT=1 LOCALE=pt_BR` |
+| `quit-200-pt_BR.png` | `QUIT=1 TEXT=200 LOCALE=pt_BR` |
+| `quit-contrast-100.png` | `QUIT=1 CONTRAST=1` |
+| `quit-contrast-200.png` | `QUIT=1 CONTRAST=1 TEXT=200` |
+
+Each still is `FIT=1 <flags> bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`.
+
+**AD's preview** (S2-R46): pending.
+
 ## Left for other tasks
 
 These widgets are no longer used by home, but they are outside this task's files:

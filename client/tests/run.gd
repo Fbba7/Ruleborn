@@ -20,6 +20,9 @@ const SCREENS := ["home", "heist_screen", "result_screen", "replay_screen", "set
 ## The tab routes whose screen shows no tab bar: the Observatory is an
 ## overlay, its top bar's back arrow going home (OverlayTop).
 const WITHOUT_TABS := [&"observatory"]
+## The routes with no back button yet, held to none until ScreenNav (S3-R38).
+const NO_BACK := [&"age", &"heist", &"result", &"replay", &"builder", &"universe", &"hatch", &"curation",
+	&"planner", &"map", &"realm", &"first", &"defences", &"scout"]
 
 var _n := 0
 var _failed := 0
@@ -206,6 +209,55 @@ func _tab_routes() -> void:
 		+ "tab's picture stands in its tile", misses.is_empty(), "; ".join(misses))
 
 
+## AD-R50: each route that is no tab or hub segment shows one back button,
+## ScreenNav's, which leaves it. AD-R51: the roster keeps its stage and scroll.
+func _back_routes() -> void:
+	var router := App.services.router
+	var was := router.change
+	router.change = func(path: String) -> void: change_scene_to_file(path)
+	App.services.store.dispatch(&"roster_loaded", {"view": ShotData.roster()})
+	var skip: Array = Router.TABS.values() + Router.HUBS.values().reduce(func(a: Array, h: Array) -> Array:
+		return a + h.map(func(s: Dictionary) -> StringName: return s["route"]), [])
+	var misses: Array[String] = []
+	var seen := 0
+	for route: StringName in Router.ROUTES.keys().filter(func(r: StringName) -> bool: return r not in skip):
+		var backs := await _backs(router.go.bind(route, {"id": 2} if route == &"character" else {}))
+		if backs.size() != (0 if route in NO_BACK else 1):
+			misses.append("%s: %d back buttons" % [route, backs.size()])
+		elif backs:
+			seen += 1
+			await _backs(backs[0].pressed.emit)
+			var to: StringName = App.services.store.get_slice(AppState.ROUTE)["name"]
+			if to == route or (route == &"character" and to != &"roster"):
+				misses.append("%s: its back button went to %s" % [route, to])
+	check("AD-R50: each route that is no tab or hub segment shows one back button, which leaves it (%d)" % seen,
+		misses.is_empty() and seen > 0, "; ".join(misses))
+	await _backs(router.go.bind(&"roster"))
+	var left := current_scene as RosterScreen
+	var pick: int = RosterScreen.kinds_of(App.services.store.get_slice(RosterState.ROSTER)).keys()[5]
+	left._choose(pick)
+	(left.body.get_parent() as ScrollContainer).scroll_vertical = 240
+	var kept := left.kept()
+	var backs := await _backs(left._open.bind(pick))
+	for b: Button in backs.slice(0, 1):
+		await _backs(b.pressed.emit)
+	var back: Dictionary = current_scene.kept() if current_scene is RosterScreen else {}
+	check("AD-R51: the roster keeps its stage's character and its scroll across a visit to one",
+		backs.size() == 1 and kept["scroll"] > 0 and back == kept, "left as %s, came back as %s" % [kept, back])
+	unload_current_scene()
+	await process_frame
+	router.change = was
+
+
+## Does `act`, lets the scene it opens settle, and returns its back buttons.
+func _backs(act: Callable) -> Array:
+	act.call()
+	await create_timer(0.4).timeout
+	await process_frame
+	return current_scene.find_children("*", "Button", true, false).filter(func(b: Button) -> bool:
+		return b.is_visible_in_tree() and b.get_meta("back", false))
+
+
 func _bars(n: Node) -> Array[KitTabs]:
 	var found: Array[KitTabs] = []
 	if n is KitTabs:
@@ -287,6 +339,8 @@ func _run() -> void:
 	StageHeroTests.new(check).run()
 	await UiKitTests.new(self, check).run()
 	await _tab_routes()
+	await _back_routes()
+	await SettingsTabTests.new(self, check).run()
 	_goal_bar()
 
 	# The game's languages (§20.6 and the owner's, D99): every key a script
