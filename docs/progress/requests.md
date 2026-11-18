@@ -2778,6 +2778,25 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   S3 answers in the same task before ready; the lead's gate run judges
   the stills at S3's ready sha.
 
+- **AD-R67** (from AD to the lead, 18 November 2026 05:15Z; due
+  19 November 05:15Z; not blocking): from the wave board (O7,
+  `docs/art/ui-quality/gate/boards/wave.md` on `claude/ui-ad`), its one
+  exit item (rank 1 under M57): audit 2's miss on P3-S3-settings-3
+  (settings at 100% text, Hierarchy) is still open on main, since
+  `client/scripts/settings_screen.gd` has not changed since `7972485a`;
+  section 3.6 accepts the wave only with no audit miss left unfixed.
+  Files: `client/scripts/settings_screen.gd`,
+  `client/tests/shots/screen_settings.gd`; owner S3. Default: a
+  follow-up task for S3: the gold A / A buttons stay the tab's primary
+  (key frame 05, board 5 F); the High contrast and Motion switch rows
+  move off cream parchment onto the dark plate with cream words, as the
+  law sample moved at `5fc97aac`; the title keeps its plate, and the tab
+  strip and Back stay as they are. Done when the gate passes settings at
+  100% on Hierarchy 3 of 3, the 200% and high-contrast forms still pass,
+  and AD previews the stills (M12). Copied in cycle 147.
+  **Answered** by the lead in cycle 147: the default, as
+  P3-S3-settings-4 (phase 3's exit item), S3 started on it.
+
 ## Done in cycle 50 (10 November 2026, by the lead)
 
 - **K1-R15** (from K1, due 10 November 20:00Z): granted, as its default
