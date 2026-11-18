@@ -1,8 +1,8 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-18T04:55:37Z",
-  "expected_next_update_by": "2026-11-18T08:00:00Z",
-  "cycle": 145,
+  "updated_at": "2026-11-18T05:22:00Z",
+  "expected_next_update_by": "2026-11-18T08:22:00Z",
+  "cycle": 146,
   "merging": null,
   "last_merged": {
     "task_id": "P3-S1-marker-1, P3-S3-offline-1",
@@ -43,9 +43,9 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Cycle 146: AD runs P3-AD-wave-board (O7, phase 3's exit): the five screens before and after, the frame strips, draw calls and texture memory per screen, the gate's pass counts, audit 2's miss (settings at 100% text, Hierarchy) and board 2's wait on icon batches 3 and 4 weighed, then the wave stands or each re-work is a request with a default. Merge it when ready (no gate item); restart AD if its update time passes; then rank any re-work AD names against phase 3's exit (M57) and seed only exit items. P3-S1-marker-1 and P3-S3-offline-1 merged as 3559ec39 (cycle 145).",
+  "next_step": "Cycle 147: AD runs P3-AD-wave-board (O7, phase 3's exit; claimed 04:56Z, lease to 07:56Z; pairs made, motion strips and budgets running, then wave.md and its ruling). Merge it when ready (no gate item); restart AD if its update time passes; then rank any re-work AD names against phase 3's exit (M57) and seed only exit items.",
   "seen": {
-    "at": "2026-11-18T04:55:44Z",
+    "at": "2026-11-18T05:16:17Z",
     "heads": {
       "claude/3d-character-screens": "6053b249bee313648da3509142eeb2ba738bb62f",
       "claude/3d-characters": "35d6ae8f5b84a4d75636f68270848b0949c111f3",
@@ -63,7 +63,7 @@
       "claude/plan-v3": "57893713636b7753d0b790c5a9dc35c3b126770a",
       "claude/security-review": "dd1e90f06b512b25a74f3f3f73ace84b3969cce9",
       "claude/server-decisions": "502b63bbf1506801a7060547f6fb225adcbf8f51",
-      "claude/ui-ad": "7e35336df96361138af6b9442ba73af0a5559663",
+      "claude/ui-ad": "97effff60c93f55056e8bb1f2e0cfbdbce668ca2",
       "claude/ui-artist": "45c6366cb2e0f9dcb5aaa428d17c017576beff5d",
       "claude/ui-artist-icons": "a4f24e6cf4fa6c7ce192e07ac99feeb1af877396",
       "claude/ui-bake": "1fc17c1f408b9e7432faee643585aec965c46dc9",
@@ -85,9 +85,7 @@
       "main": "2455f3b5392587009f9b8f7ff57f7b26b01566d1"
     },
     "ready": {},
-    "startable": [
-      "P3-AD-wave-board"
-    ],
+    "startable": [],
     "messages": [
       "M10",
       "M3"

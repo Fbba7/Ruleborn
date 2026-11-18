@@ -5,6 +5,44 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 143**, 18 November 2026, from about 02:39Z (session
+  `session_01SNkKxr53JyfW9VxwmrgaWV`, started by the Opus 5.5 launcher).
+  The changes since cycle 142: AD pushed audit 2's labels and marked
+  P3-AD-audit-2 ready at 21c0bc04 (pre-check PASS); S1 recorded
+  marker-1's pre-check PASS at 1bfb3193, acked M58 and went idle blocked
+  on S1-R43 (world_view.gd for AD-R65's opening-frame lift); S3 acked M59 (02:53Z).
+  **Requests:** S1-R43 granted (M60): client/world/world_view.gd joins
+  P3-S1-marker-1's files for one public var `lift` and its use in
+  _frame_camera only. AD's preview objections up to AD-R66 are all in
+  requests.md; nothing new to copy.
+  **Merge and gate:** P3-AD-audit-2 merged as 07e2c13d (candidate
+  bc34e83f, merge lock 02:43Z to the merge, cleared). Checks reused from
+  the pre-check at 21c0bc04 (the candidate differs from it only under
+  docs/progress); ui guard OK on bc34e83f; the docs check passes;
+  check_all passed on main 07e2c13d after the merge (03:27Z). No gate item: the task has none.
+  **Audit 2 scored** (audit-2.md's 22 rows against the gate's verdicts;
+  AD labelled blind, 01:24Z to 01:40Z): 20 rows agree. One miss:
+  P3-S3-settings-3 at 7972485a, settings at 100% text, Hierarchy: AD
+  fails it (no primary; the gold A/A text-size buttons are louder than
+  the title) where the gate passed it 5 of 6, advisory. One false block:
+  P1-K1-numerals-on at 1d21bf4a, heist at 100% text, Display type: the
+  gate failed what AD passes. Hierarchy is owner-checked
+  (gate/calibration.md), so the miss pauses no default merge: AD's boards stay
+  Hierarchy's check, offline-1's Hierarchy item included. The 22 labels
+  join the golden set through a later AD task; nothing is seeded now
+  (M57: the reserve is spent). For the judge's next prompt revision: on
+  Hierarchy, count a gold control louder than the screen's title as no
+  primary, even where each plate reads alone.
+  **Sessions:** S1 restarted as `session_01SNkKxqdHWKAJ5VQDWhsTwQ`
+  (02:49Z) on marker-1 with S1-R43 granted; its last session went idle
+  blocked on it.
+  **Seats:** S1 (marker-1) and S3 (offline-1); AD is idle with its task
+  merged. K1, S2, AIA-2 and AIA are idle. The audit and roadmap pages
+  are republished. **Next:** merge marker-1 and offline-1 with their
+  gate items when they are ready, with AD-R65 and AD-R66 answered; then
+  phase 3's exit: no board with an open objection, the second blind audit
+  done (scored this cycle), and the owner's wave board (O7).
+
 - **Cycle 142**, 18 November 2026, from about 02:14Z (session
   `session_01SNkKxpS24uPCXVy7p6bfK3`, started by the Opus 5.5 launcher).
   The changes since cycle 141: AD claimed P3-AD-audit-2 (01:25Z) and
