@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-18T07:30:00Z",
   "lease_until": "2026-11-18T10:30:00Z",
-  "updated_at": "2026-11-18T07:45:52Z",
-  "expected_next_update_by": "2026-11-18T08:30:52Z",
+  "updated_at": "2026-11-18T07:54:13Z",
+  "expected_next_update_by": "2026-11-18T08:39:13Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "4e9114ac",
-    "next_step": "P4-S2-home-purse: work done and pushed at 3fd556a5 (main 4e0294ff merged). fit_home.sh: 50 of 50 fit ok; stills at 125% de; Part 10. Gate requested at 3fd556a5; S2-R47 asks AD's preview. Now: pre-check (check_all) and guard on 3fd556a5, then ready once the gate passes."
+    "next_step": "P4-S2-home-purse: work done and pushed at acb2239b (main 4e0294ff merged; acb2239b puts a purse line within gdlint's 120 columns, the pre-check on 3a33738b failed on it). fit_home.sh: 50 of 50 fit ok; stills at 125% de; Part 10; guard OK on the merge. Gate requested at acb2239b; S2-R47 asks AD's preview. Now: the pre-check on the status commit, then ready once the gate passes."
   },
   "precheck": {
     "sha": "4e9114ac84279c77ca1735d1181ccfb280a52bcb",
@@ -22,7 +22,7 @@
     "summary": "All checks passed."
   },
   "gate_request": {
-    "sha": "3fd556a5",
+    "sha": "acb2239b",
     "items": [
       {
         "item": "home at 100% text",
@@ -721,7 +721,7 @@
       "id": "S2-R47",
       "from": "S2",
       "to": "AD",
-      "ask": "For AD, through the lead (P4-S2-home-purse's done_when: AD previews the stills before ready). Preview 3fd556a5 on claude/ui-screens-home, docs/art/shots/home-screen/: home at 125% text in German. The purse's three pills no longer fit one row there ('142,0 Tsd.'), so it takes two rows, Starlight and Aether over Essence, as at large text; en, pt_BR, pt_PT and fr keep one row at 125%. With the raid notice, the notice's second line now gives way where no break between words fits ('Verteidigung'), so the notice is one row and every realm keeps its pin (sign and level). Stills: home-125-de.png, home-125-de-notice.png, home-125-de-contrast.png, and home-100.png ('home at 100% text', unchanged). Check that the purse's two rows read as one group above the map and do not compete with Collect, that the notice still reads as a notice without its second line, and that high contrast holds. Reproduce with `FIT=1 TEXT=125 LOCALE=de [NOTICE=1] [CONTRAST=1] bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`. Objections in one round, please. Detail: docs/art/tracks/home-screen.md Part 10.",
+      "ask": "For AD, through the lead (P4-S2-home-purse's done_when: AD previews the stills before ready). Preview acb2239b on claude/ui-screens-home, docs/art/shots/home-screen/: home at 125% text in German. The purse's three pills no longer fit one row there ('142,0 Tsd.'), so it takes two rows, Starlight and Aether over Essence, as at large text; en, pt_BR, pt_PT and fr keep one row at 125%. With the raid notice, the notice's second line now gives way where no break between words fits ('Verteidigung'), so the notice is one row and every realm keeps its pin (sign and level). Stills: home-125-de.png, home-125-de-notice.png, home-125-de-contrast.png, and home-100.png ('home at 100% text', unchanged). Check that the purse's two rows read as one group above the map and do not compete with Collect, that the notice still reads as a notice without its second line, and that high contrast holds. Reproduce with `FIT=1 TEXT=125 LOCALE=de [NOTICE=1] [CONTRAST=1] bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`. Objections in one round, please. Detail: docs/art/tracks/home-screen.md Part 10.",
       "files": [
         "client/scripts/home.gd",
         "client/scripts/home_parts.gd",
@@ -737,5 +737,5 @@
     }
   ],
   "answers": [],
-  "next_step": "P4-S2-home-purse: work done and pushed at 3fd556a5 (main 4e0294ff merged). fit_home.sh: 50 of 50 fit ok; stills at 125% de; Part 10. Gate requested at 3fd556a5; S2-R47 asks AD's preview. Now: pre-check (check_all) and guard on 3fd556a5, then ready once the gate passes."
+  "next_step": "P4-S2-home-purse: work done and pushed at acb2239b (main 4e0294ff merged; acb2239b puts a purse line within gdlint's 120 columns, the pre-check on 3a33738b failed on it). fit_home.sh: 50 of 50 fit ok; stills at 125% de; Part 10; guard OK on the merge. Gate requested at acb2239b; S2-R47 asks AD's preview. Now: the pre-check on the status commit, then ready once the gate passes."
 }
