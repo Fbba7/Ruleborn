@@ -47,141 +47,6 @@
   "strings_owner": "lead",
   "tasks": [
     {
-      "assigned_to": "S3",
-      "attempts": 0,
-      "claim": {
-        "agent": "S3",
-        "branch": "claude/ui-screens-meta",
-        "claimed_at": "2026-11-17T18:30:00Z",
-        "seen_at": "2026-11-17T20:45:00Z",
-        "lease_until": "2026-11-17T21:30:00Z"
-      },
-      "critical": false,
-      "deps": [
-        "P3-S3-character-5"
-      ],
-      "done_when": [
-        "AD-R50 (flow board 2's F4, granted in cycle 123): the character's back is ScreenNav.back_button (client/scripts/screen_nav.gd), not the parchment '<' in the level-up card, with a mount test in client/tests/run.gd that opens every non-tab route through the router and finds exactly one back button on it",
-        "AD-R51 (F5, granted in cycle 123): the roster keeps its scroll and its stage's chosen character across a visit to the character and back, held in the route args or the store, with a mount test in client/tests/run.gd; a store change outside these files is a request to the lead with a default",
-        "AD-R63 (preview-1, granted in cycle 129): the character and the roster set the ERR_OFFLINE notice with UI.set_status(status_label, 'info', ...), ink on the cream plate; red stays for the server's real refusals",
-        "AD-R64 (preview-1, granted in cycle 129, M40): at large text the offline notice takes one line, the '!' and ERR_OFFLINE alone, with the full sentence as its accessibility_name, on the character and the roster; OFFLINE=1 TEXT=200 in pt_BR and de join the character's FIT=1 list, and fit ok",
-        "the gate's item 'character at 200% text, pt_BR' (Hierarchy) passes in both states, online and OFFLINE=1: it failed 3 of 3 at 3053cf6d on the offline notice outweighing Subir de nível (docs/art/ui-quality/gate/verdicts/P3-S3-character-5/3053cf6d.json)",
-        "the character's and the roster's stills at 100% and 200% text (en, pt_BR, de) and in high contrast unchanged in substance, or each change named; board 5 still stands",
-        "AD previews the stills before ready (M10, M12, M23): the builder sends them to AD while the work can still change, and AD's objections are answered in this task",
-        "python3 tools/ui_bake/check_screens.py",
-        "bash tools/ui_bake/guard.sh",
-        "gate: Screen",
-        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
-        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed under docs/art/ui-quality/gate/verdicts/ or outside the task's files (M48)",
-        "bash tools/check_all.sh"
-      ],
-      "estimate_h": 1.5,
-      "exceptions": [
-        "docs/art/shots/menu-screens/**"
-      ],
-      "files": [
-        "client/scripts/character_screen.gd",
-        "client/scripts/roster_screen.gd",
-        "client/tests/shots/screen_character.gd",
-        "client/tests/shots/screen_roster.gd",
-        "client/tests/run.gd",
-        "docs/art/tracks/menu-screens.md"
-      ],
-      "gate_items": [
-        {
-          "item": "character at 200% text, pt_BR",
-          "qualities": [
-            "Hierarchy"
-          ]
-        }
-      ],
-      "id": "P3-S3-nav-1",
-      "merged_sha": "2dc57508",
-      "model": "Opus 5.5",
-      "phase": 3,
-      "prior_branch": null,
-      "prior_sha": null,
-      "ready_sha": "5ac311f77e8d174c0ddc5f48cadabfbad25e994f",
-      "role": "S3",
-      "state": "merged",
-      "tier": 2,
-      "title": "Character and roster, navigation and the offline notice: ScreenNav's back (AD-R50), the roster keeps its scroll and stage (AD-R51), the offline notice as info in one line at large text (AD-R63, AD-R64)",
-      "updated_at": "2026-11-17T21:15:00Z",
-      "updated_by": "lead (cycle 136)"
-    },
-    {
-      "id": "P3-S2-home-7",
-      "title": "Home's tab bar by the router's tab table and ScreenNav's label rule (AD-R49's home part), and the goal card's bar on the kit's green (AD-R59's caller)",
-      "phase": 3,
-      "role": "S2",
-      "model": "Opus 5.5",
-      "assigned_to": "S2",
-      "files": [
-        "client/scripts/home.gd",
-        "client/scripts/home_parts.gd",
-        "client/tests/shots/universe_home.gd",
-        "client/tests/core_tests.gd",
-        "docs/art/tracks/home-screen.md"
-      ],
-      "deps": [
-        "P3-K1-tabs-1"
-      ],
-      "done_when": [
-        "AD-R49 (flow board 2's F3), home's part: home.gd drops its own TAB_ROUTES and routes Laws, Crew and Friends by Router.TABS (client/app/router.gd), as ScreenNav.bar does; the Heist is the one listed exception (home starts a heist rather than opening the Observatory) and Islands stays on home; both exceptions named in one place in home.gd with the reason",
-        "AD-R49's label rule: the tabs not chosen show their names up to ScreenNav.LABELS_UP_TO (125% text) and their icons alone above it, each named aloud, the chosen tab's word always shown, as ScreenNav.bar does; where home's own fitting (_fit_tab_words) still has to shrink a word below that size in some locale, it stays and the handoff names the locale and the still",
-        "a check in client/tests/core_tests.gd that every tab id in KitTabs.TABS has a route in Router.TABS and that home's route for each tab is Router.TABS' own, the Heist and Islands excepted as home.gd lists them",
-        "AD-R59's caller (P3-K1-tabs-1's handoff in docs/progress/K1.md): _show_goal drops the loop that hides the Progress labels, since KitHud.goal with an empty count hides them itself, and the comment above it says the bar is the kit's green progress fill, gold staying on Collect; the goal card's bar green in both looks on the stills",
-        "'home at 100% text', 'home at 200% text, pt_BR' and 'home in high contrast' passing on the new stills; FIT=1 runs of the home shot at 200% text in en, pt_BR and de and in high contrast all passing, each run listed in the handoff",
-        "AD previews the stills before ready (M10, M12, M23): the builder sends them to AD while the work can still change, and AD's objections are answered in this task",
-        "python3 tools/ui_bake/check_screens.py",
-        "bash tools/ui_bake/guard.sh",
-        "gate: Screen",
-        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
-        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed under docs/art/ui-quality/gate/verdicts/ or outside the task's files (M48)",
-        "bash tools/check_all.sh"
-      ],
-      "gate_items": [
-        {
-          "item": "home at 100% text",
-          "qualities": [
-            "Hierarchy",
-            "Display type"
-          ]
-        },
-        {
-          "item": "home at 200% text, pt_BR",
-          "qualities": [
-            "Hierarchy"
-          ]
-        },
-        {
-          "item": "home in high contrast",
-          "qualities": [
-            "Hierarchy"
-          ]
-        }
-      ],
-      "attempts": 0,
-      "estimate_h": 1.5,
-      "tier": 2,
-      "critical": false,
-      "state": "merged",
-      "claim": {
-        "agent": "S2",
-        "branch": "claude/ui-screens-home",
-        "claimed_at": "2026-11-17T15:55:00Z",
-        "seen_at": "2026-11-17T20:45:00Z",
-        "lease_until": "2026-11-17T21:48:00Z"
-      },
-      "prior_branch": null,
-      "prior_sha": null,
-      "ready_sha": "9ef7b2950c64c0ec80267425d050bacf9d8bd0a2",
-      "merged_sha": "9ec770d6",
-      "updated_at": "2026-11-17T20:00:00Z",
-      "updated_by": "lead (cycle 134)",
-      "exceptions": []
-    },
-    {
       "assigned_to": "S2",
       "attempts": 0,
       "claim": {
@@ -305,7 +170,13 @@
     {
       "assigned_to": "S3",
       "attempts": 0,
-      "claim": null,
+      "claim": {
+        "agent": "S3",
+        "branch": "claude/ui-screens-meta",
+        "claimed_at": "2026-11-17T23:00:17Z",
+        "seen_at": "2026-11-17T23:00:17Z",
+        "lease_until": "2026-11-18T02:00:17Z"
+      },
       "critical": false,
       "deps": [
         "P3-S3-nav-1"
@@ -343,18 +214,18 @@
         }
       ],
       "id": "P3-S3-settings-3",
-      "merged_sha": null,
+      "merged_sha": "ec6f2e5f",
       "model": "Opus 5.5",
       "phase": 3,
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
+      "ready_sha": "7972485a",
       "role": "S3",
-      "state": "open",
+      "state": "merged",
       "tier": 2,
       "title": "Settings remembers its tab for the session (AD-R52): it reopens on the tab last shown, with a mount test",
-      "updated_at": "2026-11-17T23:00:00Z",
-      "updated_by": "lead (cycle 139)"
+      "updated_at": "2026-11-18T01:07:00Z",
+      "updated_by": "lead (cycle 140)"
     },
     {
       "id": "P3-S1-marker-1",
@@ -1255,6 +1126,22 @@
       "sent_at": "2026-11-17T21:45:00Z",
       "ack_by": "2026-11-17T23:45:00Z",
       "acked_at": "2026-11-17T22:52:00Z"
+    },
+    {
+      "id": "M56",
+      "to": "lead",
+      "text": "From 17 November 2026 (report 111): the wait from ready to merged rated worse two reports in a row (2.1h, then 3.0h). P3-S2-home-7, P3-S3-nav-1 and P3-S1-hc-offline-2 sat ready 2.9 to 4.1 hours behind P3-AIA2-bake-1: the shared icons_256 bake was not the same on every machine, so the guard failed on every candidate from cycle 134 to cycle 136. Rule: a guard failure on a generated file the task does not change is an infra blocker. The lead seeds its fix to the file's owner as critical in that same cycle, ahead of new screen work; the fix proves a byte-identical rebake on a second machine before ready, and the held tasks are rebuilt and merged in one batch in the cycle the fix merges. Overdue lesson: M54 to AD (ack_by 18:22Z) is not in AD's acks on main or on claude/ui-ad; ask AD to ack it in its next turn. Add M56 to your acks.",
+      "sent_at": "2026-11-17T23:53:00Z",
+      "ack_by": "2026-11-18T01:53:00Z",
+      "acked_at": null
+    },
+    {
+      "id": "M57",
+      "to": "lead",
+      "text": "From 17 November 2026 (report 111): reserve hours used rated worse two reports in a row (23h, then 29.5h of 20h). Rule: before seeding R54, AD-R55 or S2-R44, the lead ranks the remaining requests against phase 3's exit criteria. Those the criteria do not need move to phase 4's list, and the revised reserve is written in lead.md, \"Now\". Add M57 to your acks.",
+      "sent_at": "2026-11-17T23:53:00Z",
+      "ack_by": "2026-11-18T01:53:00Z",
+      "acked_at": null
     }
   ]
 }

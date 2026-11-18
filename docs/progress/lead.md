@@ -648,6 +648,42 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 140**, 17-18 November 2026, from about 23:38Z (session
+  `session_01SNkKxpYPYZFhmxMYvxis4C`, started by the Opus 5.5 launcher).
+  The changes since cycle 139: S2's back-1 ready at 4e9114ac; S3's
+  settings-3 ready at 7972485a with a gate request; K1-R28, S3-R42 and
+  S3-R43 filed.
+  **Requests:** K1-R28 granted (overlay_landing.gd's line 248 is
+  P3-K1-outline-1's exception), S3-R42 granted (settings_tab_tests.gd and
+  its `.uid` are P3-S3-settings-3's exceptions), S3-R43 answered by its
+  default (AD has no seat; the preview joins AD's next task). AD-R54
+  re-read: unchanged. **Restarts:** K1 on P3-K1-outline-1 with K1-R28's
+  grant (`session_01SNkKxn6UGKqas3XXoa59J8`, 23:44Z).
+  **Seeded:** P3-S1-marker-1 from AD-R55 (the heist's HUD draws above
+  every map marker) and P3-S3-offline-1 from S3-R39 (a shorter pt_BR
+  ERR_OFFLINE; deps settings-3, back-1 and outline-1).
+  **Merge:** P3-S2-back-1's pass at 0bfa1d6a carries over (the merge
+  changed none of its files); candidate 58a9a197 passes full checks
+  (00:10:52Z) and the guard, merged as f7ef5ed7 (merged_sha 58a9a197).
+  **Started:** S1 on P3-S1-marker-1 (`session_01SNkKxqVesBsXCSfdHoP6BX`,
+  00:12Z) in S2's freed seat.
+  **Gate:** settings-3's 'settings at 100% text' passes Hierarchy at
+  7972485a, one fail of six after a split first three
+  (verdicts/P3-S3-settings-3/7972485a.json). **Merge:** candidate ec6f2e5f
+  (settings-3 on main) passes full checks (01:05:45Z, rerun after a
+  container restart lost the first run) and the guard, merged as
+  995dcbfe (merged_sha ec6f2e5f).
+  The audit and roadmap pages are republished.
+  **Seats:** K1 (outline-1) and S1 (marker-1); S3's seat is free
+  with settings-3 merged: within the cap of three while the seven-day bar
+  reads `allowed_warning`. S2, AIA-2 and AD are idle.
+  **Next:** merge outline-1 and marker-1 when ready, each with its own
+  full checks and the guard; start S3 on P3-S3-offline-1 once outline-1,
+  its last dep, is merged. Until then, seed and start S2-R44's home
+  follow-up in the free seat, then AD's next task with
+  the previews of S1-R41, S3-R40, AIA2-R4 and S3-R43 and back-1's quit
+  question (AD-R48).
+
 - **Cycle 139**, 17 November 2026, from about 22:10Z (session
   `session_01SNkKxq4x4crXhYQkGcqX1K`, started by the Opus 5.5 launcher).
   The changes since cycle 138: AIA-2's bake-1 ready at 75798143; K1-R27
@@ -707,32 +743,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   AD-R55 with the next heist task (S1) and S2-R44's home follow-up; AD's
   next task carries the previews of S1-R41, S3-R40 and AIA2-R4, and
   back-1's quit question (AD-R48).
-
-- **Cycle 137**, 17 November 2026, from about 21:14Z (session
-  `session_01SNkKxnomTXF5W6AXtNDsaA`, started by the Opus 5.5 launcher).
-  The changes since cycle 136: K1's claim and AIA-2's green checks.
-  **Claims copied:** K1's on P3-K1-outline-1 (claimed 21:10Z, lease
-  00:10Z). AIA-2's on P3-AIA2-bake-1 seen again: at 21:18Z it pushed 75798143,
-  "checks on merge 17520f56 pass (check_all, guard)", with the pre-check
-  and owners.py diff next (status 21:20Z, next due 22:05Z, lease 23:10Z).
-  **Requests:** none new. **Gate:** none. **Merge:** none, and no lock
-  taken: nav-1, hc-offline-2 and home-7 stay ready until bake-1 merges
-  (S2-R45). The audit and roadmap pages are not republished.
-  **Started:** S2 on P3-S2-back-1, stacked on P3-S2-home-7 at 9ef7b295
-  (`session_01SNkKxn1nyucpjrJfH22MCW`; protocol, "Stacked tasks"); its
-  files are disjoint from outline-1's and bake-1's (owners.py claims).
-  For this task the lead names S2 the owner of client/i18n/strings.csv
-  and hands it router.gd's back table. S2's prompt below no longer says
-  home-7 merged.
-  **Seats:** AIA-2 (bake-1), K1 (outline-1) and S2 (back-1): three, the
-  cap while the seven-day bar reads `allowed_warning`.
-  **Next:** once bake-1 merges, rebuild the candidates for home-7, nav-1
-  and hc-offline-2 on the new main, rerun the guard and merge each on a
-  pass; then back-1 after home-7, and outline-1 when ready. As seats
-  free, seed and start, in order: R52 with the next settings task (S3),
-  R54's content task with S3-R39, AD-R55 with the next heist task (S1)
-  and S2-R44's home follow-up; AD's next task carries the previews of
-  S1-R41, S3-R40 and AIA2-R4, and back-1's quit question (AD-R48).
 
 - **Stopped here**, 13 November 2026, about 13:20Z (the owner's "Stop
   cleanly"). Cycle 84 (session `session_01SNkKxpqF4gx3yYhsXenUGt`) took
