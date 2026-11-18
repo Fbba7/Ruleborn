@@ -930,8 +930,7 @@ func _fit_hint() -> void:
 		_hint_level = 1
 		_set_hint(_hint_source)
 		return
-	# At 200% a tip of two lines stands its plate over the map band the HUD
-	# leaves (the wave board's note): it hides, as it did under the loot.
+	# At 200% a two-line tip's plate stands over the HUD's map band (the wave board's note): it hides.
 	if HeistHud.beside_alarm() and hint_label.get_line_count() > 1:
 		_hint_level = 2
 		_set_hint(_hint_source)

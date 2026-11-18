@@ -8,12 +8,12 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-18T07:30:00Z",
   "lease_until": "2026-11-18T10:30:00Z",
-  "updated_at": "2026-11-18T07:55:00Z",
-  "expected_next_update_by": "2026-11-18T08:40:00Z",
+  "updated_at": "2026-11-18T08:00:00Z",
+  "expected_next_update_by": "2026-11-18T08:45:00Z",
   "progress_marker": {
     "last_green_sha": "520793761853473f6a96fb08bd6d53ff813ae232",
-    "next_step": "at 200% text the loot shows 'Vault 0%' with its crack, beside the alarm under the laws; next: measure the map band at 150% and 200% in en, pt_BR and de, write the test in heist_fx_tests.gd, re-shoot the stills",
-    "at": "2026-11-18T07:55:00Z"
+    "next_step": "test _vault_row added to heist_fx_tests.gd (Vault's row at 200% in en, pt_BR, de; band at 200% >= 150%); next: suite and FIT stills at 100/150/200 and high contrast, Part 10 in heist-pilot.md, merge main, checks",
+    "at": "2026-11-18T08:00:00Z"
   },
   "precheck": {
     "sha": "520793761853473f6a96fb08bd6d53ff813ae232",

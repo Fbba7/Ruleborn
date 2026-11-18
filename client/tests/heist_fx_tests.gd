@@ -49,6 +49,7 @@ func run() -> void:
 	await _entry_card()
 	await _layers()
 	await _vault_band()
+	await _vault_row()
 	_planned()
 
 
@@ -430,6 +431,58 @@ func _vault_band() -> void:
 	check.call("at 200% text the heist's opening frame keeps the vault and its tag inside the map band, between the "
 			+ "loot panel's foot and the crew tray's top edge, in en, pt_BR and de; at 100% the frame is not lifted "
 			+ "(AD-R65)", ok, "; ".join(seen))
+
+
+## The wave board's note on the heist at 200% text: the loot panel says the
+## Vault's progress ('Vault 0%' and its crack) while the Vault is shut, in en,
+## pt_BR and de, and the map band between the HUD's foot and the first plate
+## over the map under it (the tip's, or the crew tray's) is no narrower than
+## at 150% in the same locale.
+func _vault_row() -> void:
+	var scale := Settings.text_scale
+	var locale := TranslationServer.get_locale()
+	UI.root_theme()
+	var ok := true
+	var seen: Array[String] = []
+	for lang: String in ["en", "pt_BR", "de"]:
+		var bands := {}
+		for size: int in [150, 200]:
+			Settings.text_scale = size
+			Settings.apply()
+			Strings.set_locale(lang)
+			App.services.store.dispatch(&"heist_started", {"island": WorldTests.island(), "testing": true})
+			var screen: HeistScreen = load(HEIST).instantiate()
+			tree.root.add_child(screen)
+			await tree.process_frame
+			screen.set_process(false)
+			screen.controller.land_here()
+			screen._refresh()
+			for i in 4:
+				await tree.process_frame
+			var word := false
+			var count := false
+			for l: Node in screen.hud.loot_panel.find_children("*", "Label", true, false):
+				var label := l as Label
+				if not label.is_visible_in_tree():
+					continue
+				word = word or label.text == Strings.t("REHEARSE_LEGEND_VAULT")
+				count = count or label.text == "0%"
+			var foot := screen.hud.loot_panel.get_global_rect().end.y
+			var under := screen.actions_band.get_global_rect().position.y
+			if screen.hint_panel.is_visible_in_tree():
+				under = minf(under, screen.hint_panel.get_global_rect().position.y)
+			bands[size] = under - foot
+			if size == 200:
+				ok = ok and word and count and bands[200] >= bands[150]
+			seen.append("%d%% %s vault %s %s, band %d" % [size, lang, word, count, bands[size]])
+			screen.queue_free()
+			await tree.process_frame
+	Strings.set_locale(locale)
+	Settings.text_scale = scale
+	Settings.apply()
+	check.call("at 200% text the heist's loot panel says the Vault's progress ('Vault 0%') while it is shut, and the "
+			+ "map band between the HUD and the first plate under it is no narrower than at 150%, in en, pt_BR and de",
+			ok, "; ".join(seen))
 
 
 ## The lowest and highest z a drawn canvas item under `n` (itself included)
