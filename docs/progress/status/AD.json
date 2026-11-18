@@ -8,8 +8,8 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-18T01:25:25Z",
   "lease_until": "2026-11-18T04:25:25Z",
-  "updated_at": "2026-11-18T01:45:00Z",
-  "expected_next_update_by": "2026-11-18T02:30:00Z",
+  "updated_at": "2026-11-18T02:00:00Z",
+  "expected_next_update_by": "2026-11-18T02:45:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "885fae508787b78733a3104049c6de78c4c3ae13",
@@ -921,6 +921,38 @@
       "due": "2026-11-19T16:30:00Z",
       "default": "At large text the notice takes at most one line (the '!' and ERR_OFFLINE alone, the full sentence as accessibility_name), so the tabs and the ability header stay on the first screen offline in en, pt_BR and de; the roster follows in the same task; OFFLINE=1 TEXT=200 (pt_BR and de) joins the fit list.",
       "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R65",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Heist screen at 200% text (S1-R42 preview of P3-S1-marker-1, objection; M40-dependent, the heist's large-text layout; does not hold marker-1): the vault's label sits at the foot of the map band, and now that marker-1 draws the HUD above the markers it goes under the crew tray: 'COFRE' (pt_BR) is cut through its middle and 'TRESOR' (de) shows only its letters' tops. At 100% 'VAULT' reads whole. File client/scripts/heist_screen.gd (the camera's framing); owner S1, a follow-up task.",
+      "files": [
+        "client/scripts/heist_screen.gd",
+        "client/tests/shots/screen_heist.gd",
+        "docs/art/ui-quality/gate/boards/preview-2.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-18T02:00:00Z",
+      "due": "2026-11-20T02:00:00Z",
+      "default": "At large text the heist's opening frame keeps the vault and its label inside the map band, between the loot panel's foot and the crew tray's top edge, in en, pt_BR and de; the HUD's order stays as marker-1 sets it; the heist's TEXT=200 stills in pt_BR and de join the evidence.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R66",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Character screen offline at 200% text (S3-R40 preview of P3-S3-nav-1, objection; M40-dependent, the character's large-text layout, which P3-S3-offline-1 changes; does not hold nav-1, merged): AD-R64's default is met for the tabs but not for the ability header. The one-line notice (about 31 pt) and its band push the stage down about 59 pt, so 'HABILIDADE' (pt_BR) and 'FÄHIGKEIT' (de) fall below the first screen; online at 200% they stand above the foot. P3-S3-offline-1 drops the notice's shrink, so the notice gets taller. File client/scripts/character_screen.gd; owner S3.",
+      "files": [
+        "client/scripts/character_screen.gd",
+        "client/tests/shots/screen_character.gd",
+        "docs/art/ui-quality/gate/boards/preview-2.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-18T02:00:00Z",
+      "due": "2026-11-20T02:00:00Z",
+      "default": "Answered in the running P3-S3-offline-1, as an objection of its AD preview (or else a follow-up task): while offline at large text the stage gives the notice its height (the notice in the stage's top band beside '5 / 12' and the job chip, or the stage's gap above the name plate shortened by the notice's height), so the ability header stays above the foot in en, pt_BR and de; the roster keeps its notice as is; OFFLINE=1 TEXT=200 in pt_BR and de stays in that task's stills.",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
@@ -1063,8 +1095,38 @@
       "request_id": "S3-R34",
       "at": "2026-11-17T16:30:00Z",
       "answer": "Preview of P3-S3-character-5 at 4d575472 (stills at a5103ce7; only S3.md and S3.json changed since), the full list in one round (M12, M23). (1) The kit's calls stand: 100% en, high contrast, tab 1 and tab 2 are pixel for pixel main's; 200% pt_BR and de differ only in the outline. (2) AD-R53 met: the offline notice is on the roster's cream plate through the same set_status path on both screens. (3) AD-R58 met: 6 px a side on the level line, 6 to 7 px on the subtitle and 'Subir de nível', 5 px on HABILIDADE, at 540 px wide (about 12.5% and 14% of 48 and 42 px words). No objection holds character-5; S3 may mark ready. Two kept objections go to the lead for follow-ups: O1, the offline notice's words in red on both screens (AD-R63, not M40-dependent), and O2, at 200% the offline notice pushes the tabs and the ability header off the first screen (AD-R64, M40-dependent). Write-up and stills: docs/art/ui-quality/gate/boards/preview-1.md, part 2."
+    },
+    {
+      "request_id": "S1-R42",
+      "at": "2026-11-18T02:00:00Z",
+      "answer": "Preview of P3-S1-marker-1 at S1's ee155025, one round (M12, M23). (1) Stands: the hourglass no longer covers the 'E' of 'Espaço' in part 9's flow stills. (2) Stands: the HUD draws above every marker at 100%, 200% pt_BR and de, and in high contrast (HUD_Z 32, coins 47, speech 48); the guards' bubbles stay above the map. One kept objection goes to the lead for a follow-up and does not hold marker-1: at 200% the vault's label goes under the crew tray (AD-R65, owner S1, heist_screen.gd, M40-dependent). Write-up and stills: docs/art/ui-quality/gate/boards/preview-2.md, part 1."
+    },
+    {
+      "request_id": "S1-R41",
+      "at": "2026-11-18T02:00:00Z",
+      "answer": "Preview of P3-S1-hc-offline-2's leather on main, one round. Stands: the kit's high-contrast face #7A4660 (L* 36.7) in a black ink line steps ΔL* 31.5 off the tray #140C2A, where AD-R61's #6A3E52 gave 26.9; AD-R60 (gold only with a cast left) and AD-R62 (cream loot figures) are met, and red is the alarm's alone. No objection and no K1 request. Write-up and stills: docs/art/ui-quality/gate/boards/preview-2.md, part 2."
+    },
+    {
+      "request_id": "S3-R40",
+      "at": "2026-11-18T02:00:00Z",
+      "answer": "Preview of P3-S3-nav-1 on main ce9113f9, one round. (1) The kit's icon back stays (AD-R50). (2) S3-R41's value step is met since P3-K1-outline-1: the back's face is L* 57.0 on the tray's 13.7 (ΔL* 43.3), 52.4 on 5.2 in high contrast. (3) The roster's kept state (AD-R51) stands: route args and run.gd _back_routes. (4) The offline notice is info in ink on cream and one line at 200% in pt_BR and de (AD-R63, AD-R64). One kept objection, M40-dependent and not holding nav-1: offline at 200% the ability header falls below the first screen (AD-R66, owner S3, character_screen.gd, fits P3-S3-offline-1). Write-up and stills: docs/art/ui-quality/gate/boards/preview-2.md, part 3."
+    },
+    {
+      "request_id": "S3-R41",
+      "at": "2026-11-18T02:00:00Z",
+      "answer": "Met on main since P3-K1-outline-1: the character's back face measures L* 57.0 on the tray's 13.7 (ΔL* 43.3), where it was 23.9 (ΔL* 10.2). Write-up and stills: docs/art/ui-quality/gate/boards/preview-2.md, part 3."
+    },
+    {
+      "request_id": "AIA2-R4",
+      "at": "2026-11-18T02:00:00Z",
+      "answer": "Preview of crew__pip__normal in icons_48_hc after P3-AIA2-bake-1, one round. Stands: the ink ring is round, concentric with the round gold frame, and matches the crew rings on the tray and the roster; the old octagon was a facet artefact. No objection. Write-up and stills: docs/art/ui-quality/gate/boards/preview-2.md, part 4."
+    },
+    {
+      "request_id": "S3-R43",
+      "at": "2026-11-18T02:00:00Z",
+      "answer": "Preview of P3-S3-settings-3's last tab on main, one round. Stands: static var last_tab held in memory only, a fresh start opens on 'game', test settings_tab_tests.gd. No objection. Write-up and stills: docs/art/ui-quality/gate/boards/preview-2.md, part 5."
     }
   ],
-  "next_step": "Write gate/boards/preview-2.md: one round each on S1-R42, S1-R41, S3-R40, AIA2-R4 and S3-R43; then pre-check and mark ready.",
-  "last_update": "Blind audit 2 labelled and pushed at 8fe155f4 (22 rows: 16 pass, 6 fail). Rendering the previews' stills."
+  "next_step": "Pre-check with tools/run_checks.sh and check_all.sh, owners diff, then mark ready.",
+  "last_update": "Preview 2 written (gate/boards/preview-2.md): all five stand; AD-R65 (S1, vault label under the tray at 200%) and AD-R66 (S3, ability header off the first screen offline at 200%) kept as follow-ups."
 }
