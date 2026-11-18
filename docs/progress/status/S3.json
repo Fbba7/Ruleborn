@@ -8,8 +8,8 @@
   "task_state": "working",
   "claimed_at": "2026-11-18T01:49:12Z",
   "lease_until": "2026-11-18T04:49:12Z",
-  "updated_at": "2026-11-18T01:49:12Z",
-  "expected_next_update_by": "2026-11-18T02:34:12Z",
+  "updated_at": "2026-11-18T02:13:23Z",
+  "expected_next_update_by": "2026-11-18T02:58:23Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "7972485a7738ac5cea3f4ac762935d9f2522c1d7",
@@ -776,6 +776,25 @@
       "default": "AD has no objection: the stills change only by K1's kit work already on main; the gate judges settings-100 as it stands.",
       "escalate_to": "lead",
       "state": "answered"
+    },
+    {
+      "id": "S3-R44",
+      "from": "S3",
+      "to": "lead",
+      "ask": "For AD, a preview before ready (P3-S3-offline-1, AD-R64): the offline notice no longer shrinks at large text. ERR_OFFLINE is shorter in pt_BR and pt_PT ('sem servidor'), de ('kein Server') and fr ('aucun serveur'). At 200% it stands at full size on one line in every language (widths: en 829, fr 791, pt 725, de 647 of 924 px), and the whole sentence stays its accessibility_name. Four stills change because of this task: character-offline-200-pt_BR and -de (the plate is 47.67 pt and everything under it moves down 10.47 pt; the tabs and Level up stay on the first screen), and roster-offline-200-pt_BR and -de. The other character stills and the two 100% offline stills were re-shot too. Each renders pixel-identical to main's code (P3-K1-outline-1's outline and back face), and their records are unchanged. Table in docs/art/tracks/menu-screens.md, 'The offline notice at full size'. Gate item: character at 200% text, pt_BR (Hierarchy).",
+      "files": [
+        "docs/art/shots/menu-screens/character-offline-200-pt_BR.png",
+        "docs/art/shots/menu-screens/character-offline-200-de.png",
+        "docs/art/shots/menu-screens/roster-offline-200-pt_BR.png",
+        "docs/art/shots/menu-screens/roster-offline-200-de.png",
+        "docs/art/shots/menu-screens/character-200-pt_BR.png",
+        "docs/art/tracks/menu-screens.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-18T02:13:23Z",
+      "due": "2026-11-18T08:13:23Z",
+      "default": "AD has no objection: the stills stand as named, S3 marks ready at the pre-checked sha, and AD re-checks them on the merge.",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
