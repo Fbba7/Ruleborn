@@ -8,13 +8,13 @@
   "task_state": "working",
   "claimed_at": "2026-11-18T01:49:12Z",
   "lease_until": "2026-11-18T04:49:12Z",
-  "updated_at": "2026-11-18T03:02:00Z",
-  "expected_next_update_by": "2026-11-18T03:47:00Z",
+  "updated_at": "2026-11-18T03:34:00Z",
+  "expected_next_update_by": "2026-11-18T04:19:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "7972485a7738ac5cea3f4ac762935d9f2522c1d7",
-    "next_step": "M59 acked: S3-R44 answered by default; AD-R66 joins the task. The stage gives the offline notice its height at large text (character_screen.gd); re-shooting the stills, then checks, pre-check and ready.",
-    "at": "2026-11-18T03:02:00Z"
+    "next_step": "AD-R66 done and its stills pushed (5ced6958); fit_character.sh 53 of 53. Main 2ced5486 and a1649b90 merged (34a1c3fd); setup line and build.sh exit 0, owners.py diff passes; guard and the pre-check at 34a1c3fd running (the container restart lost the first run at ea72807d). Then the handoff and ready.",
+    "at": "2026-11-18T03:34:00Z"
   },
   "precheck": null,
   "gate_request": null,
