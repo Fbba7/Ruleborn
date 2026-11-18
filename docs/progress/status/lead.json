@@ -3,7 +3,14 @@
   "updated_at": "2026-11-18T02:25:00Z",
   "expected_next_update_by": "2026-11-18T05:25:00Z",
   "cycle": 142,
-  "merging": null,
+  "merging": {
+    "candidate_sha": "bc34e83f900e3f5ddac233f9015b6d9e6bdf7fdf",
+    "task_ids": [
+      "P3-AD-audit-2"
+    ],
+    "started_at": "2026-11-18T02:43:00Z",
+    "expires_at": "2026-11-18T03:43:00Z"
+  },
   "last_merged": {
     "task_id": "P3-K1-outline-1",
     "sha": "276ed4f0"

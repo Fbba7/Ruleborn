@@ -3018,3 +3018,16 @@ to the lead. None is outstanding: K1's from P0-K1-bake-2 arrived as K1-R3.
 
 Since 30 October 2026 nothing waits for the owner: AD does O2 and O3, and
 the rest of O1–O7 are AD's or the lead's (`report.md` section 3.4).
+- **S1-R43** (from S1 to the lead, 18 November 2026 02:50Z; due 05:00Z;
+  blocking): for AD-R65 (M58), folded into P3-S1-marker-1: add
+  `client/world/world_view.gd` to the task's files (no task in flight owns
+  it). The vault's place on the heist's opening frame is set by
+  `WorldView._frame_camera`, so a nudge from the task's files would desync
+  the projected labels; a constant lift suits no language. Plan: one
+  public var `lift` in `world_view.gd`, applied in `_frame_camera` while
+  following, computed on the opening frame by `heist_screen.gd` through
+  HeistHud (0 at 100% text). Default: `world_view.gd` is granted for the
+  one var and its use in `_frame_camera` only. Copied in cycle 143.
+  **Granted** by the lead in cycle 143: the default (M60); the file joins
+  the task's files in the backlog and `owners.py claims` stays disjoint.
+

@@ -239,13 +239,15 @@
         "client/scripts/heist_hud.gd",
         "client/tests/shots/screen_heist.gd",
         "client/tests/heist_fx_tests.gd",
-        "docs/art/tracks/heist-pilot.md"
+        "docs/art/tracks/heist-pilot.md",
+        "client/world/world_view.gd"
       ],
       "deps": [
         "P3-S1-hc-offline-2"
       ],
       "done_when": [
         "AD-R55 (flow board 2's F9, docs/art/ui-quality/gate/boards/flow-2.md, granted in cycle 123): the heist's HUD (HeistHud, the loot panel, the hand and every control) draws above every map marker and world draw (a sentry beam's hourglass included) at every text size, language and contrast mode, so at 200% pt_BR the loot panel's 'Espaço' reads whole; the order is set once in the screen's layer order, not by moving the marker; a world file outside this task's files is a request to the lead with a default",
+        "S1-R43 (granted in cycle 143): client/world/world_view.gd joins this task's files for one public var `lift` (pixels the heist's follow frame stands the island higher; 0 keeps the framing) and its use in _frame_camera only; no other change in that file",
         "a test in client/tests/heist_fx_tests.gd that mounts the heist at 200% text and finds no world marker drawing above the HUD (by draw order or z_index against the HUD's), failing on main's order",
         "'heist at 100% text', 'heist at 200% text, pt_BR' and 'heist in high contrast' still passing; FIT=1 runs of the heist shot at 200% text in en, pt_BR and de and in high contrast all passing, each run listed in the handoff",
         "AD previews the stills before ready (M10, M12, M23): the builder sends them to AD while the work can still change, and AD's objections are answered in this task",
@@ -273,15 +275,15 @@
         "agent": "S1",
         "branch": "claude/ui-screens-heist",
         "claimed_at": "2026-11-18T00:30:00Z",
-        "seen_at": "2026-11-18T02:02:00Z",
+        "seen_at": "2026-11-18T02:50:00Z",
         "lease_until": "2026-11-18T03:30:00Z"
       },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-18T02:20:00Z",
-      "updated_by": "lead (cycle 142)",
+      "updated_at": "2026-11-18T02:50:00Z",
+      "updated_by": "lead (cycle 143)",
       "exceptions": [
         "docs/art/shots/heist-pilot/**"
       ]
@@ -374,20 +376,20 @@
       "estimate_h": 2.0,
       "tier": 2,
       "critical": false,
-      "state": "working",
+      "state": "ready",
       "claim": {
         "agent": "AD",
         "branch": "claude/ui-ad",
         "claimed_at": "2026-11-18T01:25:25Z",
-        "seen_at": "2026-11-18T02:10:00Z",
+        "seen_at": "2026-11-18T02:25:00Z",
         "lease_until": "2026-11-18T04:25:25Z"
       },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
+      "ready_sha": "21c0bc04ebe39c87cb385ed96ca2d41e12a607c6",
       "merged_sha": null,
-      "updated_at": "2026-11-18T02:20:00Z",
-      "updated_by": "lead (cycle 142)",
+      "updated_at": "2026-11-18T02:50:00Z",
+      "updated_by": "lead (cycle 143)",
       "exceptions": []
     },
     {
@@ -1202,7 +1204,7 @@
       "text": "From cycle 142: AD-R65 (AD's preview 2, docs/art/ui-quality/gate/boards/preview-2.md) joins your running P3-S1-marker-1 as an objection of its AD preview, to answer before ready: at large text the heist's opening frame keeps the vault and its label inside the map band, between the loot panel's foot and the crew tray's top edge, in en, pt_BR and de ('COFRE' and 'TRESOR' read whole); the HUD's order stays as marker-1 sets it; the heist's TEXT=200 stills in pt_BR and de join the evidence. Your files cover it (heist_screen.gd, screen_heist.gd). If you have already marked ready when you read this, say so in your handoff and the lead seeds it as your follow-up task after the merge. Add M58 to your acks.",
       "sent_at": "2026-11-18T02:20:00Z",
       "ack_by": "2026-11-18T04:20:00Z",
-      "acked_at": null
+      "acked_at": "2026-11-18T02:50:00Z"
     },
     {
       "id": "M59",
@@ -1210,6 +1212,14 @@
       "text": "From cycle 142: S3-R44 is answered with its default: AD has no objection to the stills as named; mark ready at the pre-checked sha and AD re-checks them on the merge. AD-R66 (AD's preview 2) joins your running P3-S3-offline-1 as an objection of its AD preview, to answer before ready: while offline at large text the stage gives the notice its height so the ability header ('HABILIDADE', 'FÄHIGKEIT') stays above the foot in en, pt_BR and de; the roster keeps its notice as is; OFFLINE=1 TEXT=200 in pt_BR and de stays in your stills. Your files cover it (character_screen.gd, screen_character.gd). Add M59 to your acks.",
       "sent_at": "2026-11-18T02:20:00Z",
       "ack_by": "2026-11-18T04:20:00Z",
+      "acked_at": null
+    },
+    {
+      "id": "M60",
+      "to": "S1",
+      "text": "From cycle 143: S1-R43 is granted with its default: client/world/world_view.gd joins P3-S1-marker-1's files (backlog updated) for the one public var `lift` and its use in _frame_camera only (camera.v_offset -= lift * cam_size / size.y while following); make no other change in that file. heist_screen.gd (through HeistHud) computes the lift on the opening frame from the band and holds it, 0 at 100% text; the TEXT=200 stills in en, pt_BR and de and the test in heist_fx_tests.gd that the vault's plate sits inside the band are the evidence. Then answer AD-R65 in your handoff and mark ready as M58 says. Add M60 to your acks.",
+      "sent_at": "2026-11-18T02:50:00Z",
+      "ack_by": "2026-11-18T04:50:00Z",
       "acked_at": null
     }
   ]
