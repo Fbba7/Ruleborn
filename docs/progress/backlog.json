@@ -145,7 +145,7 @@
       "estimate_h": 2.0,
       "tier": 2,
       "critical": false,
-      "state": "ready",
+      "state": "merged",
       "claim": {
         "agent": "K1",
         "branch": "claude/ui-bake",
@@ -156,8 +156,8 @@
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": "ca49e767fc8b500ff1c9df8fa0ba2ba1bb7813ee",
-      "merged_sha": null,
-      "updated_at": "2026-11-18T01:20:00Z",
+      "merged_sha": "276ed4f0623d108174022240cba14f4f0ef9f74b",
+      "updated_at": "2026-11-18T01:50:00Z",
       "updated_by": "lead (cycle 141)",
       "exceptions": [
         "client/scripts/character_screen.gd",
