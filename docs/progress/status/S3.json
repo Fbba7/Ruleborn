@@ -8,13 +8,16 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-18T06:00:00Z",
   "lease_until": "2026-11-18T09:00:00Z",
-  "updated_at": "2026-11-18T06:00:00Z",
-  "expected_next_update_by": "2026-11-18T06:45:00Z",
-  "long_run": null,
+  "updated_at": "2026-11-18T06:07:00Z",
+  "expected_next_update_by": "2026-11-18T07:30:00Z",
+  "long_run": {
+    "log": "/tmp/check-4a998521c29f39451c8164ec5b642eb37f9835f9.log",
+    "expected_end": "2026-11-18T07:30:00Z"
+  },
   "progress_marker": {
     "last_green_sha": "34a1c3fd007aff2cf671482f80e94d04febd0934",
-    "next_step": "P3-S3-settings-4: AD preview asked (S3-R45, default no objection, due 12:00Z); main merged at 79931100; fit, guard and pre-check next.",
-    "at": "2026-11-18T06:00:00Z"
+    "next_step": "P3-S3-settings-4: fit_settings 23 of 23, check_screens OK, guard OK, owners diff passes at 4a998521; pre-check running at 4a998521 (started 06:07:17Z); then ready and the handoff.",
+    "at": "2026-11-18T06:07:00Z"
   },
   "precheck": null,
   "gate_request": null,
