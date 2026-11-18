@@ -3,17 +3,17 @@
   "role": "AD",
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
+  "agent_state": "done",
   "task_id": "P3-AD-wave-board",
-  "task_state": "ready",
+  "task_state": "merged",
   "claimed_at": "2026-11-18T04:56:42Z",
-  "lease_until": "2026-11-18T07:56:42Z",
-  "updated_at": "2026-11-18T05:43:45Z",
-  "expected_next_update_by": "2026-11-18T06:29:00Z",
+  "lease_until": null,
+  "updated_at": "2026-11-18T06:49:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "baa01a1c27ec54d5791e0c05fff6558eb7921bdd",
-    "next_step": "ready: wave.md's ruling stands but for AD-R67 (settings at 100%, Hierarchy; S3 on settings_screen.gd, rank 1 under M57); AD previews the re-work's stills when its task runs"
+    "next_step": "done: S3-R45 answered in gate/boards/preview-3.md (both departures stand); AD-R68 to the lead (tab strip, S3); AD checks the re-shot strip when it lands"
   },
   "precheck": {
     "sha": "baa01a1c27ec54d5791e0c05fff6558eb7921bdd",
@@ -974,6 +974,22 @@
       "due": "2026-11-19T05:15:11Z",
       "default": "a follow-up task for S3 on settings_screen.gd: the gold A / A buttons stay the tab's primary (key frame 05, board 5 F); the High contrast and Motion switch rows move off cream parchment onto the dark plate with cream words, as the law sample moved at 5fc97aac; the title keeps its plate, and the tab strip and Back stay as they are. Done when the gate passes settings at 100% on Hierarchy 3 of 3, the 200% and high-contrast forms still pass, and AD previews the stills (M12).",
       "escalate_to": "lead"
+    },
+    {
+      "id": "AD-R68",
+      "from": "AD",
+      "to": "lead",
+      "ask": "Preview 3 (S3-R45): P3-S3-settings-4's ghost rows stand, but the Access tab at 100% still has no lead in the grayscale squint: the cream tab strip (seg_track_light, L* 85 over 38k px, right under the title) outweighs the title and the gold As. AD-R67 wrongly kept the strip, although audit 2's critique named it. Quieten the strip outside high contrast so the title leads, with kit looks only; each tab must pass value-steps on its own ground.",
+      "files": [
+        "client/scripts/settings_screen.gd",
+        "docs/art/shots/menu-screens/",
+        "docs/art/ui-quality/gate/boards/preview-3.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-18T06:49:00Z",
+      "due": "2026-11-18T13:00:00Z",
+      "default": "S3 folds it into P3-S3-settings-4 before its gate run (back to claimed from ready at 4a998521): in _tabs() of client/scripts/settings_screen.gd the track goes on the kit's ghost with clear unchosen tabs in cream words and the chosen tab's dark leather and gold rim (or, if no kit strip passes value-steps at a mid value, the title in the display face with its outline, outweighing the strip); high contrast, the gold As and Back unchanged; the Access, Game and Account tabs re-shot at 100% en, pt_BR and de. Done when the gate passes settings at 100% text on Hierarchy 3 of 3, the 200% and hc forms still pass value-steps and fit, and AD has seen the re-shot stills (a check, not a new round). If settings-4 is already merged, the same work is a follow-up task for S3 on the same file, phase 3's one exit item (M57).",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
@@ -1146,8 +1162,13 @@
       "request_id": "S3-R43",
       "at": "2026-11-18T02:00:00Z",
       "answer": "Preview of P3-S3-settings-3's last tab on main, one round. Stands: static var last_tab held in memory only, a fresh start opens on 'game', test settings_tab_tests.gd. No objection. Write-up and stills: docs/art/ui-quality/gate/boards/preview-2.md, part 5."
+    },
+    {
+      "request_id": "S3-R45",
+      "at": "2026-11-18T06:49:00Z",
+      "answer": "Preview 3 of P3-S3-settings-4 at 4a998521, one round. Both departures stand: (1) the ghost rows, not plate_dark (ghost passes value-steps at 39.5, 23.1 to 28.3 at 200%; plate_dark fails, as tried at 5fc97aac; words 4.78:1 at worst; precedent AD-R43); (2) parchment kept in high contrast (ghost darkens to 37.5 and fails there; hc's bright plates are the mode's design). The rows' part of audit 2's miss is met. One objection kept, AD-R68 (S3, client/scripts/settings_screen.gd _tabs()): the cream tab strip still outweighs the title in the squint; it does not depend on the screen's final shape (M40). AD-R67 is answered, and the wave stands at O7, only once AD-R68 is met and the gate passes settings at 100% on Hierarchy 3 of 3. Write-up: docs/art/ui-quality/gate/boards/preview-3.md."
     }
   ],
-  "next_step": "all before/after pairs made (5 screens x 100/200 pt_BR/200 de/hc, gray, 960 px); AD-R66 verified on main; audit 2's settings miss still open on main (no settings change since 7972485a); motion strips and budget_shots running; next: wave.md and its ruling",
-  "last_update": "2026-11-18T05:09:45Z"
+  "next_step": "done: S3-R45 answered in gate/boards/preview-3.md (both departures stand); AD-R68 to the lead (tab strip, S3); AD checks the re-shot strip when it lands",
+  "last_update": "2026-11-18T06:49:00Z"
 }
