@@ -202,8 +202,9 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxmdvLviNaCD3jf7YyA` (cycle 146,
-18 November 2026 from about 05:14Z, started by the Opus 5.5 launcher). Cycle
+Latest lead cycle session: `session_01SNkKxpkKtCP2X5qJXco6ET` (cycle 147,
+18 November 2026 from about 05:39Z, started by the Opus 5.5 launcher). Cycle
+146's was `session_01SNkKxmdvLviNaCD3jf7YyA` (from 05:14Z). Cycle
 145's was `session_01SNkKxphmrV3zwhPP7SkLLW` (from 04:15Z). Cycle
 144's was `session_01SNkKxpJiWgbAtFKHtJZVPD` (from 03:39Z). Cycle
 143's was `session_01SNkKxr53JyfW9VxwmrgaWV` (from 02:39Z). Cycle
@@ -344,6 +345,7 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| S3 | `session_01SNkKxmmGcPDizHBY6ng1zz` (Opus 5.5, effort high) | P3-S3-settings-4 (start, cycle 147: seeded for AD-R67, the wave board's one exit item, audit 2's miss on settings at 100% text; S3's last session, `session_01SNkKxqjkvtzBVBdApvpLwS`, is idle, its task merged as 3559ec39) | `claude/ui-screens-meta` | 2026-11-18 05:43Z |
 | AD | `session_01SNkKxnEBc1ok2qxGk7hpRb` (Opus 5.5, effort high) | P3-AD-wave-board (start, cycle 145: the wave board, O7, phase 3's exit, seeded once P3-S1-marker-1 and P3-S3-offline-1 merged as 3559ec39; AD's last session, `session_01SNkKxnJHAVTyhVsLVjhU3m`, is idle, its task merged as 07e2c13d) | `claude/ui-ad` | 2026-11-18 04:55Z |
 | S1 | `session_01SNkKxqdHWKAJ5VQDWhsTwQ` (Opus 5.5, effort high) | P3-S1-marker-1 (restart, cycle 143: S1-R43 granted, world_view.gd's `lift` for AD-R65 (M60); S1's last session, `session_01SNkKxqVesBsXCSfdHoP6BX`, went idle blocked on it, its branch at 020f5a52) | `claude/ui-screens-heist` | 2026-11-18 02:49Z |
 | S3 | `session_01SNkKxqjkvtzBVBdApvpLwS` (Opus 5.5, effort high) | P3-S3-offline-1 (start, cycle 141: S3-R39's shorter pt_BR ERR_OFFLINE; its last dep, P3-K1-outline-1, merged as 2e17e1f1, K1's seat free; S3's last session, `session_01SNkKxoKvRK2mVxzbiptFn6`, is idle, its task merged as 995dcbfe) | `claude/ui-screens-meta` | 2026-11-18 01:47Z |
@@ -658,6 +660,37 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 147**, 18 November 2026, from about 05:39Z (session
+  `session_01SNkKxpkKtCP2X5qJXco6ET`, started by the Opus 5.5 launcher).
+  The changes since cycle 146: AD wrote the wave board (a3db0803:
+  `docs/art/ui-quality/gate/boards/wave.md` and its stills, budgets OK on
+  all 15 shots, motion strips OK), merged main (baa01a1c) and runs its
+  pre-check there; its ruling: the wave stands but for one exit re-work,
+  AD-R67. **Requests:** AD-R67 copied and answered with its default
+  (audit 2's miss on settings at 100% text, Hierarchy, still open on
+  main since 7972485a; section 3.6 needs no audit miss left unfixed, so
+  it ranks 1 under M57). **Seeded:** P3-S3-settings-4 for S3 (1 hour,
+  phase 3's exit item): the Access tab's switch rows move onto the dark
+  plate with cream words, the gold A / A stay the primary; gate item
+  'settings at 100% text' (Hierarchy); AD previews the stills.
+  `owners.py claims` stays disjoint. **Merge and gate:** the wave board
+  went ready during the cycle (AD's pre-check exit 0 at baa01a1c, 05:43Z)
+  and merged as 41ad4615 (lock on candidate abc77993 from 05:48Z):
+  checks reused from the pre-check at baa01a1c; no `ui guard: OK` was
+  recorded, so the lead ran the guard on the candidate (OK) and docs
+  consistency (OK); `owners.py diff` clean; no gate item. check_all runs
+  on main under `nohup setsid`; the audit and roadmap pages, rebuilt,
+  come out byte-identical to the copies cycle 145 published, so they are
+  not republished.
+  **Sessions:** S3 started as `session_01SNkKxmmGcPDizHBY6ng1zz`
+  (05:43Z) on settings-4. AD's session
+  (`session_01SNkKxnEBc1ok2qxGk7hpRb`) finished its task with the
+  merge; it takes S3's preview request when it comes. **Seats:** AD and
+  S3, under the cap of three while the seven-day bar reads
+  `allowed_warning`; K1, S1, S2, AIA-2 and AIA are idle. **Next:** route
+  S3's preview request to AD; merge settings-4 with its gate item; then
+  phase 3's exit: AD's preview of settings-4's stills is the last step
+  before the wave stands at O7.
 - **Cycle 146**, 18 November 2026, from about 05:14Z (session
   `session_01SNkKxmdvLviNaCD3jf7YyA`, started by the Opus 5.5 launcher).
   The changes since cycle 145: AD claimed P3-AD-wave-board (b7d03527,
@@ -713,26 +746,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   re-work AD names against phase 3's exit (M57) and seed only exit items;
   then phase 3's exit: no board with an open objection, the second blind
   audit done, O7 stands.
-- **Cycle 144**, 18 November 2026, from about 03:39Z (session
-  `session_01SNkKxpJiWgbAtFKHtJZVPD`, started by the Opus 5.5 launcher).
-  The changes since cycle 143: S1 answered AD-R65 on marker-1 (the vault
-  kept in the heist's map band at large text, 2bdd2dff and 52079376),
-  acked M60, renewed its lease to 06:22Z (push at 03:25Z, before the
-  backlog's 03:30Z lapsed) and merged main a1649b90 (a4907fc0); its
-  pre-check on 52079376 restarted after a container kill. S3 answered
-  AD-R66 on offline-1 (5ced6958, fit_character.sh 53 of 53), merged main
-  (34a1c3fd) and runs the guard and the pre-check there.
-  **Bookkeeping:** marker-1's claim takes S1's lease (06:22Z) and
-  seen_at; offline-1's seen_at; M60 acked. **Requests:** nothing new to
-  copy. **Merge and gate:** none: no task is ready, no gate request is
-  open, no merge lock. **Sessions:** none started or restarted: both
-  builders are inside their update times (S1 05:00Z, S3 04:19Z), their
-  checks running in the background.
-  **Seats:** S1 (marker-1) and S3 (offline-1), under the cap of three
-  while the seven-day bar reads `allowed_warning`; AD, K1, S2, AIA-2 and
-  AIA are idle; nothing seeded (M57). **Next:** merge marker-1 and
-  offline-1 with their gate items when they are ready, AD-R65 and AD-R66
-  answered; then phase 3's exit (O7).
 - **Stopped here**, 13 November 2026, about 13:20Z (the owner's "Stop
   cleanly"). Cycle 84 (session `session_01SNkKxpqF4gx3yYhsXenUGt`) took
   the merge lock for P2-AD-board-4 (candidate `842f09ab`, AD's ready
