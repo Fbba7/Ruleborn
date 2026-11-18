@@ -1,8 +1,8 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-18T07:30:00Z",
-  "expected_next_update_by": "2026-11-18T10:30:00Z",
-  "cycle": 149,
+  "updated_at": "2026-11-18T07:45:00Z",
+  "expected_next_update_by": "2026-11-18T10:45:00Z",
+  "cycle": 150,
   "merging": null,
   "last_merged": {
     "task_id": "P3-AD-wave-board",
@@ -44,9 +44,9 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Cycle 150: S3 (session_01SNkKxo7BCcvsUE53DWANpH) folds AD-R68 into P3-S3-settings-4 (the tab strip on the kit's ghost), re-shoots and sends the stills to AD through the lead (a check, not a new round), then marks ready: merge settings-4 with its gate run ('settings at 100% text', Hierarchy), and the wave stands at O7 (phase 3's exit). S1 (session_01SNkKxrGVdaVPxzuPW8vwRg) builds P4-S1-heist-vault and S2 (session_01SNkKxneZ4WEHJSJUnhLjUj) builds P4-S2-home-purse (M61); route their previews to AD. Seats: three of three under allowed_warning.",
+  "next_step": "Cycle 151: S3 (session_01SNkKxo7BCcvsUE53DWANpH) takes AD-R68's title road on P3-S3-settings-4 (display_xl title over seg_track_light, no kit strip passes value-steps at a mid value), re-shoots and sends the stills to AD through the lead (a check, not a new round), then marks ready: merge settings-4 with its gate run ('settings at 100% text', Hierarchy), and the wave stands at O7 (phase 3's exit). S1 (session_01SNkKxrGVdaVPxzuPW8vwRg) builds P4-S1-heist-vault and S2 (session_01SNkKxneZ4WEHJSJUnhLjUj) builds P4-S2-home-purse; route their previews to AD. Seats: three of three under allowed_warning.",
   "seen": {
-    "at": "2026-11-18T07:24:12Z",
+    "at": "2026-11-18T07:42:21Z",
     "heads": {
       "claude/3d-character-screens": "6053b249bee313648da3509142eeb2ba738bb62f",
       "claude/3d-characters": "35d6ae8f5b84a4d75636f68270848b0949c111f3",
@@ -73,9 +73,9 @@
       "claude/ui-plan": "f1affcea749d007fe1a67931bd3c1f7359d98c44",
       "claude/ui-research": "f19d5d4e5eaffff8869da3b91124d111cf1259a6",
       "claude/ui-screens": "dceb6bfcbc6c5da4e261674fe9301e1854f0aa65",
-      "claude/ui-screens-heist": "73a5f20d7323569e3b7f9bc904a0e229279fbe08",
-      "claude/ui-screens-home": "f5f934807f524747e511558a313c4238412864ca",
-      "claude/ui-screens-meta": "f68ce4989bc516636107eca1ec85332ed2eba804",
+      "claude/ui-screens-heist": "7b5328e66d873febf80ac4fceb5a3fcf6a0475dd",
+      "claude/ui-screens-home": "ebeba33c932f51e61edc966a048ee9891d0cd0cc",
+      "claude/ui-screens-meta": "b9abf2109d6111301c966de4fa00a753381b7675",
       "lead/candidate-276ed4f0": "276ed4f0623d108174022240cba14f4f0ef9f74b",
       "lead/candidate-573416ab12761b92becf0c1d3d7d7bd03e9cf7d1": "573416ab12761b92becf0c1d3d7d7bd03e9cf7d1",
       "lead/candidate-714b24ed52f56133bccc18c82cc879938b53f296": "714b24ed52f56133bccc18c82cc879938b53f296",
@@ -86,10 +86,7 @@
       "main": "2455f3b5392587009f9b8f7ff57f7b26b01566d1"
     },
     "ready": {},
-    "startable": [
-      "P4-S1-heist-vault",
-      "P4-S2-home-purse"
-    ],
+    "startable": [],
     "messages": [
       "M10",
       "M3"
@@ -135,8 +132,6 @@
       "S3-R9 to S3-R14"
     ],
     "leases": [],
-    "stale": [
-      "S1@2026-11-18T06:00:00Z"
-    ]
+    "stale": []
   }
 }

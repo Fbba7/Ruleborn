@@ -202,8 +202,9 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxrEmwKsYJezgFLCenb` (cycle 149,
-18 November 2026 from about 07:16Z, started by the Opus 5.5 launcher). Cycle
+Latest lead cycle session: `session_01SNkKxmm9uYmBksgbVUdjx9` (cycle 150,
+18 November 2026 from about 07:39Z, started by the Opus 5.5 launcher). Cycle
+149's was `session_01SNkKxrEmwKsYJezgFLCenb` (from 07:16Z). Cycle
 148's was `session_01SNkKxnbZyh2sWsw9VhvuzX` (from 06:38Z). Cycle
 147's was `session_01SNkKxpkKtCP2X5qJXco6ET` (from 05:39Z). Cycle
 146's was `session_01SNkKxmdvLviNaCD3jf7YyA` (from 05:14Z). Cycle
@@ -666,6 +667,30 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 150**, 18 November 2026, from about 07:39Z (session
+  `session_01SNkKxmm9uYmBksgbVUdjx9`, started by the Opus 5.5 launcher).
+  The changes since cycle 149: S1 claimed P4-S1-heist-vault (7b5328e6,
+  07:30Z, lease to 10:30Z); S2 claimed P4-S2-home-purse and pushed its
+  first work (ebeba33c: the purse in two rows from 125% where three do
+  not fit, the raid notice's second line gives way, `fit_home.sh` with
+  M26's cases); S3 is working on settings-4 for AD-R68 (b9abf210): no kit
+  strip passes value-steps at a mid value, so it takes AD-R68's second
+  road, the title in the display face (display_xl, outline) over the
+  strip, and re-shoots the settings stills. **Bookkeeping:** the three
+  claims copied into their tasks (S1 and S2 `claimed`, settings-4
+  `working`, its lease now S3's 10:30Z), seen_at 07:42Z. **Requests:**
+  none new; M61 stays acked. **Merge and gate:** none: nothing ready, no
+  gate request, no merge lock; main moved only by bookkeeping, so the
+  pages are not republished. **Sessions:** none started or restarted:
+  S1 (`session_01SNkKxrGVdaVPxzuPW8vwRg`), S2
+  (`session_01SNkKxneZ4WEHJSJUnhLjUj`) and S3
+  (`session_01SNkKxo7BCcvsUE53DWANpH`) are inside their update times
+  (08:15Z, 08:19Z, 08:25Z). **Seats:** S3, S1 and S2, the cap of three
+  while the seven-day bar reads `allowed_warning`; nothing seeded. K1,
+  AD, AIA-2 and AIA idle. **Next:** route S3's re-shot settings stills
+  to AD (a check of AD-R68's title road), then merge settings-4 with its
+  gate run ('settings at 100% text', Hierarchy), and the wave stands at
+  O7; route S1's and S2's previews to AD.
 - **Cycle 149**, 18 November 2026, from about 07:16Z (session
   `session_01SNkKxrEmwKsYJezgFLCenb`, started by the Opus 5.5 launcher).
   The changes since cycle 148: AD wrote preview 3
@@ -725,37 +750,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   answers AD's objections, if any, and marks ready; merge settings-4 with
   its gate run ('settings at 100% text', Hierarchy); then the wave stands
   at O7 (phase 3's exit).
-- **Cycle 147**, 18 November 2026, from about 05:39Z (session
-  `session_01SNkKxpkKtCP2X5qJXco6ET`, started by the Opus 5.5 launcher).
-  The changes since cycle 146: AD wrote the wave board (a3db0803:
-  `docs/art/ui-quality/gate/boards/wave.md` and its stills, budgets OK on
-  all 15 shots, motion strips OK), merged main (baa01a1c) and runs its
-  pre-check there; its ruling: the wave stands but for one exit re-work,
-  AD-R67. **Requests:** AD-R67 copied and answered with its default
-  (audit 2's miss on settings at 100% text, Hierarchy, still open on
-  main since 7972485a; section 3.6 needs no audit miss left unfixed, so
-  it ranks 1 under M57). **Seeded:** P3-S3-settings-4 for S3 (1 hour,
-  phase 3's exit item): the Access tab's switch rows move onto the dark
-  plate with cream words, the gold A / A stay the primary; gate item
-  'settings at 100% text' (Hierarchy); AD previews the stills.
-  `owners.py claims` stays disjoint. **Merge and gate:** the wave board
-  went ready during the cycle (AD's pre-check exit 0 at baa01a1c, 05:43Z)
-  and merged as 41ad4615 (lock on candidate abc77993 from 05:48Z):
-  checks reused from the pre-check at baa01a1c; no `ui guard: OK` was
-  recorded, so the lead ran the guard on the candidate (OK) and docs
-  consistency (OK); `owners.py diff` clean; no gate item. check_all passed
-  on main at 41ad4615 (`nohup setsid`, exit 0); the audit and roadmap pages, rebuilt,
-  come out byte-identical to the copies cycle 145 published, so they are
-  not republished.
-  **Sessions:** S3 started as `session_01SNkKxmmGcPDizHBY6ng1zz`
-  (05:43Z) on settings-4. AD's session
-  (`session_01SNkKxnEBc1ok2qxGk7hpRb`) finished its task with the
-  merge; it takes S3's preview request when it comes. **Seats:** AD and
-  S3, under the cap of three while the seven-day bar reads
-  `allowed_warning`; K1, S1, S2, AIA-2 and AIA are idle. **Next:** route
-  S3's preview request to AD; merge settings-4 with its gate item; then
-  phase 3's exit: AD's preview of settings-4's stills is the last step
-  before the wave stands at O7.
 - **Stopped here**, 13 November 2026, about 13:20Z (the owner's "Stop
   cleanly"). Cycle 84 (session `session_01SNkKxpqF4gx3yYhsXenUGt`) took
   the merge lock for P2-AD-board-4 (candidate `842f09ab`, AD's ready
