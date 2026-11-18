@@ -245,4 +245,4 @@ func show_pick() -> void:
 ## Words straight over the world, inked so they read over any island.
 static func ink(l: Label) -> void:
 	l.add_theme_color_override("font_outline_color", Tokens.color("ink_deep"))
-	l.add_theme_constant_override("outline_size", UI.px(3))
+	l.add_theme_constant_override("outline_size", KitHud.outline_px(l.get_theme_font_size("font_size")))
