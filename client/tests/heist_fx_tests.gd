@@ -5,6 +5,8 @@ extends RefCounted
 ## follow camera's span, taps and gestures, the law effects and reduced
 ## motion — all checked headless, from the nodes the screens build.
 
+const HEIST := "res://scenes/heist_screen.tscn"
+
 var tree: SceneTree
 var check: Callable
 
@@ -296,7 +298,7 @@ func _models(replay: RulebornReplay) -> void:
 func _entry_card() -> void:
 	var maker := WorldView.figure_maker
 	App.services.store.dispatch(&"heist_started", {})
-	var screen: HeistScreen = load("res://scenes/heist_screen.tscn").instantiate()
+	var screen: HeistScreen = load(HEIST).instantiate()
 	tree.root.add_child(screen)
 	await tree.process_frame
 	screen.set_process(false)
@@ -341,7 +343,7 @@ func _layers() -> void:
 	UI.root_theme()
 	Settings.text_scale = 200
 	App.services.store.dispatch(&"heist_started", {})
-	var screen: HeistScreen = load("res://scenes/heist_screen.tscn").instantiate()
+	var screen: HeistScreen = load(HEIST).instantiate()
 	tree.root.add_child(screen)
 	await tree.process_frame
 	screen.set_process(false)

@@ -58,6 +58,16 @@ var _load: KitBar
 var _flights: Array[Dictionary] = []
 
 
+## Sets the screen's HUD columns (FxSkin.frame's, each in its margin) on the
+## HUD's layer, once, in the screen's layer order (AD-R55): above every layer
+## of the world, its markers and marks included, so no marker draws over a
+## panel at any text size. Layers the screen adds after them (the guards'
+## words) stack above the HUD as before.
+static func layer(columns: Array[VBoxContainer]) -> void:
+	for c: VBoxContainer in columns:
+		(c.get_parent() as Control).z_index = HUD_Z
+
+
 func _init() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_theme_constant_override("separation", UI.px(Tokens.number("size", "gap_points")))
