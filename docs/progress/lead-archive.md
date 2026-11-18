@@ -5,6 +5,38 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 139**, 17 November 2026, from about 22:10Z (session
+  `session_01SNkKxq4x4crXhYQkGcqX1K`, started by the Opus 5.5 launcher).
+  The changes since cycle 138: AIA-2's bake-1 ready at 75798143; K1-R27
+  and S2-R46 filed; S2's back-1 asks for the gate.
+  **Claims copied:** S2's on P3-S2-back-1 (claimed 21:25Z, lease 00:25Z).
+  **Requests:** K1-R27 granted: rb_theme.gd, ui.gd, screen_kit.gd and
+  character_screen.gd are P3-K1-outline-1's exceptions in the backlog.
+  S2-R46 answered with its default. **Gate:** back-1's 'home at 100% text'
+  with the quit question passes 3 of 3 at 0bfa1d6a (Hierarchy;
+  verdicts/P3-S2-back-1/0bfa1d6a.json). **Merge:** the batch candidate
+  2dc57508 (P3-AIA2-bake-1, P3-S2-home-7, P3-S3-nav-1) passes full checks
+  and the guard, merged as 443a5cf5 (merged_sha a957e73b, 9ec770d6,
+  2dc57508). P3-S1-hc-offline-2 rebuilt on 443a5cf5 as fbae695a: guard OK,
+  full checks PASS at 23:21Z, merged as da9fce1a (merged_sha fbae695a). The
+  lock is cleared. The audit and roadmap pages are republished.
+  **Seeded:** P3-S3-settings-3 from AD-R52 (settings reopens on the tab
+  last shown in the session). **Started:** S3 on P3-S3-settings-3
+  (`session_01SNkKxoKvRK2mVxzbiptFn6`, 22:59Z). **Restarts:** K1 on
+  P3-K1-outline-1 with K1-R27's grant (`session_01SNkKxorBb4Hx1E3GUAr2GL`)
+  and S2 on P3-S2-back-1 with the gate's pass
+  (`session_01SNkKxpnKSbB1SgaR3ZrjwQ`, 22:57Z); each merges main first.
+  M55 acknowledged.
+  **Seats:** K1 (outline-1), S2 (back-1) and S3 (settings-3): three, the
+  cap while the seven-day bar reads `allowed_warning`. AIA-2, S1 and AD
+  are idle.
+  **Next:** merge back-1, outline-1 and settings-3 as each is ready, each
+  with its own full checks and the guard. As seats free, seed and start,
+  in order: R54's content task with S3-R39 (a shorter pt_BR ERR_OFFLINE),
+  AD-R55 with the next heist task (S1) and S2-R44's home follow-up; AD's
+  next task carries the previews of S1-R41, S3-R40 and AIA2-R4, and
+  back-1's quit question (AD-R48).
+
 - **Cycle 138**, 17 November 2026, from about 21:39Z (session
   `session_01SNkKxpDFMUeUQciTDiwm62`, started by the Opus 5.5 launcher).
   The changes since cycle 137: S2's first pushes on back-1 and AIA-2's

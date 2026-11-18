@@ -202,8 +202,9 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxpEocuxTAPfpiN5b9n` (cycle 141,
-18 November 2026 from about 01:14Z, started by the Opus 5.5 launcher). Cycle
+Latest lead cycle session: `session_01SNkKxpS24uPCXVy7p6bfK3` (cycle 142,
+18 November 2026 from about 02:14Z, started by the Opus 5.5 launcher). Cycle
+141's was `session_01SNkKxpEocuxTAPfpiN5b9n` (from 01:14Z). Cycle
 140's was `session_01SNkKxpYPYZFhmxMYvxis4C` (from 23:38Z). Cycle
 139's was `session_01SNkKxq4x4crXhYQkGcqX1K` (from 22:10Z). Cycle
 138's was `session_01SNkKxpDFMUeUQciTDiwm62` (from 21:39Z). Cycle
@@ -651,6 +652,29 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 142**, 18 November 2026, from about 02:14Z (session
+  `session_01SNkKxpS24uPCXVy7p6bfK3`, started by the Opus 5.5 launcher).
+  The changes since cycle 141: AD claimed P3-AD-audit-2 (01:25Z) and
+  pushed its preview 2 (`docs/art/ui-quality/gate/boards/preview-2.md`)
+  with AD-R65 and AD-R66; S3 claimed P3-S3-offline-1 (01:49Z) and filed
+  S3-R44; S1's marker-1 pre-check passed and S1 merged main 0473b222 into
+  its branch, its pre-check on the merge next.
+  **Requests:** AD-R65 (the heist's vault label under the crew tray at
+  200% text) folded into the running P3-S1-marker-1 as an objection of
+  its AD preview (M58 to S1); AD-R66 (the character screen's ability
+  header pushed below the first screen, offline at 200% text) into the
+  running P3-S3-offline-1 (M59 to S3); S3-R44 answered by its default
+  (M59). Both objections are phase 3 exit items under M57's ranking (no
+  board may keep an open objection), and both fall inside their tasks'
+  files, so nothing new is seeded and the reserve stays at 29.5 hours
+  used of its 20.
+  **Merge and gate:** none: no task is ready and no gate request is open.
+  **Seats:** S1 (marker-1), S3 (offline-1) and AD (audit-2): the cap of
+  three while the seven-day bar reads `allowed_warning`. K1, S2, AIA-2
+  and AIA are idle. **Next:** merge marker-1 and offline-1 with their
+  gate items when they are ready, with AD-R65 and AD-R66 answered; score
+  audit-2 when it merges; then phase 3's exit.
+
 - **Cycle 141**, 18 November 2026, from about 01:14Z (session
   `session_01SNkKxpEocuxTAPfpiN5b9n`, started by the Opus 5.5 launcher).
   The changes since cycle 140: K1's outline-1 ready at ca49e767; S1
@@ -720,38 +744,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   follow-up in the free seat, then AD's next task with
   the previews of S1-R41, S3-R40, AIA2-R4 and S3-R43 and back-1's quit
   question (AD-R48).
-
-- **Cycle 139**, 17 November 2026, from about 22:10Z (session
-  `session_01SNkKxq4x4crXhYQkGcqX1K`, started by the Opus 5.5 launcher).
-  The changes since cycle 138: AIA-2's bake-1 ready at 75798143; K1-R27
-  and S2-R46 filed; S2's back-1 asks for the gate.
-  **Claims copied:** S2's on P3-S2-back-1 (claimed 21:25Z, lease 00:25Z).
-  **Requests:** K1-R27 granted: rb_theme.gd, ui.gd, screen_kit.gd and
-  character_screen.gd are P3-K1-outline-1's exceptions in the backlog.
-  S2-R46 answered with its default. **Gate:** back-1's 'home at 100% text'
-  with the quit question passes 3 of 3 at 0bfa1d6a (Hierarchy;
-  verdicts/P3-S2-back-1/0bfa1d6a.json). **Merge:** the batch candidate
-  2dc57508 (P3-AIA2-bake-1, P3-S2-home-7, P3-S3-nav-1) passes full checks
-  and the guard, merged as 443a5cf5 (merged_sha a957e73b, 9ec770d6,
-  2dc57508). P3-S1-hc-offline-2 rebuilt on 443a5cf5 as fbae695a: guard OK,
-  full checks PASS at 23:21Z, merged as da9fce1a (merged_sha fbae695a). The
-  lock is cleared. The audit and roadmap pages are republished.
-  **Seeded:** P3-S3-settings-3 from AD-R52 (settings reopens on the tab
-  last shown in the session). **Started:** S3 on P3-S3-settings-3
-  (`session_01SNkKxoKvRK2mVxzbiptFn6`, 22:59Z). **Restarts:** K1 on
-  P3-K1-outline-1 with K1-R27's grant (`session_01SNkKxorBb4Hx1E3GUAr2GL`)
-  and S2 on P3-S2-back-1 with the gate's pass
-  (`session_01SNkKxpnKSbB1SgaR3ZrjwQ`, 22:57Z); each merges main first.
-  M55 acknowledged.
-  **Seats:** K1 (outline-1), S2 (back-1) and S3 (settings-3): three, the
-  cap while the seven-day bar reads `allowed_warning`. AIA-2, S1 and AD
-  are idle.
-  **Next:** merge back-1, outline-1 and settings-3 as each is ready, each
-  with its own full checks and the guard. As seats free, seed and start,
-  in order: R54's content task with S3-R39 (a shorter pt_BR ERR_OFFLINE),
-  AD-R55 with the next heist task (S1) and S2-R44's home follow-up; AD's
-  next task carries the previews of S1-R41, S3-R40 and AIA2-R4, and
-  back-1's quit question (AD-R48).
 
 - **Stopped here**, 13 November 2026, about 13:20Z (the owner's "Stop
   cleanly"). Cycle 84 (session `session_01SNkKxpqF4gx3yYhsXenUGt`) took
