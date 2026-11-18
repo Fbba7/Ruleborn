@@ -148,14 +148,20 @@
       "estimate_h": 1.0,
       "tier": 2,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "claimed",
+      "claim": {
+        "agent": "S3",
+        "branch": "claude/ui-screens-meta",
+        "claimed_at": "2026-11-18T06:00:00Z",
+        "seen_at": "2026-11-18T06:07:00Z",
+        "lease_until": "2026-11-18T09:00:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-18T05:42:00Z",
-      "updated_by": "lead (cycle 147)",
+      "updated_at": "2026-11-18T06:50:00Z",
+      "updated_by": "lead (cycle 148)",
       "exceptions": [
         "docs/art/shots/menu-screens/**"
       ]
