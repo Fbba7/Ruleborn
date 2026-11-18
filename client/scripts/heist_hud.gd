@@ -13,7 +13,7 @@ extends VBoxContainer
 ## realm is the kit's KitCards.law_chip_fit. A piece whose numbers change is
 ## set in place (KitHud.set_clock, set_alarm, set_loot), and built again only
 ## when its shape does. Three columns, left, centre and right; with §20.8's
-## large text the loot stands under the laws.
+## large text the loot stands under the laws, at 200% beside the alarm.
 
 ## §21.8: the clock turns red in its last 30 seconds.
 const RED_SECONDS := 30
@@ -53,6 +53,9 @@ var _red := false
 var _time := 0.0
 ## The loot's bar: the bags' fill.
 var _load: KitBar
+## With §20.8's large text, the Vault's number in its row ("Vault 0%" beside
+## the crack), set in place as the crack fills; null while the Vault is open.
+var _vault_count: Label
 ## Coins on their way to the loot panel: {from: Vector2 (global), t: float,
 ## coin: Control}.
 var _flights: Array[Dictionary] = []
@@ -140,9 +143,15 @@ func _init() -> void:
 	_build_alarm()
 	# The loot, top right; with large text the whole width under the law
 	# banner and the alarm instead, so each of its lines keeps one line and
-	# the column stays above the hand's controls.
+	# the column stays above the hand's controls. At 200% it stands under the
+	# laws beside the alarm, in the room the taller alarm leaves there, so the
+	# map between the HUD and the hand stays no narrower than at 150% (the
+	# wave board's note).
 	loot_panel = PanelContainer.new()
-	if large:
+	if beside_alarm():
+		loot_panel.size_flags_horizontal = Control.SIZE_FILL
+		left.add_child(loot_panel)
+	elif large:
 		loot_panel.size_flags_horizontal = Control.SIZE_FILL
 		add_child(loot_panel)
 	else:
@@ -194,6 +203,36 @@ static func _one_line(l: Label) -> void:
 			px = maxi(int(full * 0.8), int(floorf(full * room / wide)))
 		if px != l.get_theme_font_size("font_size"):
 			l.add_theme_font_size_override("font_size", px))
+
+
+## With §20.8's large text the kit draws the shut Vault as its icon beside a
+## thin crack bar; its name and number join the icon in a row of their own
+## ("Vault 0%"), in the loot's own words and figures, with the crack under
+## them across the panel, so its progress is read and not only seen (§12.19;
+## the wave board found the words gone at 200%). Returns the number's label.
+static func _vault_words(piece: PanelContainer, vault: Array) -> Label:
+	var row := piece.find_child("Vault", true, false) as HBoxContainer
+	var said: Array = piece.get_meta("words", [])
+	var counts: Array = piece.get_meta("numbers", [])
+	if row == null or vault.is_empty() or said.is_empty() or counts.is_empty():
+		return null
+	var words := HBoxContainer.new()
+	words.name = "VaultWords"
+	words.add_theme_constant_override("separation", row.get_theme_constant("separation"))
+	var word := (said[0] as Label).duplicate() as Label
+	var count := (counts[0] as Label).duplicate() as Label
+	word.text = str(vault[0])
+	count.text = str(vault[1])
+	word.custom_minimum_size.x = 0.0
+	word.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	count.custom_minimum_size.x = 0.0
+	row.get_child(0).reparent(words)  # The kit's Vault icon, before its name.
+	words.add_child(word)
+	words.add_child(count)
+	row.add_sibling(words)
+	row.get_parent().move_child(words, row.get_index())
+	(row.get_node("Cracked") as Control).size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	return count
 
 
 ## The alarm panel's count (KitHud.alarm_fit names it "Count").
@@ -395,6 +434,13 @@ func _build_alarm() -> void:
 	alarm_panel.accessibility_name = Strings.t("HUD_ALARM", alarm_label.text)
 
 
+## Whether the loot stands beside the alarm, under the laws: with §20.8's
+## largest text (200%), where the loot under the whole top row left the map
+## a narrow band over the hand.
+static func beside_alarm() -> bool:
+	return Settings.text_scale > 175
+
+
 ## The loot's rows: what the bags can still take and what is left to load.
 static func _loot_rows(room: String, left: String) -> Array:
 	return [[Strings.t("HUD_ROOM"), room], [Strings.t("HUD_LEFT"), left]]
@@ -407,11 +453,12 @@ static func _loot_rows(room: String, left: String) -> Array:
 func _build_loot(rows: Array, bags: float, load_words: String, vault: Array) -> void:
 	var aim := load_target / 100.0 if load_target >= 0 else -1.0
 	# With large text the panel has the row's whole width (a 360-point phone
-	# inside §21.1's sides, less its own rim): loot_fit gives a large panel
-	# 2.3 times the width it is told.
+	# inside §21.1's sides, less its own rim), at 200% less the alarm's
+	# column: loot_fit gives a large panel 2.3 times the width it is told.
 	var width := 90.0
 	if Settings.text_scale > 130:
-		width = (360.0 - 2.0 * Tokens.number("size", "safe_side_points") - 28.0) / 2.3
+		var beside := alarm_panel.get_combined_minimum_size().x / UI.px(1.0) if beside_alarm() else 0.0
+		width = (360.0 - 2.0 * Tokens.number("size", "safe_side_points") - 28.0 - beside) / 2.3
 	var piece := KitHud.loot_fit(rows, bags, aim, load_words, vault, width)
 	_load = piece.find_child("Load", true, false)
 	# _swap carries the old panel's spoken name over; the kit's names every
@@ -424,7 +471,15 @@ func _build_loot(rows: Array, bags: float, load_words: String, vault: Array) -> 
 	# the clock's, never the kit's gold, which says "act here" (AD-R62);
 	# baked, with §20.8's large text, in the numerals' white tinted cream.
 	_tight(piece, true, 10.0)
-	for n: Variant in piece.get_meta("numbers", []):
+	if beside_alarm():
+		# "Load to 100%" keeps one line in the narrower column, as a law's
+		# name does beside the alarm.
+		_one_line(piece.find_child("Caption", true, false) as Label)
+	var numbers: Array = piece.get_meta("numbers", []).duplicate()
+	_vault_count = _vault_words(piece, vault)
+	if _vault_count != null:
+		numbers.append(_vault_count)
+	for n: Variant in numbers:
 		if Tokens.high_contrast:
 			(n as Label).add_theme_color_override("font_color", Tokens.color("cream"))
 			(n as Label).set_meta("tint", Tokens.color("cream"))
@@ -478,6 +533,9 @@ func show_state(r: RulebornReplay) -> void:
 		KitHud.set_loot(loot_panel, rows, bags, aim, load_words, vault)
 		for n: Variant in loot_panel.get_meta("numbers", []):
 			_sync(n as Label)
+		if _vault_count != null and not vault.is_empty():
+			_vault_count.text = str(vault[1])
+			_sync(_vault_count)
 	realm_label.text = realm(r.realm_code(), r.realms_to_go())
 	realm_label.visible = realm_label.text != ""
 	(realm_label.get_parent() as Control).visible = realm_label.visible

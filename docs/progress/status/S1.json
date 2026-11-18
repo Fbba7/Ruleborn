@@ -8,12 +8,12 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-18T07:30:00Z",
   "lease_until": "2026-11-18T10:30:00Z",
-  "updated_at": "2026-11-18T07:30:00Z",
-  "expected_next_update_by": "2026-11-18T08:15:00Z",
+  "updated_at": "2026-11-18T07:55:00Z",
+  "expected_next_update_by": "2026-11-18T08:40:00Z",
   "progress_marker": {
-    "last_green_sha": "52079376",
-    "next_step": "set up the container, mount the heist at 200% text and see why the Vault row is dropped from the loot panel",
-    "at": "2026-11-18T07:30:00Z"
+    "last_green_sha": "520793761853473f6a96fb08bd6d53ff813ae232",
+    "next_step": "at 200% text the loot shows 'Vault 0%' with its crack, beside the alarm under the laws; next: measure the map band at 150% and 200% in en, pt_BR and de, write the test in heist_fx_tests.gd, re-shoot the stills",
+    "at": "2026-11-18T07:55:00Z"
   },
   "precheck": {
     "sha": "520793761853473f6a96fb08bd6d53ff813ae232",
@@ -674,6 +674,18 @@
       "due": "2026-11-18T05:00:00Z",
       "default": "With no answer by the due time, client/world/world_view.gd is granted to P3-S1-marker-1 for the one public lift var and its use in _frame_camera only; S1 makes no other change in that file.",
       "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R44",
+      "from": "S1",
+      "to": "AD",
+      "ask": "AD preview for P4-S1-heist-vault (M10, M12, M23), sent through the lead while the work can still change. At 200% text the heist's loot panel now says the Vault's progress in words ('Vault 0%' / 'Cofre 0%' / 'Tresor 0%': the kit's Vault icon, the name and the number in the loot's baked figures on one row, the crack bar under them across the panel), and the loot stands under the laws beside the alarm column at 200% only (150% keeps the full-width loot), so the map band between the HUD and the crew tray is no narrower than at 150%; a rehearsal's pause joins the hand's row at large text; at 200% a hint that would take two lines hides, as it already did on main. The stills will be docs/art/shots/heist-pilot/part10-*.png on claude/ui-screens-heist (100%, 150%, 200% in en, pt_BR and de, and high contrast), with each change named in docs/art/tracks/heist-pilot.md Part 10. Please look at the 200% pt_BR still for Hierarchy (the gate item) and say whether the loot beside the alarm reads in the right order (laws, clock and alarm, then the loot).",
+      "files": [],
+      "blocking": false,
+      "created_at": "2026-11-18T07:55:00Z",
+      "due": "2026-11-18T11:30:00Z",
+      "default": "With no objection by the due time, the stills stand as AD's preview passed and S1 marks the task ready with them.",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
@@ -719,5 +731,5 @@
       "where": "docs/progress/lead.md, Now, cycle 143 (M60)"
     }
   ],
-  "next_step": "ready at 52079376 (pre-check PASS 04:00:31Z, owners diff exit 0); main c313691c merged as 79721a80 (docs only); waiting for the gate on 'heist at 200% text, pt_BR' (Display type) and the lead's merge"
+  "next_step": "at 200% text the loot shows 'Vault 0%' with its crack, beside the alarm under the laws; next: measure the map band at 150% and 200% in en, pt_BR and de, write the test in heist_fx_tests.gd, re-shoot the stills"
 }

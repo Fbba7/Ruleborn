@@ -699,6 +699,9 @@ func _build() -> void:
 		# controls take one row fewer and stay low in reach.
 		gait_button.reparent(actions_node)
 		actions_node.move_child(gait_button, 0)
+		if pause_button != null:  # A rehearsal's pause too: no row of its own under the crew.
+			pause_button.reparent(actions_node)
+			actions_node.move_child(pause_button, 0)
 	hint.custom_minimum_size.x = UI.px(150)
 	foot.add_child(hint)
 	column.add_child(foot)
@@ -758,13 +761,6 @@ func _build_crew() -> void:
 		var b := FxPortrait.new(str(crew[i]["role"]), _portrait_tapped.bind(i), kind, shown)
 		crew_buttons.append(b)
 		crew_node.add_child(b)
-	# With large text a rehearsal's pause stands at the end of the portraits,
-	# low in reach, rather than under the taller HUD.
-	if Settings.text_scale > 130 and pause_button != null:
-		if pause_button.get_parent() != crew_node:
-			pause_button.reparent(crew_node)
-		# After the portraits, as the crew may have been drawn afresh.
-		crew_node.move_child(pause_button, -1)
 	_crew_key = _crew_shape(crew)
 
 
@@ -932,6 +928,12 @@ func _fit_hint() -> void:
 	# on the world stay in sight.
 	if _hint_level == 0 and hint_label.get_line_count() > 1 and " · " in _hint_source:
 		_hint_level = 1
+		_set_hint(_hint_source)
+		return
+	# At 200% a tip of two lines stands its plate over the map band the HUD
+	# leaves (the wave board's note): it hides, as it did under the loot.
+	if HeistHud.beside_alarm() and hint_label.get_line_count() > 1:
+		_hint_level = 2
 		_set_hint(_hint_source)
 		return
 	var low := column_node.global_position.y
