@@ -43,8 +43,8 @@ the status files, requests and scheduled-task prompts.
   nothing and started nothing) and cleared its merge lock. The program
   did not run from then until the restart of 15 November.
 - **15 November 2026, about 17:10 UTC:** the owner restarted it
-  ("Continue"), in the chat of the overseer session. **The program
-  runs**, on Opus 5.5 at effort high (order 5), with the cap of four
+  ("Continue"), in the chat of the overseer session. The program ran,
+  on Opus 5.5 at effort high (order 5), with the cap of four
   builders (order 3). Order 3's "keep working" applies again.
   - **The launcher and the watchdog of 11 November** start the lead's
     cycles again: the launcher stayed enabled through the stop, and the
@@ -53,6 +53,14 @@ the status files, requests and scheduled-task prompts.
     scheduled tasks and sessions".
   - **Where the work stood at the restart** is in the same file, "Now",
     entry "Stopped here".
+- **18 November 2026, about 08:22 UTC:** the owner stopped it again ("You
+  need to stop everything"), in the chat of the overseer session. **The
+  program is stopped.** The overseer disabled every enabled scheduled
+  task (the two launcher tasks, the watchdog and its own report
+  check-in), interrupted the three running builders (S1 on
+  P4-S1-heist-vault, S2 on P4-S2-home-purse, S3 on P3-S3-settings-4),
+  and found the lead idle after cycle 151, with no merge lock set. Their
+  work is on their branches.
 
 A session that is in the middle of a turn when the program is stopped
 finishes cleanly, so no work is lost: commit and push what it has to its
