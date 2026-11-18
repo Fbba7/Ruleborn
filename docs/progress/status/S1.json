@@ -7,12 +7,12 @@
   "task_id": "P4-S1-heist-vault",
   "task_state": "claimed",
   "claimed_at": "2026-11-18T07:30:00Z",
-  "lease_until": "2026-11-18T10:30:00Z",
-  "updated_at": "2026-11-18T08:10:00Z",
-  "expected_next_update_by": "2026-11-18T08:55:00Z",
+  "lease_until": "2026-11-18T11:30:00Z",
+  "updated_at": "2026-11-18T08:25:00Z",
+  "expected_next_update_by": "2026-11-18T09:10:00Z",
   "progress_marker": {
     "last_green_sha": "520793761853473f6a96fb08bd6d53ff813ae232",
-    "next_step": "test _vault_row in heist_fx_tests.gd passes on the branch and fails on main (phone-sized window; count read from the HUD since the numbers are baked); FIT ok at 100/150/200 in en, pt_BR, de and high contrast; next: full suite, stills part10, Part 10 in heist-pilot.md, merge main, checks",
+    "next_step": "suite on the branch passes (only the against-the-server tests fail, as locally always); guard.sh fails only on budget shots heist/200 119 against 118 (S1-R45); next: build, pre-check on HEAD, keyframes, owners diff, handoff; ready after S1-R44's answer or its 11:30Z default",
     "at": "2026-11-18T08:10:00Z"
   },
   "precheck": {
@@ -686,6 +686,20 @@
       "due": "2026-11-18T11:30:00Z",
       "default": "With no objection by the due time, the stills stand as AD's preview passed and S1 marks the task ready with them.",
       "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R45",
+      "from": "S1",
+      "to": "K1",
+      "ask": "With the lead's approval under M33: raise tools/ui_bake/budgets.json's recorded draw calls for heist/200 from 118 to 119. guard.sh on claude/ui-screens-heist (main 4e0294ff merged) measures heist/200 at 119; heist/100 (120) and heist/hc (121, record 123) keep their records, and every shot stays under the cap of 150. The one call is the Vault's word at 200% text ('Vault' / 'Cofre' / 'Tresor'), which the wave board's phase 4 item (M57, M61) asks for: the count joins the loot's baked figures, but the word is a Label of its own.",
+      "files": [
+        "tools/ui_bake/budgets.json"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-18T08:25:00Z",
+      "due": "2026-11-18T14:00:00Z",
+      "default": "As for S1-R39: the lead writes heist/200 119 with a raises entry in the merge of P4-S1-heist-vault, and S1 marks ready with guard.sh failing only on this line, named in the handoff.",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
@@ -731,5 +745,5 @@
       "where": "docs/progress/lead.md, Now, cycle 143 (M60)"
     }
   ],
-  "next_step": "full suite on the branch, re-shoot the stills as part10-*.png, write Part 10 in heist-pilot.md, then merge main and the full checks"
+  "next_step": "pre-check on HEAD, owners diff, handoff; ready after S1-R44 (AD) or its 11:30Z default"
 }

@@ -628,7 +628,7 @@ The wave board's phase 4 list (M57, M61) found two faults in the heist at 200% t
 - **The loot beside the alarm at 200%** (`HeistHud.beside_alarm()`, text over 175%). The loot panel joins the left column under the laws, in the room the taller alarm leaves there, instead of standing under the whole top row. `_build_loot` tells the kit the column's width, less the alarm's. At 150% the panel stays where it was.
 - **"Load to 100%" kept to one line at 200%** (`_one_line` on the panel's caption, as the laws' names are beside the alarm). In en and de it keeps one line; in pt_BR 'Carregar até 100%' still wraps at the font's 80% floor.
 - **The rehearsal's pause joins the actions row** with large text (`heist_screen.gd`, `_build`), beside the gait, before 'Cast' and 'Get out'. It no longer takes a row of its own under the portraits, so the tray is one row shorter.
-- **A two-line tip hides at 200%** (`heist_screen.gd`, `_fit_hint`, level 2). Its plate would stand over the map band. A tip that keeps one line stays.
+- **A two-line tip hides at 200%** (`heist_screen.gd`, `_fit_hint`, level 2). Its plate would stand over the map band. On main the tip already hid when it found no room over the tray, as at the still's moment; now a tip that takes two lines hides at 200% whatever the room. A tip that keeps one line stays.
 - **The still prints the tip's rect** (`client/tests/shots/screen_heist.gd`, the SIZES line), so the band can be read from each shot.
 
 **The band.** Measured from the loot panel's foot to the first plate under it (the tip's plate when it shows, else the tray's top), in the phone's 1080 by 2340 pixels, at the landing moment the test uses:
