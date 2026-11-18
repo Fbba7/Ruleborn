@@ -553,6 +553,41 @@ At 200% the run's first layout passes, before the bar settles at its width, also
 - **The tabs' routes.** `core_tests.gd` passes, its new check included ("ok 13 - every tab has a route in Router.TABS, and home's tabs go where it says, Islands and the Heist excepted").
 - **The stills.** The chosen tab's word shows at every size and locale; the other names show at 100% and at 125% in en and fr, and icons stand alone at 200% and at 125% in pt_BR, pt_PT and de. The goal bar's "Progress" labels show, on the green fill, and Collect keeps its gold, in both looks.
 
+## Part 9: the phone's back (P3-S2-back-1)
+
+**What changed.**
+
+- **One go-back for the whole app.** Android's back button and Escape both reach `App.GoBack`, a node `client/app/app.gd` adds at start. That node hands them to the router (`Router.go_back`). The game no longer quits on Android's back (`set_quit_on_go_back(false)`).
+- **The back table.** `Router.BACK` in `client/app/router.gd` names, for each route, the route that go-back opens:
+  - Every non-tab route goes where its own back button goes: the character to the roster, curation and the realm to the map, a law to the codex, the planner to the scout, and the scout to the observatory.
+  - Every tab other than home goes to home.
+  - A route with no way back stays where it is: the age, the heist and the first run.
+  - No screen keeps a copy of the table, and `Router.ROUTES` and `Router.TABS` are unchanged.
+- **Home asks before quitting.** On home, go-back opens a kit dialog (`KitPanels.dialog`, kind `confirm`): "Quit the game?" with Quit and Stay. Stay is the primary action and takes the focus, so a stray press keeps the player in the game. A second go-back closes the question, and so does Stay. Only Quit ends the game. If the universe menu is open, go-back closes it first. The words are `HOME_QUIT_TITLE`, `HOME_QUIT` and `HOME_STAY` in `client/i18n/strings.csv`, in every locale.
+- **Home itself is unchanged.** `client/scripts/home.gd` is untouched, so the still 'home at 100% text' is the same as Part 8's.
+
+**The check.** `client/tests/core_tests.gd` (`_back`) checks three things:
+
+- Every route has a back route, and that back route is itself a route. Tabs and the hub's segments go to home.
+- On each of the 21 non-tab routes that has a way back, the screen's own back control and the router's go-back open the same route.
+- On home, go-back opens the question. Stay is the primary action and has the focus, and a second go-back closes the question. The game quits on neither.
+
+**The stills.** The shot's new `QUIT=1` (`client/tests/shots/universe_home.gd`) opens the question over home. With `FIT=1` it checks home as before, plus the question (`asked`): Quit and Stay on screen, side by side, each at least a whole touch target, and Stay the primary action with the focus. Every still below prints "fit ok". They are in `docs/art/shots/home-screen/`:
+
+| Still | Flags |
+|---|---|
+| `home-100.png` | (none): 'home at 100% text' |
+| `quit-100.png` | `QUIT=1` |
+| `quit-200.png` | `QUIT=1 TEXT=200` |
+| `quit-100-pt_BR.png` | `QUIT=1 LOCALE=pt_BR` |
+| `quit-200-pt_BR.png` | `QUIT=1 TEXT=200 LOCALE=pt_BR` |
+| `quit-contrast-100.png` | `QUIT=1 CONTRAST=1` |
+| `quit-contrast-200.png` | `QUIT=1 CONTRAST=1 TEXT=200` |
+
+Each still is `FIT=1 <flags> bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`.
+
+**AD's preview** (S2-R46): pending.
+
 ## Left for other tasks
 
 These widgets are no longer used by home, but they are outside this task's files:

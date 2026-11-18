@@ -2359,6 +2359,15 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   the kit's parts of R49 after P3-S2-home-states merges, R52 with the next
   settings task, and a content task for R54. Home's part of R49 does not
   join home-states, which is ready to mark on AD's no objection.
+  **Cycle 140**, AD-R54 re-read: no translation task is seeded. The
+  design holds every coined name to English until a native speaker reads
+  it aloud in each launch language (§19.20 and §26.9), and
+  `tools/client_strings.py` writes content.csv's other columns as the
+  English name for that reason, with `--check` holding the file to
+  `content/`; names an agent invented would be translations nobody
+  decided on. The LAW_* names stay English until that read; S3-R39's
+  shorter pt_BR ERR_OFFLINE (a plain string, not a coined name) is
+  seeded on its own as P3-S3-offline-1.
 
 - **AD-R56 to AD-R59** (from AD, 17 November 2026 12:28Z; due 19 November
   12:28Z; not blocking): audit 1's misses still failing on main, from

@@ -234,18 +234,18 @@
         }
       ],
       "id": "P3-S2-back-1",
-      "merged_sha": null,
+      "merged_sha": "58a9a197",
       "model": "Opus 5.5",
       "phase": 3,
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
+      "ready_sha": "4e9114ac",
       "role": "S2",
-      "state": "working",
+      "state": "merged",
       "tier": 2,
       "title": "One go-back for the app: Android's back and Escape go to the router, each route to its back route, home asks before quitting (AD-R48)",
-      "updated_at": "2026-11-17T19:50:00Z",
-      "updated_by": "lead (cycle 134)"
+      "updated_at": "2026-11-18T00:12:00Z",
+      "updated_by": "lead (cycle 140)"
     },
     {
       "id": "P3-K1-outline-1",
@@ -355,6 +355,116 @@
       "title": "Settings remembers its tab for the session (AD-R52): it reopens on the tab last shown, with a mount test",
       "updated_at": "2026-11-17T23:00:00Z",
       "updated_by": "lead (cycle 139)"
+    },
+    {
+      "id": "P3-S1-marker-1",
+      "title": "Heist: the HUD draws above every map marker (AD-R55, flow board 2's F9): at 200% pt_BR no marker covers the loot panel's words",
+      "phase": 3,
+      "role": "S1",
+      "model": "Opus 5.5",
+      "assigned_to": "S1",
+      "files": [
+        "client/scripts/heist_screen.gd",
+        "client/scripts/heist_hud.gd",
+        "client/tests/shots/screen_heist.gd",
+        "client/tests/heist_fx_tests.gd",
+        "docs/art/tracks/heist-pilot.md"
+      ],
+      "deps": [
+        "P3-S1-hc-offline-2"
+      ],
+      "done_when": [
+        "AD-R55 (flow board 2's F9, docs/art/ui-quality/gate/boards/flow-2.md, granted in cycle 123): the heist's HUD (HeistHud, the loot panel, the hand and every control) draws above every map marker and world draw (a sentry beam's hourglass included) at every text size, language and contrast mode, so at 200% pt_BR the loot panel's 'Espaço' reads whole; the order is set once in the screen's layer order, not by moving the marker; a world file outside this task's files is a request to the lead with a default",
+        "a test in client/tests/heist_fx_tests.gd that mounts the heist at 200% text and finds no world marker drawing above the HUD (by draw order or z_index against the HUD's), failing on main's order",
+        "'heist at 100% text', 'heist at 200% text, pt_BR' and 'heist in high contrast' still passing; FIT=1 runs of the heist shot at 200% text in en, pt_BR and de and in high contrast all passing, each run listed in the handoff",
+        "AD previews the stills before ready (M10, M12, M23): the builder sends them to AD while the work can still change, and AD's objections are answered in this task",
+        "python3 tools/ui_bake/check_screens.py",
+        "bash tools/ui_bake/guard.sh",
+        "gate: Screen",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed under docs/art/ui-quality/gate/verdicts/ or outside the task's files (M48)",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [
+        {
+          "item": "heist at 200% text, pt_BR",
+          "qualities": [
+            "Display type"
+          ]
+        }
+      ],
+      "attempts": 0,
+      "estimate_h": 1.0,
+      "tier": 2,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-17T23:55:00Z",
+      "updated_by": "lead (cycle 140)",
+      "exceptions": [
+        "docs/art/shots/heist-pilot/**"
+      ]
+    },
+    {
+      "id": "P3-S3-offline-1",
+      "title": "A shorter pt_BR ERR_OFFLINE (S3-R39): the character's and the roster's offline notice stand at full size at 200% text, with no shrink",
+      "phase": 3,
+      "role": "S3",
+      "model": "Opus 5.5",
+      "assigned_to": "S3",
+      "files": [
+        "client/i18n/strings.csv",
+        "art/ui/keyframes/words.js",
+        "client/scripts/character_screen.gd",
+        "client/scripts/roster_screen.gd",
+        "client/tests/shots/screen_character.gd",
+        "client/tests/shots/screen_roster.gd",
+        "docs/art/tracks/menu-screens.md"
+      ],
+      "deps": [
+        "P3-S3-settings-3",
+        "P3-S2-back-1",
+        "P3-K1-outline-1"
+      ],
+      "done_when": [
+        "S3-R39 (answered in cycle 136): ERR_OFFLINE's pt_BR in client/i18n/strings.csv becomes a shorter plain sentence (for example 'sem servidor'), with the same meaning as the en text; the other languages unchanged unless one also misses one line at 200%, each such change named; node art/ui/keyframes/build_words.mjs rerun and words.js committed with it, and node art/ui/keyframes/check_keyframes.mjs passing (M34)",
+        "the character's and the roster's offline notice drop their shrink (about 122% at 200% text in pt_BR): the notice stands at its full size in one line in en, pt_BR and de at 200% text, its full sentence still its accessibility_name; a language that still does not fit is named in the track with its width",
+        "the character and roster stills at 100% and 200% text (en, pt_BR, de), online and offline, re-shot and each change named; 'character at 200% text, pt_BR' still passing",
+        "AD previews the stills before ready (M10, M12, M23): the builder sends them to AD while the work can still change, and AD's objections are answered in this task",
+        "python3 tools/ui_bake/check_screens.py",
+        "bash tools/ui_bake/guard.sh",
+        "gate: Screen",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed under docs/art/ui-quality/gate/verdicts/ or outside the task's files (M48)",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [
+        {
+          "item": "character at 200% text, pt_BR",
+          "qualities": [
+            "Hierarchy"
+          ]
+        }
+      ],
+      "attempts": 0,
+      "estimate_h": 1.0,
+      "tier": 2,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-17T23:55:00Z",
+      "updated_by": "lead (cycle 140)",
+      "exceptions": [
+        "docs/art/shots/menu-screens/**"
+      ]
     },
     {
       "id": "SV-B10",

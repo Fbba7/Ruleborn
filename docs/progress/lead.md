@@ -202,8 +202,9 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxq4x4crXhYQkGcqX1K` (cycle 139,
-17 November 2026 from about 22:10Z, started by the Opus 5.5 launcher). Cycle
+Latest lead cycle session: `session_01SNkKxpYPYZFhmxMYvxis4C` (cycle 140,
+17 November 2026 from about 23:38Z, started by the Opus 5.5 launcher). Cycle
+139's was `session_01SNkKxq4x4crXhYQkGcqX1K` (from 22:10Z). Cycle
 138's was `session_01SNkKxpDFMUeUQciTDiwm62` (from 21:39Z). Cycle
 137's was `session_01SNkKxnomTXF5W6AXtNDsaA` (from 21:14Z). Cycle
 136's was `session_01SNkKxrHpFT28u48DFoYrxa` (from 20:45Z). Cycle
@@ -337,6 +338,8 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| S1 | `session_01SNkKxqVesBsXCSfdHoP6BX` (Opus 5.5, effort high) | P3-S1-marker-1 (start, cycle 140: seeded for AD-R55, the HUD draws above every map marker; P3-S2-back-1 merged, S2's seat free; S1's last session, `session_01SNkKxpSULfXqHgZQvrJKb4`, is idle, its task merged as fbae695a) | `claude/ui-screens-heist` | 2026-11-18 00:12Z |
+| K1 | `session_01SNkKxn6UGKqas3XXoa59J8` (Opus 5.5, effort high) | P3-K1-outline-1 (restart, cycle 140: K1-R28 granted on main, so merge main, change the granted lines, recheck and mark ready; K1's last session, `session_01SNkKxorBb4Hx1E3GUAr2GL`, idle waiting on the grant) | `claude/ui-bake` | 2026-11-17 23:44Z |
 | S3 | `session_01SNkKxoKvRK2mVxzbiptFn6` (Opus 5.5, effort high) | P3-S3-settings-3 (start, cycle 139: seeded for AD-R52 in the third seat under the cap of three; S3's last session, `session_01SNkKxqvCzT3bnuPzL5KvLH`, completed P3-S3-nav-1, merged as 2dc57508) | `claude/ui-screens-meta` | 2026-11-17 22:59Z |
 | K1 | `session_01SNkKxorBb4Hx1E3GUAr2GL` (Opus 5.5, effort high) | P3-K1-outline-1 (restart, cycle 139: K1-R27 granted on main, the four outline files are the task's exceptions, and P3-S3-nav-1 merged, so merge main, change those lines, recheck and mark ready; K1's last session, `session_01SNkKxr3SoTEVHPicDs7pG9`, idle waiting on the grant) | `claude/ui-bake` | 2026-11-17 22:57Z |
 | S2 | `session_01SNkKxpnKSbB1SgaR3ZrjwQ` (Opus 5.5, effort high) | P3-S2-back-1 (restart, cycle 139: the lead's gate passes 'home at 100% text' with the quit question at 0bfa1d6a, 3 of 3, S2-R46 answered by the default and P3-S2-home-7 merged, so merge main, recheck and mark ready; S2's last session, `session_01SNkKxn1nyucpjrJfH22MCW`, idle) | `claude/ui-screens-home` | 2026-11-17 22:57Z |
@@ -579,7 +582,7 @@ You are agent S1 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: S1            Role: maker (S1): the heist screens, the phase 1 pilot        Model: Opus 5.5, effort high
 Branch: claude/ui-screens-heist
 Owned files: only the files each S1 task lists in the backlog, docs/progress/S1.md, docs/progress/status/S1.json
-Tasks: P3-S1-hc-offline-2 (seeded in cycle 128, phase 3; P3-AD-preview-1 merged in cycle 130): the heist in high contrast with one role per colour, as AD ruled in docs/art/ui-quality/gate/boards/preview-1.md on the advisory gate's Colour roles and value fail at a4ed000e (docs/art/ui-quality/gate/verdicts/P3-S1-hc-offline-1/a4ed000e.json): AD-R60, with no casts left the cast control on the leather secondary plate, gold returning when casts are left; AD-R61, 'Get out' in high contrast on leather with the amber rim, not AD-R56's red, which stays the alarm's alone; AD-R62, the hc loot figures in cream; each control still at least dL* 20 off its local ground (AD-R56). The task's done_when in the backlog lists every point. AD previews your stills before ready (a request to AD through the lead). Never commit under docs/art/ui-quality/gate/verdicts/ (M48): before ready, python3 tools/coord/owners.py diff P3-S1-hc-offline-2 origin/claude/videogame-project-analysis-ewkkk2 <ready_sha> passes. P3-S1-hc-offline-1 merged in cycle 128 and P3-AD-preview-1 in cycle 130; merge main into your branch first. Build from the kit (docs/art/ui-quality/kit-spec.md); a kit change is a request to K1 through the lead.
+Tasks: P3-S1-marker-1 (seeded in cycle 140, phase 3, from AD-R55, flow board 2's F9 in docs/art/ui-quality/gate/boards/flow-2.md, granted in cycle 123): the heist's HUD (HeistHud, the loot panel, the hand and every control) draws above every map marker and world draw, a sentry beam's hourglass included, at every text size, language and contrast mode, so at 200% pt_BR the loot panel's 'Espaço' reads whole; set the order once in the screen's layer order, not by moving the marker; a world file outside the task's files is a request to the lead with a default. A test in client/tests/heist_fx_tests.gd mounts the heist at 200% text and finds no world marker drawing above the HUD, failing on main's order. 'heist at 100% text', 'heist at 200% text, pt_BR' and 'heist in high contrast' still pass, with FIT=1 runs at 200% in en, pt_BR and de and in high contrast listed in the handoff. The task's done_when in the backlog lists every point. AD previews your stills before ready (a request to AD through the lead). Never commit under docs/art/ui-quality/gate/verdicts/ (M48): before ready, python3 tools/coord/owners.py diff P3-S1-marker-1 origin/claude/videogame-project-analysis-ewkkk2 <ready_sha> passes. P3-S1-hc-offline-2 merged in cycle 139; merge main into your branch first. Build from the kit (docs/art/ui-quality/kit-spec.md); a kit change is a request to K1 through the lead.
 STOP_AT: 2026-11-18T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 3
 
