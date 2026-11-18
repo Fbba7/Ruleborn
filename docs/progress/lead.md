@@ -668,7 +668,7 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   bc34e83f, merge lock 02:43Z to the merge, cleared). Checks reused from
   the pre-check at 21c0bc04 (the candidate differs from it only under
   docs/progress); ui guard OK on bc34e83f; the docs check passes;
-  check_all runs on main after the merge. No gate item: the task has none.
+  check_all passed on main 07e2c13d after the merge (03:27Z). No gate item: the task has none.
   **Audit 2 scored** (audit-2.md's 22 rows against the gate's verdicts;
   AD labelled blind, 01:24Z to 01:40Z): 20 rows agree. One miss:
   P3-S3-settings-3 at 7972485a, settings at 100% text, Hierarchy: AD
