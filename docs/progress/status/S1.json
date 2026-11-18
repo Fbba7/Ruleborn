@@ -8,11 +8,11 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-18T07:30:00Z",
   "lease_until": "2026-11-18T11:30:00Z",
-  "updated_at": "2026-11-18T08:25:00Z",
-  "expected_next_update_by": "2026-11-18T09:10:00Z",
+  "updated_at": "2026-11-18T08:40:00Z",
+  "expected_next_update_by": "2026-11-18T09:25:00Z",
   "progress_marker": {
     "last_green_sha": "520793761853473f6a96fb08bd6d53ff813ae232",
-    "next_step": "suite on the branch passes (only the against-the-server tests fail, as locally always); guard.sh fails only on budget shots heist/200 119 against 118 (S1-R45); next: build, pre-check on HEAD, keyframes, owners diff, handoff; ready after S1-R44's answer or its 11:30Z default",
+    "next_step": "pre-check running on aaadca6a (the ready candidate: main 4e0294ff merged as b4a85982, plus part 10); setup line, build.sh, suite, check_screens, keyframes and owners diff pass; guard.sh fails only on heist/200 119 of 118 (S1-R45); handoff written; ready after S1-R44 or its 11:30Z default",
     "at": "2026-11-18T08:10:00Z"
   },
   "precheck": {
@@ -745,5 +745,5 @@
       "where": "docs/progress/lead.md, Now, cycle 143 (M60)"
     }
   ],
-  "next_step": "pre-check on HEAD, owners diff, handoff; ready after S1-R44 (AD) or its 11:30Z default"
+  "next_step": "record the pre-check on aaadca6a, then ready with the gate request after S1-R44 (AD) or its 11:30Z default"
 }
