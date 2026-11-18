@@ -5,24 +5,34 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P3-S1-marker-1",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-18T00:30:00Z",
   "lease_until": "2026-11-18T06:22:00Z",
-  "updated_at": "2026-11-18T03:26:00Z",
-  "expected_next_update_by": "2026-11-18T05:00:00Z",
+  "updated_at": "2026-11-18T04:03:00Z",
+  "expected_next_update_by": "2026-11-18T06:00:00Z",
   "progress_marker": {
-    "last_green_sha": "1bfb3193f198c7a9590c341c6f29c6f1921c196c",
-    "next_step": "pre-check running on 52079376 (main 2ced548 merged as c8de146b, AD-R65's lift, test, stills and track in, guard, FIT runs and owners diff pass); then record and ready with the gate request 'heist at 200% text, pt_BR'",
-    "at": "2026-11-18T03:22:00Z"
+    "last_green_sha": "520793761853473f6a96fb08bd6d53ff813ae232",
+    "next_step": "ready at 52079376 (pre-check PASS 04:00:31Z, owners diff exit 0); main c313691c merged as 79721a80 (docs only); waiting for the gate on 'heist at 200% text, pt_BR' (Display type) and the lead's merge",
+    "at": "2026-11-18T04:03:00Z"
   },
   "precheck": {
-    "sha": "1bfb3193f198c7a9590c341c6f29c6f1921c196c",
+    "sha": "520793761853473f6a96fb08bd6d53ff813ae232",
     "exit": 0,
-    "finished_at": "2026-11-18T02:32:26Z",
+    "finished_at": "2026-11-18T04:00:31Z",
     "summary": "All checks passed."
   },
-  "gate_request": null,
-  "ready_sha": null,
+  "gate_request": {
+    "sha": "520793761853473f6a96fb08bd6d53ff813ae232",
+    "items": [
+      {
+        "item": "heist at 200% text, pt_BR",
+        "qualities": [
+          "Display type"
+        ]
+      }
+    ]
+  },
+  "ready_sha": "520793761853473f6a96fb08bd6d53ff813ae232",
   "stop_at": "2026-11-18T21:00:00Z",
   "acks": [
     "M6",
@@ -719,5 +729,5 @@
       "where": "docs/progress/lead.md, Now, cycle 143 (M60)"
     }
   ],
-  "next_step": "pre-check running on 52079376 (main 2ced548 merged as c8de146b, AD-R65's lift, test, stills and track in, guard, FIT runs and owners diff pass); then record and ready with the gate request 'heist at 200% text, pt_BR'"
+  "next_step": "ready at 52079376 (pre-check PASS 04:00:31Z, owners diff exit 0); main c313691c merged as 79721a80 (docs only); waiting for the gate on 'heist at 200% text, pt_BR' (Display type) and the lead's merge"
 }
