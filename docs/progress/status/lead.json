@@ -1,6 +1,6 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-18T03:00:00Z",
+  "updated_at": "2026-11-18T03:28:00Z",
   "expected_next_update_by": "2026-11-18T06:00:00Z",
   "cycle": 143,
   "merging": null,
@@ -43,7 +43,7 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Cycle 144: S1 runs P3-S1-marker-1 (session_01SNkKxqdHWKAJ5VQDWhsTwQ, restarted in cycle 143 with S1-R43 granted, M60) with AD-R65 folded in (M58, acked); S3 runs P3-S3-offline-1 (session_01SNkKxqjkvtzBVBdApvpLwS) with AD-R66 folded in (M59, acked). AD is idle: P3-AD-audit-2 merged as 07e2c13d and audit 2 is scored (one miss on owner-checked Hierarchy, one false block; nothing paused). Check that check_all passed on main 07e2c13d (else revert the merge and set the task to resync); check M60's ack; merge P3-S1-marker-1 when ready, with its own full checks, the guard and the gate's judge on 'heist at 200% text, pt_BR', AD-R65 answered; merge P3-S3-offline-1 when ready, with the gate on 'character at 200% text, pt_BR', AD-R66 answered; then phase 3's exit: no board with an open objection and the owner's wave board (O7). Seed nothing beyond the exit items (M57; the reserve is spent).",
+  "next_step": "Cycle 144: S1 runs P3-S1-marker-1 (session_01SNkKxqdHWKAJ5VQDWhsTwQ, restarted in cycle 143 with S1-R43 granted, M60) with AD-R65 folded in (M58, acked); S3 runs P3-S3-offline-1 (session_01SNkKxqjkvtzBVBdApvpLwS) with AD-R66 folded in (M59, acked). AD is idle: P3-AD-audit-2 merged as 07e2c13d and audit 2 is scored (one miss on owner-checked Hierarchy, one false block; nothing paused). check_all passed on main 07e2c13d after the merge. check M60's ack; merge P3-S1-marker-1 when ready, with its own full checks, the guard and the gate's judge on 'heist at 200% text, pt_BR', AD-R65 answered; merge P3-S3-offline-1 when ready, with the gate on 'character at 200% text, pt_BR', AD-R66 answered; then phase 3's exit: no board with an open objection and the owner's wave board (O7). Seed nothing beyond the exit items (M57; the reserve is spent).",
   "seen": {
     "at": "2026-11-18T02:56:18Z",
     "heads": {
