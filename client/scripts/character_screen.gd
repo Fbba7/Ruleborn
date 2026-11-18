@@ -63,6 +63,11 @@ var clock: Callable = func() -> int: return int(Time.get_unix_time_from_system()
 var roster := {}
 ## The last success the stage celebrated, so a refresh does not repeat it.
 var _cheered := ""
+## The stage's height in points with no notice over it.
+var _tall := 0.0
+## The points the stage gives a notice over it: offline at large text the
+## notice's own height (AD-R66), else none.
+var _give := 0.0
 
 
 func _ready() -> void:
@@ -98,8 +103,8 @@ func _build() -> void:
 	body = UI.scroll(column)
 	body.add_theme_constant_override("separation", UI.px(8))
 	stage = StageHero.new()
-	var tall := Tokens.number("size", "safe_top_points") + (165.0 if _large() else 170.0)
-	stage.custom_minimum_size = Vector2(0, UI.px(tall))
+	_tall = Tokens.number("size", "safe_top_points") + (165.0 if _large() else 170.0)
+	stage.custom_minimum_size = Vector2(0, UI.px(_tall))
 	stage.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	# Clear of the place and state pills over the stage's top.
 	stage.headroom = 0.08
@@ -186,7 +191,19 @@ func _refresh() -> void:
 		UI.set_status(status_label, "info", Strings.t("COMMON_LOADING"))
 	else:
 		UI.set_status(status_label, "info", "")
-	status_label.get_parent().get_parent().visible = status_label.text != ""
+	var notice := status_label.get_parent().get_parent() as Control
+	notice.visible = status_label.text != ""
+	# Offline at large text the notice stands over the stage in one line, and
+	# the stage gives it its height, so the ability header stays above the
+	# foot as it does online (AD-R66). The stage is then no longer under the
+	# status bar, so the pills over it give up that band first.
+	_give = 0.0
+	if c["error"] != "" and _large() and notice.visible:
+		var gap := float(notice.get_parent().get_theme_constant("separation"))
+		_give = (notice.get_combined_minimum_size().y + gap) / UI.PX_PER_POINT
+	# Framed a little higher there, so the face stays over the name's plate.
+	stage.headroom = -0.08 if _give > 0.0 else 0.08
+	stage.custom_minimum_size = Vector2(0, UI.px(_tall - _give))
 	for box: Container in [cards, actions, notes]:
 		for n in box.get_children():
 			box.remove_child(n)
@@ -820,7 +837,8 @@ func _stand(kind: String, c: Dictionary, slice: Dictionary, words: Dictionary) -
 	var top := MarginContainer.new()
 	top.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	top.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	top.add_theme_constant_override("margin_top", UI.px(Tokens.number("size", "safe_top_points")))
+	top.add_theme_constant_override("margin_top",
+		UI.px(maxf(Tokens.number("size", "safe_top_points") - _give, 8.0)))
 	top.add_theme_constant_override("margin_left", UI.px(12))
 	top.add_theme_constant_override("margin_right", UI.px(12))
 	level_badge.add_child(top)
@@ -849,9 +867,22 @@ func _stand(kind: String, c: Dictionary, slice: Dictionary, words: Dictionary) -
 		state.accessibility_name = said
 		state.tooltip_text = said
 	StageHeroSkin.on_stage(top, state, Control.PRESET_TOP_RIGHT)
+	var count: Control = null
 	if at >= 0:
-		StageHeroSkin.on_stage(top, KitStatus.pill(Strings.t("CHARACTER_COUNT", [at + 1, ids.size()]), "",
-			"plate_dark"), Control.PRESET_TOP_LEFT)
+		count = KitStatus.pill(Strings.t("CHARACTER_COUNT", [at + 1, ids.size()]), "", "plate_dark")
+		StageHeroSkin.on_stage(top, count, Control.PRESET_TOP_LEFT)
+	# On the shorter stage under an offline notice (AD-R66) the arrows centre
+	# under the count's pill, not over it.
+	var middle := top
+	if _give > 0.0 and count != null:
+		middle = MarginContainer.new()
+		middle.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		middle.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		for side: String in ["margin_left", "margin_right"]:
+			middle.add_theme_constant_override(side, top.get_theme_constant(side))
+		middle.add_theme_constant_override("margin_top", top.get_theme_constant("margin_top")
+			+ int(count.get_combined_minimum_size().y) + UI.px(4))
+		level_badge.add_child(middle)
 	# The design's arrows through the roster, in its order, round at the ends.
 	if ids.size() > 1 and at >= 0:
 		var named := RosterPresenter.names((slice.get("view", {}) as Dictionary).get("characters", []), words)
@@ -862,7 +893,8 @@ func _stand(kind: String, c: Dictionary, slice: Dictionary, words: Dictionary) -
 				func() -> void: App.services.router.go(&"character", {"id": to, "roster": roster}), "gold_round",
 				48.0)
 			b.set_meta("item", "step:%d" % step)
-			StageHeroSkin.on_stage(top, b, Control.PRESET_CENTER_LEFT if step < 0 else Control.PRESET_CENTER_RIGHT)
+			StageHeroSkin.on_stage(middle, b,
+				Control.PRESET_CENTER_LEFT if step < 0 else Control.PRESET_CENTER_RIGHT)
 
 
 ## ScreenNav's back button to the roster (AD-R50), handing the roster back
