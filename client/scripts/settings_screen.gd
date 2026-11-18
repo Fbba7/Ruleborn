@@ -288,24 +288,20 @@ static func _stroked(l: Label, outline: float, drop: float, drop_colour := "drop
 	return l
 
 
-## The tabs as key frame 05 has them: one strip, the open tab on the kit's
-## chosen segment for parchment (dark leather, cream words), so gold stays the
-## main actions' alone (§21.8). Outside high contrast the strip is the kit's
-## lesser action (`ghost`, the card's violet lifted two value steps, with its
-## gold hairline) and the closed tabs are the night's clear segments, cream
-## words on it: the parchment track was the largest light mass under the
-## title in the squint (AD's preview 3, AD-R68), and the night's dark track
-## sank under the value steps (5fc97aac). In high contrast the strip stays the
-## light parchment track, as the switch rows stay parchment there. Where an
-## icon and its word do not fit a third of the strip (large text, a long
-## word), the closed tabs keep their icon alone and the open one its word
-## alone, twice as wide; a screen reader still hears every word.
+## The tabs as key frame 05 has them: one light strip, the open tab on the
+## kit's chosen segment for parchment (dark leather, cream words), so gold
+## stays the main actions' alone (§21.8). The strip is the kit's segment track
+## for light segments, a deeper parchment a step under the cards' cream: the
+## full cream strip outweighed the title in the squint (the gate's Hierarchy
+## at 5fc97aac), and the night's dark track sank under the value steps. Where an icon and its word
+## do not fit a third of the strip (large text, a long word), the closed tabs
+## keep their icon alone and the open one its word alone, twice as wide; a
+## screen reader still hears every word.
 func _tabs() -> Control:
 	var strip := PanelContainer.new()
 	strip.name = "Segments"
 	strip.add_theme_stylebox_override("panel", UI.clear_box(2, 2))
-	var light := Settings.high_contrast
-	UI.dress(strip, "seg_track_light" if light else "ghost")
+	UI.dress(strip, "seg_track_light")
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", UI.px(4))
 	strip.add_child(row)
@@ -324,7 +320,7 @@ func _tabs() -> Control:
 		var b := UI.action(words, func() -> void:
 			tab_shown = key
 			last_tab = key
-			_build(), "seg_on_light" if open else ("seg_light" if light else "seg"), words)
+			_build(), "seg_on_light" if open else "seg_light", words)
 		b.add_theme_font_size_override("font_size", UI.text_px(14))
 		b.set_meta("points", 14.0)
 		b.set_meta("chosen", open)
