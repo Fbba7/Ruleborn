@@ -673,18 +673,24 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   phase 3's exit item): the Access tab's switch rows move onto the dark
   plate with cream words, the gold A / A stay the primary; gate item
   'settings at 100% text' (Hierarchy); AD previews the stills.
-  `owners.py claims` stays disjoint. **Merge and gate:** none: nothing
-  is ready, no gate request, no merge lock; main moved only by this
-  cycle's bookkeeping, so the pages are not republished.
+  `owners.py claims` stays disjoint. **Merge and gate:** the wave board
+  went ready during the cycle (AD's pre-check exit 0 at baa01a1c, 05:43Z)
+  and merged as 41ad4615 (lock on candidate abc77993 from 05:48Z):
+  checks reused from the pre-check at baa01a1c; no `ui guard: OK` was
+  recorded, so the lead ran the guard on the candidate (OK) and docs
+  consistency (OK); `owners.py diff` clean; no gate item. check_all runs
+  on main under `nohup setsid`; the audit and roadmap pages, rebuilt,
+  come out byte-identical to the copies cycle 145 published, so they are
+  not republished.
   **Sessions:** S3 started as `session_01SNkKxmmGcPDizHBY6ng1zz`
   (05:43Z) on settings-4. AD's session
-  (`session_01SNkKxnEBc1ok2qxGk7hpRb`) is inside its update time
-  (06:00Z), its pre-check running. **Seats:** AD and S3, under the cap
-  of three while the seven-day bar reads `allowed_warning`; K1, S1, S2,
-  AIA-2 and AIA are idle. **Next:** merge the wave board when ready (no
-  gate item); route S3's preview request to AD; merge settings-4 with
-  its gate item; then phase 3's exit: AD's preview of settings-4's stills
-  is the last step before the wave stands at O7.
+  (`session_01SNkKxnEBc1ok2qxGk7hpRb`) finished its task with the
+  merge; it takes S3's preview request when it comes. **Seats:** AD and
+  S3, under the cap of three while the seven-day bar reads
+  `allowed_warning`; K1, S1, S2, AIA-2 and AIA are idle. **Next:** route
+  S3's preview request to AD; merge settings-4 with its gate item; then
+  phase 3's exit: AD's preview of settings-4's stills is the last step
+  before the wave stands at O7.
 - **Cycle 146**, 18 November 2026, from about 05:14Z (session
   `session_01SNkKxmdvLviNaCD3jf7YyA`, started by the Opus 5.5 launcher).
   The changes since cycle 145: AD claimed P3-AD-wave-board (b7d03527,
