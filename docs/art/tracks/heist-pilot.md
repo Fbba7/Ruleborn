@@ -652,6 +652,8 @@ At 150% the Vault's words row makes the panel 74 px taller than on main (its foo
 
 On main it fails: no Vault word and no count in any locale, and the 200% bands (191, 202, 191) are narrower than the 150% ones (414, 165, 318).
 
+**The guard's draw calls.** guard.sh on this change, with main `4e0294ff` merged, measures heist/200 at 119 against its record of 118. heist/100 keeps its 120, and heist/hc is at 121 of 123. The one call is the Vault's word: the number joins the loot's baked figures, but the word is a label of its own. Every shot stays under the cap of 150 and no word is below 4.5:1. The raise, 118 -> 119, is requested of K1 with the lead's approval under M33 (S1-R45), as S1-R39 was.
+
 ### Evidence
 
 - `part10-before-200-pt.png` and `part10-after-200-pt.png`: the heist still at 200% text in pt_BR, on main and with this change. Before, the Vault's row is an icon and an empty line, the loot panel stands under the whole top row and the pause has a row of its own. After, the panel stands under the laws beside the alarm, reads 'Cofre 0%' over its crack, and the map between it and the tray is wider.
