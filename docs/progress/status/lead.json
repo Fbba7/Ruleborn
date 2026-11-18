@@ -1,6 +1,6 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-18T05:00:00Z",
+  "updated_at": "2026-11-18T04:55:37Z",
   "expected_next_update_by": "2026-11-18T08:00:00Z",
   "cycle": 145,
   "merging": null,
@@ -45,7 +45,7 @@
   ],
   "next_step": "Cycle 146: AD runs P3-AD-wave-board (O7, phase 3's exit): the five screens before and after, the frame strips, draw calls and texture memory per screen, the gate's pass counts, audit 2's miss (settings at 100% text, Hierarchy) and board 2's wait on icon batches 3 and 4 weighed, then the wave stands or each re-work is a request with a default. Merge it when ready (no gate item); restart AD if its update time passes; then rank any re-work AD names against phase 3's exit (M57) and seed only exit items. P3-S1-marker-1 and P3-S3-offline-1 merged as 3559ec39 (cycle 145).",
   "seen": {
-    "at": "2026-11-18T03:42:08Z",
+    "at": "2026-11-18T04:55:44Z",
     "heads": {
       "claude/3d-character-screens": "6053b249bee313648da3509142eeb2ba738bb62f",
       "claude/3d-characters": "35d6ae8f5b84a4d75636f68270848b0949c111f3",
@@ -72,9 +72,9 @@
       "claude/ui-plan": "f1affcea749d007fe1a67931bd3c1f7359d98c44",
       "claude/ui-research": "f19d5d4e5eaffff8869da3b91124d111cf1259a6",
       "claude/ui-screens": "dceb6bfcbc6c5da4e261674fe9301e1854f0aa65",
-      "claude/ui-screens-heist": "a4907fc02e3b02fb24461e3c5f787cabe3a27a82",
+      "claude/ui-screens-heist": "73a5f20d7323569e3b7f9bc904a0e229279fbe08",
       "claude/ui-screens-home": "f5f934807f524747e511558a313c4238412864ca",
-      "claude/ui-screens-meta": "f29995682b82b232dc64b02c5fb17df5360eb1d9",
+      "claude/ui-screens-meta": "fabcf7a1f44519fd6b01fbc350a1646c35a6a465",
       "lead/candidate-276ed4f0": "276ed4f0623d108174022240cba14f4f0ef9f74b",
       "lead/candidate-573416ab12761b92becf0c1d3d7d7bd03e9cf7d1": "573416ab12761b92becf0c1d3d7d7bd03e9cf7d1",
       "lead/candidate-714b24ed52f56133bccc18c82cc879938b53f296": "714b24ed52f56133bccc18c82cc879938b53f296",
@@ -85,7 +85,9 @@
       "main": "2455f3b5392587009f9b8f7ff57f7b26b01566d1"
     },
     "ready": {},
-    "startable": [],
+    "startable": [
+      "P3-AD-wave-board"
+    ],
     "messages": [
       "M10",
       "M3"

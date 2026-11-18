@@ -5,6 +5,29 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 142**, 18 November 2026, from about 02:14Z (session
+  `session_01SNkKxpS24uPCXVy7p6bfK3`, started by the Opus 5.5 launcher).
+  The changes since cycle 141: AD claimed P3-AD-audit-2 (01:25Z) and
+  pushed its preview 2 (`docs/art/ui-quality/gate/boards/preview-2.md`)
+  with AD-R65 and AD-R66; S3 claimed P3-S3-offline-1 (01:49Z) and filed
+  S3-R44; S1's marker-1 pre-check passed and S1 merged main 0473b222 into
+  its branch, its pre-check on the merge next.
+  **Requests:** AD-R65 (the heist's vault label under the crew tray at
+  200% text) folded into the running P3-S1-marker-1 as an objection of
+  its AD preview (M58 to S1); AD-R66 (the character screen's ability
+  header pushed below the first screen, offline at 200% text) into the
+  running P3-S3-offline-1 (M59 to S3); S3-R44 answered by its default
+  (M59). Both objections are phase 3 exit items under M57's ranking (no
+  board may keep an open objection), and both fall inside their tasks'
+  files, so nothing new is seeded and the reserve stays at 29.5 hours
+  used of its 20.
+  **Merge and gate:** none: no task is ready and no gate request is open.
+  **Seats:** S1 (marker-1), S3 (offline-1) and AD (audit-2): the cap of
+  three while the seven-day bar reads `allowed_warning`. K1, S2, AIA-2
+  and AIA are idle. **Next:** merge marker-1 and offline-1 with their
+  gate items when they are ready, with AD-R65 and AD-R66 answered; score
+  audit-2 when it merges; then phase 3's exit.
+
 - **Cycle 141**, 18 November 2026, from about 01:14Z (session
   `session_01SNkKxpEocuxTAPfpiN5b9n`, started by the Opus 5.5 launcher).
   The changes since cycle 140: K1's outline-1 ready at ca49e767; S1
