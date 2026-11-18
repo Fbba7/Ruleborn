@@ -744,32 +744,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   next task carries the previews of S1-R41, S3-R40 and AIA2-R4, and
   back-1's quit question (AD-R48).
 
-- **Cycle 137**, 17 November 2026, from about 21:14Z (session
-  `session_01SNkKxnomTXF5W6AXtNDsaA`, started by the Opus 5.5 launcher).
-  The changes since cycle 136: K1's claim and AIA-2's green checks.
-  **Claims copied:** K1's on P3-K1-outline-1 (claimed 21:10Z, lease
-  00:10Z). AIA-2's on P3-AIA2-bake-1 seen again: at 21:18Z it pushed 75798143,
-  "checks on merge 17520f56 pass (check_all, guard)", with the pre-check
-  and owners.py diff next (status 21:20Z, next due 22:05Z, lease 23:10Z).
-  **Requests:** none new. **Gate:** none. **Merge:** none, and no lock
-  taken: nav-1, hc-offline-2 and home-7 stay ready until bake-1 merges
-  (S2-R45). The audit and roadmap pages are not republished.
-  **Started:** S2 on P3-S2-back-1, stacked on P3-S2-home-7 at 9ef7b295
-  (`session_01SNkKxn1nyucpjrJfH22MCW`; protocol, "Stacked tasks"); its
-  files are disjoint from outline-1's and bake-1's (owners.py claims).
-  For this task the lead names S2 the owner of client/i18n/strings.csv
-  and hands it router.gd's back table. S2's prompt below no longer says
-  home-7 merged.
-  **Seats:** AIA-2 (bake-1), K1 (outline-1) and S2 (back-1): three, the
-  cap while the seven-day bar reads `allowed_warning`.
-  **Next:** once bake-1 merges, rebuild the candidates for home-7, nav-1
-  and hc-offline-2 on the new main, rerun the guard and merge each on a
-  pass; then back-1 after home-7, and outline-1 when ready. As seats
-  free, seed and start, in order: R52 with the next settings task (S3),
-  R54's content task with S3-R39, AD-R55 with the next heist task (S1)
-  and S2-R44's home follow-up; AD's next task carries the previews of
-  S1-R41, S3-R40 and AIA2-R4, and back-1's quit question (AD-R48).
-
 - **Stopped here**, 13 November 2026, about 13:20Z (the owner's "Stop
   cleanly"). Cycle 84 (session `session_01SNkKxpqF4gx3yYhsXenUGt`) took
   the merge lock for P2-AD-board-4 (candidate `842f09ab`, AD's ready

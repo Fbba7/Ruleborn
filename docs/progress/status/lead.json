@@ -43,7 +43,7 @@
   ],
   "next_step": "Cycle 141: K1 runs P3-K1-outline-1 (session_01SNkKxn6UGKqas3XXoa59J8, K1-R28 granted), S1 runs P3-S1-marker-1 (session_01SNkKxqVesBsXCSfdHoP6BX, from AD-R55). P3-S2-back-1 (f7ef5ed7, merged_sha 58a9a197) and P3-S3-settings-3 (995dcbfe, merged_sha ec6f2e5f) are merged. Merge outline-1 and marker-1 as each is ready, each with its own full checks and the guard. Seats: two of three (allowed_warning). Start S3 on P3-S3-offline-1 (S3-R39) once outline-1 is merged; until then, seed and start S2-R44's home follow-up in the free seat; AD's next task carries the previews of S1-R41, S3-R40, AIA2-R4, S3-R43 and back-1's quit question (AD-R48).",
   "seen": {
-    "at": "2026-11-17T23:22:23Z",
+    "at": "2026-11-18T01:07:08Z",
     "heads": {
       "claude/3d-character-screens": "6053b249bee313648da3509142eeb2ba738bb62f",
       "claude/3d-characters": "35d6ae8f5b84a4d75636f68270848b0949c111f3",
@@ -64,15 +64,15 @@
       "claude/ui-ad": "fc8a4bcff57545978e4b55d5c37e6d9aaa051eb1",
       "claude/ui-artist": "45c6366cb2e0f9dcb5aaa428d17c017576beff5d",
       "claude/ui-artist-icons": "a4f24e6cf4fa6c7ce192e07ac99feeb1af877396",
-      "claude/ui-bake": "1e9829eccf45b7f0d043937ce503ba78b1c48e1e",
+      "claude/ui-bake": "9f3c01c64619d58629aac28b0cb018712c8075e2",
       "claude/ui-gate-runs": "0e78b6ceace032f62427a1c8e89dd9ee6186a5c0",
       "claude/ui-kit": "17b900ebdc371f05244d4658850a77460f6090c0",
       "claude/ui-plan": "f1affcea749d007fe1a67931bd3c1f7359d98c44",
       "claude/ui-research": "f19d5d4e5eaffff8869da3b91124d111cf1259a6",
       "claude/ui-screens": "dceb6bfcbc6c5da4e261674fe9301e1854f0aa65",
       "claude/ui-screens-heist": "f1bafd6f36e82ca3985b3297981bf52c594ead9a",
-      "claude/ui-screens-home": "e2c05a207659d9ccd465b3cb64b6ad3eb57b2b8e",
-      "claude/ui-screens-meta": "d7c464e7d336cbe9c041c7ce8e275368e209a992",
+      "claude/ui-screens-home": "f5f934807f524747e511558a313c4238412864ca",
+      "claude/ui-screens-meta": "7972485a7738ac5cea3f4ac762935d9f2522c1d7",
       "lead/candidate-573416ab12761b92becf0c1d3d7d7bd03e9cf7d1": "573416ab12761b92becf0c1d3d7d7bd03e9cf7d1",
       "lead/candidate-714b24ed52f56133bccc18c82cc879938b53f296": "714b24ed52f56133bccc18c82cc879938b53f296",
       "lead/candidate-791aae3c187caf621ace022ed675004678dc0119": "791aae3c187caf621ace022ed675004678dc0119",
@@ -83,7 +83,7 @@
     },
     "ready": {},
     "startable": [
-      "P3-S3-settings-3"
+      "P3-S1-marker-1"
     ],
     "messages": [
       "M10",
@@ -116,6 +116,7 @@
       "S2-R14",
       "S2-R15",
       "S2-R24",
+      "S2-R26",
       "S2-R4",
       "S2-R5",
       "S2-R6",
@@ -128,7 +129,9 @@
       "S3-R8",
       "S3-R9 to S3-R14"
     ],
-    "leases": [],
+    "leases": [
+      "P3-K1-outline-1@2026-11-18T00:10:20Z"
+    ],
     "stale": []
   }
 }
