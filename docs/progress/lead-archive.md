@@ -5,6 +5,40 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 141**, 18 November 2026, from about 01:14Z (session
+  `session_01SNkKxpEocuxTAPfpiN5b9n`, started by the Opus 5.5 launcher).
+  The changes since cycle 140: K1's outline-1 ready at ca49e767; S1
+  claimed marker-1 and filed S1-R42; M56 and M57 came in.
+  **Requests:** S1-R42 (AD's preview of marker-1's stills) answered by
+  its default: the preview joins P3-AD-audit-2 with S1-R41, S3-R40,
+  AIA2-R4 and S3-R43, and S1 marks ready with the gate request, the lead's
+  gate run judging the stills. **Acks:** M56 (a guard failure on a
+  generated file the task does not change is an infra blocker, not the
+  task's) and M57 (rank the remaining work against phase 3's exit).
+  **M57's ranking:** phase 3's exit (report.md section 6) needs no board
+  with an open objection, the second blind audit and the owner's wave
+  board (O7). What stays for the exit: outline-1 (merged this cycle),
+  marker-1 (AD-R55, flow board 2's F9; S1 in flight), offline-1 (S3-R39)
+  and P3-AD-audit-2 with its scoring. Moved to phase 4's list: S2-R44's
+  home follow-up (the purse at 125%); AD-R54 has no task. The reserve:
+  29.5 hours used of its 20, so nothing beyond the exit items is seeded.
+  **Seeded:** P3-AD-audit-2, the second blind audit: the lead drew 16
+  items (12 passes, all phase 3's screen passes, and 4 fails; seed
+  `phase-3-exit`; audit 1's items left out) into
+  `docs/art/ui-quality/gate/audit/audit-2.md`, then the previews and
+  M54's ack. **Started:** AD on P3-AD-audit-2
+  (`session_01SNkKxnJHAVTyhVsLVjhU3m`, 01:23Z), a fresh session for the
+  blind rules.
+  **Merge:** candidate 276ed4f0 (outline-1 on main) passes full checks
+  (01:46:08Z) and the guard (after linking `tools/ui_research/node_modules`
+  into the guard's worktree), merged as 2e17e1f1 (merged_sha 276ed4f0).
+  **Started:** S3 on P3-S3-offline-1 (`session_01SNkKxqjkvtzBVBdApvpLwS`,
+  01:47Z), its last dep merged, in K1's freed seat.
+  The audit and roadmap pages are republished.
+  **Seats:** S1 (marker-1), S3 (offline-1) and AD (audit-2): the cap of
+  three while the seven-day bar reads `allowed_warning`. K1, S2, AIA-2
+  and AIA are idle.
+
 - **Cycle 140**, 17-18 November 2026, from about 23:38Z (session
   `session_01SNkKxpYPYZFhmxMYvxis4C`, started by the Opus 5.5 launcher).
   The changes since cycle 139: S2's back-1 ready at 4e9114ac; S3's
