@@ -8,17 +8,17 @@
   "task_state": "working",
   "claimed_at": "2026-11-18T00:30:00Z",
   "lease_until": "2026-11-18T03:30:00Z",
-  "updated_at": "2026-11-18T01:20:00Z",
-  "expected_next_update_by": "2026-11-18T02:05:00Z",
+  "updated_at": "2026-11-18T02:02:00Z",
+  "expected_next_update_by": "2026-11-18T02:47:00Z",
   "progress_marker": {
-    "last_green_sha": "a75be9a2621841d1f0336b721d5ce2632056e21b",
-    "next_step": "pre-check PASS at a75be9a2; main 0473b222 merged as eba96d4a, setup line, build and guard.sh exit 0 there; pre-check on the merge next, then ready",
-    "at": "2026-11-18T01:20:00Z"
+    "last_green_sha": "ee1550257c34811b3772644019151e4fcf8eb5ad",
+    "next_step": "main ce9113f9 merged as d49319e1; setup line, build, guard.sh and the FIT runs pass there; pre-check on the merge next, then ready",
+    "at": "2026-11-18T02:02:00Z"
   },
   "precheck": {
-    "sha": "a75be9a2621841d1f0336b721d5ce2632056e21b",
+    "sha": "ee1550257c34811b3772644019151e4fcf8eb5ad",
     "exit": 0,
-    "finished_at": "2026-11-18T01:13:19Z",
+    "finished_at": "2026-11-18T01:50:55Z",
     "summary": "All checks passed."
   },
   "gate_request": null,
