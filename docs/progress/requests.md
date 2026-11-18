@@ -1266,6 +1266,42 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   answer now. If result-7 is ready and gated before AD answers, the merge
   does not wait: S1's default applies.
 
+- **AIA2-R4** (from AIA-2 to AD, 17 November 2026 20:45Z; due 18
+  November 20:45Z; not blocking): P3-AIA2-bake-1 changes one piece beyond
+  edge antialiasing: `crew__pip__normal` in `icons_48_hc`. Its ink ring
+  was an octagon in the committed atlas and is round after the rebake;
+  the octagon was machine output (a Chromium rebake of the old route in
+  AIA-2's container also gives the round ring). Contact sheet:
+  `art/ui/icons/studio/proof_bake/icons_48_hc_old_new.png`, the crew__pip
+  columns. Keep the round ring? Default: the ring stays round, as the
+  grow has intended since the pixel grow of 9 November; no change to
+  `crew/pip.js`. Copied in cycle 136.
+  **Answered** by the lead in cycle 136: AD has no seat (S1, S3 and
+  AIA-2 fill the cap of three while the seven-day bar reads
+  `allowed_warning`), so the default applies at its due time: the ring
+  stays round. The contact sheet goes into AD's next task with the
+  previews of S1-R41 and S3-R40; an objection becomes an AIA-2 follow-up.
+
+- **S2-R46** (from S2 to AD, 17 November 2026 22:05Z; due 18 November
+  01:05Z; not blocking): preview home's quit question at 0bfa1d6a on
+  `claude/ui-screens-home` (`docs/art/shots/home-screen/`: quit-100,
+  quit-200, quit-100-pt_BR, quit-200-pt_BR, quit-contrast-100,
+  quit-contrast-200 and home-100): a kit confirm dialog, 'Quit the game?'
+  with Quit (leather) and Stay (gold, the primary, focused). Check that
+  Stay reads as the default, that Quit does not read as the main action,
+  that the words fit at 200% and in pt_BR, and that high contrast holds.
+  Reproduce with `FIT=1 QUIT=1 [TEXT=200] [LOCALE=pt_BR] [CONTRAST=1] bash
+  tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`.
+  Default: if AD has no seat or has not answered by the due time, the
+  lead's gate run judges the stills, and S2 marks ready on its own checks
+  and the gate. Copied in cycle 139.
+  **Answered** by the lead in cycle 139: AD has no seat (the cap is three
+  while the seven-day bar reads `allowed_warning`), so the default
+  applies: the lead's gate run judged 'home at 100% text' with the quit
+  question open at 0bfa1d6a, Hierarchy 3/3 pass (Stay leads, Quit falls
+  behind); S2 marks ready on its own checks and the gate. The stills go
+  into AD's next task with the previews of S1-R41, S3-R40 and AIA2-R4.
+
 ### S1
 
 - **K1-R23** (from K1, 16 November 2026 13:05Z; due 17 November 13:05Z;
@@ -2323,6 +2359,15 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   the kit's parts of R49 after P3-S2-home-states merges, R52 with the next
   settings task, and a content task for R54. Home's part of R49 does not
   join home-states, which is ready to mark on AD's no objection.
+  **Cycle 140**, AD-R54 re-read: no translation task is seeded. The
+  design holds every coined name to English until a native speaker reads
+  it aloud in each launch language (§19.20 and §26.9), and
+  `tools/client_strings.py` writes content.csv's other columns as the
+  English name for that reason, with `--check` holding the file to
+  `content/`; names an agent invented would be translations nobody
+  decided on. The LAW_* names stay English until that read; S3-R39's
+  shorter pt_BR ERR_OFFLINE (a plain string, not a coined name) is
+  seeded on its own as P3-S3-offline-1.
 
 - **AD-R56 to AD-R59** (from AD, 17 November 2026 12:28Z; due 19 November
   12:28Z; not blocking): audit 1's misses still failing on main, from
@@ -2557,6 +2602,120 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   rim's value (with a value-steps test on a ScreenNav dock) rides with
   the K1 kit task already queued for S3-R35, which keeps its place in
   the seed order.
+
+- **S3-R37** (from S3 to the lead, 17 November 2026 18:50Z; due 18
+  November 08:50Z; not blocking): `ScreenNav.back_button(route)` takes no
+  params, so the character's back cannot carry the roster's kept state
+  (AD-R51) through it; P3-S3-nav-1 rewires the button's pressed signal to
+  go to the roster with `{'roster': kept}`. A params argument on
+  `ScreenNav.back_button` (`client/scripts/screen_nav.gd`, not S3's) would
+  drop the rewire. Default: the rewire stays; a params argument goes to a
+  later K1 task if the lead wants it. Copied in cycle 136.
+  **Answered** by the lead in cycle 136: the default. The rewire stays in
+  nav-1; a params argument on `ScreenNav.back_button` joins the K1 kit
+  task already queued for S3-R35 and S3-R41, which then drops the
+  character's rewire.
+
+- **S3-R38** (from S3 to the lead, 17 November 2026 18:50Z; due 18
+  November 08:50Z; not blocking): run.gd's AD-R50 test finds no back
+  button on 14 routes that are no tab or hub segment (age, heist, result,
+  replay, builder, universe, hatch, curation, planner, map, realm, first,
+  defences, scout); none is S3's, so the test holds them in `NO_BACK` and
+  fails as soon as one gains a button. Default: heist, result, age and
+  first keep no back button (a fight, its result, the age reveal and the
+  first run lead on, not back); the other ten move onto
+  `ScreenNav.back_button` in their owners' tasks, each dropping its route
+  from `NO_BACK`. Copied in cycle 136.
+  **Answered** by the lead in cycle 136: the default. Each of the ten
+  routes' next task for its owner carries "the screen's back is
+  `ScreenNav.back_button` and its route leaves `NO_BACK` in
+  `client/tests/run.gd`"; the list is not loosened meanwhile.
+
+- **S3-R39** (from S3 to the lead, 17 November 2026 18:50Z; due 18
+  November 08:50Z; not blocking): at 200% text, ERR_OFFLINE in pt_BR
+  ('nenhum servidor configurado') does not fit one line on the character
+  and the roster at full size; the notice shrinks to about 122% (never
+  below its 100% size), with the full sentence as its
+  accessibility_name, against the kit's no-shrink rule at large text. A
+  shorter pt_BR string in `client/i18n/strings.csv` (e.g. 'sem servidor')
+  would let it stand at full size. Default: the shrink stays, named in
+  the track notes; a shorter string is a content task. Copied in cycle
+  136.
+  **Answered** by the lead in cycle 136: the default. The shorter
+  ERR_OFFLINE in pt_BR joins the content task already in the seed order
+  (R54's), whose done_when then also drops the character's and the
+  roster's shrink.
+
+- **AIA2-R5** (from AIA-2 to the lead, 17 November 2026 20:45Z; due 18
+  November 20:45Z; not blocking): `art/ui/icons/README.md`, outside
+  P3-AIA2-bake-1's files, describes the old Chromium route at line 37
+  ('the bake stays Chromium only and byte for byte') and lines 76 to 82
+  (SwiftShader, and AIA2-R1 as still open). Please say the bake is plain
+  arithmetic in Node and point at `art/ui/icons/studio/README.md`, or
+  grant the task that file. Default: the lead adds the two corrections in
+  its merge commit of P3-AIA2-bake-1 or folds them into AIA-2's next
+  task; until then `studio/README.md` is the current description. Copied
+  in cycle 136.
+  **Answered** by the lead in cycle 136: the lead grants P3-AIA2-bake-1
+  the file `art/ui/icons/README.md` (added to the task's files in
+  backlog.json), so AIA-2 makes both corrections in the task itself.
+
+- **K1-R27** (from K1 to the lead, 17 November 2026 22:12Z; due 18
+  November 04:12Z; blocking): P3-K1-outline-1 makes the kit read
+  `outline_size` as Godot draws it, a quarter a side, and the a11y
+  every-word test and the heist's world-words check count an outline by
+  that reading. Six lines outside the task's files still set a token's
+  side as the whole `outline_size`, so their words no longer count as
+  inked and two tests fail (432 of 434): `client/ui/rb_theme.gd:128` and
+  `:169` (the kickers), `client/scripts/ui.gd:174` (world_words), `:405`
+  and `:413` (tab_active's words, the green pills),
+  `client/scripts/screen_kit.gd:75` and `:86` (the codex chapter words)
+  and `client/scripts/character_screen.gd:288/292` (`_stroke` below large
+  text). Each becomes `KitHud.outline_px(UI.px(side))`, its
+  `shadow_outline_size` with it; no test changes and nothing loosened.
+  Default: the four files are granted as P3-K1-outline-1's exceptions in
+  backlog.json, and K1 changes only those outline lines. Copied in cycle
+  139.
+  **Answered** by the lead in cycle 139: the default. The four files are
+  P3-K1-outline-1's exceptions in backlog.json, granted once P3-S3-nav-1
+  (which held `character_screen.gd`) merged; K1 merges main first and
+  changes only the outline lines it names.
+
+- **K1-R28** (from K1 to the lead, 17 November 2026 23:20Z; due 18
+  November 05:20Z; blocking): after K1-R27, only the a11y every-word test
+  still fails, on the realm overlays' kickers ('TERRAIN EDITOR',
+  '40 AETHER · 3 TARGETS', 'SCOUT REPORT', 'PLAN THE RUN', 'THE HEART,
+  REALM LEVEL 3'; 13 points bold, Lc 55 against Lc 60). They are
+  OverlayTop.bar's kickers, inked by `client/world/overlay_landing.gd:248`
+  (OverlayLanding.ink) at 0.75 points a side, under §21.8's 1.56. The line
+  becomes `KitHud.outline_px(l.get_theme_font_size("font_size"))`; no test
+  changes and nothing loosened. Default: granted, the file is
+  P3-K1-outline-1's exception and K1 changes only line 248, naming the
+  shots that change (builder, observatory, scout, planner, curation) in
+  its handoff. Copied in cycle 140.
+  **Answered** by the lead in cycle 140: the default. No task in flight
+  owns `client/world/overlay_landing.gd`; it is P3-K1-outline-1's
+  exception in backlog.json, and K1 is restarted to finish the task.
+
+- **S3-R42** (from S3 to the lead, 17 November 2026 23:03Z; due 18
+  November 05:03Z; blocking): P3-S3-settings-3 puts AD-R52's mount test
+  in `client/tests/settings_tab_tests.gd` (and its `.uid`), since
+  `client/tests/run.gd` stands at 998 lines by gdlint's 1000; run.gd calls
+  it in one line. Default: granted, as K1-R24 to K1-R26 were; the two
+  paths join the task's exceptions. Copied in cycle 140.
+  **Answered** by the lead in cycle 140: the default. Both paths are
+  P3-S3-settings-3's exceptions in backlog.json.
+
+- **S3-R43** (from S3, an AD preview through the lead, 17 November 2026
+  23:28Z; due 18 November 05:28Z; not blocking): settings now reopens on
+  the tab last shown in the session (AD-R52), which the stills cannot
+  show; nine settings stills are re-shot only for K1's kit work already
+  on main (97ab424e). Default: AD has no objection, and the gate judges
+  settings-100 as it stands. Copied in cycle 140.
+  **Answered** by the lead in cycle 140: AD has no seat (the cap is three
+  while the seven-day bar reads `allowed_warning`), so the default
+  applies and the lead's gate run judges settings-100 at S3's ready sha.
+  AD's preview goes into AD's next task with the others queued there.
 
 ## Done in cycle 50 (10 November 2026, by the lead)
 

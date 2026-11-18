@@ -36,6 +36,11 @@ var _cheered := ""
 func _ready() -> void:
 	App.ready(self)
 	controller = App.services.roster_flow
+	# Back from a character's page (AD-R51): the stage, the filter and the
+	# scroll the player left, which the page carried in its route args.
+	var back: Dictionary = App.services.store.get_slice(AppState.ROUTE)["params"].get("roster", {})
+	chosen = int(back.get("chosen", chosen))
+	filter = str(back.get("filter", filter))
 	_build()
 	App.services.store.changed.connect(_on_changed)
 	var tick := Timer.new()
@@ -44,8 +49,34 @@ func _ready() -> void:
 	add_child(tick)
 	tick.start()
 	_refresh()
+	if back.has("scroll"):
+		_scroll_to.call_deferred(int(back["scroll"]))
 	await controller.load_roster()
 	await controller.load_words()
+
+
+## The scroll a character's page carried back, once the grid is laid out:
+## the scroll bar's range is the grid's height only after a layout pass.
+func _scroll_to(to: int) -> void:
+	var scroll := body.get_parent() as ScrollContainer
+	for i in 4:
+		if not is_inside_tree():
+			return
+		scroll.scroll_vertical = to
+		if scroll.scroll_vertical == to:
+			return
+		await get_tree().process_frame
+
+
+## The roster as the player leaves it for a character's page, carried in the
+## page's route args and handed back by its back button (AD-R51).
+func kept() -> Dictionary:
+	return {"chosen": chosen, "filter": filter, "scroll": (body.get_parent() as ScrollContainer).scroll_vertical}
+
+
+## A character's page, `id`'s, carrying the roster as it is left.
+func _open(id: int) -> void:
+	App.services.router.go(&"character", {"id": id, "roster": kept()})
 
 
 func _on_changed(slice: StringName) -> void:
@@ -97,6 +128,58 @@ func _build() -> void:
 	column.add_child(StageHeroKit.tab_bar())
 
 
+## A status line, `l`, made plain again before its next words: wrapping at
+## the player's text size, with no name of its own. A one-line offline notice
+## (`failed`) must not leave its shape on the loading line or a change's
+## answer that follows it.
+static func plain(l: Label) -> void:
+	l.accessibility_name = ""
+	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	l.text_overrun_behavior = TextServer.OVERRUN_NO_TRIMMING
+	l.add_theme_font_size_override("font_size", UI.text_px(float(l.get_meta("points", UI.TEXT_POINTS))))
+
+
+## A failed load or change, `sentence`, on `l`, a status line on the cream
+## plate. Being offline (`code` "offline") is information, not an error
+## (AD-R63): in ink with the info glyph. At large text it takes one line, the
+## reason alone ("no server is set"), with the whole sentence as its name
+## for a screen reader (AD-R64). Red stays for the server's real refusals.
+static func failed(l: Label, code: String, sentence: String) -> void:
+	plain(l)
+	if code != "offline":
+		UI.set_status(l, "alarm", sentence)
+		return
+	var large := Settings.text_scale > ScreenNav.LABELS_UP_TO
+	UI.set_status(l, "info", Errors.text(code) if large else sentence)
+	if not large:
+		return
+	l.accessibility_name = sentence
+	l.autowrap_mode = TextServer.AUTOWRAP_OFF
+	# Trimming lets the plate take the screen's width rather than the words';
+	# `_one_line` sizes the words so that nothing is ever trimmed.
+	l.text_overrun_behavior = TextServer.OVERRUN_TRIM_WORD_ELLIPSIS
+	if not l.has_meta("one_line"):
+		l.set_meta("one_line", true)
+		l.resized.connect(_one_line.bind(l))
+	_one_line(l)
+
+
+## A one-line notice's words at the player's text size, or as much smaller
+## as its line needs, never under their size at 100% (S3-R39: where even the
+## reason overruns the line, as pt_BR's does at 200%).
+static func _one_line(l: Label) -> void:
+	if l.autowrap_mode != TextServer.AUTOWRAP_OFF or l.size.x <= 0.0:
+		return
+	var points := float(l.get_meta("points", UI.TEXT_POINTS))
+	var font := l.get_theme_font("font")
+	var px := UI.text_px(points)
+	var least := int(points * UI.PX_PER_POINT)
+	while px > least and font.get_string_size(l.text, HORIZONTAL_ALIGNMENT_LEFT, -1, px).x > l.size.x:
+		px -= 1
+	if px != l.get_theme_font_size("font_size"):
+		l.add_theme_font_size_override("font_size", px)
+
+
 ## `what` held in from the screen's sides by the safe area's margin.
 static func padded(what: Control) -> MarginContainer:
 	var m := MarginContainer.new()
@@ -117,8 +200,9 @@ func _refresh() -> void:
 	var focus_item := str(focused.get_meta("item", "")) if focused != null else ""
 	var slice: Dictionary = App.services.store.get_slice(RosterState.ROSTER)
 	var r := RosterPresenter.screen(slice, clock.call(), App.services.store.get_slice(WorkshopState.WORKSHOP)["words"])
+	plain(status_label)
 	if r["error"] != "":
-		UI.set_status(status_label, "alarm", r["error"])
+		RosterScreen.failed(status_label, str(slice["error"]), r["error"])
 	elif r["refused"] != "":
 		UI.set_status(status_label, "alarm", r["refused"])
 	elif r["said"] != "":
@@ -178,7 +262,7 @@ func _refresh() -> void:
 	for row: Dictionary in shown:
 		var c: Dictionary = raw.get(int(row["id"]), {})
 		var card := character_row(row, busy, _send.bind(row), str(kinds.get(int(row["id"]), "")),
-			_choose.bind(int(row["id"])), int(c.get("level", 0)))
+			_choose.bind(int(row["id"])), int(c.get("level", 0)), _open.bind(int(row["id"])))
 		StageHeroSkin.cap_buttons(card, wide)
 		grid.add_child(card)
 	if focus_item != "":
@@ -278,8 +362,7 @@ func _hero(rows: Array, pick: int, c: Dictionary, ids: Array) -> void:
 	for l: Label in send.find_children("*", "Label", true, false):
 		l.add_theme_color_override("font_color", StageHeroSkin.LIGHT)
 	act.add_child(send)
-	var details := KitControls.icon_button("generalui/info", str(row.get("spoken", "")), func() -> void:
-		App.services.router.go(&"character", {"id": pick}))
+	var details := KitControls.icon_button("generalui/info", str(row.get("spoken", "")), _open.bind(pick))
 	details.set_meta("item", "details")
 	act.add_child(details)
 	cards.add_child(act)
@@ -332,12 +415,12 @@ static func kinds_of(slice: Dictionary) -> Dictionary:
 
 
 ## A character's card: its portrait on its school's ground with its level,
-## its name, which opens its page; its state's swatch, mark and word, with
+## its name, which opens its page (by `opens`, or straight to it); its state's swatch, mark and word, with
 ## the time a rest has left; where it works; and the reassign button, with
 ## why it waits when it cannot be used. A tap on the portrait stands it on
 ## the hero stage.
 static func character_row(row: Dictionary, busy: bool, send: Callable, kind := "",
-		choose := Callable(), level := 0) -> Control:
+		choose := Callable(), level := 0, opens := Callable()) -> Control:
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 0)
 	var send_button := _send_button(row["send"], busy, send)
@@ -360,8 +443,9 @@ static func character_row(row: Dictionary, busy: bool, send: Callable, kind := "
 		box.add_child(send_button)
 	# The name on the card's dark strip under the picture, which opens its
 	# page; the state's swatch, mark and word under it.
-	var open := UI.button(row["name"], func() -> void:
-		App.services.router.go(&"character", {"id": row["id"]}), false, Color(), row["spoken"])
+	if not opens.is_valid():
+		opens = func() -> void: App.services.router.go(&"character", {"id": row["id"]})
+	var open := UI.button(row["name"], opens, false, Color(), row["spoken"])
 	open.set_meta("item", "open:%d" % row["id"])
 	StageHeroSkin.flat(open, 15.0)
 	# The design's card names: the bold face, small, on the dark strip.

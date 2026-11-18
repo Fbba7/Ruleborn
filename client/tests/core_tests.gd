@@ -5,6 +5,10 @@ extends RefCounted
 ## a plain object, so no screen is mounted; `check(name, passed, detail)` is
 ## run.gd's.
 
+## The words a screen's back control says, written or spoken: the kit's
+## Back, Home, the roster (the character's) and the map (the realm's).
+const WAY_BACK := ["KIT_BACK", "COMMON_HOME", "HOME_ROSTER", "RV_KEY_MAP"]
+
 var tree: SceneTree
 var check: Callable
 
@@ -19,6 +23,8 @@ func run() -> void:
 	await _api()
 	await _outbox()
 	_router()
+	_tabs()
+	await _back()
 	_tokens()
 	_overlay()
 
@@ -156,6 +162,28 @@ func _router() -> void:
 		"%s" % [shown])
 
 
+## AD-R49: one route table for the bar. Every tab of the kit's bar has a route
+## in the router's table, and home sends each tab where that table does, but for
+## the tabs home keeps for itself (Home.TABS_HOME_KEEPS: Islands and the Heist).
+func _tabs() -> void:
+	var problems: Array[String] = []
+	var ids: Array[String] = []
+	for tab: Array in KitTabs.TABS:
+		ids.append(str(tab[0]))
+	for id: String in ids:
+		if not Router.TABS.has(id) or not Router.ROUTES.has(Router.TABS[id]):
+			problems.append("%s has no route" % id)
+		var want: StringName = &"" if id in Home.TABS_HOME_KEEPS else Router.TABS.get(id, &"")
+		if HomeParts.tab_route(id) != want:
+			problems.append("home sends %s to '%s'" % [id, HomeParts.tab_route(id)])
+	for id: String in Home.TABS_HOME_KEEPS:
+		if id not in ids:
+			problems.append("home keeps %s, not a tab" % id)
+	check.call("every tab has a route in Router.TABS, and home's tabs go where it says, Islands and the Heist excepted",
+		problems.is_empty() and Router.TABS.size() == ids.size() and Home.TABS_HOME_KEEPS == ["islands", "heist"],
+		"; ".join(problems))
+
+
 func _tokens() -> void:
 	var problems: Array[String] = []
 	var data: Variant = JSON.parse_string(FileAccess.get_file_as_string(Tokens.FILE))
@@ -188,3 +216,107 @@ func _overlay() -> void:
 	overlay.free()
 	fake.queue_free()
 	DirAccess.remove_absolute("user://outbox-core.json")
+
+
+## The phone's back and Escape (Router.BACK, App.GoBack): every route has a
+## back route; each tab but home goes home; each screen below a tab goes
+## where its own back control goes, pressed on the screen itself; home asks
+## before quitting, Stay the default and focused, a second back closes the
+## question, and nothing quits.
+func _back() -> void:
+	var router: Router = App.services.router
+	var was := router.change
+	var quitting := router.quit
+	var quits := []
+	router.quit = func() -> void: quits.append(true)
+	var problems: Array[String] = []
+	for name: StringName in Router.ROUTES:
+		if not Router.BACK.has(name) or not Router.ROUTES.has(Router.BACK[name]):
+			problems.append("%s: no back route" % name)
+	for name: StringName in Router.BACK:
+		if not Router.ROUTES.has(name):
+			problems.append("%s: not a route" % name)
+	var segments: Array = Router.HUBS.values().reduce(func(a: Array, h: Array) -> Array:
+		return a + h.map(func(s: Dictionary) -> StringName: return s["route"]), [])
+	var tabs: Array = Router.TABS.values() + segments
+	for name: StringName in tabs:
+		if name != &"home" and router.back_route(name) != &"home":
+			problems.append("%s, a tab: back to %s" % [name, router.back_route(name)])
+	# Each screen below a tab, opened as a player opens it, its back control
+	# pressed: the route it opens is the table's.
+	router.change = func(path: String) -> void: tree.change_scene_to_file(path)
+	App.services.store.dispatch(&"roster_loaded", {"view": HatchTests.born()})
+	var pressed := 0
+	for name: StringName in Router.ROUTES:
+		if name in tabs or router.back_route(name) == name:
+			continue
+		router.go(name, {"id": 2} if name == &"character" else {})
+		await tree.create_timer(0.4).timeout
+		await tree.process_frame
+		var back := _back_control(tree.current_scene)
+		if back == null:
+			problems.append("%s: no back control" % name)
+			continue
+		back.pressed.emit()
+		await tree.process_frame
+		pressed += 1
+		if router.current() != router.back_route(name):
+			problems.append("%s: its back control opens %s, the table %s" % [name, router.current(),
+				router.back_route(name)])
+		# The phone's back from the same screen lands on the same route.
+		router.go(name, {"id": 2} if name == &"character" else {})
+		if router.go_back() or router.current() != router.back_route(name):
+			problems.append("%s: the phone's back opens %s" % [name, router.current()])
+	for name: StringName in Router.BACK:
+		if Router.BACK[name] == name and name != &"home":
+			App.services.store.dispatch(&"navigated", {"name": name, "params": {}})
+			if router.go_back() or router.current() != name:
+				problems.append("%s, with no way back: the back opened %s" % [name, router.current()])
+	check.call("the phone's back and Escape follow the router's one back table: every route has one, each tab "
+			+ "goes home, and each screen below a tab goes where its own back control does (%d)" % pressed,
+		problems.is_empty() and pressed > 0, "; ".join(problems))
+
+	# Home: the phone's back asks; a second back closes the question.
+	router.go(&"home")
+	await tree.create_timer(0.4).timeout
+	await tree.process_frame
+	var home := tree.current_scene as Home
+	var go_back := App.GoBack.new()
+	tree.root.add_child(go_back)
+	await tree.process_frame
+	go_back.notification(Node.NOTIFICATION_WM_GO_BACK_REQUEST)
+	await tree.process_frame
+	await tree.process_frame
+	var asked := home != null and is_instance_valid(go_back.question) and go_back.question.get_parent() == home
+	var stay: Button = go_back.question.find_child("Stay", true, false) if asked else null
+	var leave: Button = go_back.question.find_child("Quit", true, false) if asked else null
+	var question := "%s, stay %s, focus %s" % [asked, stay != null and stay.get_meta("primary", false),
+		tree.root.gui_get_focus_owner()]
+	var stays: bool = stay != null and leave != null and stay.get_meta("primary", false) \
+		and tree.root.gui_get_focus_owner() == stay and go_back.question.name == "Confirm"
+	var held := not tree.is_quit_on_go_back()
+	go_back.notification(Node.NOTIFICATION_WM_GO_BACK_REQUEST)
+	await tree.process_frame
+	var closed := asked and go_back.question == null and router.current() == &"home"
+	check.call("home's back asks whether to quit, with Stay the default and focused, a second back closes the "
+			+ "question, and the game quits on neither",
+		asked and stays and closed and held and quits.is_empty(), "%s closed %s held %s quits %d"
+			% [question, closed, held, quits.size()])
+	go_back.queue_free()
+	tree.set_quit_on_go_back(true)
+	tree.unload_current_scene()
+	await tree.process_frame
+	router.change = was
+	router.quit = quitting
+
+
+## The screen's way back: a back key (ScreenNav's, meta "back"), or a key
+## that says where it goes, by its words or its spoken name (WAY_BACK).
+func _back_control(screen: Node) -> Button:
+	if screen == null:
+		return null
+	var words := WAY_BACK.map(func(key: String) -> String: return Strings.t(key))
+	var found: Array = screen.find_children("*", "Button", true, false).filter(func(b: Button) -> bool:
+		return b.is_visible_in_tree() and (b.get_meta("back", false) or b.accessibility_name in words
+			or b.text in words))
+	return found[0] if found else null

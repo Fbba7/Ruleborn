@@ -202,8 +202,14 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxoFjecESfuZnwv7P5q` (cycle 133,
-17 November 2026 from about 19:16Z, started by the Opus 5.5 launcher). Cycle
+Latest lead cycle session: `session_01SNkKxq4x4crXhYQkGcqX1K` (cycle 139,
+17 November 2026 from about 22:10Z, started by the Opus 5.5 launcher). Cycle
+138's was `session_01SNkKxpDFMUeUQciTDiwm62` (from 21:39Z). Cycle
+137's was `session_01SNkKxnomTXF5W6AXtNDsaA` (from 21:14Z). Cycle
+136's was `session_01SNkKxrHpFT28u48DFoYrxa` (from 20:45Z). Cycle
+135's was `session_01SNkKxoHjTC6kV1CKeERwpY` (from 20:15Z). Cycle
+134's was `session_01SNkKxpdca9RpS7R3j3gtZj` (from 19:38Z). Cycle
+133's was `session_01SNkKxoFjecESfuZnwv7P5q` (from 19:16Z). Cycle
 132's was `session_01SNkKxodysAxdoGSovguhgy` (from 18:39Z). Cycle
 131's was `session_01SNkKxqumwkRG2bcMXAVVKV` (from 17:40Z). Cycle
 130's was `session_01SNkKxoSr8iTomtimvAv5qj` (from 16:39Z). Cycle
@@ -331,6 +337,12 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| S3 | `session_01SNkKxoKvRK2mVxzbiptFn6` (Opus 5.5, effort high) | P3-S3-settings-3 (start, cycle 139: seeded for AD-R52 in the third seat under the cap of three; S3's last session, `session_01SNkKxqvCzT3bnuPzL5KvLH`, completed P3-S3-nav-1, merged as 2dc57508) | `claude/ui-screens-meta` | 2026-11-17 22:59Z |
+| K1 | `session_01SNkKxorBb4Hx1E3GUAr2GL` (Opus 5.5, effort high) | P3-K1-outline-1 (restart, cycle 139: K1-R27 granted on main, the four outline files are the task's exceptions, and P3-S3-nav-1 merged, so merge main, change those lines, recheck and mark ready; K1's last session, `session_01SNkKxr3SoTEVHPicDs7pG9`, idle waiting on the grant) | `claude/ui-bake` | 2026-11-17 22:57Z |
+| S2 | `session_01SNkKxpnKSbB1SgaR3ZrjwQ` (Opus 5.5, effort high) | P3-S2-back-1 (restart, cycle 139: the lead's gate passes 'home at 100% text' with the quit question at 0bfa1d6a, 3 of 3, S2-R46 answered by the default and P3-S2-home-7 merged, so merge main, recheck and mark ready; S2's last session, `session_01SNkKxn1nyucpjrJfH22MCW`, idle) | `claude/ui-screens-home` | 2026-11-17 22:57Z |
+| S2 | `session_01SNkKxn1nyucpjrJfH22MCW` (Opus 5.5, effort high) | P3-S2-back-1 (start, cycle 137: stacked on P3-S2-home-7, ready at 9ef7b295 and waiting for P3-AIA2-bake-1; S2's seat free at ready (M35); S2's last session, `session_01SNkKxnfpUVpuhWGguwhzhA`, is idle, its task ready) | `claude/ui-screens-home` | 2026-11-17 21:17Z |
+| K1 | `session_01SNkKxr3SoTEVHPicDs7pG9` (Opus 5.5, effort high) | P3-K1-outline-1 (start, cycle 136: seeded for S3-R35, S3-R41 and S3-R37; S1's and S3's seats free at ready (M35); K1's last session, `session_01SNkKxq7JDCazLpMjivYruu`, is idle, its task merged as e3364018) | `claude/ui-bake` | 2026-11-17 21:09Z |
+| AIA-2 | `session_01SNkKxq35wocEhfyMwmzRAR` (Opus 5.5, effort high) | P3-AIA2-bake-1 (start, cycle 134: S2-R45, the guard's byte-for-byte rebake failed on home-7's candidate on main's own icon bake; S2's seat free at ready (M35); a first session, `session_01SNkKxoME4QAYVNH1bBVGJ5`, was sent an incomplete prompt and archived within a minute, before it did any work) | `claude/ui-artist-icons` | 2026-11-17 20:01Z |
 | S3 | `session_01SNkKxqvCzT3bnuPzL5KvLH` (Opus 5.5, effort high) | P3-S3-nav-1 (start, cycle 131: P3-S3-character-5 merged as c848afc3; seeded for AD-R50, R51, R63 and R64; S3's last session, `session_01SNkKxnZi7kDm1VGLiH5FC6`, is idle, its task merged) | `claude/ui-screens-meta` | 2026-11-17 18:22Z |
 | S2 | `session_01SNkKxnfpUVpuhWGguwhzhA` (Opus 5.5, effort high) | P3-S2-home-7 (restart, cycle 132: its gate_request at c58d49c0 passes 12 of 12, so merge main, recheck and mark ready; S2's last session, `session_01SNkKxqf3uqLW1HGZt6KLXF`, idle since 17:32Z and past its 18:34Z update) | `claude/ui-screens-home` | 2026-11-17 18:45Z |
 | S2 | `session_01SNkKxqf3uqLW1HGZt6KLXF` (Opus 5.5, effort high) | P3-S2-home-7 (start, cycle 128: P3-K1-tabs-1 merged as e3364018, K1's seat free; seeded for AD-R49's home part and AD-R59's caller; S2's last session, `session_01SNkKxpWQyicTk71sUaQiab`, is idle, its task merged as 6ecdecf3) | `claude/ui-screens-home` | 2026-11-17 15:42Z |
@@ -537,7 +549,7 @@ You are agent K1 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: K1            Role: contract owner (K1): the UI kit, its bake and its guards        Model: Opus 5.5, effort high
 Branch: claude/ui-bake
 Owned files: docs/art/ui-quality/kit-spec.md, tools/ui_bake/**, client/ui/** except client/ui/art/**, client/scripts/ui.gd, client/tests/ui_kit_tests.gd, client/tests/a11y_tests.gd, client/tests/shots/ui_*.gd (each task lists its own subset), docs/progress/K1.md, docs/progress/status/K1.json
-Tasks: none open. P3-K1-tabs-1 (AD-R47 and AD-R59) merged in cycle 128; the next K1 task is the outline task for S3-R35, seeded when a seat frees. client/tests/ui_kit_tests.gd is at gdlint's 1000-line limit. Before ready on any task, python3 tools/coord/owners.py diff <task_id> origin/claude/videogame-project-analysis-ewkkk2 <ready_sha> passes (M48). The screens' callers are not yours: say in the handoff what each screen can drop. The other K1 requests in requests.md's K1 note wait for a later K1 task.
+Tasks: P3-K1-outline-1 (seeded in cycle 136: S3-R35's outline rule, S3-R41's back-button face, S3-R37's params on ScreenNav.back_button). K1-R27 is granted in cycle 139 (requests.md): client/ui/rb_theme.gd, client/scripts/ui.gd, client/scripts/screen_kit.gd and client/scripts/character_screen.gd are the task's exceptions in the backlog, so route their outline lines through the new rule, with no test loosened; P3-S3-nav-1 merged (2dc57508, main 443a5cf5), so merge main into your branch first. K1-R28 is granted in cycle 140: client/world/overlay_landing.gd is the task's exception too, and only its line 248 (OverlayLanding.ink) changes, to KitHud.outline_px(l.get_theme_font_size("font_size")); name the realm overlays' shots that change in the handoff. client/tests/ui_kit_tests.gd is at gdlint's 1000-line limit and is not in this task's files; the tests go in client/tests/a11y_tests.gd. Before ready on any task, python3 tools/coord/owners.py diff <task_id> origin/claude/videogame-project-analysis-ewkkk2 <ready_sha> passes (M48). The screens' callers are not yours: say in the handoff what each screen can drop. The other K1 requests in requests.md's K1 note wait for a later K1 task.
 STOP_AT: 2026-11-18T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 3
 
@@ -552,9 +564,9 @@ You are agent AIA-2 of the Ruleborn agent program (UI wave). Read docs/guides/ag
 Agent: AIA-2            Role: maker (AIA-2): icon art        Model: Opus 5.5, effort high
 Branch: claude/ui-artist-icons
 Owned files: art/ui/icons/**, client/tests/shots/icon_*.gd, client/ui/art/icons_48*, client/ui/art/icons_256*, and the files each AIA-2 task lists in the backlog (P2-AIA2-busts: client/world/creature_bust.gd), docs/progress/AIA-2.md, docs/progress/status/AIA-2.json
-Tasks: none open (P2-AIA2-busts, board 1's note G, merged in cycle 71; P1-AIA2-toon-route and icons-1a to -2b are merged). Icon batches 3 and 4 are deferred (D13's answer (c)); do not start them.
-STOP_AT: 2026-11-17T21:00:00Z (= 18:00 America/Sao_Paulo)
-Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
+Tasks: P3-AIA2-bake-1 (seeded in cycle 134, phase 3, critical, from S2-R45 in docs/progress/requests.md): the icon bake (art/ui/icons/studio/bake_icons.js, drawn through Chromium's SwiftShader) gives different bytes on different machines, so tools/ui_bake/guard.sh's byte-for-byte rebake of client/ui/art/icons_256.webp fails in some containers on main's own tree and holds every client merge. Make the bake give the same bytes on every x86-64 machine without loosening the guard (no pixel tolerance, no skipped family), rebake icons_256 and icons_48 with their high-contrast twins, prove it across two routes in your container (and the lead's guard run in another), and show the icons look as they did (a contact sheet, old beside new). Nothing under tools/ui_bake/** changes: that is K1's, a request through the lead. The task's done_when in the backlog lists every point. Never commit under docs/art/ui-quality/gate/verdicts/ (M48): before ready, python3 tools/coord/owners.py diff P3-AIA2-bake-1 origin/claude/videogame-project-analysis-ewkkk2 <ready_sha> passes. P2-AIA2-busts, P1-AIA2-toon-route and icons-1a to -2b are merged; merge main into your branch first. Icon batches 3 and 4 stay deferred (D13's answer (c)); do not start them. M14 and M21: rebake from a fresh container; merge main and run bash tools/ui_bake/guard.sh before ready.
+STOP_AT: 2026-11-18T21:00:00Z (= 18:00 America/Sao_Paulo)
+Wave plan: docs/art/ui-quality/report.md section 3     Phase: 3
 
 Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-artist-icons from it (create it if it does not exist) and push only to claude/ui-artist-icons with git push -u origin claude/ui-artist-icons, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is AIA-2, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Any commit that changes client/i18n/strings.csv or content.csv also runs node art/ui/keyframes/build_words.mjs and commits words.js with it, and node art/ui/keyframes/check_keyframes.mjs passes before the task is ready (M34). Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
 ```
@@ -567,7 +579,7 @@ You are agent S1 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: S1            Role: maker (S1): the heist screens, the phase 1 pilot        Model: Opus 5.5, effort high
 Branch: claude/ui-screens-heist
 Owned files: only the files each S1 task lists in the backlog, docs/progress/S1.md, docs/progress/status/S1.json
-Tasks: P3-S1-hc-offline-2 (seeded in cycle 128, phase 3; P3-AD-preview-1 merged in cycle 130): the heist in high contrast with one role per colour, as AD ruled in docs/art/ui-quality/gate/boards/preview-1.md on the advisory gate's Colour roles and value fail at a4ed000e (docs/art/ui-quality/gate/verdicts/P3-S1-hc-offline-1/a4ed000e.json): AD-R60, with no casts left the cast control on the leather secondary plate, gold returning when casts are left; AD-R61, 'Get out' in high contrast on leather with the amber rim, not AD-R56's red, which stays the alarm's alone; AD-R62, the hc loot figures in cream; each control still at least dL* 20 off its local ground (AD-R56). The task's done_when in the backlog lists every point. AD previews your stills before ready (a request to AD through the lead). Never commit under docs/art/ui-quality/gate/verdicts/ (M48): before ready, python3 tools/coord/owners.py diff P3-S1-hc-offline-2 origin/claude/videogame-project-analysis-ewkkk2 <ready_sha> passes. P3-S1-hc-offline-1 merged in cycle 128 and P3-AD-preview-1 in cycle 130; merge main into your branch first. Build from the kit (docs/art/ui-quality/kit-spec.md); a kit change is a request to K1 through the lead.
+Tasks: P3-S1-marker-1 (seeded in cycle 140, phase 3, from AD-R55, flow board 2's F9 in docs/art/ui-quality/gate/boards/flow-2.md, granted in cycle 123): the heist's HUD (HeistHud, the loot panel, the hand and every control) draws above every map marker and world draw, a sentry beam's hourglass included, at every text size, language and contrast mode, so at 200% pt_BR the loot panel's 'Espaço' reads whole; set the order once in the screen's layer order, not by moving the marker; a world file outside the task's files is a request to the lead with a default. A test in client/tests/heist_fx_tests.gd mounts the heist at 200% text and finds no world marker drawing above the HUD, failing on main's order. 'heist at 100% text', 'heist at 200% text, pt_BR' and 'heist in high contrast' still pass, with FIT=1 runs at 200% in en, pt_BR and de and in high contrast listed in the handoff. The task's done_when in the backlog lists every point. AD previews your stills before ready (a request to AD through the lead). Never commit under docs/art/ui-quality/gate/verdicts/ (M48): before ready, python3 tools/coord/owners.py diff P3-S1-marker-1 origin/claude/videogame-project-analysis-ewkkk2 <ready_sha> passes. P3-S1-hc-offline-2 merged in cycle 139; merge main into your branch first. Build from the kit (docs/art/ui-quality/kit-spec.md); a kit change is a request to K1 through the lead.
 STOP_AT: 2026-11-18T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 3
 
@@ -582,11 +594,11 @@ You are agent S2 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: S2            Role: maker (S2): the home and entry screens        Model: Opus 5.5, effort high
 Branch: claude/ui-screens-home
 Owned files: only the files each S2 task lists in the backlog, docs/progress/S2.md, docs/progress/status/S2.json
-Tasks: P3-S2-home-7 (seeded in cycle 128, phase 3, from AD-R49's home part and AD-R59's caller in docs/progress/requests.md): home's tab bar drops its own TAB_ROUTES and routes by Router.TABS (client/app/router.gd), the Heist (home starts a heist) and Islands its listed exceptions, and its words follow ScreenNav's label rule (ScreenNav.LABELS_UP_TO), with a check in client/tests/core_tests.gd; and, from P3-K1-tabs-1's handoff in docs/progress/K1.md, _show_goal drops the loop that hides the Progress labels (KitHud.goal with an empty count hides them) and its comment says the bar is green. The gate's home items still pass on the new stills. The task's done_when in the backlog lists every point. AD previews your stills before ready (a request to AD through the lead). Never commit under docs/art/ui-quality/gate/verdicts/ (M48): before ready, python3 tools/coord/owners.py diff P3-S2-home-7 origin/claude/videogame-project-analysis-ewkkk2 <ready_sha> passes. P3-K1-tabs-1 merged in cycle 128; merge main into your branch first. Build from the kit (docs/art/ui-quality/kit-spec.md); a kit change is a request to K1 through the lead.
+Tasks: P3-S2-back-1 (seeded in cycle 134, phase 3, from AD-R48 in docs/progress/requests.md): one go-back for the whole app. Android's back and Escape reach client/app/app.gd, which hands them to the router, and quit on go-back is off; the router (client/app/router.gd) keeps one back table: each non-tab route goes to the route its ScreenNav back button opens, each tab other than home goes to home, and home asks before quitting with a kit dialog (Quit and Stay, Stay the default and the focus; a second go-back closes it), its words in client/i18n/strings.csv and art/ui/keyframes/words.js rebuilt (M34). A check in client/tests/core_tests.gd covers every route's back route and home's question. 'home at 100% text' still passes; stills of the question at 100% and 200% text, pt_BR and high contrast. The task's done_when in the backlog lists every point. AD previews your stills before ready (a request to AD through the lead). Never commit under docs/art/ui-quality/gate/verdicts/ (M48): before ready, python3 tools/coord/owners.py diff P3-S2-back-1 origin/claude/videogame-project-analysis-ewkkk2 <ready_sha> passes. P3-S2-home-7 merged in cycle 139 (9ec770d6, main 443a5cf5): merge main into your branch first. The lead's gate passed 'home at 100% text' with the quit question at 0bfa1d6a, Hierarchy 3 of 3 (docs/art/ui-quality/gate/verdicts/P3-S2-back-1/0bfa1d6a.json), and S2-R46 is answered with the default in requests.md. Your change merges with its own full checks. Build from the kit (docs/art/ui-quality/kit-spec.md); a kit change is a request to K1 through the lead.
 STOP_AT: 2026-11-18T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 3
 
-Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-screens-home from it (create it if it does not exist) and push only to claude/ui-screens-home with git push -u origin claude/ui-screens-home, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is S2, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Any commit that changes client/i18n/strings.csv or content.csv also runs node art/ui/keyframes/build_words.mjs and commits words.js with it, and node art/ui/keyframes/check_keyframes.mjs passes before the task is ready (M34). Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
+Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-screens-home from it (create it if it does not exist) and push only to claude/ui-screens-home with git push -u origin claude/ui-screens-home, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is S2, whose state is open and whose deps are all merged (or the stacked task your first line names); when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Any commit that changes client/i18n/strings.csv or content.csv also runs node art/ui/keyframes/build_words.mjs and commits words.js with it, and node art/ui/keyframes/check_keyframes.mjs passes before the task is ready (M34). Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
 ```
 
 ### S3
@@ -597,7 +609,7 @@ You are agent S3 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: S3            Role: maker (S3): the character and settings screens        Model: Opus 5.5, effort high
 Branch: claude/ui-screens-meta
 Owned files: only the files each S3 task lists in the backlog, docs/progress/S3.md, docs/progress/status/S3.json
-Tasks: P3-S3-nav-1 (seeded in cycle 131, phase 3, from AD-R50, AD-R51, AD-R63 and AD-R64 in docs/progress/requests.md): the character's back is ScreenNav.back_button (client/scripts/screen_nav.gd), not the parchment '<' in the level-up card, with a mount test in client/tests/run.gd that opens every non-tab route through the router and finds exactly one back button (AD-R50); the roster keeps its scroll and its stage's chosen character across a visit to the character and back, in the route args or the store, with a mount test (AD-R51); the character and the roster set the ERR_OFFLINE notice as UI.set_status(..., 'info', ...), red staying for the server's real refusals (AD-R63); at large text the notice takes one line, the '!' and ERR_OFFLINE alone with the full sentence as accessibility_name, and OFFLINE=1 TEXT=200 in pt_BR and de join the character's FIT=1 list (AD-R64). The gate's item 'character at 200% text, pt_BR' (Hierarchy) must pass in both states, online and OFFLINE=1: it failed 3 of 3 at 3053cf6d on the offline notice outweighing Subir de nível (docs/art/ui-quality/gate/verdicts/P3-S3-character-5/3053cf6d.json). The task's done_when in the backlog lists every point. AD previews your stills before ready (a request to AD through the lead). Never commit under docs/art/ui-quality/gate/verdicts/ (M48): before ready, python3 tools/coord/owners.py diff P3-S3-nav-1 origin/claude/videogame-project-analysis-ewkkk2 <ready_sha> passes. P3-S3-character-5 merged in cycle 131 (c848afc3); merge main into your branch first. Build from the kit (docs/art/ui-quality/kit-spec.md); a kit change is a request to K1 through the lead.
+Tasks: P3-S3-settings-3 (seeded in cycle 139, phase 3, from AD-R52 in docs/progress/requests.md): settings reopens on the tab last shown in this session (game, access or account), not always on game, held in memory for the session only (the store or a session-scoped value), never in Settings' saved file, so a fresh start opens on game; a mount test in client/tests/run.gd opens settings through the router, shows access, leaves to home, reopens settings and finds access shown, and the same for account. client/app/router.gd is S2's in P3-S2-back-1: a store change outside the task's files is a request to the lead with a default. The settings stills at 100% and 200% text (en, pt_BR, de) and in high contrast stay unchanged in substance, or each change is named; 'settings at 100% text' (Hierarchy) must pass. The task's done_when in the backlog lists every point. AD previews your stills before ready (a request to AD through the lead). Never commit under docs/art/ui-quality/gate/verdicts/ (M48): before ready, python3 tools/coord/owners.py diff P3-S3-settings-3 origin/claude/videogame-project-analysis-ewkkk2 <ready_sha> passes. P3-S3-nav-1 merged in cycle 139 (2dc57508, main 443a5cf5); merge main into your branch first. Build from the kit (docs/art/ui-quality/kit-spec.md); a kit change is a request to K1 through the lead.
 STOP_AT: 2026-11-18T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 3
 
@@ -633,103 +645,91 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
-- **Cycle 133**, 17 November 2026, from about 19:16Z (session
-  `session_01SNkKxoFjecESfuZnwv7P5q`, started by the Opus 5.5 launcher).
-  **Claims copied:** S2's on P3-S2-home-7 (working, lease now 21:48Z; its
-  merge of main 9ef7b295 is pre-checking), S1's on P3-S1-hc-offline-2
-  (working; it merged main dacde49b at 5d07d988 and its pre-check runs)
-  and S3's on P3-S3-nav-1 (claimed; built, stills re-shot, checks next).
-  **Requests:** S2-R45, S3-R40 and S3-R41 copied and answered. S2-R45's
-  default applies (the lead's guard run on the candidate decides); the
-  fix, a bake that gives the same bytes on every machine and not a pixel
-  tolerance, joins the seed order. S3-R40 goes the way of S1-R41: AD has
-  no seat, so the character keeps the kit's icon back, S3 marks ready
-  with its gate request and the lead's gate run judges the stills.
-  S3-R41 (the kit back's leather face, one value step against the night)
-  rides with the K1 kit task for S3-R35.
-  **Gate:** none. No task is ready and there is no new gate_request.
-  **Merge:** none. The audit and roadmap pages are not republished.
-  **Restarts:** none. S1's session (`session_01SNkKxpSULfXqHgZQvrJKb4`)
-  pushed at 19:12Z and S2's (`session_01SNkKxnfpUVpuhWGguwhzhA`) at
-  19:00Z; both are idle waiting on a background pre-check, and S3's
-  (`session_01SNkKxqvCzT3bnuPzL5KvLH`) is running.
-  **Seats:** S3 (nav-1), S2 (home-7) and S1 (hc-offline-2): three, the
-  cap while the seven-day bar reads `allowed_warning`.
-  **Next:** merge home-7, hc-offline-2 and nav-1 as each is marked ready
-  (home-7 re-gated only if its ready sha changes the home stills). If S1
-  or S2 has not pushed by the next cycle's end of its pre-check window
-  (about 20:30Z), restart it. The seed order: AD-R48's navigation task
-  (after home-7), R52 with the next settings task, R54's content task,
-  the K1 kit task for S3-R35 and S3-R41, S2-R45's deterministic icon
-  bake, AD-R55 with the next heist task, and S2-R44's home follow-up.
-  AD's next task carries the previews of S1-R41 and S3-R40.
+- **Cycle 139**, 17 November 2026, from about 22:10Z (session
+  `session_01SNkKxq4x4crXhYQkGcqX1K`, started by the Opus 5.5 launcher).
+  The changes since cycle 138: AIA-2's bake-1 ready at 75798143; K1-R27
+  and S2-R46 filed; S2's back-1 asks for the gate.
+  **Claims copied:** S2's on P3-S2-back-1 (claimed 21:25Z, lease 00:25Z).
+  **Requests:** K1-R27 granted: rb_theme.gd, ui.gd, screen_kit.gd and
+  character_screen.gd are P3-K1-outline-1's exceptions in the backlog.
+  S2-R46 answered with its default. **Gate:** back-1's 'home at 100% text'
+  with the quit question passes 3 of 3 at 0bfa1d6a (Hierarchy;
+  verdicts/P3-S2-back-1/0bfa1d6a.json). **Merge:** the batch candidate
+  2dc57508 (P3-AIA2-bake-1, P3-S2-home-7, P3-S3-nav-1) passes full checks
+  and the guard, merged as 443a5cf5 (merged_sha a957e73b, 9ec770d6,
+  2dc57508). P3-S1-hc-offline-2 rebuilt on 443a5cf5 as fbae695a: guard OK,
+  full checks PASS at 23:21Z, merged as da9fce1a (merged_sha fbae695a). The
+  lock is cleared. The audit and roadmap pages are republished.
+  **Seeded:** P3-S3-settings-3 from AD-R52 (settings reopens on the tab
+  last shown in the session). **Started:** S3 on P3-S3-settings-3
+  (`session_01SNkKxoKvRK2mVxzbiptFn6`, 22:59Z). **Restarts:** K1 on
+  P3-K1-outline-1 with K1-R27's grant (`session_01SNkKxorBb4Hx1E3GUAr2GL`)
+  and S2 on P3-S2-back-1 with the gate's pass
+  (`session_01SNkKxpnKSbB1SgaR3ZrjwQ`, 22:57Z); each merges main first.
+  M55 acknowledged.
+  **Seats:** K1 (outline-1), S2 (back-1) and S3 (settings-3): three, the
+  cap while the seven-day bar reads `allowed_warning`. AIA-2, S1 and AD
+  are idle.
+  **Next:** merge back-1, outline-1 and settings-3 as each is ready, each
+  with its own full checks and the guard. As seats free, seed and start,
+  in order: R54's content task with S3-R39 (a shorter pt_BR ERR_OFFLINE),
+  AD-R55 with the next heist task (S1) and S2-R44's home follow-up; AD's
+  next task carries the previews of S1-R41, S3-R40 and AIA2-R4, and
+  back-1's quit question (AD-R48).
 
-- **Cycle 132**, 17 November 2026, from about 18:39Z (session
-  `session_01SNkKxodysAxdoGSovguhgy`, started by the Opus 5.5 launcher).
-  **Claims copied:** S1's on P3-S1-hc-offline-2 (working, seen 18:43Z,
-  lease 21:25Z) and S3's on P3-S3-nav-1 (claimed, seen 18:43Z, lease
-  21:30Z). S2's on P3-S2-home-7 is unchanged (lease 20:04Z).
-  **Requests:** S1-R41 copied and answered. AD has no seat, so, as for
-  S1-R40 and S3-R34, the lead's gate run judges hc-offline-2's stills, and
-  AD's preview goes into AD's next task. M54 is still not in AD's acks, so
-  S2-R43's default (no preview; the stills stand) applies at 19:06Z.
-  **Gate:** none. No task is ready and there is no new gate_request.
-  **Merge:** none. The audit and roadmap pages are not republished.
-  **Restarts:** S2's session (`session_01SNkKxqf3uqLW1HGZt6KLXF`) was idle
-  and disconnected from 17:32Z, past its 18:34Z update, with its gate
-  passing 12 of 12. S2 is restarted on home-7
-  (`session_01SNkKxnfpUVpuhWGguwhzhA`, 18:45Z) to merge main, rerun its
-  checks and pre-check (M11, M13) and mark ready. S1 is late (18:35Z)
-  but not restarted. Its last push (e3d75d53, 18:25Z) records a pre-check
-  PASS at 12079dc6 and checks rerunning on its merge 7d20f905, and its
-  session summary says it marks ready after that pre-check. If it has not
-  pushed by the next cycle, restart it.
-  **Seats:** S3 (nav-1), S2 (home-7) and S1 (hc-offline-2): three, the
+- **Cycle 138**, 17 November 2026, from about 21:39Z (session
+  `session_01SNkKxpDFMUeUQciTDiwm62`, started by the Opus 5.5 launcher).
+  The changes since cycle 137: S2's first pushes on back-1 and AIA-2's
+  green checks seen again; S3's lease passed with its task ready.
+  **Claims copied:** S2's on P3-S2-back-1 (claimed 21:25Z, lease 00:25Z;
+  8382fda9 "one go-back for the app", e46407d5 at 21:41Z, the back table
+  in router.gd with the client tests next). AIA-2's on P3-AIA2-bake-1
+  unchanged since 21:20Z: its session is idle with the pre-check on
+  75798143 running in the background (lease 23:10Z, next due 22:05Z).
+  K1's on P3-K1-outline-1 unchanged (session working, next due 21:55Z).
+  S3's lease on P3-S3-nav-1 passed at 21:30Z; the task is ready at
+  5ac311f7 and waits on the lead, so S3 is not restarted (M35), and the
+  same holds for S1's hc-offline-2 at 788eaaf4.
+  **Requests:** none new. **Gate:** none. **Merge:** none, and no lock
+  taken: nav-1, hc-offline-2 and home-7 stay ready until bake-1 merges
+  (S2-R45). The audit and roadmap pages are not republished.
+  **Started:** none; **restarts:** none.
+  **Seats:** AIA-2 (bake-1), K1 (outline-1) and S2 (back-1): three, the
   cap while the seven-day bar reads `allowed_warning`.
-  **Next:** merge home-7, hc-offline-2 and nav-1 as each is marked ready
-  (home-7 re-gated only if its ready sha changes the home stills). The
-  seed order is unchanged: AD-R48's navigation task (after home-7), R52
-  with the next settings task, R54's content task, the K1 outline task for
-  S3-R35, AD-R55 with the next heist task, and S2-R44's home follow-up.
+  **Next:** unchanged from cycle 137. Once bake-1 is ready, gate and merge
+  it; then rebuild the candidates for home-7, nav-1 and hc-offline-2 on
+  the new main, rerun the guard and merge each on a pass; back-1 after
+  home-7, outline-1 when ready. As seats free, seed and start, in order:
+  R52 with the next settings task (S3), R54's content task with S3-R39,
+  AD-R55 with the next heist task (S1) and S2-R44's home follow-up; AD's
+  next task carries the previews of S1-R41, S3-R40 and AIA2-R4, and
+  back-1's quit question (AD-R48).
 
-- **Cycle 131**, 17 November 2026, from about 17:40Z (session
-  `session_01SNkKxqumwkRG2bcMXAVVKV`, started by the Opus 5.5 launcher).
-  **Claims copied:** S3's on P3-S3-character-5 (ready at 3053cf6d), S2's
-  on P3-S2-home-7 (waiting, gate_request c58d49c0) and S1's on
-  P3-S1-hc-offline-2 (open, its session started 17:19Z). **Requests:**
-  none new.
-  **Gate (advisory, shadow mode):** P3-S3-character-5 at 3053cf6d,
-  'character at 200% text, pt_BR', Hierarchy, judged online and
-  OFFLINE=1 (both fit ok): fail 3 of 3. Online, Subir de nível leads.
-  Offline, the roster's cream notice is about 1.5 times the primary's
-  area, with four lines of bold prose, and leads in grayscale. That is
-  AD-R64's finding, and P3-S3-nav-1 carries the fix. P3-S2-home-7's
-  gate_request at c58d49c0: home at 100% (Hierarchy, Display type), 200%
-  pt_BR (Hierarchy) and high contrast (Hierarchy), pass 12 of 12, so
-  AD-R45 (a) reads as fixed. Verdicts in 4865bf04.
-  **Merge:** P3-S3-character-5. The candidate is 65d693ce (3053cf6d onto
-  91b575b3) under the lock in 91b575b3. Full checks PASS (18:21Z) and
-  the UI guard is OK. The guard first failed on a missing three.js in
-  the candidate worktree (`tools/ui_research/node_modules`, not the
-  task's fault), and passed with the main checkout's linked in. Main had
-  moved only by the verdict files, so the task is merged onto 4865bf04
-  as c848afc3, with the documentation check rerun. The audit and roadmap
-  pages are not republished: neither page has changed since cycle 126
-  published them (ef80c8bf).
-  **Seeds and starts:** P3-S3-nav-1 (AD-R50, R51, R63 and R64, after
-  character-5) went to S3 (`session_01SNkKxqvCzT3bnuPzL5KvLH`, 18:22Z) in
-  the seat character-5 freed. AD-R48 is held back: its router handler,
-  home's quit question and its core test need `home.gd` and
-  `client/tests/core_tests.gd`, which P3-S2-home-7 holds.
-  **Seats:** S3 (nav-1), S2 (home-7) and S1 (hc-offline-2): three, the
+- **Cycle 137**, 17 November 2026, from about 21:14Z (session
+  `session_01SNkKxnomTXF5W6AXtNDsaA`, started by the Opus 5.5 launcher).
+  The changes since cycle 136: K1's claim and AIA-2's green checks.
+  **Claims copied:** K1's on P3-K1-outline-1 (claimed 21:10Z, lease
+  00:10Z). AIA-2's on P3-AIA2-bake-1 seen again: at 21:18Z it pushed 75798143,
+  "checks on merge 17520f56 pass (check_all, guard)", with the pre-check
+  and owners.py diff next (status 21:20Z, next due 22:05Z, lease 23:10Z).
+  **Requests:** none new. **Gate:** none. **Merge:** none, and no lock
+  taken: nav-1, hc-offline-2 and home-7 stay ready until bake-1 merges
+  (S2-R45). The audit and roadmap pages are not republished.
+  **Started:** S2 on P3-S2-back-1, stacked on P3-S2-home-7 at 9ef7b295
+  (`session_01SNkKxn1nyucpjrJfH22MCW`; protocol, "Stacked tasks"); its
+  files are disjoint from outline-1's and bake-1's (owners.py claims).
+  For this task the lead names S2 the owner of client/i18n/strings.csv
+  and hands it router.gd's back table. S2's prompt below no longer says
+  home-7 merged.
+  **Seats:** AIA-2 (bake-1), K1 (outline-1) and S2 (back-1): three, the
   cap while the seven-day bar reads `allowed_warning`.
-  **Next:** merge home-7 when S2 marks it ready. Its verdicts at
-  c58d49c0 already pass, so re-gate only if the ready sha changes the
-  home stills. Merge hc-offline-2 and nav-1 as each is marked ready. In
-  the first free seat seed and start, in order: AD-R48's navigation task
-  (after home-7), R52 with the next settings task, R54's content task,
-  the K1 outline task for S3-R35, AD-R55 with the next heist task, and
-  S2-R44's home follow-up.
+  **Next:** once bake-1 merges, rebuild the candidates for home-7, nav-1
+  and hc-offline-2 on the new main, rerun the guard and merge each on a
+  pass; then back-1 after home-7, and outline-1 when ready. As seats
+  free, seed and start, in order: R52 with the next settings task (S3),
+  R54's content task with S3-R39, AD-R55 with the next heist task (S1)
+  and S2-R44's home follow-up; AD's next task carries the previews of
+  S1-R41, S3-R40 and AIA2-R4, and back-1's quit question (AD-R48).
 
 - **Stopped here**, 13 November 2026, about 13:20Z (the owner's "Stop
   cleanly"). Cycle 84 (session `session_01SNkKxpqF4gx3yYhsXenUGt`) took
