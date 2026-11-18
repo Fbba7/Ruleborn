@@ -88,6 +88,22 @@ The lead's gate on f5719f28 (`docs/art/ui-quality/gate/verdicts/P2-S3-settings/f
 
 An advisory self-check on the new stills (one isolated judge per failed item, with the calibration's anchors) passed all three: Display type at 100% and at 200% in pt_BR, and Hierarchy at 200% in pt_BR. Its Hierarchy note is that "Ajustes" leads by less than the golden set's `kf-settings-text200`.
 
+### The tab kept for the session (P3-S3-settings-3, AD-R52)
+
+- **What changed.** Settings opened on the game tab every time, so a player who had just set larger text on the access tab came back to the game tab. It now reopens on the tab last chosen in this session (game, access or account). `SettingsScreen.last_tab` is a `static var` on the script, set when a tab is chosen. It lives in memory only and is never written to Settings' file, so a fresh start opens on game. The router and the app's store are untouched (S2's and the app's files), so this needed no request outside the task.
+- **The tab columns are named** `TabGame`, `TabAccess` and `TabAccount`, so a test can tell which one is shown. No shot record names them, and the eleven records re-shot are byte-identical.
+- **The mount test** is `client/tests/settings_tab_tests.gd`, called from `run.gd` in one line, because `run.gd` stands at gdlint's 1000 lines (S3-R42, as K1-R24 to K1-R26 did). Through the router it opens settings and finds game shown. It then chooses access with the tab's own button, goes home, opens settings again and finds access shown, and does the same for account. Settings' file holds no tab. Without the line that keeps the tab, the test fails ("opened on game, game, game"), so it tests the change.
+
+Evidence: client tests 436 of 436. Every settings still was re-shot with the change, and it renders pixel-identical to main's `settings_screen.gd` in all four stills compared (100%, 200% German, high contrast, and the signed-in account tab at `SCROLL=1800`). Each shot sets its tab in a fresh process, so the stills cannot show the change. Five of the committed stills were already identical. Nine were stale against main, and are re-shot. Both of their changes are K1's P3-K1-polish-1 (`97ab424e`), not this task's:
+
+| Still | What moved | Why |
+|---|---|---|
+| `settings-100`, `-pt_BR`, `-de`, `-hc`, `-hc-pt_BR` | the text size readout ("100%") a little softer | numerals mipmapped |
+| `settings-200-pt_BR`, `-200-de` | the same, on "200%" | numerals mipmapped |
+| `settings-200-de-account-signed-900`, `-1800` | the device cards keep their violet face when scrolled | a scrolled panel keeps its face |
+
+The records and every other pixel are unchanged. `fit_settings.sh` prints `fit ok` for all 23 shots. `check_screens.py` and `guard.sh` pass.
+
 ### What is still worse than before
 
 - **The law card's preview has no frame.** `law_screen.gd` seats the preview in `ScreenKit.panel("well", preview, 16.0, 3.0)`. The track skin drew a dark rim round it; the well skin's rim is soft and 3 points of padding leave it under the picture, so the picture's edges fade into the green card. `law_screen.gd` is not this task's; it is in S3-R2 for AD to judge, and a fix (more padding, or the kit's `frame_*` look) is a request to the lead.
