@@ -669,16 +669,18 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   00:12Z) in S2's freed seat.
   **Gate:** settings-3's 'settings at 100% text' passes Hierarchy at
   7972485a, one fail of six after a split first three
-  (verdicts/P3-S3-settings-3/7972485a.json). Candidate ec6f2e5f
-  (settings-3 on main) is in its full checks, restarted at 00:32Z
-  after a container restart lost the first run.
+  (verdicts/P3-S3-settings-3/7972485a.json). **Merge:** candidate ec6f2e5f
+  (settings-3 on main) passes full checks (01:05:45Z, rerun after a
+  container restart lost the first run) and the guard, merged as
+  995dcbfe (merged_sha ec6f2e5f).
   The audit and roadmap pages are republished.
-  **Seats:** K1 (outline-1), S1 (marker-1) and S3 (settings-3, ready;
-  free at ready, M35): within the cap of three while the seven-day bar
+  **Seats:** K1 (outline-1) and S1 (marker-1); S3's seat is free
+  with settings-3 merged: within the cap of three while the seven-day bar
   reads `allowed_warning`. S2, AIA-2 and AD are idle.
-  **Next:** merge outline-1 when ready, with its own full checks and the
-  guard; start S3 on P3-S3-offline-1 once its deps are merged. As seats
-  free, seed and start S2-R44's home follow-up, then AD's next task with
+  **Next:** merge outline-1 and marker-1 when ready, each with its own
+  full checks and the guard; start S3 on P3-S3-offline-1 once outline-1,
+  its last dep, is merged. Until then, seed and start S2-R44's home
+  follow-up in the free seat, then AD's next task with
   the previews of S1-R41, S3-R40, AIA2-R4 and S3-R43 and back-1's quit
   question (AD-R48).
 

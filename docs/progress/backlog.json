@@ -305,7 +305,13 @@
     {
       "assigned_to": "S3",
       "attempts": 0,
-      "claim": null,
+      "claim": {
+        "agent": "S3",
+        "branch": "claude/ui-screens-meta",
+        "claimed_at": "2026-11-17T23:00:17Z",
+        "seen_at": "2026-11-17T23:00:17Z",
+        "lease_until": "2026-11-18T02:00:17Z"
+      },
       "critical": false,
       "deps": [
         "P3-S3-nav-1"
@@ -343,18 +349,18 @@
         }
       ],
       "id": "P3-S3-settings-3",
-      "merged_sha": null,
+      "merged_sha": "ec6f2e5f",
       "model": "Opus 5.5",
       "phase": 3,
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
+      "ready_sha": "7972485a",
       "role": "S3",
-      "state": "open",
+      "state": "merged",
       "tier": 2,
       "title": "Settings remembers its tab for the session (AD-R52): it reopens on the tab last shown, with a mount test",
-      "updated_at": "2026-11-17T23:00:00Z",
-      "updated_by": "lead (cycle 139)"
+      "updated_at": "2026-11-18T01:07:00Z",
+      "updated_by": "lead (cycle 140)"
     },
     {
       "id": "P3-S1-marker-1",
