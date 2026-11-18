@@ -268,14 +268,20 @@ class Raids:
 
 	## The line under the headline, where it takes two lines, broken where both
 	## halves come out nearest alike, so no word stands alone on the second
-	## (S2-R20's second objection).
+	## (S2-R20's second objection). Where no break between words fits two lines
+	## (German at 125%, "Verteidigung" wider than the room beside See), the line
+	## gives way, as with large text, rather than break inside a word and stand
+	## the notice over the realms' band (P4-S2-home-purse); the panel still says
+	## it aloud.
 	static func balance(line: Label, text: Control) -> void:
 		var words := Strings.t("HOME_RAID_LINE")
 		var font := line.get_theme_font("font")
 		var points := line.get_theme_font_size("font_size")
 		var room := text.size.x - line.get_theme_stylebox("normal").get_minimum_size().x
 		var want := words
+		var fits := true
 		if room > 0.0 and font.get_string_size(words, HORIZONTAL_ALIGNMENT_LEFT, -1, points).x > room:
+			fits = false
 			var parts := words.split(" ", false)
 			var best := INF
 			for i in range(1, parts.size()):
@@ -284,9 +290,12 @@ class Raids:
 				var b := font.get_string_size(" ".join(parts.slice(i)), HORIZONTAL_ALIGNMENT_LEFT, -1, points).x
 				if a <= room and b <= room and maxf(a, b) < best:
 					best = maxf(a, b)
+					fits = true
 					want = first + "\n" + " ".join(parts.slice(i))
 		if line.text != want:
 			line.text = want
+		if line.visible != fits:
+			line.visible = fits
 
 	## The headline's tag on one line beside See and the cross: its
 	## words where they fit, else the count alone; where even that leaves no room
@@ -513,6 +522,32 @@ static func amounts_fit(amounts: Array, held: Array[Control], room: float, least
 		if shrunk >= (least_baked if baked else least_live):
 			return Vector2(shrunk, 1.0 if baked else 0.0)
 	return Vector2(1.0, 0.0)
+
+
+## Home's purse's first `row` pills, in UniversePurse.ORDER.
+static func purse_pills(pills: Dictionary, row: int) -> Array[Control]:
+	var out: Array[Control] = []
+	for i in row:
+		out.append(pills[UniversePurse.ORDER[i]] as Control)
+	return out
+
+
+## The room across `purse` for a row of `row` pills: less the flow's own gaps
+## in two rows, the least they close to (`least` points each) in the row of three.
+static func row_room(purse: Control, row: int, least: float) -> float:
+	var gaps := float(purse.get_theme_constant("h_separation")) if row == 2 else UI.px(least) * (row - 1.0)
+	return purse.size.x - gaps
+
+
+## Whether the row's amounts fit `room` at all, as `amounts_fit` would set
+## them: baked or live, at full size or shrunk no further than its least.
+static func amounts_fit_at_all(amounts: Array, held: Array[Control], room: float, least_baked: float,
+		least_live: float) -> bool:
+	for baked: bool in [true, false]:
+		var fit := amounts_over(amounts, held, room, baked)
+		if fit.y <= 0.5 or (fit.x - fit.y - 1.0) / maxf(fit.x, 1.0) >= (least_baked if baked else least_live):
+			return true
+	return false
 
 
 ## The figures' row with T3's treatment held at every text size

@@ -8,12 +8,12 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-18T07:30:00Z",
   "lease_until": "2026-11-18T10:30:00Z",
-  "updated_at": "2026-11-18T07:30:00Z",
-  "expected_next_update_by": "2026-11-18T08:15:00Z",
+  "updated_at": "2026-11-18T07:34:48Z",
+  "expected_next_update_by": "2026-11-18T08:19:48Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "4e9114ac",
-    "next_step": "main 722c91d merged; reproduce the 125% de purse and notice cases with FIT=1, then fix _fit_amounts and the fit check."
+    "next_step": "P4-S2-home-purse: purse in two rows from 125% where three do not fit (home.gd _fit_amounts); the raid notice's second line gives way where no break between words fits two lines (home_parts.gd Raids.balance), so 125% de with NOTICE marks every realm. Running fit_home.sh (52 cases), then stills, Part 10, AD preview, gate."
   },
   "precheck": {
     "sha": "4e9114ac84279c77ca1735d1181ccfb280a52bcb",
@@ -707,5 +707,5 @@
     }
   ],
   "answers": [],
-  "next_step": "P3-S2-back-1 ready at 4e9114ac: main 443a5cf5 merged; setup line, build.sh, check_all (PASS 23:31Z), guard (OK, rebake byte for byte) and owners.py diff all pass; gate passed at 0bfa1d6a (Hierarchy 3 of 3). S2-R46 answered with the default. If the lead sets resync: merge main, rerun, mark ready again."
+  "next_step": "P4-S2-home-purse: purse in two rows from 125% where three do not fit (home.gd _fit_amounts); the raid notice's second line gives way where no break between words fits two lines (home_parts.gd Raids.balance), so 125% de with NOTICE marks every realm. Running fit_home.sh (52 cases), then stills, Part 10, AD preview, gate."
 }

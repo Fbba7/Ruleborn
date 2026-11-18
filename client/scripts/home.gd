@@ -860,7 +860,8 @@ func _fit_purse() -> void:
 		_fit_strain(purse.size.x - last.get_combined_minimum_size().x - purse.get_theme_constant("h_separation"))
 
 
-## The purse in one row at 100% text, in two with large text (§20.8). Where
+## The purse in one row at 100% text, in two with large text (§20.8), and in
+## two from 125% where the row of three cannot fit (S2-R44). Where
 ## the pills of a row cannot share it (German's "142,0 Tsd."), all three
 ## amounts are a little smaller, never under BAKED_LEAST baked or AMOUNT_LEAST
 ## live: at 100% so Essence
@@ -874,14 +875,14 @@ func _fit_amounts() -> void:
 			amounts.append(l)
 	var share := 1.0
 	var baked := true
-	var large := Settings.text_scale >= 150
-	var row := 2 if large else 3
+	var row := 2 if Settings.text_scale >= 150 else 3
+	# Two rows from 125% where the row of three cannot fit at its least (S2-R44).
+	if row == 3 and Settings.text_scale > 100 and amounts.size() >= row and not HomeParts.amounts_fit_at_all(
+			amounts, HomeParts.purse_pills(pills, row), HomeParts.row_room(purse, row, PURSE_GAP_LEAST), BAKED_LEAST, AMOUNT_LEAST):
+		row = 2
 	if amounts.size() >= row:
-		var held: Array[Control] = []
-		for i in row:
-			held.append(pills[UniversePurse.ORDER[i]] as Control)
-		var gap := float(purse.get_theme_constant("h_separation")) if large else UI.px(PURSE_GAP_LEAST) * (row - 1.0)
-		var fit := HomeParts.amounts_fit(amounts.slice(0, row), held, purse.size.x - gap, BAKED_LEAST, AMOUNT_LEAST)
+		var fit := HomeParts.amounts_fit(amounts.slice(0, row), HomeParts.purse_pills(pills, row),
+			HomeParts.row_room(purse, row, PURSE_GAP_LEAST), BAKED_LEAST, AMOUNT_LEAST)
 		share = fit.x
 		baked = fit.y > 0.5
 	for l: Label in amounts:

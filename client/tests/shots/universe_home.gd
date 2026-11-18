@@ -12,7 +12,9 @@ extends SceneTree
 ## listed in docs/art/tracks/home-screen.md; among them, board 3b's H (AD-R39):
 ## at 200% the four side buttons and the realms' chips in pt_BR, pt_PT and fr
 ## with and without NOTICE, in en and de with it, and in en at TALL=900; and
-## M26's states (MOST, EMPTY, RAIDS=99) at 200% in en, pt_BR and de.
+## M26's states (MOST, EMPTY, RAIDS=99) at 200% in en, pt_BR and de; and 100%,
+## 125%, 150% and 200% in en, pt_BR and de with and without NOTICE
+## (docs/art/shots/home-screen/fit_home.sh, P4-S2-home-purse).
 ## QUIT shows the question the phone's back asks on home (App.GoBack), and
 ## FIT then checks it too (`asked`).
 
@@ -408,9 +410,28 @@ static func kept(screen: Home) -> Array[String]:
 			var pill := screen.pills[k] as Control
 			if pill.is_visible_in_tree():
 				rows[roundi(pill.get_global_rect().position.y)] = k
-		if rows.size() > 1:
-			bad.append("the purse in %d rows at 100%% text: %s" % [rows.size(), rows])
+		# From 125% text two rows where the row of three does not fit at its
+		# least (S2-R44); at 100% always one.
+		var most := 1
+		if Settings.text_scale > 100 and not three_fit(screen):
+			most = 2
+		if rows.size() > most:
+			bad.append("the purse in %d rows at %d%% text: %s" % [rows.size(), Settings.text_scale, rows])
 	return bad
+
+
+## Whether the purse's three pills could share one row: their amounts, baked
+## or live, at full size or no smaller than home lets them, and the least
+## gaps, within the purse's width.
+static func three_fit(screen: Home) -> bool:
+	var amounts: Array = []
+	for k: String in UniversePurse.ORDER:
+		var l := (screen.pills[k] as Control).find_child("Amount", true, false) as Label
+		if l == null or not l.has_meta("points"):
+			return true
+		amounts.append(l)
+	return HomeParts.amounts_fit_at_all(amounts, HomeParts.purse_pills(screen.pills, 3),
+		HomeParts.row_room(screen.purse, 3, Home.PURSE_GAP_LEAST), Home.BAKED_LEAST, Home.AMOUNT_LEAST)
 
 
 ## The question the phone's back asks on home, once it shows: its Quit and
