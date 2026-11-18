@@ -3,22 +3,22 @@
   "role": "S1",
   "branch": "claude/ui-screens-heist",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "stopped",
   "task_id": "P4-S1-heist-vault",
   "task_state": "claimed",
   "claimed_at": "2026-11-18T07:30:00Z",
   "lease_until": "2026-11-18T11:30:00Z",
-  "updated_at": "2026-11-18T08:40:00Z",
-  "expected_next_update_by": "2026-11-18T09:25:00Z",
+  "updated_at": "2026-11-18T08:58:00Z",
+  "expected_next_update_by": null,
   "progress_marker": {
-    "last_green_sha": "520793761853473f6a96fb08bd6d53ff813ae232",
-    "next_step": "pre-check running on aaadca6a (the ready candidate: main 4e0294ff merged as b4a85982, plus part 10); setup line, build.sh, suite, check_screens, keyframes and owners diff pass; guard.sh fails only on heist/200 119 of 118 (S1-R45); handoff written; ready after S1-R44 or its 11:30Z default",
+    "last_green_sha": "aaadca6a3bd4269ed4bc70087af958f58efdc47d",
+    "next_step": "Stopped by the owner's order (18 November, about 08:22 UTC). The ready candidate aaadca6a passed its pre-check (recorded); not marked ready: AD's preview S1-R44 (default due 11:30Z) and the gate request wait for the restart. guard.sh fails only on heist/200 119 of 118 (S1-R45).",
     "at": "2026-11-18T08:10:00Z"
   },
   "precheck": {
-    "sha": "520793761853473f6a96fb08bd6d53ff813ae232",
+    "sha": "aaadca6a3bd4269ed4bc70087af958f58efdc47d",
     "exit": 0,
-    "finished_at": "2026-11-18T04:00:31Z",
+    "finished_at": "2026-11-18T08:53:47Z",
     "summary": "All checks passed."
   },
   "gate_request": null,
@@ -745,5 +745,5 @@
       "where": "docs/progress/lead.md, Now, cycle 143 (M60)"
     }
   ],
-  "next_step": "record the pre-check on aaadca6a, then ready with the gate request after S1-R44 (AD) or its 11:30Z default"
+  "next_step": "on restart: merge current main, rerun setup line, build.sh and guard.sh on the merge, then ready with ready_sha and the gate request 'heist at 200% text, pt_BR' (Hierarchy) once S1-R44 is answered or its default stands"
 }
