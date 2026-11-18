@@ -35,9 +35,10 @@ static func run(tree: SceneTree) -> Array:
 
 
 ## Whether an outline of `c` counts all round for words `points` tall, as
-## the contrast check reads one (tests/a11y_tests.gd).
+## the contrast check reads one (tests/a11y_tests.gd): a quarter of
+## `outline_size` a side (KitHud.ink_side, S3-R35).
 static func _counts(c: Control, points: float) -> bool:
-	return c.get_theme_constant("outline_size") / UI.PX_PER_POINT >= maxf(1.5, 0.12 * points)
+	return KitHud.ink_counts(c.get_theme_constant("outline_size"), points)
 
 
 static func _clocks(tree: SceneTree, screen: Control, bad: Array) -> void:

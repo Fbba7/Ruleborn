@@ -73,9 +73,10 @@ static func dock(back: StringName, actions: Array = []) -> MarginContainer:
 	return m
 
 
-## T9's round back button, going to `back`.
-static func back_button(back: StringName) -> Button:
-	var b := KitNav.back(func() -> void: App.services.router.go(back))
+## T9's round back button, going to `back` with `params` (the character's
+## back carries the roster's kept state, AD-R51 and S3-R37).
+static func back_button(back: StringName, params := {}) -> Button:
+	var b := KitNav.back(func() -> void: App.services.router.go(back, params))
 	b.set_meta("back", true)
 	b.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	return b

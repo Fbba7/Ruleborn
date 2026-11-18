@@ -5,6 +5,34 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 138**, 17 November 2026, from about 21:39Z (session
+  `session_01SNkKxpDFMUeUQciTDiwm62`, started by the Opus 5.5 launcher).
+  The changes since cycle 137: S2's first pushes on back-1 and AIA-2's
+  green checks seen again; S3's lease passed with its task ready.
+  **Claims copied:** S2's on P3-S2-back-1 (claimed 21:25Z, lease 00:25Z;
+  8382fda9 "one go-back for the app", e46407d5 at 21:41Z, the back table
+  in router.gd with the client tests next). AIA-2's on P3-AIA2-bake-1
+  unchanged since 21:20Z: its session is idle with the pre-check on
+  75798143 running in the background (lease 23:10Z, next due 22:05Z).
+  K1's on P3-K1-outline-1 unchanged (session working, next due 21:55Z).
+  S3's lease on P3-S3-nav-1 passed at 21:30Z; the task is ready at
+  5ac311f7 and waits on the lead, so S3 is not restarted (M35), and the
+  same holds for S1's hc-offline-2 at 788eaaf4.
+  **Requests:** none new. **Gate:** none. **Merge:** none, and no lock
+  taken: nav-1, hc-offline-2 and home-7 stay ready until bake-1 merges
+  (S2-R45). The audit and roadmap pages are not republished.
+  **Started:** none; **restarts:** none.
+  **Seats:** AIA-2 (bake-1), K1 (outline-1) and S2 (back-1): three, the
+  cap while the seven-day bar reads `allowed_warning`.
+  **Next:** unchanged from cycle 137. Once bake-1 is ready, gate and merge
+  it; then rebuild the candidates for home-7, nav-1 and hc-offline-2 on
+  the new main, rerun the guard and merge each on a pass; back-1 after
+  home-7, outline-1 when ready. As seats free, seed and start, in order:
+  R52 with the next settings task (S3), R54's content task with S3-R39,
+  AD-R55 with the next heist task (S1) and S2-R44's home follow-up; AD's
+  next task carries the previews of S1-R41, S3-R40 and AIA2-R4, and
+  back-1's quit question (AD-R48).
+
 - **Cycle 137**, 17 November 2026, from about 21:14Z (session
   `session_01SNkKxnomTXF5W6AXtNDsaA`, started by the Opus 5.5 launcher).
   The changes since cycle 136: K1's claim and AIA-2's green checks.

@@ -171,7 +171,7 @@ static func world_words(text: String, points := -1.0, tone := "gold_top") -> Lab
 	l.add_theme_font_override("font", bold_font())
 	l.add_theme_color_override("font_color", Tokens.color(tone))
 	l.add_theme_color_override("font_outline_color", Tokens.color("ink_line"))
-	l.add_theme_constant_override("outline_size", px(maxf(3.0, 0.12 * pts + 0.5)))
+	l.add_theme_constant_override("outline_size", KitHud.stroke_px(maxf(3.0, 0.12 * pts + 0.5)))
 	l.set_meta("bold", true)
 	return l
 
@@ -402,7 +402,7 @@ static func set_look(b: Button, look: String) -> void:
 	b.add_theme_color_override("font_disabled_color", Color(words, 0.55))
 	if box.spec.has("text_outline"):
 		b.add_theme_color_override("font_outline_color", box.spec["text_outline"][0])
-		b.add_theme_constant_override("outline_size", px(box.spec["text_outline"][1]))
+		b.add_theme_constant_override("outline_size", KitHud.stroke_px(box.spec["text_outline"][1]))
 	else:
 		b.remove_theme_constant_override("outline_size")
 	# Light words on a dark or deep control stand on the designs' hard drop.
@@ -410,7 +410,7 @@ static func set_look(b: Button, look: String) -> void:
 		b.add_theme_color_override("font_shadow_color", Tokens.color("drop"))
 		b.add_theme_constant_override("shadow_offset_x", 0)
 		b.add_theme_constant_override("shadow_offset_y", maxi(2, px(0.75)))
-		b.add_theme_constant_override("shadow_outline_size", px(box.spec["text_outline"][1]) if box.spec.has(
+		b.add_theme_constant_override("shadow_outline_size", KitHud.stroke_px(box.spec["text_outline"][1]) if box.spec.has(
 			"text_outline") else 0)
 	else:
 		b.remove_theme_color_override("font_shadow_color")
