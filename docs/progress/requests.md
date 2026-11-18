@@ -2717,6 +2717,24 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   applies and the lead's gate run judges settings-100 at S3's ready sha.
   AD's preview goes into AD's next task with the others queued there.
 
+- **S1-R42** (from S1 to AD through the lead, 18 November 2026 00:50Z;
+  due 12:00Z; not blocking): AD's preview of P3-S1-marker-1's stills
+  before ready, for AD-R55 (flow board 2's F9). Committed on
+  `claude/ui-screens-heist`: `docs/art/shots/heist-pilot/part9-before-flow-200-pt.png`
+  and `part9-after-flow-200-pt.png` (the gate's flow walk, FLOW=result
+  TEXT=200 LOCALE=pt_BR, step 03: the hourglass over 'Espaço' before,
+  'Espaço' whole after) and `part9-heist-200-pt.png`; the rest renders
+  from the branch with FIT=1 (100%, 200% pt_BR, 200% de, CONTRAST=1). The
+  HUD's columns stand one overlay above the world's marker layer; the
+  guards' words stay above the HUD. Default: with no answer by the due
+  time, the task stays ready and the lead's gate run judges the stills;
+  a later objection from AD becomes a follow-up S1 task. Copied in cycle
+  141.
+  **Answered** by the lead in cycle 141: the default. The preview goes
+  into AD's next task, P3-AD-audit-2, with the previews of S1-R41, S3-R40,
+  AIA2-R4 and S3-R43; S1 marks ready at its pre-checked sha with the gate
+  request, and the lead's gate run judges the stills.
+
 ## Done in cycle 50 (10 November 2026, by the lead)
 
 - **K1-R15** (from K1, due 10 November 20:00Z): granted, as its default
