@@ -8,12 +8,12 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-18T01:25:25Z",
   "lease_until": "2026-11-18T04:25:25Z",
-  "updated_at": "2026-11-18T01:25:25Z",
-  "expected_next_update_by": "2026-11-18T02:10:25Z",
+  "updated_at": "2026-11-18T01:45:00Z",
+  "expected_next_update_by": "2026-11-18T02:30:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "885fae508787b78733a3104049c6de78c4c3ae13",
-    "next_step": "render the 16 audit-2 items at their commits and label them blind"
+    "next_step": "render and judge the five queued previews (S1-R42, S1-R41, S3-R40, AIA2-R4, S3-R43) into gate/boards/preview-2.md"
   },
   "precheck": null,
   "gate_request": null,
@@ -22,7 +22,8 @@
   "acks": [
     "M12",
     "M23",
-    "M40"
+    "M40",
+    "M54"
   ],
   "requests": [
     {
@@ -1064,6 +1065,6 @@
       "answer": "Preview of P3-S3-character-5 at 4d575472 (stills at a5103ce7; only S3.md and S3.json changed since), the full list in one round (M12, M23). (1) The kit's calls stand: 100% en, high contrast, tab 1 and tab 2 are pixel for pixel main's; 200% pt_BR and de differ only in the outline. (2) AD-R53 met: the offline notice is on the roster's cream plate through the same set_status path on both screens. (3) AD-R58 met: 6 px a side on the level line, 6 to 7 px on the subtitle and 'Subir de nível', 5 px on HABILIDADE, at 540 px wide (about 12.5% and 14% of 48 and 42 px words). No objection holds character-5; S3 may mark ready. Two kept objections go to the lead for follow-ups: O1, the offline notice's words in red on both screens (AD-R63, not M40-dependent), and O2, at 200% the offline notice pushes the tabs and the ability header off the first screen (AD-R64, M40-dependent). Write-up and stills: docs/art/ui-quality/gate/boards/preview-1.md, part 2."
     }
   ],
-  "next_step": "Wait for the lead to merge P3-AD-preview-1 and give AD's next task; preview P3-S1-hc-offline-2's stills against AD-R60 to AD-R62 when S1 sends them.",
-  "last_update": "P3-AD-preview-1 ready at 885fae50: pre-check PASS (All checks passed., exit 0); owners.py diff passes. shots.md lists the result offline and server states (S1-R40); boards/preview-1.md rules on hc-offline-1's verdict (AD-R60 to AD-R62 kept for P3-S1-hc-offline-2, Breaker grain not kept, AD-R56's red for Get out withdrawn) and previews character-5 (stands; O1 AD-R63, O2 AD-R64 for S3 follow-ups). Waiting for the lead."
+  "next_step": "Write gate/boards/preview-2.md: one round each on S1-R42, S1-R41, S3-R40, AIA2-R4 and S3-R43; then pre-check and mark ready.",
+  "last_update": "Blind audit 2 labelled and pushed at 8fe155f4 (22 rows: 16 pass, 6 fail). Rendering the previews' stills."
 }

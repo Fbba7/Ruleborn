@@ -70,8 +70,8 @@ items, shuffled. Which is which is not written here.
 
 - **Labelled** by AD (P3-AD-audit-2) on 18 November 2026, blind: no
   verdict, board verdict line, "Gate" paragraph or lead note was opened
-  before this form was pushed. Time spent: about 20 minutes, 01:24 to
-  01:45 UTC, about half of it rendering the 12 commits' stills.
+  before this form was pushed. Time spent: about 16 minutes, 01:24 to
+  01:40 UTC, about half of it rendering the 12 commits' stills.
 - **Renders.** Each commit in its own worktree under `/tmp/audit-<sha>`,
   with `FIT=1`; the result items in both states (offline and `SERVER=1`),
   the character items online and `OFFLINE=1` where the commit's script
