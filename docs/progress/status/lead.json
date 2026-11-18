@@ -1,19 +1,12 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-18T01:18:30Z",
-  "expected_next_update_by": "2026-11-18T04:12:00Z",
-  "cycle": 140,
-  "merging": {
-    "candidate_sha": "276ed4f0623d108174022240cba14f4f0ef9f74b",
-    "task_ids": [
-      "P3-K1-outline-1"
-    ],
-    "started_at": "2026-11-18T01:18:30Z",
-    "expires_at": "2026-11-18T02:18:30Z"
-  },
+  "updated_at": "2026-11-18T01:52:00Z",
+  "expected_next_update_by": "2026-11-18T04:52:00Z",
+  "cycle": 141,
+  "merging": null,
   "last_merged": {
-    "task_id": "P3-S3-settings-3",
-    "sha": "ec6f2e5f"
+    "task_id": "P3-K1-outline-1",
+    "sha": "276ed4f0"
   },
   "acks": [
     "M15",
@@ -39,7 +32,9 @@
     "M42",
     "M48",
     "M49",
-    "M55"
+    "M55",
+    "M56",
+    "M57"
   ],
   "alerts": [
     "Owner's order 5 of 11 November 2026, about 19:50Z (\"Let's switch to Opus 5.5 everywhere again, effort high\"): every session runs on Opus 5.5 at effort high; never Fable 5.1 (order 2). Launcher trig_01T7B65veojXUDAKzLK3FFBP and watchdog trig_01A1NwZvKD6MDUosh4jyvqqr, created at 19:50Z after order 5 was on main. The Fable 5.2 pair (trig_01U7kEeot7dmuJuNZVQJ7Bhm, trig_0195QvFjjm2oUgeCeyhU4bp4), disabled at 19:49Z, and every older scheduled task stay disabled and are never re-enabled. No Fable 5.2 session is reused.",
@@ -48,9 +43,9 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Cycle 141: K1 runs P3-K1-outline-1 (session_01SNkKxn6UGKqas3XXoa59J8, K1-R28 granted), S1 runs P3-S1-marker-1 (session_01SNkKxqVesBsXCSfdHoP6BX, from AD-R55). P3-S2-back-1 (f7ef5ed7, merged_sha 58a9a197) and P3-S3-settings-3 (995dcbfe, merged_sha ec6f2e5f) are merged. Merge outline-1 and marker-1 as each is ready, each with its own full checks and the guard. Seats: two of three (allowed_warning). Start S3 on P3-S3-offline-1 (S3-R39) once outline-1 is merged; until then, seed and start S2-R44's home follow-up in the free seat; AD's next task carries the previews of S1-R41, S3-R40, AIA2-R4, S3-R43 and back-1's quit question (AD-R48).",
+  "next_step": "Cycle 142: S1 runs P3-S1-marker-1 (session_01SNkKxqVesBsXCSfdHoP6BX), S3 runs P3-S3-offline-1 (session_01SNkKxqjkvtzBVBdApvpLwS), AD runs P3-AD-audit-2 (session_01SNkKxnJHAVTyhVsLVjhU3m, blind). P3-K1-outline-1 merged (2e17e1f1, merged_sha 276ed4f0). Then: merge P3-S1-marker-1 when ready, with its own full checks, the guard and the gate's judge on 'heist at 200% text, pt_BR'; merge P3-S3-offline-1 when ready, with the gate on 'character at 200% text, pt_BR'; when P3-AD-audit-2's labels are pushed and it merges, score the audit (every fail on an item the gate passed is a miss) and copy AD's preview objections into requests.md; then phase 3's exit: no board with an open objection, the second blind audit done, and the owner's wave board (O7). Seed nothing beyond the exit items (M57; the reserve is spent).",
   "seen": {
-    "at": "2026-11-18T01:07:08Z",
+    "at": "2026-11-18T01:48:32Z",
     "heads": {
       "claude/3d-character-screens": "6053b249bee313648da3509142eeb2ba738bb62f",
       "claude/3d-characters": "35d6ae8f5b84a4d75636f68270848b0949c111f3",
@@ -71,15 +66,15 @@
       "claude/ui-ad": "fc8a4bcff57545978e4b55d5c37e6d9aaa051eb1",
       "claude/ui-artist": "45c6366cb2e0f9dcb5aaa428d17c017576beff5d",
       "claude/ui-artist-icons": "a4f24e6cf4fa6c7ce192e07ac99feeb1af877396",
-      "claude/ui-bake": "9f3c01c64619d58629aac28b0cb018712c8075e2",
+      "claude/ui-bake": "1fc17c1f408b9e7432faee643585aec965c46dc9",
       "claude/ui-gate-runs": "0e78b6ceace032f62427a1c8e89dd9ee6186a5c0",
       "claude/ui-kit": "17b900ebdc371f05244d4658850a77460f6090c0",
       "claude/ui-plan": "f1affcea749d007fe1a67931bd3c1f7359d98c44",
       "claude/ui-research": "f19d5d4e5eaffff8869da3b91124d111cf1259a6",
       "claude/ui-screens": "dceb6bfcbc6c5da4e261674fe9301e1854f0aa65",
-      "claude/ui-screens-heist": "f1bafd6f36e82ca3985b3297981bf52c594ead9a",
+      "claude/ui-screens-heist": "a75be9a2621841d1f0336b721d5ce2632056e21b",
       "claude/ui-screens-home": "f5f934807f524747e511558a313c4238412864ca",
-      "claude/ui-screens-meta": "7972485a7738ac5cea3f4ac762935d9f2522c1d7",
+      "claude/ui-screens-meta": "29eb5d4d7813ff2c65cbc93ee3c50a054674edaf",
       "lead/candidate-573416ab12761b92becf0c1d3d7d7bd03e9cf7d1": "573416ab12761b92becf0c1d3d7d7bd03e9cf7d1",
       "lead/candidate-714b24ed52f56133bccc18c82cc879938b53f296": "714b24ed52f56133bccc18c82cc879938b53f296",
       "lead/candidate-791aae3c187caf621ace022ed675004678dc0119": "791aae3c187caf621ace022ed675004678dc0119",
@@ -90,7 +85,8 @@
     },
     "ready": {},
     "startable": [
-      "P3-S1-marker-1"
+      "P3-AD-audit-2",
+      "P3-S3-offline-1"
     ],
     "messages": [
       "M10",
@@ -136,9 +132,7 @@
       "S3-R8",
       "S3-R9 to S3-R14"
     ],
-    "leases": [
-      "P3-K1-outline-1@2026-11-18T00:10:20Z"
-    ],
+    "leases": [],
     "stale": []
   }
 }
