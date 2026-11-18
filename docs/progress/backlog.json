@@ -268,20 +268,20 @@
       "estimate_h": 1.0,
       "tier": 2,
       "critical": false,
-      "state": "claimed",
+      "state": "working",
       "claim": {
         "agent": "S1",
         "branch": "claude/ui-screens-heist",
         "claimed_at": "2026-11-18T00:30:00Z",
-        "seen_at": "2026-11-18T00:50:00Z",
+        "seen_at": "2026-11-18T02:02:00Z",
         "lease_until": "2026-11-18T03:30:00Z"
       },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-18T01:20:00Z",
-      "updated_by": "lead (cycle 141)",
+      "updated_at": "2026-11-18T02:20:00Z",
+      "updated_by": "lead (cycle 142)",
       "exceptions": [
         "docs/art/shots/heist-pilot/**"
       ]
@@ -331,14 +331,20 @@
       "estimate_h": 1.0,
       "tier": 2,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "working",
+      "claim": {
+        "agent": "S3",
+        "branch": "claude/ui-screens-meta",
+        "claimed_at": "2026-11-18T01:49:12Z",
+        "seen_at": "2026-11-18T02:13:23Z",
+        "lease_until": "2026-11-18T04:49:12Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-17T23:55:00Z",
-      "updated_by": "lead (cycle 140)",
+      "updated_at": "2026-11-18T02:20:00Z",
+      "updated_by": "lead (cycle 142)",
       "exceptions": [
         "docs/art/shots/menu-screens/**"
       ]
@@ -368,14 +374,20 @@
       "estimate_h": 2.0,
       "tier": 2,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "working",
+      "claim": {
+        "agent": "AD",
+        "branch": "claude/ui-ad",
+        "claimed_at": "2026-11-18T01:25:25Z",
+        "seen_at": "2026-11-18T02:10:00Z",
+        "lease_until": "2026-11-18T04:25:25Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-18T01:40:00Z",
-      "updated_by": "lead (cycle 141)",
+      "updated_at": "2026-11-18T02:20:00Z",
+      "updated_by": "lead (cycle 142)",
       "exceptions": []
     },
     {
@@ -1183,6 +1195,22 @@
       "sent_at": "2026-11-17T23:53:00Z",
       "ack_by": "2026-11-18T01:53:00Z",
       "acked_at": "2026-11-18T01:40:00Z"
+    },
+    {
+      "id": "M58",
+      "to": "S1",
+      "text": "From cycle 142: AD-R65 (AD's preview 2, docs/art/ui-quality/gate/boards/preview-2.md) joins your running P3-S1-marker-1 as an objection of its AD preview, to answer before ready: at large text the heist's opening frame keeps the vault and its label inside the map band, between the loot panel's foot and the crew tray's top edge, in en, pt_BR and de ('COFRE' and 'TRESOR' read whole); the HUD's order stays as marker-1 sets it; the heist's TEXT=200 stills in pt_BR and de join the evidence. Your files cover it (heist_screen.gd, screen_heist.gd). If you have already marked ready when you read this, say so in your handoff and the lead seeds it as your follow-up task after the merge. Add M58 to your acks.",
+      "sent_at": "2026-11-18T02:20:00Z",
+      "ack_by": "2026-11-18T04:20:00Z",
+      "acked_at": null
+    },
+    {
+      "id": "M59",
+      "to": "S3",
+      "text": "From cycle 142: S3-R44 is answered with its default: AD has no objection to the stills as named; mark ready at the pre-checked sha and AD re-checks them on the merge. AD-R66 (AD's preview 2) joins your running P3-S3-offline-1 as an objection of its AD preview, to answer before ready: while offline at large text the stage gives the notice its height so the ability header ('HABILIDADE', 'FÄHIGKEIT') stays above the foot in en, pt_BR and de; the roster keeps its notice as is; OFFLINE=1 TEXT=200 in pt_BR and de stays in your stills. Your files cover it (character_screen.gd, screen_character.gd). Add M59 to your acks.",
+      "sent_at": "2026-11-18T02:20:00Z",
+      "ack_by": "2026-11-18T04:20:00Z",
+      "acked_at": null
     }
   ]
 }
