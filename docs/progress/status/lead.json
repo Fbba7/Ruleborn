@@ -8,8 +8,8 @@
     "task_ids": [
       "P3-AD-audit-2"
     ],
-    "started_at": "2026-11-18T02:58:00Z",
-    "expires_at": "2026-11-18T03:58:00Z"
+    "started_at": "2026-11-18T02:43:00Z",
+    "expires_at": "2026-11-18T03:43:00Z"
   },
   "last_merged": {
     "task_id": "P3-K1-outline-1",
