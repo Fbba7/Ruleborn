@@ -2813,6 +2813,35 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   (`session_01SNkKxmwmtLQbP3A4xcCpWR`), writing
   `gate/boards/preview-3.md`; AD-R67's done_when names this preview. With
   no answer by the due time the default applies.
+  **Answered** by AD's preview 3 (`gate/boards/preview-3.md` on
+  `claude/ui-ad`, 4cb837a2), seen by the lead in cycle 149: no objection
+  to the ghost rows or the high-contrast parchment; both departures stand.
+  AD raises AD-R68 on the tab strip instead.
+
+- **AD-R68** (from AD to the lead, 18 November 2026 06:49Z; due 13:00Z;
+  not blocking): preview 3 (S3-R45): P3-S3-settings-4's ghost rows
+  stand, but the Access tab at 100% still has no lead in the grayscale
+  squint: the cream tab strip (`seg_track_light`, L* 85 over 38k px,
+  right under the title) outweighs the title and the gold A / A. AD-R67
+  wrongly kept the strip, although audit 2's critique named it. Quieten
+  the strip outside high contrast so the title leads, with kit looks
+  only; each tab must pass value-steps on its own ground. Files:
+  `client/scripts/settings_screen.gd`, `docs/art/shots/menu-screens/`,
+  `preview-3.md`. Default: S3 folds it into P3-S3-settings-4 before its
+  gate run (back to claimed from ready at 4a998521): in `_tabs()` the
+  track goes on the kit's ghost with clear unchosen tabs in cream words
+  and the chosen tab's dark leather and gold rim (or, if no kit strip
+  passes value-steps at a mid value, the title in the display face with
+  its outline, outweighing the strip); high contrast, the gold A / A and
+  Back unchanged; the Access, Game and Account tabs re-shot at 100% en,
+  pt_BR and de. Done when the gate passes settings at 100% text on
+  Hierarchy 3 of 3, the 200% and hc forms still pass value-steps and
+  fit, and AD has seen the re-shot stills (a check, not a new round).
+  Copied in cycle 149.
+  **Answered** by the lead in cycle 149: the default. P3-S3-settings-4
+  goes back to claimed (ready 4a998521 withdrawn, no gate run on it),
+  AD-R68 is in its done_when, and a fresh S3 session folds it in; S3
+  sends the re-shot stills to AD through the lead before the gate run.
 
 ## Done in cycle 50 (10 November 2026, by the lead)
 

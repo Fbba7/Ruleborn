@@ -2,8 +2,8 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026. Phase 2 started on 12 November 2026 (lead cycle 70): P1-AD-board-1d let board 1 stand and phase 1's other exit criteria hold (report.md section 3.2); its first tasks are the flow findings (S1, S2) and board 1's note G (AIA-2), within the same cap of three. Since 12 November 2026, about 20:00Z, the cap is four UI builders by the owner's order (CLAUDE.md order 3; three while the seven-day bar reads allowed_warning). Phase 3 (polish and harden, report.md step 12) started on 17 November 2026 (lead cycle 118) under M49: every phase 2 task was merged by 06:55Z, the exit review ran in cycle 118 (boards 3, 4 and 5 stand, board 2 waits on the deferred icon batch 4 by D13 (c), the exceptions queue is empty, every screen passes the gate but result at 200% pt_BR, Hierarchy, which P3-S1-result-7 takes), and the first blind audit (O6) is carried into phase 3 as P3-AD-audit-1. Phase 3 draws from the 20-hour reserve; it exits when no board has an open objection, the second blind audit is done and the wave board (O7) stands.",
   "wave": "UI wave",
   "phase": 3,
-  "updated_at": "2026-11-18T05:56:52Z",
-  "updated_by": "lead (cycle 147)",
+  "updated_at": "2026-11-18T07:25:00Z",
+  "updated_by": "lead (cycle 149)",
   "stop_at": "2026-11-18T21:00:00Z",
   "lease_hours": 3,
   "status_every_minutes": 45,
@@ -127,6 +127,7 @@
       ],
       "done_when": [
         "AD-R67 (the wave board's one exit item, answered in cycle 147 with its default; audit 2's miss on P3-S3-settings-3 at 7972485a): the Access tab at 100% text has one lead in the grayscale squint. The gold A / A text-size buttons stay the tab's primary (key frame 05, board 5 F); the 'High contrast' and 'Motion' switch rows move off cream parchment onto the dark plate with cream words, as the law sample moved at 5fc97aac; the title keeps its plate; the tab strip and Back stay as they are",
+        "AD-R68 (AD's preview 3, docs/art/ui-quality/gate/boards/preview-3.md, answered in cycle 149 with its default; folded in before the gate run, ready 4a998521 withdrawn): the ghost rows stand, and the Access tab at 100% text also gets a lead over the tab strip. In _tabs() of client/scripts/settings_screen.gd the track goes on the kit's ghost, the unchosen tabs clear with cream words and the chosen tab in the kit's dark leather with its gold rim (or, if no kit strip passes value-steps at a mid value, the title in the display face with its outline, outweighing the strip); high contrast, the gold A / A and Back unchanged; each tab passes value-steps on its own ground; the Access, Game and Account tabs re-shot at 100% in en, pt_BR and de, and the 200% and high-contrast forms still pass value-steps and fit; AD sees the re-shot stills before the gate run (a check, not a new round)",
         "the settings stills at 100% and 200% text (en, pt_BR, de) and in high contrast re-shot, each change named in docs/art/tracks/menu-screens.md; the 200% and high-contrast forms still fit ('fit ok') and keep their contrast; the tab-memory test of P3-S3-settings-3 (client/tests/settings_tab_tests.gd) still passes",
         "AD previews the stills before ready (M10, M12, M23): the builder sends them to AD through the lead while the work can still change, and AD's objections are answered in this task",
         "python3 tools/ui_bake/check_screens.py",
@@ -153,15 +154,15 @@
         "agent": "S3",
         "branch": "claude/ui-screens-meta",
         "claimed_at": "2026-11-18T06:00:00Z",
-        "seen_at": "2026-11-18T06:07:00Z",
-        "lease_until": "2026-11-18T09:00:00Z"
+        "seen_at": "2026-11-18T07:25:00Z",
+        "lease_until": "2026-11-18T11:00:00Z"
       },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-18T06:50:00Z",
-      "updated_by": "lead (cycle 148)",
+      "updated_at": "2026-11-18T07:25:00Z",
+      "updated_by": "lead (cycle 149)",
       "exceptions": [
         "docs/art/shots/menu-screens/**"
       ]
@@ -516,6 +517,111 @@
       "merged_sha": null,
       "exceptions": [
         "README.md"
+      ]
+    },
+    {
+      "id": "P4-S1-heist-vault",
+      "title": "Heist at 200% text shows the Vault's progress and a wider playfield band (the wave board's phase 4 list, M57, M61)",
+      "phase": 4,
+      "role": "S1",
+      "model": "Opus 5.5",
+      "assigned_to": "S1",
+      "files": [
+        "client/scripts/heist_hud.gd",
+        "client/scripts/heist_screen.gd",
+        "client/tests/shots/screen_heist.gd",
+        "client/tests/heist_fx_tests.gd",
+        "docs/art/tracks/heist-pilot.md"
+      ],
+      "deps": [
+        "P3-S1-marker-1"
+      ],
+      "done_when": [
+        "The wave board's note (docs/art/ui-quality/gate/boards/wave.md on claude/ui-ad, 'Notes, which hold nothing', seeded in cycle 149 under M61 as phase 4's first heist task): at 200% text the loot panel shows the Vault's progress ('Vault 0%' and its crack, REHEARSE_LEGEND_VAULT) while the Vault is shut, in en, pt_BR and de, and the playfield band between the HUD and the hand is no narrower than at 150% text, by laying out the HUD in heist_hud.gd and heist_screen.gd; a change to KitHud.loot_fit or any kit file is a request to K1 through the lead, with a default",
+        "a test in client/tests/heist_fx_tests.gd mounts the heist at 200% text and finds the Vault's progress row in the loot panel while the Vault is shut, failing on main",
+        "M26: the heist's FIT=1 runs at 100%, 150% and 200% text in en, pt_BR and de and in high contrast all print 'fit ok', listed in the handoff; 'heist at 100% text', 'heist at 200% text, pt_BR' and 'heist in high contrast' still pass; the heist stills re-shot, each change named in docs/art/tracks/heist-pilot.md",
+        "AD previews the stills before ready (M10, M12, M23): the builder sends them to AD through the lead while the work can still change, and AD's objections are answered in this task",
+        "python3 tools/ui_bake/check_screens.py",
+        "bash tools/ui_bake/guard.sh",
+        "gate: Screen",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed under docs/art/ui-quality/gate/verdicts/ or outside the task's files (M48)",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [
+        {
+          "item": "heist at 200% text, pt_BR",
+          "qualities": [
+            "Hierarchy"
+          ]
+        }
+      ],
+      "attempts": 0,
+      "estimate_h": 1.0,
+      "tier": 2,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-18T07:25:00Z",
+      "updated_by": "lead (cycle 149)",
+      "exceptions": [
+        "docs/art/shots/heist-pilot/**"
+      ]
+    },
+    {
+      "id": "P4-S2-home-purse",
+      "title": "Home's purse may take two rows from 125% text in long locales, and 125% joins M26's cases (S2-R44, phase 4, M57, M61)",
+      "phase": 4,
+      "role": "S2",
+      "model": "Opus 5.5",
+      "assigned_to": "S2",
+      "files": [
+        "client/scripts/home.gd",
+        "client/scripts/home_parts.gd",
+        "client/tests/shots/universe_home.gd",
+        "docs/art/tracks/home-screen.md"
+      ],
+      "deps": [
+        "P3-S2-back-1"
+      ],
+      "done_when": [
+        "S2-R44 (answered in cycle 130, deferred to a later home task; seeded in cycle 149 under M61 as phase 4's first home task): at 125% text in German (and any locale whose three purse pills do not fit one row) home's purse lays out in two rows in home.gd's _fit_amounts, and universe_home.gd's fit check allows two rows from 125% where the row of three does not fit, not only from 150%; with the raid notice (NOTICE=1) at 125% in de the check finds a realm marked, or the reason it cannot is named in docs/art/tracks/home-screen.md Part 8 with a default for the lead",
+        "M26: 125% text joins home's scripted fit cases beside 100%, 150% and 200%, in en, pt_BR and de, with and without the raid notice, signed in and out, and every case prints 'fit ok', listed in the handoff; reproduce with FIT=1 TEXT=125 LOCALE=de [NOTICE=1] bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png",
+        "'home at 100% text', 'home at 200% text, pt_BR' and 'home in high contrast' still pass; the home stills at 125% in de re-shot, each change named in docs/art/tracks/home-screen.md",
+        "AD previews the stills before ready (M10, M12, M23): the builder sends them to AD through the lead while the work can still change, and AD's objections are answered in this task",
+        "python3 tools/ui_bake/check_screens.py",
+        "bash tools/ui_bake/guard.sh",
+        "gate: Screen",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed under docs/art/ui-quality/gate/verdicts/ or outside the task's files (M48)",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [
+        {
+          "item": "home at 100% text",
+          "qualities": [
+            "Hierarchy"
+          ]
+        }
+      ],
+      "attempts": 0,
+      "estimate_h": 1.0,
+      "tier": 2,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-18T07:25:00Z",
+      "updated_by": "lead (cycle 149)",
+      "exceptions": [
+        "docs/art/shots/home-screen/**"
       ]
     }
   ],
@@ -1002,7 +1108,7 @@
       "text": "From 18 November 2026 (report 115): builders at once rated worse two reports in a row (2 of 3, then 1 of 3). After cycle 145 only AD had a task, because phase 3's exit items were seeded one at a time. Rule: while two or more seats are free and exit items remain, seed in the same cycle every exit item whose files do not overlap a running task; when none remain, seed phase 4's first tasks that touch no exit board, so the seats stay full until phase 3 closes. Add M61 to your acks.",
       "sent_at": "2026-11-18T05:55:00Z",
       "ack_by": "2026-11-18T07:55:00Z",
-      "acked_at": null
+      "acked_at": "2026-11-18T07:25:00Z"
     }
   ]
 }
