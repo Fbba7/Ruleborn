@@ -561,6 +561,12 @@ func _build() -> void:
 	view.held.connect(open_gait_menu)
 	add_child(view)
 	var columns := FxSkin.frame(self)
+	# The screen's layer order, set once (AD-R55): the HUD's columns above
+	# every layer of the world, its markers and marks included, so a marker
+	# never draws over a panel at any text size; the guards' words' layer
+	# (Speech, below) stacks above the HUD as before.
+	for c: VBoxContainer in columns:
+		(c.get_parent() as Control).z_index = HeistHud.HUD_Z
 	var column := columns[0]
 	var lower := columns[1]
 	column_node = lower

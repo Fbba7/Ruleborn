@@ -43,6 +43,7 @@ func run() -> void:
 	await tree.process_frame
 	await _models(replay)
 	await _entry_card()
+	await _layers()
 	_planned()
 
 
@@ -327,6 +328,75 @@ func _entry_card() -> void:
 	check.call("landing in a realm, or crossing into the next, shows its name on a card for about two seconds, and a "
 			+ "heist of one island shows none (15.3, 5.4)", none and shown and HeistScreen.ENTRY_SECONDS <= 3.0,
 		"%s %s %s" % [none, shown, words])
+
+
+## AD-R55 (flow board 2's F9): at 200% text the loot panel grows down over
+## the map, so the heist mounted as the app mounts it (the kit's layers on, as
+## UI.root_theme() puts them) has every part of its HUD, panel faces and
+## words, drawn above every layer of the world, the markers' and marks' layer
+## (FxAnchors) included; and the loot's flying coins over the HUD.
+func _layers() -> void:
+	var maker := WorldView.figure_maker
+	var scale := Settings.text_scale
+	UI.root_theme()
+	Settings.text_scale = 200
+	App.services.store.dispatch(&"heist_started", {})
+	var screen: HeistScreen = load("res://scenes/heist_screen.tscn").instantiate()
+	tree.root.add_child(screen)
+	await tree.process_frame
+	screen.set_process(false)
+	screen.controller.land_here()
+	screen.controller.advance(60)
+	screen._refresh()
+	await tree.process_frame
+	var world := _z_span(screen.view)
+	var hud := Vector2i(RenderingServer.CANVAS_ITEM_Z_MAX, RenderingServer.CANVAS_ITEM_Z_MIN)
+	for c: Node in screen.get_children():
+		if c is MarginContainer:
+			var span := _z_span(c as CanvasItem)
+			hud = Vector2i(mini(hud.x, span.x), maxi(hud.y, span.y))
+	var coins := true
+	if not Settings.reduced_motion:
+		screen.hud.fly_coins(Vector2(100, 900), 1)
+		var coin := screen.hud.get_child(screen.hud.get_child_count() - 1) as CanvasItem
+		coins = coin != null and coin.top_level and _z_of(coin) > hud.y
+	screen.queue_free()
+	await tree.process_frame
+	Settings.text_scale = scale
+	WorldView.figure_maker = maker
+	check.call("at 200% text no marker or mark of the world draws above the heist's HUD: the world's layers, its "
+			+ "markers' included, all stand under the HUD's lowest, and the loot's coins fly over it (AD-R55)",
+		world.y < hud.x and coins, "world z %d..%d, HUD z %d..%d, coins %s" % [world.x, world.y, hud.x, hud.y, coins])
+
+
+## The lowest and highest z a drawn canvas item under `n` (itself included)
+## draws at on `n`'s canvas (a sub-viewport's own canvas is drawn into its
+## picture, at the z of the container that shows it).
+func _z_span(n: CanvasItem) -> Vector2i:
+	var out := Vector2i(RenderingServer.CANVAS_ITEM_Z_MAX, RenderingServer.CANVAS_ITEM_Z_MIN)
+	var items: Array[Node] = [n]
+	items.append_array(n.find_children("*", "CanvasItem", true, false))
+	for c: Node in items:
+		var item := c as CanvasItem
+		if item == null or not item.is_visible_in_tree() or item.get_canvas() != n.get_canvas():
+			continue
+		var z := _z_of(item)
+		out = Vector2i(mini(out.x, z), maxi(out.y, z))
+	return out
+
+
+## The z `item` draws at: its own, plus its parents' while it is relative to
+## them (a top-level item stands on the canvas itself).
+static func _z_of(item: CanvasItem) -> int:
+	var z := 0
+	var at: Node = item
+	while at is CanvasItem:
+		var c := at as CanvasItem
+		z += c.z_index
+		if not c.z_as_relative or c.top_level:
+			break
+		at = c.get_parent()
+	return z
 
 
 ## The HUD's shapes gather into one triangle array (FxPen): circles, arcs,

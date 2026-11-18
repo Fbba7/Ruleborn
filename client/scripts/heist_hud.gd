@@ -21,6 +21,12 @@ const BELLS := 6
 ## How many coins fly to the loot at most, and how long each takes (seconds).
 const COINS := 6
 const FLIGHT := 0.6
+## The heist's HUD layer (AD-R55): the screen's HUD columns stand here, above
+## every layer of the world under them. The kit stacks the world's markers
+## and marks (FxAnchors, full-screen over the world's picture) one overlay
+## above the picture (kit-spec.md section 5), so the HUD stands one overlay
+## above those, and no marker draws over a panel's words at any text size.
+const HUD_Z := 2 * UI.OVERLAY_Z
 
 var clock_label: Label
 var alarm_label: Label
@@ -496,7 +502,9 @@ func fly_coins(from: Vector2, count: int) -> void:
 	for k in clampi(count, 1, COINS):
 		var coin := Icons.view("heiststatus/lootbag", 14.0)
 		coin.top_level = true
-		coin.z_index = 10
+		# At the top of the HUD's layer, over its panels and their words, as it
+		# flies into the loot.
+		coin.z_index = HUD_Z + UI.OVERLAY_Z - 1
 		coin.visible = false
 		add_child(coin)
 		_flights.append({"from": from + Vector2(k * 9.0 - 20.0, -k * 6.0), "t": -k * 0.08, "coin": coin})

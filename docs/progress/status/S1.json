@@ -5,15 +5,15 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P3-S1-marker-1",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-18T00:30:00Z",
   "lease_until": "2026-11-18T03:30:00Z",
-  "updated_at": "2026-11-18T00:30:00Z",
-  "expected_next_update_by": "2026-11-18T01:15:00Z",
+  "updated_at": "2026-11-18T00:35:00Z",
+  "expected_next_update_by": "2026-11-18T01:20:00Z",
   "progress_marker": {
     "last_green_sha": null,
-    "next_step": "claimed; main 7ad5e07f merged as 2864b559; find why FxAnchors' marks draw above HeistHud and set the order in heist_screen.gd's layers",
-    "at": "2026-11-18T00:30:00Z"
+    "next_step": "fix in place: the HUD's columns at z HeistHud.HUD_Z (32) over FxAnchors' z16 (the kit lifts it one overlay over the world's picture once root_theme is on); test _layers fails on main's order (world 0..16, HUD 0..2) and passes; next: quick checks, AD preview request, merge main, full check",
+    "at": "2026-11-18T00:35:00Z"
   },
   "precheck": null,
   "gate_request": null,
@@ -670,5 +670,5 @@
       "where": "docs/progress/lead.md, Now, cycle 112; docs/art/ui-quality/board-4.md, 'Preview of result-6 (S1-R35)'; docs/art/tracks/result-screen.md, 'AD's objection H, a reward word broken (AD-R46)'"
     }
   ],
-  "next_step": "P3-S1-hc-offline-2 ready at 788eaaf4: the lead gates 'heist in high contrast' (Colour roles and value) and merges; S1 answers the verdict and AD's objections (S1-R41) in a follow-up."
+  "next_step": "fix in place: the HUD's columns at z HeistHud.HUD_Z (32) over FxAnchors' z16 (the kit lifts it one overlay over the world's picture once root_theme is on); test _layers fails on main's order (world 0..16, HUD 0..2) and passes; next: quick checks, AD preview request, merge main, full check"
 }
