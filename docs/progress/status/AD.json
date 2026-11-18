@@ -3,26 +3,21 @@
   "role": "AD",
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "P3-AD-audit-2",
-  "task_state": "ready",
-  "claimed_at": "2026-11-18T01:25:25Z",
-  "lease_until": "2026-11-18T04:25:25Z",
-  "updated_at": "2026-11-18T02:25:00Z",
-  "expected_next_update_by": null,
+  "agent_state": "active",
+  "task_id": "P3-AD-wave-board",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-18T04:56:42Z",
+  "lease_until": "2026-11-18T07:56:42Z",
+  "updated_at": "2026-11-18T04:56:42Z",
+  "expected_next_update_by": "2026-11-18T05:41:42Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "885fae508787b78733a3104049c6de78c4c3ae13",
-    "next_step": "render and judge the five queued previews (S1-R42, S1-R41, S3-R40, AIA2-R4, S3-R43) into gate/boards/preview-2.md"
+    "last_green_sha": "21c0bc04ebe39c87cb385ed96ca2d41e12a607c6",
+    "next_step": "render the five screens before (dd326ca8) and after (main 9fa88560) into gate/boards/wave/"
   },
-  "precheck": {
-    "sha": "21c0bc04ebe39c87cb385ed96ca2d41e12a607c6",
-    "exit": 0,
-    "finished_at": "2026-11-18T02:23:42Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
-  "ready_sha": "21c0bc04ebe39c87cb385ed96ca2d41e12a607c6",
+  "ready_sha": null,
   "stop_at": "2026-11-18T21:00:00Z",
   "acks": [
     "M12",
