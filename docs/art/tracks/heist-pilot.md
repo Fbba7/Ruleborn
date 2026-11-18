@@ -615,3 +615,66 @@ With the lift held at 0 it fails. Then the plate stands at 1321..1353 and the do
 
 - `part9-vault-200-en.png`, `part9-vault-200-pt.png` and `part9-vault-200-de.png`: the heist still at 200% text in each locale. 'VAULT', 'COFRE' and 'TRESOR' read whole, and each sits with the vault's dome between the loot panel's foot and the tray's top edge. `part9-heist-200-pt.png`, above, is the same still before the lift. There the vault and its label are under the tray.
 - The six FIT runs above were run again on the lift. Every run exited 0 and printed "fit ok". At 100% text and in high contrast at 100% the lift is 0, so those frames are as they were.
+
+## Part 10: the Vault's progress and the map band at 200% text (P4-S1-heist-vault)
+
+The wave board's phase 4 list (M57, M61) found two faults in the heist at 200% text. The loot panel drew the shut Vault as its icon and a thin crack bar only: its name and its progress ('Vault 0%', `REHEARSE_LEGEND_VAULT`) were gone, while at 150% and on the rehearsal's legend they are read. And the panel, under the whole top row, grew down over the map, so the band of map between the HUD and the hand's plates was narrower at 200% than at 150%.
+
+**The cause.** With large text (over 130%) `KitHud.loot_fit` builds the Vault's row as its icon beside the "Cracked" bar, and the loot panel takes the row's whole width under the law banner and the alarm. At 200% each of its rows is taller, and the alarm column is taller too, but the panel still started under both, so its foot came down by about 176 px against 150%. The rehearsal's pause had a row of its own under the portraits, which lifted the tray, and a two-line tip stood over what was left of the map.
+
+**What changed** (all in S1's files; no kit file changes):
+
+- **The Vault's words row** (`HeistHud._vault_words`, `client/scripts/heist_hud.gd`). With large text the kit's Vault icon moves into a row of its own named "VaultWords", with the Vault's name and its number in the loot's own words and figures ('Vault 0%', 'Cofre 0%', 'Tresor 0%'). The crack bar runs under them across the panel. The number is baked and tinted like the loot's other numbers (cream in high contrast), and `show_state` sets it in place as the crack fills (`_vault_count`). At 100% text nothing changes: the small panel already says 'Vault 0%'.
+- **The loot beside the alarm at 200%** (`HeistHud.beside_alarm()`, text over 175%). The loot panel joins the left column under the laws, in the room the taller alarm leaves there, instead of standing under the whole top row. `_build_loot` tells the kit the column's width, less the alarm's. At 150% the panel stays where it was.
+- **"Load to 100%" kept to one line at 200%** (`_one_line` on the panel's caption, as the laws' names are beside the alarm). In en and de it keeps one line; in pt_BR 'Carregar até 100%' still wraps at the font's 80% floor.
+- **The rehearsal's pause joins the actions row** with large text (`heist_screen.gd`, `_build`), beside the gait, before 'Cast' and 'Get out'. It no longer takes a row of its own under the portraits, so the tray is one row shorter.
+- **A two-line tip hides at 200%** (`heist_screen.gd`, `_fit_hint`, level 2). Its plate would stand over the map band. A tip that keeps one line stays.
+- **The still prints the tip's rect** (`client/tests/shots/screen_heist.gd`, the SIZES line), so the band can be read from each shot.
+
+**The band.** Measured from the loot panel's foot to the first plate under it (the tip's plate when it shows, else the tray's top), in the phone's 1080 by 2340 pixels, at the landing moment the test uses:
+
+| | 150% | 200%, main | 200%, this change |
+|---|---|---|---|
+| en | 1045..1385 (340) | 1147..1338 (191) | 1010..1491 (481) |
+| pt_BR | 1045..1289 (244) | 1147..1349 (202) | 1083..1502 (419) |
+| de | 1045..1289 (244) | 1147..1338 (191) | 1002..1491 (489) |
+
+At 150% the Vault's words row makes the panel 74 px taller than on main (its foot 1045 against 971), so main's 150% bands were 414, 165 and 318. The 200% bands are wider than both. Measured to the tray's top instead (AD-R65's band, ignoring the tip), 200% gives 481, 419 and 489 against 493, 493 and 493 at 150%: there the gain is the tip's plate, which hides at 200%. The vault's lift (Part 9) still keeps the vault and its label inside the band; `_vault_band` passes unchanged.
+
+**The test** (`client/tests/heist_fx_tests.gd`, `_vault_row`). It mounts the heist on the shot's island at the phone's size (the window at 540 by 1170, as `a11y_tests.gd`'s large-text test sets it), at 150% and 200% in en, pt_BR and de, and lands the crew. It passes when, at 200%, a visible label in the loot panel says the Vault's name, the HUD's Vault number is in the panel and says '0%', and the band is no narrower than at 150%. The numbers are baked into pictures, so the number is read from the HUD (`_vault_count`), not found as a label. On this change its detail line reads:
+
+    150% en [Room, Left, Vault, Load to 100%] count true, band 1045..1385 tip true
+    200% en [Room, Left, Vault, Load to 100%] count true, band 1010..1491 tip false
+    150% pt_BR [Espaço, Restam, Cofre, Carregar até 100%] count true, band 1045..1289 tip true
+    200% pt_BR [Espaço, Restam, Cofre, Carregar até 100%] count true, band 1083..1502 tip false
+    150% de [Platz, Übrig, Tresor, Laden bis 100 %] count true, band 1045..1289 tip true
+    200% de [Platz, Übrig, Tresor, Laden bis 100 %] count true, band 1002..1491 tip false
+
+On main it fails: no Vault word and no count in any locale, and the 200% bands (191, 202, 191) are narrower than the 150% ones (414, 165, 318).
+
+### Evidence
+
+- `part10-before-200-pt.png` and `part10-after-200-pt.png`: the heist still at 200% text in pt_BR, on main and with this change. Before, the Vault's row is an icon and an empty line, the loot panel stands under the whole top row and the pause has a row of its own. After, the panel stands under the laws beside the alarm, reads 'Cofre 0%' over its crack, and the map between it and the tray is wider.
+- `part10-200-en.png` and `part10-200-de.png`: the same at 200% in en ('Vault 0%') and de ('Tresor 0%').
+- `part10-150-pt.png`: 150% in pt_BR, the loot under the top row as before, with the Vault's words row and the pause in the actions row.
+- `part10-100-en.png`: 100% in en, unchanged.
+- `part10-hc-200-pt.png`: high contrast at 200% in pt_BR; the Vault's number is cream like the loot's other numbers.
+
+Each still was shot with `FIT=1` on this change. Every run exited 0 and printed "fit ok":
+
+    env FIT=1 TEXT=100 LOCALE=en bash tools/render/shoot.sh client/tests/shots/screen_heist.gd h100-en.png
+    env FIT=1 TEXT=100 LOCALE=pt_BR bash tools/render/shoot.sh client/tests/shots/screen_heist.gd h100-pt_BR.png
+    env FIT=1 TEXT=100 LOCALE=de bash tools/render/shoot.sh client/tests/shots/screen_heist.gd h100-de.png
+    env FIT=1 TEXT=150 LOCALE=en bash tools/render/shoot.sh client/tests/shots/screen_heist.gd h150-en.png
+    env FIT=1 TEXT=150 LOCALE=pt_BR bash tools/render/shoot.sh client/tests/shots/screen_heist.gd h150-pt_BR.png
+    env FIT=1 TEXT=150 LOCALE=de bash tools/render/shoot.sh client/tests/shots/screen_heist.gd h150-de.png
+    env FIT=1 TEXT=200 LOCALE=en bash tools/render/shoot.sh client/tests/shots/screen_heist.gd h200-en.png
+    env FIT=1 TEXT=200 LOCALE=pt_BR bash tools/render/shoot.sh client/tests/shots/screen_heist.gd h200-pt_BR.png
+    env FIT=1 TEXT=200 LOCALE=de bash tools/render/shoot.sh client/tests/shots/screen_heist.gd h200-de.png
+    env FIT=1 CONTRAST=1 TEXT=100 LOCALE=en bash tools/render/shoot.sh client/tests/shots/screen_heist.gd hc100-en.png
+    env FIT=1 CONTRAST=1 TEXT=150 LOCALE=en bash tools/render/shoot.sh client/tests/shots/screen_heist.gd hc150-en.png
+    env FIT=1 CONTRAST=1 TEXT=200 LOCALE=en bash tools/render/shoot.sh client/tests/shots/screen_heist.gd hc200-en.png
+    env FIT=1 CONTRAST=1 TEXT=200 LOCALE=pt_BR bash tools/render/shoot.sh client/tests/shots/screen_heist.gd hc200-pt_BR.png
+    env FIT=1 CONTRAST=1 TEXT=200 LOCALE=de bash tools/render/shoot.sh client/tests/shots/screen_heist.gd hc200-de.png
+
+These cover the gate's "heist at 100% text", "heist at 200% text, pt_BR" and "heist in high contrast".
