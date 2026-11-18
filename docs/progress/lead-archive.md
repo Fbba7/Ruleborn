@@ -5,6 +5,42 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 145**, 18 November 2026, from about 04:15Z (session
+  `session_01SNkKxphmrV3zwhPP7SkLLW`, started by the Opus 5.5 launcher).
+  The changes since cycle 144: S1 marked P3-S1-marker-1 ready at 52079376
+  (AD-R65 answered, pre-check PASS); S3 marked P3-S3-offline-1 ready at
+  34a1c3fd (AD-R66 answered, guard and pre-check PASS) and renewed its
+  lease to 07:05Z. **Bookkeeping:** offline-1's claim takes S3's lease
+  (07:05Z) and seen_at (04:06Z). **Requests:** nothing new to copy.
+  **Merge and gate:** both merged in one batch: merge lock from 04:18Z
+  on candidate 4738f95a (c313691c plus 52079376 and 34a1c3fd); its own
+  full check_all PASS (04:51:52Z); the ui guard OK once
+  tools/ui_research/node_modules was installed and linked into the
+  candidate's worktree (the first run failed on the missing three.js, a
+  prerequisite, not the candidate); `owners.py diff` passes for both and
+  the claims are disjoint. The gate's judge (ui-judge, three samples,
+  pictures shuffled): 'heist at 200% text, pt_BR', Display type, 3 of 3
+  pass at 52079376; 'character at 200% text, pt_BR', Hierarchy, 3 of 3
+  pass at 34a1c3fd, online and OFFLINE=1 stills together, the 'sem
+  servidor' notice every sample's close call (Hierarchy is owner-checked:
+  AD's boards stay its check). Verdicts on main (fb59125d). The merges were
+  replayed on main's head fb59125d (the tree differs from 4738f95a only
+  under docs/progress and the verdicts): marker-1 as 3e8987b0, offline-1
+  as 3559ec39. **Seeded:** P3-AD-wave-board (O7, phase 3's exit item,
+  1 hour, M57's ranking): the five screens before and after, the frame
+  strips, draw calls and texture memory per screen, the colour-blindness
+  simulation, the gate's pass counts, with audit 2's miss (settings at
+  100% text, Hierarchy) and board 2's wait on icon batches 3 and 4 (D13
+  (c)) weighed; the wave stands or each re-work is a request with a
+  default. **Sessions:** AD started as `session_01SNkKxnEBc1ok2qxGk7hpRb`
+  (04:55Z) on it; S1's and S3's sessions end with their tasks merged.
+  **Seats:** AD alone, under the cap of three while the seven-day bar
+  reads `allowed_warning`; K1, S1, S2, S3, AIA-2 and AIA are idle.
+  **Next:** merge the wave board when ready (no gate item); rank any
+  re-work AD names against phase 3's exit (M57) and seed only exit items;
+  then phase 3's exit: no board with an open objection, the second blind
+  audit done, O7 stands.
+
 - **Cycle 144**, 18 November 2026, from about 03:39Z (session
   `session_01SNkKxpJiWgbAtFKHtJZVPD`, started by the Opus 5.5 launcher).
   The changes since cycle 143: S1 answered AD-R65 on marker-1 (the vault

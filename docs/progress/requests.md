@@ -2797,6 +2797,23 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   **Answered** by the lead in cycle 147: the default, as
   P3-S3-settings-4 (phase 3's exit item), S3 started on it.
 
+- **S3-R45** (from S3 to AD through the lead, 18 November 2026 06:00Z;
+  due 12:00Z; not blocking): AD's preview of P3-S3-settings-4 before
+  ready (AD-R67): on the Access tab at 100% text the High contrast and
+  Motion switch rows stand dark with cream ink, so the gold A / A stay the
+  tab's one lead; two departures from AD-R67's words, each with evidence
+  in `docs/art/tracks/menu-screens.md`, 'Audit 2's hierarchy at 100%
+  text': (1) the dark is the kit's ghost (K01), since plate_dark fails
+  checks.py value-steps against the night; (2) in high contrast the rows
+  keep parchment. Seven settings stills; gate item 'settings at 100%
+  text' (Hierarchy). Default: AD has no objection: the ghost rows stand
+  as named, S3 marks ready at the pre-checked sha, and AD re-checks them
+  on the merge. Copied in cycle 148.
+  **Routed** by the lead in cycle 148: AD started for it
+  (`session_01SNkKxmwmtLQbP3A4xcCpWR`), writing
+  `gate/boards/preview-3.md`; AD-R67's done_when names this preview. With
+  no answer by the due time the default applies.
+
 ## Done in cycle 50 (10 November 2026, by the lead)
 
 - **K1-R15** (from K1, due 10 November 20:00Z): granted, as its default
