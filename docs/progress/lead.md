@@ -202,8 +202,9 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxpkKtCP2X5qJXco6ET` (cycle 147,
-18 November 2026 from about 05:39Z, started by the Opus 5.5 launcher). Cycle
+Latest lead cycle session: `session_01SNkKxnbZyh2sWsw9VhvuzX` (cycle 148,
+18 November 2026 from about 06:38Z, started by the Opus 5.5 launcher). Cycle
+147's was `session_01SNkKxpkKtCP2X5qJXco6ET` (from 05:39Z). Cycle
 146's was `session_01SNkKxmdvLviNaCD3jf7YyA` (from 05:14Z). Cycle
 145's was `session_01SNkKxphmrV3zwhPP7SkLLW` (from 04:15Z). Cycle
 144's was `session_01SNkKxpJiWgbAtFKHtJZVPD` (from 03:39Z). Cycle
@@ -345,6 +346,7 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| AD | `session_01SNkKxmwmtLQbP3A4xcCpWR` (Opus 5.5, effort high) | S3-R45 (not blocking, due 12:00Z: preview P3-S3-settings-4's stills, AD-R67's answer, in `gate/boards/preview-3.md`) (start, cycle 148: S3-R45 copied; AD's last session, `session_01SNkKxnEBc1ok2qxGk7hpRb`, is idle, its task merged as 41ad4615) | `claude/ui-ad` | 2026-11-18 06:41Z |
 | S3 | `session_01SNkKxmmGcPDizHBY6ng1zz` (Opus 5.5, effort high) | P3-S3-settings-4 (start, cycle 147: seeded for AD-R67, the wave board's one exit item, audit 2's miss on settings at 100% text; S3's last session, `session_01SNkKxqjkvtzBVBdApvpLwS`, is idle, its task merged as 3559ec39) | `claude/ui-screens-meta` | 2026-11-18 05:43Z |
 | AD | `session_01SNkKxnEBc1ok2qxGk7hpRb` (Opus 5.5, effort high) | P3-AD-wave-board (start, cycle 145: the wave board, O7, phase 3's exit, seeded once P3-S1-marker-1 and P3-S3-offline-1 merged as 3559ec39; AD's last session, `session_01SNkKxnJHAVTyhVsLVjhU3m`, is idle, its task merged as 07e2c13d) | `claude/ui-ad` | 2026-11-18 04:55Z |
 | S1 | `session_01SNkKxqdHWKAJ5VQDWhsTwQ` (Opus 5.5, effort high) | P3-S1-marker-1 (restart, cycle 143: S1-R43 granted, world_view.gd's `lift` for AD-R65 (M60); S1's last session, `session_01SNkKxqVesBsXCSfdHoP6BX`, went idle blocked on it, its branch at 020f5a52) | `claude/ui-screens-heist` | 2026-11-18 02:49Z |
@@ -594,7 +596,7 @@ You are agent S1 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: S1            Role: maker (S1): the heist screens, the phase 1 pilot        Model: Opus 5.5, effort high
 Branch: claude/ui-screens-heist
 Owned files: only the files each S1 task lists in the backlog, docs/progress/S1.md, docs/progress/status/S1.json
-Tasks: P3-S1-marker-1 (seeded in cycle 140, phase 3, from AD-R55, flow board 2's F9 in docs/art/ui-quality/gate/boards/flow-2.md, granted in cycle 123): the heist's HUD (HeistHud, the loot panel, the hand and every control) draws above every map marker and world draw, a sentry beam's hourglass included, at every text size, language and contrast mode, so at 200% pt_BR the loot panel's 'Espaço' reads whole; set the order once in the screen's layer order, not by moving the marker; a world file outside the task's files is a request to the lead with a default. A test in client/tests/heist_fx_tests.gd mounts the heist at 200% text and finds no world marker drawing above the HUD, failing on main's order. 'heist at 100% text', 'heist at 200% text, pt_BR' and 'heist in high contrast' still pass, with FIT=1 runs at 200% in en, pt_BR and de and in high contrast listed in the handoff. The task's done_when in the backlog lists every point. AD previews your stills before ready (a request to AD through the lead). Never commit under docs/art/ui-quality/gate/verdicts/ (M48): before ready, python3 tools/coord/owners.py diff P3-S1-marker-1 origin/claude/videogame-project-analysis-ewkkk2 <ready_sha> passes. S1-R43 is granted in cycle 143 (M60): client/world/world_view.gd joins the task's files for one public var `lift` and its use in _frame_camera only, for AD-R65. P3-S1-hc-offline-2 merged in cycle 139; merge main into your branch first. Build from the kit (docs/art/ui-quality/kit-spec.md); a kit change is a request to K1 through the lead.
+Tasks: P4-S1-heist-vault (seeded in cycle 149, phase 4's first heist task under M61, from the wave board's notes in docs/art/ui-quality/gate/boards/wave.md on claude/ui-ad): at 200% text the heist's loot panel shows the Vault's progress ('Vault 0%' and its crack) while the Vault is shut, in en, pt_BR and de, and the playfield band between the HUD and the hand is no narrower than at 150% text, laid out in heist_hud.gd and heist_screen.gd; a change to KitHud.loot_fit or any kit file is a request to K1 through the lead, with a default. A test in client/tests/heist_fx_tests.gd mounts the heist at 200% text and finds the Vault's row, failing on main. The heist's FIT=1 runs at 100%, 150% and 200% in en, pt_BR and de and in high contrast print 'fit ok' (M26), listed in the handoff; 'heist at 100% text', 'heist at 200% text, pt_BR' and 'heist in high contrast' still pass. The task's done_when in the backlog lists every point. AD previews your stills before ready (a request to AD through the lead). Never commit under docs/art/ui-quality/gate/verdicts/ (M48): before ready, python3 tools/coord/owners.py diff P4-S1-heist-vault origin/claude/videogame-project-analysis-ewkkk2 <ready_sha> passes. P3-S1-marker-1 merged (3e8987b0); merge main into your branch first. Build from the kit (docs/art/ui-quality/kit-spec.md); a kit change is a request to K1 through the lead.
 STOP_AT: 2026-11-18T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 3
 
@@ -609,7 +611,7 @@ You are agent S2 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: S2            Role: maker (S2): the home and entry screens        Model: Opus 5.5, effort high
 Branch: claude/ui-screens-home
 Owned files: only the files each S2 task lists in the backlog, docs/progress/S2.md, docs/progress/status/S2.json
-Tasks: P3-S2-back-1 (seeded in cycle 134, phase 3, from AD-R48 in docs/progress/requests.md): one go-back for the whole app. Android's back and Escape reach client/app/app.gd, which hands them to the router, and quit on go-back is off; the router (client/app/router.gd) keeps one back table: each non-tab route goes to the route its ScreenNav back button opens, each tab other than home goes to home, and home asks before quitting with a kit dialog (Quit and Stay, Stay the default and the focus; a second go-back closes it), its words in client/i18n/strings.csv and art/ui/keyframes/words.js rebuilt (M34). A check in client/tests/core_tests.gd covers every route's back route and home's question. 'home at 100% text' still passes; stills of the question at 100% and 200% text, pt_BR and high contrast. The task's done_when in the backlog lists every point. AD previews your stills before ready (a request to AD through the lead). Never commit under docs/art/ui-quality/gate/verdicts/ (M48): before ready, python3 tools/coord/owners.py diff P3-S2-back-1 origin/claude/videogame-project-analysis-ewkkk2 <ready_sha> passes. P3-S2-home-7 merged in cycle 139 (9ec770d6, main 443a5cf5): merge main into your branch first. The lead's gate passed 'home at 100% text' with the quit question at 0bfa1d6a, Hierarchy 3 of 3 (docs/art/ui-quality/gate/verdicts/P3-S2-back-1/0bfa1d6a.json), and S2-R46 is answered with the default in requests.md. Your change merges with its own full checks. Build from the kit (docs/art/ui-quality/kit-spec.md); a kit change is a request to K1 through the lead.
+Tasks: P4-S2-home-purse (seeded in cycle 149, phase 4's first home task under M61, from S2-R44 in docs/progress/requests.md): at 125% text in German (and any locale whose three purse pills do not fit one row) home's purse lays out in two rows in home.gd's _fit_amounts, and universe_home.gd's fit check allows two rows from 125% where the row of three does not fit; with the raid notice at 125% in de the check finds a realm marked, or the reason it cannot is named in docs/art/tracks/home-screen.md Part 8 with a default for the lead. 125% joins M26's cases beside 100%, 150% and 200%, in en, pt_BR and de, with and without the notice, signed in and out, each 'fit ok', listed in the handoff. 'home at 100% text', 'home at 200% text, pt_BR' and 'home in high contrast' still pass. The task's done_when in the backlog lists every point. AD previews your stills before ready (a request to AD through the lead). Never commit under docs/art/ui-quality/gate/verdicts/ (M48): before ready, python3 tools/coord/owners.py diff P4-S2-home-purse origin/claude/videogame-project-analysis-ewkkk2 <ready_sha> passes. P3-S2-back-1 merged (58a9a197); merge main into your branch first. Build from the kit (docs/art/ui-quality/kit-spec.md); a kit change is a request to K1 through the lead.
 STOP_AT: 2026-11-18T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 3
 
@@ -624,7 +626,7 @@ You are agent S3 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: S3            Role: maker (S3): the character and settings screens        Model: Opus 5.5, effort high
 Branch: claude/ui-screens-meta
 Owned files: only the files each S3 task lists in the backlog, docs/progress/S3.md, docs/progress/status/S3.json
-Tasks: P3-S3-settings-4 (seeded in cycle 147, phase 3's exit item, from AD-R67 in docs/progress/requests.md and the wave board, docs/art/ui-quality/gate/boards/wave.md on claude/ui-ad): audit 2's miss on settings at 100% text (Hierarchy) is still open on main. The Access tab at 100% gets one lead in the grayscale squint: the gold A / A text-size buttons stay the tab's primary (key frame 05, board 5 F); the 'High contrast' and 'Motion' switch rows move off cream parchment onto the dark plate with cream words, as the law sample moved at 5fc97aac; the title keeps its plate; the tab strip and Back stay as they are. The settings stills at 100% and 200% text (en, pt_BR, de) and in high contrast re-shot and each change named; the 200% and high-contrast forms still fit and pass; 'settings at 100% text' (Hierarchy) must pass 3 of 3. The task's done_when in the backlog lists every point. AD previews your stills before ready (a request to AD through the lead; AD is finishing the wave board). Never commit under docs/art/ui-quality/gate/verdicts/ (M48): before ready, python3 tools/coord/owners.py diff P3-S3-settings-4 origin/claude/videogame-project-analysis-ewkkk2 <ready_sha> passes. P3-S3-settings-3 (ec6f2e5f) and P3-S3-offline-1 (3559ec39) merged; merge main into your branch first. Build from the kit (docs/art/ui-quality/kit-spec.md); a kit change is a request to K1 through the lead.
+Tasks: P3-S3-settings-4 (seeded in cycle 147, phase 3's exit item, from AD-R67; back to claimed in cycle 149 for AD-R68, both in docs/progress/requests.md): your last session marked it ready at 4a998521 with the ghost switch rows, and AD's preview 3 (docs/art/ui-quality/gate/boards/preview-3.md on claude/ui-ad) lets the ghost rows and both departures stand, but finds the cream tab strip (seg_track_light) still outweighs the title and the gold A / A at 100% text. Fold AD-R68 in before the gate run: in _tabs() of client/scripts/settings_screen.gd the track goes on the kit's ghost, the unchosen tabs clear with cream words and the chosen tab in the kit's dark leather with its gold rim (or, if no kit strip passes value-steps at a mid value, the title in the display face with its outline, outweighing the strip); high contrast, the gold A / A and Back unchanged; each tab passes value-steps on its own ground; the Access, Game and Account tabs re-shot at 100% in en, pt_BR and de; the 200% and high-contrast forms still pass value-steps and fit. 'settings at 100% text' (Hierarchy) must pass 3 of 3. The task's done_when in the backlog lists every point. Send the re-shot stills to AD through the lead before ready (a check, not a new round). Never commit under docs/art/ui-quality/gate/verdicts/ (M48): before ready, python3 tools/coord/owners.py diff P3-S3-settings-4 origin/claude/videogame-project-analysis-ewkkk2 <ready_sha> passes. Continue on claude/ui-screens-meta from its head (f68ce498) and merge main into it first. Build from the kit (docs/art/ui-quality/kit-spec.md); a kit change is a request to K1 through the lead.
 STOP_AT: 2026-11-18T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 3
 
@@ -660,6 +662,31 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 148**, 18 November 2026, from about 06:38Z (session
+  `session_01SNkKxnbZyh2sWsw9VhvuzX`, started by the Opus 5.5 launcher).
+  The changes since cycle 147: S3 claimed P3-S3-settings-4 (06:00Z, lease
+  to 09:00Z), pushed its save point (debcb535: the Access tab's switch
+  rows on the kit's ghost, stills re-shot), merged main, filed S3-R45 and
+  runs its pre-check at 4a998521 (06:07Z, expected end 07:30Z): fit 23 of
+  23, check_screens, guard and `owners.py diff` pass there. S1's status
+  file still reads marker-1 ready past its 06:00Z update time; the task
+  merged as 3e8987b0 in cycle 145, so S1 is idle, not late.
+  **Bookkeeping:** settings-4's claim takes S3's claim, seen_at and lease
+  (06:00Z, 06:07Z, 09:00Z), state `claimed`. **Requests:** S3-R45 (AD's
+  preview of settings-4 before ready, two departures from AD-R67's words:
+  the kit's ghost instead of plate_dark, parchment kept in high contrast)
+  copied and routed to AD; the default stands at 12:00Z. **Merge and
+  gate:** none: nothing is ready, no gate request, no merge lock; main did
+  not move, so the pages are not republished. **Sessions:** AD started as
+  `session_01SNkKxmwmtLQbP3A4xcCpWR` (06:41Z) on S3-R45, writing
+  `gate/boards/preview-3.md`. S3's session
+  (`session_01SNkKxmmGcPDizHBY6ng1zz`) waits on its pre-check, inside its
+  update time (07:30Z). **Seats:** S3 and AD, under the cap of three while
+  the seven-day bar reads `allowed_warning`; K1, S1, S2, AIA-2 and AIA are
+  idle; nothing seeded (M57: only phase 3's exit items). **Next:** S3
+  answers AD's objections, if any, and marks ready; merge settings-4 with
+  its gate run ('settings at 100% text', Hierarchy); then the wave stands
+  at O7 (phase 3's exit).
 - **Cycle 147**, 18 November 2026, from about 05:39Z (session
   `session_01SNkKxpkKtCP2X5qJXco6ET`, started by the Opus 5.5 launcher).
   The changes since cycle 146: AD wrote the wave board (a3db0803:
@@ -678,8 +705,8 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   and merged as 41ad4615 (lock on candidate abc77993 from 05:48Z):
   checks reused from the pre-check at baa01a1c; no `ui guard: OK` was
   recorded, so the lead ran the guard on the candidate (OK) and docs
-  consistency (OK); `owners.py diff` clean; no gate item. check_all runs
-  on main under `nohup setsid`; the audit and roadmap pages, rebuilt,
+  consistency (OK); `owners.py diff` clean; no gate item. check_all passed
+  on main at 41ad4615 (`nohup setsid`, exit 0); the audit and roadmap pages, rebuilt,
   come out byte-identical to the copies cycle 145 published, so they are
   not republished.
   **Sessions:** S3 started as `session_01SNkKxmmGcPDizHBY6ng1zz`
@@ -711,41 +738,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   are idle; nothing seeded (M57: only phase 3's exit items, and the wave
   board is the last). **Next:** merge the wave board when ready (no gate
   item); rank any re-work AD names against phase 3's exit (M57).
-- **Cycle 145**, 18 November 2026, from about 04:15Z (session
-  `session_01SNkKxphmrV3zwhPP7SkLLW`, started by the Opus 5.5 launcher).
-  The changes since cycle 144: S1 marked P3-S1-marker-1 ready at 52079376
-  (AD-R65 answered, pre-check PASS); S3 marked P3-S3-offline-1 ready at
-  34a1c3fd (AD-R66 answered, guard and pre-check PASS) and renewed its
-  lease to 07:05Z. **Bookkeeping:** offline-1's claim takes S3's lease
-  (07:05Z) and seen_at (04:06Z). **Requests:** nothing new to copy.
-  **Merge and gate:** both merged in one batch: merge lock from 04:18Z
-  on candidate 4738f95a (c313691c plus 52079376 and 34a1c3fd); its own
-  full check_all PASS (04:51:52Z); the ui guard OK once
-  tools/ui_research/node_modules was installed and linked into the
-  candidate's worktree (the first run failed on the missing three.js, a
-  prerequisite, not the candidate); `owners.py diff` passes for both and
-  the claims are disjoint. The gate's judge (ui-judge, three samples,
-  pictures shuffled): 'heist at 200% text, pt_BR', Display type, 3 of 3
-  pass at 52079376; 'character at 200% text, pt_BR', Hierarchy, 3 of 3
-  pass at 34a1c3fd, online and OFFLINE=1 stills together, the 'sem
-  servidor' notice every sample's close call (Hierarchy is owner-checked:
-  AD's boards stay its check). Verdicts on main (fb59125d). The merges were
-  replayed on main's head fb59125d (the tree differs from 4738f95a only
-  under docs/progress and the verdicts): marker-1 as 3e8987b0, offline-1
-  as 3559ec39. **Seeded:** P3-AD-wave-board (O7, phase 3's exit item,
-  1 hour, M57's ranking): the five screens before and after, the frame
-  strips, draw calls and texture memory per screen, the colour-blindness
-  simulation, the gate's pass counts, with audit 2's miss (settings at
-  100% text, Hierarchy) and board 2's wait on icon batches 3 and 4 (D13
-  (c)) weighed; the wave stands or each re-work is a request with a
-  default. **Sessions:** AD started as `session_01SNkKxnEBc1ok2qxGk7hpRb`
-  (04:55Z) on it; S1's and S3's sessions end with their tasks merged.
-  **Seats:** AD alone, under the cap of three while the seven-day bar
-  reads `allowed_warning`; K1, S1, S2, S3, AIA-2 and AIA are idle.
-  **Next:** merge the wave board when ready (no gate item); rank any
-  re-work AD names against phase 3's exit (M57) and seed only exit items;
-  then phase 3's exit: no board with an open objection, the second blind
-  audit done, O7 stands.
 - **Stopped here**, 13 November 2026, about 13:20Z (the owner's "Stop
   cleanly"). Cycle 84 (session `session_01SNkKxpqF4gx3yYhsXenUGt`) took
   the merge lock for P2-AD-board-4 (candidate `842f09ab`, AD's ready

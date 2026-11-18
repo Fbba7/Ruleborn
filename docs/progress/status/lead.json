@@ -1,12 +1,12 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-18T05:56:52Z",
-  "expected_next_update_by": "2026-11-18T08:48:00Z",
-  "cycle": 147,
+  "updated_at": "2026-11-18T06:52:00Z",
+  "expected_next_update_by": "2026-11-18T09:52:00Z",
+  "cycle": 148,
   "merging": null,
   "last_merged": {
-    "task_id": "P3-S1-marker-1, P3-S3-offline-1",
-    "sha": "3559ec39"
+    "task_id": "P3-AD-wave-board",
+    "sha": "41ad4615"
   },
   "acks": [
     "M15",
@@ -43,9 +43,9 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Cycle 148: S3 runs P3-S3-settings-4 (AD-R67, phase 3's exit item; gate item 'settings at 100% text', Hierarchy): route S3's preview request to AD, merge settings-4 with its gate run; restart S3 if its update time passes. P3-AD-wave-board merged (41ad4615); when settings-4 merges and AD's preview stands, the wave stands at O7 (phase 3's exit).",
+  "next_step": "Cycle 149: AD (session_01SNkKxmwmtLQbP3A4xcCpWR) previews P3-S3-settings-4 for S3-R45 in gate/boards/preview-3.md (default at 12:00Z: no objection); copy any objection AD keeps as a request with its default into settings-4. S3 runs its pre-check at 4a998521 (expected end 07:30Z), then marks ready: merge settings-4 with its gate run ('settings at 100% text', Hierarchy); restart S3 if its update time passes. When settings-4 merges and AD's preview stands, the wave stands at O7 (phase 3's exit).",
   "seen": {
-    "at": "2026-11-18T05:57:40Z",
+    "at": "2026-11-18T06:41:53Z",
     "heads": {
       "claude/3d-character-screens": "6053b249bee313648da3509142eeb2ba738bb62f",
       "claude/3d-characters": "35d6ae8f5b84a4d75636f68270848b0949c111f3",
@@ -74,7 +74,7 @@
       "claude/ui-screens": "dceb6bfcbc6c5da4e261674fe9301e1854f0aa65",
       "claude/ui-screens-heist": "73a5f20d7323569e3b7f9bc904a0e229279fbe08",
       "claude/ui-screens-home": "f5f934807f524747e511558a313c4238412864ca",
-      "claude/ui-screens-meta": "b8cd32435f8f8992b4acf7ed1a24384efd7894d5",
+      "claude/ui-screens-meta": "7408f37e647675127f7d03d8a16938167be24385",
       "lead/candidate-276ed4f0": "276ed4f0623d108174022240cba14f4f0ef9f74b",
       "lead/candidate-573416ab12761b92becf0c1d3d7d7bd03e9cf7d1": "573416ab12761b92becf0c1d3d7d7bd03e9cf7d1",
       "lead/candidate-714b24ed52f56133bccc18c82cc879938b53f296": "714b24ed52f56133bccc18c82cc879938b53f296",
@@ -85,9 +85,7 @@
       "main": "2455f3b5392587009f9b8f7ff57f7b26b01566d1"
     },
     "ready": {},
-    "startable": [
-      "P3-S3-settings-4"
-    ],
+    "startable": [],
     "messages": [
       "M10",
       "M3"
@@ -133,6 +131,8 @@
       "S3-R9 to S3-R14"
     ],
     "leases": [],
-    "stale": []
+    "stale": [
+      "S1@2026-11-18T06:00:00Z"
+    ]
   }
 }
