@@ -3,17 +3,17 @@
   "role": "S2",
   "branch": "claude/ui-screens-home",
   "model": "Opus 5.5",
-  "agent_state": "done",
-  "task_id": "P3-S2-back-1",
-  "task_state": "ready",
-  "claimed_at": "2026-11-17T21:25:00Z",
-  "lease_until": "2026-11-18T02:00:00Z",
-  "updated_at": "2026-11-17T23:35:00Z",
-  "expected_next_update_by": "2026-11-18T00:20:00Z",
+  "agent_state": "active",
+  "task_id": "P4-S2-home-purse",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-18T07:30:00Z",
+  "lease_until": "2026-11-18T10:30:00Z",
+  "updated_at": "2026-11-18T07:30:00Z",
+  "expected_next_update_by": "2026-11-18T08:15:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "4e9114ac",
-    "next_step": "P3-S2-back-1 ready at 4e9114ac (main 443a5cf5 merged); the lead merges it."
+    "next_step": "main 722c91d merged; reproduce the 125% de purse and notice cases with FIT=1, then fix _fit_amounts and the fit check."
   },
   "precheck": {
     "sha": "4e9114ac84279c77ca1735d1181ccfb280a52bcb",
@@ -22,7 +22,7 @@
     "summary": "All checks passed."
   },
   "gate_request": null,
-  "ready_sha": "4e9114ac",
+  "ready_sha": null,
   "stop_at": "2026-11-18T21:00:00Z",
   "acks": [
     "M13",
