@@ -556,3 +556,34 @@ Each still was shot with `FIT=1`. Every run exited 0 and printed "fit ok":
     env FIT=1 MANIFEST=1 CONTRAST=1 bash tools/render/shoot.sh client/tests/shots/screen_heist.gd heist_man_hc.png
 
 `heist_hc.png` is the still for the gate's "heist in high contrast" (Colour roles and value). The `MANIFEST=1` stills show the gold coming back with a cast left. At 100% text, "No casts" and Get out are on the leather with its amber rim, and the loot keeps its gold (`KitHud.loot_fit`), as the key frame has it. The stills are not committed, because this task's files hold no stills. The commands above render them from the ready commit.
+
+## Part 9: the HUD above the world's markers (P3-S1-marker-1, AD-R55)
+
+Flow board 2's F9 (`docs/art/ui-quality/gate/boards/flow-2.md`): at 200% text in pt_BR, with the heist opened from Home's Heist tab, a pylon's school disc (the hourglass) drew over the "E" of the loot panel's "Espaço".
+
+**The cause.** The kit stacks its layers once `UI.root_theme()` is installed (kit-spec.md section 5). A full-screen child placed after another is lifted one overlay (`UI.OVERLAY_Z`, 16) above it. The world view's children are its picture (the SubViewportContainer) and then FxAnchors, the full-screen layer where the world's markers and marks are drawn: the pylons' school icons, the vault, the guards' marks and the pops. FxAnchors therefore stood at z 16. The HUD's columns (FxSkin.frame's two margins) stood at z 0, their words at 1 and their faces at −1, so every marker drew above the whole HUD. At 100% text the loot panel stays clear of the map's markers, so the fault showed only at 200%, where the panel grows down over the map. The heist's still (`screen_heist.gd`) and the tests built the heist before the kit's layers were on, so FxAnchors stood at 0 there and neither showed it. The app's router always has the kit's layers on by the time it opens the heist.
+
+**What changed.**
+
+- **The order is set once, in the screen's layer order** (`client/scripts/heist_screen.gd`, `_build`, through `HeistHud.layer` in `client/scripts/heist_hud.gd`). The HUD's two columns stand at `HeistHud.HUD_Z`, two overlays (32), one overlay above the world's marker layer. The world's markers are not moved, and no world file changes.
+- **The guards' words stay above the HUD**, as before. Speech, the full-screen layer for bubbles that lie over a panel, is added after the columns, so the kit lifts it to 48. The entry card and the gait menu are added after it and stack above it.
+- **The loot's flying coins** (`fly_coins`) stand at the top of the HUD's layer (47): over the panels and their words as they fly into the loot, under the guards' words.
+- **The still shows what the player sees.** `client/tests/shots/screen_heist.gd` installs the kit's layers before it builds the screen, as the app does.
+
+**The test** (`client/tests/heist_fx_tests.gd`, `_layers`). It mounts the heist the way the app mounts it, with the kit's layers on, at 200% text and with the clock played 60 ticks. It then measures the z range of every visible canvas item on the screen's canvas under the world view, and the same under the HUD's columns. It passes when the world's highest z is under the HUD's lowest and a flying coin stands above the HUD's highest. On main's order it fails with "world z 0..16, HUD z 0..2". With this change it passes: the HUD stands one overlay higher, above all of the world.
+
+### Evidence
+
+- `part9-before-flow-200-pt.png` and `part9-after-flow-200-pt.png`: the top of the gate's flow walk (`tools/ui_gate/flow_walk.gd`, `FLOW=result TEXT=200 LOCALE=pt_BR`), step 03 "heist-played", before and after. In the before still the hourglass covers the "E" of "Espaço". In the after still, "Espaço" reads whole.
+- `part9-heist-200-pt.png`: the heist's still at 200% text in pt_BR, with the kit's layers on. The vault's label, the guards' marks and the pylons draw under the loot panel and the hand.
+
+Each still was shot with `FIT=1`. Every run exited 0 and printed "fit ok":
+
+    env FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_heist.gd heist_100.png
+    env FIT=1 TEXT=200 LOCALE=en bash tools/render/shoot.sh client/tests/shots/screen_heist.gd heist_200_en.png
+    env FIT=1 TEXT=200 LOCALE=pt_BR bash tools/render/shoot.sh client/tests/shots/screen_heist.gd heist_200_pt_BR.png
+    env FIT=1 TEXT=200 LOCALE=de bash tools/render/shoot.sh client/tests/shots/screen_heist.gd heist_200_de.png
+    env FIT=1 CONTRAST=1 bash tools/render/shoot.sh client/tests/shots/screen_heist.gd heist_hc.png
+    env FIT=1 CONTRAST=1 TEXT=200 LOCALE=pt_BR bash tools/render/shoot.sh client/tests/shots/screen_heist.gd heist_hc_200_pt_BR.png
+
+These cover the gate's "heist at 100% text", "heist at 200% text, pt_BR" and "heist in high contrast". The HUD, the loot panel, the hand and every control draw above the world's markers in each of them.
