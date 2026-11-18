@@ -4,16 +4,16 @@
   "branch": "claude/ui-screens-heist",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P3-S1-marker-1",
-  "task_state": "ready",
-  "claimed_at": "2026-11-18T00:30:00Z",
-  "lease_until": "2026-11-18T06:22:00Z",
-  "updated_at": "2026-11-18T04:03:00Z",
-  "expected_next_update_by": "2026-11-18T06:00:00Z",
+  "task_id": "P4-S1-heist-vault",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-18T07:30:00Z",
+  "lease_until": "2026-11-18T10:30:00Z",
+  "updated_at": "2026-11-18T07:30:00Z",
+  "expected_next_update_by": "2026-11-18T08:15:00Z",
   "progress_marker": {
-    "last_green_sha": "520793761853473f6a96fb08bd6d53ff813ae232",
-    "next_step": "ready at 52079376 (pre-check PASS 04:00:31Z, owners diff exit 0); main c313691c merged as 79721a80 (docs only); waiting for the gate on 'heist at 200% text, pt_BR' (Display type) and the lead's merge",
-    "at": "2026-11-18T04:03:00Z"
+    "last_green_sha": "52079376",
+    "next_step": "set up the container, mount the heist at 200% text and see why the Vault row is dropped from the loot panel",
+    "at": "2026-11-18T07:30:00Z"
   },
   "precheck": {
     "sha": "520793761853473f6a96fb08bd6d53ff813ae232",
@@ -21,18 +21,8 @@
     "finished_at": "2026-11-18T04:00:31Z",
     "summary": "All checks passed."
   },
-  "gate_request": {
-    "sha": "520793761853473f6a96fb08bd6d53ff813ae232",
-    "items": [
-      {
-        "item": "heist at 200% text, pt_BR",
-        "qualities": [
-          "Display type"
-        ]
-      }
-    ]
-  },
-  "ready_sha": "520793761853473f6a96fb08bd6d53ff813ae232",
+  "gate_request": null,
+  "ready_sha": null,
   "stop_at": "2026-11-18T21:00:00Z",
   "acks": [
     "M6",
