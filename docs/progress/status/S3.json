@@ -7,14 +7,17 @@
   "task_id": "P3-S3-offline-1",
   "task_state": "working",
   "claimed_at": "2026-11-18T01:49:12Z",
-  "lease_until": "2026-11-18T04:49:12Z",
-  "updated_at": "2026-11-18T03:34:00Z",
-  "expected_next_update_by": "2026-11-18T04:19:00Z",
-  "long_run": null,
+  "lease_until": "2026-11-18T07:05:00Z",
+  "updated_at": "2026-11-18T04:05:00Z",
+  "expected_next_update_by": "2026-11-18T05:20:00Z",
+  "long_run": {
+    "log": "/tmp/check-34a1c3fd007aff2cf671482f80e94d04febd0934.log",
+    "expected_end": "2026-11-18T05:20:00Z"
+  },
   "progress_marker": {
     "last_green_sha": "7972485a7738ac5cea3f4ac762935d9f2522c1d7",
-    "next_step": "AD-R66 done and its stills pushed (5ced6958); fit_character.sh 53 of 53. Main 2ced5486 and a1649b90 merged (34a1c3fd); setup line and build.sh exit 0, owners.py diff passes; guard and the pre-check at 34a1c3fd running (the container restart lost the first run at ea72807d). Then the handoff and ready.",
-    "at": "2026-11-18T03:34:00Z"
+    "next_step": "AD-R66 done and its stills pushed (5ced6958); fit_character.sh 53 of 53. Main 2ced5486 and a1649b90 merged (34a1c3fd); setup line and build.sh exit 0, guard OK (03:39Z), owners.py diff passes; the pre-check at 34a1c3fd is running (started 03:32Z; the container restart lost the first run at ea72807d). Then the handoff and ready.",
+    "at": "2026-11-18T04:05:00Z"
   },
   "precheck": null,
   "gate_request": null,
