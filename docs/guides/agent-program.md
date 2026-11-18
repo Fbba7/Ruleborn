@@ -758,6 +758,7 @@ Rows are added as the phase runs, each sent to the agent that can act on it as a
 |---|---|---|
 | Wait from ready to merged rated worse two reports in a row (2.1h, then 3.0h). Three tasks sat ready 2.9 to 4.1 hours behind P3-AIA2-bake-1, because the shared icons_256 bake differed between machines and failed the guard from cycle 134 to cycle 136 | A guard failure on a generated file the task does not change is an infra blocker: the lead seeds its fix to the file's owner as critical in the same cycle, the fix proves a byte-identical rebake on a second machine before ready, and the held tasks merge in one batch in the cycle the fix merges | Sent to the lead as M56 |
 | Reserve hours used rated worse two reports in a row (23h, then 29.5h of 20h) | Before seeding more requests, the lead ranks the remaining ones against the phase's exit criteria, moves the rest to the next phase's list and writes the revised reserve in lead.md, "Now" | Sent to the lead as M57 |
+| Builders at once rated worse two reports in a row (2 of 3, then 1 of 3). After cycle 145 only AD had a task: phase 3's exit items were seeded one at a time | While two or more seats are free and exit items remain, the lead seeds in the same cycle every exit item whose files do not overlap a running task; when none remain, it seeds phase 4's first tasks that touch no exit board | Sent to the lead as M61 |
 
 ## Waves, progress files and stills
 

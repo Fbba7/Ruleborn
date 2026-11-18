@@ -141,9 +141,11 @@ static func plain(l: Label) -> void:
 
 ## A failed load or change, `sentence`, on `l`, a status line on the cream
 ## plate. Being offline (`code` "offline") is information, not an error
-## (AD-R63): in ink with the info glyph. At large text it takes one line, the
-## reason alone ("no server is set"), with the whole sentence as its name
-## for a screen reader (AD-R64). Red stays for the server's real refusals.
+## (AD-R63): in ink with the info glyph. At large text it takes one line at
+## the player's text size, the reason alone ("no server is set"), with the
+## whole sentence as its name for a screen reader (AD-R64). The words are
+## never shrunk to fit (S3-R39): each language's reason is short enough for
+## the line at 200% text. Red stays for the server's real refusals.
 static func failed(l: Label, code: String, sentence: String) -> void:
 	plain(l)
 	if code != "offline":
@@ -156,28 +158,8 @@ static func failed(l: Label, code: String, sentence: String) -> void:
 	l.accessibility_name = sentence
 	l.autowrap_mode = TextServer.AUTOWRAP_OFF
 	# Trimming lets the plate take the screen's width rather than the words';
-	# `_one_line` sizes the words so that nothing is ever trimmed.
+	# the fit check fails any words it would trim.
 	l.text_overrun_behavior = TextServer.OVERRUN_TRIM_WORD_ELLIPSIS
-	if not l.has_meta("one_line"):
-		l.set_meta("one_line", true)
-		l.resized.connect(_one_line.bind(l))
-	_one_line(l)
-
-
-## A one-line notice's words at the player's text size, or as much smaller
-## as its line needs, never under their size at 100% (S3-R39: where even the
-## reason overruns the line, as pt_BR's does at 200%).
-static func _one_line(l: Label) -> void:
-	if l.autowrap_mode != TextServer.AUTOWRAP_OFF or l.size.x <= 0.0:
-		return
-	var points := float(l.get_meta("points", UI.TEXT_POINTS))
-	var font := l.get_theme_font("font")
-	var px := UI.text_px(points)
-	var least := int(points * UI.PX_PER_POINT)
-	while px > least and font.get_string_size(l.text, HORIZONTAL_ALIGNMENT_LEFT, -1, px).x > l.size.x:
-		px -= 1
-	if px != l.get_theme_font_size("font_size"):
-		l.add_theme_font_size_override("font_size", px)
 
 
 ## `what` held in from the screen's sides by the safe area's margin.
