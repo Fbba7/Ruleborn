@@ -381,6 +381,21 @@ Rendered on this task's code with `FIT=1` (and `RECORD=1` for the recorded still
 - **Changed by main, not by this task:** every character still that is not offline (`character-100`, `-100-de`, `-100-pt_BR`, `-100-stats`, `-100-compare`, `character-hc`, `-hc-pt_BR`, `character-200-{en,pt_BR,de}`, `-200-{en,pt_BR,de}-4`, `-200-pt_BR-scrolled`, `-200-pt_BR-stats`, `-200-pt_BR-compare`), plus `character-offline.png` and `roster-offline.png` at 100%. They render pixel for pixel the same on main 14dee6ce's code as on this branch. Their difference from the committed stills comes from main's work since P3-S3-nav-1 shot them: the kit's outline rule and back face (P3-K1-outline-1). Their records are unchanged. The notice at 100% was never shrunk and is the same sentence in en.
 - **Fit check:** `fit_character.sh` (lesson M26, every fixture state, including the offline notice at 100% in English and at 200% in pt_BR and de): 53 shots of 53 ok (exit 0). `check_screens.py`: OK. gdlint on `roster_screen.gd`: the same 18 long lines as before the task, none new.
 
+#### AD-R66: the stage gives the notice its height
+
+AD's preview of this task (M59) found that, offline at 200%, the notice at full size pushed the ability header ("HABILIDADE", "FÄHIGKEIT") under the fixed foot with Level up. `client/scripts/character_screen.gd` now makes room for it:
+
+- **The stage gives the notice its height.** In `_refresh`, when the load failed at large text and the notice shows, the stage's height drops by the notice's own height plus the column's gap (`_give`). Everything under the stage then sits where it does online: in pt_BR the tabs are at y 474.5 points in both records, and the ability header is above the foot in en, pt_BR and de. With no notice, or at 100%, `_give` is 0 and nothing changes.
+- **The pills give up the status bar's band.** Under the notice the stage is no longer under the status bar, so the count's and state's pills move from 44 points down to 8 points from the stage's top.
+- **The arrows centre under the count's pill**, in their own margin below it, not on top of it as they would on the shorter stage.
+- **The character is framed a little higher** (the stage's `headroom` is -0.08 there, 0.08 elsewhere), so its face and ears stay clear between the notice and the name's plate.
+- **The roster keeps its notice as is** (M59). OFFLINE=1 TEXT=200 in pt_BR and de stays in the stills.
+
+Evidence, rendered with `FIT=1 RECORD=1` on this code:
+
+- **Changed:** `character-offline-200-pt_BR.png` and `character-offline-200-de.png`, with their records. The stage is shorter, the arrows move up from y 188.86 to 157.81 points, and the name's plate moves up from y 232.92 to 154.92, where it is online. In de the tabs are at y 479.92 and the sub-line at 294.31, as online too. The tabs and the ability header come back into view above Level up, which stays where it was. An en render with the same env (not a committed still) shows the same layout with "ⓘ no server is set".
+- **Unchanged, pixel for pixel and record for record:** the other 20 character and roster stills, including every online still at 200% (`character-200-{en,pt_BR,de}` and their `-4`, `-scrolled`, `-stats` and `-compare`). So the gate item 'character at 200% text, pt_BR' (Hierarchy) shows the same still as before.
+
 ## Part 3: the settings screen (P2-S3-settings)
 
 ### What was done
