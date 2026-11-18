@@ -442,6 +442,8 @@ func _vault_row() -> void:
 	var scale := Settings.text_scale
 	var locale := TranslationServer.get_locale()
 	UI.root_theme()
+	var was := tree.root.size
+	tree.root.size = Vector2i(540, 1170)
 	var ok := true
 	var seen: Array[String] = []
 	for lang: String in ["en", "pt_BR", "de"]:
@@ -461,12 +463,16 @@ func _vault_row() -> void:
 				await tree.process_frame
 			var word := false
 			var count := false
+			var said: Array[String] = []
 			for l: Node in screen.hud.loot_panel.find_children("*", "Label", true, false):
 				var label := l as Label
 				if not label.is_visible_in_tree():
 					continue
+				said.append(label.text)
 				word = word or label.text == Strings.t("REHEARSE_LEGEND_VAULT")
-				count = count or label.text == "0%"
+			# The loot numbers are baked into pictures: the count is the HUD's own label.
+			var tally := screen.hud.get(&"_vault_count") as Label
+			count = tally != null and tally.text == "0%" and screen.hud.loot_panel.is_ancestor_of(tally)
 			var foot := screen.hud.loot_panel.get_global_rect().end.y
 			var under := screen.actions_band.get_global_rect().position.y
 			if screen.hint_panel.is_visible_in_tree():
@@ -474,9 +480,11 @@ func _vault_row() -> void:
 			bands[size] = under - foot
 			if size == 200:
 				ok = ok and word and count and bands[200] >= bands[150]
-			seen.append("%d%% %s vault %s %s, band %d" % [size, lang, word, count, bands[size]])
+			seen.append("%d%% %s %s count %s, band %d..%d tip %s" % [size, lang, said, count, foot, under,
+				screen.hint_panel.is_visible_in_tree()])
 			screen.queue_free()
 			await tree.process_frame
+	tree.root.size = was
 	Strings.set_locale(locale)
 	Settings.text_scale = scale
 	Settings.apply()
