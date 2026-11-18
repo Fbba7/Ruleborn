@@ -561,6 +561,7 @@ func _build() -> void:
 	view.held.connect(open_gait_menu)
 	add_child(view)
 	var columns := FxSkin.frame(self)
+	HeistHud.layer(columns)  # The HUD over the world's markers (AD-R55).
 	var column := columns[0]
 	var lower := columns[1]
 	column_node = lower
@@ -674,14 +675,14 @@ func _build() -> void:
 			c.reparent(flow)
 		band.add_child(flow)
 		actions_node = flow
-	# The crew and the hand on one opaque tray, the kit's leather (the plum
-	# and gold frame the loot and alarm plates wear), so the portraits and
-	# buttons keep their value step off the bright world and the tray reads
-	# as a layered plate rather than a see-through scrim.
+	# The crew and the hand on one opaque tray, the kit's leather (the plum and
+	# gold frame the loot and alarm plates wear), so the portraits and buttons
+	# keep their value step off the bright world: a plate, not a scrim.
 	var tray := FxSkin.panel("leather", 14.0, 5.0)
 	tray.name = "Tray"
 	tray.add_child(band)
 	actions_band = tray
+	hud.frame_vault(view, tray)  # The vault kept in the map band (AD-R65).
 	column.add_child(tray)
 	# The hint over the tray (the design's), with the gait's small button
 	# before it.
