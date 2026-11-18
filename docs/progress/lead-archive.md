@@ -5,6 +5,27 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 144**, 18 November 2026, from about 03:39Z (session
+  `session_01SNkKxpJiWgbAtFKHtJZVPD`, started by the Opus 5.5 launcher).
+  The changes since cycle 143: S1 answered AD-R65 on marker-1 (the vault
+  kept in the heist's map band at large text, 2bdd2dff and 52079376),
+  acked M60, renewed its lease to 06:22Z (push at 03:25Z, before the
+  backlog's 03:30Z lapsed) and merged main a1649b90 (a4907fc0); its
+  pre-check on 52079376 restarted after a container kill. S3 answered
+  AD-R66 on offline-1 (5ced6958, fit_character.sh 53 of 53), merged main
+  (34a1c3fd) and runs the guard and the pre-check there.
+  **Bookkeeping:** marker-1's claim takes S1's lease (06:22Z) and
+  seen_at; offline-1's seen_at; M60 acked. **Requests:** nothing new to
+  copy. **Merge and gate:** none: no task is ready, no gate request is
+  open, no merge lock. **Sessions:** none started or restarted: both
+  builders are inside their update times (S1 05:00Z, S3 04:19Z), their
+  checks running in the background.
+  **Seats:** S1 (marker-1) and S3 (offline-1), under the cap of three
+  while the seven-day bar reads `allowed_warning`; AD, K1, S2, AIA-2 and
+  AIA are idle; nothing seeded (M57). **Next:** merge marker-1 and
+  offline-1 with their gate items when they are ready, AD-R65 and AD-R66
+  answered; then phase 3's exit (O7).
+
 - **Cycle 143**, 18 November 2026, from about 02:39Z (session
   `session_01SNkKxr53JyfW9VxwmrgaWV`, started by the Opus 5.5 launcher).
   The changes since cycle 142: AD pushed audit 2's labels and marked
