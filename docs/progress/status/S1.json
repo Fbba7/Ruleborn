@@ -8,14 +8,19 @@
   "task_state": "working",
   "claimed_at": "2026-11-18T00:30:00Z",
   "lease_until": "2026-11-18T03:30:00Z",
-  "updated_at": "2026-11-18T00:50:00Z",
-  "expected_next_update_by": "2026-11-18T01:35:00Z",
+  "updated_at": "2026-11-18T01:20:00Z",
+  "expected_next_update_by": "2026-11-18T02:05:00Z",
   "progress_marker": {
-    "last_green_sha": null,
-    "next_step": "main e1b890dd merged as 4e0cce24; setup line, client/build.sh and guard.sh exit 0 there; pre-check next, then owners diff and ready",
-    "at": "2026-11-18T00:50:00Z"
+    "last_green_sha": "a75be9a2621841d1f0336b721d5ce2632056e21b",
+    "next_step": "pre-check PASS at a75be9a2; main 0473b222 merged as eba96d4a, setup line, build and guard.sh exit 0 there; pre-check on the merge next, then ready",
+    "at": "2026-11-18T01:20:00Z"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "a75be9a2621841d1f0336b721d5ce2632056e21b",
+    "exit": 0,
+    "finished_at": "2026-11-18T01:13:19Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-18T21:00:00Z",
@@ -684,5 +689,5 @@
       "where": "docs/progress/lead.md, Now, cycle 112; docs/art/ui-quality/board-4.md, 'Preview of result-6 (S1-R35)'; docs/art/tracks/result-screen.md, 'AD's objection H, a reward word broken (AD-R46)'"
     }
   ],
-  "next_step": "main e1b890dd merged as 4e0cce24; setup line, client/build.sh and guard.sh exit 0 there; pre-check next, then owners diff and ready"
+  "next_step": "pre-check PASS at a75be9a2; main 0473b222 merged as eba96d4a, setup line, build and guard.sh exit 0 there; pre-check on the merge next, then ready"
 }
