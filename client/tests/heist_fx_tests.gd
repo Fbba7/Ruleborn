@@ -6,6 +6,8 @@ extends RefCounted
 ## motion — all checked headless, from the nodes the screens build.
 
 const HEIST := "res://scenes/heist_screen.tscn"
+## The orders that spread the crew to sneak (the heist shot's "sneak" moment).
+const SNEAK := [[4, 9], [3, 10], [4, 11]]
 
 var tree: SceneTree
 var check: Callable
@@ -46,6 +48,7 @@ func run() -> void:
 	await _models(replay)
 	await _entry_card()
 	await _layers()
+	await _vault_band()
 	_planned()
 
 
@@ -369,6 +372,64 @@ func _layers() -> void:
 	check.call("at 200% text no marker or mark of the world draws above the heist's HUD: the world's layers, its "
 			+ "markers' included, all stand under the HUD's lowest, and the loot's coins fly over it (AD-R55)",
 		world.y < hud.x and coins, "world z %d..%d, HUD z %d..%d, coins %s" % [world.x, world.y, hud.x, hud.y, coins])
+
+
+## AD-R65: at 200% text the heist's opening frame keeps the vault and its
+## tag inside the map band, between the loot panel's foot and the crew
+## tray's top edge, in en, pt_BR and de (the HUD over the markers, AD-R55,
+## would otherwise cover 'COFRE' and 'TRESOR').
+func _vault_band() -> void:
+	var scale := Settings.text_scale
+	var locale := TranslationServer.get_locale()
+	UI.root_theme()
+	var ok := true
+	var seen: Array[String] = []
+	# Each locale at 200%, and en at 100%, where the frame keeps §21.1's
+	# framing (no lift).
+	for case: Array in [[200, "en"], [200, "pt_BR"], [200, "de"], [100, "en"]]:
+		var lang: String = case[1]
+		Settings.text_scale = case[0]
+		Settings.apply()
+		Strings.set_locale(lang)
+		# AD-R65's moment: WorldTests' island, the crew spread to sneak and
+		# played in steps to tick 150, as the shot of preview-2 has it.
+		App.services.store.dispatch(&"heist_started", {"island": WorldTests.island(), "testing": true})
+		var screen: HeistScreen = load(HEIST).instantiate()
+		tree.root.add_child(screen)
+		await tree.process_frame
+		screen.set_process(false)
+		screen.controller.land_here()
+		for i in SNEAK.size():
+			var t: Array = SNEAK[i]
+			screen.controller.world.give(i, HeistController.Kind.MOVE_TO, int(t[0]) * 256 + 128, int(t[1]) * 256 + 128)
+		var v := screen.view
+		for k in 15:
+			screen.controller.advance(10)
+			screen._refresh()
+			v._process(1.0 / 3.0)
+		# The landing's drop played out, as it has by the time the player looks.
+		if v._intro != null:
+			v._intro.kill()
+		v._zoom_f = float(v.zoom)
+		for i in 4:
+			await tree.process_frame
+		var at := v.anchors.get_global_rect().position.y
+		var plate: Rect2 = v.anchors._vault_plate
+		var top := screen.hud.loot_panel.get_global_rect().end.y - at
+		var foot := screen.actions_band.get_global_rect().position.y - at
+		var base := v.camera.unproject_position(v.world_at(v.replay.vault()["at"])).y
+		ok = ok and plate.has_area() and plate.position.y >= top and maxf(plate.end.y, base) <= foot \
+				and (case[0] > 100 or v.lift == 0.0)
+		seen.append("%d%% %s tag %d..%d, vault %d, band %d..%d, lift %d" % [case[0], lang, plate.position.y,
+			plate.end.y, base, top, foot, v.lift])
+		screen.queue_free()
+		await tree.process_frame
+	Strings.set_locale(locale)
+	Settings.text_scale = scale
+	Settings.apply()
+	check.call("at 200% text the heist's opening frame keeps the vault and its tag inside the map band, between the "
+			+ "loot panel's foot and the crew tray's top edge, in en, pt_BR and de; at 100% the frame is not lifted "
+			+ "(AD-R65)", ok, "; ".join(seen))
 
 
 ## The lowest and highest z a drawn canvas item under `n` (itself included)

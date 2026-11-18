@@ -56,6 +56,11 @@ var _load: KitBar
 ## Coins on their way to the loot panel: {from: Vector2 (global), t: float,
 ## coin: Control}.
 var _flights: Array[Dictionary] = []
+## The world view whose follow frame the HUD lifts, the crew tray under the
+## map band, and the replay the lift was set for (AD-R65).
+var _view: WorldView
+var _tray: Control
+var _lift_for: RulebornReplay
 
 
 ## Sets the screen's HUD columns (FxSkin.frame's, each in its margin) on the
@@ -522,6 +527,8 @@ func fly_coins(from: Vector2, count: int) -> void:
 
 func _process(delta: float) -> void:
 	_time += delta
+	if _view != null and _view.replay != _lift_for:
+		_lift_vault()
 	if _red and not Settings.reduced_motion:
 		# The last 30 seconds pulse once a second (within §20.8's three
 		# flashes a second).
@@ -545,6 +552,38 @@ func _process(delta: float) -> void:
 			coin.global_position = from.lerp(to, e) + Vector2(0, -sin(t * PI) * 120.0) - coin.size / 2.0
 			coin.scale = Vector2.ONE * (1.0 - 0.3 * t)
 	_flights = _flights.filter(func(f: Dictionary) -> bool: return float(f["t"]) < 1.0)
+
+
+## The screen's world view and crew tray, for the vault's lift (AD-R65).
+func frame_vault(view: WorldView, tray: Control) -> void:
+	_view = view
+	_tray = tray
+	_lift_for = null
+
+
+## AD-R65: on the opening frame (landed, the landing's zoom settled, the
+## vault's tag drawn), the follow frame stands the island higher by what
+## keeps the vault and its tag inside the map band, between the loot panel's
+## foot and the tray's top edge: 0 where they fit already (100% text). Where
+## the band is too narrow for both, the tag's words come first. Then held,
+## so the camera does not hunt as the crew walks.
+func _lift_vault() -> void:
+	var v := _view
+	var plate: Rect2 = v.anchors._vault_plate
+	if v.replay == null or not v.replay.has_landed() or v.follow.is_empty() or not plate.has_area() \
+			or not is_equal_approx(v._zoom_f, float(v.zoom)) or not v.replay.vault().has("at"):
+		return
+	_lift_for = v.replay
+	var at := v.anchors.get_global_rect().position.y
+	var top := loot_panel.get_global_rect().end.y - at
+	var foot := _tray.get_global_rect().position.y - at
+	var pad := 6.0 * Settings.text_scale / 100.0
+	# Where the tag and the vault's foot stand with no lift: a lift of n
+	# pixels raises them by n.
+	var base := v.camera.unproject_position(v.world_at(v.replay.vault()["at"])).y
+	var low := maxf(plate.end.y, base) + v.lift
+	var high := plate.position.y + v.lift
+	v.lift = minf(maxf(0.0, low - (foot - pad)), maxf(0.0, high - (top + pad)))
 
 
 ## The designs' gold rim on a kit surface (the result's haul tile).
