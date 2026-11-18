@@ -5,7 +5,7 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P3-S3-offline-1",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-18T01:49:12Z",
   "lease_until": "2026-11-18T04:49:12Z",
   "updated_at": "2026-11-18T01:49:12Z",

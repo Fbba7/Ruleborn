@@ -1,50 +1,51 @@
 {
  "controls": [
   {
-   "name": "arrow 1: Vorheriger Charakter, Mossbear",
+   "interactive": false,
+   "name": "words 1: ⓘ kein Server",
+   "rect": [
+    28.17,
+    10.83,
+    333.67,
+    47.67
+   ]
+  },
+  {
+   "name": "arrow 2: Vorheriger Charakter, Mossbear",
    "rect": [
     21.67,
-    178.39,
+    188.86,
     52.0,
     52.0
    ]
   },
   {
-   "name": "arrow 2: Nächster Charakter, Glass Golem",
+   "name": "arrow 3: Nächster Charakter, Glass Golem",
    "rect": [
     313.44,
-    178.39,
+    188.86,
     52.0,
     52.0
    ]
   },
   {
    "interactive": false,
-   "name": "words 3: Skyskipper",
+   "name": "words 4: Skyskipper",
    "rect": [
     110.14,
-    222.44,
+    232.92,
     166.83,
     47.67
    ]
   },
   {
    "interactive": false,
-   "name": "words 4: Skyskipper · Träger",
+   "name": "words 5: Skyskipper · Träger",
    "rect": [
     37.56,
-    361.83,
+    372.31,
     312.0,
     47.67
-   ]
-  },
-  {
-   "name": "row 5: Raubzug Werte Vergleich",
-   "rect": [
-    17.33,
-    547.44,
-    352.44,
-    64.64
    ]
   },
   {
