@@ -202,8 +202,9 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxpYPYZFhmxMYvxis4C` (cycle 140,
-17 November 2026 from about 23:38Z, started by the Opus 5.5 launcher). Cycle
+Latest lead cycle session: `session_01SNkKxpEocuxTAPfpiN5b9n` (cycle 141,
+18 November 2026 from about 01:14Z, started by the Opus 5.5 launcher). Cycle
+140's was `session_01SNkKxpYPYZFhmxMYvxis4C` (from 23:38Z). Cycle
 139's was `session_01SNkKxq4x4crXhYQkGcqX1K` (from 22:10Z). Cycle
 138's was `session_01SNkKxpDFMUeUQciTDiwm62` (from 21:39Z). Cycle
 137's was `session_01SNkKxnomTXF5W6AXtNDsaA` (from 21:14Z). Cycle
@@ -338,6 +339,7 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| AD | `session_01SNkKxnJHAVTyhVsLVjhU3m` (Opus 5.5, effort high) | P3-AD-audit-2 (start, cycle 141: the second blind audit, phase 3's exit, drawn in gate/audit/audit-2.md, then the previews S1-R42, S1-R41, S3-R40, AIA2-R4 and S3-R43 and M54's ack; a fresh session for the blind rules; AD's last session, `session_01SNkKxoHAV28mTbRdZouhPY`, is idle, its task merged as 2eff5f43) | `claude/ui-ad` | 2026-11-18 01:23Z |
 | S1 | `session_01SNkKxqVesBsXCSfdHoP6BX` (Opus 5.5, effort high) | P3-S1-marker-1 (start, cycle 140: seeded for AD-R55, the HUD draws above every map marker; P3-S2-back-1 merged, S2's seat free; S1's last session, `session_01SNkKxpSULfXqHgZQvrJKb4`, is idle, its task merged as fbae695a) | `claude/ui-screens-heist` | 2026-11-18 00:12Z |
 | K1 | `session_01SNkKxn6UGKqas3XXoa59J8` (Opus 5.5, effort high) | P3-K1-outline-1 (restart, cycle 140: K1-R28 granted on main, so merge main, change the granted lines, recheck and mark ready; K1's last session, `session_01SNkKxorBb4Hx1E3GUAr2GL`, idle waiting on the grant) | `claude/ui-bake` | 2026-11-17 23:44Z |
 | S3 | `session_01SNkKxoKvRK2mVxzbiptFn6` (Opus 5.5, effort high) | P3-S3-settings-3 (start, cycle 139: seeded for AD-R52 in the third seat under the cap of three; S3's last session, `session_01SNkKxqvCzT3bnuPzL5KvLH`, completed P3-S3-nav-1, merged as 2dc57508) | `claude/ui-screens-meta` | 2026-11-17 22:59Z |
@@ -522,7 +524,7 @@ You are agent AD of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: AD            Role: art director (AD)        Model: Opus 5.5, effort high
 Branch: claude/ui-ad
 Owned files: docs/art/ui-quality/gate/** except gate/verdicts/, tools/ui_gate/**, docs/progress/AD.md, docs/progress/status/AD.json
-Tasks: P3-AD-preview-1 (seeded in cycle 128 for S1-R40 and S3-R34): add the result screen's offline state beside its server state to docs/art/ui-quality/gate/shots.md, as P3-S1-hc-offline-1's handoff says; render P3-S1-hc-offline-1's stills again on main and rule on its advisory gate verdict (docs/art/ui-quality/gate/verdicts/P3-S1-hc-offline-1/a4ed000e.json: Colour roles and value failed 5 of 6 on the heist in high contrast, Character presence passed 4 of 6 on the result), including whether 'Get out' keeps AD-R56's red danger plate, each fault you keep a request to the lead with a default for P3-S1-hc-offline-2; and preview P3-S3-character-5's stills (S3-R34). P3-AD-audit-1b merged in cycle 126 (06d96d05). Do not revise the judge's prompts here. See each task's done_when in docs/progress/backlog.json. Between tasks, review the stills builders send you before ready within the same cycle, every objection in one round (M12, M23), and say which objections depend on the screen's final shape (M40). Any objection you keep goes to the lead as a request with a default. O2, O2-2 and O3 were yours (report.md section 3.4); for a blind second labelling, launch a fresh subagent given only gate/rubric.md and the held-out items.
+Tasks: P3-AD-audit-2 (seeded in cycle 141, phase 3's exit, O6 at the wave's end): the second blind audit. Label the 16 items of docs/art/ui-quality/gate/audit/audit-2.md by its rules, blind: before every row is labelled, committed and pushed, do not open gate/verdicts/, the boards' verdict lines, the "Gate" paragraphs of docs/progress/requests.md or the lead's progress notes (docs/progress/lead.md, status/lead.json); the brief, the protocol, gate/rubric.md, the key frames and the golden set's form are fine. Then, and only then, preview, in a new gate/boards/preview-2.md, the stills queued for you (S1-R42, S1-R41, S3-R40, AIA2-R4, S3-R43; requests.md), each objection you keep a request to the lead with a default, and add M54 to your acks. P3-AD-preview-1 merged (2eff5f43). Do not revise the judge's prompts here. See the task's done_when in docs/progress/backlog.json. Between tasks, review the stills builders send you before ready within the same cycle, every objection in one round (M12, M23), and say which objections depend on the screen's final shape (M40). Any objection you keep goes to the lead as a request with a default. O2, O2-2 and O3 were yours (report.md section 3.4); for a blind second labelling, launch a fresh subagent given only gate/rubric.md and the held-out items.
 STOP_AT: 2026-11-18T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 3
 
