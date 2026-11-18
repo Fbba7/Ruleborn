@@ -1,0 +1,22 @@
+[
+  {
+    "task_id": "P3-S3-settings-3",
+    "sha": "7972485a7738ac5cea3f4ac762935d9f2522c1d7",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-18T00:27:00Z",
+    "item": "settings at 100% text",
+    "quality": "Hierarchy",
+    "samples": [
+      "fail",
+      "pass",
+      "pass",
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Split on the first three (one fail, two passes), so three more were taken: one fail of six, a pass (advisory). Settings has no primary, so the title must lead in grayscale: the five passes put the large near-white 'Settings' title first by size, place and contrast, with the gold A text-size buttons each about half its width and falling in behind it, the selected Access tab dark brown rather than gold, and the serif group headers outranking the row labels. The one fail found the gold A buttons the most saturated thing on screen and the cream tab strip and toggle rows heavier slabs than the small dark group-header pills. Every sample named the gold A buttons and the cream strip and rows as the close call. Still rendered at 7972485a with FIT=1 (fit ok); anchors kf-character-text200 (pass) and today-heist (fail)."
+  }
+]
