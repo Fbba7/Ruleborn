@@ -1,0 +1,19 @@
+[
+  {
+    "task_id": "P4-S2-home-purse",
+    "sha": "acb2239b137ec630e8e886b7bf8b6e6f089ec4ef",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-18T08:21:00Z",
+    "item": "home at 100% text",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Unanimous: the gold 'Collect 3.4k' button is the largest and lightest block and leads in grayscale. The experience panel beside it is dark and holds no action, and the dark purse strip, the Humming box and the small cream island pills fall in behind it. The still at acb2239b matches S2's committed home-100.png (the purse's change is at 125% text only)."
+  }
+]

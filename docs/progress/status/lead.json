@@ -1,8 +1,8 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-18T07:45:00Z",
-  "expected_next_update_by": "2026-11-18T10:45:00Z",
-  "cycle": 150,
+  "updated_at": "2026-11-18T08:25:00Z",
+  "expected_next_update_by": "2026-11-18T11:25:00Z",
+  "cycle": 151,
   "merging": null,
   "last_merged": {
     "task_id": "P3-AD-wave-board",
@@ -44,9 +44,9 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Cycle 151: S3 (session_01SNkKxo7BCcvsUE53DWANpH) takes AD-R68's title road on P3-S3-settings-4 (display_xl title over seg_track_light, no kit strip passes value-steps at a mid value), re-shoots and sends the stills to AD through the lead (a check, not a new round), then marks ready: merge settings-4 with its gate run ('settings at 100% text', Hierarchy), and the wave stands at O7 (phase 3's exit). S1 (session_01SNkKxrGVdaVPxzuPW8vwRg) builds P4-S1-heist-vault and S2 (session_01SNkKxneZ4WEHJSJUnhLjUj) builds P4-S2-home-purse; route their previews to AD. Seats: three of three under allowed_warning.",
+  "next_step": "Cycle 152: S2 (session_01SNkKxneZ4WEHJSJUnhLjUj) marks P4-S2-home-purse ready on its checks and the gate verdict of cycle 151 (gate/verdicts/P4-S2-home-purse/acb2239b.json, 'home at 100% text' Hierarchy 3/3 pass): merge it. S1 (session_01SNkKxrGVdaVPxzuPW8vwRg) marks P4-S1-heist-vault ready with its gate request ('heist at 200% text, pt_BR', Hierarchy) once S1-R44's default stands (11:30Z) or earlier: run the gate and merge. S3 (session_01SNkKxo7BCcvsUE53DWANpH) marks P3-S3-settings-4 ready with AD-R68's title road: gate run ('settings at 100% text', Hierarchy), merge, and the wave stands at O7 (phase 3's exit). AD has no seat while the cap is three; S1-R44, S2-R47 and AD-R68's check go into AD's next task. Restart any of the three idle past its update time.",
   "seen": {
-    "at": "2026-11-18T07:42:21Z",
+    "at": "2026-11-18T08:22:26Z",
     "heads": {
       "claude/3d-character-screens": "6053b249bee313648da3509142eeb2ba738bb62f",
       "claude/3d-characters": "35d6ae8f5b84a4d75636f68270848b0949c111f3",
@@ -73,9 +73,9 @@
       "claude/ui-plan": "f1affcea749d007fe1a67931bd3c1f7359d98c44",
       "claude/ui-research": "f19d5d4e5eaffff8869da3b91124d111cf1259a6",
       "claude/ui-screens": "dceb6bfcbc6c5da4e261674fe9301e1854f0aa65",
-      "claude/ui-screens-heist": "7b5328e66d873febf80ac4fceb5a3fcf6a0475dd",
-      "claude/ui-screens-home": "ebeba33c932f51e61edc966a048ee9891d0cd0cc",
-      "claude/ui-screens-meta": "b9abf2109d6111301c966de4fa00a753381b7675",
+      "claude/ui-screens-heist": "c5bf87e9e17e409cce53301532faad334ca5279f",
+      "claude/ui-screens-home": "27846b7cdd0b78ce2537c4ae0d076bb18046f260",
+      "claude/ui-screens-meta": "e0e4730b37d48ab1494a45ed0c3f0035609f14cd",
       "lead/candidate-276ed4f0": "276ed4f0623d108174022240cba14f4f0ef9f74b",
       "lead/candidate-573416ab12761b92becf0c1d3d7d7bd03e9cf7d1": "573416ab12761b92becf0c1d3d7d7bd03e9cf7d1",
       "lead/candidate-714b24ed52f56133bccc18c82cc879938b53f296": "714b24ed52f56133bccc18c82cc879938b53f296",

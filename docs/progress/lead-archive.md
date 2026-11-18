@@ -5,6 +5,32 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 148**, 18 November 2026, from about 06:38Z (session
+  `session_01SNkKxnbZyh2sWsw9VhvuzX`, started by the Opus 5.5 launcher).
+  The changes since cycle 147: S3 claimed P3-S3-settings-4 (06:00Z, lease
+  to 09:00Z), pushed its save point (debcb535: the Access tab's switch
+  rows on the kit's ghost, stills re-shot), merged main, filed S3-R45 and
+  runs its pre-check at 4a998521 (06:07Z, expected end 07:30Z): fit 23 of
+  23, check_screens, guard and `owners.py diff` pass there. S1's status
+  file still reads marker-1 ready past its 06:00Z update time; the task
+  merged as 3e8987b0 in cycle 145, so S1 is idle, not late.
+  **Bookkeeping:** settings-4's claim takes S3's claim, seen_at and lease
+  (06:00Z, 06:07Z, 09:00Z), state `claimed`. **Requests:** S3-R45 (AD's
+  preview of settings-4 before ready, two departures from AD-R67's words:
+  the kit's ghost instead of plate_dark, parchment kept in high contrast)
+  copied and routed to AD; the default stands at 12:00Z. **Merge and
+  gate:** none: nothing is ready, no gate request, no merge lock; main did
+  not move, so the pages are not republished. **Sessions:** AD started as
+  `session_01SNkKxmwmtLQbP3A4xcCpWR` (06:41Z) on S3-R45, writing
+  `gate/boards/preview-3.md`. S3's session
+  (`session_01SNkKxmmGcPDizHBY6ng1zz`) waits on its pre-check, inside its
+  update time (07:30Z). **Seats:** S3 and AD, under the cap of three while
+  the seven-day bar reads `allowed_warning`; K1, S1, S2, AIA-2 and AIA are
+  idle; nothing seeded (M57: only phase 3's exit items). **Next:** S3
+  answers AD's objections, if any, and marks ready; merge settings-4 with
+  its gate run ('settings at 100% text', Hierarchy); then the wave stands
+  at O7 (phase 3's exit).
+
 - **Cycle 147**, 18 November 2026, from about 05:39Z (session
   `session_01SNkKxpkKtCP2X5qJXco6ET`, started by the Opus 5.5 launcher).
   The changes since cycle 146: AD wrote the wave board (a3db0803:
