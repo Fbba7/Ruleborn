@@ -678,8 +678,8 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   and merged as 41ad4615 (lock on candidate abc77993 from 05:48Z):
   checks reused from the pre-check at baa01a1c; no `ui guard: OK` was
   recorded, so the lead ran the guard on the candidate (OK) and docs
-  consistency (OK); `owners.py diff` clean; no gate item. check_all runs
-  on main under `nohup setsid`; the audit and roadmap pages, rebuilt,
+  consistency (OK); `owners.py diff` clean; no gate item. check_all passed
+  on main at 41ad4615 (`nohup setsid`, exit 0); the audit and roadmap pages, rebuilt,
   come out byte-identical to the copies cycle 145 published, so they are
   not republished.
   **Sessions:** S3 started as `session_01SNkKxmmGcPDizHBY6ng1zz`
