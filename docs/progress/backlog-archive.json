@@ -5559,6 +5559,47 @@
       "updated_at": "2026-11-17T20:00:00Z",
       "updated_by": "lead (cycle 134)",
       "exceptions": []
+    },
+    {
+      "id": "P3-AD-audit-2",
+      "title": "The second blind audit (phase 3's exit, O6 at the wave's end): AD labels the 16 items of gate/audit/audit-2.md without the gate's verdicts, then the previews queued for AD (S1-R42, S1-R41, S3-R40, AIA2-R4, S3-R43)",
+      "phase": 3,
+      "role": "AD",
+      "model": "Opus 5.5",
+      "assigned_to": "AD",
+      "files": [
+        "docs/art/ui-quality/gate/**",
+        "!docs/art/ui-quality/gate/verdicts/**",
+        "tools/ui_gate/**"
+      ],
+      "deps": [],
+      "done_when": [
+        "a fresh AD session, which opens no file under docs/art/ui-quality/gate/verdicts/, no verdict line of a board, no 'Gate' paragraph of docs/progress/requests.md and no lead note on these items until every row is labelled and pushed",
+        "every one of audit-2.md's 22 rows labelled pass, fail or n/a with a one-line critique, each item rendered at its commit as the form's rules say (git worktree, bash tools/render/shoot.sh, the screen's shot script); the form committed and pushed with the labels and the time spent before any preview below; the lead scores the misses against the verdicts in the cycle after the merge",
+        "then, in one round each (M12, M23), in gate/boards/preview-2.md: S1-R42 (P3-S1-marker-1's stills, docs/art/shots/heist-pilot/part9-*.png, at S1's current sha or on main if merged), S1-R41 (P3-S1-hc-offline-2's stills on main, the high-contrast leather face), S3-R40 (P3-S3-nav-1 on main: the character's icon back, the roster's kept state, the offline notice), AIA2-R4 (crew__pip__normal's round ring in icons_48_hc) and S3-R43 (settings reopening on the last tab); every objection AD keeps goes to the lead as a request with a default, naming the screen, the file and its owner",
+        "M54 added to AD's acks in its status file",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 2.0,
+      "tier": 2,
+      "critical": false,
+      "state": "merged",
+      "claim": {
+        "agent": "AD",
+        "branch": "claude/ui-ad",
+        "claimed_at": "2026-11-18T01:25:25Z",
+        "seen_at": "2026-11-18T02:25:00Z",
+        "lease_until": "2026-11-18T04:25:25Z"
+      },
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "21c0bc04ebe39c87cb385ed96ca2d41e12a607c6",
+      "merged_sha": "07e2c13d3cb30f66b7d96cb4d04471e4347bbcdf",
+      "updated_at": "2026-11-18T02:58:00Z",
+      "updated_by": "lead (cycle 143)",
+      "exceptions": []
     }
   ],
   "idle_queue": [
