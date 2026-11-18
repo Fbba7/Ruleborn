@@ -144,7 +144,7 @@ func _layout() -> void:
 	game.add_child(_toggle("slow_rehearsals", "SETTINGS_SLOW_REHEARSALS", "playtimereminder"))
 
 	# Key frame 05: the text size and the schools' marks, then "Seeing and
-	# comfort", each switch a whole row framed on parchment.
+	# comfort", each switch a whole row, dark (parchment in high contrast).
 	access.add_child(_section("SCREEN_SETTINGS_ACCESS"))
 	access.add_child(_text_card())
 	access.add_child(_shapes())
@@ -382,12 +382,20 @@ func _stepper(icon: String, words: Label, down: Callable, up: Callable, spoken_d
 	return row
 
 
-## A switch as a whole row framed on parchment: the setting's icon, its words
-## (which say On or Off), and the switch at its end; the row is the one
-## control.
+## A switch as a whole row: the setting's icon, its words (which say On or
+## Off), and the switch at its end; the row is the one control. On parchment
+## the rows were the heaviest slabs on the access tab in the squint, over the
+## title and the gold As (audit 2, AD-R67), so they stand dark with cream
+## words, as the law's sample does since the gate at 5fc97aac, and the gold As
+## stay the tab's one lead. The dark is the kit's lesser action (`ghost`, the
+## card's violet lifted two value steps): the dark plate itself sits at the
+## night's value and fails value-steps (0.7 steps off the night; 2 needed). In
+## high contrast the rows keep parchment: there the ghost's face darkens and
+## stands 1.7 steps off the night between two rows at 200% text.
 func _toggle(setting: String, words: String, icon: String) -> Control:
 	var on := Settings.flag(setting)
-	var b := UI.action(Strings.t(words + ("_ON" if on else "_OFF")), flip.bind(setting), "parchment")
+	var look := "parchment" if Settings.high_contrast else "ghost"
+	var b := UI.action(Strings.t(words + ("_ON" if on else "_OFF")), flip.bind(setting), look)
 	b.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	# A row keeps its icon where its longest word, said either way, fits
 	# beside it; where one does not ("verschwinden" at 200%, board 5's E),
@@ -413,6 +421,12 @@ func _toggle(setting: String, words: String, icon: String) -> Control:
 		box.content_margin_right = UI.px(12 + 46 + 10)
 		b.add_theme_stylebox_override(state, box)
 	var sw := ScreenSwitch.make(on)
+	# Off, the switch's own dark-plate track would vanish on a dark row
+	# (tried and dropped at 5fc97aac), so there it takes the kit switch's off
+	# track (KitSwitch: the glass chip with its gold line, the toggle's baked
+	# track_off), and the parchment knob stands out on it.
+	if not on and look == "ghost":
+		UI.dress(sw, "chip", 999).skin_shape = "toggle/track_off"
 	sw.anchor_left = 1.0
 	sw.anchor_right = 1.0
 	sw.anchor_top = 0.5

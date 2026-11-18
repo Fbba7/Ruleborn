@@ -8,13 +8,13 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-18T06:00:00Z",
   "lease_until": "2026-11-18T09:00:00Z",
-  "updated_at": "2026-11-18T06:00:00Z",
-  "expected_next_update_by": "2026-11-18T06:45:00Z",
+  "updated_at": "2026-11-18T06:05:00Z",
+  "expected_next_update_by": "2026-11-18T06:50:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "34a1c3fd007aff2cf671482f80e94d04febd0934",
-    "next_step": "P3-S3-settings-4 claimed (AD-R67): the Access tab's switch rows onto the dark plate; main merged at e4b9bdc3.",
-    "at": "2026-11-18T06:00:00Z"
+    "next_step": "P3-S3-settings-4: switch rows on the kit's ghost (plate_dark fails value-steps on the night, 0.7 steps), parchment in high contrast; stills re-shot, all fit ok, checks.py no FAIL. Next: word contrast, checks, AD preview, pre-check.",
+    "at": "2026-11-18T06:05:00Z"
   },
   "precheck": null,
   "gate_request": null,

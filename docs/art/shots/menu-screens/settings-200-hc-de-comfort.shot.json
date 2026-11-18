@@ -1,0 +1,56 @@
+{
+ "controls": [
+  {
+   "interactive": false,
+   "name": "words 1: Sehen und Komfort",
+   "rect": [
+    30.33,
+    217.03,
+    326.44,
+    105.08
+   ]
+  },
+  {
+   "name": "switch-row 2: Hoher Kontrast: an",
+   "rect": [
+    17.33,
+    330.78,
+    352.44,
+    106.17
+   ]
+  },
+  {
+   "name": "switch-row 3: Bewegung: voll",
+   "rect": [
+    17.33,
+    445.61,
+    352.44,
+    106.17
+   ]
+  },
+  {
+   "name": "switch-row 4: Vibration: an",
+   "rect": [
+    17.33,
+    560.44,
+    352.44,
+    58.5
+   ]
+  },
+  {
+   "name": "back 5: Zurück",
+   "rect": [
+    28.17,
+    723.67,
+    192.83,
+    52.0
+   ]
+  }
+ ],
+ "frame_pt": [
+  390.0,
+  845.0
+ ],
+ "image": "settings-200-hc-de-comfort.png",
+ "text_scale": 2.0
+}

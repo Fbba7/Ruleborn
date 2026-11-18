@@ -608,9 +608,42 @@ Evidence: every render printed `fit ok`. `checks.py value-steps`, ΔL* off the c
 
 Every other control on these records passes too: the tabs at 71.5, the back button at 83.6, and the profile row at 69.2 when scrolled. `settings-account-signed-100` and `settings-account-signed-de` are new stills with their records. `settings-200-de-account-signed` and its `-900` and `-1800` are re-shot. `fit_settings.sh` now also covers the account tab at 100% signed out in pt_BR, and signed in at 100% in English, pt_BR and German. That makes 23 shots, all `fit ok` (at 100% and 200%, in English, pt_BR and German). `check_screens.py` and `guard.sh` pass.
 
+### Audit 2's hierarchy at 100% text (P3-S3-settings-4, AD-R67)
+
+Audit 2 failed the settings screen at 100% text on Hierarchy: in the grayscale squint the two cream switch rows, High contrast and Motion, were the heaviest slabs on the access tab, over the title and the gold As (the bullet "The switch rows" under "What is still worse than before" said as much). The fix, in `client/scripts/settings_screen.gd` (`_toggle`), with the kit's materials only:
+
+- **The switch rows stand dark, with cream words.** As the law's sample has since the gate at 5fc97aac, the rows leave parchment. The gold A / A stay the access tab's one lead (key frame 05, board 5's F). The title keeps its lit plate; the tab strip and Back are unchanged.
+- **The dark is the kit's lesser action, `ghost`, not `plate_dark`.** The task asked for the dark plate. Tried first, it failed `checks.py value-steps`: `plate_dark` (L* 17 to 6) sits at the night's value, 7.4 ΔL* off it, 0.7 of the 2 steps needed. `ghost` (the kit's tertiary, K01: the card's violet lifted two value steps, with the gold hairline) is the face `auth_panel.gd` already gives a lesser action on a card (AD-R43, board 5c's M). Its median L* is 44.7, 39.5 ΔL* off the night. In grayscale it reads as a mid-dark slab, well under the As (57 to 58) and the title's lit plate. Cream words on it are 7.1:1 (below).
+- **The switch's off track.** Off, `ScreenSwitch`'s own track is the dark plate, which vanished on a dark row (why the rows were left parchment at 5fc97aac). On a ghost row an off switch takes the kit switch's off track instead (`chip`, skin `toggle/track_off`, as `KitSwitch` draws it: the glass chip with its gold line), and the parchment knob stands out on it. On it is green, unchanged. `screen_switch.gd` is not changed.
+- **High contrast keeps parchment rows.** In high contrast the ghost's face darkens (L* 37.5), and at 200% in German two ghost rows stood 1.7 steps off the night (Bewegung's row at 17.1 ΔL*) where they met. Parchment passes there by far (75 to 83), the high-contrast still's lead is the gold As as before, and high contrast is where bright plates are asked for. So `_toggle` uses `ghost` only when `Settings.high_contrast` is off.
+- **The game tab too.** `_toggle` also builds the game tab's slow rehearsals row, so it is ghost now. It passes value-steps at 31.5 ΔL*; as a parchment row on the game tab's card it failed at 6.8. The steppers' six fails on the game tab (6.6 to 10.8, the card behind them) are as before.
+
+Evidence: rendered with `FIT=1 RECORD=1` and the env below, every still printed `fit ok`, and every record is unchanged (the same controls in the same rectangles). `checks.py all` has no FAIL on any of them.
+
+| Still | Env | What changed |
+|---|---|---|
+| `settings-100`, `-pt_BR`, `-de` | `TAB=access`, `LOCALE=pt_BR`, `LOCALE=de` | the switch rows ghost with cream words; an off switch on the chip track |
+| `settings-hc`, `-hc-pt_BR` | `HC=1`, `HC=1 LOCALE=pt_BR` | none from this task (rows parchment); the title's and labels' ink outline (main) |
+| `settings-200-pt_BR`, `-200-de` | `TEXT=200 LOCALE=pt_BR`, `TEXT=200 LOCALE=de` | none from this task (the rows are below the fold); the ink outline (main) |
+| `settings-200-pt_BR-comfort`, `-200-de-comfort` (new) | `TEXT=200 LOCALE=pt_BR SCROLL=2400`, `TEXT=200 LOCALE=de SCROLL=2400` | the switch rows at 200%, ghost |
+| `settings-200-hc-de-comfort` (new) | `TEXT=200 HC=1 LOCALE=de SCROLL=2400` | the switch rows at 200% in high contrast, parchment |
+
+**Changed by main, not by this task:** the high-contrast and 200% stills differ from those committed at effddd03 (P3-S3-settings-3) only on the edges of display words (the title, the tab, the group headings), up to 1.6 thousand pixels in high contrast and 15 thousand at 200%, 51 levels at most at 200%. That is the kit's outline rule merged since (P3-K1-outline-1: the ink keeps its side at twice the points it is given).
+
+`checks.py value-steps`, ΔL* off the ground:
+
+| Still | Switch rows | Tabs | As | Back |
+|---|---:|---:|---:|---:|
+| 100%, en (`settings-100`) | 39.5 and 39.5 (were 69 and 68, cream) | 71.5 | 57.9 and 57.1 | 83.6 |
+| High contrast, en | 77.0 and 75.5 | 90.5 | 75.3 | 96.2 |
+| High contrast, pt_BR | 75.0 | 90.8 | 75.3 | 96.2 |
+| 200%, pt_BR, scrolled | 28.3 and 24.1 | – | – | – |
+| 200%, de, scrolled | 27.2 and 23.1 | – | – | – |
+| 200%, de, high contrast, scrolled | 83.3, 79.5 and 76.5 | – | – | 96.2 |
+
 ### What is still worse than before
 
-- **The switch rows.** In grayscale the cream switch rows still weigh about as much as the headings above them. The switch's off track vanishes on a dark card, so they stay parchment (above).
+- **The switch rows** (superseded by P3-S3-settings-4, above: the rows are ghost, with cream words, outside high contrast). In grayscale the cream switch rows still weighed about as much as the headings above them.
 - **The tab and back words.** Key frame 05 sets them in capitals. The screen keeps the kit's sentence case (`Tokens.type_role`). Capitals would be a change to the kit's type roles, which is K1's work.
 - **The shapes in pt_BR.** At 100% text, the longer Portuguese names (Movimento, Matéria) put the six coins three to a line, not the key frame's six in one row.
 - **The fold at 200% text.** The whole law shows, but the text card runs past the window, the colour-blind card and the switches are below the fold (`SCROLL`), and the cue is a chevron with no fade, until the kit has a scroll cue (S3-R8).
