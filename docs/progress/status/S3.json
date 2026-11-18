@@ -8,13 +8,13 @@
   "task_state": "working",
   "claimed_at": "2026-11-18T01:49:12Z",
   "lease_until": "2026-11-18T04:49:12Z",
-  "updated_at": "2026-11-18T02:13:23Z",
-  "expected_next_update_by": "2026-11-18T02:58:23Z",
+  "updated_at": "2026-11-18T03:02:00Z",
+  "expected_next_update_by": "2026-11-18T03:47:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "7972485a7738ac5cea3f4ac762935d9f2522c1d7",
-    "next_step": "Claimed P3-S3-offline-1; main 14dee6ce merged. Next: the shorter pt_BR ERR_OFFLINE and the notice at full size.",
-    "at": "2026-11-18T01:49:12Z"
+    "next_step": "M59 acked: S3-R44 answered by default; AD-R66 joins the task. The stage gives the offline notice its height at large text (character_screen.gd); re-shooting the stills, then checks, pre-check and ready.",
+    "at": "2026-11-18T03:02:00Z"
   },
   "precheck": null,
   "gate_request": null,
@@ -23,7 +23,8 @@
   "acks": [
     "M26",
     "M29",
-    "M52"
+    "M52",
+    "M59"
   ],
   "requests": [
     {
