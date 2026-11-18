@@ -93,6 +93,9 @@ var hour := 12
 var follow: Array = []
 ## The crew member drawn as chosen, -1 for none.
 var chosen := -1
+## The pixels by which the heist's follow frame stands the island higher,
+## so a large text's HUD leaves the vault in sight (0 keeps §21.1's framing).
+var lift := 0.0
 ## The crew members standing where a guard can see them, by index.
 var in_sight := {}
 
@@ -517,6 +520,8 @@ func _frame_camera() -> void:
 	# it, the island stands a little below the middle, sky above it and the
 	# crew's row over its near edge.
 	camera.v_offset = cam_size * 0.07 if following else 0.0
+	if following:
+		camera.v_offset -= lift * cam_size / maxf(1.0, size.y)
 	if heist and not landing_marks.is_empty():
 		# While the landing picker's card covers the lower screen, the realm
 		# sits above it.

@@ -1,0 +1,19 @@
+[
+  {
+    "task_id": "P3-S1-marker-1",
+    "sha": "520793761853473f6a96fb08bd6d53ff813ae232",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-18T04:36:00Z",
+    "item": "heist at 200% text, pt_BR",
+    "quality": "Display type",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes. The headline figures (the 2:25 timer, the Alarme 0/6 count and the Espaço 508 loot total) carry a thick dark outline, a hard drop and a gradient fill, and the outline scaled with the 200% text. Every other word (LEIS AQUI, the crew names, Intruso!, COFRE, Lançar, Fugir) sits on a plate or card, and no glyph is clipped or covered by a map marker. All three samples found the candidate at least as strong as the pass anchor, whose 'Laws here' sits unoutlined over the sky. Still rendered at 52079376 with FIT=1 (fit ok); anchors plant-heist-dim (pass) and today-heist (fail)."
+  }
+]

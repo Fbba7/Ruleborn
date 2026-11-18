@@ -2,8 +2,8 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026. Phase 2 started on 12 November 2026 (lead cycle 70): P1-AD-board-1d let board 1 stand and phase 1's other exit criteria hold (report.md section 3.2); its first tasks are the flow findings (S1, S2) and board 1's note G (AIA-2), within the same cap of three. Since 12 November 2026, about 20:00Z, the cap is four UI builders by the owner's order (CLAUDE.md order 3; three while the seven-day bar reads allowed_warning). Phase 3 (polish and harden, report.md step 12) started on 17 November 2026 (lead cycle 118) under M49: every phase 2 task was merged by 06:55Z, the exit review ran in cycle 118 (boards 3, 4 and 5 stand, board 2 waits on the deferred icon batch 4 by D13 (c), the exceptions queue is empty, every screen passes the gate but result at 200% pt_BR, Hierarchy, which P3-S1-result-7 takes), and the first blind audit (O6) is carried into phase 3 as P3-AD-audit-1. Phase 3 draws from the 20-hour reserve; it exits when no board has an open objection, the second blind audit is done and the wave board (O7) stands.",
   "wave": "UI wave",
   "phase": 3,
-  "updated_at": "2026-11-18T01:40:00Z",
-  "updated_by": "lead (cycle 141)",
+  "updated_at": "2026-11-18T05:00:00Z",
+  "updated_by": "lead (cycle 145)",
   "stop_at": "2026-11-18T21:00:00Z",
   "lease_hours": 3,
   "status_every_minutes": 45,
@@ -239,13 +239,15 @@
         "client/scripts/heist_hud.gd",
         "client/tests/shots/screen_heist.gd",
         "client/tests/heist_fx_tests.gd",
-        "docs/art/tracks/heist-pilot.md"
+        "docs/art/tracks/heist-pilot.md",
+        "client/world/world_view.gd"
       ],
       "deps": [
         "P3-S1-hc-offline-2"
       ],
       "done_when": [
         "AD-R55 (flow board 2's F9, docs/art/ui-quality/gate/boards/flow-2.md, granted in cycle 123): the heist's HUD (HeistHud, the loot panel, the hand and every control) draws above every map marker and world draw (a sentry beam's hourglass included) at every text size, language and contrast mode, so at 200% pt_BR the loot panel's 'Espaço' reads whole; the order is set once in the screen's layer order, not by moving the marker; a world file outside this task's files is a request to the lead with a default",
+        "S1-R43 (granted in cycle 143): client/world/world_view.gd joins this task's files for one public var `lift` (pixels the heist's follow frame stands the island higher; 0 keeps the framing) and its use in _frame_camera only; no other change in that file",
         "a test in client/tests/heist_fx_tests.gd that mounts the heist at 200% text and finds no world marker drawing above the HUD (by draw order or z_index against the HUD's), failing on main's order",
         "'heist at 100% text', 'heist at 200% text, pt_BR' and 'heist in high contrast' still passing; FIT=1 runs of the heist shot at 200% text in en, pt_BR and de and in high contrast all passing, each run listed in the handoff",
         "AD previews the stills before ready (M10, M12, M23): the builder sends them to AD while the work can still change, and AD's objections are answered in this task",
@@ -268,20 +270,20 @@
       "estimate_h": 1.0,
       "tier": 2,
       "critical": false,
-      "state": "claimed",
+      "state": "merged",
       "claim": {
         "agent": "S1",
         "branch": "claude/ui-screens-heist",
         "claimed_at": "2026-11-18T00:30:00Z",
-        "seen_at": "2026-11-18T00:50:00Z",
-        "lease_until": "2026-11-18T03:30:00Z"
+        "seen_at": "2026-11-18T03:25:16Z",
+        "lease_until": "2026-11-18T06:22:00Z"
       },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null,
-      "updated_at": "2026-11-18T01:20:00Z",
-      "updated_by": "lead (cycle 141)",
+      "ready_sha": "520793761853473f6a96fb08bd6d53ff813ae232",
+      "merged_sha": "3e8987b0",
+      "updated_at": "2026-11-18T05:00:00Z",
+      "updated_by": "lead (cycle 145)",
       "exceptions": [
         "docs/art/shots/heist-pilot/**"
       ]
@@ -331,21 +333,27 @@
       "estimate_h": 1.0,
       "tier": 2,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "merged",
+      "claim": {
+        "agent": "S3",
+        "branch": "claude/ui-screens-meta",
+        "claimed_at": "2026-11-18T01:49:12Z",
+        "seen_at": "2026-11-18T04:06:00Z",
+        "lease_until": "2026-11-18T07:05:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null,
-      "updated_at": "2026-11-17T23:55:00Z",
-      "updated_by": "lead (cycle 140)",
+      "ready_sha": "34a1c3fd007aff2cf671482f80e94d04febd0934",
+      "merged_sha": "3559ec39",
+      "updated_at": "2026-11-18T05:00:00Z",
+      "updated_by": "lead (cycle 145)",
       "exceptions": [
         "docs/art/shots/menu-screens/**"
       ]
     },
     {
-      "id": "P3-AD-audit-2",
-      "title": "The second blind audit (phase 3's exit, O6 at the wave's end): AD labels the 16 items of gate/audit/audit-2.md without the gate's verdicts, then the previews queued for AD (S1-R42, S1-R41, S3-R40, AIA2-R4, S3-R43)",
+      "id": "P3-AD-wave-board",
+      "title": "The wave board (O7, phase 3's exit): AD lays out the five screens before and after, the frame strips, draw calls and texture memory per screen and the gate's pass counts, then lets the wave stand or names each re-work",
       "phase": 3,
       "role": "AD",
       "model": "Opus 5.5",
@@ -355,17 +363,19 @@
         "!docs/art/ui-quality/gate/verdicts/**",
         "tools/ui_gate/**"
       ],
-      "deps": [],
+      "deps": [
+        "P3-S1-marker-1",
+        "P3-S3-offline-1"
+      ],
       "done_when": [
-        "a fresh AD session, which opens no file under docs/art/ui-quality/gate/verdicts/, no verdict line of a board, no 'Gate' paragraph of docs/progress/requests.md and no lead note on these items until every row is labelled and pushed",
-        "every one of audit-2.md's 22 rows labelled pass, fail or n/a with a one-line critique, each item rendered at its commit as the form's rules say (git worktree, bash tools/render/shoot.sh, the screen's shot script); the form committed and pushed with the labels and the time spent before any preview below; the lead scores the misses against the verdicts in the cycle after the merge",
-        "then, in one round each (M12, M23), in gate/boards/preview-2.md: S1-R42 (P3-S1-marker-1's stills, docs/art/shots/heist-pilot/part9-*.png, at S1's current sha or on main if merged), S1-R41 (P3-S1-hc-offline-2's stills on main, the high-contrast leather face), S3-R40 (P3-S3-nav-1 on main: the character's icon back, the roster's kept state, the offline notice), AIA2-R4 (crew__pip__normal's round ring in icons_48_hc) and S3-R43 (settings reopening on the last tab); every objection AD keeps goes to the lead as a request with a default, naming the screen, the file and its owner",
-        "M54 added to AD's acks in its status file",
+        "docs/art/ui-quality/gate/boards/wave.md and its folder gate/boards/wave/ (report.md section 3.4, O7, and section 3.6): the five screens (home, heist, result, character, settings) on main before the wave (the stills of report.md's baseline, or main at the wave's start rendered with bash tools/render/shoot.sh) and after (main now), at 100% and 200% text and in high contrast, at phone size and in grayscale; the frame strips of the motion families (tools/ui_gate/sheet.py); draw calls and texture memory per screen from python3 tools/ui_bake/budget_shots.py against tools/ui_bake/budgets.json; the colour-blindness simulation of every atlas (report.md section 10); and the counts of items passing the gate, per screen and quality, from gate/verdicts/ (the wave board is not blind)",
+        "the open items weighed against section 3.6's target, each with AD's ruling: audit 2's one miss (P3-S3-settings-3, settings at 100% text, Hierarchy: the gold A/A text-size buttons louder than the title, which the gate passed 5 of 6); board 2's wait on the deferred icon batches 3 and 4 (D13 (c)); D6 (a)'s two icon styles side by side; and every board's open objection, if any is left",
+        "a ruling at the top of wave.md: the wave stands, or each item that must be re-worked is a request to the lead with a default, naming the screen, the file and its owner (ranked against phase 3's exit under M57)",
         "bash tools/check_all.sh"
       ],
       "gate_items": [],
       "attempts": 0,
-      "estimate_h": 2.0,
+      "estimate_h": 1.0,
       "tier": 2,
       "critical": false,
       "state": "open",
@@ -374,8 +384,8 @@
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-18T01:40:00Z",
-      "updated_by": "lead (cycle 141)",
+      "updated_at": "2026-11-18T05:00:00Z",
+      "updated_by": "lead (cycle 145)",
       "exceptions": []
     },
     {
@@ -1183,6 +1193,30 @@
       "sent_at": "2026-11-17T23:53:00Z",
       "ack_by": "2026-11-18T01:53:00Z",
       "acked_at": "2026-11-18T01:40:00Z"
+    },
+    {
+      "id": "M58",
+      "to": "S1",
+      "text": "From cycle 142: AD-R65 (AD's preview 2, docs/art/ui-quality/gate/boards/preview-2.md) joins your running P3-S1-marker-1 as an objection of its AD preview, to answer before ready: at large text the heist's opening frame keeps the vault and its label inside the map band, between the loot panel's foot and the crew tray's top edge, in en, pt_BR and de ('COFRE' and 'TRESOR' read whole); the HUD's order stays as marker-1 sets it; the heist's TEXT=200 stills in pt_BR and de join the evidence. Your files cover it (heist_screen.gd, screen_heist.gd). If you have already marked ready when you read this, say so in your handoff and the lead seeds it as your follow-up task after the merge. Add M58 to your acks.",
+      "sent_at": "2026-11-18T02:20:00Z",
+      "ack_by": "2026-11-18T04:20:00Z",
+      "acked_at": "2026-11-18T02:50:00Z"
+    },
+    {
+      "id": "M59",
+      "to": "S3",
+      "text": "From cycle 142: S3-R44 is answered with its default: AD has no objection to the stills as named; mark ready at the pre-checked sha and AD re-checks them on the merge. AD-R66 (AD's preview 2) joins your running P3-S3-offline-1 as an objection of its AD preview, to answer before ready: while offline at large text the stage gives the notice its height so the ability header ('HABILIDADE', 'FÄHIGKEIT') stays above the foot in en, pt_BR and de; the roster keeps its notice as is; OFFLINE=1 TEXT=200 in pt_BR and de stays in your stills. Your files cover it (character_screen.gd, screen_character.gd). Add M59 to your acks.",
+      "sent_at": "2026-11-18T02:20:00Z",
+      "ack_by": "2026-11-18T04:20:00Z",
+      "acked_at": "2026-11-18T02:53:46Z"
+    },
+    {
+      "id": "M60",
+      "to": "S1",
+      "text": "From cycle 143: S1-R43 is granted with its default: client/world/world_view.gd joins P3-S1-marker-1's files (backlog updated) for the one public var `lift` and its use in _frame_camera only (camera.v_offset -= lift * cam_size / size.y while following); make no other change in that file. heist_screen.gd (through HeistHud) computes the lift on the opening frame from the band and holds it, 0 at 100% text; the TEXT=200 stills in en, pt_BR and de and the test in heist_fx_tests.gd that the vault's plate sits inside the band are the evidence. Then answer AD-R65 in your handoff and mark ready as M58 says. Add M60 to your acks.",
+      "sent_at": "2026-11-18T02:50:00Z",
+      "ack_by": "2026-11-18T04:50:00Z",
+      "acked_at": "2026-11-18T03:25:16Z"
     }
   ]
 }

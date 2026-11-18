@@ -5,6 +5,10 @@ extends RefCounted
 ## follow camera's span, taps and gestures, the law effects and reduced
 ## motion — all checked headless, from the nodes the screens build.
 
+const HEIST := "res://scenes/heist_screen.tscn"
+## The orders that spread the crew to sneak (the heist shot's "sneak" moment).
+const SNEAK := [[4, 9], [3, 10], [4, 11]]
+
 var tree: SceneTree
 var check: Callable
 
@@ -43,6 +47,8 @@ func run() -> void:
 	await tree.process_frame
 	await _models(replay)
 	await _entry_card()
+	await _layers()
+	await _vault_band()
 	_planned()
 
 
@@ -295,7 +301,7 @@ func _models(replay: RulebornReplay) -> void:
 func _entry_card() -> void:
 	var maker := WorldView.figure_maker
 	App.services.store.dispatch(&"heist_started", {})
-	var screen: HeistScreen = load("res://scenes/heist_screen.tscn").instantiate()
+	var screen: HeistScreen = load(HEIST).instantiate()
 	tree.root.add_child(screen)
 	await tree.process_frame
 	screen.set_process(false)
@@ -327,6 +333,133 @@ func _entry_card() -> void:
 	check.call("landing in a realm, or crossing into the next, shows its name on a card for about two seconds, and a "
 			+ "heist of one island shows none (15.3, 5.4)", none and shown and HeistScreen.ENTRY_SECONDS <= 3.0,
 		"%s %s %s" % [none, shown, words])
+
+
+## AD-R55 (flow board 2's F9): at 200% text the loot panel grows down over
+## the map, so the heist mounted as the app mounts it (the kit's layers on, as
+## UI.root_theme() puts them) has every part of its HUD, panel faces and
+## words, drawn above every layer of the world, the markers' and marks' layer
+## (FxAnchors) included; and the loot's flying coins over the HUD.
+func _layers() -> void:
+	var maker := WorldView.figure_maker
+	var scale := Settings.text_scale
+	UI.root_theme()
+	Settings.text_scale = 200
+	App.services.store.dispatch(&"heist_started", {})
+	var screen: HeistScreen = load(HEIST).instantiate()
+	tree.root.add_child(screen)
+	await tree.process_frame
+	screen.set_process(false)
+	screen.controller.land_here()
+	screen.controller.advance(60)
+	screen._refresh()
+	await tree.process_frame
+	var world := _z_span(screen.view)
+	var hud := Vector2i(RenderingServer.CANVAS_ITEM_Z_MAX, RenderingServer.CANVAS_ITEM_Z_MIN)
+	for c: Node in screen.get_children():
+		if c is MarginContainer:
+			var span := _z_span(c as CanvasItem)
+			hud = Vector2i(mini(hud.x, span.x), maxi(hud.y, span.y))
+	var coins := true
+	if not Settings.reduced_motion:
+		screen.hud.fly_coins(Vector2(100, 900), 1)
+		var coin := screen.hud.get_child(screen.hud.get_child_count() - 1) as CanvasItem
+		coins = coin != null and coin.top_level and _z_of(coin) > hud.y
+	screen.queue_free()
+	await tree.process_frame
+	Settings.text_scale = scale
+	WorldView.figure_maker = maker
+	check.call("at 200% text no marker or mark of the world draws above the heist's HUD: the world's layers, its "
+			+ "markers' included, all stand under the HUD's lowest, and the loot's coins fly over it (AD-R55)",
+		world.y < hud.x and coins, "world z %d..%d, HUD z %d..%d, coins %s" % [world.x, world.y, hud.x, hud.y, coins])
+
+
+## AD-R65: at 200% text the heist's opening frame keeps the vault and its
+## tag inside the map band, between the loot panel's foot and the crew
+## tray's top edge, in en, pt_BR and de (the HUD over the markers, AD-R55,
+## would otherwise cover 'COFRE' and 'TRESOR').
+func _vault_band() -> void:
+	var scale := Settings.text_scale
+	var locale := TranslationServer.get_locale()
+	UI.root_theme()
+	var ok := true
+	var seen: Array[String] = []
+	# Each locale at 200%, and en at 100%, where the frame keeps §21.1's
+	# framing (no lift).
+	for case: Array in [[200, "en"], [200, "pt_BR"], [200, "de"], [100, "en"]]:
+		var lang: String = case[1]
+		Settings.text_scale = case[0]
+		Settings.apply()
+		Strings.set_locale(lang)
+		# AD-R65's moment: WorldTests' island, the crew spread to sneak and
+		# played in steps to tick 150, as the shot of preview-2 has it.
+		App.services.store.dispatch(&"heist_started", {"island": WorldTests.island(), "testing": true})
+		var screen: HeistScreen = load(HEIST).instantiate()
+		tree.root.add_child(screen)
+		await tree.process_frame
+		screen.set_process(false)
+		screen.controller.land_here()
+		for i in SNEAK.size():
+			var t: Array = SNEAK[i]
+			screen.controller.world.give(i, HeistController.Kind.MOVE_TO, int(t[0]) * 256 + 128, int(t[1]) * 256 + 128)
+		var v := screen.view
+		for k in 15:
+			screen.controller.advance(10)
+			screen._refresh()
+			v._process(1.0 / 3.0)
+		# The landing's drop played out, as it has by the time the player looks.
+		if v._intro != null:
+			v._intro.kill()
+		v._zoom_f = float(v.zoom)
+		for i in 4:
+			await tree.process_frame
+		var at := v.anchors.get_global_rect().position.y
+		var plate: Rect2 = v.anchors._vault_plate
+		var top := screen.hud.loot_panel.get_global_rect().end.y - at
+		var foot := screen.actions_band.get_global_rect().position.y - at
+		var base := v.camera.unproject_position(v.world_at(v.replay.vault()["at"])).y
+		ok = ok and plate.has_area() and plate.position.y >= top and maxf(plate.end.y, base) <= foot \
+				and (case[0] > 100 or v.lift == 0.0)
+		seen.append("%d%% %s tag %d..%d, vault %d, band %d..%d, lift %d" % [case[0], lang, plate.position.y,
+			plate.end.y, base, top, foot, v.lift])
+		screen.queue_free()
+		await tree.process_frame
+	Strings.set_locale(locale)
+	Settings.text_scale = scale
+	Settings.apply()
+	check.call("at 200% text the heist's opening frame keeps the vault and its tag inside the map band, between the "
+			+ "loot panel's foot and the crew tray's top edge, in en, pt_BR and de; at 100% the frame is not lifted "
+			+ "(AD-R65)", ok, "; ".join(seen))
+
+
+## The lowest and highest z a drawn canvas item under `n` (itself included)
+## draws at on `n`'s canvas (a sub-viewport's own canvas is drawn into its
+## picture, at the z of the container that shows it).
+func _z_span(n: CanvasItem) -> Vector2i:
+	var out := Vector2i(RenderingServer.CANVAS_ITEM_Z_MAX, RenderingServer.CANVAS_ITEM_Z_MIN)
+	var items: Array[Node] = [n]
+	items.append_array(n.find_children("*", "CanvasItem", true, false))
+	for c: Node in items:
+		var item := c as CanvasItem
+		if item == null or not item.is_visible_in_tree() or item.get_canvas() != n.get_canvas():
+			continue
+		var z := _z_of(item)
+		out = Vector2i(mini(out.x, z), maxi(out.y, z))
+	return out
+
+
+## The z `item` draws at: its own, plus its parents' while it is relative to
+## them (a top-level item stands on the canvas itself).
+static func _z_of(item: CanvasItem) -> int:
+	var z := 0
+	var at: Node = item
+	while at is CanvasItem:
+		var c := at as CanvasItem
+		z += c.z_index
+		if not c.z_as_relative or c.top_level:
+			break
+		at = c.get_parent()
+	return z
 
 
 ## The HUD's shapes gather into one triangle array (FxPen): circles, arcs,

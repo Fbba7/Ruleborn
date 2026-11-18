@@ -49,6 +49,10 @@ func _go() -> void:
 	frame.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	root.add_child(frame)
 	App.services = Fixtures.answered(Services.build(frame, "", null, "user://outbox-shot.json"))
+	# The kit's layers on before the screen is built, as the app has them by
+	# the time it opens the heist (AD-R55: the world's marker layer is lifted
+	# with them, so the still shows the order the player sees).
+	UI.root_theme()
 	if OS.get_environment("LOCALE") != "":
 		Strings.set_locale(OS.get_environment("LOCALE"))
 	if OS.get_environment("TEXT") != "":
