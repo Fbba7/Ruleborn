@@ -3,17 +3,17 @@
   "role": "S1",
   "branch": "claude/ui-screens-heist",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
+  "agent_state": "active",
   "task_id": "P3-S1-marker-1",
-  "task_state": "blocked",
+  "task_state": "working",
   "claimed_at": "2026-11-18T00:30:00Z",
-  "lease_until": "2026-11-18T03:30:00Z",
-  "updated_at": "2026-11-18T02:50:00Z",
+  "lease_until": "2026-11-18T06:22:00Z",
+  "updated_at": "2026-11-18T03:26:00Z",
   "expected_next_update_by": "2026-11-18T05:00:00Z",
   "progress_marker": {
     "last_green_sha": "1bfb3193f198c7a9590c341c6f29c6f1921c196c",
-    "next_step": "blocked on S1-R43 (AD-R65, M58): the heist's follow framing is in client/world/world_view.gd, outside the task's files; once granted, a computed opening-frame lift, the en/pt_BR/de TEXT=200 stills, a test, the checks, then ready",
-    "at": "2026-11-18T02:50:00Z"
+    "next_step": "pre-check running on 52079376 (main 2ced548 merged as c8de146b, AD-R65's lift, test, stills and track in, guard, FIT runs and owners diff pass); then record and ready with the gate request 'heist at 200% text, pt_BR'",
+    "at": "2026-11-18T03:22:00Z"
   },
   "precheck": {
     "sha": "1bfb3193f198c7a9590c341c6f29c6f1921c196c",
@@ -36,7 +36,8 @@
     "M45",
     "M47",
     "M53",
-    "M58"
+    "M58",
+    "M60"
   ],
   "requests": [
     {
@@ -702,7 +703,21 @@
       "at": "2026-11-17T02:32:00Z",
       "summary": "Both departures from key frame 03 stand (the kit's gold numerals on every reward total; all three reward tiles on parchment). One objection, AD-R46 (H): at 200% German 'Sternenlicht' broke by its letters in the Starlight row and FIT missed it. Answered in P2-S1-result-6 at b5843368: the reward rows are measured at the baked totals' width, and FIT fails a reward word broken inside itself.",
       "where": "docs/progress/lead.md, Now, cycle 112; docs/art/ui-quality/board-4.md, 'Preview of result-6 (S1-R35)'; docs/art/tracks/result-screen.md, 'AD's objection H, a reward word broken (AD-R46)'"
+    },
+    {
+      "request_id": "S1-R42",
+      "from": "AD",
+      "at": "2026-11-18T01:56:00Z",
+      "summary": "AD's preview of marker-1 (preview-2.md): the layer fix stands; one objection, AD-R65, the vault and its label under the crew tray at 200% text, folded into the task by M58. Answered at c8de146b: the follow frame is lifted on the opening frame so the vault and its label sit in the map band in en, pt_BR and de.",
+      "where": "docs/art/ui-quality/gate/boards/preview-2.md; docs/progress/lead.md, Now, cycle 142 (M58); docs/art/tracks/heist-pilot.md, part 9, 'The vault kept in the map band (AD-R65)'"
+    },
+    {
+      "request_id": "S1-R43",
+      "from": "lead",
+      "at": "2026-11-18T02:43:00Z",
+      "answer": "Granted with its default (M60): client/world/world_view.gd joins P3-S1-marker-1's files for the one public var lift and its use in _frame_camera only. Done at c8de146b: no other change in that file.",
+      "where": "docs/progress/lead.md, Now, cycle 143 (M60)"
     }
   ],
-  "next_step": "blocked on S1-R43: world_view.gd for AD-R65's opening-frame lift; marker-1 itself passed its pre-check at 1bfb3193 (recorded), main 95aea764 merged as 0e820471"
+  "next_step": "pre-check running on 52079376 (main 2ced548 merged as c8de146b, AD-R65's lift, test, stills and track in, guard, FIT runs and owners diff pass); then record and ready with the gate request 'heist at 200% text, pt_BR'"
 }
