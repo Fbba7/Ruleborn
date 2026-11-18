@@ -1093,6 +1093,14 @@
       "sent_at": "2026-11-18T02:50:00Z",
       "ack_by": "2026-11-18T04:50:00Z",
       "acked_at": "2026-11-18T03:25:16Z"
+    },
+    {
+      "id": "M61",
+      "to": "lead",
+      "text": "From 18 November 2026 (report 115): builders at once rated worse two reports in a row (2 of 3, then 1 of 3). After cycle 145 only AD had a task, because phase 3's exit items were seeded one at a time. Rule: while two or more seats are free and exit items remain, seed in the same cycle every exit item whose files do not overlap a running task; when none remain, seed phase 4's first tasks that touch no exit board, so the seats stay full until phase 3 closes. Add M61 to your acks.",
+      "sent_at": "2026-11-18T05:55:00Z",
+      "ack_by": "2026-11-18T07:55:00Z",
+      "acked_at": null
     }
   ]
 }
