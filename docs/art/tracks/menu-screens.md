@@ -88,6 +88,22 @@ The lead's gate on f5719f28 (`docs/art/ui-quality/gate/verdicts/P2-S3-settings/f
 
 An advisory self-check on the new stills (one isolated judge per failed item, with the calibration's anchors) passed all three: Display type at 100% and at 200% in pt_BR, and Hierarchy at 200% in pt_BR. Its Hierarchy note is that "Ajustes" leads by less than the golden set's `kf-settings-text200`.
 
+### The tab kept for the session (P3-S3-settings-3, AD-R52)
+
+- **What changed.** Settings opened on the game tab every time, so a player who had just set larger text on the access tab came back to the game tab. It now reopens on the tab last chosen in this session (game, access or account). `SettingsScreen.last_tab` is a `static var` on the script, set when a tab is chosen. It lives in memory only and is never written to Settings' file, so a fresh start opens on game. The router and the app's store are untouched (S2's and the app's files), so this needed no request outside the task.
+- **The tab columns are named** `TabGame`, `TabAccess` and `TabAccount`, so a test can tell which one is shown. No shot record names them, and the eleven records re-shot are byte-identical.
+- **The mount test** is `client/tests/settings_tab_tests.gd`, called from `run.gd` in one line, because `run.gd` stands at gdlint's 1000 lines (S3-R42, as K1-R24 to K1-R26 did). Through the router it opens settings and finds game shown. It then chooses access with the tab's own button, goes home, opens settings again and finds access shown, and does the same for account. Settings' file holds no tab. Without the line that keeps the tab, the test fails ("opened on game, game, game"), so it tests the change.
+
+Evidence: client tests 436 of 436. Every settings still was re-shot with the change, and it renders pixel-identical to main's `settings_screen.gd` in all four stills compared (100%, 200% German, high contrast, and the signed-in account tab at `SCROLL=1800`). Each shot sets its tab in a fresh process, so the stills cannot show the change. Five of the committed stills were already identical. Nine were stale against main, and are re-shot. Both of their changes are K1's P3-K1-polish-1 (`97ab424e`), not this task's:
+
+| Still | What moved | Why |
+|---|---|---|
+| `settings-100`, `-pt_BR`, `-de`, `-hc`, `-hc-pt_BR` | the text size readout ("100%") a little softer | numerals mipmapped |
+| `settings-200-pt_BR`, `-200-de` | the same, on "200%" | numerals mipmapped |
+| `settings-200-de-account-signed-900`, `-1800` | the device cards keep their violet face when scrolled | a scrolled panel keeps its face |
+
+The records and every other pixel are unchanged. `fit_settings.sh` prints `fit ok` for all 23 shots. `check_screens.py` and `guard.sh` pass.
+
 ### What is still worse than before
 
 - **The law card's preview has no frame.** `law_screen.gd` seats the preview in `ScreenKit.panel("well", preview, 16.0, 3.0)`. The track skin drew a dark rim round it; the well skin's rim is soft and 3 points of padding leave it under the picture, so the picture's edges fade into the green card. `law_screen.gd` is not this task's; it is in S3-R2 for AD to judge, and a fix (more padding, or the kit's `frame_*` look) is a request to the lead.
@@ -316,7 +332,7 @@ AD's navigation audit found the character screen's back was its own parchment ch
 - **The mount test (AD-R50).** `client/tests/run.gd` opens every route of `Router.ROUTES` that is not a tab through the router, finds the buttons that carry `ScreenNav`'s "back" meta, asks for exactly one on each, presses it and checks the router lands on the route's back route. Fourteen routes have no back yet (`NO_BACK` in `run.gd`, S3-R38): heist, result, age and first keep none by design; the other ten are their owners' screens and move onto `ScreenNav` in their owners' tasks. The test covers the ten routes that have one.
 - **AD-R51, the roster kept.** The roster hands the character screen what it showed (`RosterScreen.kept()`: the chosen character on the stage, the filter and the scroll), the character screen carries it through its prev and next arrows, and its back hands it back. The roster restores the chosen character and the filter at once, and the scroll once the list has its height (up to four frames). A mount test in `run.gd` scrolls the roster, chooses a character, opens one, goes back and asks for the same scroll and the same chosen character.
 - **AD-R63, information, not alarm.** `ERR_OFFLINE` ("no server is set") is set with `UI.set_status(status_label, "info", …)` on the roster and the character screen (`RosterScreen.plain`), so it shows in the info ink with the ⓘ glyph on the cream plate. Red with "!" stays for real refusals (`RosterScreen.failed` keeps `"error"` for any other code).
-- **AD-R64, one line at large text.** At large text the offline notice is one line: `RosterScreen._one_line` shrinks its words until they fit the plate's width, no smaller than the body's 100% size, and sets the full sentence as the label's `accessibility_name`. In pt_BR at 200% that is about 122% (S3-R39: the shrink stays unless the words are shortened in `client/i18n/strings.csv`, which this task does not own).
+- **AD-R64, one line at large text.** At large text the offline notice is one line: `RosterScreen._one_line` shrinks its words until they fit the plate's width, no smaller than the body's 100% size, and sets the full sentence as the label's `accessibility_name`. In pt_BR at 200% that is about 122% (S3-R39: the shrink stays unless the words are shortened in `client/i18n/strings.csv`, which this task does not own). *Superseded by P3-S3-offline-1 (below): the words are shortened and the shrink is gone.*
 - **The record.** `screen_character.gd`'s record names the back by `ScreenNav`'s "back" meta, so it reads "back 5: Back" ("back 5: Roster" before), rather than "button 5".
 - **Settings is not on `ScreenNav`'s back.** Flow board 2's F4 says settings uses `ScreenNav.back_button`, the dock's "« Back". It does not: `settings_screen.gd` builds its own labelled parchment "« Back" (with the "back" meta, so AD-R50's test counts it). The character screen now wears what the other `ScreenNav` screens wear, the icon button, not settings' labelled one (S3-R40 asks AD which it wants).
 
@@ -331,6 +347,54 @@ Rendered on this task's code with `FIT=1` (and `RECORD=1` for the recorded ones)
 - **Not this task's:** the notice's cream plate draws in the status bar's band, as it did before this task (P3-S3-character-5).
 - **Tests:** in `client/tests/run.gd`, AD-R50's mount test passes on the ten routes with a back, and AD-R51's passes. AD-R51's was proved by mutation: with the character screen's back going to the roster without the kept state, it fails ("left as chosen 6, scroll 240, came back as chosen -1, scroll 0").
 - **Fit check:** `fit_character.sh` (lesson M26, every fixture state, now with the offline notice at 100% in English and at 200% in pt_BR and de): 53 shots of 53 `fit ok` (exit 0).
+
+### The offline notice at full size (P3-S3-offline-1)
+
+S3-R39 left the offline notice shrunk at large text: "nenhum servidor configurado" did not fit the plate's one line at 200%, so `RosterScreen._one_line` set it at about 122% in pt_BR (and shrank de's "kein Server eingestellt" too). This task shortens the reason and drops the shrink.
+
+- **The words (`client/i18n/strings.csv`, `ERR_OFFLINE`).** en and en_US keep "no server is set". Each language that missed one line at 200% changes to a shorter plain phrase with the en meaning:
+  - pt_BR: "nenhum servidor configurado" → "sem servidor";
+  - pt_PT: "nenhum servidor definido" → "sem servidor";
+  - de: "kein Server eingestellt" → "kein Server";
+  - fr: "aucun serveur n'est défini" → "aucun serveur".
+  At 100% the whole sentence still shows and wraps as before ("O plantel não mudou: sem servidor"). No other file used the old strings. `node art/ui/keyframes/build_words.mjs` was rerun: `art/ui/keyframes/words.js` comes out byte for byte the same, because the key frames do not use `ERR_OFFLINE`. `check_keyframes.mjs` prints "key frame checks passed" (M34).
+- **The shrink is gone (`client/scripts/roster_screen.gd`).** `_one_line` and its `resized` hook are removed. At large text, `RosterScreen.failed` sets the reason alone in the info ink with ⓘ at the player's text size, on one line, with no autowrap. The whole sentence stays the label's `accessibility_name` (AD-R64). The label keeps word trimming so the plate takes the screen's width, not the words' width. `screen_character.gd`'s fit check fails any words that would be trimmed. `character_screen.gd` calls the same `RosterScreen.plain` and `failed`, so it needs no change.
+- **The widths at 200% text, full size,** measured in the shot at the render's pixel scale. The plate's label is 924 px wide (333.67 points):
+
+  | language | notice | width |
+  |---|---|---|
+  | en, en_US | ⓘ no server is set | 829 px |
+  | fr | ⓘ aucun serveur | 791 px |
+  | pt_BR, pt_PT | ⓘ sem servidor | 725 px |
+  | de | ⓘ kein Server | 647 px |
+
+  Before this task, at full size, pt_BR was 1513 px and de was 1182 px. Every language now fits, so the track names none that misses.
+
+#### Evidence
+
+Rendered on this task's code with `FIT=1` (and `RECORD=1` for the recorded stills), using the env of Part 2's tables and of P3-S3-nav-1's evidence. Every character still printed `fit ok`. The roster shot has no fit mode; its three offline stills were checked by eye against main's.
+
+- **Changed by this task, the notice (four stills):**
+  - `character-offline-200-pt_BR.png` and `character-offline-200-de.png`: the notice is on one line at full size ("ⓘ sem servidor", "ⓘ kein Server"), no longer shrunk. The plate is 47.67 points tall, and everything under it moves down 10.47 points (the arrows from y 178.39 to 188.86, for example). The tabs and Level up stay on the first screen. At full size the notice is back in both records, as "words 1", so the later entries are numbered one higher.
+  - `roster-offline-200-pt_BR.png` and `roster-offline-200-de.png`: the same notice at full size, with the tabs and the card about 13 points lower.
+  - Hierarchy in pt_BR at 200% is unchanged: the name, the stage and Level up lead as before, and the notice is one information line in ink on cream.
+- **Changed by main, not by this task:** every character still that is not offline (`character-100`, `-100-de`, `-100-pt_BR`, `-100-stats`, `-100-compare`, `character-hc`, `-hc-pt_BR`, `character-200-{en,pt_BR,de}`, `-200-{en,pt_BR,de}-4`, `-200-pt_BR-scrolled`, `-200-pt_BR-stats`, `-200-pt_BR-compare`), plus `character-offline.png` and `roster-offline.png` at 100%. They render pixel for pixel the same on main 14dee6ce's code as on this branch. Their difference from the committed stills comes from main's work since P3-S3-nav-1 shot them: the kit's outline rule and back face (P3-K1-outline-1). Their records are unchanged. The notice at 100% was never shrunk and is the same sentence in en.
+- **Fit check:** `fit_character.sh` (lesson M26, every fixture state, including the offline notice at 100% in English and at 200% in pt_BR and de): 53 shots of 53 ok (exit 0). `check_screens.py`: OK. gdlint on `roster_screen.gd`: the same 18 long lines as before the task, none new.
+
+#### AD-R66: the stage gives the notice its height
+
+AD's preview of this task (M59) found that, offline at 200%, the notice at full size pushed the ability header ("HABILIDADE", "FÄHIGKEIT") under the fixed foot with Level up. `client/scripts/character_screen.gd` now makes room for it:
+
+- **The stage gives the notice its height.** In `_refresh`, when the load failed at large text and the notice shows, the stage's height drops by the notice's own height plus the column's gap (`_give`). Everything under the stage then sits where it does online: in pt_BR the tabs are at y 474.5 points in both records, and the ability header is above the foot in en, pt_BR and de. With no notice, or at 100%, `_give` is 0 and nothing changes.
+- **The pills give up the status bar's band.** Under the notice the stage is no longer under the status bar, so the count's and state's pills move from 44 points down to 8 points from the stage's top.
+- **The arrows centre under the count's pill**, in their own margin below it, not on top of it as they would on the shorter stage.
+- **The character is framed a little higher** (the stage's `headroom` is -0.08 there, 0.08 elsewhere), so its face and ears stay clear between the notice and the name's plate.
+- **The roster keeps its notice as is** (M59). OFFLINE=1 TEXT=200 in pt_BR and de stays in the stills.
+
+Evidence, rendered with `FIT=1 RECORD=1` on this code:
+
+- **Changed:** `character-offline-200-pt_BR.png` and `character-offline-200-de.png`, with their records. The stage is shorter, the arrows move up from y 188.86 to 157.81 points, and the name's plate moves up from y 232.92 to 154.92, where it is online. In de the tabs are at y 479.92 and the sub-line at 294.31, as online too. The tabs and the ability header come back into view above Level up, which stays where it was. An en render with the same env (not a committed still) shows the same layout with "ⓘ no server is set".
+- **Unchanged, pixel for pixel and record for record:** the other 20 character and roster stills, including every online still at 200% (`character-200-{en,pt_BR,de}` and their `-4`, `-scrolled`, `-stats` and `-compare`). So the gate item 'character at 200% text, pt_BR' (Hierarchy) shows the same still as before.
 
 ## Part 3: the settings screen (P2-S3-settings)
 

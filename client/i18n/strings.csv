@@ -189,7 +189,7 @@ RESULT_PLAY_NOT_COUNTED,This play does not count as a clear of the island,This p
 RESULT_KEEPER,+%s Keeper experience,+%s Keeper experience,+%s de experiência de Guardião,+%s de experiência de Guardião,+%s Hüter-EP,+%s d'expérience de Gardien
 RESULT_KEEPER_UP,Keeper %d reached,Keeper %d reached,Guardião %d alcançado,Guardião %d alcançado,Hüter %d erreicht,Gardien %d atteint
 ERR_UNKNOWN,something went wrong (%s),something went wrong (%s),algo deu errado (%s),algo correu mal (%s),etwas ist schiefgelaufen (%s),un problème est survenu (%s)
-ERR_OFFLINE,no server is set,no server is set,nenhum servidor configurado,nenhum servidor definido,kein Server eingestellt,aucun serveur n'est défini
+ERR_OFFLINE,no server is set,no server is set,sem servidor,sem servidor,kein Server,aucun serveur
 ERR_UNREACHABLE,the server could not be reached,the server could not be reached,não foi possível falar com o servidor,não foi possível contactar o servidor,der Server war nicht erreichbar,le serveur est injoignable
 ERR_TIMEOUT,the server took too long to answer,the server took too long to answer,o servidor demorou demais para responder,o servidor demorou demasiado a responder,der Server hat zu lange gebraucht,le serveur a mis trop de temps à répondre
 ERR_REQUEST_FAILED,the request could not be sent,the request could not be sent,não foi possível enviar o pedido,não foi possível enviar o pedido,die Anfrage konnte nicht gesendet werden,la requête n'a pas pu être envoyée

@@ -7,6 +7,12 @@ class_name KitNav
 
 ## The base frame's width in points (1080 pixels at 3 a point, tokens.json).
 const PHONE_POINTS := 360.0
+## How much the back button's leather face is brightened (S3-R41): in
+## standard contrast its maroon at L* 24 becomes about 53, and high
+## contrast's at 37 about 53, each two value steps (20 L*) off the night's
+## lightest stop (30.4) and so off every dock; the arrow keeps 3:1 on it.
+const BACK_LIFT := 2.4
+const BACK_LIFT_HC := 1.45
 
 
 ## A screen's header: an optional kicker in capitals above its title in
@@ -36,9 +42,13 @@ static func rule() -> Control:
 
 
 ## The back button: a round leather button with the designs' back arrow,
-## named for a screen reader.
+## named for a screen reader. Its leather face is lifted (BACK_LIFT) so it
+## stands two value steps off the night of every dock (S3-R41).
 static func back(pressed: Callable) -> Button:
-	return KitControls.icon_button("generalui/back", Strings.t("KIT_BACK"), pressed)
+	var b := KitControls.icon_button("generalui/back", Strings.t("KIT_BACK"), pressed)
+	var lift := BACK_LIFT_HC if Tokens.high_contrast else BACK_LIFT
+	RbBox.of(b).modulate = Color(lift, lift, lift)
+	return b
 
 
 ## The hub's segmented control (the designs' sub-tab strip): a dark track

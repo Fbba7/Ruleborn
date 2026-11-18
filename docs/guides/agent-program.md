@@ -750,6 +750,16 @@ as a backlog message.
 | A candidate failed its first attempt in cycle 116: S1's branch had committed a copy of the lead's verdict for result 6 and four more files in `docs/art/ui-quality/gate/verdicts/`, outside the task's files, and the batched merge stopped on an add/add conflict | Builders never commit under the gate's verdict folder; the pre-check runs `owners.py diff` on the task against main, so a file outside the task's list fails before ready, not at the merge | Sent to the lead as M48 |
 | Builders at once rated worse two reports in a row (1 of 4, then 0 of 4). Every phase 2 task merged at 06:55 on 17 November, 14 hours before stop_at, and M33's limit on seeding left all four seats idle | When every task of a phase is merged before its stop_at, the phase closes then: the lead moves stop_at to now, runs the exit review and seeds the next phase's first tasks in the same cycle | Sent to the lead as M49 |
 
+## Lessons from UI phase 3
+
+Rows are added as the phase runs, each sent to the agent that can act on it as a backlog message.
+
+| What happened | The rule it led to | Now |
+|---|---|---|
+| Wait from ready to merged rated worse two reports in a row (2.1h, then 3.0h). Three tasks sat ready 2.9 to 4.1 hours behind P3-AIA2-bake-1, because the shared icons_256 bake differed between machines and failed the guard from cycle 134 to cycle 136 | A guard failure on a generated file the task does not change is an infra blocker: the lead seeds its fix to the file's owner as critical in the same cycle, the fix proves a byte-identical rebake on a second machine before ready, and the held tasks merge in one batch in the cycle the fix merges | Sent to the lead as M56 |
+| Reserve hours used rated worse two reports in a row (23h, then 29.5h of 20h) | Before seeding more requests, the lead ranks the remaining ones against the phase's exit criteria, moves the rest to the next phase's list and writes the revised reserve in lead.md, "Now" | Sent to the lead as M57 |
+| Builders at once rated worse two reports in a row (2 of 3, then 1 of 3). After cycle 145 only AD had a task: phase 3's exit items were seeded one at a time | While two or more seats are free and exit items remain, the lead seeds in the same cycle every exit item whose files do not overlap a running task; when none remain, it seeds phase 4's first tasks that touch no exit board | Sent to the lead as M61 |
+
 ## Waves, progress files and stills
 
 **Waves.** Work happens in *waves*: a stretch of hours in which a set of

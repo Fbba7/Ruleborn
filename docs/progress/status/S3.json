@@ -4,31 +4,27 @@
   "branch": "claude/ui-screens-meta",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P3-S3-nav-1",
-  "task_state": "claimed",
-  "claimed_at": "2026-11-17T18:30:00Z",
-  "lease_until": "2026-11-17T21:30:00Z",
-  "updated_at": "2026-11-17T19:47:00Z",
-  "expected_next_update_by": "2026-11-17T20:30:00Z",
+  "task_id": "P3-S3-offline-1",
+  "task_state": "working",
+  "claimed_at": "2026-11-18T01:49:12Z",
+  "lease_until": "2026-11-18T04:49:12Z",
+  "updated_at": "2026-11-18T03:02:00Z",
+  "expected_next_update_by": "2026-11-18T03:47:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "3053cf6d8fddacb5e9c4b6b05235eb99d3746e1e",
-    "next_step": "Main dacde49b merged at 095e95b4 (lead files only); setup, client/build.sh and guard exit 0 there, owners diff passes; tools/check_all.sh running; then the handoff evidence, the pre-check and ready",
-    "at": "2026-11-17T19:47:00Z"
+    "last_green_sha": "7972485a7738ac5cea3f4ac762935d9f2522c1d7",
+    "next_step": "M59 acked: S3-R44 answered by default; AD-R66 joins the task. The stage gives the offline notice its height at large text (character_screen.gd); re-shooting the stills, then checks, pre-check and ready.",
+    "at": "2026-11-18T03:02:00Z"
   },
-  "precheck": {
-    "sha": "3053cf6d8fddacb5e9c4b6b05235eb99d3746e1e",
-    "exit": 0,
-    "finished_at": "2026-11-17T16:54:36Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-18T21:00:00Z",
   "acks": [
     "M26",
     "M29",
-    "M52"
+    "M52",
+    "M59"
   ],
   "requests": [
     {
@@ -732,7 +728,7 @@
       "due": "2026-11-17T21:00:00Z",
       "default": "The stills stand as named: the character keeps the kit's icon back (ScreenNav.back_button, as AD-R50 asks), and the task goes ready at the pre-checked sha.",
       "escalate_to": "lead",
-      "state": "open"
+      "state": "answered"
     },
     {
       "id": "S3-R41",
@@ -748,7 +744,58 @@
       "due": "2026-11-18T19:00:00Z",
       "default": "The character keeps the kit's back as it is; the value-steps FAIL stands named in the track and the records; nothing is loosened.",
       "escalate_to": "lead",
-      "state": "open"
+      "state": "answered"
+    },
+    {
+      "id": "S3-R42",
+      "from": "S3",
+      "to": "lead",
+      "ask": "P3-S3-settings-3 touches two paths outside its files: client/tests/settings_tab_tests.gd and its .uid. client/tests/run.gd stands at 998 lines on main, by gdlint's 1000, so AD-R52's mount test (settings opened through the router, access shown, home, settings again; the same for account; a first open on game; no tab in Settings' file) lives in this helper, as K1-R24's to K1-R26's did, and run.gd calls it in one line after _back_routes. owners.py diff names the two paths until they join the task's exceptions (M48).",
+      "files": [
+        "client/tests/settings_tab_tests.gd",
+        "client/tests/settings_tab_tests.gd.uid"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-17T23:03:24Z",
+      "due": "2026-11-18T05:03:24Z",
+      "default": "Granted, as K1-R24 to K1-R26 were: the two paths join P3-S3-settings-3's exceptions; S3 marks ready once owners.py diff passes with them.",
+      "escalate_to": "lead",
+      "state": "answered"
+    },
+    {
+      "id": "S3-R43",
+      "from": "S3",
+      "to": "lead",
+      "ask": "For AD, a preview before the gate (P3-S3-settings-3, AD-R52): settings now reopens on the tab last shown in the session. The stills cannot show that (each shot sets its tab in a fresh process), and the change renders pixel-identical to main's settings_screen.gd. Nine settings stills were stale against main and are re-shot: settings-100, -pt_BR, -de, -hc, -hc-pt_BR, -200-pt_BR and -200-de have a softer text-size readout (K1's numerals mipmapped, 97ab424e), and settings-200-de-account-signed-900 and -1800 have device cards that keep their violet face when scrolled (97ab424e). Records unchanged; table in docs/art/tracks/menu-screens.md, 'The tab kept for the session'. Gate item: settings at 100% text, Hierarchy.",
+      "files": [
+        "docs/art/shots/menu-screens/settings-100.png",
+        "docs/art/tracks/menu-screens.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T23:28:54Z",
+      "due": "2026-11-18T05:28:54Z",
+      "default": "AD has no objection: the stills change only by K1's kit work already on main; the gate judges settings-100 as it stands.",
+      "escalate_to": "lead",
+      "state": "answered"
+    },
+    {
+      "id": "S3-R44",
+      "from": "S3",
+      "to": "lead",
+      "ask": "For AD, a preview before ready (P3-S3-offline-1, AD-R64): the offline notice no longer shrinks at large text. ERR_OFFLINE is shorter in pt_BR and pt_PT ('sem servidor'), de ('kein Server') and fr ('aucun serveur'). At 200% it stands at full size on one line in every language (widths: en 829, fr 791, pt 725, de 647 of 924 px), and the whole sentence stays its accessibility_name. Four stills change because of this task: character-offline-200-pt_BR and -de (the plate is 47.67 pt and everything under it moves down 10.47 pt; the tabs and Level up stay on the first screen), and roster-offline-200-pt_BR and -de. The other character stills and the two 100% offline stills were re-shot too. Each renders pixel-identical to main's code (P3-K1-outline-1's outline and back face), and their records are unchanged. Table in docs/art/tracks/menu-screens.md, 'The offline notice at full size'. Gate item: character at 200% text, pt_BR (Hierarchy).",
+      "files": [
+        "docs/art/shots/menu-screens/character-offline-200-pt_BR.png",
+        "docs/art/shots/menu-screens/character-offline-200-de.png",
+        "docs/art/shots/menu-screens/roster-offline-200-pt_BR.png",
+        "docs/art/shots/menu-screens/roster-offline-200-de.png",
+        "docs/art/shots/menu-screens/character-200-pt_BR.png",
+        "docs/art/tracks/menu-screens.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-18T02:13:23Z",
+      "due": "2026-11-18T08:13:23Z",
+      "default": "AD has no objection: the stills stand as named, S3 marks ready at the pre-checked sha, and AD re-checks them on the merge.",
+      "escalate_to": "lead"
     }
   ],
   "answers": [

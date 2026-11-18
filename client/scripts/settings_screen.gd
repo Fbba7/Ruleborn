@@ -57,6 +57,11 @@ const DROP_POINTS := 4.0
 ## window cuts through the row instead, above the cue.
 const SNAP_POINTS := 48.0
 
+## The tab a player last chose in this session (AD-R52): settings reopens on
+## it. It lives in memory only, on the script, never in Settings' file, so a
+## fresh start opens on "game".
+static var last_tab := "game"
+
 var volume_labels := {}
 var text_label: Control
 var list_scroll: ScrollContainer
@@ -65,7 +70,7 @@ var list_scroll: ScrollContainer
 var scroll_cue: Control
 var snap_queued := false
 ## The tab on show: "game" (language, sound, play), "access" or "account".
-var tab_shown := "game"
+var tab_shown := last_tab
 
 
 func _ready() -> void:
@@ -108,6 +113,7 @@ func _layout() -> void:
 	var access := VBoxContainer.new()
 	var account := VBoxContainer.new()
 	for tab: VBoxContainer in [game, access, account]:
+		tab.name = "Tab" + ["Game", "Access", "Account"][[game, access, account].find(tab)]
 		tab.add_theme_constant_override("separation", UI.px(Tokens.number("size", "gap_points")))
 	list.add_child(game)
 	list.add_child(access)
@@ -313,6 +319,7 @@ func _tabs() -> Control:
 		var open := key == tab_shown
 		var b := UI.action(words, func() -> void:
 			tab_shown = key
+			last_tab = key
 			_build(), "seg_on_light" if open else "seg_light", words)
 		b.add_theme_font_size_override("font_size", UI.text_px(14))
 		b.set_meta("points", 14.0)

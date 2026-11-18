@@ -1,0 +1,19 @@
+[
+  {
+    "task_id": "P3-S3-offline-1",
+    "sha": "34a1c3fd007aff2cf671482f80e94d04febd0934",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-18T04:37:00Z",
+    "item": "character at 200% text, pt_BR",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Three passes, on the online and offline states together. In grayscale and in colour, the gold full-width 'Subir de nível' card at the foot leads by size, place and saturation, as the pass anchor's Level up card does. The gold arrows and the NV badge are half its size or less and fall in behind it, and the cream tab strip weighs what it does on the anchor. Offline, the cream 'sem servidor' notice stands at full size at the top. It holds information and no action and is smaller than the Level up card, so by the version 3 ruling it is no second primary. Every sample named that notice as the close call. Stills rendered at 34a1c3fd with FIT=1, online and with OFFLINE=1 (fit ok on both); anchors kf-character-text200 (pass) and today-heist (fail). Hierarchy is owner-checked: AD's boards stay its check."
+  }
+]

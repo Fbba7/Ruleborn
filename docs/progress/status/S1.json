@@ -3,19 +3,24 @@
   "role": "S1",
   "branch": "claude/ui-screens-heist",
   "model": "Opus 5.5",
-  "agent_state": "active",
-  "task_id": "P3-S1-hc-offline-1",
-  "task_state": "claimed",
-  "claimed_at": "2026-11-17T13:30:00Z",
-  "lease_until": "2026-11-17T16:30:00Z",
-  "updated_at": "2026-11-17T14:20:00Z",
-  "expected_next_update_by": "2026-11-17T15:05:00Z",
+  "agent_state": "waiting",
+  "task_id": "P3-S1-marker-1",
+  "task_state": "blocked",
+  "claimed_at": "2026-11-18T00:30:00Z",
+  "lease_until": "2026-11-18T03:30:00Z",
+  "updated_at": "2026-11-18T02:50:00Z",
+  "expected_next_update_by": "2026-11-18T05:00:00Z",
   "progress_marker": {
-    "last_green_sha": null,
-    "next_step": "Track docs and handoff written; S1-R39 (budget raises) and S1-R40 (AD preview) filed; next check_screens, pre-check, owners diff, gate request, main merge (M11, M13)",
-    "at": "2026-11-17T14:20:00Z"
+    "last_green_sha": "1bfb3193f198c7a9590c341c6f29c6f1921c196c",
+    "next_step": "blocked on S1-R43 (AD-R65, M58): the heist's follow framing is in client/world/world_view.gd, outside the task's files; once granted, a computed opening-frame lift, the en/pt_BR/de TEXT=200 stills, a test, the checks, then ready",
+    "at": "2026-11-18T02:50:00Z"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "1bfb3193f198c7a9590c341c6f29c6f1921c196c",
+    "exit": 0,
+    "finished_at": "2026-11-18T02:32:26Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-18T21:00:00Z",
@@ -29,7 +34,9 @@
     "M41",
     "M44",
     "M45",
-    "M47"
+    "M47",
+    "M53",
+    "M58"
   ],
   "requests": [
     {
@@ -606,8 +613,8 @@
         "tools/ui_bake/budgets.json"
       ],
       "blocking": false,
-      "created_at": "2026-11-17T14:20:00Z",
-      "due": "2026-11-18T14:20:00Z",
+      "created_at": "2026-11-17T13:59:00Z",
+      "due": "2026-11-18T13:59:00Z",
       "default": "The lead approves the three raises at the merge of P3-S1-hc-offline-1 (they close AD-R56 and AD-R57) and records them with a raises entry. If refused, a follow-up S1 task shows the offline crew by role with no faces (result/100 about 92, result/hc about 33) and keeps Pause on the card (heist/hc 122), at the cost of AD-R57's portraits and AD-R56's 20 dL* on Pause.",
       "escalate_to": "lead"
     },
@@ -620,9 +627,51 @@
         "docs/art/ui-quality/gate/shots.md"
       ],
       "blocking": false,
-      "created_at": "2026-11-17T14:20:00Z",
+      "created_at": "2026-11-17T13:59:00Z",
       "due": "2026-11-18T12:00:00Z",
       "default": "With no answer by the due time, the task stays ready and the lead's gate run judges the stills; any objection AD raises later is answered in a follow-up S1 task.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R41",
+      "from": "S1",
+      "to": "AD",
+      "ask": "Through the lead: preview of P3-S1-hc-offline-2's stills before ready (the task's done_when), for AD-R60 to AD-R62. Render them from claude/ui-screens-heist (no stills are committed): env FIT=1 CONTRAST=1 bash tools/render/shoot.sh client/tests/shots/screen_heist.gd heist_hc.png; the same with TEXT=200 LOCALE=pt_BR; env FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_heist.gd heist_100.png; and MANIFEST=1 with and without CONTRAST=1 (one cast left: gold again). The dL* table is in docs/art/tracks/heist-pilot.md part 8: the lowest control step is Walk's, 29.0; a spent Cast and Get out are 31.5 off the tray. One departure to judge: in high contrast the leather is the kit atlas's own face, flat #7A4660 (L* 36.7) inside a black ink line with no amber rim, not #6A3E52 with the amber rim. The shader cannot recolour an atlas face, so the exact face needs a high-contrast leather face from K1 (client/ui/, K1's files).",
+      "files": [
+        "client/ui/"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-17T17:50:00Z",
+      "due": "2026-11-18T18:00:00Z",
+      "default": "The kit's high-contrast leather face (#7A4660, ink line) stands: it is 4.6 L* further off the tray than #6A3E52. The task goes ready, and the lead's gate run judges the stills. Any objection AD raises later is answered in a follow-up S1 task. The alternative, if AD asks: a request to K1 for a high-contrast leather face, flat #6A3E52 with the amber rim.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R42",
+      "from": "S1",
+      "to": "AD",
+      "ask": "Through the lead: a preview of P3-S1-marker-1's stills before ready (the task's done_when), for AD-R55 (flow board 2's F9). Committed on claude/ui-screens-heist: docs/art/shots/heist-pilot/part9-before-flow-200-pt.png and part9-after-flow-200-pt.png (the gate's flow walk, FLOW=result TEXT=200 LOCALE=pt_BR, step 03: the hourglass over 'Espaço' before, 'Espaço' whole after) and part9-heist-200-pt.png. Render the rest from the branch: env FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_heist.gd heist_100.png; the same with TEXT=200 LOCALE=pt_BR, TEXT=200 LOCALE=de and CONTRAST=1. The HUD's columns now stand one overlay above the world's marker layer; the guards' words (Speech) stay above the HUD, as before. docs/art/tracks/heist-pilot.md part 9 has the detail.",
+      "files": [
+        "docs/art/shots/heist-pilot/"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-18T00:50:00Z",
+      "due": "2026-11-18T12:00:00Z",
+      "default": "With no answer by the due time, the task stays ready and the lead's gate run judges the stills; any objection AD raises later is answered in a follow-up S1 task.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R43",
+      "from": "S1",
+      "to": "lead",
+      "ask": "For AD-R65 (M58), folded into P3-S1-marker-1: please add client/world/world_view.gd to the task's files (no task in flight owns it; precedent M50, universe_pins.gd). The vault's place on the heist's opening frame is set by WorldView._frame_camera, not by heist_screen.gd: the follow camera centres on the crew (_follow_point) and drops the scene by camera.v_offset = cam_size * 0.07, so at 200% text, where the loot panel and the crew tray leave a narrow map band, the vault and its label land under the tray. From the task's files there is no clean way to move it: an outside nudge to the camera after _frame_camera desyncs FxAnchors (labels and bubbles are projected in the same _process), and shrinking the view's rect changes the aspect and so the scale, and moves the vignette, the alarm edges and the bubbles' clamp. A prototype with a constant lift (140 and 170 still pixels) shows lifting the follow frame brings the vault into the band, but no constant suits en, pt_BR and de: at 170 'COFRE' goes under the loot panel, and at 140 'TRESOR' is under it too. The plan, once granted: one public var in world_view.gd, `var lift := 0.0` (pixels the heist's follow frame stands the island higher; 0 keeps the framing), applied in _frame_camera as camera.v_offset -= lift * cam_size / size.y while following, so the anchors stay in step; heist_screen.gd (through a HeistHud helper, since the screen is at 999 lines) computes it on the opening frame from the band (loot panel's foot, tray's top) and the vault's projected label and dome, 0 when the vault already fits (100% text), then holds it. Evidence: the TEXT=200 stills in en, pt_BR and de, plus a test in heist_fx_tests.gd that the vault's plate sits inside the band.",
+      "files": [
+        "client/world/world_view.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-18T02:50:00Z",
+      "due": "2026-11-18T05:00:00Z",
+      "default": "With no answer by the due time, client/world/world_view.gd is granted to P3-S1-marker-1 for the one public lift var and its use in _frame_camera only; S1 makes no other change in that file.",
       "escalate_to": "lead"
     }
   ],
@@ -655,5 +704,5 @@
       "where": "docs/progress/lead.md, Now, cycle 112; docs/art/ui-quality/board-4.md, 'Preview of result-6 (S1-R35)'; docs/art/tracks/result-screen.md, 'AD's objection H, a reward word broken (AD-R46)'"
     }
   ],
-  "next_step": "P3-S1-hc-offline-1: FIT series, guard.sh, track docs and handoff, AD preview, pre-check, gate request"
+  "next_step": "blocked on S1-R43: world_view.gd for AD-R65's opening-frame lift; marker-1 itself passed its pre-check at 1bfb3193 (recorded), main 95aea764 merged as 0e820471"
 }

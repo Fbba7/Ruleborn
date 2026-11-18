@@ -72,7 +72,7 @@ static func text(words: String, points: float, role := "words", material := "car
 	var spec := Tokens.material(look(material))
 	if spec.has("text_outline"):
 		l.add_theme_color_override("font_outline_color", spec["text_outline"][0])
-		l.add_theme_constant_override("outline_size", UI.px(spec["text_outline"][1]))
+		l.add_theme_constant_override("outline_size", KitHud.stroke_px(spec["text_outline"][1]))
 	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	l.set_meta("bold", role in ["words", "number"])
 	l.set_meta("own_ink", true)
@@ -83,7 +83,7 @@ static func text(words: String, points: float, role := "words", material := "car
 ## a fill: at 1.5 points or more they are measured against the outline.
 static func inked(l: Label, points := OUTLINE_POINTS) -> Label:
 	l.add_theme_color_override("font_outline_color", INK)
-	l.add_theme_constant_override("outline_size", UI.px(points * 2.0))
+	l.add_theme_constant_override("outline_size", KitHud.stroke_px(points * 2.0))
 	return l
 
 
