@@ -877,8 +877,8 @@ func _fit_amounts() -> void:
 	var baked := true
 	var row := 2 if Settings.text_scale >= 150 else 3
 	# Two rows from 125% where the row of three cannot fit at its least (S2-R44).
-	if row == 3 and Settings.text_scale > 100 and amounts.size() >= row and not HomeParts.amounts_fit_at_all(
-			amounts, HomeParts.purse_pills(pills, row), HomeParts.row_room(purse, row, PURSE_GAP_LEAST), BAKED_LEAST, AMOUNT_LEAST):
+	if row == 3 and Settings.text_scale > 100 and amounts.size() >= row and not HomeParts.amounts_fit_at_all(amounts,
+			HomeParts.purse_pills(pills, 3), HomeParts.row_room(purse, 3, PURSE_GAP_LEAST), BAKED_LEAST, AMOUNT_LEAST):
 		row = 2
 	if amounts.size() >= row:
 		var fit := HomeParts.amounts_fit(amounts.slice(0, row), HomeParts.purse_pills(pills, row),
