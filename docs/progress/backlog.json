@@ -234,18 +234,18 @@
         }
       ],
       "id": "P3-S2-back-1",
-      "merged_sha": null,
+      "merged_sha": "58a9a197",
       "model": "Opus 5.5",
       "phase": 3,
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
+      "ready_sha": "4e9114ac",
       "role": "S2",
-      "state": "working",
+      "state": "merged",
       "tier": 2,
       "title": "One go-back for the app: Android's back and Escape go to the router, each route to its back route, home asks before quitting (AD-R48)",
-      "updated_at": "2026-11-17T19:50:00Z",
-      "updated_by": "lead (cycle 134)"
+      "updated_at": "2026-11-18T00:12:00Z",
+      "updated_by": "lead (cycle 140)"
     },
     {
       "id": "P3-K1-outline-1",
