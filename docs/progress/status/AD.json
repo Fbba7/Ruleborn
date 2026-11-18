@@ -3,21 +3,26 @@
   "role": "AD",
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P3-AD-audit-2",
-  "task_state": "claimed",
+  "task_state": "ready",
   "claimed_at": "2026-11-18T01:25:25Z",
   "lease_until": "2026-11-18T04:25:25Z",
-  "updated_at": "2026-11-18T02:10:00Z",
-  "expected_next_update_by": "2026-11-18T02:55:00Z",
+  "updated_at": "2026-11-18T02:25:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "885fae508787b78733a3104049c6de78c4c3ae13",
     "next_step": "render and judge the five queued previews (S1-R42, S1-R41, S3-R40, AIA2-R4, S3-R43) into gate/boards/preview-2.md"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "21c0bc04ebe39c87cb385ed96ca2d41e12a607c6",
+    "exit": 0,
+    "finished_at": "2026-11-18T02:23:42Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "21c0bc04ebe39c87cb385ed96ca2d41e12a607c6",
   "stop_at": "2026-11-18T21:00:00Z",
   "acks": [
     "M12",
@@ -1127,6 +1132,6 @@
       "answer": "Preview of P3-S3-settings-3's last tab on main, one round. Stands: static var last_tab held in memory only, a fresh start opens on 'game', test settings_tab_tests.gd. No objection. Write-up and stills: docs/art/ui-quality/gate/boards/preview-2.md, part 5."
     }
   ],
-  "next_step": "Pre-check with tools/run_checks.sh and check_all.sh, owners diff, then mark ready.",
-  "last_update": "Preview 2 pushed (03b03967); AD.md rewritten; pre-check running on the commit with AD.md."
+  "next_step": "Waiting for the lead: score audit 2, merge P3-AD-audit-2, then the next AD task (P3-S3-offline-1's preview, with AD-R66).",
+  "last_update": "P3-AD-audit-2 ready at 21c0bc04: blind audit 2 labelled (22 rows, 16 pass, 6 fail; 8fe155f4), preview 2 written (all five stand; AD-R65 for S1, AD-R66 for S3, both M40-dependent); pre-check PASS (All checks passed., exit 0); owners.py diff passes."
 }
