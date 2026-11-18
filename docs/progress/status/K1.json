@@ -4,18 +4,23 @@
   "branch": "claude/ui-bake",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P3-K1-tabs-1",
+  "task_id": "P3-K1-outline-1",
   "task_state": "working",
-  "claimed_at": "2026-11-17T13:05:00Z",
-  "lease_until": "2026-11-17T16:05:00Z",
-  "updated_at": "2026-11-17T14:17:00Z",
-  "expected_next_update_by": "2026-11-17T15:02:00Z",
+  "claimed_at": "2026-11-17T21:10:20Z",
+  "lease_until": "2026-11-18T03:00:00Z",
+  "updated_at": "2026-11-17T23:55:00Z",
+  "expected_next_update_by": "2026-11-18T00:40:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "6fcf88ba",
-    "next_step": "pre-check on the handoff commit, owners.py diff, ready"
+    "last_green_sha": null,
+    "next_step": "K1-R28 granted (cycle 140): main merged, overlay_landing.gd:248 through KitHud.outline_px (271acb2); client tests, guard, check_all and the pre-check next"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "f9e15600d6f27703375a79e1e3e7ae19ebdb9681",
+    "exit": 0,
+    "finished_at": "2026-11-18T00:20:26Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-18T21:00:00Z",
@@ -47,14 +52,14 @@
       "id": "K1-R4",
       "from": "K1",
       "to": "lead",
-      "ask": "P0-K1-contract-2 (AD-R5) leaves two of kit-spec.md section 2.1's values pending owner decisions, as O2.md allows. Please add two entries to the owner's decision brief (docs/decisions/brief.json, then python3 tools/build_brief.py --check), drafted in docs/progress/K1.md under 'Draft brief entries (K1-R4)': (1) success words on a dark surface: §21.8's #3FBF7F measures Lc 54-55 on the dark card (43 on the backdrop's #2C3AA8) against the Lc 60 bold words under 36 points need, and ink on the green fill Lc 57.5; options (a) lighter success words on dark, #8FF0A8, (b) keep §21.8: green words only at 36 points and over on the card, smaller ones as ink on the fill; recommend (a). (2) the menus' backdrop: the designs' sub-screens draw a radial (#2E1F5E, #140C30, #0A0620), §21.2 says '#171046 to #2C3AA8'; options (a) §21.2's linear values, (b) change §21.2 to the designs' radial; recommend (a). If brief.json is not the lead's to edit, forward this to its owner.",
+      "ask": "P0-K1-contract-2 (AD-R5) leaves two of kit-spec.md section 2.1's values pending owner decisions, as O2.md allows. Please add two entries to the owner's decision brief (docs/decisions/brief.json, then python3 tools/build_brief.py --check), drafted in docs/progress/K1.md under 'Draft brief entries (K1-R4)': (1) success words on a dark surface: \u00a721.8's #3FBF7F measures Lc 54-55 on the dark card (43 on the backdrop's #2C3AA8) against the Lc 60 bold words under 36 points need, and ink on the green fill Lc 57.5; options (a) lighter success words on dark, #8FF0A8, (b) keep \u00a721.8: green words only at 36 points and over on the card, smaller ones as ink on the fill; recommend (a). (2) the menus' backdrop: the designs' sub-screens draw a radial (#2E1F5E, #140C30, #0A0620), \u00a721.2 says '#171046 to #2C3AA8'; options (a) \u00a721.2's linear values, (b) change \u00a721.2 to the designs' radial; recommend (a). If brief.json is not the lead's to edit, forward this to its owner.",
       "files": [
         "docs/decisions/brief.json"
       ],
       "blocking": false,
       "created_at": "2026-10-31T02:15:00Z",
       "due": "2026-11-02T22:00:00Z",
-      "default": "No brief entry; kit-spec.md keeps both rows marked pending with O2.md's interim rulings (#3FBF7F at 36 points and over on the card, else ink on the green fill; §21.2's linear backdrop), and P0-K1-kitskin writes tokens.json to those interim values",
+      "default": "No brief entry; kit-spec.md keeps both rows marked pending with O2.md's interim rulings (#3FBF7F at 36 points and over on the card, else ink on the green fill; \u00a721.2's linear backdrop), and P0-K1-kitskin writes tokens.json to those interim values",
       "escalate_to": "lead"
     },
     {
@@ -395,6 +400,37 @@
       "due": "2026-11-17T16:40:00Z",
       "default": "Granted, as K1-R24 and K1-R25 were: client/tests/shots/ui_kit_polish.gd is one of P3-K1-polish-2's exceptions in backlog.json",
       "escalate_to": "lead"
+    },
+    {
+      "id": "K1-R27",
+      "from": "K1",
+      "to": "lead",
+      "ask": "P3-K1-outline-1 (S3-R35) makes the kit read outline_size as Godot draws it, a quarter a side, and the a11y every-word test and the heist's world-words check now count an outline by that reading. Six lines outside the task's files still set a token's side as the whole outline_size, so their words no longer count as inked and those two tests fail (432 of 434): client/ui/rb_theme.gd:128 and :169 (the kickers, 'TERRAIN EDITOR' 4.97:1 on #2c3aa8); client/scripts/ui.gd:174 (world_words, the heist check), :405 and :413 (tab_active's words, 'All \u00b7 5' 4.49:1 on #6a5af0; the green pills 'Hush', '\u221215%'); client/scripts/screen_kit.gd:75 and :86 (the codex chapter words, 'Motion' 1.67:1); client/scripts/character_screen.gd:288/292 (_stroke below large text, 'Level up' 1.19:1 on #f9de9c). Each becomes KitHud.outline_px(UI.px(side)), its shadow_outline_size with it; no test changes and nothing loosened. character_screen.gd is P3-S3-nav-1's (ready, unclaimed).",
+      "files": [
+        "client/ui/rb_theme.gd",
+        "client/scripts/ui.gd",
+        "client/scripts/screen_kit.gd",
+        "client/scripts/character_screen.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-17T22:12:25Z",
+      "due": "2026-11-18T04:12:25Z",
+      "default": "Granted: the four files are P3-K1-outline-1's exceptions in backlog.json, and K1 changes only those outline lines (character_screen.gd's _stroke and _outline_px included); the changed shots (kickers, tab_active, green pills, codex chapters, world words, Level up) are named in the handoff",
+      "escalate_to": "lead",
+      "status": "answered: granted, cycle 139"
+    },
+    {
+      "id": "K1-R28",
+      "from": "K1",
+      "to": "lead",
+      "ask": "P3-K1-outline-1 after K1-R27: the six granted lines now go through KitHud.stroke_px and the codex chapters pass; 409 client tests pass and only the a11y every-word test (test 17) still fails, on the realm overlays' kickers in both contrast modes: 'TERRAIN EDITOR' (builder), '40 AETHER \u00b7 3 TARGETS' (observatory), 'SCOUT REPORT', 'PLAN THE RUN', 'THE HEART, REALM LEVEL 3' (curation), each 13 points bold, 4.97:1 Lc 55 on #2c3aa8 against Lc 60. K1-R27 put them on rb_theme.gd by mistake: they are OverlayTop.bar's kickers, inked by client/world/overlay_landing.gd:248 (OverlayLanding.ink), whose outline_size UI.px(3) draws 0.75 points a side, under \u00a721.8's 1.56 at 13 points. No task in flight owns the file (owners.py: the lead). The line becomes KitHud.outline_px(l.get_theme_font_size(\"font_size\")): \u00a721.8's least outline for the words' size, so the kicker's side goes from 0.75 to about 1.6 points and the title under it (22 points) from 0.75 to about 2.7. No test changes and nothing loosened.",
+      "files": [
+        "client/world/overlay_landing.gd"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-17T23:20:00Z",
+      "due": "2026-11-18T05:20:00Z",
+      "default": "Granted: client/world/overlay_landing.gd is P3-K1-outline-1's exception in backlog.json, and K1 changes only line 248 (OverlayLanding.ink) to KitHud.outline_px(l.get_theme_font_size(\"font_size\")); the shots that change (the realm overlays' kickers and titles: builder, observatory, scout, planner, curation) are named in the handoff."
     }
   ],
   "answers": [
@@ -449,5 +485,5 @@
       "at": "2026-11-17T08:15:00Z"
     }
   ],
-  "next_step": "P3-K1-tabs-1: on the merge 6fcf88ba check_all All checks passed (client 432 of 432, AD-R47 and AD-R59 tests pass) and guard.sh ui guard: OK; handoff written; next the pre-check, owners.py diff and ready"
+  "next_step": "K1-R28 granted (cycle 140): main merged, overlay_landing.gd:248 through KitHud.outline_px (271acb2); client tests, guard, check_all and the pre-check next"
 }

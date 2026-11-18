@@ -125,7 +125,7 @@ static func _words(th: Theme, spec: Dictionary) -> void:
 			th.set_color("font_color", kind, words)
 		if not outline.is_empty():
 			th.set_color("font_outline_color", kind, outline[0])
-			th.set_constant("outline_size", kind, UI.px(float(outline[1])))
+			th.set_constant("outline_size", kind, KitHud.stroke_px(float(outline[1])))
 	if spec["text_2"] != Tokens.color("parchment_text_2" if light else "text_on_night_2"):
 		th.set_color("font_color", "Secondary", spec["text_2"])
 	if bool(spec["bold_words"]):
@@ -166,7 +166,7 @@ static func _build(family: String) -> Theme:
 		# ink, and an ink stroke round ink only fattens it).
 		if t.has("outline") and not light:
 			th.set_color("font_outline_color", v, Tokens.color("ink_line"))
-			th.set_constant("outline_size", v, UI.px(float(t["outline"])))
+			th.set_constant("outline_size", v, KitHud.stroke_px(float(t["outline"])))
 			th.set_color("font_color", v, Tokens.color("cream"))
 	# A title stands over the designs' gold rule (UI.title draws it in this
 	# margin).
