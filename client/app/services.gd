@@ -97,7 +97,15 @@ static func build(parent: Node, server: String, with_transport: Transport = null
 	AuthState.register(s.store)
 	var t := with_transport if with_transport != null else HttpTransport.new()
 	if t.get_parent() == null:
-		parent.add_child(t)
+		# A cold start builds the services from the main scene's _ready, while
+		# root is still readying its children: Godot refuses a child added
+		# then, so it joins once root is done (RB-27). Send waits for it.
+		if parent.is_node_ready():
+			parent.add_child(t)
+		else:
+			(func() -> void:
+				if is_instance_valid(t) and is_instance_valid(parent) and t.get_parent() == null:
+					parent.add_child(t)).call_deferred()
 	s.transport = t
 	s.api = Api.new(t, server, s.store.action_log)
 	s.outbox = Outbox.new(outbox_path)

@@ -88,14 +88,23 @@ func devices() -> Result:
 ## One other device of the list signed out, by its id in the server's list
 ## (this one signs out with sign_out, which also parks what waits).
 func end_device(id: int) -> Result:
-	var r := await services.api.post_json("/v1/session/end", {"device": id})
-	return await _done(r, "")
+	return await _done(await _end({"device": id}), "")
 
 
 ## Every other device of this account signed out; this one stays.
 func sign_out_others() -> Result:
-	var r := await services.api.post_json("/v1/session/end", {"others": true})
-	return await _done(r, "")
+	return await _done(await _end({"others": true}), "")
+
+
+## /v1/session/end sent with a live access token. Api neither renews nor
+## retries a /v1/session/* call (so a sign-out never signs in again), and
+## the server refuses a stale token or none: the session is made live
+## first, as a step-up does (RB-04).
+func _end(body: Dictionary) -> Result:
+	var live := await services.auth.ensure()
+	if not live.ok:
+		return live
+	return await services.api.post_json("/v1/session/end", body)
 
 
 ## Another platform's identity linked to this account (AuthSession.link).

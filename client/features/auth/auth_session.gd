@@ -319,11 +319,7 @@ func send_revocation() -> void:
 ## /v1/session/end proven by a refresh token alone, with no access token
 ## sent beside it (which would end that session instead).
 func _end_with(refresh: String, everywhere: bool) -> Result:
-	var held := api.token
-	api.token = ""
-	var r := await api.post_json("/v1/session/end", {"everywhere": everywhere, "refreshToken": refresh})
-	api.token = held
-	return r
+	return await api.public_post_json("/v1/session/end", {"everywhere": everywhere, "refreshToken": refresh})
 
 
 func _read() -> void:
