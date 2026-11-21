@@ -8,18 +8,36 @@
   "task_state": "working",
   "claimed_at": "2026-11-21T17:53:00Z",
   "lease_until": "2026-11-21T20:53:00Z",
-  "updated_at": "2026-11-21T17:53:00Z",
-  "expected_next_update_by": "2026-11-21T18:38:00Z",
-  "long_run": null,
+  "updated_at": "2026-11-21T18:02:19Z",
+  "expected_next_update_by": "2026-11-21T18:47:19Z",
+  "long_run": {
+    "log": "/tmp/check-16a5a961c7f48973ec4cd63f72f6cde9e719d1df.log",
+    "expected_end": "2026-11-21T19:22:19Z"
+  },
   "progress_marker": {
-    "last_green_sha": "3a9ecd5b",
-    "next_step": "Fail-first tests for RB-40, RB-50, RB-57, candidates 7 and 34"
+    "last_green_sha": "351b90bb",
+    "next_step": "Pre-check of the main merge 16a5a961, then record and ready"
   },
   "precheck": null,
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-24T21:00:00Z",
   "acks": [],
-  "requests": [],
+  "requests": [
+    {
+      "id": "FX3-R1",
+      "from": "FX3",
+      "to": "lead",
+      "ask": "FX3-2-island adds two publish problems, the new last bits of island::Problem: EntranceBlocked (RB-40) and DuplicateLaw (candidate 7). The builder (client/scripts/builder_screen.gd:515) and curation (client/features/curation/curation_presenter.gd:235) show a problem as Strings.t(\"PROBLEM_\" + name.to_upper()), so client/i18n/strings.csv needs PROBLEM_ENTRANCEBLOCKED (e.g. 'the entrance is on the Vault or inside a wall') and PROBLEM_DUPLICATELAW (e.g. 'a law is woven on two pylons'), in every locale column, with node art/ui/keyframes/build_words.mjs rerun (M34). strings.csv is not an FX3 file.",
+      "files": [
+        "client/i18n/strings.csv"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-21T18:02:19Z",
+      "due": "2026-11-22T18:02:19Z",
+      "default": "Until the strings land, the builder and curation show the raw key (PROBLEM_ENTRANCEBLOCKED or PROBLEM_DUPLICATELAW) for these two problems; the lead adds the rows to a strings or UI task once the UI resumes.",
+      "escalate_to": "lead"
+    }
+  ],
   "answers": []
 }
