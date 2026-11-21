@@ -106,5 +106,6 @@ test("RB-22: raising a Nursery carries the hours before the raise at the old rat
   const raised = nursery();
   assert.equal(raised.ready, 0, "no birth is ready right after the raise: 5 h at the 6 h rate made none");
   assert.ok(raised.next_at > t.clock.now, "the next birth is still to come");
-  assert.ok(raised.next_at - t.clock.now < raised.period, "and the progress made before the raise is kept");
+  // 5 h of a 6 h period is 5/6 of level 2's 5 h one: the next birth in 50 min.
+  assert.equal(raised.next_at - t.clock.now, 50 * 60 * 1000, "and the progress made before the raise is kept");
 });
