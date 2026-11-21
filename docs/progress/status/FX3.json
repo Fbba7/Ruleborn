@@ -5,15 +5,15 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "FX3-4-lab-replay",
-  "task_state": "claimed",
+  "task_state": "in_progress",
   "claimed_at": "2026-11-21T21:00:00Z",
   "lease_until": "2026-11-22T00:00:00Z",
-  "updated_at": "2026-11-21T21:00:00Z",
-  "expected_next_update_by": "2026-11-21T21:45:00Z",
+  "updated_at": "2026-11-21T21:35:00Z",
+  "expected_next_update_by": "2026-11-21T22:30:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": null,
-    "next_step": "Fail-first tests for RB-51, RB-52, RB-54, RB-55"
+    "last_green_sha": "7db937dde2a036bccea8801fa57c493c19771de3",
+    "next_step": "Pre-check at 7db937dd running; then record, ready"
   },
   "precheck": null,
   "gate_request": null,
