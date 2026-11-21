@@ -444,10 +444,11 @@ export class Service {
     if (holders.length === 0) {
       // A snapshot no island is on any more is an echo for 14 days (§12.3:
       // "Robbing an echo takes nothing from its owner"), and after that not
-      // a target at all.
+      // a target at all. The game's generated islands are no echoes
+      // (generator.mjs: "Yesterday's are no echoes", RB-12).
       const by = this.db.prepare("SELECT banned_at, deleted_at FROM accounts WHERE id = ?").get(snapshot.owner);
       const days = facts.ECHO_DAYS * 24 * 60 * 60 * 1000;
-      if (trace || snapshot.owner === attacker || by.banned_at || by.deleted_at
+      if (trace || snapshot.owner === attacker || snapshot.owner === GENERATOR || by.banned_at || by.deleted_at
           || now - snapshot.published_at > days) {
         throw new Refused(410, "superseded");
       }
