@@ -2634,7 +2634,8 @@ fn an_island_keeps_to_5_2_and_6_1_or_is_not_published() {
         }
     }
     assert!(landing.landings().is_empty());
-    assert_eq!(landing.check(), vec![Problem::LandingBlocked, Problem::EdgeClosed]);
+    // The entrance, (11, 11), is an edge tile too, now under a pillar (RB-40).
+    assert_eq!(landing.check(), vec![Problem::LandingBlocked, Problem::EdgeClosed, Problem::EntranceBlocked]);
 
     // F51: each side keeps half its tiles open. The north side is twelve
     // tiles; six closed is still half open, seven is not.
@@ -6794,4 +6795,81 @@ fn laws_flicker_off_for_two_seconds_in_an_overloaded_universe_every_ten_seconds_
     assert!(counts[1] * 100 > draws * 24 * 2 && counts[1] * 100 < draws * 24 * 9, "about 5%: {counts:?}");
     assert!(counts[2] > counts[1] * 3 / 2, "twice as often: {counts:?}");
     assert_eq!(blinks(1, 3), blinks(1, 3), "the same heist flickers the same everywhere");
+}
+
+#[test]
+fn rb40_an_entrance_in_a_wall_or_on_the_vault_is_not_published() {
+    // RB-40: the alarm-5 Warden spawns at the entrance, so an entrance in a
+    // wall or on the Vault weakens the alarm-5 penalty. The gate refuses it.
+    use crate::island::Island;
+    let open = Island::example_open();
+    assert_eq!(open.check(), vec![]);
+    let mut walled = open.clone();
+    walled.entrance = (0, 5);                             // the ruin wall
+    assert!(!walled.check().is_empty(), "an entrance in the ruin wall: {:?}", walled.check());
+    let mut vault = open.clone();
+    vault.entrance = vault.vault;
+    assert!(!vault.check().is_empty(), "an entrance on the Vault: {:?}", vault.check());
+}
+
+#[test]
+fn rb50_weaving_a_law_onto_the_vault_is_refused_and_keeps_the_law() {
+    // RB-50: the builder's law tool on the Vault took the law away.
+    use crate::island::Island;
+    let mut island = Island::example_open();
+    assert!(island.weave("haste", 1, 10));
+    let (vx, vy) = island.vault;
+    assert!(!island.weave("haste", vx, vy), "the Vault cannot be covered");
+    assert_eq!(island.laws, vec![("haste".to_string(), 1, 10)], "the law stays where it was");
+}
+
+#[test]
+fn rb57_a_ward_or_pylon_on_a_guard_in_tall_grass_replaces_the_grass_too() {
+    // RB-57: claim cleared the guard and left the grass under it, so the
+    // ward or pylon put there made the island Crowded.
+    use crate::heist::WardKind;
+    use crate::island::{Island, Post};
+    let mut island = Island::example_open();
+    assert_eq!(island.tile(2, 7).and_then(|t| t.feature), Some(crate::grid::Feature::TallGrass));
+    island.guards.push(Post { row: 0, x: 2, y: 7, facing: 0 });  // hidden in the grass
+    assert_eq!(island.check(), vec![]);
+    let mut ward = island.clone();
+    assert!(ward.place_ward(WardKind::TimeSnare, 2, 7));
+    assert_eq!((ward.guards.len(), ward.tile(2, 7).and_then(|t| t.feature)), (0, None));
+    assert_eq!(ward.check(), vec![], "the ward replaced whatever stood there");
+    let mut pylon = island.clone();
+    assert!(pylon.weave("haste", 2, 7));
+    assert_eq!((pylon.guards.len(), pylon.tile(2, 7).and_then(|t| t.feature)), (0, None));
+    assert_eq!(pylon.check(), vec![], "the pylon replaced whatever stood there");
+}
+
+#[test]
+fn candidate_7_the_same_law_twice_is_not_published() {
+    // Bug report, unproven candidate 7: one law on two pylons passed the
+    // gate, and the sheet applied it twice (guard speed 5/4 became
+    // 441/256). A realm weaves each law once.
+    use crate::island::Island;
+    let mut twice = Island::example();
+    assert_eq!(twice.laws.len(), 2);
+    twice.laws[1].0 = twice.laws[0].0.clone();            // haste at (1, 10) and (11, 2)
+    assert!(Island::decode(&twice.encode()).is_err() || !twice.check().is_empty(),
+            "the same law twice passes the gate: {:?}", twice.check());
+}
+
+#[test]
+fn candidate_34_a_tunnel_mouth_under_a_raised_wall_is_no_way_out() {
+    // Bug report, unproven candidate 34: a crew's Crystal Wall raised on a
+    // tunnel's far mouth still let routes come up through it, into the wall.
+    let mut world = vault_world(1);
+    for y in 0..14 {
+        world.grid.place(4, y, Feature::RockPillar);
+    }
+    let at = |w: &World, x, y| w.grid.index(x, y).unwrap();
+    let (from, to) = (at(&world, 2, 2), at(&world, 8, 2));
+    world.grid.dig_tunnel(at(&world, 3, 2), at(&world, 6, 2));
+    assert!(path::find_through(&world.grid, from, to).is_some(), "through the tunnel");
+    world.grid.set_raised(at(&world, 6, 2), true);
+    let route = path::find_through(&world.grid, from, to);
+    assert!(route.as_ref().is_none_or(|r| r.iter().all(|&t| world.grid.at(t).passable())),
+            "a route comes up into the raised wall: {route:?}");
 }

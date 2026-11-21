@@ -5,6 +5,26 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 156**, 21 November 2026, from about 16:14Z (session
+  `session_01SNkKxmoamFWusvtLCG6EYC`, started by the Opus 5.5 launcher).
+  The changes since cycle 155: the three builders it started claimed
+  their tasks. FX1 (`claude/fix-server-a`, 5dbcd80e) committed fixes for
+  RB-30, RB-05 and RB-06, merged main and is pre-checking at b67863b8;
+  FX2 (`claude/fix-server-b`, 8c4f9b2d) and FX4 (`claude/fix-client`,
+  c44b0083) merged main and claimed FX2-2-trace-telemetry and
+  FX4-2-trace-events. **Bookkeeping:** the three claims copied into the
+  backlog (FX1-1-workshop-pairs `working`, FX2-2 and FX4-2 `claimed`,
+  leases to 19:10Z). All three sessions are within their expected
+  update (16:55Z to 17:25Z; FX1's session is idle while its detached
+  pre-check runs), so none is restarted. **FX3 waits** with
+  FX3-2-island open: the seven-day bar still reads `allowed_warning`, so
+  order 3's cap stays three. No ready task, request or audit finding: no
+  merge, no gate run, no page republished. **The UI stays paused.**
+  **Next:** merge FX1-1 on ready once its checks pass and each RB
+  entry's fail-first test precedes its fix (check this on FX1's branch:
+  its fixes landed within minutes of its start), then start FX1's next
+  task; start FX3 on FX3-2-island when a seat frees or the bar clears.
+
 - **Cycle 155**, 21 November 2026, from about 15:14Z (session
   `session_01SNkKxo9bZSEQwttAmfNMX2`, started by the Opus 5.5 launcher).
   **Merged** FX2-1-db-store-home (c393a96b: RB-01, RB-02, RB-07, RB-22),

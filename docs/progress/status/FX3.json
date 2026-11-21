@@ -4,16 +4,16 @@
   "branch": "claude/fix-sim",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "FX3-1-heal-alarm",
+  "task_id": "FX3-2-island",
   "task_state": "working",
-  "claimed_at": "2026-11-21T14:14:00Z",
-  "lease_until": "2026-11-21T17:14:00Z",
-  "updated_at": "2026-11-21T14:19:00Z",
-  "expected_next_update_by": "2026-11-21T15:04:00Z",
+  "claimed_at": "2026-11-21T17:53:00Z",
+  "lease_until": "2026-11-21T20:53:00Z",
+  "updated_at": "2026-11-21T17:53:00Z",
+  "expected_next_update_by": "2026-11-21T18:38:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "bdc0ba84",
-    "next_step": "Pre-check at bdc0ba84 running; record it, then ready"
+    "last_green_sha": "3a9ecd5b",
+    "next_step": "Fail-first tests for RB-40, RB-50, RB-57, candidates 7 and 34"
   },
   "precheck": null,
   "gate_request": null,

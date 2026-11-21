@@ -1,6 +1,6 @@
 # FX3 simulation fixes: progress
 
-- Status: Waiting. FX3-1-heal-alarm is ready at the pre-checked sha in `docs/progress/status/FX3.json`.
+- Status: Waiting. FX3-1-heal-alarm is ready at 946ed7f5 (pre-check PASS, recorded).
 - Progress: FX3-1-heal-alarm: RB-28 (Regrowth heals a Vault up to its own level's health) and RB-29 (a realm's alarm counts from the crew's arrival). Each has a fail-first test in `sim/src/tests.rs`, committed before its fix.
 - Done: `cargo test` in `sim` 338 of 338, golden replays still verify (no rebake); `cd server && npm test` 535 of 535; `owners.py diff` passes.
 - Next: the lead's merge, then FX3-2-island in a fresh session.
@@ -12,7 +12,7 @@
 | FX3-1-heal-alarm: RB-28 and RB-29 | 3.0 | ready | `sim/src/tests.rs` `rb28_regrowth_heals_a_vault_up_to_its_own_levels_health`, `rb29_a_realms_alarm_counts_from_when_the_crew_arrives`; `sim/src/heist.rs`, `sim/src/lib.rs`, `sim/src/universe.rs` |
 
 ## Handoff
-- FX3-1-heal-alarm, ready (2026-11-21). Branch `claude/fix-sim`. The pre-check result and `ready_sha` are in `docs/progress/status/FX3.json`.
+- FX3-1-heal-alarm, ready (2026-11-21). Branch `claude/fix-sim`. Pre-check at 946ed7f5: PASS ("All checks passed.", recorded); `ready_sha` is in `docs/progress/status/FX3.json`.
   - **RB-28.** `World::heal` capped the Vault at `heist::VAULT_HEALTH_PER_LEVEL` (1,500), so Regrowth's first heal cut a level-10 Vault from 15,000 to 1,500. The Vault now keeps `full` (1,500 a level, set where the island's Vault is built), and healing stops there.
     - Test commit a10dc9ee, fix commit 1ab25511. The test fails on main:
       ```
@@ -32,5 +32,6 @@
     - **A design choice to confirm.** A realm the crew comes back to keeps the `alarm_from` of its first arrival: its alarm goes on counting from then, not from the return. The design (§12.17) and the harness cover only forward legs, so nothing tests a return. If the lead wants a return to reset the count, it is a one-line change in `Crossing::go`.
   - **Goldens.** Neither fix changes a golden outcome: `golden_replays_still_verify` passes, and no `sim/golden/*.rbh` was rebaked.
   - **Existing tests.** No existing test was changed, skipped or loosened.
-  - **Merge evidence.** Main was merged at bdc0ba84. It brought lead files only (backlog, lead.md, lead-archive.md, owner-inbox.md, requests.md, status/lead.json) and no conflict. `owners.py diff FX3-1-heal-alarm origin/claude/videogame-project-analysis-ewkkk2 bdc0ba84` reports "every changed path is inside its files".
+  - **`sim/systems.json`.** `status.py` fails a test that no system claims, so the first pre-check, at bdc0ba84, failed ("tests no system claims"). 946ed7f5 lists the RB-28 test under Laws and pylons, beside the Regrowth test, and the RB-29 test under Universes. It also commits the `sim/status.json` that `status.py` rewrote: the only change is two new "passed" lines.
+  - **Merge evidence.** Main was merged at bdc0ba84. It brought lead files only (backlog, lead.md, lead-archive.md, owner-inbox.md, requests.md, status/lead.json) and no conflict. Main then moved to 30bc30ca (lead cycle 154: lead.md, lead-archive.md, status/lead.json only), so 946ed7f5 is not re-merged and its checks stand. `owners.py diff FX3-1-heal-alarm origin/claude/videogame-project-analysis-ewkkk2 946ed7f5` reports "every changed path is inside its files".
   - **Next.** FX3-2-island, in a fresh session.
