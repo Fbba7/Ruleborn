@@ -443,7 +443,8 @@ export function offer(raider, candidates, { size = 3 } = {}) {
   if (middle) {
     const i = sorted.indexOf(middle);
     const half = Math.floor(size / 2);
-    const easier = sorted.slice(0, i).slice(-half);
+    // Never slice(-0), which is the whole run before the middle (RB-17).
+    const easier = sorted.slice(Math.max(0, i - half), i);
     const harder = sorted.slice(i + 1).slice(0, size - 1 - easier.length);
     const more = sorted.slice(0, i - easier.length).reverse();
     list = [...easier, middle, ...harder];
