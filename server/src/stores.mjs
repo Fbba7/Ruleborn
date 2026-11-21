@@ -336,6 +336,18 @@ const GOOGLE_MOST = 8192;
  * Play Developer API says before the grant (googleapi.mjs, D67).
  */
 export function playPurchase(receipt, { licenceKey, packageName }) {
+  // The client sends the purchase as the JSON string Play's billing plugin
+  // gives it (RB-10): read it as an object, within the length both parts
+  // could have.
+  if (typeof receipt === "string") {
+    if (receipt.length > 4 * GOOGLE_MOST) return null;
+    try {
+      receipt = JSON.parse(receipt);
+    } catch {
+      return null;
+    }
+    if (typeof receipt !== "object" || receipt === null || Array.isArray(receipt)) return null;
+  }
   const { data, signature } = receipt ?? {};
   if (typeof data !== "string" || typeof signature !== "string") return null;
   if (data.length > GOOGLE_MOST || signature.length > GOOGLE_MOST) return null;
