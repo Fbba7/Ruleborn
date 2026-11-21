@@ -6012,6 +6012,28 @@ fn the_lantern_wisps_reveal_shows_what_is_hidden_within_six_tiles_for_six_second
 }
 
 #[test]
+fn rb45_a_slowed_clock_still_catches_whoever_is_inside_at_the_last_tick() {
+    // RB-45: §12.6, "Anyone still inside when the clock ends is caught". The
+    // replay stops after its clock's ticks whatever the clock rate, so a
+    // clock slowed by an inverted Haste whose pylon then breaks ends there.
+    let mut world = sage_world(&["stormhound"], 2);   // the Tinkerer: Invert first
+    world.clock = 30 * TICKS_PER_SECOND;
+    world.weave(&[("haste", (3, 4))]);
+    world.step();
+    call_at(&mut world, 0, 3, 4);
+    world.step();
+    assert_eq!(world.sheet.factor(Param::ClockRate), (4, 5), "the clock slowed");
+    run_for(&mut world, 5 * TICKS_PER_SECOND);
+    world.laws[0].broken_at = Some(world.tick);
+    while world.tick < world.clock {
+        world.step();
+    }
+    assert!(world.clock_run < world.clock as u64 * 1000, "the slowed clock has not run its 30 s");
+    assert_eq!(world.raiders[0].standing, Standing::Caught, "inside at the replay's last tick");
+    assert_eq!(world.outcome().caught, 1);
+}
+
+#[test]
 fn invert_turns_a_law_into_its_opposite_for_ten_seconds() {
     let mut world = sage_world(&["stormhound"], 2);   // the Tinkerer: Invert first
     world.weave(&[("haste", (3, 4))]);
