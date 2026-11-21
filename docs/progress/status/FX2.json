@@ -4,22 +4,38 @@
   "branch": "claude/fix-server-b",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "FX2-1-db-store-home",
-  "task_state": "working",
-  "claimed_at": "2026-11-21T14:15:00Z",
-  "lease_until": "2026-11-21T17:15:00Z",
-  "updated_at": "2026-11-21T14:17:04Z",
-  "expected_next_update_by": "2026-11-21T15:00:00Z",
+  "task_id": "FX2-2-trace-telemetry",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-21T16:10:00Z",
+  "lease_until": "2026-11-21T19:10:00Z",
+  "updated_at": "2026-11-21T16:35:00Z",
+  "expected_next_update_by": "2026-11-21T17:20:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "1dd781cb",
-    "next_step": "pre-check on the merge with main, then ready"
+    "last_green_sha": "d2eb98cdd6fcc7a969a1b2339f3da6fa98d8ac34",
+    "next_step": "pre-check (run_checks) on the handoff commit, owners diff, then mark ready"
   },
   "precheck": null,
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-24T21:00:00Z",
   "acks": [],
-  "requests": [],
+  "requests": [
+    {
+      "id": "FX2-2-r1",
+      "from": "FX2",
+      "to": "lead",
+      "ask": "let too_many_events move from 429 to 422, like the other per-day telemetry caps of RB-32 (server/test/security_limits.test.mjs SR-19, line 97, pins 429; that file is outside FX2-2's files)",
+      "files": [
+        "server/test/security_limits.test.mjs",
+        "server/src/telemetry.mjs"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-21T16:35:00Z",
+      "due": "2026-11-22T16:35:00Z",
+      "default": "too_many_events stays 429, documented in telemetry.mjs batch as a refusal the device drops; FX4-2's client rule drops a chunk refused 429 too_many_events",
+      "escalate_to": "lead"
+    }
+  ],
   "answers": []
 }
