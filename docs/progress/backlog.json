@@ -101,7 +101,7 @@
       "estimate_h": 3.5,
       "tier": 1,
       "critical": true,
-      "state": "claimed",
+      "state": "merged",
       "claim": {
         "agent": "FX4",
         "branch": "claude/fix-client",
@@ -111,9 +111,9 @@
       },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null,
-      "updated_at": "2026-11-21T14:17:00Z",
+      "ready_sha": "087a3a2f790b2e735570778fff2be88b07309b22",
+      "merged_sha": "23cf8a9012a5154854bc594f885a1d8537eed089",
+      "updated_at": "2026-11-21T16:07:15Z",
       "updated_by": "lead"
     },
     {
@@ -179,7 +179,7 @@
       "estimate_h": 3.5,
       "tier": 1,
       "critical": true,
-      "state": "claimed",
+      "state": "merged",
       "claim": {
         "agent": "FX2",
         "branch": "claude/fix-server-b",
@@ -189,9 +189,9 @@
       },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null,
-      "updated_at": "2026-11-21T14:17:00Z",
+      "ready_sha": "c393a96b8643fc5b4168ddb9e4d89550b3eeb8db",
+      "merged_sha": "23cf8a9012a5154854bc594f885a1d8537eed089",
+      "updated_at": "2026-11-21T16:07:15Z",
       "updated_by": "lead"
     },
     {
@@ -227,7 +227,7 @@
       "estimate_h": 3.0,
       "tier": 1,
       "critical": true,
-      "state": "claimed",
+      "state": "merged",
       "claim": {
         "agent": "FX3",
         "branch": "claude/fix-sim",
@@ -237,9 +237,9 @@
       },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null,
-      "updated_at": "2026-11-21T14:17:00Z",
+      "ready_sha": "946ed7f561e6dfbe205edea6eefe9709eca19acc",
+      "merged_sha": "23cf8a9012a5154854bc594f885a1d8537eed089",
+      "updated_at": "2026-11-21T16:07:15Z",
       "updated_by": "lead"
     },
     {

@@ -516,6 +516,9 @@ impl Crossing {
             // Where the crew entered the realm is its landing there: where
             // Ghost tide sends the knocked-out back to, and the report's.
             w.landing = Some(Self::standable_near(&w, w.entrance));
+            // Its alarm counts from the crew's arrival (§12.17's ladder, a
+            // realm at a time); a realm the crew comes back to keeps its own.
+            w.alarm_from = self.world.tick;
             w
         });
         let prev = &self.world;

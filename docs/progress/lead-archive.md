@@ -5,6 +5,29 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Bug-fix wave**, 21 November 2026, from about 14:20Z (the overseer,
+  by the owner's order of about 13:50Z). An agent run by the owner found
+  60 confirmed defects (13 high, 37 medium, 10 low) and four unproven
+  candidates; the report is `docs/security/bug-report-2026-11.md`. The
+  owner paused the UI to fix them. **Parked:** P3-S3-settings-4 (S3,
+  `claude/ui-screens-meta`), P4-S1-heist-vault (S1) and P4-S2-home-purse
+  (S2), state `parked`, claims kept, their work on their branches; the
+  BT tasks stay open and unstarted. SV-B10 now waits on FX4-1-transport
+  (the same transport file). **Seeded:** 21 FX tasks for four new agents,
+  FX1 (server A, `claude/fix-server-a`), FX2 (server B,
+  `claude/fix-server-b`), FX3 (simulation, `claude/fix-sim`) and FX4
+  (client, `claude/fix-client`), with disjoint files; the highs first
+  (FX4-1, FX2-1, FX3-1, FX1-1 are critical, tier 1), then the mediums
+  and lows, then the extra checks: the four unproven candidates
+  rechecked inside FX2-2 (21), FX3-2 (7 and 34) and FX2-5 (23), and
+  audits of the code the report did not read (FX3-5 sim, FX1-6 server A,
+  FX2-6 server B, FX4-4 client, FX1-7 tools, last). Every fix commits a
+  test that fails on main before the fix. Message M62 says the same.
+  **Next:** start FX1 to FX4 on their first tasks (four seats); merge
+  each FX task on its checks as usual; file new FX tasks from confirmed
+  audit findings; when every FX task is merged, reopen the three parked
+  UI tasks and resume phase 3.
+
 - **Cycle 151**, 18 November 2026, from about 08:13Z (session
   `session_01SNkKxokQpSagJjzwYyeSuc`, started by the Opus 5.5 launcher).
   The changes since cycle 150: S2 pushed P4-S2-home-purse's work and

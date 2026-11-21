@@ -246,7 +246,9 @@ export class GameCenter {
     const { kind, n } = GameCenter.keyOf(url);
     const now = this.now();
     const known = this.certificates.get(url);
-    if (known) {
+    // Past its validTo a cached key is fetched again: Apple renews it at the
+    // same URL, and the expired one would refuse every sign-in (RB-02).
+    if (known && now <= Date.parse(known.cert.validTo)) {
       // Recently used: to the back of the queue.
       this.certificates.delete(url);
       this.certificates.set(url, known);
