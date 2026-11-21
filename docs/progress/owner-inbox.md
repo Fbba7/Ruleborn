@@ -20,6 +20,11 @@ recording the answer under it.
 - **Needs the owner:** nothing, unless the artifact should stay current
   during the wave: then allow the Artifact publish for the lead's
   sessions, or republish `docs/audit/index.html` from main once.
+- **Cycle 164 (21:50Z):** FX3-4 merged at f5870f77 and the page was
+  regenerated again (b3181beb, sim tests 342/342). The republish was not
+  attempted: after two refusals, and since the page (1.3 MB) is too large
+  for a lead session to read whole before publishing, the lead leaves the
+  artifact as it is. The artifact shows sim tests 336.
 
 ## 2026-11-21 14:09Z: the launcher's hourly firing had not run since the stop; its half-hour firing ran at 14:05Z (watchdog)
 
