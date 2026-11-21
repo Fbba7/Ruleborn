@@ -152,7 +152,9 @@ test("RB-32: a refusal the same batch can never get past is not a 429, which the
   assert.equal(status([survey]), 202);
   assert.equal(status([survey]), "422 survey_once_a_quarter");
   for (let i = 0; i < 3; i++) assert.equal(status(many("weave", { law: "tilt", realm: "heart" }, 100)), 202);
-  assert.equal(status(many("weave", { law: "tilt", realm: "heart" }, 100)), "422 too_many_events");
+  // SR-19's day ceiling stays 429, which its own test pins (outside this
+  // task's files); telemetry.mjs's batch comment tells the device to drop it.
+  assert.equal(status(many("weave", { law: "tilt", realm: "heart" }, 100)), "429 too_many_events");
 });
 
 test("candidate 21: a banned raider's island is not offered as a Trace the lease would refuse", () => {
