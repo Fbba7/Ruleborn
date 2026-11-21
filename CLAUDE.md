@@ -54,13 +54,31 @@ the status files, requests and scheduled-task prompts.
   - **Where the work stood at the restart** is in the same file, "Now",
     entry "Stopped here".
 - **18 November 2026, about 08:22 UTC:** the owner stopped it again ("You
-  need to stop everything"), in the chat of the overseer session. **The
-  program is stopped.** The overseer disabled every enabled scheduled
+  need to stop everything"), in the chat of the overseer session. The
+  program did not run from then until the restart of 21 November. The
+  overseer disabled every enabled scheduled
   task (the two launcher tasks, the watchdog and its own report
   check-in), interrupted the three running builders (S1 on
   P4-S1-heist-vault, S2 on P4-S2-home-purse, S3 on P3-S3-settings-4),
   and found the lead idle after cycle 151, with no merge lock set. Their
   work is on their branches.
+- **21 November 2026, about 13:50 UTC:** the owner restarted it for bug
+  fixes only ("Yes the UI stays paused and do the extra checks"), in the
+  chat of the overseer session, approving the overseer's plan to pause
+  the UI and fix the defects of the November bug report
+  ([`docs/security/bug-report-2026-11.md`](docs/security/bug-report-2026-11.md)).
+  The program runs, on Opus 5.5 at effort high (order 5).
+  - **The UI stays paused.** P3-S3-settings-4, P4-S1-heist-vault and
+    P4-S2-home-purse are parked, their work on their branches; the BT
+    track stays parked. The UI resumes after the fixes are merged.
+  - **Up to four fix builders** (FX1 to FX4, the cap of order 3) fix all
+    60 confirmed defects, highs first, each with a test that fails before
+    the fix. The extra checks are part of the work: confirm or reject the
+    four unproven issues, and audit the code the report did not read.
+  - **The launcher and the watchdog of 11 November** start the lead's
+    cycles again. Their IDs are in
+    [`docs/progress/lead.md`](docs/progress/lead.md), "The program's
+    scheduled tasks and sessions".
 
 A session that is in the middle of a turn when the program is stopped
 finishes cleanly, so no work is lost: commit and push what it has to its
