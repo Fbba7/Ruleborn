@@ -517,6 +517,7 @@
         "a_replay_carries_the_laws_it_was_made_under",
         "kinship_heals_whoever_stands_beside_an_ally",
         "regrowth_heals_guards_pylons_and_the_vault_and_revives_nothing",
+        "rb28_regrowth_heals_a_vault_up_to_its_own_levels_health",
         "every_one_of_the_48_laws_weaves_and_runs",
         "frictionless_slides_on_past_the_end_of_a_route_until_something_stops_it",
         "frictionless_and_bounce_are_pinball_and_a_warden_absorbs_the_ricochet",
@@ -709,6 +710,7 @@
         "the_route_to_the_heart_is_the_fewest_links_a_chute_crossed_only_its_own_way_ties_to_the_earlier_realm",
         "a_crew_lands_on_an_outer_realm_crosses_at_its_way_on_and_takes_the_hearts_vault_on_one_clock",
         "a_rift_on_the_route_holds_the_crew_thirty_seconds_after_an_alarm_in_the_realm",
+        "rb29_a_realms_alarm_counts_from_when_the_crew_arrives",
         "a_crew_entering_at_a_fault_jumps_through_the_crack_to_the_hearts_entrance_on_its_realms_clock",
         "laws_flicker_off_for_two_seconds_in_an_overloaded_universe_every_ten_seconds_at_cracking_and_five_at_breaking"
       ]

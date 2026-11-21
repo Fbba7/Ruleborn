@@ -823,6 +823,10 @@ pub struct World {
     /// The realm alarm, 0 to 6. §12.17: "climbs from 0 to 6 — once every
     /// thirty seconds and once per knocked-out guard discovered".
     pub alarm: i32,
+    /// The tick the crew first arrived in this realm: its alarm climbs with
+    /// the time since then, not since the heist began. Zero in the realm
+    /// the crew lands in.
+    pub alarm_from: u32,
     /// Knocked-out guards found by other guards. Always zero until the crew
     /// can knock anyone out; held so the alarm's rule is whole rather than
     /// half-written.
@@ -1051,6 +1055,7 @@ impl World {
             guards,
             raiders,
             alarm: 0,
+            alarm_from: 0,
             knockouts_discovered: 0,
             entrance,
             reinforced: false,
@@ -1067,6 +1072,7 @@ impl World {
             vault: Vault {
                 tile: vault_tile,
                 health: heist::VAULT_HEALTH_PER_LEVEL * island.vault_level as i32,
+                full: heist::VAULT_HEALTH_PER_LEVEL * island.vault_level as i32,
                 exposed: island.exposed as i32,
                 opened_at: None,
             },
@@ -3228,7 +3234,8 @@ impl World {
         self.bells_due.retain(|&t| t > now);
         self.bells_rung += due * grid::BELL_LEVELS;
         let before = self.alarm;
-        self.alarm = ((now / guard::ALARM_STEP_TICKS) as i32 + self.knockouts_discovered
+        self.alarm = ((now.saturating_sub(self.alarm_from) / guard::ALARM_STEP_TICKS) as i32
+            + self.knockouts_discovered
             + self.bells_rung).min(guard::ALARM_MAX);
         if self.alarm > before {
             let found = self.knockouts_discovered > self.found_logged;
@@ -4801,7 +4808,7 @@ impl World {
                 g.health = (g.health + share(full)).min(full);
             }
             if self.vault.opened_at.is_none() {
-                let full = heist::VAULT_HEALTH_PER_LEVEL;
+                let full = self.vault.full;
                 self.vault.health = (self.vault.health + share(full)).min(full);
             }
             for law in self.laws.iter_mut().filter(|l| l.broken_at.is_none()) {

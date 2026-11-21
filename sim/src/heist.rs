@@ -133,6 +133,8 @@ pub enum Grade {
 pub struct Vault {
     pub tile: crate::grid::TileIndex,
     pub health: i32,
+    /// Its health when untouched: 1,500 a level (§12.6). Healing stops here.
+    pub full: i32,
     /// What is left to load. §12.6: loading stops when "the exposed share is
     /// gone".
     pub exposed: i32,

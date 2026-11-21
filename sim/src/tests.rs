@@ -2097,6 +2097,26 @@ fn regrowth_heals_guards_pylons_and_the_vault_and_revives_nothing() {
     assert_eq!(world.laws[1].health, 0, "a broken pylon is not rebuilt");
 }
 
+#[test]
+fn rb28_regrowth_heals_a_vault_up_to_its_own_levels_health() {
+    // RB-28: §12.6 gives a Vault 1,500 health a level, and Regrowth heals
+    // "2% of their health each second": a level-10 Vault's 15,000, not a
+    // level-1 Vault's 1,500.
+    use crate::island::Island;
+    let mut island = Island::example();
+    island.vault_level = 10;
+    let mut world = World::on_ground(&island, 3, vec![]);
+    world.weave(&[("regrowth", (0, 0))]);
+    assert_eq!(world.vault.health, 15_000);
+    world.step();
+    assert_eq!(world.vault.health, 15_000, "an untouched Vault stays at full health");
+    world.vault.health = 10_000;
+    for _ in 0..crate::TICKS_PER_SECOND {
+        world.step();
+    }
+    assert_eq!(world.vault.health, 10_000 + 300, "2% of 15,000");
+}
+
 // --------------------------------------------------------------------------
 // Wards (§10.3, as spec/wards.md reads them at level 1)
 // --------------------------------------------------------------------------
@@ -6534,6 +6554,49 @@ fn a_crew_lands_on_an_outer_realm_crosses_at_its_way_on_and_takes_the_hearts_vau
     let mut tampered = heist.clone();
     tampered.checksums[100] ^= 1;
     assert_eq!(verify_universe(&u, &islands, &tampered), Err(Refusal::Diverged(101)));
+}
+
+#[test]
+fn rb29_a_realms_alarm_counts_from_when_the_crew_arrives() {
+    // RB-29: §12.17's realm alarm climbs once every thirty seconds in the
+    // realm the crew is in; each realm keeps its own, from when the crew
+    // arrives (the harness the hold tables were measured on).
+    use crate::universe::{Crossing, LinkKind};
+    let arrive_at = |second: u32| {
+        let (u, islands) = two_realms(LinkKind::Stone);
+        let land = crate::reference::competent_universe(&u, &islands, 1, 3, None, None, None).unwrap().commands[0];
+        let heist = Heist { seed: 1, island: u.digest(), rules: crate::rules_version(), ticks: 4_950, crew: 3, era: None,
+                            manifest: None, commands: vec![Command { tick: 0, ..land }], checksums: Vec::new() };
+        let mut c = Crossing::new(&u, &islands, &heist).unwrap();
+        c.step();
+        let w = &mut c.world;
+        w.wards.clear();
+        w.tick = second * TICKS_PER_SECOND;
+        let beside = w.grid.neighbours(w.vault.tile).into_iter().flatten().find(|&t| w.grid.standable(t)).unwrap();
+        let (x, y) = w.grid.centre(beside);
+        for r in w.raiders.iter_mut() {
+            r.at = Point { x, y };
+            r.route.clear();
+        }
+        c.step();
+        assert_eq!(c.leg, 1, "crossed to the Heart");
+        c
+    };
+    // Across at about 151 s: the Heart's alarm starts at 0, not at 5.
+    let mut c = arrive_at(151);
+    let guards = c.world.guards.len();
+    c.step();
+    assert_eq!((c.world.alarm, c.world.reinforced, c.world.guards.len()), (0, false, guards),
+               "the Heart's alarm on the crew's first tick there");
+    // Across at 61 s: thirty seconds in the Heart, counted from its first
+    // tick, is one level, not three.
+    let mut c = arrive_at(61);
+    for _ in 0..=crate::guard::ALARM_STEP_TICKS {
+        c.step();
+    }
+    let w = &c.world;
+    assert_eq!(w.alarm, (1 + w.knockouts_discovered + w.bells_rung).min(crate::guard::ALARM_MAX),
+               "one level for thirty seconds in the realm, and one a body or bell");
 }
 
 #[test]
