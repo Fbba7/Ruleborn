@@ -4,13 +4,14 @@
   "expected_next_update_by": "2026-11-21T17:45:00Z",
   "cycle": 154,
   "merging": {
-    "candidate_sha": "a724a04087aba63195f1583343bc8e3021ce9d23",
+    "candidate_sha": "c28600bb79d414a96fb204637b8c6a3bc08c71cd",
     "task_ids": [
       "FX2-1-db-store-home",
-      "FX3-1-heal-alarm"
+      "FX3-1-heal-alarm",
+      "FX4-1-transport"
     ],
-    "started_at": "2026-11-21T15:16:56Z",
-    "expires_at": "2026-11-21T16:16:56Z"
+    "started_at": "2026-11-21T15:20:44Z",
+    "expires_at": "2026-11-21T16:20:44Z"
   },
   "last_merged": {
     "task_id": "P3-AD-wave-board",

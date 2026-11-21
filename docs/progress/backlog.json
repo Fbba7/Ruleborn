@@ -101,7 +101,7 @@
       "estimate_h": 3.5,
       "tier": 1,
       "critical": true,
-      "state": "claimed",
+      "state": "ready",
       "claim": {
         "agent": "FX4",
         "branch": "claude/fix-client",
@@ -111,7 +111,7 @@
       },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
+      "ready_sha": "087a3a2f790b2e735570778fff2be88b07309b22",
       "merged_sha": null,
       "updated_at": "2026-11-21T14:17:00Z",
       "updated_by": "lead"
