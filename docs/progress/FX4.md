@@ -1,90 +1,84 @@
 # FX4 client fixer: progress
 
-- Status: FX4-1-transport ready (RB-27, RB-03, RB-04 fixed, each after a test that failed on main).
-- Progress: 0 of 4 tasks merged; FX4-1 ready for the lead; no gate items (fix wave).
-- Done: RB-27, RB-03 and RB-04 fixed on claude/fix-client.
-- Next: FX4-2-trace-events, in a fresh session once the lead merges FX4-1.
+- Status: FX4-2-trace-events ready (RB-31, RB-32, RB-41, RB-42 fixed, each after a test that failed on main).
+- Progress: 1 of 4 tasks merged (FX4-1); FX4-2 ready for the lead; no gate items (fix wave).
+- Done: RB-31, RB-32, RB-41 and RB-42 fixed on claude/fix-client.
+- Next: FX4's next task, in a fresh session once the lead merges FX4-2.
 - Blocked by: none.
 - Owner decision needed: none.
 
 | Deliverable | Weight (h) | Status | Evidence |
 |---|---:|---|---|
-| FX4-1-transport: RB-27, RB-03, RB-04 | 3.5 | ready | see Handoff |
+| FX4-1-transport: RB-27, RB-03, RB-04 | 3.5 | merged | lead cycle 155, `c28600bb` |
+| FX4-2-trace-events: RB-31, RB-32, RB-41, RB-42 | 3.5 | ready | see Handoff |
 
 ## Handoff
 
-- Last verified commit: `087a3a2f` (ready_sha): the merge of main
-  `b2a0dc59` into claude/fix-client, plus this handoff.
+- Last verified commit: the ready_sha in `status/FX4.json`: the merge of
+  main `10909f76` into claude/fix-client (`17a2cbc0`), plus this handoff.
 - Commits, in order:
-  - `b6945c6d` fail-first tests: `client/tests/fix_transport_tests.gd`
-    (FixTransportTests), called from `client/tests/run.gd`.
-  - `d7af253e` RB-27: `client/app/services.gd`, `client/data/http_transport.gd`.
-  - `c9c51e07` RB-03: `client/data/api.gd`, `client/features/auth/auth_session.gd`.
-  - `109469be` RB-04: `client/features/auth/auth_controller.gd`.
+  - `df4481b6` fail-first tests: `client/tests/fix_trace_events_tests.gd`
+    (FixTraceEventsTests). `client/tests/run.gd` now calls one aggregator,
+    `client/tests/fix_tests.gd` (FixTests), which runs FixTransportTests and
+    FixTraceEventsTests: run.gd stays at 1000 lines.
+  - `5bf2839d` RB-31: `client/features/observatory/observatory_presenter.gd`.
+  - `65d2be84` RB-41: `client/app/services.gd`.
+  - `c2596844` RB-32: `client/app/services.gd`, `client/data/device_notices.gd`.
+  - `444129d4` RB-42: `client/app/services.gd`.
 
 ### The tests, failing on main (before the fixes)
 
-Run on the parent of the fixes (`b6945c6d`, which is main's client plus the
-tests). Tokens are labelled in the details, never printed.
+Run on `df4481b6` (main's client plus the tests), Godot 4.7.2 headless:
 
-- **RB-27** (the report asked for a device check; reproduced on Godot 4.7.2
-  headless: services built from a `_ready` under a parent still readying its
-  children, against a real local TCP server):
-  `not ok - RB-27: on a cold start the services built under a parent still
-  readying its children put the HTTP transport in the tree, and the first
-  call reaches the server and is answered` with
-  `listening true, transport in tree false, answer failed(request_failed { }),
-  requests heard 0`. Godot logged "Parent node is busy setting up children,
-  `add_child()` failed" at services.gd:100 and `!is_inside_tree()`
-  ERR_UNCONFIGURED at `request_raw`. So RB-27 is **confirmed**.
-- **RB-03**, a public GET beside a signed-in call:
-  `not ok - RB-03: a public GET while signed in sends no token and leaves the
-  session's alone ...` with `routes ["POST /v1/session/refresh",
-  "GET /v1/balance", "GET /v1/words"], balance sent with the renewed token,
-  token after the first token; renewal kept false, next call sent with the
-  first token`.
-- **RB-03**, an owed sign-out beside a call:
-  `not ok - RB-03: a sign-out owed to the server is told with the refresh
-  token alone ...` with `routes ["POST /v1/session/end",
-  "POST /v1/session/end", "POST /v1/session/refresh", "GET /v1/balance"],
-  end sent with no token, balance sent with the renewed token, token after
-  the renewed token`.
-- **RB-04** (four cases: stale or missing token, crossed with "sign out other
-  devices" or "end device 3"; each failed alike):
-  `not ok - RB-04: signing out other devices, or one of them, with a token
-  past its hour or none at all renews the session first ...` with
-  `stale others: failed(session_refused { "error": "session_refused",
-  "status": 401 }), routes ["POST /v1/session/end", "POST /v1/session/refresh",
-  "GET /v1/session/devices"], end sent with the first token, notice 'Could not
-  change that: please sign in again'` (the missing-token cases: "end sent with
-  no token").
+- **RB-31** (the raider's island is also an offered target; tap the Trace,
+  then Plan): `not ok 166 - RB-31: a Trace whose island is also offered as a
+  target opens as the Trace, free, and its Plan leases it as a Trace, not as
+  the paid target with the same bundle` with `scout card kind player fee
+  100.0, planner target kind player`.
+- **RB-32** (120 queued events; an eight-day-old crashed session; a 429 and
+  no network): `not ok 167 - RB-32: a queue the server refuses for good
+  drains ...` with `120 events: batches [120, 120, 120], recorded 0, left
+  120; eight days late: left 3, fresh one recorded false; kept after 429 2,
+  after offline 2`. The test's server answers as `server/src/telemetry.mjs`
+  `batch` does (413 over 100 events, 400 `bad_time` for an event more than
+  seven days back).
+- **RB-41** (sign_in three times with a fresh session): `not ok 168 -
+  RB-41: signing in while the token is still fresh keeps it, with no renewal
+  on each visit` with `visits [true, true, true], renewals 3, token kept
+  false`.
+- **RB-42** (two sends overlapping on a slow network, events added between):
+  `not ok 169 - RB-42: overlapping event sends post each event once, and
+  none is let go unsent` with `times each event was posted [2, 2, 1, 0], left
+  0` (the first two posted twice, the fourth dropped unsent).
 
 ### The fixes
 
-- **RB-27:** `Services.build` adds the transport at once only when the parent
-  is ready; otherwise it adds it deferred, once root is done readying.
-  `HttpTransport.send` waits for `tree_entered` when it is not yet in the tree.
-- **RB-03:** `Api._raw` takes `authed`; `public_json` and a new
-  `public_post_json` send no Authorization header, instead of blanking the
-  shared `Api.token` for the whole request and writing the old one back.
-  `AuthSession._end_with` (the owed sign-out, ended by its refresh token)
-  uses `public_post_json`.
-- **RB-04:** `AuthController.end_device` and `sign_out_others` call
-  `AuthSession.ensure()` first, through a new `_end`, as `_step_up` does.
-  `api.gd`'s rule that `/v1/session/*` is never renewed or retried is left as
-  the report asks.
+- **RB-31:** `ObservatoryPresenter.scout` takes a target with the chosen
+  bundle only when the Trace does not have it, so the card the Plan button
+  passes is the Trace (`kind` "trace", no fee) and the planner leases it as
+  one.
+- **RB-41:** `Services.sign_in` calls `session()` instead of
+  `session(true)`: a fresh session is kept; an expired one is still renewed
+  (`auth.fresh()`), and a refused call still renews through `Api.reauth`.
+- **RB-32:** `Services.send_events` first lets go of events older than
+  `DeviceNotices.LATE_MS` (seven days, the server's `LATE_MS`) through the new
+  `DeviceNotices.drop_before`, then sends the queue in chunks of
+  `EVENTS_BATCH` (100, the server's `BATCH`). A chunk refused for good — a
+  4xx other than 401, 408 or 429 — is dropped; a 401/408/429, a 5xx or no
+  network keeps the rest for the next send.
+- **RB-42:** a `_sending` flag: a send overlapping one in flight returns at
+  once, and the one in flight reads the queue again after each chunk, so
+  what was added meanwhile goes in the same send.
 
 ### Evidence
 
-- On `109469be` (before the merge): `bash client/build.sh` exit 0;
-  `python3 client/status.py`: 446 of 446 passed.
-- On the merge `4c8c0ad4` (main `b2a0dc59`): the setup line exit 0;
-  `bash tools/check_all.sh` exit 0, "All checks passed." (client 446 of 446).
-- Pre-check on the ready_sha `087a3a2f` (that merge plus this handoff):
-  `tools/run_checks.sh` PASS, exit 0, "All checks passed.", sandbox bwrap,
-  finished 2026-11-21T15:18:33Z; recorded in `status/FX4.json`.
-- `python3 tools/coord/owners.py diff FX4-1-transport
-  origin/claude/videogame-project-analysis-ewkkk2 087a3a2f`: "every changed
+- On `444129d4` (before the merge): `bash client/build.sh` exit 0;
+  `python3 client/status.py`: 450 of 450 passed.
+- The merge `17a2cbc0` brought only docs/progress changes from main, no
+  client file.
+- Pre-check on the ready_sha: see `precheck` in `status/FX4.json`.
+- `python3 tools/coord/owners.py diff FX4-2-trace-events
+  origin/claude/videogame-project-analysis-ewkkk2 17a2cbc0`: "every changed
   path is inside its files".
 
 ## Tried and failed
@@ -98,3 +92,6 @@ tests). Tokens are labelled in the details, never printed.
   lands while the public call is out.
 - `client/tests/run.gd` is at gdlint's 1000-line limit: a later task adds its
   tests inside an aggregator such as FixTransportTests, not as new run.gd lines.
+- A test that reads its FakeTransport after `Services.close()` hits a freed
+  object (close queue_frees the transport) and aborts with no `ok`/`not ok`
+  line: read what it recorded before close.
