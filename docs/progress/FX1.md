@@ -1,15 +1,15 @@
 # FX1 server fixes (A): progress
 
-- Status: Green. FX1-1-workshop-pairs: fail-first tests and fixes for RB-30, RB-05 and RB-06 pushed; the first pre-check failed on a new refusal reason with no client words, fixed; main merged again; pre-check running at fd9af096.
+- Status: Green. FX1-1-workshop-pairs ready at fd9af096: pre-check "All checks passed." (16:55Z).
 - Progress: 0 of 6 tasks merged; no gate items (fix tasks have none).
 - Done: RB-30, RB-05, RB-06, each with a test committed before its fix; `cd server && npm test` 543 of 543; `owners.py diff` passes.
-- Next: record the pre-check, mark FX1-1 ready; then FX1-2-leases in a fresh session.
+- Next: FX1-2-leases (RB-12, RB-14, RB-16, RB-17) in a fresh session.
 - Blocked by: none.
 - Owner decision needed: none.
 
 | Deliverable | Weight (h) | Status | Evidence |
 |---|---:|---|---|
-| FX1-1-workshop-pairs: RB-30, RB-05, RB-06 | 3.0 | working | `server/test/fix_fx1_workshop_pairs.test.mjs`; test commit 3785a41c; fixes in `server/src/workshop.mjs`, `server/src/service.mjs`, `server/src/matchmaking.mjs` |
+| FX1-1-workshop-pairs: RB-30, RB-05, RB-06 | 3.0 | ready (fd9af096) | `server/test/fix_fx1_workshop_pairs.test.mjs`; test commit 3785a41c; fixes in `server/src/workshop.mjs`, `server/src/service.mjs`, `server/src/matchmaking.mjs` |
 | FX1-2-leases | 3.5 | open | |
 | FX1-3-workshop | 3.5 | open | |
 | FX1-4-holds-codex | 4.0 | open | |
@@ -39,7 +39,7 @@
   - **RB-05** (fix commit "RB-05: …"). In `grant`, the pair query now adds `AND l.echo = ?`, bound to `lease.echo ? 1 : 0`, and the foiled-fee query adds `AND l.echo = 0`. As the report's Fix line says.
   - **RB-06** (fix commit "RB-06: …"). `offer` now treats an island as the game's own only when `origin === "generated" && owner === GENERATOR`, as `current()` does. As the report's Fix line says. `generated.test.mjs` and `matchmaking.test.mjs` still pass unchanged.
   - **Existing tests.** No existing test was changed, skipped or loosened.
-  - **Merge evidence.** Main (2339d63a) was first merged at b67863b8. The pre-check there failed only on the client contract (above), and the result is recorded here, not re-run blind. After the RB-30 reason change, main (10909f76) was merged again at fd9af096 with no conflict. `owners.py diff FX1-1-workshop-pairs origin/claude/videogame-project-analysis-ewkkk2 HEAD` reports "every changed path is inside its files". `cd server && npm test` passes 543 of 543. `tools/client_contract.py` reports "205 failure codes have words in every language". The fresh-container setup line and `bash client/build.sh` ran first (SETUP_DONE=0). The pre-check at fd9af096 is in `docs/progress/status/FX1.json`.
+  - **Merge evidence.** Main (2339d63a) was first merged at b67863b8. The pre-check there failed only on the client contract (above), and the result is recorded here, not re-run blind. After the RB-30 reason change, main (10909f76) was merged again at fd9af096 with no conflict. `owners.py diff FX1-1-workshop-pairs origin/claude/videogame-project-analysis-ewkkk2 HEAD` reports "every changed path is inside its files". `cd server && npm test` passes 543 of 543. `tools/client_contract.py` reports "205 failure codes have words in every language". The fresh-container setup line and `bash client/build.sh` ran first (SETUP_DONE=0). The pre-check at fd9af096 passed ("All checks passed.", exit 0, 16:55:35Z), recorded in `docs/progress/status/FX1.json`; `ready_sha` is fd9af096.
   - **Next.** FX1-2-leases (RB-12, RB-14, RB-16, RB-17), in a fresh session.
 
 ## Tried and failed
