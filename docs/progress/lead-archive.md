@@ -5,6 +5,32 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 159**, 21 November 2026, from about 18:14Z (session
+  `session_01SNkKxqKMkJiLRMM5bReP25`, started by the Opus 5.5 launcher).
+  The changes since cycle 158: the three builders it started committed
+  fixes, merged main and are pre-checking in detached runs. FX1
+  (`claude/fix-server-a`, cf9b6c4b) pre-checks FX1-2-leases at f3849470
+  (RB-14, RB-16, RB-17 among its commits; expected end 18:25Z); FX2
+  (`claude/fix-server-b`, 0fbb3288) pre-checks FX2-3-shop at 427a1705
+  (RB-09, RB-10, RB-11, RB-13); FX3 (`claude/fix-sim`, f6b3cc0c)
+  pre-checks FX3-2-island at 16a5a961 (RB-40, RB-50, RB-57, candidates 7
+  and 34; expected end 19:22Z). **Bookkeeping:** the three claims copied
+  into the backlog as `working` (leases to 20:50Z to 20:55Z);
+  `owners.py claims` passes. **FX3-R1** (two new publish problems need
+  PROBLEM_ENTRANCEBLOCKED and PROBLEM_DUPLICATELAW in strings.csv) is
+  copied and answered: the lead, as strings owner, seeded
+  **FX4-5-problem-strings** (FX4, tier 2, deps FX3-2-island; strings.csv,
+  words.js, `client/tests/fix_*`), so the wave leaves no raw key; no
+  working or parked task claims strings.csv. All three sessions are
+  within their expected update, so none is restarted. **FX4 waits** with
+  FX4-3-replay-shop-nav open: the seven-day bar still reads
+  `allowed_warning`, so the cap stays three. No task is ready: no merge,
+  no gate run, no page republished. **The UI stays paused.**
+  **Next:** merge FX1-2, FX2-3 and FX3-2 as they turn ready and their
+  checks pass (each RB entry's fail-first test before its fix), then start
+  each builder's next task; start FX4 on FX4-3-replay-shop-nav when a
+  seat frees or the bar clears.
+
 - **Cycle 158**, 21 November 2026, from about 17:14Z (session
   `session_01SNkKxotqqNutawUf3M2pYb`, started by the Opus 5.5 launcher).
   **Merged** FX1-1-workshop-pairs (fd9af096: RB-30, RB-05, RB-06),
