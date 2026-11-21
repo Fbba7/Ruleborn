@@ -517,6 +517,22 @@ export class Home {
     return { realm, ready, holds, since, period, next_at: ready >= holds ? null : since + (ready + 1) * period };
   }
 
+  /** A Nursery in `realm` about to be raised to level `to`: the births it
+   *  has ready are kept, and the part of a period it has made counts at the
+   *  old rate, carried over as the same share of the new period. Without
+   *  this the raise restarted the wait from `changed_at` (RB-07) or paid the
+   *  hours before it at the new rate (RB-22). */
+  carryNursery(account, realm, to, now) {
+    const old = this.nursery(account, realm, now);
+    if (!old) return;
+    const { period } = NURSERY[to - 1];
+    const ready = Math.min(old.ready, NURSERY[to - 1].holds);
+    const made = old.ready >= old.holds ? 0 : now - old.since - old.ready * old.period;
+    const since = now - ready * period - Math.floor(made * period / old.period);
+    this.db.prepare(`INSERT INTO nurseries (owner, realm, since) VALUES (?, ?, ?)
+                     ON CONFLICT (owner, realm) DO UPDATE SET since = excluded.since`).run(account, realm, since);
+  }
+
   /** §11.5: a birth at the Nursery in `realm`, paid in Essence at §9.5's
    *  price for the characters already owned. `n` is the size of the roster
    *  it leads to, so a retry of one already born is answered as born. The
