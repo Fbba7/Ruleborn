@@ -1,6 +1,6 @@
 # FX1 server fixes (A): progress
 
-- Status: Green. FX1-4-holds-codex: pre-check at 2003cc38 running; `ready_sha` and the result go in `docs/progress/status/FX1.json` when it ends.
+- Status: Green. FX1-4-holds-codex ready at 2003cc38 (pre-check PASS, 21:44:27Z).
 - Progress: 3 of 6 tasks merged (FX1-1-workshop-pairs, 8ed7538f; FX1-2-leases, c7cdcbbd; FX1-3-workshop, e413e4a9); no gate items (fix tasks have none).
 - Done: FX1-4: RB-15, RB-18, RB-36, RB-53, RB-56, each with a test committed before its fix; `cd server && npm test` 578 of 578; `owners.py diff` passes.
 - Next: FX1-6-audit-server-a, in a fresh session.
@@ -12,7 +12,7 @@
 | FX1-1-workshop-pairs: RB-30, RB-05, RB-06 | 3.0 | merged (8ed7538f) | `server/test/fix_fx1_workshop_pairs.test.mjs`; test commit 3785a41c; fixes in `server/src/workshop.mjs`, `server/src/service.mjs`, `server/src/matchmaking.mjs` |
 | FX1-2-leases: RB-12, RB-14, RB-16, RB-17 | 3.5 | merged (c7cdcbbd) | `server/test/fix_fx1_leases.test.mjs`; test commit d1c34426; fixes 68b8d6f9, 092bc9fd, 2c55de1f, 165fa31f |
 | FX1-3-workshop: RB-35, RB-37, RB-38, RB-39 | 3.5 | merged (e413e4a9) | `server/test/fix_fx1_workshop.test.mjs`; test commit bf0ff93e; fixes c717a9b1, 1faccdd2, 2ac59da1, a4817445 |
-| FX1-4-holds-codex: RB-15, RB-18, RB-36, RB-53, RB-56 | 4.0 | pre-check (2003cc38) | `server/test/fix_fx1_holds_codex.test.mjs`; test commit 924726b8; fixes 103d4176, 1de6f966, 63f031ad, 07047356, b45dafe6 |
+| FX1-4-holds-codex: RB-15, RB-18, RB-36, RB-53, RB-56 | 4.0 | ready (2003cc38) | `server/test/fix_fx1_holds_codex.test.mjs`; test commit 924726b8; fixes 103d4176, 1de6f966, 63f031ad, 07047356, b45dafe6 |
 | FX1-6-audit-server-a | 4.0 | open | |
 | FX1-7-audit-tools | 4.0 | open | |
 
@@ -45,7 +45,7 @@
   - **RB-56** (b45dafe6). As the report's Fix line says. The queue's `server` flag, and the dismissal's check for an open server report (RB-39), now also require `reason = 'completion_spike'`. Only the server files that reason: it is not one of `REPORT_REASONS`.
   - **Left for FX1-6's audit** (not in FX1-4's Fix lines). The same unguarded `lawsOf(store.get(bundle))` read is at `server/src/codex.mjs:128` (`afterHeist`), `server/src/service.mjs:823` and `:853` (settlement), and `server/src/matchmaking.mjs:338`. Each throws if a bundle is erased between lease and submit.
   - **Existing tests.** No existing test was changed, skipped or loosened. `cd server && npm test` passes 578 of 578.
-  - **Merge evidence.** Main (02558e05, lead bookkeeping) was merged at 2003cc38 with no conflict. `owners.py diff FX1-4-holds-codex origin/claude/videogame-project-analysis-ewkkk2 2003cc38` reports "every changed path is inside its files". The fresh-container setup line and `bash client/build.sh` ran first (exit 0).
+  - **Merge evidence.** Main (02558e05, lead bookkeeping) was merged at 2003cc38 with no conflict. `owners.py diff FX1-4-holds-codex origin/claude/videogame-project-analysis-ewkkk2 2003cc38` reports "every changed path is inside its files". The fresh-container setup line and `bash client/build.sh` ran first (exit 0). The pre-check at 2003cc38 passed ("All checks passed.", exit 0, 21:44:27Z, sandbox bwrap).
   - **Next.** FX1-6-audit-server-a, in a fresh session.
 
 ## Tried and failed
