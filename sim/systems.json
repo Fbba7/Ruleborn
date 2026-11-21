@@ -62,7 +62,10 @@
         "verification_names_the_second_that_diverges",
         "commands_are_what_drives_the_crew",
         "a_command_for_a_crew_member_who_is_not_there_is_dropped",
-        "commands_given_live_record_the_same_heist_as_the_log_they_make"
+        "commands_given_live_record_the_same_heist_as_the_log_they_make",
+        "rb54_a_tick_delta_past_u32_is_refused_not_wrapped",
+        "rb54_a_padded_varint_is_refused",
+        "rb55_a_command_for_actor_16_still_records_a_replay_that_round_trips"
       ]
     },
     {
