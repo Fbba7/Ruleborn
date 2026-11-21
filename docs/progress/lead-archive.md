@@ -5,6 +5,65 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 150**, 18 November 2026, from about 07:39Z (session
+  `session_01SNkKxmm9uYmBksgbVUdjx9`, started by the Opus 5.5 launcher).
+  The changes since cycle 149: S1 claimed P4-S1-heist-vault (7b5328e6,
+  07:30Z, lease to 10:30Z); S2 claimed P4-S2-home-purse and pushed its
+  first work (ebeba33c: the purse in two rows from 125% where three do
+  not fit, the raid notice's second line gives way, `fit_home.sh` with
+  M26's cases); S3 is working on settings-4 for AD-R68 (b9abf210): no kit
+  strip passes value-steps at a mid value, so it takes AD-R68's second
+  road, the title in the display face (display_xl, outline) over the
+  strip, and re-shoots the settings stills. **Bookkeeping:** the three
+  claims copied into their tasks (S1 and S2 `claimed`, settings-4
+  `working`, its lease now S3's 10:30Z), seen_at 07:42Z. **Requests:**
+  none new; M61 stays acked. **Merge and gate:** none: nothing ready, no
+  gate request, no merge lock; main moved only by bookkeeping, so the
+  pages are not republished. **Sessions:** none started or restarted:
+  S1 (`session_01SNkKxrGVdaVPxzuPW8vwRg`), S2
+  (`session_01SNkKxneZ4WEHJSJUnhLjUj`) and S3
+  (`session_01SNkKxo7BCcvsUE53DWANpH`) are inside their update times
+  (08:15Z, 08:19Z, 08:25Z). **Seats:** S3, S1 and S2, the cap of three
+  while the seven-day bar reads `allowed_warning`; nothing seeded. K1,
+  AD, AIA-2 and AIA idle. **Next:** route S3's re-shot settings stills
+  to AD (a check of AD-R68's title road), then merge settings-4 with its
+  gate run ('settings at 100% text', Hierarchy), and the wave stands at
+  O7; route S1's and S2's previews to AD.
+- **Cycle 149**, 18 November 2026, from about 07:16Z (session
+  `session_01SNkKxrEmwKsYJezgFLCenb`, started by the Opus 5.5 launcher).
+  The changes since cycle 148: AD wrote preview 3
+  (`docs/art/ui-quality/gate/boards/preview-3.md` on `claude/ui-ad`,
+  4cb837a2) for S3-R45: the ghost switch rows and both departures stand,
+  but the cream tab strip (`seg_track_light`) still outweighs the title
+  and the gold A / A at 100% text, so AD raises AD-R68. S3's pre-check
+  passed at 4a998521 (06:42Z) and S3 marked settings-4 ready there with a
+  gate request; its session went idle. M61 arrived (seed every exit item
+  that fits, then phase 4's first tasks that touch no exit board, while
+  two or more seats are free): acked. **Requests:** S3-R45 answered by
+  preview 3; AD-R68 copied and answered with its default: settings-4
+  goes back to claimed (ready 4a998521 withdrawn) and AD-R68 joins its
+  done_when, its lease moved to 11:00Z. **Merge and gate:** none: a gate
+  run at 4a998521 would judge the strip AD-R68 names, so it waits for
+  S3's re-shot stills; no merge lock; main moved only by bookkeeping
+  (722c91d7), so the pages are not republished. **Seeded (M61):** phase
+  3's one exit item is held by S3, and two seats were free, so phase 4's
+  first tasks that touch no exit board: P4-S1-heist-vault (1 hour, the
+  wave board's note: 'Vault 0%' shown and a wider playfield band at 200%
+  text) and P4-S2-home-purse (1 hour, S2-R44: the purse in two rows from
+  125% in long locales, 125% in M26's cases); `owners.py claims`: the
+  files of the tasks in flight are disjoint. **Sessions:** S3 restarted
+  as `session_01SNkKxo7BCcvsUE53DWANpH` on settings-4 for AD-R68; S1
+  started as `session_01SNkKxrGVdaVPxzuPW8vwRg` on P4-S1-heist-vault; S2
+  started as `session_01SNkKxneZ4WEHJSJUnhLjUj` on P4-S2-home-purse (all
+  07:23Z); the S1, S2 and S3 prompts above name the new tasks. AD's
+  session (`session_01SNkKxmwmtLQbP3A4xcCpWR`) is idle; AD sees S3's
+  re-shot stills when S3 sends them. **Seats:** S3, S1 and S2, the cap of
+  three while the seven-day bar reads `allowed_warning`; K1, AD, AIA-2
+  and AIA idle. **Next:** S3 sends the re-shot settings stills to AD
+  through the lead (a check), then marks ready: merge settings-4 with its
+  gate run ('settings at 100% text', Hierarchy); then the wave stands at
+  O7 (phase 3's exit). S1 and S2 send their previews to AD.
+
 - **Cycle 148**, 18 November 2026, from about 06:38Z (session
   `session_01SNkKxnbZyh2sWsw9VhvuzX`, started by the Opus 5.5 launcher).
   The changes since cycle 147: S3 claimed P3-S3-settings-4 (06:00Z, lease
