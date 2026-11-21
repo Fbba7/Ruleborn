@@ -227,13 +227,21 @@ pub enum Problem {
     /// Crystal Wall standing (F51, decided): a Keeper may make the edge a
     /// puzzle, and may not close it to one gate.
     EdgeClosed,
+    /// The entrance on the Vault or on a tile nobody can stand on, with
+    /// every Crystal Wall standing. The alarm-5 Warden comes in there
+    /// (RB-40).
+    EntranceBlocked,
+    /// One law on two pylons: a realm weaves each law once, and the sheet
+    /// would apply it twice (bug report candidate 7).
+    DuplicateLaw,
 }
 
 impl Problem {
-    pub const ALL: [Problem; 9] = [
+    pub const ALL: [Problem; 11] = [
         Problem::TooManyWards, Problem::TooManyGuards, Problem::TooManyLaws,
         Problem::UnknownLaw, Problem::Crowded, Problem::PostBlocked,
         Problem::LandingBlocked, Problem::Sealed, Problem::EdgeClosed,
+        Problem::EntranceBlocked, Problem::DuplicateLaw,
     ];
 
     pub fn bit(self) -> u32 {
@@ -719,6 +727,12 @@ impl Island {
         if sides.iter().any(|at| 2 * (0..n).filter(|&i| { let (x, y) = at(i); open(x, y) }).count() < n as usize) {
             found.push(Problem::EdgeClosed);
         }
+        if self.entrance == self.vault || !open(self.entrance.0 as u16, self.entrance.1 as u16) {
+            found.push(Problem::EntranceBlocked);
+        }
+        if self.laws.iter().enumerate().any(|(i, (id, _, _))| self.laws[..i].iter().any(|(e, _, _)| e == id)) {
+            found.push(Problem::DuplicateLaw);
+        }
         found
     }
 
@@ -916,7 +930,8 @@ impl Island {
         if !self.on_grid(x, y) || self.occupant(x, y) == Occupant::Vault {
             return false;
         }
-        self.clear(x, y);
+        // A guard may stand in tall grass or fog: clear both (RB-57).
+        while self.clear(x, y) {}
         true
     }
 
@@ -1067,7 +1082,8 @@ impl Island {
     /// Weave a law this rules version has, with its pylon on the tile. A law
     /// already woven moves its pylon here, since a realm weaves a law once.
     pub fn weave(&mut self, id: &str, x: u8, y: u8) -> bool {
-        if !LAWS.iter().any(|l| l.id == id) || !self.on_grid(x, y) {
+        // Refused before the law is lifted from its old pylon (RB-50).
+        if !LAWS.iter().any(|l| l.id == id) || !self.on_grid(x, y) || self.occupant(x, y) == Occupant::Vault {
             return false;
         }
         if let Some(i) = self.laws.iter().position(|(l, _, _)| l == id) {
