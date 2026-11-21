@@ -5,15 +5,15 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "FX2-4-purge-notify",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-21T19:15:00Z",
   "lease_until": "2026-11-21T22:15:00Z",
-  "updated_at": "2026-11-21T19:15:00Z",
-  "expected_next_update_by": "2026-11-21T20:00:00Z",
+  "updated_at": "2026-11-21T19:22:00Z",
+  "expected_next_update_by": "2026-11-21T20:07:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": null,
-    "next_step": "fail-first tests for RB-33, RB-34, RB-46, RB-47, RB-48"
+    "next_step": "full checks on the merged head, then handoff and ready"
   },
   "precheck": null,
   "gate_request": null,
