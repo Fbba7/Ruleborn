@@ -366,7 +366,12 @@ export class Workshop {
     else if (header.seed.toString() !== play.seed) outcome = { validated: false, reason: "wrong_seed" };
     else if (header.ticks !== play.ticks) outcome = { validated: false, reason: "wrong_clock" };
     else if (header.era !== 0) outcome = { validated: false, reason: "wrong_era" };
-    else {
+    // RB-35: a play is issued under the current rules (play() hands out no
+    // other), so a replay naming an older build the server still holds is
+    // refused, as a heist is against its lease (SEC-31).
+    else if (header.rules !== this.service.builds.current.rulesVersion) {
+      outcome = { validated: false, reason: "wrong_rules" };
+    } else {
       const build = this.service.builds.get(header.rules);
       const island = this.service.store.get(item.bundle);
       const result = !build ? { status: "refused", reason: "rules_not_held" }
@@ -392,7 +397,13 @@ export class Workshop {
         // SEC-26: recorded either way; on the ladder only from a player
         // who counts.
         const paid = this.counts("workshop_completions", player, item.creator, now);
-        const fresh = this.db.prepare(
+        // RB-37: one completion per player, creator and island: the same
+        // bytes listed again under another name are not a second completion.
+        const copied = this.db.prepare(
+          `SELECT 1 FROM workshop_completions c JOIN workshop_items i ON i.id = c.item
+            WHERE c.player = ? AND i.creator = ? AND i.bundle = ? AND i.id <> ? AND i.removed_at IS NULL
+            LIMIT 1`).get(player, item.creator, item.bundle, item.id);
+        const fresh = copied ? 0 : this.db.prepare(
           `INSERT OR IGNORE INTO workshop_completions (item, player, weight, at, counted)
            VALUES (?, ?, ?, ?, ?)`).run(item.id, player, mate ? facts.KIN_COMPLETION_WEIGHT : 1, now, paid ? 1 : 0)
           .changes;
@@ -534,7 +545,8 @@ export class Workshop {
          JOIN workshop_items i ON i.id = c.item
         WHERE i.creator = ? AND i.removed_at IS NULL AND c.counted = 1`).get(creator).n);
     const featured = this.db.prepare(
-      "SELECT COUNT(*) AS n FROM workshop_items WHERE creator = ? AND featured_at IS NOT NULL")
+      // RB-38: a featured island later removed no longer counts.
+      "SELECT COUNT(*) AS n FROM workshop_items WHERE creator = ? AND featured_at IS NOT NULL AND removed_at IS NULL")
       .get(creator).n;
     const level = LADDER.find(([, at]) => completions >= at.completions || featured >= at.featured);
     return { level: level ? level[0] : null, completions, featured };
@@ -579,7 +591,11 @@ export class Workshop {
           .run(now, reason, item.id);
       }
       if (action === "ban") this.ban(item.creator, reason, now);
-      if (action === "dismiss" && report.reporter === null) {
+      // RB-39: the spike flag clears whenever a server report is among those
+      // the dismissal closes, whichever report the moderator acted on.
+      if (action === "dismiss" && this.db.prepare(
+        "SELECT 1 FROM workshop_reports WHERE item = ? AND resolved_at IS NULL AND reporter IS NULL LIMIT 1")
+        .get(item.id)) {
         this.db.prepare("UPDATE workshop_items SET review = 0 WHERE id = ?").run(item.id);
       }
       this.db.prepare(

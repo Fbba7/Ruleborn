@@ -1399,6 +1399,22 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   island coming back on republish) is fixed either way, and a new string
   would touch the parked UI's strings file during the UI pause. No task
   is seeded.
+- **FX1-R2** (from FX1, 21 November 2026 19:21Z; due 22 November 19:21Z;
+  not blocking): RB-35's Fix line stores the rules build per Workshop
+  play, which needs a `rules` column on `workshop_plays` in
+  `server/src/db.mjs` (outside FX1-3's files). FX1-3 instead refuses
+  `wrong_rules` in `submitPlay` when the replay names any build but
+  `builds.current`, since `play()` only issues plays under the current
+  build; a play issued before a rules upgrade and submitted after it is
+  refused, and the player asks for a fresh one. Files: db.mjs,
+  workshop.mjs. Default: keep the current-build check; no schema change.
+  Copied in cycle 161.
+  **Answered** by the lead in cycle 161: the default. RB-35's defect, an
+  old build's exploit staying usable in the Workshop while that build is
+  held, is closed either way: no play judged by an older build is
+  validated or counted. The cost, a play spanning a rules upgrade being
+  refused, is rare and recoverable, and a schema change would add a
+  migration to the bug-fix wave for no further fix. No task is seeded.
 - **FX2-2-r1** (from FX2, 21 November 2026 16:35Z; due 22 November
   16:35Z; not blocking): let `too_many_events` move from 429 to 422, like
   the other per-day telemetry caps FX2-2 moved for RB-32;
