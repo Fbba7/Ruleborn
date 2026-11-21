@@ -148,10 +148,13 @@ export class Observatory {
     const mm = this.service.matchmaking;
     // Each raider ordered by their own latest heist: SELECT DISTINCT with an
     // ORDER BY on a column it leaves out orders them by whichever of their
-    // heists SQLite's plan reads (RB-49).
+    // heists SQLite's plan reads (RB-49). A banned or deleted raider is
+    // passed over: the lease would refuse their island (candidate 21).
     const raiders = this.db.prepare(
       `SELECT h.attacker FROM heists h JOIN leases l ON l.token = h.token
+         JOIN accounts a ON a.id = h.attacker
         WHERE h.defender = ? AND h.submitted_at > ?
+          AND a.banned_at IS NULL AND a.deleted_at IS NULL
         GROUP BY h.attacker ORDER BY MAX(h.submitted_at) DESC`)
       .all(account, now - facts.TRACE_HOURS * HOUR).map((r) => r.attacker);
     for (const raider of raiders) {
