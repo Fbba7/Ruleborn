@@ -591,7 +591,11 @@ export class Workshop {
           .run(now, reason, item.id);
       }
       if (action === "ban") this.ban(item.creator, reason, now);
-      if (action === "dismiss" && report.reporter === null) {
+      // RB-39: the spike flag clears whenever a server report is among those
+      // the dismissal closes, whichever report the moderator acted on.
+      if (action === "dismiss" && this.db.prepare(
+        "SELECT 1 FROM workshop_reports WHERE item = ? AND resolved_at IS NULL AND reporter IS NULL LIMIT 1")
+        .get(item.id)) {
         this.db.prepare("UPDATE workshop_items SET review = 0 WHERE id = ?").run(item.id);
       }
       this.db.prepare(
