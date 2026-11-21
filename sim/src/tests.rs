@@ -6940,3 +6940,76 @@ fn candidate_34_a_tunnel_mouth_under_a_raised_wall_is_no_way_out() {
     assert!(route.as_ref().is_none_or(|r| r.iter().all(|&t| world.grid.at(t).passable())),
             "a route comes up into the raised wall: {route:?}");
 }
+
+/// The byte at which a replay's first command's tick delta starts: the
+/// header's length, which a copy of the heist with no commands and no
+/// checksums encodes to exactly.
+fn first_delta_at(heist: &Heist) -> usize {
+    Heist { commands: Vec::new(), checksums: Vec::new(), ..heist.clone() }.encode().len()
+}
+
+#[test]
+fn rb54_a_tick_delta_past_u32_is_refused_not_wrapped() {
+    // Bug report RB-54: `delta as u32` truncated the varint before
+    // `checked_add`, so 2^32 + d decoded as d, the same heist.
+    let heist = fixture(3, 600, 3);
+    let bytes = heist.encode();
+    let at = first_delta_at(&heist);
+    let d = heist.commands[0].tick as u64;
+    assert!(d < 0x80, "the fixture's first delta is one byte");
+    let mut wide = bytes[..at].to_vec();
+    let mut value = (1u64 << 32) + d;
+    loop {
+        let byte = (value & 0x7f) as u8;
+        value >>= 7;
+        if value == 0 {
+            wide.push(byte);
+            break;
+        }
+        wide.push(byte | 0x80);
+    }
+    wide.extend_from_slice(&bytes[at + 1..]);
+    assert!(Heist::decode(&wide).is_none(), "2^32 + {d} decodes as {d}");
+}
+
+#[test]
+fn rb54_a_padded_varint_is_refused() {
+    // Bug report RB-54: a varint padded with a trailing zero byte decoded to
+    // the same value, a second byte string for one heist.
+    let heist = fixture(3, 600, 3);
+    let bytes = heist.encode();
+    let at = first_delta_at(&heist);
+    assert!(bytes[at] < 0x80, "the fixture's first delta is one byte");
+    let mut padded = bytes[..at].to_vec();
+    padded.extend_from_slice(&[bytes[at] | 0x80, 0x00]);
+    padded.extend_from_slice(&bytes[at + 1..]);
+    assert!(Heist::decode(&padded).is_none(), "a padded varint decodes");
+    // Ten bytes whose last bit falls past u64's 64th: the same value again.
+    let mut long = bytes[..at].to_vec();
+    long.push(bytes[at] | 0x80);
+    long.extend_from_slice(&[0x80; 8]);
+    long.push(0x02);
+    long.extend_from_slice(&bytes[at + 1..]);
+    assert!(Heist::decode(&long).is_none(), "a varint whose high bits fall off decodes");
+}
+
+#[test]
+fn rb55_a_command_for_actor_16_still_records_a_replay_that_round_trips() {
+    // Bug report RB-55: the replay packs the actor in four bits, so a
+    // command for actor 16 came back as actor 0 and the replay diverged.
+    use crate::island::Island;
+    use crate::{record_in, verify_on};
+    let island = Island::example_open();
+    let (vx, vy) = (island.vault.0 as i16, island.vault.1 as i16);
+    let mut commands = crate::draw(&island, 7, crate::MIN_TICKS, 3);
+    let after_landing = commands.iter().position(|c| c.tick > 0).unwrap_or(commands.len());
+    commands.insert(after_landing, Command { tick: 1, actor: 16, kind: Kind::MoveTo, x: vx * 256 + 128, y: vy * 256 + 128 });
+    assert!(commands.windows(2).all(|w| w[0].tick <= w[1].tick));
+    let heist = record_in(&island, 7, crate::MIN_TICKS, 3, None, commands);
+    let back = Heist::decode(&heist.encode()).expect("a recorded heist decodes");
+    // The replay is the record: what it keeps must come back as written,
+    // never as another crew member.
+    assert!(heist.commands.iter().all(|c| c.actor < 16), "the recorded heist keeps a command for an actor past 15");
+    assert_eq!(back.commands, heist.commands, "the recorded replay round-trips");
+    assert!(verify_on(&island, &back).is_ok(), "{:?}", verify_on(&island, &back).err());
+}
