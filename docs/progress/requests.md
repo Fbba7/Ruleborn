@@ -2447,6 +2447,9 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   plates (dL* about 52 to 56 off the sky); the cream line goes to a K1
   follow-up if AD asks for it. Copied in cycle 127. K1 is on
   P3-K1-tabs-1; the default stands unless AD's preview asks for cream.
+  **Default applied** by the lead in cycle 152 (21 November 2026, past due
+  since 18 November 13:50Z): the lavender line stands on the heist's card
+  plates; no cream follow-up is filed while the UI is paused.
 
 - **S1-R39** (from S1 to K1, with the lead's approval under M33,
   17 November 2026 13:59Z; due 18 November 13:59Z; not blocking): raise

@@ -1,8 +1,8 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-18T08:25:00Z",
-  "expected_next_update_by": null,
-  "cycle": 151,
+  "updated_at": "2026-11-21T14:20:00Z",
+  "expected_next_update_by": "2026-11-21T17:20:00Z",
+  "cycle": 153,
   "merging": null,
   "last_merged": {
     "task_id": "P3-AD-wave-board",
@@ -35,18 +35,20 @@
     "M55",
     "M56",
     "M57",
-    "M61"
+    "M61",
+    "M62"
   ],
   "alerts": [
+    "Bug-fix wave, by the owner's restart of 21 November 2026, about 13:50Z (\"Yes the UI stays paused and do the extra checks\"; CLAUDE.md order 1; M62): the UI stays paused (P3-S3-settings-4, P4-S1-heist-vault and P4-S2-home-purse parked; BT parked) until every FX task is merged. Fix builders FX1 to FX4 run on Opus 5.5 at effort high within order 3's cap (three while the seven-day bar reads allowed_warning). The launcher and watchdog of 11 November start the lead's cycles.",
     "Owner's order 5 of 11 November 2026, about 19:50Z (\"Let's switch to Opus 5.5 everywhere again, effort high\"): every session runs on Opus 5.5 at effort high; never Fable 5.1 (order 2). Launcher trig_01T7B65veojXUDAKzLK3FFBP and watchdog trig_01A1NwZvKD6MDUosh4jyvqqr, created at 19:50Z after order 5 was on main. The Fable 5.2 pair (trig_01U7kEeot7dmuJuNZVQJ7Bhm, trig_0195QvFjjm2oUgeCeyhU4bp4), disabled at 19:49Z, and every older scheduled task stay disabled and are never re-enabled. No Fable 5.2 session is reused.",
     "Restarted by the owner on 11 November 2026 (\"We still need to keep the UI process we were doing with the phases running as it was\", then \"Make sure it is running now\"; CLAUDE.md order 1), on Fable 5.2 only (order 4). Launcher trig_01U7kEeot7dmuJuNZVQJ7Bhm and watchdog trig_0195QvFjjm2oUgeCeyhU4bp4, created at 01:10Z and 01:11Z after the restart was on main (40c92625). Every older scheduled task stays disabled and is never re-enabled.",
     "Stopped by the owner on 10 November 2026 (\"Deploy and then stop cleanly\", CLAUDE.md order 1), until the restart of 11 November 2026. The final deploy is on main (e072364a, 718ddcbe, 8f03235f). No session worked and nothing was merged between the stop and the restart. The launcher trig_01ChLd51gPMwzsKrXifYfkYj and the watchdog trig_016aHfeAQkYXB6Z5X361irkE were disabled then, stay disabled and are never re-enabled.",
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Cycle 152: S2 (session_01SNkKxneZ4WEHJSJUnhLjUj) marks P4-S2-home-purse ready on its checks and the gate verdict of cycle 151 (gate/verdicts/P4-S2-home-purse/acb2239b.json, 'home at 100% text' Hierarchy 3/3 pass): merge it. S1 (session_01SNkKxrGVdaVPxzuPW8vwRg) marks P4-S1-heist-vault ready with its gate request ('heist at 200% text, pt_BR', Hierarchy) once S1-R44's default stands (11:30Z) or earlier: run the gate and merge. S3 (session_01SNkKxo7BCcvsUE53DWANpH) marks P3-S3-settings-4 ready with AD-R68's title road: gate run ('settings at 100% text', Hierarchy), merge, and the wave stands at O7 (phase 3's exit). AD has no seat while the cap is three; S1-R44, S2-R47 and AD-R68's check go into AD's next task. Restart any of the three idle past its update time.",
+  "next_step": "Cycle 154: FX4 (session_01SNkKxpaLsMGZP21royWUDx) on FX4-1-transport, FX2 (session_01SNkKxnSsbQpjGppmXiBbGG) on FX2-1-db-store-home and FX3 (session_01SNkKxp7XpKf4e1axKU4F7x) on FX3-1-heal-alarm, all claimed (leases to about 17:15Z). Merge each FX task on ready once its pre-check passes and each RB entry's fail-first test is committed before its fix; then start that agent's next FX task. Start FX1 on FX1-1-workshop-pairs when a seat frees or the seven-day bar clears allowed_warning (cap three while it reads allowed_warning, four otherwise). Restart any FX builder idle past its expected update. File new FX tasks from confirmed findings in docs/security/audit-2026-11/. Start no UI or BT builder; when every FX task is merged, reopen P3-S3-settings-4, P4-S1-heist-vault and P4-S2-home-purse (parked to open, prior_branch and prior_sha recorded) and resume phase 3.",
   "seen": {
-    "at": "2026-11-18T08:22:26Z",
+    "at": "2026-11-21T14:17:44Z",
     "heads": {
       "claude/3d-character-screens": "6053b249bee313648da3509142eeb2ba738bb62f",
       "claude/3d-characters": "35d6ae8f5b84a4d75636f68270848b0949c111f3",
@@ -60,6 +62,9 @@
       "claude/auth": "162e29d2b42a74df530e73e5a4db4b5410897275",
       "claude/db-cost": "1a033fe3d77dd294c53ef27cb1553bc5c754b4c2",
       "claude/docs": "2e0eededbbc1e3c53ba9a4dea3647de87b7ef11b",
+      "claude/fix-client": "3d559d7600e6b8bd434bd0af1da610e2eafa9599",
+      "claude/fix-server-b": "1dd781cb001eb58935d1e469be9134cab57e72dc",
+      "claude/fix-sim": "1ab25511761557330682ec0dcef43245055ba66a",
       "claude/lead-cycle-84-verdicts": "ae9c5e4effc8070a5e29f589882bc14445520fa4",
       "claude/plan-v3": "57893713636b7753d0b790c5a9dc35c3b126770a",
       "claude/security-review": "dd1e90f06b512b25a74f3f3f73ace84b3969cce9",
@@ -73,7 +78,7 @@
       "claude/ui-plan": "f1affcea749d007fe1a67931bd3c1f7359d98c44",
       "claude/ui-research": "f19d5d4e5eaffff8869da3b91124d111cf1259a6",
       "claude/ui-screens": "dceb6bfcbc6c5da4e261674fe9301e1854f0aa65",
-      "claude/ui-screens-heist": "c5bf87e9e17e409cce53301532faad334ca5279f",
+      "claude/ui-screens-heist": "ed443f93cbe84ae052c9621ecb52385068d81a3d",
       "claude/ui-screens-home": "27846b7cdd0b78ce2537c4ae0d076bb18046f260",
       "claude/ui-screens-meta": "e0e4730b37d48ab1494a45ed0c3f0035609f14cd",
       "lead/candidate-276ed4f0": "276ed4f0623d108174022240cba14f4f0ef9f74b",
@@ -132,6 +137,11 @@
       "S3-R9 to S3-R14"
     ],
     "leases": [],
-    "stale": []
+    "stale": [
+      "S2@2026-11-18T08:39:13Z",
+      "S2@2026-11-18T08:39:13Z+late",
+      "S3@2026-11-18T08:45:00Z",
+      "S3@2026-11-18T08:45:00Z+late"
+    ]
   }
 }
