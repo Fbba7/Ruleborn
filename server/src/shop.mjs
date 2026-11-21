@@ -293,13 +293,20 @@ export class Shop {
     if (!proof) throw new Refused(402, "receipt_refused");
     const done = this.db.prepare("SELECT 1 FROM purchases WHERE store = ? AND txn = ?").get(store, proof.transaction);
     if (!done) {
-      // Refused before the store is told anything, so nothing is consumed.
+      // Refused before the store is told anything, so nothing is consumed
+      // and a Play purchase is refunded by itself: every refusal `redeem`
+      // would make after the store had settled it (RB-08), and a minor's
+      // cap (SEC-21). `redeem` checks each again once the store answers.
+      const buyer = this.db.prepare("SELECT deleted_at FROM accounts WHERE id = ?").get(account);
+      if (!buyer || buyer.deleted_at) throw new Refused(410, "account_deleted");
       if (this.refunded(store, proof.transaction)) throw new Refused(402, "receipt_refunded");
-      const i = this.intentOf(proof);
-      // Over a minor's cap, refused before the store acknowledges it, so a
-      // Play purchase is refunded by itself (SEC-21).
       const p = this.product(proof.product);
-      if (p) this.capCheck(account, p, i, this.service.now());
+      if (!p) throw new Refused(404, "no_such_product");
+      const i = this.intentOf(proof);
+      if (i && (i.account !== account || (!i.tomb && i.product !== proof.product))) {
+        throw new Refused(409, "intent_mismatch");
+      }
+      this.capCheck(account, p, i, this.service.now());
       const settled = await this.settleReceipt(store, proof);
       if (!settled?.ok) {
         const reason = settled?.reason ?? "receipt_refused";
