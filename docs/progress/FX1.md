@@ -1,16 +1,16 @@
 # FX1 server fixes (A): progress
 
-- Status: Green locally. FX1-2-leases: fail-first tests and fixes for RB-12, RB-14, RB-16 and RB-17 pushed; main merged at f3849470; pre-check running there.
+- Status: Green. FX1-2-leases ready at f3849470 (pre-check PASS, 18:30:38Z).
 - Progress: 1 of 6 tasks merged (FX1-1-workshop-pairs, 8ed7538f); no gate items (fix tasks have none).
 - Done: FX1-1 merged. FX1-2: RB-12, RB-14, RB-16, RB-17, each with a test committed before its fix; `cd server && npm test` 554 of 554; `owners.py diff` passes.
-- Next: record the pre-check, mark FX1-2 ready; then FX1-3-workshop in a fresh session.
+- Next: FX1-3-workshop, in a fresh session.
 - Blocked by: none.
 - Owner decision needed: none.
 
 | Deliverable | Weight (h) | Status | Evidence |
 |---|---:|---|---|
 | FX1-1-workshop-pairs: RB-30, RB-05, RB-06 | 3.0 | merged (8ed7538f) | `server/test/fix_fx1_workshop_pairs.test.mjs`; test commit 3785a41c; fixes in `server/src/workshop.mjs`, `server/src/service.mjs`, `server/src/matchmaking.mjs` |
-| FX1-2-leases: RB-12, RB-14, RB-16, RB-17 | 3.5 | working | `server/test/fix_fx1_leases.test.mjs`; test commit d1c34426; fixes 68b8d6f9, 092bc9fd, 2c55de1f, 165fa31f |
+| FX1-2-leases: RB-12, RB-14, RB-16, RB-17 | 3.5 | ready (f3849470) | `server/test/fix_fx1_leases.test.mjs`; test commit d1c34426; fixes 68b8d6f9, 092bc9fd, 2c55de1f, 165fa31f |
 | FX1-3-workshop | 3.5 | open | |
 | FX1-4-holds-codex | 4.0 | open | |
 | FX1-6-audit-server-a | 4.0 | open | |
@@ -43,7 +43,7 @@
   - **RB-16** (2c55de1f). `challengeLease`'s "played" query now adds `AND h.validated = 1`. As the report's Fix line says. The test also checks that a validated play still uses up the link.
   - **RB-17** (165fa31f). `offer` takes the easier neighbours with `sorted.slice(Math.max(0, i - half), i)`. As the report's Fix line says. The test also checks that a size-3 offer is unchanged.
   - **Existing tests.** No existing test was changed, skipped or loosened. `cd server && npm test` passes 554 of 554.
-  - **Merge evidence.** Main (2e02482a) was merged at f3849470 with no conflict. `owners.py diff FX1-2-leases origin/claude/videogame-project-analysis-ewkkk2 HEAD` reports "every changed path is inside its files". The fresh-container setup line and `bash client/build.sh` ran first (build exit 0). The pre-check at f3849470 is running; its result goes in the status file.
+  - **Merge evidence.** Main (2e02482a) was merged at f3849470 with no conflict. `owners.py diff FX1-2-leases origin/claude/videogame-project-analysis-ewkkk2 HEAD` reports "every changed path is inside its files". The fresh-container setup line and `bash client/build.sh` ran first (build exit 0). The pre-check at f3849470 passed ("All checks passed.", exit 0, 18:30:38Z, sandbox bwrap); `owners.py diff` at that sha passes. Main's later commit 7c7e389a is lead bookkeeping only (`docs/progress/`), so it was not merged.
   - **Next.** FX1-3-workshop (RB-35, RB-37, RB-38, RB-39), in a fresh session.
 
 ## Tried and failed
