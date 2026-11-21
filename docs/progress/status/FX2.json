@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-21T17:50:00Z",
   "lease_until": "2026-11-21T20:50:00Z",
-  "updated_at": "2026-11-21T17:55:00Z",
-  "expected_next_update_by": "2026-11-21T18:40:00Z",
+  "updated_at": "2026-11-21T18:00:00Z",
+  "expected_next_update_by": "2026-11-21T18:45:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "8ed7538f",
-    "next_step": "fixes RB-08, RB-09, RB-11, RB-10, RB-13, one commit each (tests at 3b4d287b)"
+    "last_green_sha": "1ab236f9",
+    "next_step": "record check_all on 427a1705 (running), then mark ready"
   },
   "precheck": null,
   "gate_request": null,
