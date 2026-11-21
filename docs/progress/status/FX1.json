@@ -3,21 +3,26 @@
   "role": "FX1",
   "branch": "claude/fix-server-a",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "FX1-3-workshop",
-  "task_state": "claimed",
+  "task_state": "ready",
   "claimed_at": "2026-11-21T19:20:00Z",
   "lease_until": "2026-11-21T22:20:00Z",
-  "updated_at": "2026-11-21T19:21:15Z",
-  "expected_next_update_by": "2026-11-21T20:06:15Z",
+  "updated_at": "2026-11-21T19:53:31Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "24e171e81b23a90195ca3bee0dcbc27d5a4a94b6",
-    "next_step": "FX1-3-workshop: pre-check at 24e171e8, then ready"
+    "next_step": "FX1-4-holds-codex, in a fresh session"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "24e171e81b23a90195ca3bee0dcbc27d5a4a94b6",
+    "exit": 0,
+    "finished_at": "2026-11-21T19:52:54Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "24e171e81b23a90195ca3bee0dcbc27d5a4a94b6",
   "stop_at": "2026-11-24T21:00:00Z",
   "acks": [],
   "requests": [

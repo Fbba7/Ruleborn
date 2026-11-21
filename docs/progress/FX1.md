@@ -1,6 +1,6 @@
 # FX1 server fixes (A): progress
 
-- Status: Green. FX1-3-workshop ready at 24e171e8 (pre-check in `docs/progress/status/FX1.json`).
+- Status: Green. FX1-3-workshop ready at 24e171e8 (pre-check PASS, 19:52:54Z).
 - Progress: 2 of 6 tasks merged (FX1-1-workshop-pairs, 8ed7538f; FX1-2-leases, c7cdcbbd); no gate items (fix tasks have none).
 - Done: FX1-3: RB-35, RB-37, RB-38, RB-39, each with a test committed before its fix; `cd server && npm test` 566 of 566; `owners.py diff` passes.
 - Next: FX1-4-holds-codex, in a fresh session.
@@ -60,7 +60,7 @@
   - **RB-38** (2ac59da1). The ladder's featured count adds `AND removed_at IS NULL`, as the report's Fix line says.
   - **RB-39** (a4817445). On a dismiss, `review` is reset when any open report on the island is a server report (`reporter IS NULL`). The check runs before the reports are closed. As the report's Fix line says.
   - **Existing tests.** No existing test was changed, skipped or loosened. `cd server && npm test` passes 566 of 566.
-  - **Merge evidence.** Main (6cfd40b4) was merged at 24e171e8 with no conflict. `owners.py diff FX1-3-workshop origin/claude/videogame-project-analysis-ewkkk2 24e171e8` reports "every changed path is inside its files". The fresh-container setup line and `bash client/build.sh` ran first (build exit 0). The pre-check ran at 24e171e8 (sandbox bwrap).
+  - **Merge evidence.** Main (6cfd40b4) was merged at 24e171e8 with no conflict. `owners.py diff FX1-3-workshop origin/claude/videogame-project-analysis-ewkkk2 24e171e8` reports "every changed path is inside its files". The fresh-container setup line and `bash client/build.sh` ran first (build exit 0). The pre-check at 24e171e8 passed ("All checks passed.", exit 0, 19:52:54Z, sandbox bwrap); `owners.py diff` at that sha passes. Main's later commit 91ab2a52 is lead bookkeeping only (`docs/progress/`), so it was not merged. The lead answered FX1-R2 with its default (keep the current-build check).
   - **Next.** FX1-4-holds-codex, in a fresh session.
 
 ## Tried and failed
