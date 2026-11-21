@@ -6588,9 +6588,10 @@ fn rb29_a_realms_alarm_counts_from_when_the_crew_arrives() {
     c.step();
     assert_eq!((c.world.alarm, c.world.reinforced, c.world.guards.len()), (0, false, guards),
                "the Heart's alarm on the crew's first tick there");
-    // Across at 61 s: thirty seconds in the Heart is one level, not three.
+    // Across at 61 s: thirty seconds in the Heart, counted from its first
+    // tick, is one level, not three.
     let mut c = arrive_at(61);
-    for _ in 0..crate::guard::ALARM_STEP_TICKS {
+    for _ in 0..=crate::guard::ALARM_STEP_TICKS {
         c.step();
     }
     let w = &c.world;
