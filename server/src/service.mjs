@@ -463,7 +463,15 @@ export class Service {
       if (echo || trace) throw new Refused(410, "superseded");
       if (!this.friends.areFriends(attacker, defender)) throw new Refused(403, "not_friends");
     } else if (trace) {
-      traceOf = this.matchmaking.traceable(attacker, defender, now);
+      // A Trace asked for again while one is held is handed back (§24.13),
+      // though traceable() no longer finds its robbery: the held one names
+      // it (RB-14). Only the newest lease on the bundle can be held (issue).
+      const newest = this.db.prepare(
+        "SELECT token, trace_of, expires_at FROM leases WHERE attacker = ? AND bundle = ? ORDER BY issued_at DESC LIMIT 1")
+        .get(attacker, bundle);
+      const heldTrace = newest?.trace_of && newest.expires_at > now
+        && !this.db.prepare("SELECT 1 FROM heists WHERE token = ?").get(newest.token) ? newest.trace_of : null;
+      traceOf = this.matchmaking.traceable(attacker, defender, now) ?? heldTrace;
       if (!traceOf) throw new Refused(403, "nothing_to_trace");
     } else if (this.matchmaking.shielded(defender, now)) {
       throw new Refused(403, "new_player_protected", { hours: facts.NEW_PLAYER_SHIELD_HOURS });
