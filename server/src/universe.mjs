@@ -298,6 +298,7 @@ export class Universe {
       // before it rises, and every producer before the Spire or an Anchor
       // Stone moves the universe's stability band (home.mjs).
       this.service.home?.settleAll(account, now);
+      if (have && kind === "nursery") this.service.home?.carryNursery(account, realm, to, now);
       this.db.prepare(
         `INSERT INTO buildings (owner, realm, kind, n, level, changed_at) VALUES (?, ?, ?, ?, ?, ?)
          ON CONFLICT (owner, realm, kind, n) DO UPDATE SET level = excluded.level, changed_at = excluded.changed_at`)

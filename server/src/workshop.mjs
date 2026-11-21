@@ -176,6 +176,13 @@ export class Workshop {
       `SELECT 1 FROM workshop_items WHERE bundle = ? AND creator != ?
           AND (withdrawn_at IS NULL OR removed_at IS NOT NULL) LIMIT 1`).get(read.digest, creator);
     if (listedElsewhere) throw new Refused(409, remixOf !== null ? "remix_unchanged" : "already_published");
+    // Nor by its own creator once a moderator took it down: the removal
+    // takes the island out of the Workshop (§18.7, RB-30). The reason is
+    // one the client already has words for in every language.
+    const takenDown = this.db.prepare(
+      `SELECT 1 FROM workshop_items WHERE bundle = ? AND creator = ? AND removed_at IS NOT NULL LIMIT 1`)
+      .get(read.digest, creator);
+    if (takenDown) throw new Refused(409, "island_withdrawn");
 
     const header = readHeader(replay);
     if (!header || header.island !== read.digest) throw new Refused(422, "not_cleared", { why: "wrong_island" });

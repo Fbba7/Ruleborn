@@ -366,10 +366,12 @@ export class Home {
    *  level's rate, a slot's share for each worker from five minutes after it
    *  started, §9.3's laws working at `at` — "1 + 0.10 per realm law of a
    *  matching school + 0.05 per matching crown law" — the realm's school
-   *  (§5.2) and the worker's bonuses (§9.2). */
-  rate(account, realm, kind, at) {
+   *  (§5.2) and the worker's bonuses (§9.2). With `ahead`, also `ahead`:
+   *  those workers and the ones resting at `at`, each counting from the end
+   *  of its rest, for when the store fills (RB-21). */
+  rate(account, realm, kind, at, { ahead = false } = {}) {
     const b = this.building(account, realm, kind);
-    if (!b) return { level: null, workers: [], perHour: 0 };
+    if (!b) return { level: null, workers: [], perHour: 0, ...(ahead ? { ahead: [] } : {}) };
     const lv = PRODUCERS[kind][b.level - 1];
     const resource = RESOURCE[kind];
     const type = this.universe.realms(account).find((r) => r.realm === realm)?.type;
@@ -388,16 +390,19 @@ export class Home {
       * laws * band * cut;
     // §11.6: "A character on a heist isn't working or guarding", nor while
     // it rests after one.
-    const workers = this.characters(account)
-      .filter((c) => c.work_realm === realm && c.work_kind === kind && !away(c, at))
+    const staff = this.characters(account)
+      .filter((c) => c.work_realm === realm && c.work_kind === kind)
       .map((c) => {
         let bonus = schoolsOf(resource).includes(RULEBORN[c.kind].school) ? facts.WORKER_SCHOOL_BONUS : 0;
         for (const t of c.traits) if (WORK[t] && (WORK[t].at === null || WORK[t].at === kind)) bonus += WORK[t].share;
-        return { id: c.id, from: c.work_since + facts.PRODUCTION_START_MINUTES * MINUTE,
+        const from = c.work_since + facts.PRODUCTION_START_MINUTES * MINUTE;
+        return { id: c.id, from: away(c, at) ? Math.max(from, c.away_until) : from, resting: away(c, at),
                  perHour: (lv.hourly * boost * (1 + bonus)) / lv.slots };
       });
+    const workers = staff.filter((w) => !w.resting).map(({ resting, ...w }) => w);
     const perHour = workers.filter((w) => w.from <= at).reduce((s, w) => s + w.perHour, 0);
-    return { level: b.level, lv, workers, perHour, boost, resource, built: b.changed_at, band: stability.band, fault };
+    return { level: b.level, lv, workers, perHour, boost, resource, built: b.changed_at, band: stability.band, fault,
+             ...(ahead ? { ahead: staff.map(({ resting, ...w }) => w) } : {}) };
   }
 
   /** A producer's store brought up to `now`, in thousandths, and written:
@@ -515,6 +520,22 @@ export class Home {
       ?? b.changed_at;
     const ready = Math.min(holds, Math.floor((now - since) / period));
     return { realm, ready, holds, since, period, next_at: ready >= holds ? null : since + (ready + 1) * period };
+  }
+
+  /** A Nursery in `realm` about to be raised to level `to`: the births it
+   *  has ready are kept, and the part of a period it has made counts at the
+   *  old rate, carried over as the same share of the new period. Without
+   *  this the raise restarted the wait from `changed_at` (RB-07) or paid the
+   *  hours before it at the new rate (RB-22). */
+  carryNursery(account, realm, to, now) {
+    const old = this.nursery(account, realm, now);
+    if (!old) return;
+    const { period } = NURSERY[to - 1];
+    const ready = Math.min(old.ready, NURSERY[to - 1].holds);
+    const made = old.ready >= old.holds ? 0 : now - old.since - old.ready * old.period;
+    const since = now - ready * period - Math.floor(made * period / old.period);
+    this.db.prepare(`INSERT INTO nurseries (owner, realm, since) VALUES (?, ?, ?)
+                     ON CONFLICT (owner, realm) DO UPDATE SET since = excluded.since`).run(account, realm, since);
   }
 
   /** §11.5: a birth at the Nursery in `realm`, paid in Essence at §9.5's
@@ -808,7 +829,7 @@ export class Home {
     const crown = (working.crown ?? []).map((w) => w.law);
     for (const b of this.universe.buildings(account)) {
       if (PRODUCERS[b.kind]) {
-        const r = this.rate(account, b.realm, b.kind, now);
+        const r = this.rate(account, b.realm, b.kind, now, { ahead: true });
         const row = this.db.prepare("SELECT * FROM producers WHERE owner = ? AND realm = ? AND kind = ?")
           .get(account, b.realm, b.kind) ?? { stored: 0, settled_at: b.changed_at };
         const made = this.made(account, b.realm, b.kind, row.settled_at, now);
@@ -816,7 +837,7 @@ export class Home {
         producers.push({ realm: b.realm, kind: b.kind, level: b.level, resource: r.resource, slots: r.lv.slots,
                          workers: r.workers.map((w) => w.id), per_hour: Math.round(r.perHour),
                          stored: Math.min(holds, Math.floor((row.stored + made) / 1000)), holds,
-                         full_at: fullAt(row.stored + made, holds * 1000, r.workers, now),
+                         full_at: fullAt(row.stored + made, holds * 1000, r.ahead, now),
                          // §5.5's band, 0 Quiet to 6 Breaking, and whether a
                          // fault opens from this realm (§9.3).
                          band: r.band, fault: r.fault });
