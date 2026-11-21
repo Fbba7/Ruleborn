@@ -1,6 +1,6 @@
 # FX3 simulation fixes: progress
 
-- Status: Active. FX3-4-lab-replay: every fix committed; pre-check running at 7db937dd. FX3-3-clock-report merged.
+- Status: Waiting. FX3-4-lab-replay is ready at 7db937dd (pre-check PASS at 21:40Z, recorded). FX3-3-clock-report merged.
 - Progress: FX3-4-lab-replay: RB-51 (a crossing hinted only the first chord of each three laws), RB-52 (a Lab hint could name a resonance not found at launch), RB-54 (several byte strings decoded as one heist), RB-55 (a command for actor 16 or above came back as another crew member). Each has a fail-first test, committed before its fix.
 - Done: `cargo test` in `sim` 349 of 349, golden replays still verify (no rebake); `cd server && npm test` 574 of 574; `python3 sim/status.py` every gate holds.
 - Next: the lead's merge, then FX3-5-audit-sim in a fresh session.
@@ -12,10 +12,10 @@
 | FX3-1-heal-alarm: RB-28 and RB-29 | 3.0 | merged | lead cycle 158 |
 | FX3-2-island: RB-40, RB-50, RB-57, candidates 7 and 34 | 4.0 | merged | `sim/src/tests.rs` `rb40_an_entrance_in_a_wall_or_on_the_vault_is_not_published`, `rb50_weaving_a_law_onto_the_vault_is_refused_and_keeps_the_law`, `rb57_a_ward_or_pylon_on_a_guard_in_tall_grass_replaces_the_grass_too`, `candidate_7_the_same_law_twice_is_not_published`, `candidate_34_a_tunnel_mouth_under_a_raised_wall_is_no_way_out`; `sim/src/island.rs`, `sim/src/path.rs`, `server/src/sim.mjs` |
 | FX3-3-clock-report: RB-44, RB-45, RB-19 | 3.0 | merged | `sim/src/tests.rs` `rb44_a_split_and_rejoined_mite_does_not_hold_the_report_to_the_whole_clock`, `rb44_a_crossings_reports_count_only_the_crew_for_held`, `rb45_a_slowed_clock_still_catches_whoever_is_inside_at_the_last_tick`; `server/test/fix_fx3_older_build.test.mjs`; `sim/src/lib.rs`, `sim/src/universe.rs`, `server/src/sim.mjs` |
-| FX3-4-lab-replay: RB-51, RB-52, RB-54, RB-55 | 3.5 | in progress | `server/test/fix_fx3_lab_hints.test.mjs`; `sim/src/tests.rs` `rb54_a_tick_delta_past_u32_is_refused_not_wrapped`, `rb54_a_padded_varint_is_refused`, `rb55_a_command_for_actor_16_still_records_a_replay_that_round_trips`; `server/src/lab.mjs`, `sim/src/replay.rs`, `sim/src/lib.rs` |
+| FX3-4-lab-replay: RB-51, RB-52, RB-54, RB-55 | 3.5 | ready | `server/test/fix_fx3_lab_hints.test.mjs`; `sim/src/tests.rs` `rb54_a_tick_delta_past_u32_is_refused_not_wrapped`, `rb54_a_padded_varint_is_refused`, `rb55_a_command_for_actor_16_still_records_a_replay_that_round_trips`; `server/src/lab.mjs`, `sim/src/replay.rs`, `sim/src/lib.rs` |
 
 ## Handoff
-- FX3-4-lab-replay, draft (2026-11-21). Branch `claude/fix-sim`. Pre-check at 7db937dd: running. Main merged at 702b29e6 (lead cycle 162's files only, no conflict). An earlier pre-check at 702b29e6 failed on `sim/status.py` ("tests no system claims") because the new Rust tests were not yet listed in `sim/systems.json`; 7db937dd lists them, and that run is superseded.
+- FX3-4-lab-replay, ready (2026-11-21). Branch `claude/fix-sim`. Pre-check at 7db937dd: PASS ("All checks passed.", 21:40Z, recorded); `ready_sha` 7db937dd is in `docs/progress/status/FX3.json`. Main merged at 702b29e6 (lead cycle 162's files only, no conflict). An earlier pre-check at 702b29e6 failed on `sim/status.py` ("tests no system claims") because the new Rust tests were not yet listed in `sim/systems.json`; 7db937dd lists them, and that run is superseded. Main has since gained lead cycle 163 (57c23193, 11aa8614, docs/progress bookkeeping only); not merged, so the pre-checked sha stays the ready one.
   - **RB-51.** `Lab.crossed` took `chordOf`, the first chord in §8.8's table three laws make, so three laws completing two or more chords hinted only one of them. A new `chordsOf` returns every chord the three complete, each note carried by a different law; `crossed` hints each one not yet found. `chordOf` stays, as `chordsOf(..)[0]`, for `server/test/lab.test.mjs`.
     - Test commit efdc9028, fix commit 812c7e52. The test fails on main:
       ```
