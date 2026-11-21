@@ -68,6 +68,9 @@ var realm_flow: RealmController
 var share_flow: ShareController
 var first_flow: FirstController
 var auth_flow: AuthController
+## A send of the events is in flight: another waits for none, it returns and
+## the one in flight sends what was added meanwhile (RB-42).
+var _sending := false
 
 
 ## `transport` null means the real network. `server` "" means none: the
@@ -257,16 +260,22 @@ func set_timers() -> void:
 ## than it takes let go first, and a chunk it refuses for good — a 4xx other
 ## than 401, 408 or 429 — dropped, so it never blocks the queue. A refusal
 ## that may pass later, or no network, keeps the rest for the next time.
+## One send at a time (RB-42): an overlapping call returns at once, and the
+## send in flight reads the queue again after each chunk.
 func send_events() -> void:
+	if _sending:
+		return
+	_sending = true
 	notices.drop_before(int(Time.get_unix_time_from_system() * 1000) - DeviceNotices.LATE_MS)
 	while true:
 		var batch := notices.pending().slice(0, EVENTS_BATCH)
 		if batch.is_empty():
-			return
+			break
 		var r := await device.events(batch)
 		if not r.ok and not _refused_for_good(r):
-			return
+			break
 		notices.sent(batch.size())
+	_sending = false
 
 
 static func _refused_for_good(r: Result) -> bool:
