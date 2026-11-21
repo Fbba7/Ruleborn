@@ -401,13 +401,16 @@ export class Auth {
   signOutWith(refreshToken, { everywhere = false, admit = () => {} } = {}) {
     const peek = peekRefresh(refreshToken);
     const s = peek && this.db.prepare(
-      "SELECT id, account, salt, generation, ended_at FROM sessions WHERE id = ?").get(peek.session);
+      "SELECT id, account, salt, generation, ended_at, used_at, created_at FROM sessions WHERE id = ?")
+      .get(peek.session);
     if (!s || !refreshSigned(this.keys, refreshToken, s.salt)) throw refused();
     admit();
     const now = this.service.now();
     if (everywhere) {
-      // Only the session's current token, while it lives (T12's SR-24).
+      // Only the session's current token, while it lives (T12's SR-24):
+      // not lapsed, as `refresh` holds it (RB-24).
       if (s.ended_at !== null || peek.generation !== s.generation) throw refused();
+      if (now - s.used_at > IDLE_MS || now - s.created_at >= ABSOLUTE_MS) throw refused();
       return this.endAll(s.account, "everywhere", now);
     }
     return this.#end("id", s.id, "signed_out", now);
