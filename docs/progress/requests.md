@@ -1412,6 +1412,23 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   client drops a chunk refused 429 `too_many_events`, so the queue drains
   with SR-19's test unchanged. No test is changed and no file is granted.
 
+- **FX3-R1** (from FX3, 21 November 2026 18:02Z; due 22 November
+  18:02Z; not blocking): FX3-2-island adds two publish problems to
+  `island::Problem`, EntranceBlocked (RB-40) and DuplicateLaw (candidate
+  7). The builder (`client/scripts/builder_screen.gd:515`) and curation
+  (`client/features/curation/curation_presenter.gd:235`) show a problem as
+  `Strings.t("PROBLEM_" + name.to_upper())`, so `client/i18n/strings.csv`
+  needs PROBLEM_ENTRANCEBLOCKED and PROBLEM_DUPLICATELAW in every locale
+  column, with `build_words.mjs` rerun (M34). Files: strings.csv. Default:
+  the raw key shows for these two problems until a strings or UI task adds
+  the rows once the UI resumes. Copied in cycle 159.
+  **Answered** by the lead in cycle 159: the default holds only until
+  FX4-5-problem-strings merges. The lead, as the strings owner, seeded
+  that task (FX4, tier 2, deps FX3-2-island; files strings.csv, words.js
+  and `client/tests/fix_*`), so the bug-fix wave does not leave a raw key
+  behind. No working or parked task claims strings.csv, so the UI pause
+  is not touched. FX3 changes nothing.
+
 - **AD-R46** (from AD, 17 November 2026 02:58Z; due 19 November 02:58Z;
   not blocking): AD's preview of P2-S1-result-6 (S1-R35) at 16515088.
   S1's two departures stand (gold numerals on every total; all three

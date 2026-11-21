@@ -219,7 +219,8 @@
         "a_route_into_a_wall_is_refused_rather_than_approximated",
         "the_same_route_is_found_every_time_and_by_both_ends_of_the_grid",
         "slow_ground_does_not_move_the_route",
-        "slow_ground_does_change_how_long_the_walk_takes"
+        "slow_ground_does_change_how_long_the_walk_takes",
+        "candidate_34_a_tunnel_mouth_under_a_raised_wall_is_no_way_out"
       ]
     },
     {
@@ -723,7 +724,11 @@
       "tests": [
         "an_island_keeps_to_5_2_and_6_1_or_is_not_published",
         "a_blank_island_is_publishable_and_round_trips",
-        "an_edited_island_is_one_the_format_can_write_and_check_can_judge"
+        "an_edited_island_is_one_the_format_can_write_and_check_can_judge",
+        "rb40_an_entrance_in_a_wall_or_on_the_vault_is_not_published",
+        "rb50_weaving_a_law_onto_the_vault_is_refused_and_keeps_the_law",
+        "rb57_a_ward_or_pylon_on_a_guard_in_tall_grass_replaces_the_grass_too",
+        "candidate_7_the_same_law_twice_is_not_published"
       ]
     },
     {

@@ -90,6 +90,10 @@ export class Shop {
     this.verifyReceipt = verifyReceipt;
     this.settleReceipt = settleReceipt;
     this.items = new Map(catalogue.items.map((i) => [i.id, i]));
+    // Claims still with their store, by account: "store:txn" to its price
+    // and until when its intent already holds that price in the allowance
+    // (RB-09). In memory, as the server runs as one process.
+    this.pending = new Map();
   }
 
   get db() { return this.service.db; }
@@ -147,13 +151,24 @@ export class Shop {
    *  month's cap, counted at the grant whatever intents were made before
    *  (SEC-21). The account's own intent, while it still holds its place in
    *  the allowance, is counted once, not twice. */
-  capCheck(account, p, i, now) {
+  capCheck(account, p, i, now, claiming = null) {
     let left = this.allowance(account, now);
     if (left === null) return;
-    if (i && i.account === account && !i.redeemed_at && i.created_at > now - INTENT_MS) left += i.price ?? p.price;
+    if (this.heldUntil(i, account) > now) left += i.price ?? p.price;
+    // Claims still with the store count too, unless their intent is
+    // already counted as held (RB-09): two receipts at once cannot both
+    // pass on the same allowance.
+    for (const [key, c] of this.pending.get(account) ?? []) if (key !== claiming && now >= c.heldUntil) left -= c.price;
     if (p.price > left) {
-      throw new Refused(403, "monthly_cap", { left, cap: facts.SPENDING_CAPS_EUR[this.ageBand(account)] * 100 });
+      throw new Refused(403, "monthly_cap",
+                        { left: Math.max(0, left), cap: facts.SPENDING_CAPS_EUR[this.ageBand(account)] * 100 });
     }
+  }
+
+  /** Until when intent `i` holds its place in `account`'s allowance: its
+   *  own intent, not yet redeemed, until it lapses. -Infinity for none. */
+  heldUntil(i, account) {
+    return i && i.account === account && !i.redeemed_at && i.created_at ? i.created_at + INTENT_MS : -Infinity;
   }
 
   /**
@@ -293,14 +308,33 @@ export class Shop {
     if (!proof) throw new Refused(402, "receipt_refused");
     const done = this.db.prepare("SELECT 1 FROM purchases WHERE store = ? AND txn = ?").get(store, proof.transaction);
     if (!done) {
-      // Refused before the store is told anything, so nothing is consumed.
+      // Refused before the store is told anything, so nothing is consumed
+      // and a Play purchase is refunded by itself: every refusal `redeem`
+      // would make after the store had settled it (RB-08), and a minor's
+      // cap (SEC-21). `redeem` checks each again once the store answers.
+      const buyer = this.db.prepare("SELECT deleted_at FROM accounts WHERE id = ?").get(account);
+      if (!buyer || buyer.deleted_at) throw new Refused(410, "account_deleted");
       if (this.refunded(store, proof.transaction)) throw new Refused(402, "receipt_refunded");
-      const i = this.intentOf(proof);
-      // Over a minor's cap, refused before the store acknowledges it, so a
-      // Play purchase is refunded by itself (SEC-21).
       const p = this.product(proof.product);
-      if (p) this.capCheck(account, p, i, this.service.now());
-      const settled = await this.settleReceipt(store, proof);
+      if (!p) throw new Refused(404, "no_such_product");
+      const i = this.intentOf(proof);
+      if (i && (i.account !== account || (!i.tomb && i.product !== proof.product))) {
+        throw new Refused(409, "intent_mismatch");
+      }
+      const key = `${store}:${proof.transaction}`;
+      this.capCheck(account, p, i, this.service.now(), key);
+      // Held under the cap while the store is asked (RB-09), and let go
+      // whatever it answers: a granted claim is counted as spent by then.
+      const claim = { price: p.price, heldUntil: this.heldUntil(i, account) };
+      const mine = this.pending.get(account) ?? new Map();
+      this.pending.set(account, mine.set(key, claim));
+      let settled;
+      try {
+        settled = await this.settleReceipt(store, proof);
+      } finally {
+        if (mine.get(key) === claim) mine.delete(key);
+        if (!mine.size && this.pending.get(account) === mine) this.pending.delete(account);
+      }
       if (!settled?.ok) {
         const reason = settled?.reason ?? "receipt_refused";
         throw new Refused(reason === "store_unavailable" ? 503 : 402, "receipt_refused", { why: reason });
