@@ -8,12 +8,12 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-21T19:16:00Z",
   "lease_until": "2026-11-21T22:16:00Z",
-  "updated_at": "2026-11-21T19:16:00Z",
-  "expected_next_update_by": "2026-11-21T20:01:00Z",
+  "updated_at": "2026-11-21T19:22:00Z",
+  "expected_next_update_by": "2026-11-21T20:07:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "2955e9bf",
-    "next_step": "Fail-first tests for RB-44, RB-45, RB-19"
+    "last_green_sha": "9aa26794",
+    "next_step": "Pre-check at 9aa26794, owners.py diff, then ready"
   },
   "precheck": null,
   "gate_request": null,
