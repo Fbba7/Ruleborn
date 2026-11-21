@@ -48,7 +48,9 @@ export class Holds {
   status(bundle) {
     const r = this.db.prepare("SELECT * FROM island_holds WHERE bundle = ? AND rules = ?")
       .get(bundle, this.service.builds.current.rulesVersion);
-    if (!r) return null;
+    // A measurement lost to a throw or to its bundle's bytes is no figure
+    // (RB-15): `held` is -1, and the screen shows none.
+    if (!r || r.held < 0) return null;
     return r.measured_at == null
       ? { status: "measuring", played: r.played, raids: r.raids }
       : { status: "measured", held: r.held, raids: r.raids, hold: r.held / r.raids };
@@ -95,8 +97,10 @@ export class Holds {
     transaction(this.db, () => {
       const played = failed ? r.raids : r.played + n;
       const done = failed || played >= r.raids || !island;
-      this.db.prepare("UPDATE island_holds SET played = ?, held = held + ?, measured_at = ? WHERE bundle = ? AND rules = ?")
-        .run(played, held, done ? now : null, r.bundle, r.rules);
+      const lost = failed || !island;
+      this.db.prepare(`UPDATE island_holds SET played = ?, held = CASE WHEN ? THEN -1 ELSE held + ? END,
+                         measured_at = ? WHERE bundle = ? AND rules = ?`)
+        .run(played, lost ? 1 : 0, held, done ? now : null, r.bundle, r.rules);
       if (done && island && !failed) this.rate(r.bundle, (r.held + held) / r.raids, now);
     });
     return n;
