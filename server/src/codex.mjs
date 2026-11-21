@@ -188,7 +188,11 @@ export class Codex {
         if (done.law !== law) throw new Refused(409, "already_studied");
         return { studied: law, repeated: true, codex: this.view(account) };
       }
-      if (!lawsOf(this.service.store.get(h.bundle)).includes(law) || !isLaw(law)) {
+      // An island erased since (an under-13 deletion, §20.11) leaves nothing
+      // to study, a refusal rather than a throw (RB-53).
+      const island = this.service.store.get(h.bundle);
+      if (!island) throw new Refused(409, "nothing_to_study");
+      if (!lawsOf(island).includes(law) || !isLaw(law)) {
         throw new Refused(409, "law_not_crossed");
       }
       const grade = JSON.parse(h.outcome).verdict?.grade;
