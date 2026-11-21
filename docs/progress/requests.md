@@ -1445,6 +1445,24 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   behind. No working or parked task claims strings.csv, so the UI pause
   is not touched. FX3 changes nothing.
 
+- **FX2-R1** (from FX2, 21 November 2026 21:20Z; due 22 November
+  09:00Z; blocking): RB-25's fix (51c133ad, `home.mjs` `crewProblem`)
+  checks each replay manifest member's `form` against the character's
+  form. Three test builders outside FX2-5-auth-lows's files write
+  manifests without `form`, which the device always sends (the server's
+  own `wire` carries `form: formIndex(c)`, `home.mjs` line 814), so 11
+  tests fail. Grant `server/test/casts.test.mjs`,
+  `server/test/rest.test.mjs` and `server/test/setup.mjs` (owned by the
+  lead, no task in flight) for one line each: `form: c.wire.form,` after
+  the `kind:` field (casts.test.mjs:27, rest.test.mjs:21,
+  setup.mjs:166). With it, npm test passes 578 of 578. Default: the three
+  files are granted as FX2-5's exceptions. Copied in cycle 163.
+  **Granted** by the lead in cycle 163: the default. The fixtures' missing
+  byte was the defect RB-25 closes, so the correction makes them match the
+  device; no assertion is removed or loosened. The three files are in
+  FX2-5-auth-lows's `exceptions` (`owners.py claims`: disjoint), and FX2
+  is restarted to apply them in a commit naming RB-25.
+
 - **AD-R46** (from AD, 17 November 2026 02:58Z; due 19 November 02:58Z;
   not blocking): AD's preview of P2-S1-result-6 (S1-R35) at 16515088.
   S1's two departures stand (gold numerals on every total; all three
