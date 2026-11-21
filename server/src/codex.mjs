@@ -149,8 +149,10 @@ export class Codex {
     }
     // §7.6: "If the raider cast a law during a foiled heist, the defender
     // gets one page of it" — a page of each law cast, to a defender who is
-    // still someone (an echo's owner is not defending; G30, §20.12).
-    if (verdict.grade === "foiled" && cast.length && !lease.echo) {
+    // still someone (an echo's owner is not defending; G30, §20.12). A
+    // friendly heist pays this only as the pair's first of the day (SEC-24,
+    // RB-36).
+    if (verdict.grade === "foiled" && cast.length && !lease.echo && friendPages) {
       const owner = this.db.prepare(
         "SELECT a.id FROM accounts a WHERE a.id = ? AND a.deleted_at IS NULL").get(lease.defender)?.id;
       if (owner) {
