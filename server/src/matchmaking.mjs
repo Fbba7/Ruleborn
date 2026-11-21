@@ -302,14 +302,15 @@ export class Matchmaking {
    * rows: a banned or deleted owner's taken out, a republished island's
    * card swapped to its current snapshot, an island since taken away
    * dropped (DB-1). An echo is no one's current island, so only its owner is
-   * checked.
+   * checked. The generator's cards are its current islands, swapped to the
+   * day's as any republished island is: yesterday's are no echoes (RB-12).
    */
   current(targets) {
     const out = [];
     for (const c of targets) {
       const owner = this.db.prepare("SELECT banned_at, deleted_at FROM accounts WHERE id = ?").get(c.owner);
       if (!owner || owner.banned_at !== null || owner.deleted_at !== null) continue;
-      if (c.echo || c.origin === "generated" && c.owner === GENERATOR) { out.push(c); continue; }
+      if (c.echo && c.owner !== GENERATOR) { out.push(c); continue; }
       const island = this.db.prepare("SELECT bundle FROM islands WHERE owner = ? AND realm = ?").get(c.owner, c.realm);
       if (!island) continue;
       if (island.bundle === c.bundle) { out.push(c); continue; }
@@ -442,7 +443,8 @@ export function offer(raider, candidates, { size = 3 } = {}) {
   if (middle) {
     const i = sorted.indexOf(middle);
     const half = Math.floor(size / 2);
-    const easier = sorted.slice(0, i).slice(-half);
+    // Never slice(-0), which is the whole run before the middle (RB-17).
+    const easier = sorted.slice(Math.max(0, i - half), i);
     const harder = sorted.slice(i + 1).slice(0, size - 1 - easier.length);
     const more = sorted.slice(0, i - easier.length).reverse();
     list = [...easier, middle, ...harder];
