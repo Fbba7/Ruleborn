@@ -18,7 +18,7 @@ const MINUTE = 60_000;
  *  manifest the device writes for them. */
 function heist(t, crew) {
   const lease = t.service.lease(t.raider.account, t.bundle);
-  const manifest = { members: crew.map((c) => ({ kind: KINDS.indexOf(c.kind), level: c.level,
+  const manifest = { members: crew.map((c) => ({ kind: KINDS.indexOf(c.kind), form: c.wire.form, level: c.level,
                                                  traits: c.traits.map((x) => TRAITS.indexOf(x)) })),
                      sage: 0, casts: [] };
   return { lease, replay: play(t, lease, { plan: openPlan(), manifest }) };
