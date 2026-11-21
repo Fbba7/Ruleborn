@@ -97,7 +97,8 @@
         "every_crew_member_on_the_island_is_logged_once_a_second",
         "the_log_is_outside_the_checksum",
         "the_decisive_moment_is_chosen_by_twelve_thirteens_rule",
-        "every_golden_heist_has_a_decisive_moment"
+        "every_golden_heist_has_a_decisive_moment",
+        "rb44_a_split_and_rejoined_mite_does_not_hold_the_report_to_the_whole_clock"
       ]
     },
     {
@@ -484,7 +485,8 @@
         "the_four_grades_follow_12_9",
         "the_planned_heist_ends_clean_with_every_bag_full",
         "loading_stops_when_the_clock_left_only_covers_getting_out",
-        "dropping_loot_costs_exactly_the_fraction_dropped"
+        "dropping_loot_costs_exactly_the_fraction_dropped",
+        "rb45_a_slowed_clock_still_catches_whoever_is_inside_at_the_last_tick"
       ]
     },
     {
@@ -713,7 +715,8 @@
         "a_rift_on_the_route_holds_the_crew_thirty_seconds_after_an_alarm_in_the_realm",
         "rb29_a_realms_alarm_counts_from_when_the_crew_arrives",
         "a_crew_entering_at_a_fault_jumps_through_the_crack_to_the_hearts_entrance_on_its_realms_clock",
-        "laws_flicker_off_for_two_seconds_in_an_overloaded_universe_every_ten_seconds_at_cracking_and_five_at_breaking"
+        "laws_flicker_off_for_two_seconds_in_an_overloaded_universe_every_ten_seconds_at_cracking_and_five_at_breaking",
+        "rb44_a_crossings_reports_count_only_the_crew_for_held"
       ]
     },
     {
