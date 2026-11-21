@@ -231,14 +231,17 @@ pub enum Problem {
     /// every Crystal Wall standing. The alarm-5 Warden comes in there
     /// (RB-40).
     EntranceBlocked,
+    /// One law on two pylons: a realm weaves each law once, and the sheet
+    /// would apply it twice (bug report candidate 7).
+    DuplicateLaw,
 }
 
 impl Problem {
-    pub const ALL: [Problem; 10] = [
+    pub const ALL: [Problem; 11] = [
         Problem::TooManyWards, Problem::TooManyGuards, Problem::TooManyLaws,
         Problem::UnknownLaw, Problem::Crowded, Problem::PostBlocked,
         Problem::LandingBlocked, Problem::Sealed, Problem::EdgeClosed,
-        Problem::EntranceBlocked,
+        Problem::EntranceBlocked, Problem::DuplicateLaw,
     ];
 
     pub fn bit(self) -> u32 {
@@ -726,6 +729,9 @@ impl Island {
         }
         if self.entrance == self.vault || !open(self.entrance.0 as u16, self.entrance.1 as u16) {
             found.push(Problem::EntranceBlocked);
+        }
+        if self.laws.iter().enumerate().any(|(i, (id, _, _))| self.laws[..i].iter().any(|(e, _, _)| e == id)) {
+            found.push(Problem::DuplicateLaw);
         }
         found
     }
