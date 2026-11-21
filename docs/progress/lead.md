@@ -213,8 +213,9 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxo9bZSEQwttAmfNMX2` (cycle 155,
-21 November 2026 from about 15:14Z, started by the Opus 5.5 launcher). Cycle
+Latest lead cycle session: `session_01SNkKxmoamFWusvtLCG6EYC` (cycle 156,
+21 November 2026 from about 16:14Z, started by the Opus 5.5 launcher). Cycle
+155's was `session_01SNkKxo9bZSEQwttAmfNMX2` (from 15:14Z). Cycle
 154's was `session_01SNkKxrGtCCvMiSUGwxCxup` (from 14:38Z). Cycle
 153's was `session_01SNkKxr8vD91wFJCWPCztin` (from 14:15Z). Cycle
 152's was `session_01SNkKxpjqNeDGHxFAxH2tjX` (from 14:06Z). Cycle
@@ -749,6 +750,26 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 156**, 21 November 2026, from about 16:14Z (session
+  `session_01SNkKxmoamFWusvtLCG6EYC`, started by the Opus 5.5 launcher).
+  The changes since cycle 155: the three builders it started claimed
+  their tasks. FX1 (`claude/fix-server-a`, 5dbcd80e) committed fixes for
+  RB-30, RB-05 and RB-06, merged main and is pre-checking at b67863b8;
+  FX2 (`claude/fix-server-b`, 8c4f9b2d) and FX4 (`claude/fix-client`,
+  c44b0083) merged main and claimed FX2-2-trace-telemetry and
+  FX4-2-trace-events. **Bookkeeping:** the three claims copied into the
+  backlog (FX1-1-workshop-pairs `working`, FX2-2 and FX4-2 `claimed`,
+  leases to 19:10Z). All three sessions are within their expected
+  update (16:55Z to 17:25Z; FX1's session is idle while its detached
+  pre-check runs), so none is restarted. **FX3 waits** with
+  FX3-2-island open: the seven-day bar still reads `allowed_warning`, so
+  order 3's cap stays three. No ready task, request or audit finding: no
+  merge, no gate run, no page republished. **The UI stays paused.**
+  **Next:** merge FX1-1 on ready once its checks pass and each RB
+  entry's fail-first test precedes its fix (check this on FX1's branch:
+  its fixes landed within minutes of its start), then start FX1's next
+  task; start FX3 on FX3-2-island when a seat frees or the bar clears.
+
 - **Cycle 155**, 21 November 2026, from about 15:14Z (session
   `session_01SNkKxo9bZSEQwttAmfNMX2`, started by the Opus 5.5 launcher).
   **Merged** FX2-1-db-store-home (c393a96b: RB-01, RB-02, RB-07, RB-22),
@@ -796,25 +817,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   **Next:** merge each FX task on ready once its checks pass, then start
   that agent's next task; start FX1 on FX1-1-workshop-pairs when a seat
   frees or the bar clears.
-
-- **Cycle 153**, 21 November 2026, from about 14:15Z (session
-  `session_01SNkKxr8vD91wFJCWPCztin`, started by the Opus 5.5 launcher).
-  The changes since cycle 152: the three fix builders claimed their
-  tasks and pushed their first commits. FX2 (`claude/fix-server-b`,
-  1dd781cb) committed fail-first tests for RB-01, RB-02, RB-07 and RB-22,
-  then fixes for RB-01, RB-02 and RB-22 with RB-07; FX3
-  (`claude/fix-sim`, 1ab25511) committed RB-28's failing test, then its
-  fix; FX4 (`claude/fix-client`, 3d559d76) claimed FX4-1-transport.
-  **Bookkeeping:** the three claims copied into the backlog
-  (FX4-1-transport, FX2-1-db-store-home and FX3-1-heal-alarm `claimed`,
-  leases to about 17:15Z). Each builder is within its expected update
-  (14:59Z to 15:00Z), so none is restarted. **FX1 waits:** the seven-day
-  bar still reads `allowed_warning`, so order 3's cap stays three. No
-  request, ready task or gate request: no merge, no gate run, no page
-  republished. **The UI stays paused.**
-  **Next:** merge each FX task on ready once its checks pass and its
-  fail-first tests precede the fixes, then start that agent's next task;
-  start FX1 on FX1-1-workshop-pairs when a seat frees or the bar clears.
 
 - **Stopped here**, 13 November 2026, about 13:20Z (the owner's "Stop
   cleanly"). Cycle 84 (session `session_01SNkKxpqF4gx3yYhsXenUGt`) took
