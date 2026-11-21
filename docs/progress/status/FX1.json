@@ -4,16 +4,16 @@
   "branch": "claude/fix-server-a",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "FX1-2-leases",
+  "task_id": "FX1-3-workshop",
   "task_state": "claimed",
-  "claimed_at": "2026-11-21T17:55:00Z",
-  "lease_until": "2026-11-21T20:55:00Z",
-  "updated_at": "2026-11-21T17:55:00Z",
-  "expected_next_update_by": "2026-11-21T18:40:00Z",
+  "claimed_at": "2026-11-21T19:20:00Z",
+  "lease_until": "2026-11-21T22:20:00Z",
+  "updated_at": "2026-11-21T19:20:00Z",
+  "expected_next_update_by": "2026-11-21T20:05:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "fd9af09696510011472505f2ca393fc441fd3f1e",
-    "next_step": "FX1-2-leases: fail-first tests for RB-12, RB-14, RB-16, RB-17"
+    "last_green_sha": "f3849470946a2f547ba0fbd1962d29dd16154134",
+    "next_step": "FX1-3-workshop: fail-first tests for RB-35, RB-37, RB-38, RB-39"
   },
   "precheck": null,
   "gate_request": null,

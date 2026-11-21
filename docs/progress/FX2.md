@@ -1,64 +1,51 @@
 # FX2 fixer, server B: progress
 
-- Status: Waiting. FX2-2-trace-telemetry is ready at 873809b4 (pre-check PASS, 17:01:26Z, recorded). It has fail-first tests, fixes for RB-31, RB-49, RB-21, RB-32 (server half) and candidate 21, and main merged. `cd server && npm test` passes 545 of 545.
-- Progress: 1 of 2 tasks merged (FX2-1 at 23cf8a90, FX2-2 ready). No gate items.
-- Done: RB-31, RB-49, RB-21, RB-32 (server half) and candidate 21, each with a test written first. All but RB-49 fail on main; RB-49 is explained below.
-- Next: the lead's merge of FX2-2. Request FX2-2-r1 is answered: the default.
+- Status: Waiting. FX2-3-shop is ready at 427a1705 (check_all PASS at 18:25:53Z, recorded). It has fail-first tests, fixes for RB-08, RB-09, RB-11, RB-10 and RB-13, and main merged. `cd server && npm test` passes 556 of 556.
+- Progress: 2 of 3 tasks merged (FX2-1 at 23cf8a90, FX2-2 at 8ed7538f), FX2-3 ready. No gate items.
+- Done: RB-08, RB-09, RB-11, RB-10 and RB-13, each with a test written first that fails on main.
+- Next: the lead's merge of FX2-3.
 - Blocked by: none.
 - Owner decision needed: none.
 
 | Deliverable | Weight (h) | Status | Evidence |
 |---|---:|---|---|
 | FX2-1-db-store-home: RB-01, RB-02, RB-07, RB-22 | 3.5 | merged at 23cf8a90 | `server/test/fix_fx2_db_store_home.test.mjs` |
-| FX2-2-trace-telemetry: RB-31, RB-32, RB-49, RB-21, candidate 21 | 3.5 | ready at 873809b4, pre-check PASS | `server/test/fix_fx2_trace_telemetry.test.mjs`; `docs/security/audit-2026-11/server.md`. Commits: 388febd5 (tests), 948d5975 (RB-31), 8d63feb9 (RB-49), 60dfab43 (candidate 21), 536f4e9d (RB-32), 7bbbf794 (RB-21), 5a4fdc72 (audit note), d2eb98cd (merge of main) |
+| FX2-2-trace-telemetry: RB-31, RB-32, RB-49, RB-21, candidate 21 | 3.5 | merged at 8ed7538f | `server/test/fix_fx2_trace_telemetry.test.mjs`; `docs/security/audit-2026-11/server.md` |
+| FX2-3-shop: RB-08, RB-09, RB-11, RB-10, RB-13 | 4.0 | ready at 427a1705 | `server/test/fix_fx2_shop.test.mjs`. Commits: 3b4d287b (tests), 98f4c3f2 (RB-08), 1d9f4374 (RB-09), 0aab18c7 (RB-11), 05d93c45 (RB-10), 1ab236f9 (RB-13), 427a1705 (merge of main) |
 
 ## Handoff
-- **Last verified commit:** 873809b4, the `ready_sha` (pre-check green, 2026-11-21T17:01:26Z, "All checks passed.", recorded in the status file). It holds the merge d2eb98cd and this handoff; the status commit that marks ready changes only the status file and this handoff.
+- **Last verified commit:** 427a1705, the `ready_sha`: main 2e02482a merged into the branch. The commit after it changes only this handoff and the status file.
 
 ### The tests
-- All six tests are in one file, `server/test/fix_fx2_trace_telemetry.test.mjs`, committed alone in 388febd5 before any fix.
-- They were run on 8c4f9b2d, whose `server/` is main 23cf8a90's. Five fail:
-  - **RB-31** (`the Trace's island is not also offered as a paid target…`): `and not among the targets the device matches the Trace's bundle against`. Actual `['player']`, expected `[]`.
-  - **RB-21** (`full_at counts a resting worker from the end of its rest…`): `resting: the same fill, two hours later`. Actual `null`, expected `1790204700000`.
-  - **RB-32, drain** (`a device that drops a chunk the server will never take…`): `the queue drains: 429 too_many_session_starts` five times, `120 !== 0`.
-  - **RB-32, contract** (`a refusal the same batch can never get past is not a 429…`): actual `'429 too_many_session_starts'`, expected `'422 too_many_session_starts'`.
-  - **Candidate 21** (`a banned raider's island is not offered as a Trace the lease would refuse`): `no Trace to a banned raider`. Actual is a trace card `{ across: false, band: 0, … }`, expected `null`.
-- **RB-49 passes on main** (`ok 2`), on this SQLite build.
-  - Every plan I could force returns A, the most recent raider: the default plan, `NOT INDEXED`, `INDEXED BY heists_by_attacker`, the defender's index dropped, and `reverse_unordered_selects` 0 and 1.
-  - Only a hand-written `FROM leases l CROSS JOIN heists h` gives B before A.
-  - The test still pins the order through the dropped index and both `reverse_unordered_selects` settings. It stays as a guard against a planner change.
-  - Written up in `docs/security/audit-2026-11/server.md`, "Notes on the fixed entries".
+- All seven tests are in one file, `server/test/fix_fx2_shop.test.mjs`, committed alone in 3b4d287b before any fix.
+- They were run on 4bcc98b0, whose `server/` is main 8ed7538f's. Six fail:
+  - **RB-08** (`a Play purchase the server will not grant is refused before Google is told anything`): `nothing acknowledged or consumed, so Play refunds each by itself`. Actual `['t-future', 't-theirs', 't-gone']`, expected `[]`. The 404 `no_such_product`, 409 `intent_mismatch` and 410 `account_deleted` answers already came on main, but from `redeem`, after Google had acknowledged each purchase.
+  - **RB-09, race** (`two claims racing for a minor's last €25 do not both reach Google`): `only the granted one was acknowledged`. Actual `['tokA', 'tokB']`, expected `['tokA']`. The statuses were already `[201, 403]` on main, as the report says: the second was refused only after Google acknowledged it.
+  - **RB-10, end to end** (`the Play receipt as the JSON string the client sends is verified and granted`): `402 !== 201`.
+  - **RB-10, unit** (`a string receipt is read only as a short JSON object of strings`): actual `null`, expected `{ transaction: 'token-abc', product: 'premium.1', intent: null }`.
+  - **RB-11** (`a StoreKit transaction for more than one item is refused, as Play's is`): `five items, one grant`. Actual `{ transaction: '2000000123', product: 'gift.robe-aurora', intent: null }`, expected `null`.
+  - **RB-13** (`a ninth Game Center key, after eight have each signed a player in, is cached and used`): `gc-prod-9 sign-in works`, `null !== 'gc:T:_p'`.
+- **The second RB-09 test passes on main** (`a claim the store refuses holds no place under the cap afterwards`). It guards the fix: a claim the store refuses must let go of its place under the cap.
 
 ### The fixes
-- **RB-31** (948d5975, `observatory.mjs` `view`). This follows the report's Fix: the Trace is worked out first, and its bundle is added to `aside` before the offer is built. Tapping the Trace now finds no paid card with its bundle. The test checks that the lease is `trace: true`, fee 0.
-- **RB-49** (8d63feb9, `observatory.mjs` `trace`). This follows the report's Fix: `GROUP BY h.attacker ORDER BY MAX(h.submitted_at) DESC` replaces `SELECT DISTINCT … ORDER BY h.submitted_at DESC`.
-- **Candidate 21** (60dfab43, the same query). It joins `accounts` and passes over a raider with `banned_at` or `deleted_at` set. The lease refuses those islands, so the Trace now moves on to the next raider. Confirmed and fixed. Written up under "Unproven, rechecked" in `docs/security/audit-2026-11/server.md`.
-- **RB-21** (7bbbf794, `home.mjs` `rate`). This follows the report's Fix: with `{ ahead: true }`, `rate` also returns every worker, a resting one counted `from` the end of its rest (`max(from, away_until)`). The view's `fullAt` uses that list. `workers` and `per_hour`, now, are unchanged: a resting worker is still not counted as working.
-- **RB-32**: the server half, as the task's title asks. This differs from the report's Fix line, which is mostly the client's.
-  - The client's half is FX4-2-trace-events: chunks of 100, drop a chunk refused with a 4xx other than 429, keep it on a 429 or a 5xx. The drain test plays that rule against the real server.
-  - On the server (536f4e9d, `telemetry.mjs`), the refusals no retry of the same batch can pass become 422, not 429:
-    - `too_many_session_starts`, `too_many_session_ends` and `worth_too_often`, the per-day caps;
-    - `survey_once_a_quarter`.
-  - Under the old 429s, that rule kept the chunk forever (the drain test's 120 events).
-  - `batch`'s doc comment now states the contract the device relies on:
-    - 400, 413 or 422: drop the chunk.
-    - 429 `too_many_requests` (with Retry-After) or a 5xx: keep the chunk.
-    - 429 `too_many_events`: drop the chunk. It has no Retry-After.
-- **`too_many_events` stays 429.**
-  - SR-19's test, `server/test/security_limits.test.mjs:97` (`[202,202,202,202,429,429]`), pins it, and that file is outside this task's files.
-  - Request FX2-2-r1 asked the lead to move it to 422. The lead answered in cycle 157: the default. It stays 429, FX4-2's client drops a chunk refused `429 too_many_events`, and `telemetry.mjs` documents that.
-  - My contract test's last line expects `429 too_many_events` and names SR-19's test.
-- **Existing tests:** none was changed, skipped or loosened. `telemetry.test.mjs` asserts the refusal reasons only, not the statuses. `limits.test.mjs:164` uses a stub 429 and is not affected.
-- **RB-31's test, amended before it was pushed.** Its first draft called `lease(account, bundle, { trace: true })` with the options in the owner's place. That was corrected in the test commit itself, to `lease(account, bundle, null, { trace: true })`. Its fail-first assertion, on the targets, is the one quoted above.
+- **RB-08** (98f4c3f2, `shop.mjs` `claim`). This follows the report's Fix. Before `settleReceipt`, `claim` now refuses a deleted buyer (410), a product the server does not sell (404) and an intent that is another account's or another product's (409). It then runs `capCheck` unconditionally. `redeem` still checks each again after the store answers (SEC-33's test still passes).
+- **RB-09** (1d9f4374, `shop.mjs`). This follows the report's Fix: a per-account record of claims still with the store, in memory, as the server runs as one process.
+  - `Shop.pending`: account → `"store:txn"` → `{ price, heldUntil }`. A claim adds its entry after `capCheck` passes and before the await, and a `finally` removes it whatever the store answers, before the synchronous `redeem`.
+  - `capCheck(account, p, i, now, claiming)` subtracts the other pending claims. It skips the claim's own key (a retry of the same transaction) and a claim whose own live intent is already counted as held, so no price is counted twice.
+  - New helper `heldUntil(i, account)`: the old "own live intent" condition, as a time.
+  - If the server ever runs as several processes, this must become a DB reservation, as the report says.
+- **RB-11** (0aab18c7, `stores.mjs` `appStoreTransaction`). The report's Fix, word for word: a quantity other than 1 is refused; none named is one item.
+- **RB-10** (05d93c45, `stores.mjs` `playPurchase`). The report's first Fix: a string receipt of at most 4 × `GOOGLE_MOST` characters is parsed and must be a JSON object. The object form is unchanged.
+  - **For the client's owner, not in this task's files:** the Play adapter that replaces the `StorePurchases.buy` stub must put a JSON string (`JSON.stringify({data, signature})`) in `receipt`. `shop_controller.gd:81` passes it through `str()`, which leaves a String as it is but does not turn a Dictionary into valid JSON.
+- **RB-13** (1ab236f9, `stores.mjs` `keep`). The report's Fix: `keep` never evicts the key it was just asked to keep. A proven key still goes only after every other unproven one, so SR-20's test passes.
+- **Existing tests:** none was changed, skipped or loosened.
 
 ### Merge and evidence
-- **Merge:** main 10909f76 (lead cycles 155 and 156: backlog, the lead's files, requests and status files only) merged at d2eb98cd with no conflict.
-- **On the merge:**
-  - The setup line (`rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios`, `pip install "gdtoolkit==4.*" "playwright==1.63.0"`, `npm install` in `server/`), then `bash client/build.sh`: exit 0.
-  - `cd server && npm test`: 545 tests, 545 pass, 0 fail.
-  - `bash tools/run_checks.sh` (check_all, bwrap) on 873809b4: PASS at 17:01:26Z, "All checks passed.", recorded.
-  - `python3 tools/coord/owners.py diff FX2-2-trace-telemetry origin/claude/videogame-project-analysis-ewkkk2 873809b4`: "every changed path is inside its files".
-  - Main then moved to 11a81ae6 (lead cycle 157: backlog, lead.md, lead-archive.md, requests.md, status/lead.json only), so 873809b4 is not re-merged and its checks stand.
+- **Merge:** main 2e02482a (lead cycle 158, which merged FX2-2 at 8ed7538f: backlog, the lead's files and status only) merged at 427a1705 with no conflict. It changed no file under `server/`, so the setup from the start of the session holds.
+- **Setup:** `rustup target add …` and `pip install …` ran. `(cd server && npm ci)` fails, as `server/` has no `package-lock.json`. I ran `npm install` there instead and deleted the lock file it wrote, which is outside this task's files. `bash client/build.sh`: exit 0. The sim's wasm was built with `cargo build --release --target wasm32-unknown-unknown` in `sim/`.
+- **`cd server && npm test`** on 1ab236f9 (the same `server/` as 427a1705): 556 tests, 556 pass, 0 fail.
+- **`python3 tools/coord/owners.py diff FX2-3-shop origin/claude/videogame-project-analysis-ewkkk2 427a1705`:** "every changed path is inside its files".
+- **`bash tools/run_checks.sh`** (check_all, bwrap) on 427a1705: PASS at 2026-11-21T18:25:53Z, "All checks passed.", recorded in the status file.
 - **Open hypotheses:** none.
 - **Next step:** the lead's merge. This session ends here (one task per session).
 
@@ -67,3 +54,4 @@
 - 2026-11-21 Tried to make RB-49 fail on main by forcing query plans: `NOT INDEXED`, `INDEXED BY`, a dropped index and `reverse_unordered_selects`. All returned the right raider. See "The tests".
 - 2026-11-21 Ran the Nursery tests before building the wasm: "ruleborn_sim.wasm is not built". Built it with `cargo build --release --target wasm32-unknown-unknown` in `sim/`.
 - 2026-11-21 Raised the test Nursery to level 2 with the starting Spire: refused, `needs_spire_level`. The test helper now sets the Spire to level 3.
+- 2026-11-21 `(cd server && npm ci)` in the setup line: no `package-lock.json` in `server/`. Ran `npm install` instead and deleted the lock file it wrote.
