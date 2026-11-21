@@ -1067,6 +1067,7 @@ impl World {
             vault: Vault {
                 tile: vault_tile,
                 health: heist::VAULT_HEALTH_PER_LEVEL * island.vault_level as i32,
+                full: heist::VAULT_HEALTH_PER_LEVEL * island.vault_level as i32,
                 exposed: island.exposed as i32,
                 opened_at: None,
             },
@@ -4801,7 +4802,7 @@ impl World {
                 g.health = (g.health + share(full)).min(full);
             }
             if self.vault.opened_at.is_none() {
-                let full = heist::VAULT_HEALTH_PER_LEVEL;
+                let full = self.vault.full;
                 self.vault.health = (self.vault.health + share(full)).min(full);
             }
             for law in self.laws.iter_mut().filter(|l| l.broken_at.is_none()) {
