@@ -6822,3 +6822,23 @@ fn rb50_weaving_a_law_onto_the_vault_is_refused_and_keeps_the_law() {
     assert!(!island.weave("haste", vx, vy), "the Vault cannot be covered");
     assert_eq!(island.laws, vec![("haste".to_string(), 1, 10)], "the law stays where it was");
 }
+
+#[test]
+fn rb57_a_ward_or_pylon_on_a_guard_in_tall_grass_replaces_the_grass_too() {
+    // RB-57: claim cleared the guard and left the grass under it, so the
+    // ward or pylon put there made the island Crowded.
+    use crate::heist::WardKind;
+    use crate::island::{Island, Post};
+    let mut island = Island::example_open();
+    assert_eq!(island.tile(2, 7).and_then(|t| t.feature), Some(crate::grid::Feature::TallGrass));
+    island.guards.push(Post { row: 0, x: 2, y: 7, facing: 0 });  // hidden in the grass
+    assert_eq!(island.check(), vec![]);
+    let mut ward = island.clone();
+    assert!(ward.place_ward(WardKind::TimeSnare, 2, 7));
+    assert_eq!((ward.guards.len(), ward.tile(2, 7).and_then(|t| t.feature)), (0, None));
+    assert_eq!(ward.check(), vec![], "the ward replaced whatever stood there");
+    let mut pylon = island.clone();
+    assert!(pylon.weave("haste", 2, 7));
+    assert_eq!((pylon.guards.len(), pylon.tile(2, 7).and_then(|t| t.feature)), (0, None));
+    assert_eq!(pylon.check(), vec![], "the pylon replaced whatever stood there");
+}
