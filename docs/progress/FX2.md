@@ -1,6 +1,6 @@
 # FX2 fixer, server B: progress
 
-- Status: Waiting. FX2-4-purge-notify is ready at b4445a58 once check_all passes (running). It has fail-first tests, fixes for RB-33, RB-34, RB-46, RB-47 and RB-48, and main merged. `cd server && npm test` passes 566 of 566.
+- Status: Waiting. FX2-4-purge-notify is ready at b4445a58 (check_all PASS, recorded). It has fail-first tests, fixes for RB-33, RB-34, RB-46, RB-47 and RB-48, and main merged. `cd server && npm test` passes 566 of 566.
 - Progress: 3 of 4 tasks merged (FX2-1 at 23cf8a90, FX2-2 at 8ed7538f, FX2-3 at c7cdcbbd), FX2-4 ready. No gate items.
 - Done: RB-33, RB-34, RB-46, RB-47 and RB-48, each with a test written first that fails on main.
 - Next: the lead's merge of FX2-4.
@@ -43,7 +43,7 @@
 - **Setup:** `rustup target add …` and `pip install …` ran, and `tools/ui_research` `npm ci` ran. `(cd server && npm ci)` fails, as `server/` has no `package-lock.json`. I ran `npm install` there instead and deleted the lock file it wrote, which is outside this task's files. `bash client/build.sh`: exit 0. The sim's wasm was built with `cargo build --release --target wasm32-unknown-unknown` in `sim/`. Setup exit 0.
 - **`cd server && npm test`** on 20acfab8: 566 tests, 566 pass, 0 fail.
 - **`python3 tools/coord/owners.py diff FX2-4-purge-notify origin/claude/videogame-project-analysis-ewkkk2 b4445a58`:** "every changed path is inside its files".
-- **`bash tools/run_checks.sh`** (check_all, bwrap) on b4445a58: running.
+- **`bash tools/run_checks.sh`** (check_all, bwrap) on b4445a58: PASS ("All checks passed.", exit 0, finished 2026-11-21T19:53:14Z), recorded as precheck in the status file.
 - **Open hypotheses:** none.
 - **Next step:** the lead's merge. This session ends here (one task per session).
 
