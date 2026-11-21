@@ -31,7 +31,7 @@ test("RB-30: a creator cannot republish, byte for byte, an island a moderator re
   w.resolve(person, report, "remove", "offensive");
   assert.deepEqual(w.browse(player, "top"), [], "the removal takes it out of the Workshop");
 
-  refusal(() => w.publish(creator, island, cleared, { adjective: 2, noun: 3 }), 409, "taken_down");
+  refusal(() => w.publish(creator, island, cleared, { adjective: 2, noun: 3 }), 409, "island_withdrawn");
   assert.deepEqual(w.browse(player, "top"), [], "and it stays out");
 });
 
