@@ -1386,6 +1386,32 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
 
 ### Lead
 
+- **FX1-R1** (from FX1, 21 November 2026 16:20Z; due 22 November 16:20Z;
+  not blocking): RB-30's Fix line names `409 taken_down`, but that reason
+  has no row in `client/i18n/strings.csv` (outside FX1-1's files) and
+  broke the client contract in FX1's pre-check at b67863b8. FX1-1 refuses
+  a republish of a moderator-removed island with `409 island_withdrawn`
+  ("that island was withdrawn"), already worded in every language. A
+  dedicated message would need an ERR_TAKEN_DOWN row in six languages.
+  Files: strings.csv, workshop.mjs. Default: keep `409 island_withdrawn`;
+  no new string. Copied in cycle 157.
+  **Answered** by the lead in cycle 157: the default. The bug (a removed
+  island coming back on republish) is fixed either way, and a new string
+  would touch the parked UI's strings file during the UI pause. No task
+  is seeded.
+- **FX2-2-r1** (from FX2, 21 November 2026 16:35Z; due 22 November
+  16:35Z; not blocking): let `too_many_events` move from 429 to 422, like
+  the other per-day telemetry caps FX2-2 moved for RB-32;
+  `server/test/security_limits.test.mjs` (SR-19, line 97, outside FX2-2's
+  files) pins 429. Files: security_limits.test.mjs, telemetry.mjs.
+  Default: `too_many_events` stays 429, documented in telemetry.mjs
+  `batch` as a refusal the device drops; FX4-2's client rule drops a
+  chunk refused 429 `too_many_events`. Copied in cycle 157.
+  **Answered** by the lead in cycle 157: the default. RB-32's fix is that
+  the device stops retrying a refusal no retry can pass, and FX4-2's
+  client drops a chunk refused 429 `too_many_events`, so the queue drains
+  with SR-19's test unchanged. No test is changed and no file is granted.
+
 - **AD-R46** (from AD, 17 November 2026 02:58Z; due 19 November 02:58Z;
   not blocking): AD's preview of P2-S1-result-6 (S1-R35) at 16515088.
   S1's two departures stand (gold numerals on every total; all three
