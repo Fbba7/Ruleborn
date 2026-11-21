@@ -16,9 +16,10 @@ import { collected, load } from "./privacy.mjs";
 import { TERMS, TERMS_VERSION } from "./safety.mjs";
 
 /** The declaration's words for a reader, without its references to the
- *  design (§24.8) and the audit (F43), which mean nothing on the page. */
+ *  design (§24.8, §11.2 to §11.6) and the audit (F43, SEC-18), which mean
+ *  nothing on the page (RB-60). */
 export const plain = (s) => String(s)
-  .replace(/\s*\((?:[§A-Z]?[\d.]+[a-z]?|[A-Z]\d+)(?:,\s*(?:[§A-Z]?[\d.]+|[A-Z]\d+))*(?:;[^)]*)?\)/g, "")
+  .replace(/\s*\((?:[§A-Z]?[\d.]+[a-z]?|[A-Z]+-?\d+)(?:(?:,\s*|\s+(?:to|and)\s+)(?:[§A-Z]?[\d.]+|[A-Z]+-?\d+))*(?:;[^)]*)?\)/g, "")
   .replace(/§[\d.]+(?:'s)?\s*/g, "").replace(/\s+([.,;:])/g, "$1");
 
 /** With a capital, for the first word of a cell. */
