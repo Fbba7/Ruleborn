@@ -5,15 +5,15 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "FX1-1-workshop-pairs",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-21T16:10:00Z",
   "lease_until": "2026-11-21T19:10:00Z",
-  "updated_at": "2026-11-21T16:10:00Z",
-  "expected_next_update_by": "2026-11-21T16:55:00Z",
+  "updated_at": "2026-11-21T16:40:00Z",
+  "expected_next_update_by": "2026-11-21T17:25:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": null,
-    "next_step": "Fail-first tests for RB-30, RB-05, RB-06"
+    "next_step": "Pre-check on the merge of main; record it, then ready"
   },
   "precheck": null,
   "gate_request": null,
