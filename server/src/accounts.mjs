@@ -216,7 +216,17 @@ export function finishErasures(service) {
   }
   // Off every target list now, not at the next regeneration, and off the
   // list before it too.
-  if (pending.some((e) => e.store === "lists")) service.targetLists({ keepPrevious: false });
+  if (pending.some((e) => e.store === "lists")) {
+    const named = () => new Set(db.prepare("SELECT list, previous FROM target_lists").all()
+      .flatMap((r) => [r.list, r.previous]).filter(Boolean));
+    const before = named();
+    service.targetLists({ keepPrevious: false });
+    // RB-34: the edge caches a list for an hour by its hash; every list that
+    // named the child and is no longer named is purged there too.
+    const after = named();
+    const now = service.now();
+    for (const list of before) if (!after.has(list)) queuePurge(db, list, now);
+  }
   db.prepare("DELETE FROM erasures").run();
   return pending.length;
 }
