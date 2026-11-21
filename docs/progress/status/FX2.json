@@ -3,21 +3,22 @@
   "role": "FX2",
   "branch": "claude/fix-server-b",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "stopped",
   "task_id": "FX2-5-auth-lows",
-  "task_state": "working",
+  "task_state": "merged",
   "claimed_at": "2026-11-21T21:00:00Z",
   "lease_until": "2026-11-22T03:00:00Z",
-  "updated_at": "2026-11-21T21:25:00Z",
-  "expected_next_update_by": "2026-11-22T00:10:00Z",
+  "updated_at": "2026-11-21T23:15:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "326f9a2",
-    "next_step": "fresh-container setup line, then run_checks start/wait/record, owners.py, ready"
+    "next_step": "Stopped here (owner's order, 21 November 2026, about 21:45 UTC: \"Merge cleanly what we have until now and then stop\"): FX2-5-auth-lows merged to main; nothing is in flight. Do no work until the owner restarts the program.",
+    "at": "2026-11-21T23:15:00Z"
   },
   "precheck": null,
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "574495aa",
   "stop_at": "2026-11-24T21:00:00Z",
   "acks": [],
   "requests": [

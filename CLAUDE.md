@@ -79,6 +79,16 @@ the status files, requests and scheduled-task prompts.
     cycles again. Their IDs are in
     [`docs/progress/lead.md`](docs/progress/lead.md), "The program's
     scheduled tasks and sessions".
+- **21 November 2026, about 21:45 UTC:** the owner ordered "Merge cleanly
+  what we have until now and then stop", in the chat of the overseer
+  session. **The program is stopped.** FX2-5-auth-lows merged onto main
+  (5f1cc425) after its full checks passed. FX1-4-holds-codex stays on its
+  branch as `resync`, because its combined candidate with FX2-5 failed
+  RB-36's test. FX3-5-audit-sim is open again. Every builder is
+  `stopped`, the lead is idle, no scheduled task is enabled, and the
+  merge lock is cleared. The UI stays paused. Where the work stands is in
+  [`docs/progress/lead.md`](docs/progress/lead.md), "Now", entry
+  "Stopped here, 21 November 2026".
 
 A session that is in the middle of a turn when the program is stopped
 finishes cleanly, so no work is lost: commit and push what it has to its

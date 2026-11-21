@@ -449,7 +449,7 @@
       "estimate_h": 4.0,
       "tier": 1,
       "critical": false,
-      "state": "working",
+      "state": "resync",
       "claim": {
         "agent": "FX1",
         "branch": "claude/fix-server-a",
@@ -459,9 +459,9 @@
       },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
+      "ready_sha": "2003cc38ee7b200a1c1858555fc0a05fff6e47a5",
       "merged_sha": null,
-      "updated_at": "2026-11-21T14:20:00Z",
+      "updated_at": "2026-11-21T23:15:00Z",
       "updated_by": "overseer"
     },
     {
@@ -580,7 +580,7 @@
       "estimate_h": 4.0,
       "tier": 1,
       "critical": false,
-      "state": "working",
+      "state": "merged",
       "claim": {
         "agent": "FX2",
         "branch": "claude/fix-server-b",
@@ -590,10 +590,10 @@
       },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null,
-      "updated_at": "2026-11-21T21:44:00Z",
-      "updated_by": "lead",
+      "ready_sha": "574495aa",
+      "merged_sha": "5f1cc4250ef5f81a41239f037ecacd9185472948",
+      "updated_at": "2026-11-21T23:15:00Z",
+      "updated_by": "overseer",
       "exceptions": [
         "server/test/casts.test.mjs",
         "server/test/rest.test.mjs",
@@ -635,11 +635,11 @@
       "critical": false,
       "state": "open",
       "claim": null,
-      "prior_branch": null,
-      "prior_sha": null,
+      "prior_branch": "claude/fix-sim",
+      "prior_sha": "941dd4a5",
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-21T14:20:00Z",
+      "updated_at": "2026-11-21T23:15:00Z",
       "updated_by": "overseer"
     },
     {

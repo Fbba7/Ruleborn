@@ -1,20 +1,12 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-21T22:20:00Z",
-  "expected_next_update_by": "2026-11-22T01:20:00Z",
+  "updated_at": "2026-11-21T23:15:00Z",
+  "expected_next_update_by": null,
   "cycle": 164,
-  "merging": {
-    "candidate_sha": "ea551636",
-    "task_ids": [
-      "FX1-4-holds-codex",
-      "FX2-5-auth-lows"
-    ],
-    "started_at": "2026-11-21T22:05:00Z",
-    "expires_at": "2026-11-21T23:35:00Z"
-  },
+  "merging": null,
   "last_merged": {
-    "task_id": "FX3-4-lab-replay",
-    "sha": "f5870f77"
+    "task_id": "FX2-5-auth-lows",
+    "sha": "5f1cc425"
   },
   "acks": [
     "M15",
@@ -54,7 +46,7 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Cycle 165: FX1 (session_01SNkKxoFvZx6Npx6VHRteSw) on FX1-4-holds-codex, FX2 (session_01SNkKxpZ9SYmNgdCeAw8sqx) on FX2-5-auth-lows and FX3 (session_01SNkKxne1a1DLSJJZJn4mc2, started in cycle 164) on FX3-5-audit-sim. The full check on main f5870f77 passed (22:18Z). Copy claims into the backlog; merge each FX task on ready once its pre-check passes and each RB entry's fail-first test is committed before its fix (batch the ready ones); then start that agent's next task (FX1-6-audit-server-a, FX2-6-audit-server-b; FX3's queue ends with FX3-5). Start FX4 on FX4-3-replay-shop-nav (open, deps merged) when a seat frees or the seven-day bar clears allowed_warning (cap three while it reads allowed_warning, four otherwise); FX4-4-audit-client and FX4-5-problem-strings follow in FX4's queue, and FX1-7-audit-tools in FX1's. The audit page on main is current (b3181beb); its artifact republish was refused in cycles 162 and 163 (owner inbox); do not work around it. In a fresh container run the builders' setup before the full checks (client/build.sh needs Godot). Restart any FX builder idle past its expected update (FX1's was 21:53Z). File new FX tasks from confirmed findings in docs/security/audit-2026-11/. Start no UI or BT builder; when every FX task is merged, reopen P3-S3-settings-4, P4-S1-heist-vault and P4-S2-home-purse (parked to open, prior_branch and prior_sha recorded) and resume phase 3.",
+  "next_step": "The program is stopped by the owner's order of 21 November 2026, about 21:45 UTC (\"Merge cleanly what we have until now and then stop\"); see CLAUDE.md order 1. Start no cycle, builder or scheduled task until the owner restarts it. Where the work stands: lead.md, \"Now\", entry \"Stopped here, 21 November 2026\".",
   "seen": {
     "at": "2026-11-21T21:45:23Z",
     "heads": {

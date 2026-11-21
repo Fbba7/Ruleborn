@@ -769,6 +769,32 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Stopped here, 21 November 2026** (the overseer, about 23:15Z). At
+  about 21:45 UTC the owner ordered, in the chat of the overseer session,
+  "Merge cleanly what we have until now and then stop" (CLAUDE.md
+  order 1). **The program is stopped.** **Merged:** FX2-5-auth-lows
+  (ready at 574495aa; RB-23, RB-24, RB-25, RB-26, RB-60) onto main at
+  **5f1cc425**. Its fail-first test 83ba326a precedes its fixes;
+  `owners.py diff` passes. **Checks:** the full check on 5f1cc425 passed
+  at 23:11Z (`tools/run_checks.sh`). Its first run failed on the
+  environment, not a test: the style board step (AIA-R1) raised
+  `ImportError: cannot import name '_imaging' from 'PIL'`, because the
+  container's `python3` is 3.11 while its Debian Pillow is built for
+  3.12. Pillow 10.4.0 was installed for Python 3.11 (checks.md: "Pillow
+  and numpy (`pip install pillow numpy`)") and the re-run passed. Main
+  then took the cycle-164 lead's docs-only commit 55d579a2;
+  `check_docs_consistency.py` passes. **Not merged:** FX1-4-holds-codex
+  is `resync` (ready 2003cc38). It passes alone, but the combined
+  candidate ea551636 with FX2-5 failed RB-36's test with `crew_mismatch`
+  (`server/test/fix_fx1_holds_codex.test.mjs:98`): FX2-5's RB-25 now
+  checks the manifest's form byte. After a restart: merge main into
+  `claude/fix-server-a`, give RB-36's test manifests the form byte,
+  re-run the checks. FX3-5-audit-sim is `open` again: its session
+  `session_01SNkKxne1a1DLSJJZJn4mc2` was interrupted after its claim
+  commit 941dd4a5 on `claude/fix-sim`. **Sessions:** FX1 to FX4 are
+  `stopped`; the cycle-164 lead pushed 55d579a2 at 22:18Z and is idle.
+  **Scheduled tasks:** none is enabled. **Merge lock:** cleared. The UI
+  stays paused. Start nothing until the owner restarts the program.
 - **Cycle 164**, 21 November 2026, from about 21:39Z (session
   `session_01SNkKxnEwW1ec5DJwnyoz4w`, started by the Opus 5.5 launcher).
   **Merged:** FX3-4-lab-replay (ready at 7db937dd; RB-51, RB-52, RB-54,
