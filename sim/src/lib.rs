@@ -3770,8 +3770,9 @@ impl World {
         }
 
         // §12.6: "Anyone still inside when the clock ends is caught and drops
-        // what it carries."
-        if self.clock_run >= self.clock as u64 * 1000 {
+        // what it carries." It ends when it has run, or on the replay's last
+        // tick, which a clock slowed below its rate never reaches (RB-45).
+        if self.clock_run >= self.clock as u64 * 1000 || now.saturating_add(1) >= self.clock {
             for raider in self.raiders.iter_mut() {
                 if matches!(raider.standing, Standing::Active | Standing::Down) {
                     raider.standing = Standing::Caught;
