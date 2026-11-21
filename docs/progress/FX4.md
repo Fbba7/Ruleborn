@@ -13,8 +13,8 @@
 
 ## Handoff
 
-- Last verified commit: the ready_sha in `status/FX4.json` (the merge of
-  main `b2a0dc59` into claude/fix-client, plus this handoff).
+- Last verified commit: `087a3a2f` (ready_sha): the merge of main
+  `b2a0dc59` into claude/fix-client, plus this handoff.
 - Commits, in order:
   - `b6945c6d` fail-first tests: `client/tests/fix_transport_tests.gd`
     (FixTransportTests), called from `client/tests/run.gd`.
@@ -79,9 +79,13 @@ tests). Tokens are labelled in the details, never printed.
 - On `109469be` (before the merge): `bash client/build.sh` exit 0;
   `python3 client/status.py`: 446 of 446 passed.
 - On the merge `4c8c0ad4` (main `b2a0dc59`): the setup line exit 0;
-  `bash tools/check_all.sh`: see the ready_sha's pre-check in
-  `status/FX4.json` (`precheck`) and the line below.
-- `tools/coord/owners.py diff FX4-1-transport`: see below.
+  `bash tools/check_all.sh` exit 0, "All checks passed." (client 446 of 446).
+- Pre-check on the ready_sha `087a3a2f` (that merge plus this handoff):
+  `tools/run_checks.sh` PASS, exit 0, "All checks passed.", sandbox bwrap,
+  finished 2026-11-21T15:18:33Z; recorded in `status/FX4.json`.
+- `python3 tools/coord/owners.py diff FX4-1-transport
+  origin/claude/videogame-project-analysis-ewkkk2 087a3a2f`: "every changed
+  path is inside its files".
 
 ## Tried and failed
 
