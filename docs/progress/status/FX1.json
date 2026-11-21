@@ -3,26 +3,21 @@
   "role": "FX1",
   "branch": "claude/fix-server-a",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "FX1-1-workshop-pairs",
-  "task_state": "ready",
-  "claimed_at": "2026-11-21T16:10:00Z",
-  "lease_until": "2026-11-21T19:10:00Z",
-  "updated_at": "2026-11-21T16:57:00Z",
-  "expected_next_update_by": null,
+  "agent_state": "active",
+  "task_id": "FX1-2-leases",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-21T17:55:00Z",
+  "lease_until": "2026-11-21T20:55:00Z",
+  "updated_at": "2026-11-21T17:55:00Z",
+  "expected_next_update_by": "2026-11-21T18:40:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "fd9af09696510011472505f2ca393fc441fd3f1e",
-    "next_step": "FX1-1 ready at fd9af096; next task FX1-2-leases in a fresh session"
+    "next_step": "FX1-2-leases: fail-first tests for RB-12, RB-14, RB-16, RB-17"
   },
-  "precheck": {
-    "sha": "fd9af09696510011472505f2ca393fc441fd3f1e",
-    "exit": 0,
-    "finished_at": "2026-11-21T16:55:35Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
-  "ready_sha": "fd9af09696510011472505f2ca393fc441fd3f1e",
+  "ready_sha": null,
   "stop_at": "2026-11-24T21:00:00Z",
   "acks": [],
   "requests": [
