@@ -4,6 +4,26 @@ Alerts and questions for the owner, newest first. The lead also sends each one
 as a direct message (work-order decision D-03). An entry is closed by
 recording the answer under it.
 
+## 2026-11-21 14:09Z: the launcher's hourly firing had not run since the stop; its half-hour firing ran at 14:05Z (watchdog)
+
+- **What:** the watchdog's first check after the owner's restart of 21
+  November (13:50Z). The launcher's hourly task
+  (`trig_01NksvDVV7iRJi4zrU7Uf7Te`) is enabled, but its last run was on
+  18 November at 07:39Z (SUCCEEDED). That is more than 2 hours ago, so by
+  the watchdog's rule it counts as failed. It is only stale because the
+  overseer disabled it at the stop of 18 November and re-enabled it at
+  14:05Z today. Its next run is at 14:38Z. The launcher's half-hour
+  firing (`trig_0155PATecuM4Cm5NGsEsbkX1`), into the same launcher
+  session, was fired at 14:05:47Z and SUCCEEDED; it fires again at
+  14:13Z. `status/lead.json` is not stale: its `expected_next_update_by`
+  is null (cycle 151, set at the stop).
+- **Done:** started no session. The "Latest lead cycle session" line in
+  `lead.md` still names cycle 151 (`session_01SNkKxokQpSagJjzwYyeSuc`,
+  from 18 November). The launcher fired 4 minutes before this check to
+  start the bug-fix wave's first cycle. A watchdog cycle on top of it
+  would have run as a duplicate lead.
+- **Needs the owner:** nothing.
+
 ## 2026-11-16 16:47Z: two lead cycles overlapped and both started AD; the duplicate was archived (cycle 102)
 
 - **What:** the launcher started cycle 102 at 16:39Z while cycle 101 was
