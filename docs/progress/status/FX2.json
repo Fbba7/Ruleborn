@@ -3,21 +3,26 @@
   "role": "FX2",
   "branch": "claude/fix-server-b",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "FX2-5-auth-lows",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-21T21:00:00Z",
   "lease_until": "2026-11-22T03:00:00Z",
-  "updated_at": "2026-11-21T21:25:00Z",
-  "expected_next_update_by": "2026-11-22T00:10:00Z",
+  "updated_at": "2026-11-21T21:50:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "326f9a2",
-    "next_step": "fresh-container setup line, then run_checks start/wait/record, owners.py, ready"
+    "last_green_sha": "574495a",
+    "next_step": "the lead merges FX2-5-auth-lows; then FX2-6-audit-server-b in a new session"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "574495aa252625af90cf5c05ccc7b8fedf461366",
+    "exit": 0,
+    "finished_at": "2026-11-21T21:48:11Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "574495aa252625af90cf5c05ccc7b8fedf461366",
   "stop_at": "2026-11-24T21:00:00Z",
   "acks": [],
   "requests": [

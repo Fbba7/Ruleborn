@@ -1,7 +1,7 @@
 # FX2 fixer, server B: progress
 
-- Status: Green. FX2-5-auth-lows awaits its pre-check at 574495a: all six fixes, FX2-R1's three test lines (82e31a1) and main 57c23193 merged (326f9a2). `cd server && npm test` passes 578 of 578.
-- Progress: 4 of 5 tasks merged (FX2-1 at 23cf8a90, FX2-2 at 8ed7538f, FX2-3 at c7cdcbbd, FX2-4 at e413e4a9). FX2-5 awaits its pre-check. No gate items.
+- Status: Green. FX2-5-auth-lows is ready at 574495a: all six fixes, FX2-R1's three test lines (82e31a1) and main 57c23193 merged (326f9a2). `cd server && npm test` passes 578 of 578.
+- Progress: 4 of 5 tasks merged (FX2-1 at 23cf8a90, FX2-2 at 8ed7538f, FX2-3 at c7cdcbbd, FX2-4 at e413e4a9). FX2-5 is ready. No gate items.
 - Done: RB-23, RB-24, RB-25, RB-26 and RB-60, and candidate 23 (it reproduced, fixed here). Each has a test written first that fails on main.
 - Next: the lead merges FX2-5-auth-lows; then FX2-6-audit-server-b.
 - Blocked by: nothing.
@@ -58,7 +58,7 @@
 - **`cd server && npm test`** on 82e31a1 (the merge changed no server file): 578 tests, 578 pass, 0 fail.
 - **`python3 tools/coord/owners.py diff FX2-5-auth-lows origin/claude/videogame-project-analysis-ewkkk2 574495a`:** "FX2-5-auth-lows: every changed path is inside its files".
 - **Setup:** the fresh-container line in this session's container, exit 0: `rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios`, `pip install "gdtoolkit==4.*" "playwright==1.63.0"`, `(cd tools/ui_research && npm ci)`, `bash client/build.sh` (it fetched Godot 4.7.2). Then `cargo build --release --target wasm32-unknown-unknown` in `sim/` and `npm install` in `server/` (its lock file deleted).
-- **check_all:** `bash tools/run_checks.sh` on 574495a: running (started 21:4x UTC); the result is recorded in the status file when it ends.
+- **check_all:** `bash tools/run_checks.sh` on 574495a, in bwrap: PASS, finished 2026-11-21T21:48:11Z; the log ends `DONE exit=0` and contains "All checks passed." Recorded in the status file.
 
 ## Tried and failed
 - 2026-11-21 The first RB-32 drain test passed on main, for the wrong reason (`401 session_refused`). Its session was made before the clock moved 12 h, and a session lasts an hour. It now signs in after the clock moves.
