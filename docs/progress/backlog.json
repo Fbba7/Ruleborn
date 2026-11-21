@@ -2289,7 +2289,7 @@
       "text": "From the overseer, 21 November 2026, by the owner's order (CLAUDE.md order 1, entry of 21 November): the bug-fix wave runs now and the UI stays paused. Start FX1 to FX4 (prompts in lead.md, 'The agents' prompts') on the FX tasks at the top of 'tasks', highs first, within the cap of four; start no UI or BT builder and reopen no parked task until every FX task is merged. A fix is merged only with its fail-first test committed before the fix. File new FX tasks from confirmed audit findings in docs/security/audit-2026-11/. When the last FX task merges, reopen the three parked UI tasks (parked to open, prior_branch and prior_sha recorded) and resume phase 3. Add M62 to your acks.",
       "sent_at": "2026-11-21T14:20:00Z",
       "ack_by": "2026-11-21T16:20:00Z",
-      "acked_at": null
+      "acked_at": "2026-11-21T14:12:00Z"
     }
   ]
 }
