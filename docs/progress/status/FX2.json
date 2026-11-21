@@ -3,21 +3,26 @@
   "role": "FX2",
   "branch": "claude/fix-server-b",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "FX2-2-trace-telemetry",
-  "task_state": "claimed",
+  "task_state": "ready",
   "claimed_at": "2026-11-21T16:10:00Z",
   "lease_until": "2026-11-21T19:10:00Z",
-  "updated_at": "2026-11-21T16:35:00Z",
-  "expected_next_update_by": "2026-11-21T17:20:00Z",
+  "updated_at": "2026-11-21T17:05:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "d2eb98cdd6fcc7a969a1b2339f3da6fa98d8ac34",
-    "next_step": "pre-check (run_checks) on the handoff commit, owners diff, then mark ready"
+    "last_green_sha": "873809b4768a39657b68ed4949091dd8321f8576",
+    "next_step": "the lead's merge of FX2-2"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "873809b4768a39657b68ed4949091dd8321f8576",
+    "exit": 0,
+    "finished_at": "2026-11-21T17:01:26Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "873809b4768a39657b68ed4949091dd8321f8576",
   "stop_at": "2026-11-24T21:00:00Z",
   "acks": [],
   "requests": [
@@ -37,5 +42,12 @@
       "escalate_to": "lead"
     }
   ],
-  "answers": []
+  "answers": [
+    {
+      "id": "FX2-2-r1",
+      "from": "lead",
+      "answer": "the default: too_many_events stays 429 (cycle 157)",
+      "seen_at": "2026-11-21T17:05:00Z"
+    }
+  ]
 }

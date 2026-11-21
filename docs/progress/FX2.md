@@ -1,19 +1,19 @@
 # FX2 fixer, server B: progress
 
-- Status: Waiting. FX2-2-trace-telemetry is ready (the `ready_sha` and the pre-check are in the status file). It has fail-first tests, fixes for RB-31, RB-49, RB-21, RB-32 (server half) and candidate 21, and main merged. `cd server && npm test` passes 545 of 545.
+- Status: Waiting. FX2-2-trace-telemetry is ready at 873809b4 (pre-check PASS, 17:01:26Z, recorded). It has fail-first tests, fixes for RB-31, RB-49, RB-21, RB-32 (server half) and candidate 21, and main merged. `cd server && npm test` passes 545 of 545.
 - Progress: 1 of 2 tasks merged (FX2-1 at 23cf8a90, FX2-2 ready). No gate items.
 - Done: RB-31, RB-49, RB-21, RB-32 (server half) and candidate 21, each with a test written first. All but RB-49 fail on main; RB-49 is explained below.
-- Next: the lead merges FX2-2, and answers request FX2-2-r1 (not blocking).
+- Next: the lead's merge of FX2-2. Request FX2-2-r1 is answered: the default.
 - Blocked by: none.
 - Owner decision needed: none.
 
 | Deliverable | Weight (h) | Status | Evidence |
 |---|---:|---|---|
 | FX2-1-db-store-home: RB-01, RB-02, RB-07, RB-22 | 3.5 | merged at 23cf8a90 | `server/test/fix_fx2_db_store_home.test.mjs` |
-| FX2-2-trace-telemetry: RB-31, RB-32, RB-49, RB-21, candidate 21 | 3.5 | ready, pre-check in the status file | `server/test/fix_fx2_trace_telemetry.test.mjs`; `docs/security/audit-2026-11/server.md`. Commits: 388febd5 (tests), 948d5975 (RB-31), 8d63feb9 (RB-49), 60dfab43 (candidate 21), 536f4e9d (RB-32), 7bbbf794 (RB-21), 5a4fdc72 (audit note), d2eb98cd (merge of main) |
+| FX2-2-trace-telemetry: RB-31, RB-32, RB-49, RB-21, candidate 21 | 3.5 | ready at 873809b4, pre-check PASS | `server/test/fix_fx2_trace_telemetry.test.mjs`; `docs/security/audit-2026-11/server.md`. Commits: 388febd5 (tests), 948d5975 (RB-31), 8d63feb9 (RB-49), 60dfab43 (candidate 21), 536f4e9d (RB-32), 7bbbf794 (RB-21), 5a4fdc72 (audit note), d2eb98cd (merge of main) |
 
 ## Handoff
-- **Last verified commit:** the `ready_sha` in the status file. It holds the merge d2eb98cd and this handoff. Its pre-check result is recorded there too.
+- **Last verified commit:** 873809b4, the `ready_sha` (pre-check green, 2026-11-21T17:01:26Z, "All checks passed.", recorded in the status file). It holds the merge d2eb98cd and this handoff; the status commit that marks ready changes only the status file and this handoff.
 
 ### The tests
 - All six tests are in one file, `server/test/fix_fx2_trace_telemetry.test.mjs`, committed alone in 388febd5 before any fix.
@@ -46,8 +46,8 @@
     - 429 `too_many_events`: drop the chunk. It has no Retry-After.
 - **`too_many_events` stays 429.**
   - SR-19's test, `server/test/security_limits.test.mjs:97` (`[202,202,202,202,429,429]`), pins it, and that file is outside this task's files.
-  - Request FX2-2-r1 to the lead asks to move it to 422. Its default: it stays 429, FX4-2's client drops a chunk refused `429 too_many_events`, and `telemetry.mjs` documents that.
-  - My contract test's last line expects `429 too_many_events` and names SR-19's test. If the request is granted, that line changes with it.
+  - Request FX2-2-r1 asked the lead to move it to 422. The lead answered in cycle 157: the default. It stays 429, FX4-2's client drops a chunk refused `429 too_many_events`, and `telemetry.mjs` documents that.
+  - My contract test's last line expects `429 too_many_events` and names SR-19's test.
 - **Existing tests:** none was changed, skipped or loosened. `telemetry.test.mjs` asserts the refusal reasons only, not the statuses. `limits.test.mjs:164` uses a stub 429 and is not affected.
 - **RB-31's test, amended before it was pushed.** Its first draft called `lease(account, bundle, { trace: true })` with the options in the owner's place. That was corrected in the test commit itself, to `lease(account, bundle, null, { trace: true })`. Its fail-first assertion, on the targets, is the one quoted above.
 
@@ -56,8 +56,9 @@
 - **On the merge:**
   - The setup line (`rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios`, `pip install "gdtoolkit==4.*" "playwright==1.63.0"`, `npm install` in `server/`), then `bash client/build.sh`: exit 0.
   - `cd server && npm test`: 545 tests, 545 pass, 0 fail.
-  - `bash tools/run_checks.sh` (check_all) on the `ready_sha`: its result is recorded in the status file's `precheck`.
-  - `python3 tools/coord/owners.py diff FX2-2-trace-telemetry origin/claude/videogame-project-analysis-ewkkk2 <ready_sha>`: "every changed path is inside its files".
+  - `bash tools/run_checks.sh` (check_all, bwrap) on 873809b4: PASS at 17:01:26Z, "All checks passed.", recorded.
+  - `python3 tools/coord/owners.py diff FX2-2-trace-telemetry origin/claude/videogame-project-analysis-ewkkk2 873809b4`: "every changed path is inside its files".
+  - Main then moved to 11a81ae6 (lead cycle 157: backlog, lead.md, lead-archive.md, requests.md, status/lead.json only), so 873809b4 is not re-merged and its checks stand.
 - **Open hypotheses:** none.
 - **Next step:** the lead's merge. This session ends here (one task per session).
 
