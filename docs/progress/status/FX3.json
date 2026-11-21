@@ -3,43 +3,23 @@
   "role": "FX3",
   "branch": "claude/fix-sim",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "FX3-2-island",
-  "task_state": "ready",
-  "claimed_at": "2026-11-21T17:53:00Z",
-  "lease_until": "2026-11-21T20:53:00Z",
-  "updated_at": "2026-11-21T18:36:11Z",
-  "expected_next_update_by": null,
+  "agent_state": "active",
+  "task_id": "FX3-3-clock-report",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-21T19:16:00Z",
+  "lease_until": "2026-11-21T22:16:00Z",
+  "updated_at": "2026-11-21T19:16:00Z",
+  "expected_next_update_by": "2026-11-21T20:01:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "16a5a961",
-    "next_step": "Lead merges FX3-2-island; FX3-3-clock-report in a fresh session"
+    "last_green_sha": "2955e9bf",
+    "next_step": "Fail-first tests for RB-44, RB-45, RB-19"
   },
-  "precheck": {
-    "sha": "16a5a961c7f48973ec4cd63f72f6cde9e719d1df",
-    "exit": 0,
-    "finished_at": "2026-11-21T18:35:42Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
-  "ready_sha": "16a5a961c7f48973ec4cd63f72f6cde9e719d1df",
+  "ready_sha": null,
   "stop_at": "2026-11-24T21:00:00Z",
   "acks": [],
-  "requests": [
-    {
-      "id": "FX3-R1",
-      "from": "FX3",
-      "to": "lead",
-      "ask": "FX3-2-island adds two publish problems, the new last bits of island::Problem: EntranceBlocked (RB-40) and DuplicateLaw (candidate 7). The builder (client/scripts/builder_screen.gd:515) and curation (client/features/curation/curation_presenter.gd:235) show a problem as Strings.t(\"PROBLEM_\" + name.to_upper()), so client/i18n/strings.csv needs PROBLEM_ENTRANCEBLOCKED (e.g. 'the entrance is on the Vault or inside a wall') and PROBLEM_DUPLICATELAW (e.g. 'a law is woven on two pylons'), in every locale column, with node art/ui/keyframes/build_words.mjs rerun (M34). strings.csv is not an FX3 file.",
-      "files": [
-        "client/i18n/strings.csv"
-      ],
-      "blocking": false,
-      "created_at": "2026-11-21T18:02:19Z",
-      "due": "2026-11-22T18:02:19Z",
-      "default": "Until the strings land, the builder and curation show the raw key (PROBLEM_ENTRANCEBLOCKED or PROBLEM_DUPLICATELAW) for these two problems; the lead adds the rows to a strings or UI task once the UI resumes.",
-      "escalate_to": "lead"
-    }
-  ],
+  "requests": [],
   "answers": []
 }
