@@ -239,6 +239,8 @@
   "quicksand_opens_hidden_pits_that_drop_whoever_steps_in": "passed",
   "quiet_week_heists_may_run_thirty_seconds_past_the_longest": "passed",
   "rapids_push_anyone_a_tile_a_second_downstream": "passed",
+  "rb28_regrowth_heals_a_vault_up_to_its_own_levels_health": "passed",
+  "rb29_a_realms_alarm_counts_from_when_the_crew_arrives": "passed",
   "realm_grids_are_the_sizes_5_2_states": "passed",
   "rebound_bounces_every_stun_on_to_the_nearest_enemy": "passed",
   "recall_brings_a_knocked_out_crew_member_back_at_forty_percent": "passed",
