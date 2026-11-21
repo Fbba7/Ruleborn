@@ -3,24 +3,26 @@
   "role": "FX3",
   "branch": "claude/fix-sim",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "FX3-2-island",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-21T17:53:00Z",
   "lease_until": "2026-11-21T20:53:00Z",
-  "updated_at": "2026-11-21T18:02:19Z",
-  "expected_next_update_by": "2026-11-21T18:47:19Z",
-  "long_run": {
-    "log": "/tmp/check-16a5a961c7f48973ec4cd63f72f6cde9e719d1df.log",
-    "expected_end": "2026-11-21T19:22:19Z"
-  },
+  "updated_at": "2026-11-21T18:36:11Z",
+  "expected_next_update_by": null,
+  "long_run": null,
   "progress_marker": {
-    "last_green_sha": "351b90bb",
-    "next_step": "Pre-check of the main merge 16a5a961, then record and ready"
+    "last_green_sha": "16a5a961",
+    "next_step": "Lead merges FX3-2-island; FX3-3-clock-report in a fresh session"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "16a5a961c7f48973ec4cd63f72f6cde9e719d1df",
+    "exit": 0,
+    "finished_at": "2026-11-21T18:35:42Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "16a5a961c7f48973ec4cd63f72f6cde9e719d1df",
   "stop_at": "2026-11-24T21:00:00Z",
   "acks": [],
   "requests": [

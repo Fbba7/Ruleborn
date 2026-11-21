@@ -1,6 +1,6 @@
 # FX3 simulation fixes: progress
 
-- Status: Working. FX3-2-island: fixes done and main merged at 16a5a961; its pre-check is running. FX3-1-heal-alarm merged in lead cycle 158.
+- Status: Waiting. FX3-2-island is ready at 16a5a961 (pre-check PASS at 18:35Z, recorded). FX3-1-heal-alarm merged in lead cycle 158.
 - Progress: FX3-2-island: RB-40 (an entrance in a wall or on the Vault), RB-50 (weaving onto the Vault deleted the law), RB-57 (a ward or pylon on a guard in tall grass left the grass), and the unproven candidates 7 (the same law twice) and 34 (a covered tunnel mouth), both reproduced. Each has a fail-first test in `sim/src/tests.rs`, committed before its fix.
 - Done: `cargo test` in `sim` 343 of 343, golden replays still verify (no rebake); `cd server && npm test` 549 of 549; `bash sim/run_spike.sh` every gate holds; `owners.py diff` passes.
 - Next: the lead's merge, then FX3-3-clock-report in a fresh session.
@@ -13,7 +13,7 @@
 | FX3-2-island: RB-40, RB-50, RB-57, candidates 7 and 34 | 4.0 | ready | `sim/src/tests.rs` `rb40_an_entrance_in_a_wall_or_on_the_vault_is_not_published`, `rb50_weaving_a_law_onto_the_vault_is_refused_and_keeps_the_law`, `rb57_a_ward_or_pylon_on_a_guard_in_tall_grass_replaces_the_grass_too`, `candidate_7_the_same_law_twice_is_not_published`, `candidate_34_a_tunnel_mouth_under_a_raised_wall_is_no_way_out`; `sim/src/island.rs`, `sim/src/path.rs`, `server/src/sim.mjs` |
 
 ## Handoff
-- FX3-2-island (2026-11-21). Branch `claude/fix-sim`. Pre-check of the merge commit 16a5a961 is running; ready follows a PASS.
+- FX3-2-island, ready (2026-11-21). Branch `claude/fix-sim`. Pre-check at 16a5a961: PASS ("All checks passed.", 18:35Z, recorded); `ready_sha` 16a5a961 is in `docs/progress/status/FX3.json`.
   - **RB-40.** `Island::check` never looked at the entrance, where the alarm-5 Warden comes in. It now appends `Problem::EntranceBlocked`, a new last bit (bit 9), when the entrance is the Vault's tile or a tile nobody can stand on with every Crystal Wall standing (the same `standing()` grid as `PostBlocked`). `PROBLEMS` in `server/src/sim.mjs` gains `entrance_blocked` in that place.
     - Test commit c1d07713, fix commit aaafc4f8. The test fails on main:
       ```
