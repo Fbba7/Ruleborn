@@ -5,6 +5,40 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 158**, 21 November 2026, from about 17:14Z (session
+  `session_01SNkKxotqqNutawUf3M2pYb`, started by the Opus 5.5 launcher).
+  **Merged** FX1-1-workshop-pairs (fd9af096: RB-30, RB-05, RB-06),
+  FX2-2-trace-telemetry (873809b4: RB-31, RB-32, RB-49, RB-21 and
+  unproven candidate 21, now confirmed and fixed) and FX4-2-trace-events
+  (76823607: RB-31, RB-32, RB-41, RB-42) as one candidate, 436feb0d, onto
+  main at 8ed7538f. All three turned ready with passing pre-checks
+  (16:55Z to 17:06Z). Each RB entry's fail-first test precedes its fix,
+  checked in cycle 157 at the same shas, and `owners.py diff` and
+  `claims` pass on all three. The candidate's full checks ran here and
+  were not reused (check_all PASS, 17:46Z), and the UI guard passed in its
+  own worktree. The merge lock's `started_at` reads 17:25Z; the lock was
+  set at about 17:16Z. Both pages were regenerated and came out byte for
+  byte the same as the copies cycle 155 republished (51abbef0), so neither
+  is republished. **FX2's audit note**
+  (`docs/security/audit-2026-11/server.md`) confirms candidate 21. Its
+  RB-49 test also passes on old main because of the SQLite query plan;
+  it stays as a guard. No new FX task is needed.
+  **Started** on Opus 5.5 at effort high:
+  - FX1 on FX1-2-leases (`session_01SNkKxqAwEhhaxa4xEwqmCX`)
+  - FX2 on FX2-3-shop (`session_01SNkKxrM2E56bY4bUhSx5Q9`)
+  - FX3 on FX3-2-island (`session_01SNkKxnzj1jLW96L7CkQ47A`), open since
+    cycle 152
+
+  The earlier sessions were idle. **FX4 waits** with
+  FX4-3-replay-shop-nav (medium) open: the seven-day bar still reads
+  `allowed_warning`, so the cap stays three. FX4 has the least work left
+  (two tasks against FX1's five and FX2's and FX3's four). **The UI stays
+  paused.**
+  **Next:** merge each FX task on ready once its checks pass and each RB
+  entry's fail-first test precedes its fix, then start that agent's next
+  task. Start FX4 on FX4-3-replay-shop-nav when a seat frees or the bar
+  clears.
+
 - **Cycle 157**, 21 November 2026, from about 16:39Z (session
   `session_01SNkKxqS8YH5ACTyg5ANTEz`, started by the Opus 5.5 launcher).
   The changes since cycle 156: all three builders committed fixes, merged
