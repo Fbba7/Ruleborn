@@ -5,15 +5,15 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "FX1-4-holds-codex",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-21T21:00:00Z",
   "lease_until": "2026-11-22T00:00:00Z",
-  "updated_at": "2026-11-21T21:00:00Z",
-  "expected_next_update_by": "2026-11-21T21:45:00Z",
+  "updated_at": "2026-11-21T21:08:00Z",
+  "expected_next_update_by": "2026-11-21T21:53:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "24e171e81b23a90195ca3bee0dcbc27d5a4a94b6",
-    "next_step": "FX1-4: write failing tests for RB-15, RB-18, RB-36, RB-53, RB-56"
+    "last_green_sha": "2003cc38ee7b200a1c1858555fc0a05fff6e47a5",
+    "next_step": "FX1-4: pre-check running at 2003cc38; then record and mark ready"
   },
   "precheck": null,
   "gate_request": null,
