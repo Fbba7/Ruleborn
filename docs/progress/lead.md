@@ -213,8 +213,9 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxr8vD91wFJCWPCztin` (cycle 153,
-21 November 2026 from about 14:15Z, started by the Opus 5.5 launcher). Cycle
+Latest lead cycle session: `session_01SNkKxrGtCCvMiSUGwxCxup` (cycle 154,
+21 November 2026 from about 14:38Z, started by the Opus 5.5 launcher). Cycle
+153's was `session_01SNkKxr8vD91wFJCWPCztin` (from 14:15Z). Cycle
 152's was `session_01SNkKxpjqNeDGHxFAxH2tjX` (from 14:06Z). Cycle
 151's was `session_01SNkKxokQpSagJjzwYyeSuc` (18 November, from 08:13Z). Cycle
 150's was `session_01SNkKxmm9uYmBksgbVUdjx9` (from 07:39Z). Cycle
@@ -744,6 +745,25 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 154**, 21 November 2026, from about 14:38Z (session
+  `session_01SNkKxrGtCCvMiSUGwxCxup`, started by the Opus 5.5 launcher).
+  The changes since cycle 153: the three fix builders pushed fixes and
+  handoffs, each with its fail-first tests committed before its fixes.
+  FX2 (`claude/fix-server-b`, c393a96b) merged main and is pre-checking
+  RB-01, RB-02, RB-07 and RB-22; FX3 (`claude/fix-sim`, 58bf13a4) fixed
+  RB-28 and RB-29, claimed the two new tests in `systems.json` and is
+  pre-checking at bdc0ba84; FX4 (`claude/fix-client`, 087a3a2f) fixed
+  RB-27, RB-03 and RB-04 and runs check_all on its merge of main.
+  `owners.py diff` passes on all three heads (every changed path inside
+  the task's files). None is ready, none is past its expected update
+  (15:00Z to 15:25Z), so none is restarted. **FX1 waits:** the seven-day
+  bar still reads `allowed_warning`, so order 3's cap stays three. No
+  request or gate request: no merge, no gate run, no page republished.
+  **The UI stays paused.**
+  **Next:** merge each FX task on ready once its checks pass, then start
+  that agent's next task; start FX1 on FX1-1-workshop-pairs when a seat
+  frees or the bar clears.
+
 - **Cycle 153**, 21 November 2026, from about 14:15Z (session
   `session_01SNkKxr8vD91wFJCWPCztin`, started by the Opus 5.5 launcher).
   The changes since cycle 152: the three fix builders claimed their
@@ -783,29 +803,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   task on ready once its checks pass and its fail-first tests precede
   the fixes; file new FX tasks from confirmed audit findings; when every
   FX task is merged, reopen the three parked UI tasks.
-
-- **Bug-fix wave**, 21 November 2026, from about 14:20Z (the overseer,
-  by the owner's order of about 13:50Z). An agent run by the owner found
-  60 confirmed defects (13 high, 37 medium, 10 low) and four unproven
-  candidates; the report is `docs/security/bug-report-2026-11.md`. The
-  owner paused the UI to fix them. **Parked:** P3-S3-settings-4 (S3,
-  `claude/ui-screens-meta`), P4-S1-heist-vault (S1) and P4-S2-home-purse
-  (S2), state `parked`, claims kept, their work on their branches; the
-  BT tasks stay open and unstarted. SV-B10 now waits on FX4-1-transport
-  (the same transport file). **Seeded:** 21 FX tasks for four new agents,
-  FX1 (server A, `claude/fix-server-a`), FX2 (server B,
-  `claude/fix-server-b`), FX3 (simulation, `claude/fix-sim`) and FX4
-  (client, `claude/fix-client`), with disjoint files; the highs first
-  (FX4-1, FX2-1, FX3-1, FX1-1 are critical, tier 1), then the mediums
-  and lows, then the extra checks: the four unproven candidates
-  rechecked inside FX2-2 (21), FX3-2 (7 and 34) and FX2-5 (23), and
-  audits of the code the report did not read (FX3-5 sim, FX1-6 server A,
-  FX2-6 server B, FX4-4 client, FX1-7 tools, last). Every fix commits a
-  test that fails on main before the fix. Message M62 says the same.
-  **Next:** start FX1 to FX4 on their first tasks (four seats); merge
-  each FX task on its checks as usual; file new FX tasks from confirmed
-  audit findings; when every FX task is merged, reopen the three parked
-  UI tasks and resume phase 3.
 
 - **Stopped here**, 13 November 2026, about 13:20Z (the owner's "Stop
   cleanly"). Cycle 84 (session `session_01SNkKxpqF4gx3yYhsXenUGt`) took
