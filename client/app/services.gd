@@ -5,6 +5,9 @@ extends RefCounted
 ## files, so nothing a test does reaches the network or a player's data, and
 ## nothing in the app reaches for a global it was not given.
 
+## The most events one POST /v1/events takes (server/src/telemetry.mjs BATCH).
+const EVENTS_BATCH := 100
+
 var store: Store
 var router: Router
 var api: Api
@@ -250,13 +253,25 @@ func set_timers() -> void:
 		DeviceNotices.apply(notifier, h.value, int(Time.get_time_zone_from_system().get("bias", 0)))
 
 
+## The pending events sent in chunks the server takes (RB-32): those older
+## than it takes let go first, and a chunk it refuses for good — a 4xx other
+## than 401, 408 or 429 — dropped, so it never blocks the queue. A refusal
+## that may pass later, or no network, keeps the rest for the next time.
 func send_events() -> void:
-	var batch := notices.pending()
-	if batch.is_empty():
-		return
-	var r := await device.events(batch)
-	if r.ok:
+	notices.drop_before(int(Time.get_unix_time_from_system() * 1000) - DeviceNotices.LATE_MS)
+	while true:
+		var batch := notices.pending().slice(0, EVENTS_BATCH)
+		if batch.is_empty():
+			return
+		var r := await device.events(batch)
+		if not r.ok and not _refused_for_good(r):
+			return
 		notices.sent(batch.size())
+
+
+static func _refused_for_good(r: Result) -> bool:
+	var status := int(r.detail.get("status", 0))
+	return status >= 400 and status < 500 and status not in [401, 408, 429]
 
 
 ## Everything released: the transport node taken out of the tree and freed,
