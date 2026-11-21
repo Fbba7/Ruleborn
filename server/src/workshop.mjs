@@ -397,7 +397,13 @@ export class Workshop {
         // SEC-26: recorded either way; on the ladder only from a player
         // who counts.
         const paid = this.counts("workshop_completions", player, item.creator, now);
-        const fresh = this.db.prepare(
+        // RB-37: one completion per player, creator and island: the same
+        // bytes listed again under another name are not a second completion.
+        const copied = this.db.prepare(
+          `SELECT 1 FROM workshop_completions c JOIN workshop_items i ON i.id = c.item
+            WHERE c.player = ? AND i.creator = ? AND i.bundle = ? AND i.id <> ? AND i.removed_at IS NULL
+            LIMIT 1`).get(player, item.creator, item.bundle, item.id);
+        const fresh = copied ? 0 : this.db.prepare(
           `INSERT OR IGNORE INTO workshop_completions (item, player, weight, at, counted)
            VALUES (?, ?, ?, ?, ?)`).run(item.id, player, mate ? facts.KIN_COMPLETION_WEIGHT : 1, now, paid ? 1 : 0)
           .changes;
