@@ -895,10 +895,13 @@ export class Service {
     // a player in a UTC day; any later one that day pays the raider's haul,
     // within their caps, and nothing else — so two players cannot mint
     // Renown, stars or shares by robbing or foiling each other on a loop.
+    // An echo takes nothing from its owner (§12.3, G30), so a raid on one
+    // counts only against other echo raids, never the pair's real one (RB-05).
     const pairEarlierToday = this.db.prepare(
       `SELECT COUNT(*) AS n FROM heists h JOIN leases l ON l.token = h.token
-        WHERE h.attacker = ? AND h.day = ? AND h.defender = ? AND l.mode = 'raid' AND h.validated = 1`)
-      .get(attacker, day(now), lease.defender).n;
+        WHERE h.attacker = ? AND h.day = ? AND h.defender = ? AND l.mode = 'raid' AND l.echo = ?
+          AND h.validated = 1`)
+      .get(attacker, day(now), lease.defender, lease.echo ? 1 : 0).n;
     const scores = !friendly && pairEarlierToday === 0;
     // The two Keeper levels the raid was played at, read once: the raider's
     // experience below may level them up, and nothing after it — the
@@ -954,8 +957,8 @@ export class Service {
       // one's stays with the game (G37).
       const foiledEarlierToday = this.db.prepare(
         `SELECT COUNT(*) AS n FROM heists h JOIN leases l ON l.token = h.token
-          WHERE h.attacker = ? AND h.day = ? AND h.defender = ? AND l.mode = 'raid' AND h.validated = 1
-            AND json_extract(h.outcome, '$.verdict.grade') = 'foiled'`)
+          WHERE h.attacker = ? AND h.day = ? AND h.defender = ? AND l.mode = 'raid' AND l.echo = 0
+            AND h.validated = 1 AND json_extract(h.outcome, '$.verdict.grade') = 'foiled'`)
         .get(attacker, day(now), lease.defender).n;
       if (foiledEarlierToday === 0) book("defender", "starlight", fee);
       const percent = this.seasons.defenceShare(this.seasons.current(now).id);

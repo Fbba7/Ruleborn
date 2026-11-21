@@ -5,6 +5,9 @@ extends RefCounted
 ## files, so nothing a test does reaches the network or a player's data, and
 ## nothing in the app reaches for a global it was not given.
 
+## The most events one POST /v1/events takes (server/src/telemetry.mjs BATCH).
+const EVENTS_BATCH := 100
+
 var store: Store
 var router: Router
 var api: Api
@@ -65,6 +68,9 @@ var realm_flow: RealmController
 var share_flow: ShareController
 var first_flow: FirstController
 var auth_flow: AuthController
+## A send of the events is in flight: another waits for none, it returns and
+## the one in flight sends what was added meanwhile (RB-42).
+var _sending := false
 
 
 ## `transport` null means the real network. `server` "" means none: the
@@ -173,10 +179,12 @@ static func build(parent: Node, server: String, with_transport: Transport = null
 	return s
 
 
-## Sign in with the platform's credential, and say who is signed in. Every
-## call without a session, or with an expired one, comes here (Api.reauth).
+## Sign in with the platform's credential, and say who is signed in. A
+## session still fresh is kept (RB-41): home calls this on each visit while
+## the outbox holds an item, and the server limits renewals. A call refused
+## for an expired session gets a new one through Api.reauth.
 func sign_in() -> bool:
-	return (await session(true)).ok
+	return (await session()).ok
 
 
 ## The session, as a Result: refused on the phone until §20.1's age check
@@ -248,13 +256,31 @@ func set_timers() -> void:
 		DeviceNotices.apply(notifier, h.value, int(Time.get_time_zone_from_system().get("bias", 0)))
 
 
+## The pending events sent in chunks the server takes (RB-32): those older
+## than it takes let go first, and a chunk it refuses for good — a 4xx other
+## than 401, 408 or 429 — dropped, so it never blocks the queue. A refusal
+## that may pass later, or no network, keeps the rest for the next time.
+## One send at a time (RB-42): an overlapping call returns at once, and the
+## send in flight reads the queue again after each chunk.
 func send_events() -> void:
-	var batch := notices.pending()
-	if batch.is_empty():
+	if _sending:
 		return
-	var r := await device.events(batch)
-	if r.ok:
+	_sending = true
+	notices.drop_before(int(Time.get_unix_time_from_system() * 1000) - DeviceNotices.LATE_MS)
+	while true:
+		var batch := notices.pending().slice(0, EVENTS_BATCH)
+		if batch.is_empty():
+			break
+		var r := await device.events(batch)
+		if not r.ok and not _refused_for_good(r):
+			break
 		notices.sent(batch.size())
+	_sending = false
+
+
+static func _refused_for_good(r: Result) -> bool:
+	var status := int(r.detail.get("status", 0))
+	return status >= 400 and status < 500 and status not in [401, 408, 429]
 
 
 ## Everything released: the transport node taken out of the tree and freed,
