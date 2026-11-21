@@ -3,23 +3,39 @@
   "role": "FX2",
   "branch": "claude/fix-server-b",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "FX2-5-auth-lows",
-  "task_state": "claimed",
+  "task_state": "blocked",
   "claimed_at": "2026-11-21T21:00:00Z",
   "lease_until": "2026-11-22T00:00:00Z",
-  "updated_at": "2026-11-21T21:00:00Z",
-  "expected_next_update_by": "2026-11-21T21:45:00Z",
+  "updated_at": "2026-11-21T21:20:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "2f83705b",
-    "next_step": "fail-first tests for RB-23, RB-24, RB-25, RB-26, RB-60 and candidate 23"
+    "last_green_sha": "5e4979d0",
+    "next_step": "on FX2-R1's answer: apply the three test lines, npm test, merge main, check_all, owners.py, ready"
   },
   "precheck": null,
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-24T21:00:00Z",
   "acks": [],
-  "requests": [],
+  "requests": [
+    {
+      "id": "FX2-R1",
+      "from": "FX2",
+      "to": "lead",
+      "blocking": true,
+      "ask": "Grant server/test/casts.test.mjs, server/test/rest.test.mjs and server/test/setup.mjs (no task in flight owns them; owners.py: the lead does) to FX2-5-auth-lows as exceptions. RB-25's fix (51c133ad) checks each replay manifest member's form byte against the character's form. These three files build manifests without `form`, which the device always writes, so 11 tests fail (casts 3, rest 2, security_deep_heists 2, and 4 through setup.mjs's crewed). The test expectations encoded the defect. The correction is one line in each: add `form: c.wire.form,` after `kind: \u2026indexOf(c.kind),` (casts.test.mjs:27, rest.test.mjs:21, setup.mjs:166). With it, npm test passes 578 of 578. Details: docs/progress/FX2.md, 'FX2-R1'.",
+      "files": [
+        "server/test/casts.test.mjs",
+        "server/test/rest.test.mjs",
+        "server/test/setup.mjs"
+      ],
+      "due": "2026-11-22T09:00:00Z",
+      "default": "The three files are granted as FX2-5-auth-lows's exceptions. FX2 applies the three one-line corrections in a commit naming RB-25, runs npm test (578/578), merges main, runs check_all and owners.py, and sets ready.",
+      "escalate_to": "lead"
+    }
+  ],
   "answers": []
 }

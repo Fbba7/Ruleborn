@@ -1,10 +1,10 @@
 # FX2 fixer, server B: progress
 
-- Status: Waiting. FX2-4-purge-notify is ready at b4445a58 (check_all PASS, recorded). It has fail-first tests, fixes for RB-33, RB-34, RB-46, RB-47 and RB-48, and main merged. `cd server && npm test` passes 566 of 566.
-- Progress: 3 of 4 tasks merged (FX2-1 at 23cf8a90, FX2-2 at 8ed7538f, FX2-3 at c7cdcbbd), FX2-4 ready. No gate items.
-- Done: RB-33, RB-34, RB-46, RB-47 and RB-48, each with a test written first that fails on main.
-- Next: the lead's merge of FX2-4.
-- Blocked by: none.
+- Status: Blocked on FX2-R1. FX2-5-auth-lows has all six fixes committed at 5e4979d0 (main 02558e05 merged). `cd server && npm test` gives 567 of 578: 11 tests in three files outside the task's files write replay manifests without the `form` byte, which RB-25 now checks.
+- Progress: 4 of 5 tasks merged (FX2-1 at 23cf8a90, FX2-2 at 8ed7538f, FX2-3 at c7cdcbbd, FX2-4 at e413e4a9). FX2-5 is blocked on one request. No gate items.
+- Done: RB-23, RB-24, RB-25, RB-26 and RB-60, and candidate 23 (it reproduced, fixed here). Each has a test written first that fails on main.
+- Next: the lead answers FX2-R1. With its default, FX2 applies three one-line test corrections, then runs npm test, check_all and owners.py and marks the task ready.
+- Blocked by: FX2-R1 (lead), due 2026-11-22T09:00:00Z.
 - Owner decision needed: none.
 
 | Deliverable | Weight (h) | Status | Evidence |
@@ -12,40 +12,53 @@
 | FX2-1-db-store-home: RB-01, RB-02, RB-07, RB-22 | 3.5 | merged at 23cf8a90 | `server/test/fix_fx2_db_store_home.test.mjs` |
 | FX2-2-trace-telemetry: RB-31, RB-32, RB-49, RB-21, candidate 21 | 3.5 | merged at 8ed7538f | `server/test/fix_fx2_trace_telemetry.test.mjs`; `docs/security/audit-2026-11/server.md` |
 | FX2-3-shop: RB-08, RB-09, RB-11, RB-10, RB-13 | 4.0 | merged at c7cdcbbd | `server/test/fix_fx2_shop.test.mjs` |
-| FX2-4-purge-notify: RB-33, RB-34, RB-46, RB-47, RB-48 | 4.0 | ready at b4445a58 | `server/test/fix_fx2_purge_notify.test.mjs`. Commits: 7dad0e16 (tests), 81580799 (test assertion name), 0c9e6c67 (RB-33), 0f3b6494 (RB-34), a9678f50 (RB-46), e4b8d44c (RB-47), 5cdb0318 (RB-48), 20acfab8 (merge of main), b4445a58 (status) |
+| FX2-4-purge-notify: RB-33, RB-34, RB-46, RB-47, RB-48 | 4.0 | merged at e413e4a9 | `server/test/fix_fx2_purge_notify.test.mjs`. Commits: 7dad0e16 (tests), 81580799 (test assertion name), 0c9e6c67 (RB-33), 0f3b6494 (RB-34), a9678f50 (RB-46), e4b8d44c (RB-47), 5cdb0318 (RB-48), 20acfab8 (merge of main), b4445a58 (status) |
+| FX2-5-auth-lows: RB-23, RB-24, RB-25, RB-26, RB-60, candidate 23 | 4.0 | blocked on FX2-R1 | `server/test/fix_fx2_auth_lows.test.mjs`. Commits: 83ba326a (tests), b63fe5ca (RB-23), d981f86f (RB-24), 51c133ad (RB-25), 20fd2dee (RB-26), 268243b4 (RB-60 test guard), cfc93897 (RB-60), df07570d (candidate 23), 5e4979d0 (merge of main) |
 
 ## Handoff
-- **Last verified commit:** b4445a58, the `ready_sha`. It is 20acfab8 (main 6cfd40b4 merged) plus the status file. The commit after it changes only this handoff and the status file.
+- **Last verified commit:** 5e4979d0, which is df07570d with main 02558e05 (lead cycle 162) merged in, with no conflict. The commit after it changes only this handoff and the status file.
 
 ### The tests
-- All five tests are in one file, `server/test/fix_fx2_purge_notify.test.mjs`, committed alone in 7dad0e16 before any fix. They were run on 7dad0e16, whose `server/src/` is main's. All five fail:
-  - **RB-33** (`a bundle is served only at the one URL the under-13 purge names`): `/v1/bundles/b5bbd56f…b232?v=2 is not a URL the edge would ever be asked to purge`, `200 !== 404`.
-  - **RB-34** (`an under-13 deletion asks the edge to purge the target lists that named the child`): `the edge was asked to purge the list; asked=["/v1/bundles/b5bbd56f…b232"]`. Only the island's bundle was purged.
-  - **RB-46** (`the raid notification lists only validated heists, never a refused submission`): the push also listed `{ grade: null, heist: 'b9c4cfda…535e' }`, the refused junk submission.
-  - **RB-47** (`a friendly heist after the day's first raid is told in the same message`): the push listed only the raid; the expected `{ grade: 'foiled', heist: 'dee9f4ff…7883' }` was missing.
-  - **RB-48** (`a raid that lands while a push is in flight is told once, after the push is retried`): `each raid told once`. N1 was sent with `[x1, x2, x3]` and N2 with `[x2, x3]`: actual tokens `[x3, x3, x1, x2, x2]`, expected `[x3, x1, x2]`.
-- **One test line was corrected after the fail-first commit** (81580799): the RB-33 test called `assert.notmatch`, which does not exist; node's name is `assert.doesNotMatch`. On main the test failed before reaching that line, at the status check quoted above, so the failure is unchanged.
+- All six tests are in `server/test/fix_fx2_auth_lows.test.mjs`, committed alone in 83ba326a before any fix and run on it. 83ba326a's `server/src/` is main's. All six fail:
+  - **RB-23** (`a device refreshing every hour stays signed in with a 720-hour rotation span`): `refresh #721 at 720.5 h refused: session_refused`.
+  - **RB-24** (`a lapsed session's refresh token does not sign out everywhere`): `the same answer refresh gives for A`, expected 401, actual 200.
+  - **RB-25** (`a manifest member's form must be the character's`): expected `'crew_mismatch'`, actual `undefined`.
+  - **RB-26** (`the roles route acts only on the constellation its URL names`): `a wrong id answers 200`.
+  - **RB-60** (`the privacy policy shows no leftover reference text`): `the page shows "(to, )"`.
+  - **Candidate 23** (`viewing another player's profile does not fix their tier price`): `the view wrote no standing for the viewed player`, expected 0, actual 1.
+- **One line of my own test was corrected after the fail-first commit** (268243b4). RB-60's last guard checked that "(ISO 3166" stays on the page, but that text was never on the rendered page, before the fix or after it. It now checks three prose parentheses the page does show: "(30 days unused", "(products, prices, refunds)" and "(an hour)". The test still fails before the fix with the same error, `the page shows "(to, )"`.
 
 ### The fixes
-- **RB-33** (0c9e6c67, `http.mjs` `GET /v1/bundles`). The report's Fix: a bundle is served only when the path is exactly `bundlePath(hash)` (`edge.mjs`, the path the purge names) and the URL has no `?`, even an empty one. `?v=2`, `/x`, a trailing `/` and a bare `?` answer 404 `not_found`.
-- **RB-34** (0f3b6494, `accounts.mjs` `finishErasures`). The report's Fix: it reads every list and previous hash named in `target_lists` before `targetLists({keepPrevious: false})` and after it, and queues an edge purge (`queuePurge`) for each named before and not after. `deleteAccount` already calls `purgeEdge` after an under-13 deletion. A list that did not name the child keeps its hash, so it is not purged.
-  - Not fixed, outside the entry: a crash between the remake and the queued purges loses those purges; the next start's `finishErasures` sees the new lists only.
-- **RB-46** (a9678f50, `notifications.mjs` `raids`). The report's Fix: `h.validated = 1` in the query. `validated` is final when the heist row is written (`service.settle`), so no heist turns validated later.
-- **RB-47** (e4b8d44c, `notifications.mjs` `raids`). The report's Fix: `l.echo = 0` replaces `${RAIDED}`, matching `grant()`, which notifies every heist that is not an echo and whose defender is not deleted. The `RAIDED` import is gone from `notifications.mjs`; `matchmaking.mjs` still exports and uses it. Whether friendly heists should notify at all is still the open design question the report names; this makes the result independent of the order heists land in.
-- **RB-48** (5cdb0318, `notifications.mjs`). The report's Fix, with one further change it needs:
-  - `send()` claims a notification and, in the same transaction, resolves a raid notification's list with `raids(n)` and stores it without `since`. The message is the stored data, and a retry sends the same list.
-  - `raided()` now joins the newest waiting raid notification (`ORDER BY id DESC`). Without this, a raid x3 landing while N1 (resolved, waiting for its retry) and N2 (reading by reference) both wait could be written into N1 by name and also read by N2, which is a new double. The test covers that case.
-  - Not fixed, outside the entry: a heist with the same millisecond as a claim and as a later raid's `since` could be read by both. This needs two writes in one millisecond.
-- **Existing tests:** none was changed, skipped or loosened.
+- **RB-23** (b63fe5ca, `auth.mjs` `refresh`). A refresh inside the rotation span keeps the token only while the span is less than `IDLE_MS - SESSION_MS`. So whatever `RULEBORN_REFRESH_ROTATE_HOURS` says, a device refreshing on time rotates, and `used_at` moves, before the idle lapse.
+- **RB-24** (d981f86f, `auth.mjs` `signOutWith`). "Everywhere" now refuses a refresh token whose session is past the idle lapse or the absolute limit, the same 401 `refresh` gives for it.
+- **RB-25** (51c133ad, `home.mjs` `crewProblem`). Each member's `form` must equal `formIndex(c)`, beside kind, level and traits.
+- **RB-26** (20fd2dee, `http.mjs` and `social.mjs`). The roles route passes the URL's id to `appoint`, which refuses a founder of another constellation with 403 `founder_only`. The id parameter is optional, so the existing callers in tests that pass none are unchanged.
+- **RB-60** (cfc93897, `pages.mjs` `plain`). The reference pattern now takes "to" or "and" between references, and multi-letter tags such as SEC-18. The rendered page was compared before and after: only the three cells the report names change.
+- **Candidate 23** (df07570d, `profile.mjs`). Another player's profile read their league through `seasons.league`, and that opened their standing and fixed their tier price at the viewer's time. A view of another player (`own: false`) now uses `leagueSeen`, which reads the standing if there is one, or else the opening `standing` would write, and writes nothing. A scratch test compared it with the player's own `seasons.league` over three seasons and found them equal. Since it reproduced, nothing goes under "Unproven, rechecked".
+
+### FX2-R1: three tests that wrote the defect
+- RB-25's fix makes 11 tests fail. They build replay manifests without `form`, which the device always writes (`home.show(...).characters[i].wire`). The three builders are outside this task's files. owners.py says "no task in flight owns it: the lead does", so, per the protocol and S3-R30's precedent, I committed none of them:
+  - `server/test/casts.test.mjs:27`: `kind: KINDS.indexOf(c.kind), level: c.level,` → `kind: KINDS.indexOf(c.kind), form: c.wire.form, level: c.level,`
+  - `server/test/rest.test.mjs:21`: the same change.
+  - `server/test/setup.mjs:166` (`crewed`): `kind: kinds.indexOf(c.kind), level: c.level,` → `kind: kinds.indexOf(c.kind), form: c.wire.form, level: c.level,`
+- With those three lines applied, `cd server && npm test` passes 578 of 578 (checked on df07570d and reverted). The 11 failing tests without them:
+  - casts: "a cast used is paid at validation…", "a cast must be the raider's own restored law…", "a law cast in a foiled heist…"
+  - rest: "a heist names its crew from the roster…", "a resting character is woken early…"
+  - security_deep_heists: the two SEC-24 friendly heist tests.
+  - Four more through `crewed`: RB-47's friendly heist test, "a friendly heist is for fun…", "a foiled raid earns a foiled heist's experience…" and "a challenge, a friendly heist or an echo robbed nobody…".
+
+### For the audit (outside this task's entries, not fixed)
+- `matchmaking.mjs` lines 275, 348 and 366 call `seasons.league` for accounts other than the caller, so they open those players' standings too, the way candidate 23 did.
+- The privacy page still shows "(docs/security/auth.md)", "(expireReplays)" and "(snapshots)" (`privacy.json` lines 2078, 2138, 2465 and 2471). These are code references, not the § or audit references `plain` removes, and the report names only the three cells above.
+- `profile.view` for another player still runs `codex.ensure` and `home.ensure` for them (`profile.mjs`, "written the first time they are asked for").
 
 ### Merge and evidence
-- **Merge:** main 6cfd40b4 (lead cycle 160: backlog, the lead's files and status only) merged at 20acfab8 with no conflict. It changed no file under `server/`, so the setup from the start of the session holds.
-- **Setup:** `rustup target add …` and `pip install …` ran, and `tools/ui_research` `npm ci` ran. `(cd server && npm ci)` fails, as `server/` has no `package-lock.json`. I ran `npm install` there instead and deleted the lock file it wrote, which is outside this task's files. `bash client/build.sh`: exit 0. The sim's wasm was built with `cargo build --release --target wasm32-unknown-unknown` in `sim/`. Setup exit 0.
-- **`cd server && npm test`** on 20acfab8: 566 tests, 566 pass, 0 fail.
-- **`python3 tools/coord/owners.py diff FX2-4-purge-notify origin/claude/videogame-project-analysis-ewkkk2 b4445a58`:** "every changed path is inside its files".
-- **`bash tools/run_checks.sh`** (check_all, bwrap) on b4445a58: PASS ("All checks passed.", exit 0, finished 2026-11-21T19:53:14Z), recorded as precheck in the status file.
-- **Open hypotheses:** none.
-- **Next step:** the lead's merge. This session ends here (one task per session).
+- **Merge:** main 02558e05 merged at 5e4979d0 with no conflict. It changed only the backlog, the lead's files and status files.
+- **`cd server && npm test`** on 5e4979d0: 578 tests, 567 pass, 11 fail (the 11 above). With FX2-R1's three lines: 578 of 578.
+- **`python3 tools/coord/owners.py diff FX2-5-auth-lows origin/claude/videogame-project-analysis-ewkkk2 5e4979d0`:** "every changed path is inside its files".
+- **check_all:** not run, because the task is not ready until FX2-R1 is answered.
+- **Setup:** as in FX2-4. The wasm is built, and `npm install` in `server/` with its lock file deleted.
+- **Next step:** once FX2-R1 is granted (its default), apply the three lines and commit them naming RB-25. Then run npm test, merge main, run check_all and owners.py, and set ready.
 
 ## Tried and failed
 - 2026-11-21 The first RB-32 drain test passed on main, for the wrong reason (`401 session_refused`). Its session was made before the clock moved 12 h, and a session lasts an hour. It now signs in after the clock moves.
