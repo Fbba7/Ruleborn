@@ -3,7 +3,16 @@
   "updated_at": "2026-11-21T16:50:00Z",
   "expected_next_update_by": "2026-11-21T19:50:00Z",
   "cycle": 157,
-  "merging": null,
+  "merging": {
+    "candidate_sha": "436feb0de5408a02a27469e5282a9622618a4859",
+    "task_ids": [
+      "FX1-1-workshop-pairs",
+      "FX2-2-trace-telemetry",
+      "FX4-2-trace-events"
+    ],
+    "started_at": "2026-11-21T17:25:00Z",
+    "expires_at": "2026-11-21T18:25:00Z"
+  },
   "last_merged": {
     "task_id": "FX2-1-db-store-home, FX3-1-heal-alarm, FX4-1-transport",
     "sha": "23cf8a90"
