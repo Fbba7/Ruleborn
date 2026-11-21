@@ -777,8 +777,8 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   pre-check exited 0 at 7db937dd and the candidate differs from it only
   under `docs/progress`, so the lead's own check before the merge was
   reused; `check_docs_consistency.py` passes; the full check on main
-  f5870f77 runs after the merge (builders' setup first, `client/build.sh`
-  needs Godot). **Pages:** the audit page was regenerated (b3181beb, sim
+  f5870f77 passed after the merge (22:18Z, `tools/run_checks.sh`, after
+  the builders' setup: `client/build.sh` needs Godot). **Pages:** the audit page was regenerated (b3181beb, sim
   tests 342/342); the republish was not attempted (refused in cycles 162
   and 163, owner inbox). **Started:** FX3 on FX3-5-audit-sim as
   `session_01SNkKxne1a1DLSJJZJn4mc2` (Opus 5.5, effort high).
