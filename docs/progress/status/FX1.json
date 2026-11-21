@@ -8,12 +8,12 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-21T19:20:00Z",
   "lease_until": "2026-11-21T22:20:00Z",
-  "updated_at": "2026-11-21T19:20:00Z",
-  "expected_next_update_by": "2026-11-21T20:05:00Z",
+  "updated_at": "2026-11-21T19:21:15Z",
+  "expected_next_update_by": "2026-11-21T20:06:15Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "f3849470946a2f547ba0fbd1962d29dd16154134",
-    "next_step": "FX1-3-workshop: fail-first tests for RB-35, RB-37, RB-38, RB-39"
+    "last_green_sha": "24e171e81b23a90195ca3bee0dcbc27d5a4a94b6",
+    "next_step": "FX1-3-workshop: pre-check at 24e171e8, then ready"
   },
   "precheck": null,
   "gate_request": null,
@@ -34,6 +34,21 @@
       "created_at": "2026-11-21T16:20:00Z",
       "due": "2026-11-22T16:20:00Z",
       "default": "Keep 409 island_withdrawn for a republish of a removed island; no new string",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "FX1-R2",
+      "from": "FX1",
+      "to": "lead",
+      "ask": "RB-35's Fix line stores the rules build per Workshop play, which needs a column in server/src/db.mjs (outside FX1-3's files). FX1-3 instead refuses wrong_rules in submitPlay when the replay names any build but builds.current, since play() only issues plays under the current build; a play issued before a rules upgrade and submitted after it is refused, and the player asks for a fresh one. If per-play rules are wanted, add [\"workshop_plays\", \"rules\", \"TEXT\"] to db.mjs's added columns in a task that owns it, and FX1 sets it in play() and checks it in submitPlay in a later task.",
+      "files": [
+        "server/src/db.mjs",
+        "server/src/workshop.mjs"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-21T19:21:15Z",
+      "due": "2026-11-22T19:21:15Z",
+      "default": "Keep the current-build check; no schema change",
       "escalate_to": "lead"
     }
   ],

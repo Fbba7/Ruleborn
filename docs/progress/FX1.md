@@ -1,50 +1,67 @@
 # FX1 server fixes (A): progress
 
-- Status: Green. FX1-2-leases ready at f3849470 (pre-check PASS, 18:30:38Z).
-- Progress: 1 of 6 tasks merged (FX1-1-workshop-pairs, 8ed7538f); no gate items (fix tasks have none).
-- Done: FX1-1 merged. FX1-2: RB-12, RB-14, RB-16, RB-17, each with a test committed before its fix; `cd server && npm test` 554 of 554; `owners.py diff` passes.
-- Next: FX1-3-workshop, in a fresh session.
+- Status: Green. FX1-3-workshop ready at 24e171e8 (pre-check in `docs/progress/status/FX1.json`).
+- Progress: 2 of 6 tasks merged (FX1-1-workshop-pairs, 8ed7538f; FX1-2-leases, c7cdcbbd); no gate items (fix tasks have none).
+- Done: FX1-3: RB-35, RB-37, RB-38, RB-39, each with a test committed before its fix; `cd server && npm test` 566 of 566; `owners.py diff` passes.
+- Next: FX1-4-holds-codex, in a fresh session.
 - Blocked by: none.
 - Owner decision needed: none.
 
 | Deliverable | Weight (h) | Status | Evidence |
 |---|---:|---|---|
 | FX1-1-workshop-pairs: RB-30, RB-05, RB-06 | 3.0 | merged (8ed7538f) | `server/test/fix_fx1_workshop_pairs.test.mjs`; test commit 3785a41c; fixes in `server/src/workshop.mjs`, `server/src/service.mjs`, `server/src/matchmaking.mjs` |
-| FX1-2-leases: RB-12, RB-14, RB-16, RB-17 | 3.5 | ready (f3849470) | `server/test/fix_fx1_leases.test.mjs`; test commit d1c34426; fixes 68b8d6f9, 092bc9fd, 2c55de1f, 165fa31f |
-| FX1-3-workshop | 3.5 | open | |
+| FX1-2-leases: RB-12, RB-14, RB-16, RB-17 | 3.5 | merged (c7cdcbbd) | `server/test/fix_fx1_leases.test.mjs`; test commit d1c34426; fixes 68b8d6f9, 092bc9fd, 2c55de1f, 165fa31f |
+| FX1-3-workshop: RB-35, RB-37, RB-38, RB-39 | 3.5 | ready (24e171e8) | `server/test/fix_fx1_workshop.test.mjs`; test commit bf0ff93e; fixes c717a9b1, 1faccdd2, 2ac59da1, a4817445 |
 | FX1-4-holds-codex | 4.0 | open | |
 | FX1-6-audit-server-a | 4.0 | open | |
 | FX1-7-audit-tools | 4.0 | open | |
 
 ## Handoff
-- FX1-2-leases (2026-11-21). Branch `claude/fix-server-a`. The pre-check result and `ready_sha` are in `docs/progress/status/FX1.json`.
-  - **Tests first.** All five tests in `server/test/fix_fx1_leases.test.mjs` were committed alone at d1c34426. All five fail on main (8ed7538f, with the wasm simulation built):
+- FX1-3-workshop (2026-11-21). Branch `claude/fix-server-a`. The pre-check result and `ready_sha` are in `docs/progress/status/FX1.json`.
+  - **Tests first.** The five tests in `server/test/fix_fx1_workshop.test.mjs` were committed alone at bf0ff93e. All five fail on main (6cfd40b4's server code, with the wasm simulation built):
     ```
-    not ok 1 - RB-12: yesterday's generated island is not leased as an echo (12.22, generator.mjs)
-      error: 'Missing expected exception: refused 410 superseded'
-    not ok 2 - RB-12: an hourly list made before the rotation does not hand out yesterday's generated island (12.22)
-      error: 'no stale card: ["0cc936624e251d63c81a46175e6ffbc6052466d03a3d87e4399d49ffad8aede2"]'
-    not ok 3 - RB-14: asking again for a held Trace hands back the same lease (12.3, 24.13)
-      Got unwanted exception: the second ask is not refused
-      Actual message: "nothing_to_trace"
-    not ok 4 - RB-16: a refused upload does not use up a challenge link (17.6)
-      Got unwanted exception: a refused submission is not a play
-      Actual message: "challenge_already_played"
-    not ok 5 - RB-17: an offer of size 1 is the band's middle, guaranteed (12.22)
-      the in-band middle
+    not ok 1 - RB-35: a Workshop play recorded under an older rules build the server still holds is refused wrong_rules (SEC-31)
       + actual - expected
         [
-      +   'a'
-      -   'c'
+      +   true,
+      +   undefined
+      -   false,
+      -   'wrong_rules'
         ]
+    not ok 2 - RB-37: one fan clearing three listings of the same island is one completion (18.7)
+      only the first copy's clear is a completion
+        [
+          true,
+      +   true,
+      +   true
+      -   false,
+      -   false
+        ]
+    not ok 3 - RB-37: one fan's Island Fund time on three listings of the same island is capped once (18.9, SR-12)
+      at most 3600 s a quarter from that fan
+      9000 !== 3600
+    not ok 4 - RB-38: featured islands removed by moderation no longer count on the creator ladder (18.7)
+        [
+      +   'loremaker',
+      +   8
+      -   null,
+      -   5
+        ]
+    not ok 5 - RB-39: dismissing a player's report leaves spike review on for the island's later spikes (18.7)
+      + []
+      - [
+      -   'completion_spike'
+      - ]
     ```
-  - **RB-12** (68b8d6f9). `lease` now refuses `410 superseded` when a snapshot on no island is the generator's (`snapshot.owner === GENERATOR`). In `current()`, only echo cards whose owner is not the generator are passed through unchanged. A generator card is now looked up like any live island, so a card from a list made before the rotation is swapped to the day's island. As the report's Fix line says.
-  - **RB-14** (092bc9fd). In `lease`, when `traceable()` returns null, the Trace falls back to the `trace_of` of the attacker's newest lease on the bundle, if that lease is a live, unplayed Trace. `issue()` then hands that lease back. This follows the report's Fix line, narrowed to the newest lease, because `issue()` hands back only the newest. As the report says, an expired, unplayed Trace still uses its robbery up; that case is not part of this fix.
-  - **RB-16** (2c55de1f). `challengeLease`'s "played" query now adds `AND h.validated = 1`. As the report's Fix line says. The test also checks that a validated play still uses up the link.
-  - **RB-17** (165fa31f). `offer` takes the easier neighbours with `sorted.slice(Math.max(0, i - half), i)`. As the report's Fix line says. The test also checks that a size-3 offer is unchanged.
-  - **Existing tests.** No existing test was changed, skipped or loosened. `cd server && npm test` passes 554 of 554.
-  - **Merge evidence.** Main (2e02482a) was merged at f3849470 with no conflict. `owners.py diff FX1-2-leases origin/claude/videogame-project-analysis-ewkkk2 HEAD` reports "every changed path is inside its files". The fresh-container setup line and `bash client/build.sh` ran first (build exit 0). The pre-check at f3849470 passed ("All checks passed.", exit 0, 18:30:38Z, sandbox bwrap); `owners.py diff` at that sha passes. Main's later commit 7c7e389a is lead bookkeeping only (`docs/progress/`), so it was not merged.
-  - **Next.** FX1-3-workshop (RB-35, RB-37, RB-38, RB-39), in a fresh session.
+  - **RB-35** (c717a9b1). `submitPlay` refuses `wrong_rules` when the replay's header names any rules build but `builds.current`. **This differs from the report's Fix line**, which adds a `rules` column to `workshop_plays`. That table is defined in `server/src/db.mjs`, which is not one of FX1-3's files. `play()` only ever issues plays under the current build, so the check closes the hole without a schema change. The cost: a play issued just before a rules upgrade and submitted after it is refused. Nothing is staked on a Workshop play, so the player only has to ask for a fresh play. Request FX1-R2 asks the lead for the column; its default keeps this check. `wrong_rules` is already worded in `client/i18n/strings.csv` (`ERR_WRONG_RULES`).
+  - **RB-37** (1faccdd2). As the report's Fix line says:
+    - A clear is no longer recorded as a completion when the player already has one on another live listing with the same creator and the same bundle. `outcome.counted` is false, and the spike count is not raised.
+    - `Fund.played` keys SR-12's cap by player, creator and bundle instead of by item.
+  - **RB-38** (2ac59da1). The ladder's featured count adds `AND removed_at IS NULL`, as the report's Fix line says.
+  - **RB-39** (a4817445). On a dismiss, `review` is reset when any open report on the island is a server report (`reporter IS NULL`). The check runs before the reports are closed. As the report's Fix line says.
+  - **Existing tests.** No existing test was changed, skipped or loosened. `cd server && npm test` passes 566 of 566.
+  - **Merge evidence.** Main (6cfd40b4) was merged at 24e171e8 with no conflict. `owners.py diff FX1-3-workshop origin/claude/videogame-project-analysis-ewkkk2 24e171e8` reports "every changed path is inside its files". The fresh-container setup line and `bash client/build.sh` ran first (build exit 0). The pre-check ran at 24e171e8 (sandbox bwrap).
+  - **Next.** FX1-4-holds-codex, in a fresh session.
 
 ## Tried and failed
 - 2026-11-21 Refused RB-30 with the report's new reason `taken_down`: the client contract needs every server reason worded in `client/i18n/strings.csv`, a file outside the task. Reused `island_withdrawn` instead.
