@@ -2097,6 +2097,26 @@ fn regrowth_heals_guards_pylons_and_the_vault_and_revives_nothing() {
     assert_eq!(world.laws[1].health, 0, "a broken pylon is not rebuilt");
 }
 
+#[test]
+fn rb28_regrowth_heals_a_vault_up_to_its_own_levels_health() {
+    // RB-28: §12.6 gives a Vault 1,500 health a level, and Regrowth heals
+    // "2% of their health each second": a level-10 Vault's 15,000, not a
+    // level-1 Vault's 1,500.
+    use crate::island::Island;
+    let mut island = Island::example();
+    island.vault_level = 10;
+    let mut world = World::on_ground(&island, 3, vec![]);
+    world.weave(&[("regrowth", (0, 0))]);
+    assert_eq!(world.vault.health, 15_000);
+    world.step();
+    assert_eq!(world.vault.health, 15_000, "an untouched Vault stays at full health");
+    world.vault.health = 10_000;
+    for _ in 0..crate::TICKS_PER_SECOND {
+        world.step();
+    }
+    assert_eq!(world.vault.health, 10_000 + 300, "2% of 15,000");
+}
+
 // --------------------------------------------------------------------------
 // Wards (§10.3, as spec/wards.md reads them at level 1)
 // --------------------------------------------------------------------------
