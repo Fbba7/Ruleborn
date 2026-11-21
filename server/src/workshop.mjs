@@ -366,7 +366,12 @@ export class Workshop {
     else if (header.seed.toString() !== play.seed) outcome = { validated: false, reason: "wrong_seed" };
     else if (header.ticks !== play.ticks) outcome = { validated: false, reason: "wrong_clock" };
     else if (header.era !== 0) outcome = { validated: false, reason: "wrong_era" };
-    else {
+    // RB-35: a play is issued under the current rules (play() hands out no
+    // other), so a replay naming an older build the server still holds is
+    // refused, as a heist is against its lease (SEC-31).
+    else if (header.rules !== this.service.builds.current.rulesVersion) {
+      outcome = { validated: false, reason: "wrong_rules" };
+    } else {
       const build = this.service.builds.get(header.rules);
       const island = this.service.store.get(item.bundle);
       const result = !build ? { status: "refused", reason: "rules_not_held" }
