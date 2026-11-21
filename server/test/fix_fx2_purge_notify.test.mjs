@@ -46,7 +46,7 @@ test("RB-33: a bundle is served only at the one URL the under-13 purge names", a
                          `${bundlePath(t.bundle)}?`]) {
     const res = await call(t, "GET", variant);
     assert.equal(res.status, 404, `${variant} is not a URL the edge would ever be asked to purge`);
-    assert.notmatch(res.headers.get("cache-control") ?? "", /immutable/, variant);
+    assert.doesNotMatch(res.headers.get("cache-control") ?? "", /immutable/, variant);
   }
 });
 
