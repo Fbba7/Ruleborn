@@ -607,7 +607,7 @@ impl Crossing {
                 }
             }
         }
-        let ended = if done.len() >= self.world.raiders.len() { last } else { self.world.clock };
+        let ended = if self.world.crew_all_in(&done) { last } else { self.world.clock };
         let held = (ended / TICKS_PER_SECOND).min(u16::MAX as u32) as u16;
         worlds.iter().enumerate()
             .map(|(leg, w)| {

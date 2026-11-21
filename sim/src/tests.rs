@@ -6012,6 +6012,28 @@ fn the_lantern_wisps_reveal_shows_what_is_hidden_within_six_tiles_for_six_second
 }
 
 #[test]
+fn rb45_a_slowed_clock_still_catches_whoever_is_inside_at_the_last_tick() {
+    // RB-45: §12.6, "Anyone still inside when the clock ends is caught". The
+    // replay stops after its clock's ticks whatever the clock rate, so a
+    // clock slowed by an inverted Haste whose pylon then breaks ends there.
+    let mut world = sage_world(&["stormhound"], 2);   // the Tinkerer: Invert first
+    world.clock = 30 * TICKS_PER_SECOND;
+    world.weave(&[("haste", (3, 4))]);
+    world.step();
+    call_at(&mut world, 0, 3, 4);
+    world.step();
+    assert_eq!(world.sheet.factor(Param::ClockRate), (4, 5), "the clock slowed");
+    run_for(&mut world, 5 * TICKS_PER_SECOND);
+    world.laws[0].broken_at = Some(world.tick);
+    while world.tick < world.clock {
+        world.step();
+    }
+    assert!(world.clock_run < world.clock as u64 * 1000, "the slowed clock has not run its 30 s");
+    assert_eq!(world.raiders[0].standing, Standing::Caught, "inside at the replay's last tick");
+    assert_eq!(world.outcome().caught, 1);
+}
+
+#[test]
 fn invert_turns_a_law_into_its_opposite_for_ten_seconds() {
     let mut world = sage_world(&["stormhound"], 2);   // the Tinkerer: Invert first
     world.weave(&[("haste", (3, 4))]);
@@ -6145,6 +6167,51 @@ fn what_a_half_brings_out_is_banked_and_the_half_is_never_counted_as_crew() {
     world.raiders[1].standing = Standing::Caught;
     let o = world.outcome();
     assert_eq!((o.banked, o.caught, o.left), (26, 0, 25));
+}
+
+#[test]
+fn rb44_a_split_and_rejoined_mite_does_not_hold_the_report_to_the_whole_clock() {
+    // RB-44: "held" is the seconds to the last crew member out or caught
+    // (§13.2). The Prism mite's half is a raider of its own but never one of
+    // the crew, and a half that rejoins logs neither Out nor Caught.
+    use crate::events::Event;
+    let mut world = kinds_world(&["prism_mite", "stormhound", "quarryback"]);
+    fire_at(&mut world, 0, 2, 10);
+    world.step();
+    run_for(&mut world, ruleborn::SPLIT_TICKS);
+    assert_eq!((world.raiders.len(), world.raiders[3].standing), (4, Standing::Gone), "split and rejoined");
+    for crew in 0..3u8 {
+        world.raiders[crew as usize].standing = Standing::Out;
+        world.log.push(300, Event::Out { crew, carried: 0 });
+    }
+    let report = world.report(&crate::island::Island::example());
+    assert_eq!(report.held as u32, 300 / TICKS_PER_SECOND, "all three out at tick 300");
+}
+
+#[test]
+fn rb44_a_crossings_reports_count_only_the_crew_for_held() {
+    // RB-44, in `Crossing::reports`: the same count across a universe.
+    use crate::events::Event;
+    use crate::universe::{Crossing, LinkKind};
+    let (u, islands) = two_realms(LinkKind::Stone);
+    let land = crate::reference::competent_universe(&u, &islands, 1, 3, None, None, None).unwrap().commands[0];
+    let heist = Heist { seed: 1, island: u.digest(), rules: crate::rules_version(), ticks: 4_950, crew: 3, era: None,
+                        manifest: None, commands: vec![Command { tick: 0, ..land }], checksums: Vec::new() };
+    let mut c = Crossing::new(&u, &islands, &heist).unwrap();
+    c.step();
+    // A Prism mite's half, rejoined: a fourth raider, gone, never crew.
+    let mut half = c.world.raiders[0].clone();
+    half.half_of = Some(0);
+    half.standing = Standing::Gone;
+    c.world.raiders.push(half);
+    for crew in 0..3u8 {
+        c.world.raiders[crew as usize].standing = Standing::Out;
+        c.world.log.push(300, Event::Out { crew, carried: 0 });
+    }
+    let reports = c.reports();
+    assert!(!reports.is_empty());
+    assert!(reports.iter().all(|r| r.1.held as u32 == 300 / TICKS_PER_SECOND), "all three out at tick 300: {:?}",
+            reports.iter().map(|r| r.1.held).collect::<Vec<_>>());
 }
 
 // -- Casts and the Wanderer's Copy: laws that hold inside a circle (TD.12) ------
