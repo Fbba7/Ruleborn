@@ -117,6 +117,8 @@ export function appStoreTransaction(jws, { roots, bundleId, now, oids = STOREKIT
   const payload = appleSigned(jws, { roots, now, oids });
   if (!payload || payload.bundleId !== bundleId || payload.revocationDate) return null;
   if (payload.environment !== "Production" && !(sandbox && payload.environment === "Sandbox")) return null;
+  // One transaction is one grant, so one item, as Play's is (RB-11).
+  if (payload.quantity !== undefined && payload.quantity !== 1) return null;
   return {
     transaction: String(payload.transactionId),
     product: payload.productId,
