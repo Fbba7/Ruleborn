@@ -179,7 +179,7 @@
       "estimate_h": 3.5,
       "tier": 1,
       "critical": true,
-      "state": "claimed",
+      "state": "ready",
       "claim": {
         "agent": "FX2",
         "branch": "claude/fix-server-b",
@@ -189,7 +189,7 @@
       },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
+      "ready_sha": "c393a96b8643fc5b4168ddb9e4d89550b3eeb8db",
       "merged_sha": null,
       "updated_at": "2026-11-21T14:17:00Z",
       "updated_by": "lead"
@@ -227,7 +227,7 @@
       "estimate_h": 3.0,
       "tier": 1,
       "critical": true,
-      "state": "claimed",
+      "state": "ready",
       "claim": {
         "agent": "FX3",
         "branch": "claude/fix-sim",
@@ -237,7 +237,7 @@
       },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
+      "ready_sha": "946ed7f561e6dfbe205edea6eefe9709eca19acc",
       "merged_sha": null,
       "updated_at": "2026-11-21T14:17:00Z",
       "updated_by": "lead"
