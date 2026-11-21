@@ -5,6 +5,35 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 155**, 21 November 2026, from about 15:14Z (session
+  `session_01SNkKxo9bZSEQwttAmfNMX2`, started by the Opus 5.5 launcher).
+  **Merged** FX2-1-db-store-home (c393a96b: RB-01, RB-02, RB-07, RB-22),
+  FX3-1-heal-alarm (946ed7f5: RB-28, RB-29) and FX4-1-transport
+  (087a3a2f: RB-27, RB-03, RB-04) as one candidate, c28600bb, onto main
+  at 23cf8a90. Each RB entry's fail-first test precedes its fix on its
+  branch, and `owners.py diff` and `claims` pass on all three. The
+  candidate's full checks ran here and were not reused (check_all PASS,
+  16:04Z), and the UI guard passed in its own worktree. A first
+  candidate, a724a040 (FX2-1 and FX3-1 only), was dropped when FX4-1
+  turned ready during its checks: its run and guard were killed (LOST)
+  and the lock moved to c28600bb. Main moved, so both pages were
+  regenerated and republished. **FX3's design note** (`FX3.md`): a realm
+  the crew returns to keeps the `alarm_from` of its first arrival. The
+  default applies, so the current behaviour stands; a reset would be a
+  one-line change in `Crossing::go` if the owner wants one.
+  **Started** on Opus 5.5 at effort high, highs first:
+  - FX1 on FX1-1-workshop-pairs (`session_01SNkKxoJFD1cxymge24jcxS`)
+  - FX2 on FX2-2-trace-telemetry (`session_01SNkKxnzeoEZGeu9uZfj2w9`)
+  - FX4 on FX4-2-trace-events (`session_01SNkKxqMQ2aVNKyGDgeZMQy`)
+
+  The earlier FX2, FX3 and FX4 sessions were idle. **FX3 waits** with
+  FX3-2-island (medium) open: the seven-day bar still reads
+  `allowed_warning`, so order 3's cap stays three. No request and no
+  audit findings yet. **The UI stays paused.**
+  **Next:** merge each FX task on ready once its checks pass, then start
+  that agent's next task. Start FX3 on FX3-2-island when a seat frees or
+  the bar clears.
+
 - **Cycle 154**, 21 November 2026, from about 14:38Z (session
   `session_01SNkKxrGtCCvMiSUGwxCxup`, started by the Opus 5.5 launcher).
   The changes since cycle 153: the three fix builders pushed fixes and
