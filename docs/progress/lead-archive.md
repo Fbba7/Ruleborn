@@ -5,6 +5,40 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 160**, 21 November 2026, from about 18:39Z (session
+  `session_01SNkKxniTiRqQzPk2REyWq3`, started by the Opus 5.5 launcher).
+  **Merged** FX1-2-leases (f3849470: RB-12, RB-14, RB-16, RB-17),
+  FX2-3-shop (427a1705: RB-08, RB-09, RB-10, RB-11, RB-13) and
+  FX3-2-island (16a5a961: RB-40, RB-50, RB-57, unproven candidates 7 and
+  34) as one candidate, 590a74fb, onto main at c7cdcbbd. All three turned
+  ready with passing pre-checks. Each RB entry's fail-first test precedes
+  its fix, and `owners.py diff` and `claims` pass on all three. The
+  candidate's full checks ran here (check_all PASS, 19:09Z) and the UI
+  guard passed in its own worktree. The merge lock was set at about
+  18:40Z (8bad3e7c). Main gained only that lock commit while the checks
+  ran, so the candidate was merged onto it and only the docs check rerun
+  (pass); the tree matches the candidate outside `docs/progress`.
+  **Pages:** the roadmap came out byte for byte the same as cycle 155's
+  copy (51abbef0) and is not republished; the audit page changed (sim
+  tests 331 to 336, FX3-2's new tests), so it is committed and republished
+  (version 232). With FX3-2 merged, its two new publish problems
+  (PROBLEM_ENTRANCEBLOCKED, PROBLEM_DUPLICATELAW) have no strings until
+  FX4-5-problem-strings lands; its deps are now merged, and the parked UI
+  shows none of them, so nothing reaches a player meanwhile.
+  **Started** on Opus 5.5 at effort high:
+  - FX1 on FX1-3-workshop (`session_01SNkKxmoNcX1h8LTVeP5XNK`)
+  - FX2 on FX2-4-purge-notify (`session_01SNkKxnBNSWuPYLJtFjoP4M`)
+  - FX3 on FX3-3-clock-report (`session_01SNkKxorHHkqpPHzjNrNryy`)
+
+  The earlier sessions were idle. **FX4 waits** with
+  FX4-3-replay-shop-nav and FX4-5-problem-strings open: the seven-day bar
+  still reads `allowed_warning`, so the cap stays three, and FX4 has the
+  least work left (about 8 hours against FX1's 15.5, FX2's 12 and FX3's
+  11). No new request. **The UI stays paused.**
+  **Next:** merge FX1-3, FX2-4 and FX3-3 as they turn ready and their
+  checks pass; start FX4 on FX4-3-replay-shop-nav when a seat frees or the
+  bar clears.
+
 - **Cycle 159**, 21 November 2026, from about 18:14Z (session
   `session_01SNkKxqKMkJiLRMM5bReP25`, started by the Opus 5.5 launcher).
   The changes since cycle 158: the three builders it started committed
