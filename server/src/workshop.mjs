@@ -545,7 +545,8 @@ export class Workshop {
          JOIN workshop_items i ON i.id = c.item
         WHERE i.creator = ? AND i.removed_at IS NULL AND c.counted = 1`).get(creator).n);
     const featured = this.db.prepare(
-      "SELECT COUNT(*) AS n FROM workshop_items WHERE creator = ? AND featured_at IS NOT NULL")
+      // RB-38: a featured island later removed no longer counts.
+      "SELECT COUNT(*) AS n FROM workshop_items WHERE creator = ? AND featured_at IS NOT NULL AND removed_at IS NULL")
       .get(creator).n;
     const level = LADDER.find(([, at]) => completions >= at.completions || featured >= at.featured);
     return { level: level ? level[0] : null, completions, featured };
