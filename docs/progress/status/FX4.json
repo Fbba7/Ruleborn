@@ -5,16 +5,16 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "FX4-2-trace-events",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-21T16:10:00Z",
   "lease_until": "2026-11-21T19:10:00Z",
-  "updated_at": "2026-11-21T16:10:00Z",
-  "expected_next_update_by": "2026-11-21T16:55:00Z",
+  "updated_at": "2026-11-21T16:28:29Z",
+  "expected_next_update_by": "2026-11-21T17:13:29Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "9ce5c7d7",
-    "next_step": "fail-first tests for RB-31, RB-32, RB-41, RB-42",
-    "at": "2026-11-21T16:10:00Z"
+    "next_step": "fixes: RB-31 presenter, RB-41 sign_in, RB-32 chunks and drops, RB-42 single flight",
+    "at": "2026-11-21T16:28:29Z"
   },
   "precheck": null,
   "gate_request": null,
