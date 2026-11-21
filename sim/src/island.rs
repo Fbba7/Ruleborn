@@ -1075,7 +1075,8 @@ impl Island {
     /// Weave a law this rules version has, with its pylon on the tile. A law
     /// already woven moves its pylon here, since a realm weaves a law once.
     pub fn weave(&mut self, id: &str, x: u8, y: u8) -> bool {
-        if !LAWS.iter().any(|l| l.id == id) || !self.on_grid(x, y) {
+        // Refused before the law is lifted from its old pylon (RB-50).
+        if !LAWS.iter().any(|l| l.id == id) || !self.on_grid(x, y) || self.occupant(x, y) == Occupant::Vault {
             return false;
         }
         if let Some(i) = self.laws.iter().position(|(l, _, _)| l == id) {
