@@ -1,0 +1,26 @@
+{
+  "agent": "FX2",
+  "role": "FX2",
+  "branch": "claude/fix-server-b",
+  "model": "Opus 5.5",
+  "agent_state": "active",
+  "task_id": "FX2-1-db-store-home",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-21T14:15:00Z",
+  "lease_until": "2026-11-21T17:15:00Z",
+  "updated_at": "2026-11-21T14:15:00Z",
+  "expected_next_update_by": "2026-11-21T15:00:00Z",
+  "long_run": null,
+  "progress_marker": {
+    "last_green_sha": null,
+    "next_step": "Fail-first tests for RB-01, RB-02, RB-07, RB-22, then the fixes.",
+    "at": "2026-11-21T14:15:00Z"
+  },
+  "precheck": null,
+  "gate_request": null,
+  "ready_sha": null,
+  "stop_at": "2026-11-24T21:00:00Z",
+  "acks": [],
+  "requests": [],
+  "answers": []
+}
