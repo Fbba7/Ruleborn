@@ -6795,3 +6795,18 @@ fn laws_flicker_off_for_two_seconds_in_an_overloaded_universe_every_ten_seconds_
     assert!(counts[2] > counts[1] * 3 / 2, "twice as often: {counts:?}");
     assert_eq!(blinks(1, 3), blinks(1, 3), "the same heist flickers the same everywhere");
 }
+
+#[test]
+fn rb40_an_entrance_in_a_wall_or_on_the_vault_is_not_published() {
+    // RB-40: the alarm-5 Warden spawns at the entrance, so an entrance in a
+    // wall or on the Vault weakens the alarm-5 penalty. The gate refuses it.
+    use crate::island::Island;
+    let open = Island::example_open();
+    assert_eq!(open.check(), vec![]);
+    let mut walled = open.clone();
+    walled.entrance = (0, 5);                             // the ruin wall
+    assert!(!walled.check().is_empty(), "an entrance in the ruin wall: {:?}", walled.check());
+    let mut vault = open.clone();
+    vault.entrance = vault.vault;
+    assert!(!vault.check().is_empty(), "an entrance on the Vault: {:?}", vault.check());
+}
