@@ -3,7 +3,16 @@
   "updated_at": "2026-11-21T18:18:00Z",
   "expected_next_update_by": "2026-11-21T21:18:00Z",
   "cycle": 159,
-  "merging": null,
+  "merging": {
+    "candidate_sha": "590a74fb",
+    "task_ids": [
+      "FX1-2-leases",
+      "FX2-3-shop",
+      "FX3-2-island"
+    ],
+    "started_at": "2026-11-21T18:40:00Z",
+    "expires_at": "2026-11-21T19:40:00Z"
+  },
   "last_merged": {
     "task_id": "FX1-1-workshop-pairs, FX2-2-trace-telemetry, FX4-2-trace-events",
     "sha": "8ed7538f"
