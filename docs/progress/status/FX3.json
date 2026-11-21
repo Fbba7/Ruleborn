@@ -1,0 +1,25 @@
+{
+  "agent": "FX3",
+  "role": "FX3",
+  "branch": "claude/fix-sim",
+  "model": "Opus 5.5",
+  "agent_state": "active",
+  "task_id": "FX3-1-heal-alarm",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-21T14:14:00Z",
+  "lease_until": "2026-11-21T17:14:00Z",
+  "updated_at": "2026-11-21T14:14:00Z",
+  "expected_next_update_by": "2026-11-21T14:59:00Z",
+  "long_run": null,
+  "progress_marker": {
+    "last_green_sha": "9c754b81",
+    "next_step": "Fail-first tests for RB-28 and RB-29, then the fixes"
+  },
+  "precheck": null,
+  "gate_request": null,
+  "ready_sha": null,
+  "stop_at": "2026-11-24T21:00:00Z",
+  "acks": [],
+  "requests": [],
+  "answers": []
+}
