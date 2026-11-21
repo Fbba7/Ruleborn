@@ -9,7 +9,7 @@
 
 | Deliverable | Weight (h) | Status | Evidence |
 |---|---:|---|---|
-| FX1-1-workshop-pairs: RB-30, RB-05, RB-06 | 3.0 | ready (fd9af096) | `server/test/fix_fx1_workshop_pairs.test.mjs`; test commit 3785a41c; fixes in `server/src/workshop.mjs`, `server/src/service.mjs`, `server/src/matchmaking.mjs` |
+| FX1-1-workshop-pairs: RB-30, RB-05, RB-06 | 3.0 | merged (8ed7538f) | `server/test/fix_fx1_workshop_pairs.test.mjs`; test commit 3785a41c; fixes in `server/src/workshop.mjs`, `server/src/service.mjs`, `server/src/matchmaking.mjs` |
 | FX1-2-leases: RB-12, RB-14, RB-16, RB-17 | 3.5 | working | `server/test/fix_fx1_leases.test.mjs`; test commit d1c34426; fixes 68b8d6f9, 092bc9fd, 2c55de1f, 165fa31f |
 | FX1-3-workshop | 3.5 | open | |
 | FX1-4-holds-codex | 4.0 | open | |
