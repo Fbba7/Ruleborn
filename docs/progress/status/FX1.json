@@ -8,18 +8,34 @@
   "task_state": "working",
   "claimed_at": "2026-11-21T16:10:00Z",
   "lease_until": "2026-11-21T19:10:00Z",
-  "updated_at": "2026-11-21T16:40:00Z",
-  "expected_next_update_by": "2026-11-21T17:25:00Z",
+  "updated_at": "2026-11-21T16:20:00Z",
+  "expected_next_update_by": "2026-11-21T17:05:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": null,
-    "next_step": "Pre-check on the merge of main; record it, then ready"
+    "next_step": "Pre-check at fd9af096 (main merged again after the RB-30 reason change); record it, then ready"
   },
   "precheck": null,
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-24T21:00:00Z",
   "acks": [],
-  "requests": [],
+  "requests": [
+    {
+      "id": "FX1-R1",
+      "from": "FX1",
+      "to": "lead",
+      "ask": "RB-30's Fix line names 409 taken_down, but that reason has no row in client/i18n/strings.csv (outside FX1-1's files) and broke the client contract in the pre-check at b67863b8. FX1-1 refuses with 409 island_withdrawn ('that island was withdrawn'), already worded in every language. If a dedicated message for a moderator's removal is wanted, assign an ERR_TAKEN_DOWN row in strings.csv (six languages) and FX1 switches the reason in a later task.",
+      "files": [
+        "client/i18n/strings.csv",
+        "server/src/workshop.mjs"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-21T16:20:00Z",
+      "due": "2026-11-22T16:20:00Z",
+      "default": "Keep 409 island_withdrawn for a republish of a removed island; no new string",
+      "escalate_to": "lead"
+    }
+  ],
   "answers": []
 }
