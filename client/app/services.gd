@@ -173,10 +173,12 @@ static func build(parent: Node, server: String, with_transport: Transport = null
 	return s
 
 
-## Sign in with the platform's credential, and say who is signed in. Every
-## call without a session, or with an expired one, comes here (Api.reauth).
+## Sign in with the platform's credential, and say who is signed in. A
+## session still fresh is kept (RB-41): home calls this on each visit while
+## the outbox holds an item, and the server limits renewals. A call refused
+## for an expired session gets a new one through Api.reauth.
 func sign_in() -> bool:
-	return (await session(true)).ok
+	return (await session()).ok
 
 
 ## The session, as a Result: refused on the phone until §20.1's age check
