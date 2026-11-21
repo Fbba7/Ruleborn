@@ -5,6 +5,25 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 153**, 21 November 2026, from about 14:15Z (session
+  `session_01SNkKxr8vD91wFJCWPCztin`, started by the Opus 5.5 launcher).
+  The changes since cycle 152: the three fix builders claimed their
+  tasks and pushed their first commits. FX2 (`claude/fix-server-b`,
+  1dd781cb) committed fail-first tests for RB-01, RB-02, RB-07 and RB-22,
+  then fixes for RB-01, RB-02 and RB-22 with RB-07; FX3
+  (`claude/fix-sim`, 1ab25511) committed RB-28's failing test, then its
+  fix; FX4 (`claude/fix-client`, 3d559d76) claimed FX4-1-transport.
+  **Bookkeeping:** the three claims copied into the backlog
+  (FX4-1-transport, FX2-1-db-store-home and FX3-1-heal-alarm `claimed`,
+  leases to about 17:15Z). Each builder is within its expected update
+  (14:59Z to 15:00Z), so none is restarted. **FX1 waits:** the seven-day
+  bar still reads `allowed_warning`, so order 3's cap stays three. No
+  request, ready task or gate request: no merge, no gate run, no page
+  republished. **The UI stays paused.**
+  **Next:** merge each FX task on ready once its checks pass and its
+  fail-first tests precede the fixes, then start that agent's next task;
+  start FX1 on FX1-1-workshop-pairs when a seat frees or the bar clears.
+
 - **Cycle 152**, 21 November 2026, from about 14:06Z (session
   `session_01SNkKxpjqNeDGHxFAxH2tjX`, started by the Opus 5.5 launcher).
   The first cycle of the bug-fix wave. **M62 acked.** **Started** three
