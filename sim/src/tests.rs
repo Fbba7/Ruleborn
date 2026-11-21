@@ -2634,7 +2634,8 @@ fn an_island_keeps_to_5_2_and_6_1_or_is_not_published() {
         }
     }
     assert!(landing.landings().is_empty());
-    assert_eq!(landing.check(), vec![Problem::LandingBlocked, Problem::EdgeClosed]);
+    // The entrance, (11, 11), is an edge tile too, now under a pillar (RB-40).
+    assert_eq!(landing.check(), vec![Problem::LandingBlocked, Problem::EdgeClosed, Problem::EntranceBlocked]);
 
     // F51: each side keeps half its tiles open. The north side is twelve
     // tiles; six closed is still half open, seven is not.

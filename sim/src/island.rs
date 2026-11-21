@@ -227,13 +227,18 @@ pub enum Problem {
     /// Crystal Wall standing (F51, decided): a Keeper may make the edge a
     /// puzzle, and may not close it to one gate.
     EdgeClosed,
+    /// The entrance on the Vault or on a tile nobody can stand on, with
+    /// every Crystal Wall standing. The alarm-5 Warden comes in there
+    /// (RB-40).
+    EntranceBlocked,
 }
 
 impl Problem {
-    pub const ALL: [Problem; 9] = [
+    pub const ALL: [Problem; 10] = [
         Problem::TooManyWards, Problem::TooManyGuards, Problem::TooManyLaws,
         Problem::UnknownLaw, Problem::Crowded, Problem::PostBlocked,
         Problem::LandingBlocked, Problem::Sealed, Problem::EdgeClosed,
+        Problem::EntranceBlocked,
     ];
 
     pub fn bit(self) -> u32 {
@@ -718,6 +723,9 @@ impl Island {
         ];
         if sides.iter().any(|at| 2 * (0..n).filter(|&i| { let (x, y) = at(i); open(x, y) }).count() < n as usize) {
             found.push(Problem::EdgeClosed);
+        }
+        if self.entrance == self.vault || !open(self.entrance.0 as u16, self.entrance.1 as u16) {
+            found.push(Problem::EntranceBlocked);
         }
         found
     }
