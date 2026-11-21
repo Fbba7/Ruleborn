@@ -406,7 +406,10 @@ export function offer(raider, candidates, { size = 3 } = {}) {
   const pass = (pool) => pool.filter((c) => Object.entries(filters)
     .every(([name, f]) => widened.includes(name) || f(c)));
   const enough = (pool) => pool.filter(inBand).length >= facts.THIN_BAND;
-  const authored = others.filter((c) => c.origin !== "generated");
+  // The game's own islands are the generator's (as current() reads them); a
+  // player's kept curated layout is "generated" too, and is a player's live
+  // island (RB-06).
+  const authored = others.filter((c) => !(c.origin === "generated" && c.owner === GENERATOR));
   const liveOnly = authored.filter((c) => !c.echo);
   let pool = pass(liveOnly);
   let echoes = false;
