@@ -266,7 +266,8 @@ export class Notifications {
 
   /** The raids a waiting notification tells of: those it carries, then the
    *  heists on record against the player since its first, which it only
-   *  refers to (DB-4). */
+   *  refers to (DB-4). Only validated ones: a refused submission is no raid
+   *  (RB-46). */
   raids(n) {
     const data = JSON.parse(n.data);
     if (data.since === undefined) return data.heists;
@@ -274,7 +275,7 @@ export class Notifications {
     const more = this.db.prepare(
       `SELECT h.token, json_extract(h.outcome, '$.verdict.grade') AS grade
          FROM heists h JOIN leases l ON l.token = h.token
-        WHERE h.defender = ? AND h.submitted_at >= ? AND ${RAIDED}
+        WHERE h.defender = ? AND h.submitted_at >= ? AND h.validated = 1 AND ${RAIDED}
         ORDER BY h.submitted_at, h.token`).all(n.account, data.since)
       .filter((h) => !known.has(h.token)).map((h) => ({ heist: h.token, grade: h.grade }));
     return [...data.heists, ...more];
