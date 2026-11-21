@@ -213,8 +213,10 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxokQpSagJjzwYyeSuc` (cycle 151,
-18 November 2026 from about 08:13Z, started by the Opus 5.5 launcher). Cycle
+Latest lead cycle session: `session_01SNkKxr8vD91wFJCWPCztin` (cycle 153,
+21 November 2026 from about 14:15Z, started by the Opus 5.5 launcher). Cycle
+152's was `session_01SNkKxpjqNeDGHxFAxH2tjX` (from 14:06Z). Cycle
+151's was `session_01SNkKxokQpSagJjzwYyeSuc` (18 November, from 08:13Z). Cycle
 150's was `session_01SNkKxmm9uYmBksgbVUdjx9` (from 07:39Z). Cycle
 149's was `session_01SNkKxrEmwKsYJezgFLCenb` (from 07:16Z). Cycle
 148's was `session_01SNkKxnbZyh2sWsw9VhvuzX` (from 06:38Z). Cycle
@@ -360,6 +362,9 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| FX4 | `session_01SNkKxpaLsMGZP21royWUDx` (Opus 5.5, effort high) | FX4-1-transport (start, cycle 152: the bug-fix wave, M62; FX4's first session, first in the high tier, deps none) | `claude/fix-client` | 2026-11-21 14:09Z |
+| FX2 | `session_01SNkKxnSsbQpjGppmXiBbGG` (Opus 5.5, effort high) | FX2-1-db-store-home (start, cycle 152: the bug-fix wave, M62; FX2's first session, high tier, deps none) | `claude/fix-server-b` | 2026-11-21 14:09Z |
+| FX3 | `session_01SNkKxp7XpKf4e1axKU4F7x` (Opus 5.5, effort high) | FX3-1-heal-alarm (start, cycle 152: the bug-fix wave, M62; FX3's first session, high tier, deps none) | `claude/fix-sim` | 2026-11-21 14:09Z |
 | S2 | `session_01SNkKxneZ4WEHJSJUnhLjUj` (Opus 5.5, effort high) | P4-S2-home-purse (start, cycle 149: seeded under M61 from S2-R44, phase 4's first home task, while phase 3's one exit item is held by S3; S2's last session, `session_01SNkKxpnKSbB1SgaR3ZrjwQ`, is idle, its task merged as 58a9a197) | `claude/ui-screens-home` | 2026-11-18 07:23Z |
 | S1 | `session_01SNkKxrGVdaVPxzuPW8vwRg` (Opus 5.5, effort high) | P4-S1-heist-vault (start, cycle 149: seeded under M61 from the wave board's notes, phase 4's first heist task; S1's last session, `session_01SNkKxqdHWKAJ5VQDWhsTwQ`, is idle, its task merged as 3e8987b0) | `claude/ui-screens-heist` | 2026-11-18 07:23Z |
 | S3 | `session_01SNkKxo7BCcvsUE53DWANpH` (Opus 5.5, effort high) | P3-S3-settings-4 (restart, cycle 149: AD-R68 from AD's preview 3, the tab strip, folded in before the gate run; ready 4a998521 withdrawn; S3's last session, `session_01SNkKxmmGcPDizHBY6ng1zz`, is idle) | `claude/ui-screens-meta` | 2026-11-18 07:23Z |
@@ -739,6 +744,46 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 153**, 21 November 2026, from about 14:15Z (session
+  `session_01SNkKxr8vD91wFJCWPCztin`, started by the Opus 5.5 launcher).
+  The changes since cycle 152: the three fix builders claimed their
+  tasks and pushed their first commits. FX2 (`claude/fix-server-b`,
+  1dd781cb) committed fail-first tests for RB-01, RB-02, RB-07 and RB-22,
+  then fixes for RB-01, RB-02 and RB-22 with RB-07; FX3
+  (`claude/fix-sim`, 1ab25511) committed RB-28's failing test, then its
+  fix; FX4 (`claude/fix-client`, 3d559d76) claimed FX4-1-transport.
+  **Bookkeeping:** the three claims copied into the backlog
+  (FX4-1-transport, FX2-1-db-store-home and FX3-1-heal-alarm `claimed`,
+  leases to about 17:15Z). Each builder is within its expected update
+  (14:59Z to 15:00Z), so none is restarted. **FX1 waits:** the seven-day
+  bar still reads `allowed_warning`, so order 3's cap stays three. No
+  request, ready task or gate request: no merge, no gate run, no page
+  republished. **The UI stays paused.**
+  **Next:** merge each FX task on ready once its checks pass and its
+  fail-first tests precede the fixes, then start that agent's next task;
+  start FX1 on FX1-1-workshop-pairs when a seat frees or the bar clears.
+
+- **Cycle 152**, 21 November 2026, from about 14:06Z (session
+  `session_01SNkKxpjqNeDGHxFAxH2tjX`, started by the Opus 5.5 launcher).
+  The first cycle of the bug-fix wave. **M62 acked.** **Started** three
+  fix builders on Opus 5.5 at effort high, each on its first task (open,
+  deps none, the high tier): FX4 on FX4-1-transport
+  (`session_01SNkKxpaLsMGZP21royWUDx`), FX2 on FX2-1-db-store-home
+  (`session_01SNkKxnSsbQpjGppmXiBbGG`) and FX3 on FX3-1-heal-alarm
+  (`session_01SNkKxp7XpKf4e1axKU4F7x`). **FX1 waits:** the seven-day bar
+  reads `allowed_warning`, so order 3's cap is three; FX1 starts on
+  FX1-1-workshop-pairs when a seat frees or the bar clears. **The UI
+  stays paused:** S1 is stopped at ed443f93 (P4-S1-heist-vault, its
+  pre-check of aaadca6a passed, not ready), S2 (27846b7c) and S3
+  (e0e4730b) are past their expected updates but parked, so no UI
+  session is restarted. **S1-R38**'s default applied (past due): the
+  lavender line stands. Nothing is ready and no gate request is open:
+  no merge, no gate run, no page republished.
+  **Next:** start FX1 when a seat frees or the bar clears; merge each FX
+  task on ready once its checks pass and its fail-first tests precede
+  the fixes; file new FX tasks from confirmed audit findings; when every
+  FX task is merged, reopen the three parked UI tasks.
+
 - **Bug-fix wave**, 21 November 2026, from about 14:20Z (the overseer,
   by the owner's order of about 13:50Z). An agent run by the owner found
   60 confirmed defects (13 high, 37 medium, 10 low) and four unproven
@@ -762,97 +807,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   audit findings; when every FX task is merged, reopen the three parked
   UI tasks and resume phase 3.
 
-- **Cycle 151**, 18 November 2026, from about 08:13Z (session
-  `session_01SNkKxokQpSagJjzwYyeSuc`, started by the Opus 5.5 launcher).
-  The changes since cycle 150: S2 pushed P4-S2-home-purse's work and
-  stills (acb2239b: the purse in two rows at 125% text in German, the
-  raid notice's second line gives way where no word break fits), filed
-  S2-R47 (AD's preview) and a gate request at acb2239b ('home at 100%
-  text', Hierarchy); S1 pushed P4-S1-heist-vault's work (c5bf87e9: 'Vault
-  0%' in the loot panel, the loot beside the alarm at 200% text), filed
-  S1-R44 (AD's preview, due 11:30Z) and runs its pre-check; S3 committed
-  AD-R68's title road on settings-4 (a201e966: the display_xl title over
-  the strip), merged main and runs its checks. **Bookkeeping:** S2's task
-  `working`, S1's `claimed`, settings-4 `working`, seen_at copied, leases
-  unchanged (10:30Z). **Requests:** S2-R47 and S1-R44 copied; AD has no
-  seat (the cap of three while the seven-day bar reads `allowed_warning`),
-  so both defaults apply: the lead's gate run judges S2's stills, and
-  S1-R44's default stands at 11:30Z. Both previews, and AD-R68's check of
-  S3's re-shot settings stills, go into AD's next task. **Merge and
-  gate:** the gate ran on S2's request: 'home at 100% text' rendered at
-  acb2239b (Godot built here), Hierarchy 3/3 pass (Collect leads; the
-  purse, the Humming box and the island pills fall in behind), verdict in
-  `gate/verdicts/P4-S2-home-purse/acb2239b.json`. No merge: nothing
-  ready, no merge lock; main moved only by bookkeeping and the verdict, so
-  the pages are not republished. **Sessions:** none started or
-  restarted: S1 (`session_01SNkKxrGVdaVPxzuPW8vwRg`), S2
-  (`session_01SNkKxneZ4WEHJSJUnhLjUj`) and S3
-  (`session_01SNkKxo7BCcvsUE53DWANpH`) are inside their update times
-  (08:55Z, 08:39Z, 08:45Z). **Seats:** S3, S1 and S2, three of three;
-  nothing seeded. K1, AD, AIA-2 and AIA idle. **Next:** S2 marks
-  P4-S2-home-purse ready on its checks and this gate verdict (merge it);
-  S1 marks P4-S1-heist-vault ready with its gate request ('heist at 200%
-  text, pt_BR'); S3 marks settings-4 ready, then its gate run ('settings
-  at 100% text', Hierarchy) and merge, and the wave stands at O7. A
-  session idle past its update time is restarted.
-- **Cycle 150**, 18 November 2026, from about 07:39Z (session
-  `session_01SNkKxmm9uYmBksgbVUdjx9`, started by the Opus 5.5 launcher).
-  The changes since cycle 149: S1 claimed P4-S1-heist-vault (7b5328e6,
-  07:30Z, lease to 10:30Z); S2 claimed P4-S2-home-purse and pushed its
-  first work (ebeba33c: the purse in two rows from 125% where three do
-  not fit, the raid notice's second line gives way, `fit_home.sh` with
-  M26's cases); S3 is working on settings-4 for AD-R68 (b9abf210): no kit
-  strip passes value-steps at a mid value, so it takes AD-R68's second
-  road, the title in the display face (display_xl, outline) over the
-  strip, and re-shoots the settings stills. **Bookkeeping:** the three
-  claims copied into their tasks (S1 and S2 `claimed`, settings-4
-  `working`, its lease now S3's 10:30Z), seen_at 07:42Z. **Requests:**
-  none new; M61 stays acked. **Merge and gate:** none: nothing ready, no
-  gate request, no merge lock; main moved only by bookkeeping, so the
-  pages are not republished. **Sessions:** none started or restarted:
-  S1 (`session_01SNkKxrGVdaVPxzuPW8vwRg`), S2
-  (`session_01SNkKxneZ4WEHJSJUnhLjUj`) and S3
-  (`session_01SNkKxo7BCcvsUE53DWANpH`) are inside their update times
-  (08:15Z, 08:19Z, 08:25Z). **Seats:** S3, S1 and S2, the cap of three
-  while the seven-day bar reads `allowed_warning`; nothing seeded. K1,
-  AD, AIA-2 and AIA idle. **Next:** route S3's re-shot settings stills
-  to AD (a check of AD-R68's title road), then merge settings-4 with its
-  gate run ('settings at 100% text', Hierarchy), and the wave stands at
-  O7; route S1's and S2's previews to AD.
-- **Cycle 149**, 18 November 2026, from about 07:16Z (session
-  `session_01SNkKxrEmwKsYJezgFLCenb`, started by the Opus 5.5 launcher).
-  The changes since cycle 148: AD wrote preview 3
-  (`docs/art/ui-quality/gate/boards/preview-3.md` on `claude/ui-ad`,
-  4cb837a2) for S3-R45: the ghost switch rows and both departures stand,
-  but the cream tab strip (`seg_track_light`) still outweighs the title
-  and the gold A / A at 100% text, so AD raises AD-R68. S3's pre-check
-  passed at 4a998521 (06:42Z) and S3 marked settings-4 ready there with a
-  gate request; its session went idle. M61 arrived (seed every exit item
-  that fits, then phase 4's first tasks that touch no exit board, while
-  two or more seats are free): acked. **Requests:** S3-R45 answered by
-  preview 3; AD-R68 copied and answered with its default: settings-4
-  goes back to claimed (ready 4a998521 withdrawn) and AD-R68 joins its
-  done_when, its lease moved to 11:00Z. **Merge and gate:** none: a gate
-  run at 4a998521 would judge the strip AD-R68 names, so it waits for
-  S3's re-shot stills; no merge lock; main moved only by bookkeeping
-  (722c91d7), so the pages are not republished. **Seeded (M61):** phase
-  3's one exit item is held by S3, and two seats were free, so phase 4's
-  first tasks that touch no exit board: P4-S1-heist-vault (1 hour, the
-  wave board's note: 'Vault 0%' shown and a wider playfield band at 200%
-  text) and P4-S2-home-purse (1 hour, S2-R44: the purse in two rows from
-  125% in long locales, 125% in M26's cases); `owners.py claims`: the
-  files of the tasks in flight are disjoint. **Sessions:** S3 restarted
-  as `session_01SNkKxo7BCcvsUE53DWANpH` on settings-4 for AD-R68; S1
-  started as `session_01SNkKxrGVdaVPxzuPW8vwRg` on P4-S1-heist-vault; S2
-  started as `session_01SNkKxneZ4WEHJSJUnhLjUj` on P4-S2-home-purse (all
-  07:23Z); the S1, S2 and S3 prompts above name the new tasks. AD's
-  session (`session_01SNkKxmwmtLQbP3A4xcCpWR`) is idle; AD sees S3's
-  re-shot stills when S3 sends them. **Seats:** S3, S1 and S2, the cap of
-  three while the seven-day bar reads `allowed_warning`; K1, AD, AIA-2
-  and AIA idle. **Next:** S3 sends the re-shot settings stills to AD
-  through the lead (a check), then marks ready: merge settings-4 with its
-  gate run ('settings at 100% text', Hierarchy); then the wave stands at
-  O7 (phase 3's exit). S1 and S2 send their previews to AD.
 - **Stopped here**, 13 November 2026, about 13:20Z (the owner's "Stop
   cleanly"). Cycle 84 (session `session_01SNkKxpqF4gx3yYhsXenUGt`) took
   the merge lock for P2-AD-board-4 (candidate `842f09ab`, AD's ready
