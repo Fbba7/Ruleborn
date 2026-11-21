@@ -6855,3 +6855,21 @@ fn candidate_7_the_same_law_twice_is_not_published() {
     assert!(Island::decode(&twice.encode()).is_err() || !twice.check().is_empty(),
             "the same law twice passes the gate: {:?}", twice.check());
 }
+
+#[test]
+fn candidate_34_a_tunnel_mouth_under_a_raised_wall_is_no_way_out() {
+    // Bug report, unproven candidate 34: a crew's Crystal Wall raised on a
+    // tunnel's far mouth still let routes come up through it, into the wall.
+    let mut world = vault_world(1);
+    for y in 0..14 {
+        world.grid.place(4, y, Feature::RockPillar);
+    }
+    let at = |w: &World, x, y| w.grid.index(x, y).unwrap();
+    let (from, to) = (at(&world, 2, 2), at(&world, 8, 2));
+    world.grid.dig_tunnel(at(&world, 3, 2), at(&world, 6, 2));
+    assert!(path::find_through(&world.grid, from, to).is_some(), "through the tunnel");
+    world.grid.set_raised(at(&world, 6, 2), true);
+    let route = path::find_through(&world.grid, from, to);
+    assert!(route.as_ref().is_none_or(|r| r.iter().all(|&t| world.grid.at(t).passable())),
+            "a route comes up into the raised wall: {route:?}");
+}
