@@ -499,8 +499,11 @@ export class Service {
     const c = this.challenge(attacker, code);
     if (c.bundle !== bundle) throw new Refused(409, "not_this_challenge");
     if (c.account === attacker) throw new Refused(409, "own_island");
+    // Played: a submission the server validated. A refused one is no play
+    // (RB-16); seed re-rolls stay capped by the refusal limits (issue).
     const played = this.db.prepare(
-      "SELECT 1 FROM leases l JOIN heists h ON h.token = l.token WHERE l.attacker = ? AND l.challenge = ?")
+      `SELECT 1 FROM leases l JOIN heists h ON h.token = l.token
+        WHERE l.attacker = ? AND l.challenge = ? AND h.validated = 1`)
       .get(attacker, code);
     if (played) throw new Refused(409, "challenge_already_played");
     return this.issue(attacker, bundle, c.account, now, { mode: "challenge", challenge: code });
