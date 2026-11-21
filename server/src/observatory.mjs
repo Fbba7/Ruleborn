@@ -146,9 +146,13 @@ export class Observatory {
    *  still answer, with no fee. */
   trace(account, now, raider = this.service.raider(account, now)) {
     const mm = this.service.matchmaking;
+    // Each raider ordered by their own latest heist: SELECT DISTINCT with an
+    // ORDER BY on a column it leaves out orders them by whichever of their
+    // heists SQLite's plan reads (RB-49).
     const raiders = this.db.prepare(
-      `SELECT DISTINCT h.attacker FROM heists h JOIN leases l ON l.token = h.token
-        WHERE h.defender = ? AND h.submitted_at > ? ORDER BY h.submitted_at DESC`)
+      `SELECT h.attacker FROM heists h JOIN leases l ON l.token = h.token
+        WHERE h.defender = ? AND h.submitted_at > ?
+        GROUP BY h.attacker ORDER BY MAX(h.submitted_at) DESC`)
       .all(account, now - facts.TRACE_HOURS * HOUR).map((r) => r.attacker);
     for (const raider of raiders) {
       if (!mm.traceable(account, raider, now)) continue;
