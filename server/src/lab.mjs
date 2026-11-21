@@ -197,7 +197,8 @@ export class Lab {
   }
 
   /** §8.6: after three empty experiments that included the same law, one
-   *  undiscovered resonance of that law, hinted once. */
+   *  undiscovered resonance of that law that can be found at launch, hinted
+   *  once. */
   hint(account, laws, now) {
     const empties = this.db.prepare(
       `SELECT laws FROM lab_experiments WHERE owner = ? AND settled_at IS NOT NULL
@@ -206,7 +207,7 @@ export class Lab {
     for (const law of laws) {
       const count = empties.filter((ls) => ls.includes(law)).length + 1;
       if (count < facts.LAB_HINT_AFTER) continue;
-      const open = RESONANCES.find((r) => r.laws.includes(law) && !resonances.has(r.id) && !hinted.has(r.id));
+      const open = LAUNCH_RESONANCES.find((r) => r.laws.includes(law) && !resonances.has(r.id) && !hinted.has(r.id));
       if (!open) continue;
       this.db.prepare("INSERT OR IGNORE INTO lab_discoveries (owner, kind, id, found_at) VALUES (?, 'hint', ?, ?)")
         .run(account, open.id, now);
