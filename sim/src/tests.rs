@@ -6842,3 +6842,16 @@ fn rb57_a_ward_or_pylon_on_a_guard_in_tall_grass_replaces_the_grass_too() {
     assert_eq!((pylon.guards.len(), pylon.tile(2, 7).and_then(|t| t.feature)), (0, None));
     assert_eq!(pylon.check(), vec![], "the pylon replaced whatever stood there");
 }
+
+#[test]
+fn candidate_7_the_same_law_twice_is_not_published() {
+    // Bug report, unproven candidate 7: one law on two pylons passed the
+    // gate, and the sheet applied it twice (guard speed 5/4 became
+    // 441/256). A realm weaves each law once.
+    use crate::island::Island;
+    let mut twice = Island::example();
+    assert_eq!(twice.laws.len(), 2);
+    twice.laws[1].0 = twice.laws[0].0.clone();            // haste at (1, 10) and (11, 2)
+    assert!(Island::decode(&twice.encode()).is_err() || !twice.check().is_empty(),
+            "the same law twice passes the gate: {:?}", twice.check());
+}
