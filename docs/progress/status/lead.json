@@ -3,19 +3,10 @@
   "updated_at": "2026-11-21T19:52:00Z",
   "expected_next_update_by": "2026-11-21T22:52:00Z",
   "cycle": 161,
-  "merging": {
-    "candidate_sha": "13f6fb44",
-    "task_ids": [
-      "FX1-3-workshop",
-      "FX2-4-purge-notify",
-      "FX3-3-clock-report"
-    ],
-    "started_at": "2026-11-21T20:25:00Z",
-    "expires_at": "2026-11-21T21:25:00Z"
-  },
+  "merging": null,
   "last_merged": {
-    "task_id": "FX1-2-leases, FX2-3-shop, FX3-2-island",
-    "sha": "c7cdcbbd"
+    "task_id": "FX1-3-workshop, FX2-4-purge-notify, FX3-3-clock-report",
+    "sha": "e413e4a9"
   },
   "acks": [
     "M15",
