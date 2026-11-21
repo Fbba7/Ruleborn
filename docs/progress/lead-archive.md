@@ -5,6 +5,25 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 154**, 21 November 2026, from about 14:38Z (session
+  `session_01SNkKxrGtCCvMiSUGwxCxup`, started by the Opus 5.5 launcher).
+  The changes since cycle 153: the three fix builders pushed fixes and
+  handoffs, each with its fail-first tests committed before its fixes.
+  FX2 (`claude/fix-server-b`, c393a96b) merged main and is pre-checking
+  RB-01, RB-02, RB-07 and RB-22; FX3 (`claude/fix-sim`, 58bf13a4) fixed
+  RB-28 and RB-29, claimed the two new tests in `systems.json` and is
+  pre-checking at bdc0ba84; FX4 (`claude/fix-client`, 087a3a2f) fixed
+  RB-27, RB-03 and RB-04 and runs check_all on its merge of main.
+  `owners.py diff` passes on all three heads (every changed path inside
+  the task's files). None is ready, none is past its expected update
+  (15:00Z to 15:25Z), so none is restarted. **FX1 waits:** the seven-day
+  bar still reads `allowed_warning`, so order 3's cap stays three. No
+  request or gate request: no merge, no gate run, no page republished.
+  **The UI stays paused.**
+  **Next:** merge each FX task on ready once its checks pass, then start
+  that agent's next task; start FX1 on FX1-1-workshop-pairs when a seat
+  frees or the bar clears.
+
 - **Cycle 153**, 21 November 2026, from about 14:15Z (session
   `session_01SNkKxr8vD91wFJCWPCztin`, started by the Opus 5.5 launcher).
   The changes since cycle 152: the three fix builders claimed their

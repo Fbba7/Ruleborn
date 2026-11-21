@@ -187,6 +187,22 @@ export class Telemetry {
    * kind it may send, as an object holding that kind's fields and only
    * them, each of its type, dated no later than now and no earlier than a
    * queued heist could be; and no more of a kind than a player's day counts.
+   *
+   * What a refusal tells the device, which keeps a queue of events and sends
+   * it in chunks of at most BATCH (RB-32):
+   *   - 400 (no_events, no_such_event, bad_data, positions_are_never_sent,
+   *     no_such_field, bad_field, missing_field, bad_time), 413
+   *     batch_too_large and 422 (survey_once_a_quarter,
+   *     too_many_session_starts, too_many_session_ends, worth_too_often,
+   *     each day cap with its `most`): this chunk will never be taken as
+   *     sent, by any retry, so the device drops it and sends the rest;
+   *   - 429 too_many_requests, with Retry-After (http.mjs's rate limits),
+   *     and 5xx: the chunk may be taken later, so the device keeps it;
+   *   - 429 too_many_events (SR-19's ceiling on a day's device events, all
+   *     kinds together): kept at 429 for now, since SR-19's test pins it, but
+   *     like the day caps above it never passes on a retry, so the device
+   *     drops it too; it carries no Retry-After.
+   * The reasons and statuses are stable: the device reads them as above.
    */
   batch(account, events) {
     if (!Array.isArray(events) || events.length === 0) throw new Refused(400, "no_events");
@@ -222,7 +238,7 @@ export class Telemetry {
     if (surveys.length > 1 || (surveys.length && this.db.prepare(
       "SELECT 1 FROM events WHERE who = ? AND started >= ? AND kind = 'survey' AND at > ?")
       .get(who, since(now - SURVEY_GAP_MS), now - SURVEY_GAP_MS))) {
-      throw new Refused(429, "survey_once_a_quarter");
+      throw new Refused(422, "survey_once_a_quarter");
     }
     // Each event counts against its own day, as report() reads it.
     const sent = this.db.prepare(
@@ -233,7 +249,7 @@ export class Telemetry {
       const days = {};
       for (const r of rows) if (r.kind === kind) days[day(r.at)] = (days[day(r.at)] ?? 0) + 1;
       for (const [d, n] of Object.entries(days)) {
-        if (n + Number(sent.get(who, since(d), kind, d).n) > most) throw new Refused(429, reason, { most });
+        if (n + Number(sent.get(who, since(d), kind, d).n) > most) throw new Refused(422, reason, { most });
       }
     }
     const kinds = Object.keys(DEVICE_EVENTS);
