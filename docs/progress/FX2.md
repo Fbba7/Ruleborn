@@ -59,6 +59,7 @@
 - **`python3 tools/coord/owners.py diff FX2-5-auth-lows origin/claude/videogame-project-analysis-ewkkk2 574495a`:** "FX2-5-auth-lows: every changed path is inside its files".
 - **Setup:** the fresh-container line in this session's container, exit 0: `rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios`, `pip install "gdtoolkit==4.*" "playwright==1.63.0"`, `(cd tools/ui_research && npm ci)`, `bash client/build.sh` (it fetched Godot 4.7.2). Then `cargo build --release --target wasm32-unknown-unknown` in `sim/` and `npm install` in `server/` (its lock file deleted).
 - **check_all:** `bash tools/run_checks.sh` on 574495a, in bwrap: PASS, finished 2026-11-21T21:48:11Z; the log ends `DONE exit=0` and contains "All checks passed." Recorded in the status file.
+- **Main moved after the pre-check** (eeaac50, lead cycle 164: FX3-4's `server/src/lab.mjs` and its test). It merges into 574495a with no conflict, and on that merge in a scratch worktree `cd server && npm test` passes 580 of 580. Not committed here, so the ready sha stays the pre-checked one.
 
 ## Tried and failed
 - 2026-11-21 The first RB-32 drain test passed on main, for the wrong reason (`401 session_refused`). Its session was made before the clock moved 12 h, and a session lasts an hour. It now signs in after the clock moves.
