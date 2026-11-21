@@ -1315,8 +1315,10 @@ export function transaction(db, fn) {
     db.exec("COMMIT");
     return result;
   } catch (err) {
-    // A rollback that fails itself never hides the first error.
-    if (db.isTransaction) {
+    // A rollback that fails itself never hides the first error. Before
+    // Node 22.16 node:sqlite has no isTransaction (undefined): roll back
+    // then too, or the dead transaction holds the connection (RB-01).
+    if (db.isTransaction !== false) {
       try { db.exec("ROLLBACK"); } catch (rollbackErr) { err.rollback = rollbackErr; }
     }
     throw err;

@@ -79,14 +79,16 @@ func raw(method: HTTPClient.Method, path: String, body := PackedByteArray()) -> 
 	return await _raw(method, path, body)
 
 
-func _raw(method: HTTPClient.Method, path: String, body: PackedByteArray) -> Result:
+## `authed` false sends no token, whatever the session holds: a public call
+## never touches the shared token, which a call beside it is using (RB-03).
+func _raw(method: HTTPClient.Method, path: String, body: PackedByteArray, authed := true) -> Result:
 	# The token goes to the configured server only: a path that could move the
 	# URL to another host is sent nowhere (SEC-30).
 	if not path.begins_with("/v1/") or path.contains("@") or path.contains("//") or path.contains("\\") \
 			or path.contains("\n") or path.contains("\r"):
 		return Result.failure("bad_route")
 	var headers: PackedStringArray = []
-	if token != "":
+	if authed and token != "":
 		headers.append("Authorization: Bearer " + token)
 	if method != HTTPClient.METHOD_GET:
 		headers.append("Content-Type: application/octet-stream")
@@ -125,12 +127,20 @@ func get_json(path: String) -> Result:
 ## the first launch makes before any account exists (§25.2): no sign-in, and
 ## no token sent.
 func public_json(path: String) -> Result:
+	return await _public(HTTPClient.METHOD_GET, path, PackedByteArray())
+
+
+## A POST proven by its body alone, with no token sent beside it: a session
+## ended by its refresh token (AuthSession._end_with), which an access token
+## sent too would end instead.
+func public_post_json(path: String, body: Variant) -> Result:
+	return await _public(HTTPClient.METHOD_POST, path, JSON.stringify(body).to_utf8_buffer())
+
+
+func _public(method: HTTPClient.Method, path: String, bytes: PackedByteArray) -> Result:
 	if not online():
 		return Result.failure("offline")
-	var held := token
-	token = ""
-	var r := await _raw(HTTPClient.METHOD_GET, path, PackedByteArray())
-	token = held
+	var r := await _raw(method, path, bytes, false)
 	if not r.ok:
 		return r
 	var parsed: Variant = JSON.parse_string((r.value as PackedByteArray).get_string_from_utf8())
