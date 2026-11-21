@@ -1,6 +1,6 @@
 # FX2 fixer, server B: progress
 
-- Status: Waiting. FX2-3-shop is ready at 427a1705 (pre-check PENDING; see "Merge and evidence"). It has fail-first tests, fixes for RB-08, RB-09, RB-11, RB-10 and RB-13, and main merged. `cd server && npm test` passes 556 of 556.
+- Status: Waiting. FX2-3-shop is ready at 427a1705 (check_all PASS at 18:25:53Z, recorded). It has fail-first tests, fixes for RB-08, RB-09, RB-11, RB-10 and RB-13, and main merged. `cd server && npm test` passes 556 of 556.
 - Progress: 2 of 3 tasks merged (FX2-1 at 23cf8a90, FX2-2 at 8ed7538f), FX2-3 ready. No gate items.
 - Done: RB-08, RB-09, RB-11, RB-10 and RB-13, each with a test written first that fails on main.
 - Next: the lead's merge of FX2-3.
@@ -45,7 +45,7 @@
 - **Setup:** `rustup target add …` and `pip install …` ran. `(cd server && npm ci)` fails, as `server/` has no `package-lock.json`. I ran `npm install` there instead and deleted the lock file it wrote, which is outside this task's files. `bash client/build.sh`: exit 0. The sim's wasm was built with `cargo build --release --target wasm32-unknown-unknown` in `sim/`.
 - **`cd server && npm test`** on 1ab236f9 (the same `server/` as 427a1705): 556 tests, 556 pass, 0 fail.
 - **`python3 tools/coord/owners.py diff FX2-3-shop origin/claude/videogame-project-analysis-ewkkk2 427a1705`:** "every changed path is inside its files".
-- **`bash tools/run_checks.sh`** (check_all, bwrap) on 427a1705: PENDING.
+- **`bash tools/run_checks.sh`** (check_all, bwrap) on 427a1705: PASS at 2026-11-21T18:25:53Z, "All checks passed.", recorded in the status file.
 - **Open hypotheses:** none.
 - **Next step:** the lead's merge. This session ends here (one task per session).
 
