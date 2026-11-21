@@ -286,7 +286,8 @@ export class GameCenter {
       map.delete(key);
       map.set(key, value);
       while (map.size > most) {
-        const unproven = [...map].find(([, v]) => !v?.proven);
+        // Never the key just kept: it has had no chance to prove itself (RB-13).
+        const unproven = [...map].find(([k, v]) => k !== key && !v?.proven);
         map.delete(unproven ? unproven[0] : map.keys().next().value);
       }
     };
