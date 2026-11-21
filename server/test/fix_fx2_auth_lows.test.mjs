@@ -111,7 +111,7 @@ test("RB-60: the privacy policy shows no leftover reference text", async () => {
   }
   assert.ok(!/\((?:to|and)[,\s]*\)/.test(page), "no reference join word left alone in parentheses");
   // The prose's own parentheses stay.
-  for (const kept of ["(ISO 3166"]) assert.ok(page.includes(kept), `the page keeps ${JSON.stringify(kept)}`);
+  for (const kept of ["(30 days unused", "(products, prices, refunds)", "(an hour)"]) assert.ok(page.includes(kept), `the page keeps ${JSON.stringify(kept)}`);
 });
 
 // Candidate 23: the season track's tier price is fixed the first time a
