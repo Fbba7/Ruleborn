@@ -6811,3 +6811,14 @@ fn rb40_an_entrance_in_a_wall_or_on_the_vault_is_not_published() {
     vault.entrance = vault.vault;
     assert!(!vault.check().is_empty(), "an entrance on the Vault: {:?}", vault.check());
 }
+
+#[test]
+fn rb50_weaving_a_law_onto_the_vault_is_refused_and_keeps_the_law() {
+    // RB-50: the builder's law tool on the Vault took the law away.
+    use crate::island::Island;
+    let mut island = Island::example_open();
+    assert!(island.weave("haste", 1, 10));
+    let (vx, vy) = island.vault;
+    assert!(!island.weave("haste", vx, vy), "the Vault cannot be covered");
+    assert_eq!(island.laws, vec![("haste".to_string(), 1, 10)], "the law stays where it was");
+}
