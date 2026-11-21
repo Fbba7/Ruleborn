@@ -193,8 +193,12 @@ export class Auth {
       if (now - s.used_at > IDLE_MS || now - s.created_at >= ABSOLUTE_MS) return null;
       // Rotated less often, when the owner chose so: inside the span the
       // same refresh token stands, and nothing is written; its last use and
-      // place are as old as the span at most.
-      if (this.rotateMs > 0 && now - s.used_at < this.rotateMs) return this.#tokens(s, now);
+      // place are as old as the span at most. The span stops an access
+      // token's life short of the idle lapse, so a device refreshing on
+      // time is never taken for one unused (RB-23).
+      if (this.rotateMs > 0 && now - s.used_at < Math.min(this.rotateMs, IDLE_MS - SESSION_MS)) {
+        return this.#tokens(s, now);
+      }
       const next = s.generation + 1;
       // The same write records where it was last seen (the devices list):
       // a country, kept as it was when the edge names none.
