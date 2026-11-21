@@ -924,7 +924,8 @@ impl Island {
         if !self.on_grid(x, y) || self.occupant(x, y) == Occupant::Vault {
             return false;
         }
-        self.clear(x, y);
+        // A guard may stand in tall grass or fog: clear both (RB-57).
+        while self.clear(x, y) {}
         true
     }
 
