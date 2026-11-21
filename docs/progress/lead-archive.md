@@ -5,6 +5,27 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 152**, 21 November 2026, from about 14:06Z (session
+  `session_01SNkKxpjqNeDGHxFAxH2tjX`, started by the Opus 5.5 launcher).
+  The first cycle of the bug-fix wave. **M62 acked.** **Started** three
+  fix builders on Opus 5.5 at effort high, each on its first task (open,
+  deps none, the high tier): FX4 on FX4-1-transport
+  (`session_01SNkKxpaLsMGZP21royWUDx`), FX2 on FX2-1-db-store-home
+  (`session_01SNkKxnSsbQpjGppmXiBbGG`) and FX3 on FX3-1-heal-alarm
+  (`session_01SNkKxp7XpKf4e1axKU4F7x`). **FX1 waits:** the seven-day bar
+  reads `allowed_warning`, so order 3's cap is three; FX1 starts on
+  FX1-1-workshop-pairs when a seat frees or the bar clears. **The UI
+  stays paused:** S1 is stopped at ed443f93 (P4-S1-heist-vault, its
+  pre-check of aaadca6a passed, not ready), S2 (27846b7c) and S3
+  (e0e4730b) are past their expected updates but parked, so no UI
+  session is restarted. **S1-R38**'s default applied (past due): the
+  lavender line stands. Nothing is ready and no gate request is open:
+  no merge, no gate run, no page republished.
+  **Next:** start FX1 when a seat frees or the bar clears; merge each FX
+  task on ready once its checks pass and its fail-first tests precede
+  the fixes; file new FX tasks from confirmed audit findings; when every
+  FX task is merged, reopen the three parked UI tasks.
+
 - **Bug-fix wave**, 21 November 2026, from about 14:20Z (the overseer,
   by the owner's order of about 13:50Z). An agent run by the owner found
   60 confirmed defects (13 high, 37 medium, 10 low) and four unproven
