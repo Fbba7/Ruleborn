@@ -126,13 +126,18 @@ export class Observatory {
     const keeper = this.db.prepare("SELECT keeper_level FROM accounts WHERE id = ?").get(account)?.keeper_level ?? 1;
     const wanderer = keeper >= WANDERER_FROM;
     const size = targetsAt(this.level(account)) + (wanderer ? WANDERER_EXTRA : 0);
-    const aside = this.setAside(account);
-    const list = offer(mm.raider(account, now), mm.listed(now).filter((c) => !aside.has(c.bundle)), { size });
-    list.targets = mm.current(list.targets);
     // The raider's week and Starlight, read once for every card's fee.
     const raider = this.service.raider(account, now);
+    // The Trace first, and its island left out of the paid targets: the
+    // device finds a card by its bundle, and a paid card for the Trace's
+    // island would lease it without the Trace (RB-31).
+    const trace = this.trace(account, now, raider);
+    const aside = this.setAside(account);
+    if (trace) aside.add(trace.bundle);
+    const list = offer(mm.raider(account, now), mm.listed(now).filter((c) => !aside.has(c.bundle)), { size });
+    list.targets = mm.current(list.targets);
     const targets = list.targets.map((c) => this.card(account, c, { raider }));
-    return { size, wanderer, targets, trace: this.trace(account, now, raider), echoes: list.echoes, generated: list.generated,
+    return { size, wanderer, targets, trace, echoes: list.echoes, generated: list.generated,
              refresh: { aether: this.refreshCost(account, now) }, aether: this.service.aether(account),
              protected: mm.shielded(account, now) };
   }
