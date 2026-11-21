@@ -1,18 +1,18 @@
 # FX2 fixer, server B: progress
 
-- Status: Green. The last push holds FX2-1-db-store-home's fail-first tests, its four fixes (RB-01, RB-02, RB-07, RB-22) and current main merged; `cd server && npm test` 539 of 539.
-- Progress: 0 of 1 tasks merged (FX2-1 on its way to ready); no gate items.
+- Status: Waiting. FX2-1-db-store-home is ready at c393a96b (pre-check PASS, 14:57:46Z, recorded): its fail-first tests, its four fixes (RB-01, RB-02, RB-07, RB-22) and main merged; `cd server && npm test` 539 of 539.
+- Progress: 0 of 1 tasks merged (FX2-1 ready); no gate items.
 - Done: RB-01, RB-02, RB-07 and RB-22, each with a test that fails on main.
-- Next: the pre-check through `run_checks.sh`, recorded; then ready for the lead's merge.
+- Next: the lead's merge of FX2-1.
 - Blocked by: none.
 - Owner decision needed: none.
 
 | Deliverable | Weight (h) | Status | Evidence |
 |---|---:|---|---|
-| FX2-1-db-store-home: RB-01, RB-02, RB-07, RB-22 | 3.5 | working | `server/test/fix_fx2_db_store_home.test.mjs`; commits a5a716b6 (tests), 225b3624 (RB-01), 41a688d5 (RB-02), 5c49d4d1 (RB-22's test), 1dd781cb (RB-22, RB-07) |
+| FX2-1-db-store-home: RB-01, RB-02, RB-07, RB-22 | 3.5 | ready at c393a96b, pre-check PASS | `server/test/fix_fx2_db_store_home.test.mjs`; commits a5a716b6 (tests), 225b3624 (RB-01), 41a688d5 (RB-02), 5c49d4d1 (RB-22's test), 1dd781cb (RB-22, RB-07) |
 
 ## Handoff
-- Last verified commit: 1dd781cb (`cd server && npm test` 539 of 539, 2026-11-21); the pre-check comes next, on the merge with main.
+- Last verified commit: c393a96b (pre-check green, 2026-11-21T14:57:46Z, "All checks passed.", recorded in the status file); `ready_sha` there.
 - **Done.** One test file, `server/test/fix_fx2_db_store_home.test.mjs`, committed alone in a5a716b6 before any fix. The report's own test folders (`tests/b1-prove-*`) are not in the repository, so each test is written fresh from the entry's Input. On main 9c754b8 all four fail:
   - **RB-01** (`a transaction that throws is rolled back on a node:sqlite without isTransaction`). A Proxy hides `isTransaction`, as Node 22.5 to 22.15 lack it. It fails with `the failed write is undone` / `1 !== 0`.
   - **RB-02** (`an expired cached Game Center certificate is fetched again, and the sign-in succeeds`). It uses a 1-day leaf for the stand-in key under the stand-in chain, `server/test/fix_fx2_gc_short.pem` (openssl, `-days 1`). The clock moves past its validTo and the test signs in again. It fails with `the expired certificate is fetched again`, the diff showing `fetched` held one `https://static.gc.apple.com/public-key/gc-prod-6.cer` where two were expected.
@@ -28,7 +28,8 @@
 - **A test corrected.** RB-22's last assertion was mine and could never pass, so I corrected it on its own in 5c49d4d1. It read a `period` field that `home.show`'s Nursery view does not return. It now expects the next birth exactly 50 min after the raise: 5 h of 6 h is 5/6 of level 2's 5 h. Its fail-first assertion, ready `1 !== 0`, is unchanged, and the test still fails that way with the fix taken out. No existing test was changed, skipped or loosened.
 - **Merge.** Main 4d488179 (lead cycle 152 files only: backlog, lead.md, lead-archive.md, owner-inbox.md, requests.md, status/lead.json) merged at 112f320c with no conflict. Before that merge: the setup line (`rustup target add wasm32-unknown-unknown`, `pip install "gdtoolkit==4.*" "playwright==1.63.0"`, plus the environment's script) exit 0, then `bash client/build.sh` exit 0.
 - **Open hypotheses:** none.
-- **Next step:** the pre-check (`run_checks.sh start` / `wait` / `record`), then `owners.py diff`, then ready.
+- **Checks on the merge.** `bash tools/run_checks.sh` (check_all, bwrap) on c393a96b, which holds the merge 112f320c and this handoff: PASS at 14:57:46Z. `python3 tools/coord/owners.py diff FX2-1-db-store-home origin/claude/videogame-project-analysis-ewkkk2 c393a96b`: "every changed path is inside its files". Main then moved to 30bc30ca (lead cycles 153 and 154: backlog, lead.md, lead-archive.md, status/lead.json only), so c393a96b is not re-merged and its checks stand.
+- **Next step:** the lead's merge. This session ends here (one task per session).
 
 ## Tried and failed
 - 2026-11-21 Ran the Nursery tests before building the wasm: "ruleborn_sim.wasm is not built". Built it with `cargo build --release --target wasm32-unknown-unknown` in `sim/`.
