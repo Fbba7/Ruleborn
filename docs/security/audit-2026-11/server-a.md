@@ -96,7 +96,8 @@ on main (`9fe151ad`).
   island is no longer flagged.
 - **Evidence:** test "FX1-A-03".
 - **Fix (made):** a decided report is refused another decision with
-  409 `already_resolved`.
+  404 `no_such_report`, the answer the client already has words for: the
+  queue holds open reports only.
 
 ### FX1-A-04: Lone fans re-rating on a later day use up that day's lone-fan slots
 

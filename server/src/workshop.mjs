@@ -582,8 +582,9 @@ export class Workshop {
     const report = this.db.prepare("SELECT * FROM workshop_reports WHERE id = ?").get(reportId);
     if (!report) throw new Refused(404, "no_such_report");
     // FX1-A-03: a report a person has decided on is decided; acting on it
-    // again would close the island's newer reports, unread.
-    if (report.resolved_at != null) throw new Refused(409, "already_resolved");
+    // again would close the island's newer reports, unread. The queue holds
+    // open reports only, so a decided one is no report to decide.
+    if (report.resolved_at != null) throw new Refused(404, "no_such_report");
     if (!["dismiss", "remove", "ban"].includes(action)) throw new Refused(400, "no_such_action");
     if (action !== "dismiss" && !REMOVAL_REASONS.includes(reason)) {
       throw new Refused(400, "a_reason_is_owed");
