@@ -659,7 +659,8 @@ export class Home {
   /** Why `ids` cannot be the crew of the heist a replay records, or null:
    *  each a character the player holds, none twice, none away, as many as
    *  the replay's crew, and — when the replay carries §12.5's manifest —
-   *  each member's kind, level and traits the character's (TD.34). */
+   *  each member's kind, form, level and traits the character's (TD.34,
+   *  RB-25). */
   crewProblem(account, ids, replay, header, now) {
     if (!Array.isArray(ids) || ids.length !== header.crew || new Set(ids).size !== ids.length) return "crew_mismatch";
     const mine = this.characters(account);
@@ -670,10 +671,10 @@ export class Home {
     if (header.manifest) {
       if (!manifest) return "crew_mismatch";
       for (const [i, c] of crew.entries()) {
-        const { kind, level, traits } = manifest.members[i];
+        const { kind, form, level, traits } = manifest.members[i];
         const want = c.traits.map((t) => TRAIT_INDEX[t]);
-        if (kind !== KIND_INDEX[c.kind] || level !== c.level || traits.length !== want.length
-            || traits.some((t, j) => t !== want[j])) return "crew_mismatch";
+        if (kind !== KIND_INDEX[c.kind] || form !== formIndex(c) || level !== c.level
+            || traits.length !== want.length || traits.some((t, j) => t !== want[j])) return "crew_mismatch";
       }
     }
     return null;

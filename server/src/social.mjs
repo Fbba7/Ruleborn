@@ -164,10 +164,13 @@ export class Social {
         WHERE constellation = ? AND account = ? AND left_at IS NULL`).run(role, constellation, account);
   }
 
-  /** The founder names up to four elders, and can make one a member again. */
-  appoint(founder, account, role) {
+  /** The founder names up to four elders, and can make one a member again;
+   *  in the constellation `id` names, when the caller names one (RB-26). */
+  appoint(founder, account, role, id = null) {
     const f = this.membership(founder);
-    if (!f || f.role !== "founder") throw new Refused(403, "founder_only");
+    if (!f || f.role !== "founder" || (id !== null && f.constellation !== id)) {
+      throw new Refused(403, "founder_only");
+    }
     const m = this.membership(account);
     if (!m || m.constellation !== f.constellation || account === founder) {
       throw new Refused(404, "not_a_member");

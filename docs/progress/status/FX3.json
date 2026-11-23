@@ -6,14 +6,14 @@
   "agent_state": "active",
   "task_id": "FX3-5-audit-sim",
   "task_state": "claimed",
-  "claimed_at": "2026-11-21T21:50:00Z",
-  "lease_until": "2026-11-22T00:50:00Z",
-  "updated_at": "2026-11-21T21:50:00Z",
-  "expected_next_update_by": "2026-11-21T22:35:00Z",
+  "claimed_at": "2026-11-23T21:30:00Z",
+  "lease_until": "2026-11-24T00:30:00Z",
+  "updated_at": "2026-11-23T21:30:00Z",
+  "expected_next_update_by": "2026-11-23T22:15:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "f072df90",
-    "next_step": "Read the sim files the report did not read; write docs/security/audit-2026-11/sim.md"
+    "last_green_sha": null,
+    "next_step": "Fresh session after the restart of 23 November: set up the container, read the sim files the report did not read, write docs/security/audit-2026-11/sim.md"
   },
   "precheck": null,
   "gate_request": null,
