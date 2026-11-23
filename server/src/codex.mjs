@@ -149,8 +149,10 @@ export class Codex {
     }
     // §7.6: "If the raider cast a law during a foiled heist, the defender
     // gets one page of it" — a page of each law cast, to a defender who is
-    // still someone (an echo's owner is not defending; G30, §20.12).
-    if (verdict.grade === "foiled" && cast.length && !lease.echo) {
+    // still someone (an echo's owner is not defending; G30, §20.12). A
+    // friendly heist pays this only as the pair's first of the day (SEC-24,
+    // RB-36).
+    if (verdict.grade === "foiled" && cast.length && !lease.echo && friendPages) {
       const owner = this.db.prepare(
         "SELECT a.id FROM accounts a WHERE a.id = ? AND a.deleted_at IS NULL").get(lease.defender)?.id;
       if (owner) {
@@ -186,7 +188,11 @@ export class Codex {
         if (done.law !== law) throw new Refused(409, "already_studied");
         return { studied: law, repeated: true, codex: this.view(account) };
       }
-      if (!lawsOf(this.service.store.get(h.bundle)).includes(law) || !isLaw(law)) {
+      // An island erased since (an under-13 deletion, §20.11) leaves nothing
+      // to study, a refusal rather than a throw (RB-53).
+      const island = this.service.store.get(h.bundle);
+      if (!island) throw new Refused(409, "nothing_to_study");
+      if (!lawsOf(island).includes(law) || !isLaw(law)) {
         throw new Refused(409, "law_not_crossed");
       }
       const grade = JSON.parse(h.outcome).verdict?.grade;
