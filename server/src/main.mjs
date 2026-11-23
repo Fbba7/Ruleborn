@@ -76,6 +76,17 @@ function settled(env) {
 }
 settled(process.env);
 
+// The whole-number settings: a value that is not one stops the start, where
+// Number() would have read "abc" as no cap and "0" as no connection at all
+// (AUD-B-16). The replay floor alone may be 0, which turns it off.
+for (const [name, least] of [["RULEBORN_MAX_CONNECTIONS", 1], ["RULEBORN_HEADERS_TIMEOUT_MS", 1],
+  ["RULEBORN_REPLAYS_MIN_FREE_MB", 0]]) {
+  const value = process.env[name];
+  if (value !== undefined && !(/^\d+$/.test(value.trim()) && Number(value) >= least && Number.isSafeInteger(Number(value)))) {
+    throw new Error(`${name} must be a whole number of at least ${least}, or unset (got ${JSON.stringify(value)})`);
+  }
+}
+
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, "..", "..");
 const data = process.env.RULEBORN_DATA ?? join(here, "..", ".data");
