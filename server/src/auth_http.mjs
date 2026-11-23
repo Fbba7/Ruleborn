@@ -209,6 +209,11 @@ export async function deleteByGoogle(service, request, { signIn, read, webClient
   return signIn(async (admit) => {
     const { idToken, withdrawIslands = false } = await read(request);
     if (typeof idToken !== "string") throw new Refused(400, "malformed_body");
+    // Without the web client there is no audience to hold the token to, so
+    // the game's own token would pass: no token is taken, as the page is not
+    // served. It is refused as any token for another client is, after the
+    // site check, and counted as a failed sign-in (AUD-B-08).
+    if (!webClientId) throw new Refused(401, "google_identity_refused");
     const credential = { idToken };
     await service.preparePlatform(credential);
     // T12's SR-11: a token the game signs in with deletes nothing here —

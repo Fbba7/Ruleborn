@@ -1,10 +1,10 @@
 # FX2 fixer, server B: progress
 
-- Status: Blocked on FX2-R1. FX2-5-auth-lows has all six fixes committed at 5e4979d0 (main 02558e05 merged). `cd server && npm test` gives 567 of 578: 11 tests in three files outside the task's files write replay manifests without the `form` byte, which RB-25 now checks.
-- Progress: 4 of 5 tasks merged (FX2-1 at 23cf8a90, FX2-2 at 8ed7538f, FX2-3 at c7cdcbbd, FX2-4 at e413e4a9). FX2-5 is blocked on one request. No gate items.
+- Status: Green. FX2-5-auth-lows is ready at 574495a: all six fixes, FX2-R1's three test lines (82e31a1) and main 57c23193 merged (326f9a2). `cd server && npm test` passes 578 of 578.
+- Progress: 4 of 5 tasks merged (FX2-1 at 23cf8a90, FX2-2 at 8ed7538f, FX2-3 at c7cdcbbd, FX2-4 at e413e4a9). FX2-5 is ready. No gate items.
 - Done: RB-23, RB-24, RB-25, RB-26 and RB-60, and candidate 23 (it reproduced, fixed here). Each has a test written first that fails on main.
-- Next: the lead answers FX2-R1. With its default, FX2 applies three one-line test corrections, then runs npm test, check_all and owners.py and marks the task ready.
-- Blocked by: FX2-R1 (lead), due 2026-11-22T09:00:00Z.
+- Next: the lead merges FX2-5-auth-lows; then FX2-6-audit-server-b.
+- Blocked by: nothing.
 - Owner decision needed: none.
 
 | Deliverable | Weight (h) | Status | Evidence |
@@ -13,10 +13,10 @@
 | FX2-2-trace-telemetry: RB-31, RB-32, RB-49, RB-21, candidate 21 | 3.5 | merged at 8ed7538f | `server/test/fix_fx2_trace_telemetry.test.mjs`; `docs/security/audit-2026-11/server.md` |
 | FX2-3-shop: RB-08, RB-09, RB-11, RB-10, RB-13 | 4.0 | merged at c7cdcbbd | `server/test/fix_fx2_shop.test.mjs` |
 | FX2-4-purge-notify: RB-33, RB-34, RB-46, RB-47, RB-48 | 4.0 | merged at e413e4a9 | `server/test/fix_fx2_purge_notify.test.mjs`. Commits: 7dad0e16 (tests), 81580799 (test assertion name), 0c9e6c67 (RB-33), 0f3b6494 (RB-34), a9678f50 (RB-46), e4b8d44c (RB-47), 5cdb0318 (RB-48), 20acfab8 (merge of main), b4445a58 (status) |
-| FX2-5-auth-lows: RB-23, RB-24, RB-25, RB-26, RB-60, candidate 23 | 4.0 | blocked on FX2-R1 | `server/test/fix_fx2_auth_lows.test.mjs`. Commits: 83ba326a (tests), b63fe5ca (RB-23), d981f86f (RB-24), 51c133ad (RB-25), 20fd2dee (RB-26), 268243b4 (RB-60 test guard), cfc93897 (RB-60), df07570d (candidate 23), 5e4979d0 (merge of main) |
+| FX2-5-auth-lows: RB-23, RB-24, RB-25, RB-26, RB-60, candidate 23 | 4.0 | ready at 574495a | `server/test/fix_fx2_auth_lows.test.mjs`. Commits: 83ba326a (tests), b63fe5ca (RB-23), d981f86f (RB-24), 51c133ad (RB-25), 20fd2dee (RB-26), 268243b4 (RB-60 test guard), cfc93897 (RB-60), df07570d (candidate 23), 5e4979d0 (merge of main), 82e31a1 (RB-25: FX2-R1's three test lines), 326f9a2 (merge of main 57c23193) |
 
 ## Handoff
-- **Last verified commit:** 5e4979d0, which is df07570d with main 02558e05 (lead cycle 162) merged in, with no conflict. The commit after it changes only this handoff and the status file.
+- **Last verified commit:** 574495a: 82e31a1 (FX2-R1's three test lines) with main 57c23193 (lead cycle 163) merged at 326f9a2, with no conflict, then the status file. The commit after it changes only this handoff and the status file.
 
 ### The tests
 - All six tests are in `server/test/fix_fx2_auth_lows.test.mjs`, committed alone in 83ba326a before any fix and run on it. 83ba326a's `server/src/` is main's. All six fail:
@@ -36,7 +36,7 @@
 - **RB-60** (cfc93897, `pages.mjs` `plain`). The reference pattern now takes "to" or "and" between references, and multi-letter tags such as SEC-18. The rendered page was compared before and after: only the three cells the report names change.
 - **Candidate 23** (df07570d, `profile.mjs`). Another player's profile read their league through `seasons.league`, and that opened their standing and fixed their tier price at the viewer's time. A view of another player (`own: false`) now uses `leagueSeen`, which reads the standing if there is one, or else the opening `standing` would write, and writes nothing. A scratch test compared it with the player's own `seasons.league` over three seasons and found them equal. Since it reproduced, nothing goes under "Unproven, rechecked".
 
-### FX2-R1: three tests that wrote the defect
+### FX2-R1: three tests that wrote the defect (granted in cycle 163, applied in 82e31a1)
 - RB-25's fix makes 11 tests fail. They build replay manifests without `form`, which the device always writes (`home.show(...).characters[i].wire`). The three builders are outside this task's files. owners.py says "no task in flight owns it: the lead does", so, per the protocol and S3-R30's precedent, I committed none of them:
   - `server/test/casts.test.mjs:27`: `kind: KINDS.indexOf(c.kind), level: c.level,` → `kind: KINDS.indexOf(c.kind), form: c.wire.form, level: c.level,`
   - `server/test/rest.test.mjs:21`: the same change.
@@ -53,12 +53,13 @@
 - `profile.view` for another player still runs `codex.ensure` and `home.ensure` for them (`profile.mjs`, "written the first time they are asked for").
 
 ### Merge and evidence
-- **Merge:** main 02558e05 merged at 5e4979d0 with no conflict. It changed only the backlog, the lead's files and status files.
-- **`cd server && npm test`** on 5e4979d0: 578 tests, 567 pass, 11 fail (the 11 above). With FX2-R1's three lines: 578 of 578.
-- **`python3 tools/coord/owners.py diff FX2-5-auth-lows origin/claude/videogame-project-analysis-ewkkk2 5e4979d0`:** "every changed path is inside its files".
-- **check_all:** not run, because the task is not ready until FX2-R1 is answered.
-- **Setup:** as in FX2-4. The wasm is built, and `npm install` in `server/` with its lock file deleted.
-- **Next step:** once FX2-R1 is granted (its default), apply the three lines and commit them naming RB-25. Then run npm test, merge main, run check_all and owners.py, and set ready.
+- **FX2-R1:** granted with its default in lead cycle 163 (main 57c23193); the three files are FX2-5-auth-lows's exceptions in the backlog. The three lines above are applied in 82e31a1, whose message names RB-25. These are the tests whose expectations encoded the defect (manifests without the form byte the device writes); nothing else in them changed.
+- **Merge:** main 57c23193 merged at 326f9a2 with no conflict. It changed only `docs/progress/backlog.json` and `docs/progress/requests.md`.
+- **`cd server && npm test`** on 82e31a1 (the merge changed no server file): 578 tests, 578 pass, 0 fail.
+- **`python3 tools/coord/owners.py diff FX2-5-auth-lows origin/claude/videogame-project-analysis-ewkkk2 574495a`:** "FX2-5-auth-lows: every changed path is inside its files".
+- **Setup:** the fresh-container line in this session's container, exit 0: `rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios`, `pip install "gdtoolkit==4.*" "playwright==1.63.0"`, `(cd tools/ui_research && npm ci)`, `bash client/build.sh` (it fetched Godot 4.7.2). Then `cargo build --release --target wasm32-unknown-unknown` in `sim/` and `npm install` in `server/` (its lock file deleted).
+- **check_all:** `bash tools/run_checks.sh` on 574495a, in bwrap: PASS, finished 2026-11-21T21:48:11Z; the log ends `DONE exit=0` and contains "All checks passed." Recorded in the status file.
+- **Main moved after the pre-check** (eeaac50, lead cycle 164: FX3-4's `server/src/lab.mjs` and its test). It merges into 574495a with no conflict, and on that merge in a scratch worktree `cd server && npm test` passes 580 of 580. Not committed here, so the ready sha stays the pre-checked one.
 
 ## Tried and failed
 - 2026-11-21 The first RB-32 drain test passed on main, for the wrong reason (`401 session_refused`). Its session was made before the clock moved 12 h, and a session lasts an hour. It now signs in after the clock moves.

@@ -175,14 +175,17 @@ export class Observatory {
     const snap = this.db.prepare("SELECT realm, realm_level, vault_level, exposed FROM snapshots WHERE bundle = ?")
       .get(c.bundle);
     const generated = c.owner === GENERATOR;
+    // An echo is one past island, robbed from nobody: never a universe
+    // (service.issue), so its card is that island's alone (AUD-B-07).
+    const single = generated || Boolean(c.echo);
     const owner = generated ? null
       : this.db.prepare("SELECT keeper_level FROM accounts WHERE id = ?").get(c.owner);
     // The Heart and the outer realms, which are the realms table's rows.
-    const realms = generated ? 1
+    const realms = single ? 1
       : 1 + this.db.prepare("SELECT COUNT(*) AS n FROM realms WHERE owner = ?").get(c.owner).n;
     let strain = 0;
     let band = 0;
-    if (!generated && this.db.prepare("SELECT 1 FROM realms WHERE owner = ? LIMIT 1").get(c.owner)) {
+    if (!single && this.db.prepare("SELECT 1 FROM realms WHERE owner = ? LIMIT 1").get(c.owner)) {
       const p = this.service.weaving.stability(c.owner);
       strain = p.strain;
       band = p.band;
@@ -200,16 +203,18 @@ export class Observatory {
       // planner): across a universe, the shortest and the longest by the
       // realm landed on, and whether a raid would cross one (crossings.mjs).
       ...(([clock, longest]) => ({ clock, clock_longest: longest, across: longest > clockTicks() / TICKS_PER_SECOND }))(
-        generated ? [clockTicks() / TICKS_PER_SECOND, clockTicks() / TICKS_PER_SECOND]
+        single ? [clockTicks() / TICKS_PER_SECOND, clockTicks() / TICKS_PER_SECOND]
           : this.service.crossings.clocks(c.owner, c.bundle)),
       keeper_level: owner?.keeper_level ?? null, realms, renown: c.renown ?? null,
-      // G58: the Keeper's name is §12.4's free fact, from the word lists.
-      keeper_name: generated ? null : this.service.keeper.name(c.owner),
+      // G58: the Keeper's name is §12.4's free fact, from the word lists;
+      // across a block it is not shown, the island still is (§17.8, AUD-B-02).
+      keeper_name: generated || this.service.safety.between(account, c.owner) ? null
+        : this.service.keeper.name(c.owner),
       loot: rough(snap.exposed), strain, band, faults: faults(strain, realms - 1),
       // §12.22: "up to N realms to the Heart", the most links any outer
       // realm's shortest route takes, and the realms the faults open from
       // (§5.4, links.mjs); the game's own island is one realm.
-      ...(generated ? { depth: 0, fault_realms: [] } : (({ deepest, faults: at }) =>
+      ...(single ? { depth: 0, fault_realms: [] } : (({ deepest, faults: at }) =>
         ({ depth: deepest, fault_realms: at }))(this.service.links.view(c.owner, strain))),
       ...(generated ? { success: [lo, hi] } : {}),
       realm: { realm: snap.realm, realm_level: snap.realm_level, vault_level: snap.vault_level,

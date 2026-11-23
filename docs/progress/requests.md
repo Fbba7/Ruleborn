@@ -1463,6 +1463,21 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   FX2-5-auth-lows's `exceptions` (`owners.py claims`: disjoint), and FX2
   is restarted to apply them in a commit naming RB-25.
 
+- **FX4-R1** (from FX4, 23 November 2026 22:00Z; due 24 November
+  22:00Z; not blocking): RB-43's Fix line also says "ideally keep the
+  leased island in the HEIST state". With FX4-3's digest check a leased
+  heist's result screen leaves the night empty (the report's Should
+  happen) instead of showing the real night. Showing it needs
+  `client/scripts/heist_screen.gd` (outside FX4-3's files) to put the
+  leased island's bytes into `heist_finished`, and `AppState.heist_finished`
+  to keep them. Files: heist_screen.gd, app_state.gd. Default: no
+  follow-up; a leased heist's result screen shows no night, as RB-43's
+  Should happen says. Copied in cycle 167.
+  **Answered** by the lead in cycle 167: the default. RB-43's defect, a
+  leased heist's result showing the wrong night, is closed by FX4-3's
+  digest check; showing the real night is a UI improvement, and both
+  files belong to the parked UI. No task is seeded during the UI pause.
+
 - **AD-R46** (from AD, 17 November 2026 02:58Z; due 19 November 02:58Z;
   not blocking): AD's preview of P2-S1-result-6 (S1-R35) at 16515088.
   S1's two departures stand (gold numerals on every total; all three
