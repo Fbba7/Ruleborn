@@ -1,9 +1,16 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-23T21:18:00Z",
-  "expected_next_update_by": "2026-11-23T22:18:00Z",
-  "cycle": 164,
-  "merging": null,
+  "updated_at": "2026-11-23T21:45:00Z",
+  "expected_next_update_by": "2026-11-24T00:45:00Z",
+  "cycle": 166,
+  "merging": {
+    "candidate_sha": "e2e8f5a1738195b7cf9930a385c5feab00f4a20e",
+    "task_ids": [
+      "FX1-4-holds-codex"
+    ],
+    "started_at": "2026-11-23T22:17:00Z",
+    "expires_at": "2026-11-23T23:17:00Z"
+  },
   "last_merged": {
     "task_id": "FX2-5-auth-lows",
     "sha": "5f1cc425"
@@ -47,9 +54,9 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Restarted by the owner on 23 November 2026 (\"Continue, first the bugs then the UI\"; CLAUDE.md order 1). Bugs first: resync FX1-4-holds-codex (merge main into claude/fix-server-a, give RB-36's test manifests the form byte, re-run the checks), restart FX3-5-audit-sim, then FX4-3-replay-shop-nav and the other open FX tasks, within the cap of four builders, each started fresh on Opus 5.5 at effort high. Then the UI: once every FX task is merged, unpark P3-S3-settings-4, P4-S1-heist-vault, P4-S2-home-purse and the BT track. Where the work stood: lead.md, \"Now\", entry \"Stopped here, 21 November 2026\".",
+  "next_step": "Bugs first (the owner's restart of 23 November 2026). Four builders are active on Opus 5.5 at effort high: FX1 on FX1-4-holds-codex's resync (pre-check at 9fe151ad; session_01SNkKxqf8d3D9CxTFED7uAn), FX2 on FX2-6-audit-server-b (session_01SNkKxqkjiqLB1v3Vtjw8hm), FX3 on FX3-5-audit-sim (session_01SNkKxr46k63bAaFiJ5F3gi), FX4 on FX4-3-replay-shop-nav (session_01SNkKxpABZrz4Mfhrmhdq7n). Merge each as it turns ready (full checks, owners.py diff); then FX1-6, FX1-7, FX4-4, FX4-5 as seats free. File fix tasks from the audits' confirmed findings. Then the UI: once every FX task is merged, unpark P3-S3-settings-4, P4-S1-heist-vault, P4-S2-home-purse and the BT track.",
   "seen": {
-    "at": "2026-11-21T21:45:23Z",
+    "at": "2026-11-23T21:41:49Z",
     "heads": {
       "claude/3d-character-screens": "6053b249bee313648da3509142eeb2ba738bb62f",
       "claude/3d-characters": "35d6ae8f5b84a4d75636f68270848b0949c111f3",
@@ -63,10 +70,10 @@
       "claude/auth": "162e29d2b42a74df530e73e5a4db4b5410897275",
       "claude/db-cost": "1a033fe3d77dd294c53ef27cb1553bc5c754b4c2",
       "claude/docs": "2e0eededbbc1e3c53ba9a4dea3647de87b7ef11b",
-      "claude/fix-client": "742567917e473deefcdd05275579fe61e6eb4ee2",
-      "claude/fix-server-a": "1d1297341ded6fa564dafc93f1bf7cfafff05749",
-      "claude/fix-server-b": "86ccc59264fc56ebf996a0714c1b0e104ed466ed",
-      "claude/fix-sim": "6550f2384aa64373eb83974a167fc0cafb911270",
+      "claude/fix-client": "ae7748483265c224b20071c5d07961311bdc4716",
+      "claude/fix-server-a": "8e4b9851b2e3cc65fd5f5914690a879e4b65e164",
+      "claude/fix-server-b": "5fa472a0cb1db8c22075d4780e14d6fe4fefbada",
+      "claude/fix-sim": "039be74fdb393a7cfb5c0df7dc9c3145cb6fb75f",
       "claude/lead-cycle-84-verdicts": "ae9c5e4effc8070a5e29f589882bc14445520fa4",
       "claude/plan-v3": "57893713636b7753d0b790c5a9dc35c3b126770a",
       "claude/security-review": "dd1e90f06b512b25a74f3f3f73ace84b3969cce9",
@@ -98,9 +105,7 @@
       "main": "2455f3b5392587009f9b8f7ff57f7b26b01566d1"
     },
     "ready": {},
-    "startable": [
-      "FX3-5-audit-sim"
-    ],
+    "startable": [],
     "messages": [
       "M10",
       "M3"
