@@ -74,7 +74,7 @@ export function termsPage() {
 export function privacyPage(doc = load(), { webDeletion = false } = {}) {
   const types = collected(doc);
   const purposes = (t) => [...new Set([...t.purposes].map((p) => doc.purposes[p].google))].sort().join("; ");
-  const kept = (k) => (k.days !== undefined ? `${k.days} days${k.after ? ` after ${plain(k.after)}` : ""}` : {
+  const kept = (k) => (k.days !== undefined ? `${k.days} ${k.days === 1 ? "day" : "days"}${k.after ? ` after ${plain(k.after)}` : ""}` : {
     account: "as long as your account", record: "for good",
     ever: "for good; it is not about a person", current: "while it is current", ban: "as long as a ban lasts" }[k.for]);
   const deletion = (d) => ({
