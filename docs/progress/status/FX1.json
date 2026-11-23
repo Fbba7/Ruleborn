@@ -69,7 +69,7 @@
       "id": "FX1-R4",
       "from": "FX1",
       "to": "lead",
-      "ask": "FX1-A-10: limits.mjs peerKey keys an IPv6 address written in hex or full mapped form under one /64 of zeros ('0:0:0:0::/64'), so unrelated peers share a rate bucket; '::ffff:a.b.c.d' maps to the IPv4. Fix: parse with node:net's BlockList/SocketAddress normalisation before taking the /64.",
+      "ask": "FX1-A-10: limits.mjs peerKey reads only the dotted '::ffff:a.b.c.d' form as IPv4. IPv4-mapped addresses written in hex or full form ('::ffff:c633:6407', '0:0:0:0:0:ffff:198.51.100.7') all key to '0:0:0:0::/64', so their callers share one rate-limit bucket. Fix: expand the address to eight groups (a dotted tail counts as two); if the first five are 0 and the sixth is ffff, key it as the dotted IPv4; otherwise take the /64 as now. Flip test 'FX1-A-10' in server/test/fix_fx1_audit_server_a.test.mjs with the fix.",
       "files": [
         "server/src/limits.mjs"
       ],
