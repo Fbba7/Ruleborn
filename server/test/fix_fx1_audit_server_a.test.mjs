@@ -2,15 +2,20 @@
 // finding, each failing on the code the audit read.
 
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { test } from "node:test";
 
 import { deleteAccount } from "../src/accounts.mjs";
+import { ratingFor } from "../src/glicko.mjs";
+import { peerKey } from "../src/limits.mjs";
+import { offer } from "../src/matchmaking.mjs";
 import { clockTicks } from "../src/service.mjs";
 import { Build, Builds } from "../src/sim.mjs";
 import { SPIKE_MIN, Workshop } from "../src/workshop.mjs";
-import { WASM, counting, established, openPlan, server, twoPlayers } from "./setup.mjs";
+import { WASM, counting, established, openPlan, play, server, twoPlayers } from "./setup.mjs";
 
 const DAY = 24 * 60 * 60 * 1000;
+const t0facts = () => JSON.parse(readFileSync(new URL("../src/facts.json", import.meta.url), "utf8"));
 
 /** B's island X, then B's next: X is B's echo. A, under 13, lists the same
  *  bytes in the Workshop and is deleted. */
@@ -121,4 +126,177 @@ test("FX1-A-05: after a rules upgrade a live island's hold is queued again and s
   const view = t.service.curation.view(t.defender.account, "heart").hold;
   assert.equal(view?.status, "measuring", `curation shows the hold as measuring, not ${JSON.stringify(view)}`);
   assert.ok(h.work(2) > 0, "the queue measures the live island under the new rules");
+});
+
+test("FX1-A-06: the defence log offers no Trace on a banned raider, which the lease refuses (12.3)", () => {
+  const t = twoPlayers(true);
+  established(t, t.raider.account);
+  t.service.db.prepare("UPDATE accounts SET keeper_level = 6 WHERE id = ?").run(t.raider.account);
+  const i = t.build.exampleIsland(true); i[5] = 2;
+  t.service.publish(t.raider.account, i);
+  const lease = t.service.lease(t.raider.account, t.bundle);
+  const out = t.service.submit(t.raider.account, lease.token, play(t, lease, { plan: openPlan() }));
+  assert.notEqual(out.verdict.grade, "foiled");
+  const before = t.service.defences.view(t.defender.account);
+  assert.ok(before.raids[0].trace, "a Trace before the ban");
+  new Workshop(t.service).ban(t.raider.account, "cheating");
+  assert.equal(t.service.observatory.view(t.defender.account).trace, null, "the Observatory offers none");
+  assert.throws(() => t.service.lease(t.defender.account, before.raids[0].trace.bundle, null, { trace: true }),
+                "the lease refuses a Trace on a banned raider");
+  assert.equal(t.service.defences.view(t.defender.account).raids[0].trace, null, "no Trace button the lease refuses");
+});
+
+test("FX1-A-07: a card swapped to a republished island shows only laws from the raider's open chapters (7.6)", () => {
+  const t = twoPlayers(true);
+  const mm = t.service.matchmaking;
+  assert.equal(mm.raider(t.raider.account).chapter, 1, "the raider has chapter 1 alone");
+  const before = t.service.observatory.view(t.raider.account);
+  assert.ok(before.targets.find((c) => c.bundle === t.bundle), "the defender's chapter-1 island is offered");
+  // Within the hour, the defender republishes the realm with Haste, chapter 2's.
+  t.clock.now += 60 * 1000;
+  const { bundle: haste } = t.service.publish(t.defender.account, t.build.exampleIsland(false));
+  assert.equal(mm.fresh(t.service.now()).find((c) => c.bundle === haste)?.chapter, 2, "the new island is chapter 2's");
+  const after = t.service.observatory.view(t.raider.account);
+  assert.deepEqual(after.targets.filter((c) => c.bundle === haste).map((c) => c.bundle), [],
+    "a chapter-2 island is not offered to a chapter-1 raider");
+});
+
+test("FX1-A-08: recentSuccess learns from the heists the rating learns from: a pair's later raids that day rate nothing (G30, G37)", () => {
+  const t = twoPlayers(true);
+  const mm = t.service.matchmaking;
+  let lease = t.service.lease(t.raider.account, t.bundle);
+  let out = t.service.submit(t.raider.account, lease.token, play(t, lease, { plan: [] }));
+  assert.equal(out.verdict.grade, "foiled");
+  assert.ok(out.rating, "the pair's first raid of the day is rated");
+  for (let i = 0; i < 3; i++) {
+    t.clock.now += 60 * 1000;
+    lease = t.service.lease(t.raider.account, t.bundle);
+    out = t.service.submit(t.raider.account, lease.token, play(t, lease, { plan: openPlan() }));
+    assert.equal(out.verdict.grade, "clean");
+    assert.equal(out.rating, null, "a pair's later raid that day is not rated");
+  }
+  assert.equal(mm.raiderRating(t.raider.account).games, 1, "one heist rated the raider");
+  assert.equal(mm.recentSuccess(t.raider.account), 0, "the one rated heist was foiled");
+  assert.equal(mm.raider(t.raider.account).recent, 0);
+});
+
+test("FX1-A-09: the list says it reached for echoes only when an echo was there (12.22, as `generated` is)", () => {
+  const candidate = (id, p) => ({ bundle: id, owner: `owner-${id}`, realm: "heart", realmLevel: 1, keeperLevel: 5,
+    renown: 100, rating: ratingFor(p), deviation: 0, origin: "authored", echo: false });
+  const raider = { account: "me", rating: 1500, deviation: 0, renown: 100, keeperLevel: 5, recent: 0.625 };
+  const out = offer(raider, [candidate("a", 0.62), candidate("b", 0.63)]);
+  assert.ok(out.targets.every((c) => !c.echo), "no echo is offered");
+  assert.equal(out.generated, false);
+  assert.equal(out.echoes, false, "no echo candidate: echoes is not claimed");
+});
+
+test("FX1-A-10: an IPv4-mapped address written in hex or in full shares one /64 bucket (limits.mjs, not this task's)", () => {
+  // FX1-A-10: this asserts today's behaviour; the fix is limits.mjs's
+  // (server-a.md), which turns these into "198.51.100.7" and "203.0.113.1".
+  assert.equal(peerKey("::ffff:198.51.100.7"), "198.51.100.7", "the dotted form Node gives is the IPv4 address");
+  assert.deepEqual(["::ffff:c633:6407", "0:0:0:0:0:ffff:198.51.100.7", "::ffff:cb00:7101"].map(peerKey),
+    ["0:0:0:0::/64", "0:0:0:0::/64", "0:0:0:0::/64"]);
+});
+
+test("FX1-A-11: a refused Trace upload does not use up the Trace (12.3, 24.13)", () => {
+  const t = twoPlayers(true);
+  established(t, t.raider.account);
+  const island = t.build.exampleIsland(true); island[5] = 2;
+  const home = t.service.publish(t.raider.account, island).bundle;
+  const lease = t.service.lease(t.raider.account, t.bundle);
+  const robbed = t.service.submit(t.raider.account, lease.token, play(t, lease, { plan: openPlan() }));
+  assert.equal(robbed.validated, true);
+  assert.notEqual(robbed.verdict.grade, "foiled");
+  const first = t.service.lease(t.defender.account, home, null, { trace: true });
+  assert.equal(first.trace, true);
+  const junk = t.service.submit(t.defender.account, first.token, new Uint8Array(10));
+  assert.deepEqual([junk.validated, junk.reason], [false, "replay_malformed"]);
+  t.clock.now += 1_000;
+  let again;
+  assert.doesNotThrow(() => { again = t.service.lease(t.defender.account, home, null, { trace: true }); },
+                      "a refused submission is not a play: the Trace is still owed");
+  assert.equal(again.trace, true);
+  const out = t.service.submit(t.defender.account, again.token, play(t, again, { plan: openPlan() }));
+  assert.equal(out.validated, true);
+  assert.throws(() => t.service.lease(t.defender.account, home, null, { trace: true }),
+                (e) => e.reason === "nothing_to_trace", "played for real, it is used up");
+});
+
+test("FX1-A-12: a lease at exactly expires_at is run out for submit as it is for issue (24.12, G17)", () => {
+  const t = twoPlayers(true);
+  const first = t.service.lease(t.raider.account, t.bundle);
+  const replay = play(t, first, { plan: openPlan() });
+  t.clock.now = first.expiresAt;
+  const second = t.service.lease(t.raider.account, t.bundle);
+  assert.notEqual(second.token, first.token, "issue reads the first lease as run out and issues a new one");
+  assert.equal(t.service.submit(t.raider.account, first.token, replay).validated, true);
+  assert.equal(t.service.db.prepare("SELECT grace FROM heists WHERE token = ?").get(first.token).grace, 1,
+    "a lease issue treated as run out is submitted on the day's grace");
+});
+
+test("FX1-A-13: a raid on the second publisher of shared bytes rates their island, in their realm (12.22)", () => {
+  const t = twoPlayers(true);
+  const b = t.service.session("gc:second").account;
+  established(t, b);
+  assert.equal(t.service.publish(b, t.island, "outer-1").bundle, t.bundle, "one snapshot, the first publisher's (heart)");
+  const before = t.service.matchmaking.islandRating(b, "outer-1");
+  assert.ok(before, "B's outer-1 island entered at its prior");
+  const lease = t.service.lease(t.raider.account, t.bundle, b);
+  const out = t.service.submit(t.raider.account, lease.token, play(t, lease, { plan: openPlan() }));
+  assert.equal(out.validated, true);
+  assert.equal(t.service.matchmaking.islandRating(b, "outer-1").games, before.games + 1, "B's outer-1 island played a rated game");
+  assert.equal(t.service.matchmaking.islandRating(b, "heart"), null, "no rating for a B/heart island B never published");
+});
+
+test("FX1-A-14: a law cast in both slots of a foiled heist gives the defender one page of it (7.6)", () => {
+  const t = twoPlayers(true);
+  const d = t.service.codex;
+  const pages = () => d.row(t.defender.account, "half_gravity")?.pages ?? 0;
+  d.ensure(t.defender.account, t.clock.now);
+  const before = pages();
+  d.afterHeist({ attacker: t.raider.account, defender: t.defender.account, bundle: t.bundle, mode: "raid", token: "x" },
+               { grade: "foiled", broken: 0, caught: 0 }, t.clock.now, ["half_gravity", "half_gravity"]);
+  assert.equal(pages() - before, 1, "'the defender gets one page of it' (7.6)");
+});
+
+test("FX1-A-15: the constellation league answers [] for an open season and for no season (seasons.mjs, not this task's)", () => {
+  // FX1-A-15: this asserts today's behaviour; the fix is seasons.mjs's
+  // (server-a.md): 409 season_still_open and 404 no_such_season, as result().
+  const t = server();
+  t.service.seasons.current();
+  assert.deepEqual(t.service.seasons.constellationTable(1), []);
+  assert.deepEqual(t.service.seasons.constellationTable(99), []);
+});
+
+test("FX1-A-16: a link's number is given again, so a retried DELETE takes down the next link (links.mjs, not this task's)", () => {
+  // FX1-A-16: this asserts today's behaviour; the fix is links.mjs's
+  // (server-a.md): a link's number is never given again.
+  const facts = t0facts();
+  const t = server({ strictUniverse: true });
+  const me = t.service.session("gc:links").account;
+  t.service.db.prepare("UPDATE accounts SET keeper_level = 40 WHERE id = ?").run(me);
+  t.service.book(me, "starlight", 1_000_000, "a test's grant");
+  for (const type of facts.REALM_TYPES.slice(0, 3)) t.service.universe.open(me, type);
+  const l = t.service.links;
+  const n = l.build(me, { a: "outer-1", b: "outer-2", kind: "rope_bridge" }).universe.links.find((x) => x.kind === "rope_bridge").n;
+  l.remove(me, n);
+  const chute = l.build(me, { a: "outer-2", b: "outer-3", kind: "chute" }).universe.links.find((x) => x.kind === "chute");
+  assert.equal(chute.n, n, "the new link took the number of the one taken down");
+  l.remove(me, n); // the first DELETE's retry
+  assert.equal(t.service.db.prepare("SELECT COUNT(*) AS n FROM links WHERE owner = ? AND kind = 'chute'").get(me).n, 0,
+    "today the retry takes the Chute down");
+});
+
+test("FX1-A-17: a weave taken out before it finishes counts as a mastery step (weaving.mjs, not this task's)", () => {
+  // FX1-A-17: this asserts today's behaviour; the fix is weaving.mjs's with
+  // codex.woven (server-a.md): a law counts once its weaving finishes.
+  const t = server({ strictUniverse: true });
+  const me = t.service.session("gc:weaver").account;
+  t.service.book(me, "aether", 10_000, "a test's grant");
+  const steps = () => t.service.codex.show(me).mastery.find((m) => m.school === "Motion").steps;
+  assert.equal(steps(), 0);
+  t.service.weaving.weave(me, { realm: "heart", slot: 1, law: "half_gravity" });
+  t.service.weaving.unweave(me, { realm: "heart", slot: 1 });
+  t.clock.now += 2 * 60 * 60 * 1000;
+  assert.equal(steps(), 1, "today the weave never finished, and still counts");
 });
