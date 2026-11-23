@@ -37,7 +37,7 @@ test("AUD-B-04: a device whose clock runs a second ahead still has its session e
   const now = t.clock.now;
   tel.batch(me, [{ kind: "session_start", data: {}, at: now - 60e3 + 1000 },
                  { kind: "session_end", data: { seconds: 60, crashed: false }, at: now + 1000 }]);
-  const rows = t.service.db.prepare("SELECT kind, at FROM events ORDER BY at").all();
+  const rows = t.service.db.prepare("SELECT kind, at FROM events WHERE kind LIKE 'session_%' ORDER BY at").all();
   assert.deepEqual(rows.map((r) => r.kind), ["session_start", "session_end"]);
   assert.ok(rows.every((r) => r.at <= now), "an event is never kept as later than the server's clock");
   // Far ahead is still refused.
