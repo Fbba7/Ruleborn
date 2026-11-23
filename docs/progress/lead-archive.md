@@ -5,6 +5,71 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 164**, 21 November 2026, from about 21:39Z (session
+  `session_01SNkKxnEwW1ec5DJwnyoz4w`, started by the Opus 5.5 launcher).
+  **Merged:** FX3-4-lab-replay (ready at 7db937dd; RB-51, RB-52, RB-54,
+  RB-55), merged onto main at **f5870f77**. Each RB entry's fail-first
+  test precedes its fix; `owners.py diff` passes. **Checks:** FX3's
+  pre-check exited 0 at 7db937dd and the candidate differs from it only
+  under `docs/progress`, so the lead's own check before the merge was
+  reused; `check_docs_consistency.py` passes; the full check on main
+  f5870f77 passed after the merge (22:18Z, `tools/run_checks.sh`, after
+  the builders' setup: `client/build.sh` needs Godot). **Pages:** the audit page was regenerated (b3181beb, sim
+  tests 342/342); the republish was not attempted (refused in cycles 162
+  and 163, owner inbox). **Started:** FX3 on FX3-5-audit-sim as
+  `session_01SNkKxne1a1DLSJJZJn4mc2` (Opus 5.5, effort high).
+  **Claims:** FX2-5-auth-lows `working` (lease to 03:00Z). FX1
+  (FX1-4-holds-codex) and FX2 are idle while their detached pre-checks
+  run, within their expected updates. FX4 waits on FX4-3-replay-shop-nav
+  (cap three while the seven-day bar reads `allowed_warning`). No new
+  audit finding. The UI stays paused.
+- **Cycle 163**, 21 November 2026, from about 21:14Z (session
+  `session_01SNkKxpcmxyDQn5DN27H68P`, started by the Opus 5.5 launcher).
+  **Claims:** FX1's, FX2's and FX3's claims copied into the backlog
+  (FX1-4-holds-codex `working`, FX3-4-lab-replay `claimed`,
+  FX2-5-auth-lows `blocked`), pushed in 57c23193. **Request:** FX2-R1
+  granted, the default: `server/test/casts.test.mjs`,
+  `server/test/rest.test.mjs` and `server/test/setup.mjs` are in
+  FX2-5-auth-lows' exceptions, because their fixtures lacked the form
+  byte RB-25 adds and no assertion is loosened. **Restarted:** FX2 on
+  FX2-5-auth-lows as `session_01SNkKxpZ9SYmNgdCeAw8sqx` (Opus 5.5, effort
+  high), the cycle-162 session having ended its turn blocked on FX2-R1.
+  FX1 (`session_01SNkKxoFvZx6Npx6VHRteSw`) is idle while its detached
+  pre-check runs, within its expected update; FX3
+  (`session_01SNkKxp6SqCgPtEaiERbSnT`) is running. **Merged:** nothing;
+  no task is `ready`, the merge lock stays clear. **Pages:** the audit
+  page's republish was refused again by the session's permission check;
+  not worked around, recorded in the owner inbox; the page on main is
+  current. FX4 waits on FX4-3-replay-shop-nav (cap three while the
+  seven-day bar reads `allowed_warning`). No new audit finding. The UI
+  stays paused.
+- **Cycle 162**, 21 November 2026, from about 20:10Z (session
+  `session_01SNkKxpKnFvTro6bdPJL9Ah`, started by the Opus 5.5 launcher).
+  **Merged:** FX1-3-workshop (ready at 24e171e8), FX2-4-purge-notify
+  (b4445a58) and FX3-3-clock-report (9aa26794), batched as candidate
+  13f6fb44 (branch `lead/candidate-13f6fb44`) under the merge lock
+  (cd2530de), merged onto main's bookkeeping head at **e413e4a9**. Each
+  RB entry's fail-first test precedes its fix; `owners.py diff` passes
+  for all three. **Checks:** the first full run failed in four minutes on
+  the container, not the code (`client/build.sh`: the fresh container had
+  no Godot and a read-only cache path); after the builders' setup
+  (rustup targets, gdtoolkit and playwright, `tools/ui_research` npm ci,
+  `client/build.sh`) the rerun passed at 20:55Z. The guard was not
+  needed: the candidate touches only `server/`, `sim/` and
+  `docs/progress/`. **Bookkeeping:** the three tasks `merged` in the
+  backlog, the lock cleared (2830c8c1). **Pages:** the audit page is
+  regenerated (sim tests 339/339) and committed; its republish to the
+  existing artifact was refused by the session's permission check this
+  cycle, so the page on the artifact is one cycle behind until a later
+  cycle republishes it. The roadmap page is unchanged. **Started**, on
+  Opus 5.5 at effort high: FX1 on FX1-4-holds-codex
+  (`session_01SNkKxoFvZx6Npx6VHRteSw`), FX2 on FX2-5-auth-lows
+  (`session_01SNkKxmg2qQ8HqKBzsGpMCx`) and FX3 on FX3-4-lab-replay
+  (`session_01SNkKxp6SqCgPtEaiERbSnT`); the cycle-160 sessions were idle
+  with their work merged. FX4 waits on FX4-3-replay-shop-nav (cap three
+  while the seven-day bar reads `allowed_warning`). No new audit finding
+  and no new request. The UI stays paused.
+
 - **Cycle 161**, 21 November 2026, from about 19:39Z (session
   `session_01SNkKxq7tRdEEZo5rkVPq4N`, started by the Opus 5.5 launcher).
   The changes since cycle 160: the three builders it started committed
