@@ -50,6 +50,8 @@ export const ROW_EVENTS = 200;
  *  so no caller writes the store full (SR-19). */
 export const DEVICE_EVENTS_A_DAY = 2 * ROW_EVENTS;
 export const LATE_MS = 7 * DAY_MS;
+/** How far ahead of the server's clock a device's may run. */
+export const CLOCK_SKEW_MS = 5 * 60 * 1000;
 
 /** What a player's day counts (§20.3's one tap, §25.3's gates): no more
  *  sessions than one an hour, started or ended, and a "worth your time" rating for each —
@@ -227,8 +229,11 @@ export class Telemetry {
       for (const key of Object.keys(shape)) {
         if (!Object.hasOwn(data, key)) throw new Refused(400, "missing_field", { index: i, field: key });
       }
-      const at = Number.isInteger(e.at) ? e.at : now;
-      if (at > now || at < now - LATE_MS) throw new Refused(400, "bad_time", { index: i });
+      // A device's clock a little ahead of the server's is taken, as of now:
+      // the client drops a refused batch whole (AUD-B-04).
+      const stamp = Number.isInteger(e.at) ? e.at : now;
+      if (stamp > now + CLOCK_SKEW_MS || stamp < now - LATE_MS) throw new Refused(400, "bad_time", { index: i });
+      const at = Math.min(stamp, now);
       // §25.4's quarter runs from when the server received the survey, so a
       // survey is kept as of then, and stays as long as the quarter does.
       return { kind: e.kind, data, at: e.kind === "survey" ? now : at };
@@ -375,8 +380,12 @@ export class Telemetry {
         WHERE kind = 'session_start' AND day BETWEEN ? AND ?)`, from, to).n;
     const surveys = q("SELECT data FROM events WHERE kind = 'survey' AND day BETWEEN ? AND ?", from, to)
       .map((r) => JSON.parse(r.data));
+    // Buyers among the period's players, so the share is never over 1: a
+    // purchase just past midnight is on a day its session is not (AUD-B-03).
     const buyers = one(
-      "SELECT COUNT(DISTINCT who) AS n FROM events WHERE kind = 'purchase' AND day BETWEEN ? AND ?", from, to).n;
+      `SELECT COUNT(DISTINCT who) AS n FROM events p WHERE kind = 'purchase' AND day BETWEEN ? AND ?
+        AND EXISTS (SELECT 1 FROM events s WHERE s.who = p.who AND s.kind = 'session_start'
+                    AND s.day BETWEEN ? AND ?)`, from, to, from, to).n;
     const sessions = one(
       "SELECT COUNT(*) AS n FROM events WHERE kind = 'session_start' AND day BETWEEN ? AND ?", from, to).n;
     return {
