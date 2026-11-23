@@ -52,8 +52,9 @@ top-level `not ok` as a failure, `todo` included.
 | AUD-B-19 | Low | `main.mjs:224` | open |
 | AUD-B-20 | Low | `load.mjs:453` | open |
 
-Eight are fixed here and twelve are open. Three suspicions stay unproven,
-and eleven were checked and rejected (see the last two sections).
+Eight are fixed here and twelve are open. Three suspicions stay unproven.
+Seven were checked and rejected, and the rest of the configuration,
+`refused.mjs` and `store.mjs` showed no defect (see the last two sections).
 
 ## High
 
