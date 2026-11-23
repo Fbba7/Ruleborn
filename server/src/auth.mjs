@@ -73,7 +73,9 @@ export const ROTATE_HOURS_DEFAULT = 24;
 export function rotateHoursOf(env, { example = false } = {}) {
   // The example server (--example) is for trying the game and its tests: it
   // rotates on every refresh, as the device's contract is written.
-  const h = Number(env.RULEBORN_REFRESH_ROTATE_HOURS ?? (example ? 0 : ROTATE_HOURS_DEFAULT));
+  // An empty variable is unset, as the deploy files leave it, never 0 (AUD-B-11).
+  const set = env.RULEBORN_REFRESH_ROTATE_HOURS;
+  const h = set === undefined || set === "" ? (example ? 0 : ROTATE_HOURS_DEFAULT) : Number(set);
   if (!Number.isInteger(h) || h < 0 || h > 24 * 30) {
     throw new Error("RULEBORN_REFRESH_ROTATE_HOURS is a whole number of hours, 0 to 720");
   }
