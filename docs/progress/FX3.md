@@ -1,6 +1,6 @@
 # FX3 simulation fixes: progress
 
-- Status: Waiting. FX3-5-audit-sim: pre-check running at c333f546, `ready` once it passes. FX3-4-lab-replay merged.
+- Status: Waiting. FX3-5-audit-sim is ready at c333f546 (pre-check PASS at 22:24Z, recorded). FX3-4-lab-replay merged.
 - Progress: FX3-5-audit-sim: the sim code the November report did not read is audited; nine findings confirmed (SIM-1 to SIM-9, five Medium, four Low, no High), each with a fail-first test, and all nine fixed. The report's five sim suspicions are settled. Findings in `docs/security/audit-2026-11/sim.md`.
 - Done: `cargo test --release` in `sim` 358 of 358 (seven `stability::` tests now counted), golden replays still verify (no rebake); `cd server && npm test` 580 of 580; `python3 sim/status.py` every gate holds; `python3 sim/test_tools.py` passes.
 - Next: the lead's merge. FX3 has no further open task.
@@ -16,7 +16,7 @@
 | FX3-5-audit-sim: SIM-1 to SIM-9, the report's sim suspicions | 4.0 | ready | `docs/security/audit-2026-11/sim.md`; `sim/src/tests.rs` `sim_1_*` to `sim_9_*` (nine tests); `sim/test_tools.py` (SIM-3, SIM-4); `sim/src/lib.rs`, `sim/src/ffi.rs`, `sim/no_floats.py`, `sim/status.py`, `sim/run_spike.sh`, `sim/systems.json` |
 
 ## Handoff
-- FX3-5-audit-sim, pre-check running (2026-11-23). Branch `claude/fix-sim`. Pre-check started at c333f546 (21:51Z); `ready_sha` is set once it passes. Main merged at c333f546 (lead cycles 165 and 166, docs/progress bookkeeping only, no conflict).
+- FX3-5-audit-sim, ready (2026-11-23). Branch `claude/fix-sim`. Pre-check at c333f546: PASS ("All checks passed.", 22:24Z, recorded); `ready_sha` c333f546 is in `docs/progress/status/FX3.json`. Main merged at c333f546 (lead cycles 165 and 166, docs/progress bookkeeping only, no conflict). Main has since gained lead cycle 167 and the FX1-4-holds-codex merge (e2e8f5a1, server files and FX1's, none of this task's); not merged, so the pre-checked sha stays the ready one.
   - **Commits.** Claim 039be74f; fail-first tests f32be7db (every proof fails there); fixes f08f52b9; findings commit c7878bcf.
   - **Findings.** `docs/security/audit-2026-11/sim.md`, in the report's format, with its line references against f32be7db (pre-fix code).
     - SIM-1 (Medium): `sees_body` ignored bushes, thickets and lanterns for a knocked-out guard (§12.8 v3.3).
