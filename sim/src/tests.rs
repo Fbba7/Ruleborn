@@ -2634,7 +2634,8 @@ fn an_island_keeps_to_5_2_and_6_1_or_is_not_published() {
         }
     }
     assert!(landing.landings().is_empty());
-    assert_eq!(landing.check(), vec![Problem::LandingBlocked, Problem::EdgeClosed]);
+    // The entrance, (11, 11), is an edge tile too, now under a pillar (RB-40).
+    assert_eq!(landing.check(), vec![Problem::LandingBlocked, Problem::EdgeClosed, Problem::EntranceBlocked]);
 
     // F51: each side keeps half its tiles open. The north side is twelve
     // tiles; six closed is still half open, seven is not.
@@ -6011,6 +6012,28 @@ fn the_lantern_wisps_reveal_shows_what_is_hidden_within_six_tiles_for_six_second
 }
 
 #[test]
+fn rb45_a_slowed_clock_still_catches_whoever_is_inside_at_the_last_tick() {
+    // RB-45: §12.6, "Anyone still inside when the clock ends is caught". The
+    // replay stops after its clock's ticks whatever the clock rate, so a
+    // clock slowed by an inverted Haste whose pylon then breaks ends there.
+    let mut world = sage_world(&["stormhound"], 2);   // the Tinkerer: Invert first
+    world.clock = 30 * TICKS_PER_SECOND;
+    world.weave(&[("haste", (3, 4))]);
+    world.step();
+    call_at(&mut world, 0, 3, 4);
+    world.step();
+    assert_eq!(world.sheet.factor(Param::ClockRate), (4, 5), "the clock slowed");
+    run_for(&mut world, 5 * TICKS_PER_SECOND);
+    world.laws[0].broken_at = Some(world.tick);
+    while world.tick < world.clock {
+        world.step();
+    }
+    assert!(world.clock_run < world.clock as u64 * 1000, "the slowed clock has not run its 30 s");
+    assert_eq!(world.raiders[0].standing, Standing::Caught, "inside at the replay's last tick");
+    assert_eq!(world.outcome().caught, 1);
+}
+
+#[test]
 fn invert_turns_a_law_into_its_opposite_for_ten_seconds() {
     let mut world = sage_world(&["stormhound"], 2);   // the Tinkerer: Invert first
     world.weave(&[("haste", (3, 4))]);
@@ -6144,6 +6167,51 @@ fn what_a_half_brings_out_is_banked_and_the_half_is_never_counted_as_crew() {
     world.raiders[1].standing = Standing::Caught;
     let o = world.outcome();
     assert_eq!((o.banked, o.caught, o.left), (26, 0, 25));
+}
+
+#[test]
+fn rb44_a_split_and_rejoined_mite_does_not_hold_the_report_to_the_whole_clock() {
+    // RB-44: "held" is the seconds to the last crew member out or caught
+    // (§13.2). The Prism mite's half is a raider of its own but never one of
+    // the crew, and a half that rejoins logs neither Out nor Caught.
+    use crate::events::Event;
+    let mut world = kinds_world(&["prism_mite", "stormhound", "quarryback"]);
+    fire_at(&mut world, 0, 2, 10);
+    world.step();
+    run_for(&mut world, ruleborn::SPLIT_TICKS);
+    assert_eq!((world.raiders.len(), world.raiders[3].standing), (4, Standing::Gone), "split and rejoined");
+    for crew in 0..3u8 {
+        world.raiders[crew as usize].standing = Standing::Out;
+        world.log.push(300, Event::Out { crew, carried: 0 });
+    }
+    let report = world.report(&crate::island::Island::example());
+    assert_eq!(report.held as u32, 300 / TICKS_PER_SECOND, "all three out at tick 300");
+}
+
+#[test]
+fn rb44_a_crossings_reports_count_only_the_crew_for_held() {
+    // RB-44, in `Crossing::reports`: the same count across a universe.
+    use crate::events::Event;
+    use crate::universe::{Crossing, LinkKind};
+    let (u, islands) = two_realms(LinkKind::Stone);
+    let land = crate::reference::competent_universe(&u, &islands, 1, 3, None, None, None).unwrap().commands[0];
+    let heist = Heist { seed: 1, island: u.digest(), rules: crate::rules_version(), ticks: 4_950, crew: 3, era: None,
+                        manifest: None, commands: vec![Command { tick: 0, ..land }], checksums: Vec::new() };
+    let mut c = Crossing::new(&u, &islands, &heist).unwrap();
+    c.step();
+    // A Prism mite's half, rejoined: a fourth raider, gone, never crew.
+    let mut half = c.world.raiders[0].clone();
+    half.half_of = Some(0);
+    half.standing = Standing::Gone;
+    c.world.raiders.push(half);
+    for crew in 0..3u8 {
+        c.world.raiders[crew as usize].standing = Standing::Out;
+        c.world.log.push(300, Event::Out { crew, carried: 0 });
+    }
+    let reports = c.reports();
+    assert!(!reports.is_empty());
+    assert!(reports.iter().all(|r| r.1.held as u32 == 300 / TICKS_PER_SECOND), "all three out at tick 300: {:?}",
+            reports.iter().map(|r| r.1.held).collect::<Vec<_>>());
 }
 
 // -- Casts and the Wanderer's Copy: laws that hold inside a circle (TD.12) ------
@@ -6794,4 +6862,154 @@ fn laws_flicker_off_for_two_seconds_in_an_overloaded_universe_every_ten_seconds_
     assert!(counts[1] * 100 > draws * 24 * 2 && counts[1] * 100 < draws * 24 * 9, "about 5%: {counts:?}");
     assert!(counts[2] > counts[1] * 3 / 2, "twice as often: {counts:?}");
     assert_eq!(blinks(1, 3), blinks(1, 3), "the same heist flickers the same everywhere");
+}
+
+#[test]
+fn rb40_an_entrance_in_a_wall_or_on_the_vault_is_not_published() {
+    // RB-40: the alarm-5 Warden spawns at the entrance, so an entrance in a
+    // wall or on the Vault weakens the alarm-5 penalty. The gate refuses it.
+    use crate::island::Island;
+    let open = Island::example_open();
+    assert_eq!(open.check(), vec![]);
+    let mut walled = open.clone();
+    walled.entrance = (0, 5);                             // the ruin wall
+    assert!(!walled.check().is_empty(), "an entrance in the ruin wall: {:?}", walled.check());
+    let mut vault = open.clone();
+    vault.entrance = vault.vault;
+    assert!(!vault.check().is_empty(), "an entrance on the Vault: {:?}", vault.check());
+}
+
+#[test]
+fn rb50_weaving_a_law_onto_the_vault_is_refused_and_keeps_the_law() {
+    // RB-50: the builder's law tool on the Vault took the law away.
+    use crate::island::Island;
+    let mut island = Island::example_open();
+    assert!(island.weave("haste", 1, 10));
+    let (vx, vy) = island.vault;
+    assert!(!island.weave("haste", vx, vy), "the Vault cannot be covered");
+    assert_eq!(island.laws, vec![("haste".to_string(), 1, 10)], "the law stays where it was");
+}
+
+#[test]
+fn rb57_a_ward_or_pylon_on_a_guard_in_tall_grass_replaces_the_grass_too() {
+    // RB-57: claim cleared the guard and left the grass under it, so the
+    // ward or pylon put there made the island Crowded.
+    use crate::heist::WardKind;
+    use crate::island::{Island, Post};
+    let mut island = Island::example_open();
+    assert_eq!(island.tile(2, 7).and_then(|t| t.feature), Some(crate::grid::Feature::TallGrass));
+    island.guards.push(Post { row: 0, x: 2, y: 7, facing: 0 });  // hidden in the grass
+    assert_eq!(island.check(), vec![]);
+    let mut ward = island.clone();
+    assert!(ward.place_ward(WardKind::TimeSnare, 2, 7));
+    assert_eq!((ward.guards.len(), ward.tile(2, 7).and_then(|t| t.feature)), (0, None));
+    assert_eq!(ward.check(), vec![], "the ward replaced whatever stood there");
+    let mut pylon = island.clone();
+    assert!(pylon.weave("haste", 2, 7));
+    assert_eq!((pylon.guards.len(), pylon.tile(2, 7).and_then(|t| t.feature)), (0, None));
+    assert_eq!(pylon.check(), vec![], "the pylon replaced whatever stood there");
+}
+
+#[test]
+fn candidate_7_the_same_law_twice_is_not_published() {
+    // Bug report, unproven candidate 7: one law on two pylons passed the
+    // gate, and the sheet applied it twice (guard speed 5/4 became
+    // 441/256). A realm weaves each law once.
+    use crate::island::Island;
+    let mut twice = Island::example();
+    assert_eq!(twice.laws.len(), 2);
+    twice.laws[1].0 = twice.laws[0].0.clone();            // haste at (1, 10) and (11, 2)
+    assert!(Island::decode(&twice.encode()).is_err() || !twice.check().is_empty(),
+            "the same law twice passes the gate: {:?}", twice.check());
+}
+
+#[test]
+fn candidate_34_a_tunnel_mouth_under_a_raised_wall_is_no_way_out() {
+    // Bug report, unproven candidate 34: a crew's Crystal Wall raised on a
+    // tunnel's far mouth still let routes come up through it, into the wall.
+    let mut world = vault_world(1);
+    for y in 0..14 {
+        world.grid.place(4, y, Feature::RockPillar);
+    }
+    let at = |w: &World, x, y| w.grid.index(x, y).unwrap();
+    let (from, to) = (at(&world, 2, 2), at(&world, 8, 2));
+    world.grid.dig_tunnel(at(&world, 3, 2), at(&world, 6, 2));
+    assert!(path::find_through(&world.grid, from, to).is_some(), "through the tunnel");
+    world.grid.set_raised(at(&world, 6, 2), true);
+    let route = path::find_through(&world.grid, from, to);
+    assert!(route.as_ref().is_none_or(|r| r.iter().all(|&t| world.grid.at(t).passable())),
+            "a route comes up into the raised wall: {route:?}");
+}
+
+/// The byte at which a replay's first command's tick delta starts: the
+/// header's length, which a copy of the heist with no commands and no
+/// checksums encodes to exactly.
+fn first_delta_at(heist: &Heist) -> usize {
+    Heist { commands: Vec::new(), checksums: Vec::new(), ..heist.clone() }.encode().len()
+}
+
+#[test]
+fn rb54_a_tick_delta_past_u32_is_refused_not_wrapped() {
+    // Bug report RB-54: `delta as u32` truncated the varint before
+    // `checked_add`, so 2^32 + d decoded as d, the same heist.
+    let heist = fixture(3, 600, 3);
+    let bytes = heist.encode();
+    let at = first_delta_at(&heist);
+    let d = heist.commands[0].tick as u64;
+    assert!(d < 0x80, "the fixture's first delta is one byte");
+    let mut wide = bytes[..at].to_vec();
+    let mut value = (1u64 << 32) + d;
+    loop {
+        let byte = (value & 0x7f) as u8;
+        value >>= 7;
+        if value == 0 {
+            wide.push(byte);
+            break;
+        }
+        wide.push(byte | 0x80);
+    }
+    wide.extend_from_slice(&bytes[at + 1..]);
+    assert!(Heist::decode(&wide).is_none(), "2^32 + {d} decodes as {d}");
+}
+
+#[test]
+fn rb54_a_padded_varint_is_refused() {
+    // Bug report RB-54: a varint padded with a trailing zero byte decoded to
+    // the same value, a second byte string for one heist.
+    let heist = fixture(3, 600, 3);
+    let bytes = heist.encode();
+    let at = first_delta_at(&heist);
+    assert!(bytes[at] < 0x80, "the fixture's first delta is one byte");
+    let mut padded = bytes[..at].to_vec();
+    padded.extend_from_slice(&[bytes[at] | 0x80, 0x00]);
+    padded.extend_from_slice(&bytes[at + 1..]);
+    assert!(Heist::decode(&padded).is_none(), "a padded varint decodes");
+    // Ten bytes whose last bit falls past u64's 64th: the same value again.
+    let mut long = bytes[..at].to_vec();
+    long.push(bytes[at] | 0x80);
+    long.extend_from_slice(&[0x80; 8]);
+    long.push(0x02);
+    long.extend_from_slice(&bytes[at + 1..]);
+    assert!(Heist::decode(&long).is_none(), "a varint whose high bits fall off decodes");
+}
+
+#[test]
+fn rb55_a_command_for_actor_16_still_records_a_replay_that_round_trips() {
+    // Bug report RB-55: the replay packs the actor in four bits, so a
+    // command for actor 16 came back as actor 0 and the replay diverged.
+    use crate::island::Island;
+    use crate::{record_in, verify_on};
+    let island = Island::example_open();
+    let (vx, vy) = (island.vault.0 as i16, island.vault.1 as i16);
+    let mut commands = crate::draw(&island, 7, crate::MIN_TICKS, 3);
+    let after_landing = commands.iter().position(|c| c.tick > 0).unwrap_or(commands.len());
+    commands.insert(after_landing, Command { tick: 1, actor: 16, kind: Kind::MoveTo, x: vx * 256 + 128, y: vy * 256 + 128 });
+    assert!(commands.windows(2).all(|w| w[0].tick <= w[1].tick));
+    let heist = record_in(&island, 7, crate::MIN_TICKS, 3, None, commands);
+    let back = Heist::decode(&heist.encode()).expect("a recorded heist decodes");
+    // The replay is the record: what it keeps must come back as written,
+    // never as another crew member.
+    assert!(heist.commands.iter().all(|c| c.actor < 16), "the recorded heist keeps a command for an actor past 15");
+    assert_eq!(back.commands, heist.commands, "the recorded replay round-trips");
+    assert!(verify_on(&island, &back).is_ok(), "{:?}", verify_on(&island, &back).err());
 }

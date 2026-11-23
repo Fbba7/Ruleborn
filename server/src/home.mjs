@@ -366,10 +366,12 @@ export class Home {
    *  level's rate, a slot's share for each worker from five minutes after it
    *  started, §9.3's laws working at `at` — "1 + 0.10 per realm law of a
    *  matching school + 0.05 per matching crown law" — the realm's school
-   *  (§5.2) and the worker's bonuses (§9.2). */
-  rate(account, realm, kind, at) {
+   *  (§5.2) and the worker's bonuses (§9.2). With `ahead`, also `ahead`:
+   *  those workers and the ones resting at `at`, each counting from the end
+   *  of its rest, for when the store fills (RB-21). */
+  rate(account, realm, kind, at, { ahead = false } = {}) {
     const b = this.building(account, realm, kind);
-    if (!b) return { level: null, workers: [], perHour: 0 };
+    if (!b) return { level: null, workers: [], perHour: 0, ...(ahead ? { ahead: [] } : {}) };
     const lv = PRODUCERS[kind][b.level - 1];
     const resource = RESOURCE[kind];
     const type = this.universe.realms(account).find((r) => r.realm === realm)?.type;
@@ -388,16 +390,19 @@ export class Home {
       * laws * band * cut;
     // §11.6: "A character on a heist isn't working or guarding", nor while
     // it rests after one.
-    const workers = this.characters(account)
-      .filter((c) => c.work_realm === realm && c.work_kind === kind && !away(c, at))
+    const staff = this.characters(account)
+      .filter((c) => c.work_realm === realm && c.work_kind === kind)
       .map((c) => {
         let bonus = schoolsOf(resource).includes(RULEBORN[c.kind].school) ? facts.WORKER_SCHOOL_BONUS : 0;
         for (const t of c.traits) if (WORK[t] && (WORK[t].at === null || WORK[t].at === kind)) bonus += WORK[t].share;
-        return { id: c.id, from: c.work_since + facts.PRODUCTION_START_MINUTES * MINUTE,
+        const from = c.work_since + facts.PRODUCTION_START_MINUTES * MINUTE;
+        return { id: c.id, from: away(c, at) ? Math.max(from, c.away_until) : from, resting: away(c, at),
                  perHour: (lv.hourly * boost * (1 + bonus)) / lv.slots };
       });
+    const workers = staff.filter((w) => !w.resting).map(({ resting, ...w }) => w);
     const perHour = workers.filter((w) => w.from <= at).reduce((s, w) => s + w.perHour, 0);
-    return { level: b.level, lv, workers, perHour, boost, resource, built: b.changed_at, band: stability.band, fault };
+    return { level: b.level, lv, workers, perHour, boost, resource, built: b.changed_at, band: stability.band, fault,
+             ...(ahead ? { ahead: staff.map(({ resting, ...w }) => w) } : {}) };
   }
 
   /** A producer's store brought up to `now`, in thousandths, and written:
@@ -654,7 +659,8 @@ export class Home {
   /** Why `ids` cannot be the crew of the heist a replay records, or null:
    *  each a character the player holds, none twice, none away, as many as
    *  the replay's crew, and — when the replay carries §12.5's manifest —
-   *  each member's kind, level and traits the character's (TD.34). */
+   *  each member's kind, form, level and traits the character's (TD.34,
+   *  RB-25). */
   crewProblem(account, ids, replay, header, now) {
     if (!Array.isArray(ids) || ids.length !== header.crew || new Set(ids).size !== ids.length) return "crew_mismatch";
     const mine = this.characters(account);
@@ -665,10 +671,10 @@ export class Home {
     if (header.manifest) {
       if (!manifest) return "crew_mismatch";
       for (const [i, c] of crew.entries()) {
-        const { kind, level, traits } = manifest.members[i];
+        const { kind, form, level, traits } = manifest.members[i];
         const want = c.traits.map((t) => TRAIT_INDEX[t]);
-        if (kind !== KIND_INDEX[c.kind] || level !== c.level || traits.length !== want.length
-            || traits.some((t, j) => t !== want[j])) return "crew_mismatch";
+        if (kind !== KIND_INDEX[c.kind] || form !== formIndex(c) || level !== c.level
+            || traits.length !== want.length || traits.some((t, j) => t !== want[j])) return "crew_mismatch";
       }
     }
     return null;
@@ -824,7 +830,7 @@ export class Home {
     const crown = (working.crown ?? []).map((w) => w.law);
     for (const b of this.universe.buildings(account)) {
       if (PRODUCERS[b.kind]) {
-        const r = this.rate(account, b.realm, b.kind, now);
+        const r = this.rate(account, b.realm, b.kind, now, { ahead: true });
         const row = this.db.prepare("SELECT * FROM producers WHERE owner = ? AND realm = ? AND kind = ?")
           .get(account, b.realm, b.kind) ?? { stored: 0, settled_at: b.changed_at };
         const made = this.made(account, b.realm, b.kind, row.settled_at, now);
@@ -832,7 +838,7 @@ export class Home {
         producers.push({ realm: b.realm, kind: b.kind, level: b.level, resource: r.resource, slots: r.lv.slots,
                          workers: r.workers.map((w) => w.id), per_hour: Math.round(r.perHour),
                          stored: Math.min(holds, Math.floor((row.stored + made) / 1000)), holds,
-                         full_at: fullAt(row.stored + made, holds * 1000, r.workers, now),
+                         full_at: fullAt(row.stored + made, holds * 1000, r.ahead, now),
                          // §5.5's band, 0 Quiet to 6 Breaking, and whether a
                          // fault opens from this realm (§9.3).
                          band: r.band, fault: r.fault });

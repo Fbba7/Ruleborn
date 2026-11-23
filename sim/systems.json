@@ -62,7 +62,10 @@
         "verification_names_the_second_that_diverges",
         "commands_are_what_drives_the_crew",
         "a_command_for_a_crew_member_who_is_not_there_is_dropped",
-        "commands_given_live_record_the_same_heist_as_the_log_they_make"
+        "commands_given_live_record_the_same_heist_as_the_log_they_make",
+        "rb54_a_tick_delta_past_u32_is_refused_not_wrapped",
+        "rb54_a_padded_varint_is_refused",
+        "rb55_a_command_for_actor_16_still_records_a_replay_that_round_trips"
       ]
     },
     {
@@ -97,7 +100,8 @@
         "every_crew_member_on_the_island_is_logged_once_a_second",
         "the_log_is_outside_the_checksum",
         "the_decisive_moment_is_chosen_by_twelve_thirteens_rule",
-        "every_golden_heist_has_a_decisive_moment"
+        "every_golden_heist_has_a_decisive_moment",
+        "rb44_a_split_and_rejoined_mite_does_not_hold_the_report_to_the_whole_clock"
       ]
     },
     {
@@ -219,7 +223,8 @@
         "a_route_into_a_wall_is_refused_rather_than_approximated",
         "the_same_route_is_found_every_time_and_by_both_ends_of_the_grid",
         "slow_ground_does_not_move_the_route",
-        "slow_ground_does_change_how_long_the_walk_takes"
+        "slow_ground_does_change_how_long_the_walk_takes",
+        "candidate_34_a_tunnel_mouth_under_a_raised_wall_is_no_way_out"
       ]
     },
     {
@@ -483,7 +488,8 @@
         "the_four_grades_follow_12_9",
         "the_planned_heist_ends_clean_with_every_bag_full",
         "loading_stops_when_the_clock_left_only_covers_getting_out",
-        "dropping_loot_costs_exactly_the_fraction_dropped"
+        "dropping_loot_costs_exactly_the_fraction_dropped",
+        "rb45_a_slowed_clock_still_catches_whoever_is_inside_at_the_last_tick"
       ]
     },
     {
@@ -712,7 +718,8 @@
         "a_rift_on_the_route_holds_the_crew_thirty_seconds_after_an_alarm_in_the_realm",
         "rb29_a_realms_alarm_counts_from_when_the_crew_arrives",
         "a_crew_entering_at_a_fault_jumps_through_the_crack_to_the_hearts_entrance_on_its_realms_clock",
-        "laws_flicker_off_for_two_seconds_in_an_overloaded_universe_every_ten_seconds_at_cracking_and_five_at_breaking"
+        "laws_flicker_off_for_two_seconds_in_an_overloaded_universe_every_ten_seconds_at_cracking_and_five_at_breaking",
+        "rb44_a_crossings_reports_count_only_the_crew_for_held"
       ]
     },
     {
@@ -723,7 +730,11 @@
       "tests": [
         "an_island_keeps_to_5_2_and_6_1_or_is_not_published",
         "a_blank_island_is_publishable_and_round_trips",
-        "an_edited_island_is_one_the_format_can_write_and_check_can_judge"
+        "an_edited_island_is_one_the_format_can_write_and_check_can_judge",
+        "rb40_an_entrance_in_a_wall_or_on_the_vault_is_not_published",
+        "rb50_weaving_a_law_onto_the_vault_is_refused_and_keeps_the_law",
+        "rb57_a_ward_or_pylon_on_a_guard_in_tall_grass_replaces_the_grass_too",
+        "candidate_7_the_same_law_twice_is_not_published"
       ]
     },
     {

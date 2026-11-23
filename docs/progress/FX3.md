@@ -1,36 +1,46 @@
 # FX3 simulation fixes: progress
 
-- Status: Waiting. FX3-1-heal-alarm is ready at the pre-checked sha in `docs/progress/status/FX3.json`.
-- Progress: FX3-1-heal-alarm: RB-28 (Regrowth heals a Vault up to its own level's health) and RB-29 (a realm's alarm counts from the crew's arrival). Each has a fail-first test in `sim/src/tests.rs`, committed before its fix.
-- Done: `cargo test` in `sim` 338 of 338, golden replays still verify (no rebake); `cd server && npm test` 535 of 535; `owners.py diff` passes.
-- Next: the lead's merge, then FX3-2-island in a fresh session.
+- Status: Waiting. FX3-3-clock-report is ready at 9aa26794 (pre-check PASS at 19:52Z, recorded). FX3-2-island merged.
+- Progress: FX3-3-clock-report: RB-44 (a split Prism mite held the defender's report to the whole clock), RB-45 (a slowed clock never caught the crew still inside), RB-19 (an older pinned build could not load). Each has a fail-first test, committed before its fix.
+- Done: `cargo test` in `sim` 346 of 346, golden replays still verify (no rebake); `cd server && npm test` 562 of 562; `python3 sim/status.py` every gate holds.
+- Next: the lead's merge, then the next FX3 task in a fresh session.
 - Blocked by: none.
 - Owner decision needed: none.
 
 | Deliverable | Weight (h) | Status | Evidence |
 |---|---:|---|---|
-| FX3-1-heal-alarm: RB-28 and RB-29 | 3.0 | ready | `sim/src/tests.rs` `rb28_regrowth_heals_a_vault_up_to_its_own_levels_health`, `rb29_a_realms_alarm_counts_from_when_the_crew_arrives`; `sim/src/heist.rs`, `sim/src/lib.rs`, `sim/src/universe.rs` |
+| FX3-1-heal-alarm: RB-28 and RB-29 | 3.0 | merged | lead cycle 158 |
+| FX3-2-island: RB-40, RB-50, RB-57, candidates 7 and 34 | 4.0 | merged | `sim/src/tests.rs` `rb40_an_entrance_in_a_wall_or_on_the_vault_is_not_published`, `rb50_weaving_a_law_onto_the_vault_is_refused_and_keeps_the_law`, `rb57_a_ward_or_pylon_on_a_guard_in_tall_grass_replaces_the_grass_too`, `candidate_7_the_same_law_twice_is_not_published`, `candidate_34_a_tunnel_mouth_under_a_raised_wall_is_no_way_out`; `sim/src/island.rs`, `sim/src/path.rs`, `server/src/sim.mjs` |
+| FX3-3-clock-report: RB-44, RB-45, RB-19 | 3.0 | ready | `sim/src/tests.rs` `rb44_a_split_and_rejoined_mite_does_not_hold_the_report_to_the_whole_clock`, `rb44_a_crossings_reports_count_only_the_crew_for_held`, `rb45_a_slowed_clock_still_catches_whoever_is_inside_at_the_last_tick`; `server/test/fix_fx3_older_build.test.mjs`; `sim/src/lib.rs`, `sim/src/universe.rs`, `server/src/sim.mjs` |
 
 ## Handoff
-- FX3-1-heal-alarm, ready (2026-11-21). Branch `claude/fix-sim`. The pre-check result and `ready_sha` are in `docs/progress/status/FX3.json`.
-  - **RB-28.** `World::heal` capped the Vault at `heist::VAULT_HEALTH_PER_LEVEL` (1,500), so Regrowth's first heal cut a level-10 Vault from 15,000 to 1,500. The Vault now keeps `full` (1,500 a level, set where the island's Vault is built), and healing stops there.
-    - Test commit a10dc9ee, fix commit 1ab25511. The test fails on main:
+- FX3-3-clock-report, ready (2026-11-21). Branch `claude/fix-sim`. Pre-check at 9aa26794: PASS ("All checks passed.", 19:52Z, recorded); `ready_sha` 9aa26794 is in `docs/progress/status/FX3.json`. Main merged at 9aa26794 (lead cycle 160's files only, no conflict). Main has since gained lead cycle 161 (91ab2a52, bookkeeping only); not merged, so the pre-checked sha stays the ready one.
+  - **RB-44.** `World::report` and `Crossing::reports` set `held` to the whole clock unless every raider in `raiders` was Out or Caught. A Prism mite's half is appended to `raiders` and retired as `Gone` at the rejoin, logging neither, so after any split the defence "held" for the whole clock. A new `World::crew_all_in` counts only the crew (raiders with no `half_of`); both reports use it.
+    - Test commit 596289a8, fix commit 6e610477. The tests fail on main:
       ```
-      assertion `left == right` failed: an untouched Vault stays at full health
-        left: 1500
-       right: 15000
+      assertion `left == right` failed: all three out at tick 300
+        left: 65535
+       right: 10
       ```
-    - With the fix, a Vault at 10,000 heals 2% of 15,000 a second (10,300 after one second). The existing level-1 test (`regrowth_heals_guards_pylons_and_the_vault_and_revives_nothing`) is unchanged and passes.
-  - **RB-29.** The alarm climbed with `now / ALARM_STEP_TICKS`, counting from the heist's first tick. A crew crossing into a second realm 151 s in therefore arrived at alarm 5, already reinforced. `World` now has `alarm_from`, the tick the crew first entered the realm, and the alarm climbs with `now - alarm_from`. `Crossing::go` sets it when it builds a realm's world on first entry. The landing realm keeps 0, so a single-realm heist is unchanged.
-    - Test commits 9ea01d54 and c49f223c, fix commit 80fce5b2. The test fails on main, matching the report's "alarm 5 reinforced true guards 2 -> 3":
+      (the test world's clock is unbounded, so the whole clock reads as the clamp), and for the crossing:
       ```
-      assertion `left == right` failed: the Heart's alarm on the crew's first tick there
-        left: (5, true, 3)
-       right: (0, false, 2)
+      all three out at tick 300: [165]
       ```
-    - **The test was corrected once, before the fix.** Its 30-second check first stepped `ALARM_STEP_TICKS` times. The last step's `now` is then 899 ticks after arrival, so the alarm reads 0 even with the fix. c49f223c steps `0..=ALARM_STEP_TICKS`. On main that check still fails, with the alarm at 3.
-    - **A design choice to confirm.** A realm the crew comes back to keeps the `alarm_from` of its first arrival: its alarm goes on counting from then, not from the return. The design (§12.17) and the harness cover only forward legs, so nothing tests a return. If the lead wants a return to reset the count, it is a one-line change in `Crossing::go`.
-  - **Goldens.** Neither fix changes a golden outcome: `golden_replays_still_verify` passes, and no `sim/golden/*.rbh` was rebaked.
-  - **Existing tests.** No existing test was changed, skipped or loosened.
-  - **Merge evidence.** Main was merged at bdc0ba84. It brought lead files only (backlog, lead.md, lead-archive.md, owner-inbox.md, requests.md, status/lead.json) and no conflict. `owners.py diff FX3-1-heal-alarm origin/claude/videogame-project-analysis-ewkkk2 bdc0ba84` reports "every changed path is inside its files".
-  - **Next.** FX3-2-island, in a fresh session.
+  - **RB-45.** §12.6's catch at the clock's end ran only when `clock_run` reached `clock * 1000`. An inverted Haste runs the clock at 4/5, so it never got there before the replay's last tick, and whoever was inside was never caught. The catch now also runs on the replay's last tick (`now + 1 >= clock`). At the normal rate `clock_run` reaches `clock * 1000` on that same tick, so an unslowed heist is unchanged; a quickened one still ends early as before.
+    - Test commit 1601e5cb, fix commit 2fe3eb44. The test fails on main:
+      ```
+      assertion `left == right` failed: inside at the replay's last tick
+        left: Active
+       right: Caught
+      ```
+  - **RB-19.** `Build`'s trap-wrapping loop read each method as `this[name]`, which ran the `buildingKinds` and `footprints` getters at load, and a build without `rb_building_kinds` threw. The loop now reads `Object.getOwnPropertyDescriptor(Build.prototype, name).value`, as the report proposes, so getters are skipped (they were never wrapped anyway: their value is not a function).
+    - Test commit 7fc59edd, fix commit 5e792a71. The test makes the older build from this checkout's by renaming the `rb_building_kinds` export to a same-length name, so the module stays valid. It fails on main:
+      ```
+      error: 'this.x.rb_building_kinds is not a function'
+      name: 'TypeError'
+      ```
+  - **Goldens.** No fix changes a golden outcome: `golden_replays_still_verify` passes, and no `sim/golden/*.rbh` was rebaked.
+  - **`sim/systems.json`.** 35a69624 lists the RB-44 tests under Event log and Universes and the RB-45 test under The skiff, the clock and the outcome. It also commits the `sim/status.json` that `status.py` rewrote, whose only change is three new "passed" lines.
+  - **No existing test was changed.**
+  - **Owners.** `owners.py diff FX3-3-clock-report origin/claude/videogame-project-analysis-ewkkk2 9aa26794` reports "every changed path is inside its files".
+  - **Next.** The lead's merge; the next FX3 task in a fresh session.

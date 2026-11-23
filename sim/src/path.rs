@@ -116,7 +116,8 @@ pub fn find_through(grid: &Grid, from: TileIndex, to: TileIndex) -> Option<Route
             .filter(|&nb| grid.can_step(tile, nb))
             .map(|nb| (nb, 1))
             .collect();
-        if let Some(exit) = grid.tunnel_exit(tile) {
+        // A mouth under a raised wall is no way out (bug report candidate 34).
+        if let Some(exit) = grid.tunnel_exit(tile).filter(|&e| grid.at(e).passable()) {
             ways.push((exit, grid.walk_tiles(tile, exit) as u32));
         }
         for (next, cost) in ways {

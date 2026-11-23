@@ -3770,8 +3770,9 @@ impl World {
         }
 
         // §12.6: "Anyone still inside when the clock ends is caught and drops
-        // what it carries."
-        if self.clock_run >= self.clock as u64 * 1000 {
+        // what it carries." It ends when it has run, or on the replay's last
+        // tick, which a clock slowed below its rate never reaches (RB-45).
+        if self.clock_run >= self.clock as u64 * 1000 || now.saturating_add(1) >= self.clock {
             for raider in self.raiders.iter_mut() {
                 if matches!(raider.standing, Standing::Active | Standing::Down) {
                     raider.standing = Standing::Caught;
@@ -5411,7 +5412,10 @@ pub fn record_in(island: &island::Island, seed: u64, ticks: u32, crew: u8, era: 
 /// `record_in`, with §12.5's crew manifest when the heist carries one.
 pub fn record_with(island: &island::Island, seed: u64, ticks: u32, crew: u8,
                    era: Option<era::Era>, manifest: Option<replay::Manifest>,
-                   commands: Vec<Command>) -> Heist {
+                   mut commands: Vec<Command>) -> Heist {
+    // The replay packs the actor in four bits: a command for actor 16 or
+    // above names no crew member, so it is not recorded as one (RB-55).
+    commands.retain(|c| c.actor < 16);
     let mut heist = Heist {
         seed,
         island: island.digest(),
@@ -5944,6 +5948,12 @@ impl Report {
 }
 
 impl World {
+    /// Every crew member, not counting a Prism mite's halves, is in `done`:
+    /// out or caught.
+    pub fn crew_all_in(&self, done: &std::collections::BTreeSet<u8>) -> bool {
+        self.raiders.iter().enumerate().filter(|(_, r)| r.half_of.is_none()).all(|(i, _)| done.contains(&(i as u8)))
+    }
+
     /// `Report` from this world's log, the island it was played on beside it.
     pub fn report(&self, island: &island::Island) -> Report {
         use events::{Cause, Event, Hurt};
@@ -6000,8 +6010,9 @@ impl World {
             }
         }
         // Everyone out or caught before the clock: the last of them; else
-        // the clock itself.
-        let ended = if done.len() >= self.raiders.len() { last } else { self.clock };
+        // the clock itself. The crew only: a Prism mite's half is a raider
+        // but never crew, and one that rejoins logs neither (RB-44).
+        let ended = if self.crew_all_in(&done) { last } else { self.clock };
         r.held = (ended / TICKS_PER_SECOND).min(u16::MAX as u32) as u16;
         let posts = island.guards.len();
         r.slept = (0..posts as u16).filter(|g| !noticed.contains(g)).count() as u8;

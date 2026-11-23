@@ -444,10 +444,11 @@ export class Service {
     if (holders.length === 0) {
       // A snapshot no island is on any more is an echo for 14 days (§12.3:
       // "Robbing an echo takes nothing from its owner"), and after that not
-      // a target at all.
+      // a target at all. The game's generated islands are no echoes
+      // (generator.mjs: "Yesterday's are no echoes", RB-12).
       const by = this.db.prepare("SELECT banned_at, deleted_at FROM accounts WHERE id = ?").get(snapshot.owner);
       const days = facts.ECHO_DAYS * 24 * 60 * 60 * 1000;
-      if (trace || snapshot.owner === attacker || by.banned_at || by.deleted_at
+      if (trace || snapshot.owner === attacker || snapshot.owner === GENERATOR || by.banned_at || by.deleted_at
           || now - snapshot.published_at > days) {
         throw new Refused(410, "superseded");
       }
@@ -462,7 +463,15 @@ export class Service {
       if (echo || trace) throw new Refused(410, "superseded");
       if (!this.friends.areFriends(attacker, defender)) throw new Refused(403, "not_friends");
     } else if (trace) {
-      traceOf = this.matchmaking.traceable(attacker, defender, now);
+      // A Trace asked for again while one is held is handed back (§24.13),
+      // though traceable() no longer finds its robbery: the held one names
+      // it (RB-14). Only the newest lease on the bundle can be held (issue).
+      const newest = this.db.prepare(
+        "SELECT token, trace_of, expires_at FROM leases WHERE attacker = ? AND bundle = ? ORDER BY issued_at DESC LIMIT 1")
+        .get(attacker, bundle);
+      const heldTrace = newest?.trace_of && newest.expires_at > now
+        && !this.db.prepare("SELECT 1 FROM heists WHERE token = ?").get(newest.token) ? newest.trace_of : null;
+      traceOf = this.matchmaking.traceable(attacker, defender, now) ?? heldTrace;
       if (!traceOf) throw new Refused(403, "nothing_to_trace");
     } else if (this.matchmaking.shielded(defender, now)) {
       throw new Refused(403, "new_player_protected", { hours: facts.NEW_PLAYER_SHIELD_HOURS });
@@ -490,8 +499,11 @@ export class Service {
     const c = this.challenge(attacker, code);
     if (c.bundle !== bundle) throw new Refused(409, "not_this_challenge");
     if (c.account === attacker) throw new Refused(409, "own_island");
+    // Played: a submission the server validated. A refused one is no play
+    // (RB-16); seed re-rolls stay capped by the refusal limits (issue).
     const played = this.db.prepare(
-      "SELECT 1 FROM leases l JOIN heists h ON h.token = l.token WHERE l.attacker = ? AND l.challenge = ?")
+      `SELECT 1 FROM leases l JOIN heists h ON h.token = l.token
+        WHERE l.attacker = ? AND l.challenge = ? AND h.validated = 1`)
       .get(attacker, code);
     if (played) throw new Refused(409, "challenge_already_played");
     return this.issue(attacker, bundle, c.account, now, { mode: "challenge", challenge: code });
@@ -895,10 +907,13 @@ export class Service {
     // a player in a UTC day; any later one that day pays the raider's haul,
     // within their caps, and nothing else — so two players cannot mint
     // Renown, stars or shares by robbing or foiling each other on a loop.
+    // An echo takes nothing from its owner (§12.3, G30), so a raid on one
+    // counts only against other echo raids, never the pair's real one (RB-05).
     const pairEarlierToday = this.db.prepare(
       `SELECT COUNT(*) AS n FROM heists h JOIN leases l ON l.token = h.token
-        WHERE h.attacker = ? AND h.day = ? AND h.defender = ? AND l.mode = 'raid' AND h.validated = 1`)
-      .get(attacker, day(now), lease.defender).n;
+        WHERE h.attacker = ? AND h.day = ? AND h.defender = ? AND l.mode = 'raid' AND l.echo = ?
+          AND h.validated = 1`)
+      .get(attacker, day(now), lease.defender, lease.echo ? 1 : 0).n;
     const scores = !friendly && pairEarlierToday === 0;
     // The two Keeper levels the raid was played at, read once: the raider's
     // experience below may level them up, and nothing after it — the
@@ -954,8 +969,8 @@ export class Service {
       // one's stays with the game (G37).
       const foiledEarlierToday = this.db.prepare(
         `SELECT COUNT(*) AS n FROM heists h JOIN leases l ON l.token = h.token
-          WHERE h.attacker = ? AND h.day = ? AND h.defender = ? AND l.mode = 'raid' AND h.validated = 1
-            AND json_extract(h.outcome, '$.verdict.grade') = 'foiled'`)
+          WHERE h.attacker = ? AND h.day = ? AND h.defender = ? AND l.mode = 'raid' AND l.echo = 0
+            AND h.validated = 1 AND json_extract(h.outcome, '$.verdict.grade') = 'foiled'`)
         .get(attacker, day(now), lease.defender).n;
       if (foiledEarlierToday === 0) book("defender", "starlight", fee);
       const percent = this.seasons.defenceShare(this.seasons.current(now).id);

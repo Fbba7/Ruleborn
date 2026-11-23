@@ -163,7 +163,7 @@ export function crewed(t, account, lease, { plan = openPlan() } = {}) {
   const kinds = content("ruleborn").map((k) => k.id);
   const traits = content("traits").map((x) => x.id);
   const crew = t.service.home.show(account).characters.slice(0, 3);
-  const manifest = { members: crew.map((c) => ({ kind: kinds.indexOf(c.kind), level: c.level,
+  const manifest = { members: crew.map((c) => ({ kind: kinds.indexOf(c.kind), form: c.wire.form, level: c.level,
                                                  traits: c.traits.map((x) => traits.indexOf(x)) })),
                      sage: 0, casts: [] };
   return { replay: play(t, lease, { plan, manifest }), crew: crew.map((c) => c.id) };
