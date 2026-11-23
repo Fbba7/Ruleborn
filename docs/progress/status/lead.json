@@ -3,7 +3,14 @@
   "updated_at": "2026-11-23T21:45:00Z",
   "expected_next_update_by": "2026-11-24T00:45:00Z",
   "cycle": 166,
-  "merging": null,
+  "merging": {
+    "candidate_sha": "e2e8f5a1738195b7cf9930a385c5feab00f4a20e",
+    "task_ids": [
+      "FX1-4-holds-codex"
+    ],
+    "started_at": "2026-11-23T22:17:00Z",
+    "expires_at": "2026-11-23T23:17:00Z"
+  },
   "last_merged": {
     "task_id": "FX2-5-auth-lows",
     "sha": "5f1cc425"
