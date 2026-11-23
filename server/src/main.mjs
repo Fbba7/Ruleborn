@@ -64,6 +64,18 @@ import { GOOGLE_KEYS_URL, GameCenter, GoogleSignIn, appStoreNotification, receip
 import { rotateHoursOf } from "./auth.mjs";
 import { platformProofs } from "./auth_proofs.mjs";
 
+// A setting set but empty, as a deployment template's blank line leaves it,
+// is unset, so every `??` below takes its default: an empty RULEBORN_DELETIONS
+// would otherwise be the in-memory store and lose the journal at every restart
+// (AUD-B-14).
+function settled(env) {
+  for (const [name, value] of Object.entries(env)) {
+    if (name.startsWith("RULEBORN_") && value.trim() === "") delete env[name];
+  }
+  return env;
+}
+settled(process.env);
+
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, "..", "..");
 const data = process.env.RULEBORN_DATA ?? join(here, "..", ".data");
