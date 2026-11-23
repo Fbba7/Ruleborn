@@ -7,13 +7,13 @@
   "task_id": "FX1-6-audit-server-a",
   "task_state": "working",
   "claimed_at": "2026-11-23T22:25:00Z",
-  "lease_until": "2026-11-24T01:25:00Z",
-  "updated_at": "2026-11-23T22:26:03Z",
-  "expected_next_update_by": "2026-11-23T23:11:03Z",
+  "lease_until": "2026-11-24T01:36:18Z",
+  "updated_at": "2026-11-23T22:36:18Z",
+  "expected_next_update_by": "2026-11-23T23:21:18Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "9fe151ad16cf67cbd00fcbdf5f74c2853b353fbf",
-    "next_step": "FX1-6: FX1-A-01 fixed in matchmaking.mjs, FX1-A-02 proven (accounts.mjs, not owned); collecting the slices' findings, then server-a.md"
+    "last_green_sha": "533b793d",
+    "next_step": "FX1-6: proofs and owned fixes pushed (603/603 green); writing server-a.md, then checks"
   },
   "precheck": null,
   "gate_request": null,
@@ -49,6 +49,121 @@
       "created_at": "2026-11-21T19:21:15Z",
       "due": "2026-11-22T19:21:15Z",
       "default": "Keep the current-build check; no schema change",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "FX1-R3",
+      "from": "FX1",
+      "to": "lead",
+      "ask": "FX1-A-02: accounts.mjs erase() deletes a bundle's bytes that are still another player's snapshot or island, so their raids and holds lose the bundle. Fix: keep bytes that any other row still references.",
+      "files": [
+        "server/src/accounts.mjs"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-23T22:36:18Z",
+      "due": "2026-11-24T22:36:18Z",
+      "default": "Assign the fix to a task that owns accounts.mjs; the fix_fx1 test stays marked until then",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "FX1-R4",
+      "from": "FX1",
+      "to": "lead",
+      "ask": "FX1-A-10: limits.mjs peerKey keys an IPv6 address written in hex or full mapped form under one /64 of zeros ('0:0:0:0::/64'), so unrelated peers share a rate bucket; '::ffff:a.b.c.d' maps to the IPv4. Fix: parse with node:net's BlockList/SocketAddress normalisation before taking the /64.",
+      "files": [
+        "server/src/limits.mjs"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-23T22:36:18Z",
+      "due": "2026-11-24T22:36:18Z",
+      "default": "Assign to a task that owns limits.mjs",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "FX1-R5",
+      "from": "FX1",
+      "to": "lead",
+      "ask": "FX1-A-13: a heist on an island whose bundle another player published first is rated in the first publisher's realm. FX1-6 picks the defender's own realm for that bundle at grant(); the exact fix stores the realm on the lease at issue(), which needs [\"leases\",\"realm\",\"TEXT\"] in db.mjs's added columns.",
+      "files": [
+        "server/src/db.mjs",
+        "server/src/service.mjs"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-23T22:36:18Z",
+      "due": "2026-11-24T22:36:18Z",
+      "default": "Keep FX1-6's grant-time lookup; no schema change",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "FX1-R6",
+      "from": "FX1",
+      "to": "lead",
+      "ask": "FX1-A-15: seasons.mjs constellationTable returns [] for a season still open and for a season that never was, where result() refuses both. Fix: refuse the same way.",
+      "files": [
+        "server/src/seasons.mjs"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-23T22:36:18Z",
+      "due": "2026-11-24T22:36:18Z",
+      "default": "Assign to a task that owns seasons.mjs",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "FX1-R7",
+      "from": "FX1",
+      "to": "lead",
+      "ask": "FX1-A-16: links.mjs reuses a links number after the newest link is removed. Fix: a counter that only goes up.",
+      "files": [
+        "server/src/links.mjs"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-23T22:36:18Z",
+      "due": "2026-11-24T22:36:18Z",
+      "default": "Assign to a task that owns links.mjs",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "FX1-R8",
+      "from": "FX1",
+      "to": "lead",
+      "ask": "FX1-A-17: weaving.mjs counts a mastery step (codex.woven) when a weave starts, so a cancelled weave still counts. Fix: count it when the weave finishes. Knock-on: server/test/codex.test.mjs:211 expects the step at start and must change with the fix.",
+      "files": [
+        "server/src/weaving.mjs",
+        "server/test/codex.test.mjs"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-23T22:36:18Z",
+      "due": "2026-11-24T22:36:18Z",
+      "default": "Assign to a task that owns weaving.mjs and codex.test.mjs",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "FX1-R9",
+      "from": "FX1",
+      "to": "lead",
+      "ask": "FX1-A-09 (contested): offer() sets echoes=true whenever the list is thin, even with no echo to reach for. server/test/generated.test.mjs:56 asserts exactly that ('echoes first') with no echo candidate, so FX1-6 left it. Decide whether the flag means 'reached for echoes' or 'an echo was offered'.",
+      "files": [
+        "server/src/matchmaking.mjs",
+        "server/test/generated.test.mjs"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-23T22:36:18Z",
+      "due": "2026-11-24T22:36:18Z",
+      "default": "Leave as is; the flag means the list reached past live islands",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "FX1-R10",
+      "from": "FX1",
+      "to": "lead",
+      "ask": "Design call (unproven, server-a.md): over several skipped seasons Renown is pulled back once, not once per season. The design doc does not say which.",
+      "files": [
+        "server/src/seasons.mjs"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-23T22:36:18Z",
+      "due": "2026-11-24T22:36:18Z",
+      "default": "Leave as is: one pull-back",
       "escalate_to": "lead"
     }
   ],
