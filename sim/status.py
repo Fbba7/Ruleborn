@@ -36,9 +36,20 @@ def sh(*cmd: str, check: bool = True) -> str:
 
 
 def tests() -> dict[str, str]:
-    out = sh("cargo", "test", "--release", "--", "--test-threads=1", check=False)
-    return {m.group(1): ("passed" if m.group(2) == "ok" else "failed")
-            for m in re.finditer(r"^test tests::(\w+) \.\.\. (ok|FAILED)$", out, re.M)}
+    """Every test cargo ran, by name: `tests::x` as `x`, any other module's
+    as `module::x`. Audit finding SIM-4: this read only `tests::` and never
+    cargo's exit code, so a failing `stability::` test, or a failure cargo
+    reports outside a test line, left every gate holding."""
+    run = subprocess.run(["cargo", "test", "--release", "--", "--test-threads=1"],
+                         cwd=HERE, capture_output=True, text=True)
+    out = run.stdout + run.stderr
+    got = {}
+    for m in re.finditer(r"^test ((?:\w+::)*)(\w+) \.\.\. (ok|FAILED)$", out, re.M):
+        module = m.group(1).removesuffix("tests::")
+        got[module + m.group(2)] = "passed" if m.group(3) == "ok" else "failed"
+    if run.returncode != 0:
+        got[f"cargo test exited {run.returncode}"] = "failed"
+    return got
 
 
 def goldens() -> list[dict]:
