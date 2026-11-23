@@ -1,9 +1,9 @@
 # FX2 fixer, server B: progress
 
-- Status: Green. FX2-6-audit-server-b is ready at d259b10f: 20 findings proven, 8 fixed here, 12 open with running proofs. `cd server && npm test` passes 607 of 607.
-- Progress: 5 of 6 tasks merged (FX2-1 at 23cf8a90, FX2-2 at 8ed7538f, FX2-3 at c7cdcbbd, FX2-4 at e413e4a9, FX2-5 at 5f1cc425). FX2-6 is ready. No gate items.
-- Done: the server-b audit, `docs/security/audit-2026-11/server-b.md`: AUD-B-01 to AUD-B-20, three unproven, seven rejected. Fixed here: AUD-B-02, 03, 04, 07, 08, 09, 11 and 12, each with a proof committed first that fails on main.
-- Next: the lead merges FX2-6-audit-server-b and routes the twelve open findings, which are outside this task's files.
+- Status: Green. FX2-7-audit-b-config is ready at 0006a4d9: AUD-B-14 to AUD-B-19 fixed in `server/src/main.mjs`, each proof plain and failing on main first. `cd server && npm test` passes 614 of 614.
+- Progress: 6 of 7 tasks merged (FX2-1 at 23cf8a90, FX2-2 at 8ed7538f, FX2-3 at c7cdcbbd, FX2-4 at e413e4a9, FX2-5 at 5f1cc425, FX2-6 at ab25eb88). FX2-7 is ready. No gate items.
+- Done: main.mjs's configuration findings of the server-b audit: AUD-B-14 and AUD-B-15 (High), AUD-B-16, 17 and 18 (Medium), AUD-B-19 (Low).
+- Next: the lead merges FX2-7-audit-b-config and routes AUD-B-18's residual guard in `seasons.mjs` (below).
 - Blocked by: nothing.
 - Owner decision needed: none.
 
@@ -14,37 +14,46 @@
 | FX2-3-shop: RB-08, RB-09, RB-11, RB-10, RB-13 | 4.0 | merged at c7cdcbbd | `server/test/fix_fx2_shop.test.mjs` |
 | FX2-4-purge-notify: RB-33, RB-34, RB-46, RB-47, RB-48 | 4.0 | merged at e413e4a9 | `server/test/fix_fx2_purge_notify.test.mjs`. Commits: 7dad0e16 (tests), 81580799 (test assertion name), 0c9e6c67 (RB-33), 0f3b6494 (RB-34), a9678f50 (RB-46), e4b8d44c (RB-47), 5cdb0318 (RB-48), 20acfab8 (merge of main), b4445a58 (status) |
 | FX2-5-auth-lows: RB-23, RB-24, RB-25, RB-26, RB-60, candidate 23 | 4.0 | merged at 5f1cc425 | `server/test/fix_fx2_auth_lows.test.mjs`. Commits: 83ba326a (tests), b63fe5ca (RB-23), d981f86f (RB-24), 51c133ad (RB-25), 20fd2dee (RB-26), 268243b4 (RB-60 test guard), cfc93897 (RB-60), df07570d (candidate 23), 5e4979d0 (merge of main), 82e31a1 (RB-25: FX2-R1's three test lines), 326f9a2 (merge of main 57c23193) |
-| FX2-6-audit-server-b: the audit of main.mjs's configuration and fourteen server modules | 4.0 | ready at d259b10f | `docs/security/audit-2026-11/server-b.md`; `server/test/fix_fx2_audit_*.test.mjs`, `server/test/fix_fx2_open.mjs`. Commits: 1080f1f9 (proofs), 8e5040b9 (AUD-B-11), aff2441c (AUD-B-09), 40f375df and 53796600 (AUD-B-08), b0f8519b (AUD-B-12), 2235e681 (AUD-B-03, AUD-B-04), 7d713b26 (AUD-B-02, AUD-B-07), a8886d67 (report), 1cb9620a (merge of main), d259b10f (status) |
+| FX2-6-audit-server-b: the audit of main.mjs's configuration and fourteen server modules | 4.0 | merged at ab25eb88 | `docs/security/audit-2026-11/server-b.md`; `server/test/fix_fx2_audit_*.test.mjs`, `server/test/fix_fx2_open.mjs`. Commits: 1080f1f9 (proofs), 8e5040b9 (AUD-B-11), aff2441c (AUD-B-09), 40f375df and 53796600 (AUD-B-08), b0f8519b (AUD-B-12), 2235e681 (AUD-B-03, AUD-B-04), 7d713b26 (AUD-B-02, AUD-B-07), a8886d67 (report), 1cb9620a (merge of main), d259b10f (status) |
+| FX2-7-audit-b-config: AUD-B-14, 15, 16, 17, 18, 19 (main.mjs's configuration) | 1.5 | ready at 0006a4d9 | `server/test/fix_fx2_audit_config.test.mjs`; `docs/security/audit-2026-11/server-b.md`. Commits: bfe73490 (proofs), 51006c1a (AUD-B-14 proof corrected), c0a00136 (AUD-B-14, 17, 19), 323293f8 (AUD-B-15), c7e630cc (AUD-B-16), 35a8ea86 (AUD-B-18), 4372844d (report), 0006a4d9 (merge of main 92beb32b) |
 
 ## Handoff
-- **Last verified commit:** d259b10f, with main (lead cycle 166, 719c4ff3) merged at 1cb9620a with no conflict; the merge changed only `docs/progress/`. The commit after it changes only this handoff, the status file and one summary sentence of the report (the count of rejected suspicions).
+- **Last verified commit:** 0006a4d9, the merge of main (lead cycle 167, 92beb32b) into 4372844d with no conflict; the merge changed only `docs/progress/`. The commit after it changes only this handoff and the status file.
 
-### The proofs
-- Every proof was committed in 1080f1f9, before any fix, and run on main's `server/src/`; each failed. The test names are in the report, one per entry.
-- A finding proven but outside this task's files runs inside `stillOpen(id, proof)` (`server/test/fix_fx2_open.mjs`): it passes while the proof fails with an assertion error, rethrows any other error, and fails once the finding is fixed, saying so. Nothing is skipped. Whoever fixes one turns its wrapper back into the plain proof.
+### The proofs (bfe73490, run on main's `main.mjs`)
+Each `stillOpen` wrapper of `fix_fx2_audit_config.test.mjs` became the plain proof, committed alone. On main's code, 8 tests failed and 2 passed: the defaults control, and AUD-B-18's service proof, which stays in `stillOpen`. The failures on main:
 
-### The fixes (all in the task's files)
-- **AUD-B-02 and AUD-B-07** (7d713b26, `observatory.mjs`): a card's `keeper_name` is null when generated or across a block (§17.8); an echo's card describes the one island the echo is.
-- **AUD-B-03 and AUD-B-04** (2235e681, `telemetry.mjs`): the buyer share counts only buyers with a `session_start` in the period; a batch accepts a device clock up to `CLOCK_SKEW_MS` (5 min) ahead, keeping such an event at the server's time. `server/test/telemetry.test.mjs`'s "too far ahead" threshold moved to `T0 + CLOCK_SKEW_MS + 1`, which still tests the same refusal.
-- **AUD-B-08** (53796600, `auth_http.mjs`): with no web client id, `deleteByGoogle` refuses with 401 `google_identity_refused` after reading the body, so the game's own Google token cannot delete through the web route.
-- **AUD-B-09** (aff2441c, `auth.mjs`): a spent proof is refused through its window's last millisecond (`expires_at >= now`).
-- **AUD-B-11** (8e5040b9, `auth.mjs`): an empty `RULEBORN_REFRESH_ROTATE_HOURS` is unset, not 0.
-- **AUD-B-12** (b0f8519b, `pages.mjs`): "1 day", not "1 days".
+| Test | Failure on main |
+|---|---|
+| AUD-B-14, empty `RULEBORN_DELETIONS` keeps the journal on disk | "the journal's folder is on disk": `false !== true` |
+| AUD-B-14, real sign-in and empty `RULEBORN_DELETIONS` refused | `true !== false` (it started) |
+| AUD-B-15, Apple roots without the bundle id refused | "RULEBORN_GAMECENTER_ROOTS": `true !== false` |
+| AUD-B-16, empty `RULEBORN_MAX_CONNECTIONS` keeps the default | "the listener answers (got ECONNRESET)": expected 'number', actual 'string' |
+| AUD-B-16, unreadable `RULEBORN_MAX_CONNECTIONS` refused | "abc": `true !== false` |
+| AUD-B-17, empty `RULEBORN_HEADERS_TIMEOUT_MS` keeps 10 s | `false !== true` (the socket stayed open) |
+| AUD-B-18, `RULEBORN_SEASON_START=next monday` refused | `true !== false` |
+| AUD-B-19, empty `RULEBORN_REPLAYS_MIN_FREE_MB` keeps 512 MiB | `0 !== 536870912` |
 
-### Open, for the lead to route (outside this task's files)
-- High: AUD-B-14 (an empty `RULEBORN_DELETIONS` keeps the deletion journal in memory) and AUD-B-15 (Game Center and StoreKit roots without `RULEBORN_BUNDLE_ID` switch both off silently), both `main.mjs`.
-- Medium: AUD-B-01 (`matchmaking.mjs`, target lists fix an absent owner's tier price), AUD-B-05 (`auth_http.mjs` prove and `delete.html`), AUD-B-16, 17 and 18 (`main.mjs` configuration).
-- Low: AUD-B-06 (`matchmaking.mjs`), AUD-B-10 (`tokens.mjs:55`), AUD-B-13 (`privacy.json`), AUD-B-19 (`main.mjs:224`), AUD-B-20 (`load.mjs:453`).
-- Each entry in the report has its proposed fix.
+### Tests corrected (the expectation encoded the defect, or was wrong)
+- **AUD-B-14's first proof**, FX2-6's version, showed that `new Store("")` loses an entry, which is that store's design and not the defect. In bfe73490 it boots `main.mjs` with an empty `RULEBORN_DELETIONS` and asserts that the journal's folder `data/deletions` is on disk, and that the inside-data warning names it (the folder checked is the folder used).
+- **The same proof, again (51006c1a):** the boot helper sets `RULEBORN_GOOGLE_CLIENT_IDS`, so it ran with real sign-in, and the inside-data check refused the start it asserts. It now boots with the client ids empty, which is stubbed sign-in. Re-run on main's `main.mjs`, it still fails: "the journal's folder is on disk", `false !== true`.
+- Two proofs were added beside the plain ones. AUD-B-15 checks GC roots only, StoreKit only, and both. AUD-B-16 refuses `abc`, `0`, `-1` and `1.5`. No other test changed.
 
-### A note for the lead (not a request)
-- SR-14 is rejected as a finding: `social.mjs` follows the owner's ruling (`owner-decisions.md:41`) and `security_owner.test.mjs:82` guards it. But §20.7 gives a 13 to 15's co-op as "Friends only", and a crew of mixed ages may need squaring with it once co-op and the crew thread are built.
+### The fixes (all in `server/src/main.mjs`)
+- **AUD-B-14, and AUD-B-17 and AUD-B-19 by the same step** (c0a00136): `settled(process.env)`, at the top, deletes every empty or blank `RULEBORN_*` variable before any is read, so each `??` takes its default.
+  - **Not as the Fix line says:** the `Store` is not given `journalDir`. `security_deep_heists.test.mjs:54` pins its expression, and that file is not mine. After `settled()`, both expressions name the same folder, and the first AUD-B-14 proof shows it.
+  - `security_deep_heists.test.mjs:52` and `security_deep_http.test.mjs:147,149` pin the other three expressions, which are unchanged too.
+- **AUD-B-15** (323293f8): Game Center or StoreKit roots without `RULEBORN_BUNDLE_ID` stop the start, as the Play pair does.
+- **AUD-B-16** (c7e630cc): after `settled()`, `RULEBORN_MAX_CONNECTIONS` and `RULEBORN_HEADERS_TIMEOUT_MS` must each be a whole number of at least 1, or unset. `RULEBORN_REPLAYS_MIN_FREE_MB` must be one of at least 0, because `docs/guides/server.md:93` documents 0 as turning the floor off. Any other value stops the start.
+- **AUD-B-18** (35a8ea86): `main.mjs` parses `RULEBORN_SEASON_START` before building the service and stops the start when the value is not finite.
+
+### For the lead to route (outside this task's files)
+- AUD-B-18's second proof, "with seasonStart NaN there is no current season", stays in `stillOpen("AUD-B-18 (seasons.mjs)")`. The seasons constructor's own guard is in `seasons.mjs`. `main.mjs` now refuses the value first, so this is defence in depth, Low at most.
 
 ### Merge and evidence
-- **`cd server && npm test`** on d259b10f: 607 tests, 607 pass, 0 fail.
-- **`python3 tools/coord/owners.py diff FX2-6-audit-server-b origin/claude/videogame-project-analysis-ewkkk2 d259b10f`:** "FX2-6-audit-server-b: every changed path is inside its files".
-- **check_all:** `bash tools/run_checks.sh` on d259b10f, in bwrap: PASS, finished 2026-11-23T22:21:52Z; the log ends `DONE exit=0` and contains "All checks passed." Recorded in the status file.
-- **Main moved after the pre-check** (e2e8f5a1 and 876a87fd, lead cycle 167: FX1-4-holds-codex). It merges into d259b10f with no conflict, and on that merge in a scratch worktree `cd server && npm test` passes 613 of 613. Not committed here, so the ready sha stays the pre-checked one.
+- **`cd server && npm test`** on 4372844d and on 0006a4d9: 614 tests, 614 pass, 0 fail, 0 skipped.
+- **`python3 tools/coord/owners.py diff FX2-7-audit-b-config origin/claude/videogame-project-analysis-ewkkk2 0006a4d9`:** "FX2-7-audit-b-config: every changed path is inside its files".
+- **check_all:** `bash tools/run_checks.sh start 0006a4d9`, in bwrap, after the fresh-container setup (it exited 0). The result is in the status file's `precheck`, recorded with `record 0006a4d9… FX2`.
 
 ## Tried and failed
 - 2026-11-21 The first RB-32 drain test passed on main, for the wrong reason (`401 session_refused`). Its session was made before the clock moved 12 h, and a session lasts an hour. It now signs in after the clock moves.
@@ -57,3 +66,5 @@
 - 2026-11-23 Marked open findings with node's `todo`: `tools/coord/status.py` counts a top-level `not ok` as failed, `todo` included. Wrote `stillOpen` (`server/test/fix_fx2_open.mjs`) instead.
 - 2026-11-23 AUD-B-08's first fix (40f375df) answered 503 in the route before anything else. It broke `limits.test.mjs:135` (G44: a 4xx sign-in failure counts) and `security_config.test.mjs:94` (SR-23: the cross-site check comes first). Moved the refusal into `deleteByGoogle` as a 401 (53796600).
 - 2026-11-23 The AUD-B-04 skew broke `telemetry.test.mjs:67`, whose "too far ahead" event was 1 ms past the server's clock. Moved its threshold past the skew.
+- 2026-11-23 Ran FX2-7's proofs on main before building the wasm: every boot failed for that reason, not the finding's. Built it with `cargo build --release --target wasm32-unknown-unknown` in `sim/`.
+- 2026-11-23 AUD-B-14's corrected proof booted with the helper's real sign-in, so the inside-data check refused the start. It now boots with stubbed sign-in only (51006c1a).
