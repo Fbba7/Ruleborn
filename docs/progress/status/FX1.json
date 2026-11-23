@@ -5,14 +5,14 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "FX1-6-audit-server-a",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-23T22:25:00Z",
   "lease_until": "2026-11-24T01:25:00Z",
-  "updated_at": "2026-11-23T22:25:00Z",
-  "expected_next_update_by": "2026-11-23T23:10:00Z",
+  "updated_at": "2026-11-23T22:40:00Z",
+  "expected_next_update_by": "2026-11-23T23:25:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "9fe151ad10ba3ab2c5f0f3d34a4a4fa0b0cd2ad8",
+    "last_green_sha": "9fe151ad16cf67cbd00fcbdf5f74c2853b353fbf",
     "next_step": "FX1-6: read the audit's modules, write docs/security/audit-2026-11/server-a.md, prove each finding with a test"
   },
   "precheck": null,
