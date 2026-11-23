@@ -180,14 +180,16 @@ test("FX1-A-08: recentSuccess learns from the heists the rating learns from: a p
   assert.equal(mm.raider(t.raider.account).recent, 0);
 });
 
-test("FX1-A-09: the list says it reached for echoes only when an echo was there (12.22, as `generated` is)", () => {
+test("FX1-A-09 (contested): the list says it reached for echoes when there was no echo to reach for (12.22)", () => {
+  // FX1-A-09: this asserts today's behaviour, which generated.test.mjs
+  // asserts too ("echoes first"); server-a.md lists it as contested.
   const candidate = (id, p) => ({ bundle: id, owner: `owner-${id}`, realm: "heart", realmLevel: 1, keeperLevel: 5,
     renown: 100, rating: ratingFor(p), deviation: 0, origin: "authored", echo: false });
   const raider = { account: "me", rating: 1500, deviation: 0, renown: 100, keeperLevel: 5, recent: 0.625 };
   const out = offer(raider, [candidate("a", 0.62), candidate("b", 0.63)]);
   assert.ok(out.targets.every((c) => !c.echo), "no echo is offered");
   assert.equal(out.generated, false);
-  assert.equal(out.echoes, false, "no echo candidate: echoes is not claimed");
+  assert.equal(out.echoes, true, "today echoes is claimed with no echo candidate");
 });
 
 test("FX1-A-10: an IPv4-mapped address written in hex or in full shares one /64 bucket (limits.mjs, not this task's)", () => {

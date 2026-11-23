@@ -174,6 +174,10 @@ export class Matchmaking {
     const rows = this.db.prepare(
       `SELECT h.outcome FROM heists h JOIN leases l ON l.token = h.token
         WHERE h.attacker = ? AND h.validated = 1 AND l.mode = 'raid'
+          -- FX1-A-08: a raid that rated nothing (a pair's later raids that
+          -- UTC day, an island whose owner is gone) is no heist that rates
+          -- them, so "recent" does not learn from it either.
+          AND json_extract(h.outcome, '$.rating') IS NOT NULL
         ORDER BY h.day DESC, h.submitted_at DESC, h.token DESC LIMIT ?`).all(account, RECENT);
     if (rows.length === 0) {
       const [lo, hi] = successBand(1, "authored");
@@ -205,7 +209,16 @@ export class Matchmaking {
           AND json_extract(h.outcome, '$.verdict.grade') != 'foiled'
           AND COALESCE(json_extract(h.outcome, '$.haul.cappedBy'), '') != 'week'
           AND h.submitted_at > ?
-          AND NOT EXISTS (SELECT 1 FROM leases t WHERE t.trace_of = h.token)
+          -- FX1-A-11: a Trace whose only uploads were refused is no play
+          -- (24.13, as RB-16 reads it), so it is still owed; a live one not
+          -- yet played still holds it.
+          AND NOT EXISTS (SELECT 1 FROM leases t WHERE t.trace_of = h.token
+                AND NOT EXISTS (SELECT 1 FROM heists th WHERE th.token = t.token AND th.validated = 0))
+          -- FX1-A-06: a banned or deleted raider is no target, as the lease
+          -- and the Observatory read it: the defence log offers no Trace
+          -- the lease would refuse.
+          AND NOT EXISTS (SELECT 1 FROM accounts a WHERE a.id = h.attacker
+                AND (a.banned_at IS NOT NULL OR a.deleted_at IS NOT NULL))
         ORDER BY h.submitted_at DESC LIMIT 1`)
       .get(raider, account, now - facts.TRACE_HOURS * HOUR_MS)?.token ?? null;
   }
@@ -317,9 +330,30 @@ export class Matchmaking {
       const snap = this.db.prepare("SELECT realm_level, vault_level, exposed FROM snapshots WHERE bundle = ?")
         .get(island.bundle);
       if (!snap) continue;
-      out.push({ ...c, bundle: island.bundle, realmLevel: snap.realm_level, vaultLevel: snap.vault_level, exposed: snap.exposed });
+      // FX1-A-07: the swapped card's chapter is its new island's. One above
+      // the card it replaces may be past the raider's open chapters (§7.6:
+      // "Matchmaking only shows universes running laws from open
+      // chapters"), which this list was filtered by and current() cannot
+      // read, so it waits for the next hourly list.
+      const chapter = this.bundleChapter(island.bundle);
+      if (chapter === null || chapter > (c.chapter ?? 1)) continue;
+      out.push({ ...c, bundle: island.bundle, realmLevel: snap.realm_level, vaultLevel: snap.vault_level,
+                 exposed: snap.exposed, chapter });
     }
     return out;
+  }
+
+  /** A bundle's chapter (§7.6). A bundle never changes (§24.8), so it is
+   *  worked out once. FX1-A-01: a bundle whose bytes an under-13 deletion
+   *  erased has none (null), and nothing is kept of it, as the same bytes
+   *  may come again. */
+  bundleChapter(bundle) {
+    if (!this.chapters.has(bundle)) {
+      const bytes = this.service.store.get(bundle);
+      if (!bytes) return null;
+      this.chapters.set(bundle, chapterOf(lawsOf(bytes)));
+    }
+    return this.chapters.get(bundle);
   }
 
   fresh(now, rows = this.live(now)) {
@@ -333,17 +367,7 @@ export class Matchmaking {
           AND s.owner != ?
           AND NOT EXISTS (SELECT 1 FROM islands i WHERE i.bundle = s.bundle)
         ORDER BY +s.bundle`).all(now - facts.ECHO_DAYS * DAY_MS, GENERATOR);
-    // A bundle never changes (§24.8), so its chapter is worked out once.
-    // FX1-A-01: an echo whose bytes an under-13 deletion erased is no
-    // target, and nothing is kept of it, as the same bytes may come again.
-    const chapter = (bundle) => {
-      if (!this.chapters.has(bundle)) {
-        const bytes = this.service.store.get(bundle);
-        if (!bytes) return null;
-        this.chapters.set(bundle, chapterOf(lawsOf(bytes)));
-      }
-      return this.chapters.get(bundle);
-    };
+    const chapter = (bundle) => this.bundleChapter(bundle);
     const view = (r, echo) => {
       // §13.3: a player's curated layout is judged as generated too.
       const origin = r.origin ?? (r.owner === GENERATOR ? "generated" : "authored");
