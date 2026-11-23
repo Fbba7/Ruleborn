@@ -52,7 +52,7 @@ test("AUD-B-08: with no web client configured, POST /v1/account/delete deletes n
   // A nonce any client can ask for, and the game's own (Android client) token carrying it.
   const { nonce } = r.t.service.auth.nonce();
   const res = await remove(handle, { idToken: r.idToken({ nonce }), cookie: `${DELETE_COOKIE}=${nonce}` });
-  assert.equal(res.status, 503, "the game's token reached the web deletion");
+  assert.equal(res.status, 401, "the game's token reached the web deletion");
   assert.equal(r.t.service.account(me.token), me.account);
 });
 
