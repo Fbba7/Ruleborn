@@ -3,24 +3,26 @@
   "role": "FX1",
   "branch": "claude/fix-server-a",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "FX1-4-holds-codex",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-23T21:25:00Z",
   "lease_until": "2026-11-24T00:25:00Z",
-  "updated_at": "2026-11-23T21:29:00Z",
-  "expected_next_update_by": "2026-11-23T22:14:00Z",
-  "long_run": {
-    "log": "/tmp/check-9fe151ad16cf67cbd00fcbdf5f74c2853b353fbf.log",
-    "expected_end": "2026-11-23T21:58:00Z"
-  },
+  "updated_at": "2026-11-23T22:06:00Z",
+  "expected_next_update_by": null,
+  "long_run": null,
   "progress_marker": {
-    "last_green_sha": "2003cc38ee7b200a1c1858555fc0a05fff6e47a5",
-    "next_step": "pre-check at 9fe151ad running; then record, mark ready"
+    "last_green_sha": "9fe151ad16cf67cbd00fcbdf5f74c2853b353fbf",
+    "next_step": "FX1-6-audit-server-a, in a fresh session, once FX1-4 merges"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "9fe151ad16cf67cbd00fcbdf5f74c2853b353fbf",
+    "exit": 0,
+    "finished_at": "2026-11-23T22:04:13Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "9fe151ad16cf67cbd00fcbdf5f74c2853b353fbf",
   "stop_at": "2026-11-24T21:00:00Z",
   "acks": [],
   "requests": [
