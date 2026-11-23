@@ -90,7 +90,7 @@ test("RB-36: five foiled friendly heists in one day, each casting a law, pay the
   for (let i = 0; i < 5; i++) {
     const crew = t.service.home.show(alice).characters.filter((c) => c.state !== "resting").slice(0, 3);
     const lease = t.service.lease(alice, t.bundle, null, { mode: "friendly" });
-    const manifest = { members: crew.map((c) => ({ kind: KINDS.indexOf(c.kind), level: c.level,
+    const manifest = { members: crew.map((c) => ({ kind: KINDS.indexOf(c.kind), form: c.wire.form, level: c.level,
                                                    traits: c.traits.map((x) => TRAITS.indexOf(x)) })),
                        sage: 0, casts: [LAWS.findIndex((l) => l.id === "bloom")] };
     const replay = play(t, lease, { plan: [...land, cast], manifest });
