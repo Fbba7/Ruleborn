@@ -334,8 +334,14 @@ export class Matchmaking {
           AND NOT EXISTS (SELECT 1 FROM islands i WHERE i.bundle = s.bundle)
         ORDER BY +s.bundle`).all(now - facts.ECHO_DAYS * DAY_MS, GENERATOR);
     // A bundle never changes (§24.8), so its chapter is worked out once.
+    // FX1-A-01: an echo whose bytes an under-13 deletion erased is no
+    // target, and nothing is kept of it, as the same bytes may come again.
     const chapter = (bundle) => {
-      if (!this.chapters.has(bundle)) this.chapters.set(bundle, chapterOf(lawsOf(this.service.store.get(bundle))));
+      if (!this.chapters.has(bundle)) {
+        const bytes = this.service.store.get(bundle);
+        if (!bytes) return null;
+        this.chapters.set(bundle, chapterOf(lawsOf(bytes)));
+      }
       return this.chapters.get(bundle);
     };
     const view = (r, echo) => {
@@ -353,7 +359,7 @@ export class Matchmaking {
     return [
       ...live.filter((r) => !r.shielded).map((r) => view(r, false)),
       // The protection covers a new player's echoes too (G30).
-      ...echoes.filter((r) => !this.shielded(r.owner, now)).map((r) => view(r, true)),
+      ...echoes.filter((r) => !this.shielded(r.owner, now) && chapter(r.bundle) !== null).map((r) => view(r, true)),
     ];
   }
 
