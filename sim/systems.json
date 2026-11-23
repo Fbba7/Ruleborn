@@ -732,6 +732,21 @@
       ]
     },
     {
+      "name": "Stability",
+      "section": "5.5",
+      "task": "TD.14",
+      "what": "§5.5's stability, priced once in sim/src/stability.rs: the universe's capacity from the Spire and anchor stones, each woven law's cost with every term §5.5 and §8 give it (tier, crown, school, harmonies, signature resonances, chords, dissonances, the era), the chords that sound and their draw, and the strain and its seven bands. The server charges what this prices through rb_stability and the client shows the same figure; sim/stability_cases.json holds the cases both read. Its tests live in the stability module, so they are named stability::…; until audit finding SIM-4 the gate could not see them.",
+      "tests": [
+        "stability::strain_falls_in_5_5s_seven_bands",
+        "stability::capacity_is_5_5s_spire_and_anchor_stones",
+        "stability::a_harmony_counts_once_per_shared_note",
+        "stability::the_cheapest_chord_is_priced_as_8_5_prices_it",
+        "stability::the_wire_reads_back",
+        "stability::tier_crown_school_dissonance_and_eras_price_as_5_5_and_18_3_say",
+        "stability::stability_cases_match_the_file"
+      ]
+    },
+    {
       "name": "Publishing rules",
       "section": "5.2",
       "task": "T3.3",
