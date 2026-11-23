@@ -88,7 +88,11 @@ export class Crossings {
     // Read as the owner's universe page reads it: links made for realms
     // opened before they were kept, and a Rift's upkeep paid or not.
     const now = this.service.now();
-    if (!this.plan(defender, heart)) return null;
+    // Only the Heart is checked first: a plan needs links, and these are
+    // what makes them (RB-18).
+    const current = this.db.prepare("SELECT 1 FROM islands WHERE owner = ? AND realm = 'heart' AND bundle = ?")
+      .get(defender, heart);
+    if (!current) return null;
     this.service.links.ensure(defender, now);
     this.service.links.upkeep(defender, now);
     const plan = this.plan(defender, heart);

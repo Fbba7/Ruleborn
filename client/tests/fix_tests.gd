@@ -16,3 +16,4 @@ func _init(t: SceneTree, c: Callable) -> void:
 func run() -> void:
 	await FixTransportTests.new(tree, check).run()
 	await FixTraceEventsTests.new(tree, check).run()
+	await FixReplayShopNavTests.new(tree, check).run()

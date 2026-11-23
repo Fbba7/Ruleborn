@@ -3,22 +3,21 @@
   "role": "FX1",
   "branch": "claude/fix-server-a",
   "model": "Opus 5.5",
-  "agent_state": "idle",
+  "agent_state": "active",
   "task_id": "FX1-4-holds-codex",
-  "task_state": "resync",
-  "claimed_at": "2026-11-21T19:20:00Z",
-  "lease_until": "2026-11-21T22:20:00Z",
-  "updated_at": "2026-11-23T21:18:00Z",
-  "expected_next_update_by": null,
+  "task_state": "working",
+  "claimed_at": "2026-11-23T21:25:00Z",
+  "lease_until": "2026-11-24T00:25:00Z",
+  "updated_at": "2026-11-23T21:25:00Z",
+  "expected_next_update_by": "2026-11-23T22:10:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "f3849470946a2f547ba0fbd1962d29dd16154134",
-    "next_step": "Restarted by the owner on 23 November 2026 (\"Continue, first the bugs then the UI\"); the lead starts this builder anew on Opus 5.5 at effort high. FX1-4-holds-codex is resync: alone it passes, but with FX2-5 (RB-25 checks the manifest's form byte) RB-36's test fails 'crew_mismatch' (fix_fx1_holds_codex.test.mjs:98) in candidate ea551636. When the owner restarts the program: merge main into claude/fix-server-a, give RB-36's test manifests the form byte, re-run the checks, ready again.",
-    "at": "2026-11-23T21:18:00Z"
+    "last_green_sha": "2003cc38ee7b200a1c1858555fc0a05fff6e47a5",
+    "next_step": "resync FX1-4-holds-codex: main merged; give RB-36's test manifests the form byte, rerun npm test and the pre-check"
   },
   "precheck": null,
   "gate_request": null,
-  "ready_sha": "2003cc38ee7b200a1c1858555fc0a05fff6e47a5",
+  "ready_sha": null,
   "stop_at": "2026-11-24T21:00:00Z",
   "acks": [],
   "requests": [
@@ -35,6 +34,21 @@
       "created_at": "2026-11-21T16:20:00Z",
       "due": "2026-11-22T16:20:00Z",
       "default": "Keep 409 island_withdrawn for a republish of a removed island; no new string",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "FX1-R2",
+      "from": "FX1",
+      "to": "lead",
+      "ask": "RB-35's Fix line stores the rules build per Workshop play, which needs a column in server/src/db.mjs (outside FX1-3's files). FX1-3 instead refuses wrong_rules in submitPlay when the replay names any build but builds.current, since play() only issues plays under the current build; a play issued before a rules upgrade and submitted after it is refused, and the player asks for a fresh one. If per-play rules are wanted, add [\"workshop_plays\", \"rules\", \"TEXT\"] to db.mjs's added columns in a task that owns it, and FX1 sets it in play() and checks it in submitPlay in a later task.",
+      "files": [
+        "server/src/db.mjs",
+        "server/src/workshop.mjs"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-21T19:21:15Z",
+      "due": "2026-11-22T19:21:15Z",
+      "default": "Keep the current-build check; no schema change",
       "escalate_to": "lead"
     }
   ],

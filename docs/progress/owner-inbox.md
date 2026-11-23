@@ -25,6 +25,10 @@ recording the answer under it.
   attempted: after two refusals, and since the page (1.3 MB) is too large
   for a lead session to read whole before publishing, the lead leaves the
   artifact as it is. The artifact shows sim tests 336.
+- **Cycle 167 (23:08Z):** FX2-6, FX3-5 and FX4-3 merged (60a905ab); the
+  page was regenerated and committed again (41/41 systems, sim tests
+  358/358). Not republished, as in cycle 164; the artifact still shows sim
+  tests 336.
 
 ## 2026-11-21 14:09Z: the launcher's hourly firing had not run since the stop; its half-hour firing ran at 14:05Z (watchdog)
 

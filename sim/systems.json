@@ -65,7 +65,8 @@
         "commands_given_live_record_the_same_heist_as_the_log_they_make",
         "rb54_a_tick_delta_past_u32_is_refused_not_wrapped",
         "rb54_a_padded_varint_is_refused",
-        "rb55_a_command_for_actor_16_still_records_a_replay_that_round_trips"
+        "rb55_a_command_for_actor_16_still_records_a_replay_that_round_trips",
+        "sim_2_the_recorder_never_returns_a_replay_over_2_kb"
       ]
     },
     {
@@ -156,7 +157,8 @@
         "a_waterfall_is_walked_behind_along_its_ledge_and_blocks_sight",
         "rapids_push_anyone_a_tile_a_second_downstream",
         "a_tunnel_is_a_hidden_path_up_to_six_tiles_and_nobody_sees_into_it",
-        "the_six_and_a_tunnel_travel_in_the_island_and_a_second_encoding_is_refused"
+        "the_six_and_a_tunnel_travel_in_the_island_and_a_second_encoding_is_refused",
+        "sim_9_a_bounce_mushroom_lands_on_a_bridge_three_tiles_on"
       ],
       "features": {
         "rock_pillar": "a_rock_pillar_hides_what_is_behind_it",
@@ -373,7 +375,9 @@
         "the_lantern_wisps_reveal_shows_what_is_hidden_within_six_tiles_for_six_seconds",
         "the_prism_mite_splits_into_two_halves_that_go_different_ways_and_rejoin_after_eight_seconds",
         "a_caught_half_loses_only_its_half_whichever_half_it_is",
-        "what_a_half_brings_out_is_banked_and_the_half_is_never_counted_as_crew"
+        "what_a_half_brings_out_is_banked_and_the_half_is_never_counted_as_crew",
+        "sim_5_the_hourkeeper_gives_back_a_hit_taken_in_a_tick_the_ally_was_healed",
+        "sim_7_a_folded_prism_half_is_nobody_and_does_not_block_the_glass_golems_wall"
       ],
       "abilities": {
         "stormhound": "the_stormhounds_sprint_runs_sixty_percent_faster_for_four_seconds",
@@ -474,7 +478,9 @@
         "an_open_hit_sends_suspicion_straight_to_1000",
         "a_knocked_out_guard_found_by_another_raises_the_realm_alarm",
         "a_posted_guard_holds_its_facing",
-        "a_crouched_step_up_behind_a_guard_is_heard_unless_it_is_on_moss"
+        "a_crouched_step_up_behind_a_guard_is_heard_unless_it_is_on_moss",
+        "sim_1_a_body_in_a_bush_is_not_found",
+        "sim_1_a_body_in_a_thicket_beyond_a_tile_is_not_found"
       ]
     },
     {
@@ -588,7 +594,9 @@
         "hidden_garden_spreads_tall_grass_a_tile_a_minute",
         "lantern_festival_returns_each_character_once_at_the_revive_health",
         "quicksand_opens_hidden_pits_that_drop_whoever_steps_in",
-        "rebound_bounces_every_stun_on_to_the_nearest_enemy"
+        "rebound_bounces_every_stun_on_to_the_nearest_enemy",
+        "sim_6_a_ramblers_charge_through_a_crystal_wall_counts_for_cracked_gardens",
+        "sim_6_a_ramblers_charge_through_a_crystal_wall_under_shattered_glass_leaves_shards"
       ],
       "combos": {
         "harmony:flow": "a_flow_harmony_makes_movement_a_quarter_stronger",
@@ -647,7 +655,8 @@
         "a_ward_ignores_the_crew_member_disarming_it_and_fires_on_anyone_else",
         "a_glare_still_fires_on_a_disarmer_walking_to_it",
         "a_lantern_glare_fires_when_a_crew_member_comes_within_two_tiles",
-        "smashing_a_ward_is_loud_and_a_breaker_does_it_in_seven_hits"
+        "smashing_a_ward_is_loud_and_a_breaker_does_it_in_seven_hits",
+        "sim_8_a_gravity_well_does_not_cut_short_a_time_snares_freeze"
       ]
     },
     {
@@ -720,6 +729,21 @@
         "a_crew_entering_at_a_fault_jumps_through_the_crack_to_the_hearts_entrance_on_its_realms_clock",
         "laws_flicker_off_for_two_seconds_in_an_overloaded_universe_every_ten_seconds_at_cracking_and_five_at_breaking",
         "rb44_a_crossings_reports_count_only_the_crew_for_held"
+      ]
+    },
+    {
+      "name": "Stability",
+      "section": "5.5",
+      "task": "TD.14",
+      "what": "§5.5's stability, priced once in sim/src/stability.rs: the universe's capacity from the Spire and anchor stones, each woven law's cost with every term §5.5 and §8 give it (tier, crown, school, harmonies, signature resonances, chords, dissonances, the era), the chords that sound and their draw, and the strain and its seven bands. The server charges what this prices through rb_stability and the client shows the same figure; sim/stability_cases.json holds the cases both read. Its tests live in the stability module, so they are named stability::…; until audit finding SIM-4 the gate could not see them.",
+      "tests": [
+        "stability::strain_falls_in_5_5s_seven_bands",
+        "stability::capacity_is_5_5s_spire_and_anchor_stones",
+        "stability::a_harmony_counts_once_per_shared_note",
+        "stability::the_cheapest_chord_is_priced_as_8_5_prices_it",
+        "stability::the_wire_reads_back",
+        "stability::tier_crown_school_dissonance_and_eras_price_as_5_5_and_18_3_say",
+        "stability::stability_cases_match_the_file"
       ]
     },
     {

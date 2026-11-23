@@ -116,7 +116,8 @@ static func _claimed_text(c: Variant) -> String:
 
 ## A cosmetic's kind: the catalogue's, or read from an earned one's id as
 ## the server reads it (shop.mjs kindOf): a track tier's is its tier's kind,
-## a league's season-end cosmetic is a realm skin.
+## a league's season-end cosmetic is a realm skin, the first hatch's free
+## outfit (§19.20) is an outfit (RB-20).
 static func kind_of(id: String, catalogue: Array) -> String:
 	for i: Dictionary in catalogue:
 		if str(i["id"]) == id:
@@ -126,6 +127,8 @@ static func kind_of(id: String, catalogue: Array) -> String:
 		return PREMIUM_KINDS[(int(tier.get_string(1)) / 5 - 1) % PREMIUM_KINDS.size()]
 	if RegEx.create_from_string("^season-\\d+-[a-z]+$").search(id) != null:
 		return "realm_skin"
+	if id == "hatch-outfit":
+		return "outfit"
 	return ""
 
 
