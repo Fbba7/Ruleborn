@@ -138,7 +138,8 @@ impl RulebornReplay {
     /// Load a replay onto the realm it was played in. With no island, the
     /// fixture realm the golden replays are recorded on. False if either does
     /// not decode, the replay is not one the simulation plays (`playable`),
-    /// or the island is not the one the replay names.
+    /// or the realm is not the one the replay names: with no island too, so a
+    /// heist played elsewhere is never shown on the fixture realm (RB-43).
     #[func]
     fn load(&mut self, replay: PackedByteArray, island: PackedByteArray) -> bool {
         let Some(heist) = Heist::decode(replay.as_slice()) else { return false };
@@ -146,7 +147,7 @@ impl RulebornReplay {
             return false;
         }
         let Some(realm) = realm_of(&island) else { return false };
-        if !island.is_empty() && realm.digest() != heist.island {
+        if realm.digest() != heist.island {
             return false;
         }
         self.world = Some(World::from_island(&realm, &heist));
