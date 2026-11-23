@@ -213,9 +213,11 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxpouhMqDYtpvhRsNr4` (cycle 165,
-23 November 2026 from about 21:20Z, started by the Opus 5.5 launcher, the
-first cycle after the owner's restart of 23 November). Cycle 164's was
+Latest lead cycle session: `session_01SNkKxr1ZSqi1YJiktk15QA` (cycle 166,
+23 November 2026 from about 21:39Z, started by the Opus 5.5 launcher).
+Cycle 165's was `session_01SNkKxpouhMqDYtpvhRsNr4` (23 November, from
+about 21:20Z, the first cycle after the owner's restart of 23 November).
+Cycle 164's was
 `session_01SNkKxnEwW1ec5DJwnyoz4w` (21 November, from 21:39Z). Cycle
 163's was `session_01SNkKxpcmxyDQn5DN27H68P` (from 21:14Z). Cycle
 162's was `session_01SNkKxpKnFvTro6bdPJL9Ah` (from 20:10Z). Cycle
@@ -775,6 +777,23 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 166**, 23 November 2026, from about 21:39Z (session
+  `session_01SNkKxr1ZSqi1YJiktk15QA`, started by the Opus 5.5 launcher).
+  Bookkeeping only. **Merged:** nothing; no task is `ready`, no gate
+  request, the merge lock stays clear, main did not move, so the pages
+  need no republish. **Seen:** all four builders started in cycle 165 are
+  active, within their deadlines (next updates due 22:14Z to 22:15Z):
+  FX1 merged main into `claude/fix-server-a`, gave RB-36's test manifests
+  the form byte (9fe151ad) and runs its pre-check (expected end about
+  21:58Z), so FX1-4-holds-codex is `working`; FX2 claimed
+  FX2-6-audit-server-b, FX3 claimed FX3-5-audit-sim afresh, FX4 claimed
+  FX4-3-replay-shop-nav and pushed its fail-first tests (ae774848, not yet
+  run). Their claims and leases are copied into the backlog. **Started:**
+  nothing; the four seats are full. No new message or request (FX1-R1
+  and FX1-R2 are in `requests.md` with their defaults applied); no
+  restart is due. **Next:** merge FX1-4-holds-codex when it turns ready
+  (full checks, `owners.py diff`), then FX1-6 in FX1's seat; FX4-5 and
+  FX4-4 wait for FX4's seat; FX1-7 after FX1-6.
 - **Cycle 165**, 23 November 2026, from about 21:20Z (session
   `session_01SNkKxpouhMqDYtpvhRsNr4`, started by the Opus 5.5 launcher),
   the first cycle after the owner's restart of 23 November ("Continue,
