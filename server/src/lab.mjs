@@ -67,14 +67,17 @@ export function labLevel(level) {
 /** The signature resonance two laws make, if any. */
 export const resonanceOf = (a, b) => RESONANCES.find((r) => r.laws.includes(a) && r.laws.includes(b) && a !== b) ?? null;
 
-/** §8.8: a chord three distinct laws make, each carrying a different one of
- *  its notes. */
-export function chordOf(laws) {
-  if (laws.length !== 3 || new Set(laws).size !== 3) return null;
+/** §8.8: every chord three distinct laws make, each carrying a different
+ *  one of its notes; the simulation sounds each of them (combos.rs). */
+export function chordsOf(laws) {
+  if (laws.length !== 3 || new Set(laws).size !== 3) return [];
   const carries = (l, n) => LAWS[l].notes.includes(n);
   const orders = [[0, 1, 2], [0, 2, 1], [1, 0, 2], [1, 2, 0], [2, 0, 1], [2, 1, 0]];
-  return CHORDS.find((c) => orders.some((o) => c.notes.every((n, k) => carries(laws[o[k]], n)))) ?? null;
+  return CHORDS.filter((c) => orders.some((o) => c.notes.every((n, k) => carries(laws[o[k]], n))));
 }
+
+/** The first chord in §8.8's table three distinct laws make, if any. */
+export const chordOf = (laws) => chordsOf(laws)[0] ?? null;
 
 /** §8.6's unstable pairing: two tier III laws with opposite notes. */
 function unstable(laws, tierOf) {
@@ -194,7 +197,8 @@ export class Lab {
   }
 
   /** §8.6: after three empty experiments that included the same law, one
-   *  undiscovered resonance of that law, hinted once. */
+   *  undiscovered resonance of that law that can be found at launch, hinted
+   *  once. */
   hint(account, laws, now) {
     const empties = this.db.prepare(
       `SELECT laws FROM lab_experiments WHERE owner = ? AND settled_at IS NOT NULL
@@ -203,7 +207,7 @@ export class Lab {
     for (const law of laws) {
       const count = empties.filter((ls) => ls.includes(law)).length + 1;
       if (count < facts.LAB_HINT_AFTER) continue;
-      const open = RESONANCES.find((r) => r.laws.includes(law) && !resonances.has(r.id) && !hinted.has(r.id));
+      const open = LAUNCH_RESONANCES.find((r) => r.laws.includes(law) && !resonances.has(r.id) && !hinted.has(r.id));
       if (!open) continue;
       this.db.prepare("INSERT OR IGNORE INTO lab_discoveries (owner, kind, id, found_at) VALUES (?, 'hint', ?, ?)")
         .run(account, open.id, now);
@@ -262,8 +266,9 @@ export class Lab {
     for (let i = 0; i < laws.length; i++) {
       for (let j = i + 1; j < laws.length; j++) {
         for (let k = j + 1; k < laws.length; k++) {
-          const c = chordOf([laws[i], laws[j], laws[k]]);
-          if (c && !chords.has(c.id)) hint.run(account, c.id, now);
+          for (const c of chordsOf([laws[i], laws[j], laws[k]])) {
+            if (!chords.has(c.id)) hint.run(account, c.id, now);
+          }
         }
       }
     }
