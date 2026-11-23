@@ -794,6 +794,9 @@ export function handler(service, { webClientId = null, appleNotifications = null
         case "POST /v1/account": {
           if (parts[2] !== "delete") return json({ error: "no_such_route" }, 404);
           // The page's Google ID token, bound to its cookie (auth_http.mjs).
+          // Without the web client there is no audience to check the token
+          // against, so the route is off, as its page is (AUD-B-08).
+          if (!webClientId) return json({ error: "not_configured" }, 503);
           return await deleteByGoogle(service, request, { signIn, read: body, webClientId });
         }
         case "DELETE /v1/account": {
