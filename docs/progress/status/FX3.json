@@ -5,15 +5,15 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "FX3-6-audit-universe",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-23T23:10:00Z",
   "lease_until": "2026-11-24T02:10:00Z",
-  "updated_at": "2026-11-23T23:10:00Z",
-  "expected_next_update_by": "2026-11-23T23:55:00Z",
+  "updated_at": "2026-11-23T23:20:00Z",
+  "expected_next_update_by": "2026-11-24T00:05:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "cac284bb",
-    "next_step": "read universe.rs, island.rs, grid.rs and sim/examples for defects"
+    "next_step": "SIM-10 fail-first test committed; fix record_universe, then read island.rs, grid.rs and sim/examples"
   },
   "precheck": null,
   "gate_request": null,

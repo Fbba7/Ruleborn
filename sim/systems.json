@@ -66,7 +66,8 @@
         "rb54_a_tick_delta_past_u32_is_refused_not_wrapped",
         "rb54_a_padded_varint_is_refused",
         "rb55_a_command_for_actor_16_still_records_a_replay_that_round_trips",
-        "sim_2_the_recorder_never_returns_a_replay_over_2_kb"
+        "sim_2_the_recorder_never_returns_a_replay_over_2_kb",
+        "sim_10_a_command_for_actor_16_still_records_a_universe_replay_that_round_trips"
       ]
     },
     {

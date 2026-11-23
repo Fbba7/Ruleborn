@@ -7206,3 +7206,25 @@ fn sim_9_a_bounce_mushroom_lands_on_a_bridge_three_tiles_on() {
     }
     panic!("never launched");
 }
+
+#[test]
+fn sim_10_a_command_for_actor_16_still_records_a_universe_replay_that_round_trips() {
+    // Audit finding SIM-10 (docs/security/audit-2026-11/sim.md).
+    // RB-55 on the universe's recorder: the replay packs the actor in four
+    // bits, so a command for actor 16 comes back as actor 0.
+    use crate::universe::{record_universe, verify_universe, LinkKind};
+    let (u, islands) = two_realms(LinkKind::Stone);
+    let played = crate::reference::competent_universe(&u, &islands, 1, 3, None, None, None).unwrap();
+    let mut commands = played.commands.clone();
+    // Past the landing, while the crew walks the outer realm: an order for
+    // actor 0 here would change the heist.
+    let at = commands.iter().position(|c| c.tick > 60).unwrap();
+    let (vx, vy) = (islands[1].vault.0 as i16, islands[1].vault.1 as i16);
+    commands.insert(at, Command { tick: 60, actor: 16, kind: Kind::MoveTo, x: vx * 256 + 128, y: vy * 256 + 128 });
+    assert!(commands.windows(2).all(|w| w[0].tick <= w[1].tick));
+    let heist = record_universe(&u, &islands, 1, played.ticks, 3, None, None, commands).unwrap();
+    let back = Heist::decode(&heist.encode()).expect("a recorded heist decodes");
+    assert!(heist.commands.iter().all(|c| c.actor < 16), "the recorded heist keeps a command for an actor past 15");
+    assert_eq!(back.commands, heist.commands, "the recorded replay round-trips");
+    assert!(verify_universe(&u, &islands, &back).is_ok(), "{:?}", verify_universe(&u, &islands, &back).err());
+}
