@@ -43,7 +43,8 @@
 ### Merge and evidence
 - **`cd server && npm test`** on d259b10f: 607 tests, 607 pass, 0 fail.
 - **`python3 tools/coord/owners.py diff FX2-6-audit-server-b origin/claude/videogame-project-analysis-ewkkk2 d259b10f`:** "FX2-6-audit-server-b: every changed path is inside its files".
-- **check_all:** `bash tools/run_checks.sh start d259b10f`, in bwrap; its result is recorded in the status file's `precheck`.
+- **check_all:** `bash tools/run_checks.sh` on d259b10f, in bwrap: PASS, finished 2026-11-23T22:21:52Z; the log ends `DONE exit=0` and contains "All checks passed." Recorded in the status file.
+- **Main moved after the pre-check** (e2e8f5a1 and 876a87fd, lead cycle 167: FX1-4-holds-codex). It merges into d259b10f with no conflict, and on that merge in a scratch worktree `cd server && npm test` passes 613 of 613. Not committed here, so the ready sha stays the pre-checked one.
 
 ## Tried and failed
 - 2026-11-21 The first RB-32 drain test passed on main, for the wrong reason (`401 session_refused`). Its session was made before the clock moved 12 h, and a session lasts an hour. It now signs in after the clock moves.

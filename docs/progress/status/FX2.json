@@ -3,21 +3,26 @@
   "role": "FX2",
   "branch": "claude/fix-server-b",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "FX2-6-audit-server-b",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-23T21:30:00Z",
   "lease_until": "2026-11-24T00:30:00Z",
-  "updated_at": "2026-11-23T22:05:00Z",
-  "expected_next_update_by": "2026-11-23T22:50:00Z",
+  "updated_at": "2026-11-23T22:25:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "4f58e28b",
-    "next_step": "full checks running on d259b10f (bwrap); npm test 607/607 and owners.py pass; once the checks pass: record, ready"
+    "last_green_sha": "d259b10f",
+    "next_step": "ready at d259b10f (full checks PASS 22:21:52Z, bwrap); the lead merges it and routes the twelve open findings"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "d259b10fbc5bfd4c3eb945d2fa8fa0a31c643a9e",
+    "exit": 0,
+    "finished_at": "2026-11-23T22:21:52Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "d259b10f",
   "stop_at": "2026-11-24T21:00:00Z",
   "acks": [],
   "requests": [
