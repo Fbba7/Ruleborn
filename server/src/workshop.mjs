@@ -490,14 +490,17 @@ export class Workshop {
       throw new Refused(400, "ratings_are_one_to_five");
     }
     // SEC-26: recorded either way; in the island's numbers only from a
-    // player who counts, and once counted, counted still.
+    // player who counts, and once counted, counted still — on the day it
+    // first counted, so a re-rate takes none of a later day's lone-fan
+    // slots (FX1-A-04).
     const now = this.now();
     const paid = this.counts("workshop_ratings", player, item.creator, now) ? 1 : 0;
     this.db.prepare(
       `INSERT INTO workshop_ratings (item, player, fun, cleverness, fairness, at, counted)
        VALUES (?, ?, ?, ?, ?, ?, ?)
        ON CONFLICT (item, player) DO UPDATE SET fun = excluded.fun,
-         cleverness = excluded.cleverness, fairness = excluded.fairness, at = excluded.at,
+         cleverness = excluded.cleverness, fairness = excluded.fairness,
+         at = CASE WHEN workshop_ratings.counted = 1 THEN workshop_ratings.at ELSE excluded.at END,
          counted = MAX(counted, excluded.counted)`)
       .run(id, player, fun, cleverness, fairness, now, paid);
     return this.view(this.row(id)).ratings;
@@ -578,6 +581,9 @@ export class Workshop {
     this.moderator(moderator);
     const report = this.db.prepare("SELECT * FROM workshop_reports WHERE id = ?").get(reportId);
     if (!report) throw new Refused(404, "no_such_report");
+    // FX1-A-03: a report a person has decided on is decided; acting on it
+    // again would close the island's newer reports, unread.
+    if (report.resolved_at != null) throw new Refused(409, "already_resolved");
     if (!["dismiss", "remove", "ban"].includes(action)) throw new Refused(400, "no_such_action");
     if (action !== "dismiss" && !REMOVAL_REASONS.includes(reason)) {
       throw new Refused(400, "a_reason_is_owed");
