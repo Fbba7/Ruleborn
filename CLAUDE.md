@@ -89,6 +89,24 @@ the status files, requests and scheduled-task prompts.
   merge lock is cleared. The UI stays paused. Where the work stands is in
   [`docs/progress/lead.md`](docs/progress/lead.md), "Now", entry
   "Stopped here, 21 November 2026".
+- **23 November 2026:** the owner restarted it ("Continue, first the bugs
+  then the UI"), in the chat of the overseer session. The program runs,
+  on Opus 5.5 at effort high (order 5), with the cap of four builders
+  (order 3). Order 3's "keep working" applies again.
+  - **Bugs first.** Fix builders FX1 to FX4 finish the remaining defects
+    of the November bug report, each with a test that fails before the
+    fix, and the extra checks (the audits). FX1-4-holds-codex is resynced
+    first; FX3-5-audit-sim, FX4-3-replay-shop-nav and the other open FX
+    tasks follow.
+  - **Then the UI.** Once every FX task is merged, the UI resumes:
+    P3-S3-settings-4, P4-S1-heist-vault, P4-S2-home-purse and the BT
+    track.
+  - **The launcher and the watchdog of 15 November** start the lead's
+    cycles again. Their IDs are in
+    [`docs/progress/lead.md`](docs/progress/lead.md), "The program's
+    scheduled tasks and sessions".
+  - **Where the work stood at the restart** is in the same file, "Now",
+    entry "Stopped here, 21 November 2026".
 
 A session that is in the middle of a turn when the program is stopped
 finishes cleanly, so no work is lost: commit and push what it has to its

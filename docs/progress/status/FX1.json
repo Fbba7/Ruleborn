@@ -3,18 +3,18 @@
   "role": "FX1",
   "branch": "claude/fix-server-a",
   "model": "Opus 5.5",
-  "agent_state": "stopped",
+  "agent_state": "idle",
   "task_id": "FX1-4-holds-codex",
   "task_state": "resync",
   "claimed_at": "2026-11-21T19:20:00Z",
   "lease_until": "2026-11-21T22:20:00Z",
-  "updated_at": "2026-11-21T23:15:00Z",
+  "updated_at": "2026-11-23T21:18:00Z",
   "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "f3849470946a2f547ba0fbd1962d29dd16154134",
-    "next_step": "Stopped here (owner's order, 21 November 2026, about 21:45 UTC: \"Merge cleanly what we have until now and then stop\"): FX1-4-holds-codex is resync: alone it passes, but with FX2-5 (RB-25 checks the manifest's form byte) RB-36's test fails 'crew_mismatch' (fix_fx1_holds_codex.test.mjs:98) in candidate ea551636. When the owner restarts the program: merge main into claude/fix-server-a, give RB-36's test manifests the form byte, re-run the checks, ready again. Do no work until the owner restarts the program.",
-    "at": "2026-11-21T23:15:00Z"
+    "next_step": "Restarted by the owner on 23 November 2026 (\"Continue, first the bugs then the UI\"); the lead starts this builder anew on Opus 5.5 at effort high. FX1-4-holds-codex is resync: alone it passes, but with FX2-5 (RB-25 checks the manifest's form byte) RB-36's test fails 'crew_mismatch' (fix_fx1_holds_codex.test.mjs:98) in candidate ea551636. When the owner restarts the program: merge main into claude/fix-server-a, give RB-36's test manifests the form byte, re-run the checks, ready again.",
+    "at": "2026-11-23T21:18:00Z"
   },
   "precheck": null,
   "gate_request": null,

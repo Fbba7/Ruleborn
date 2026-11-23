@@ -769,6 +769,24 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Restart, 23 November 2026** (the overseer, about 21:20Z). The owner
+  restarted the program, in the chat of the overseer session: "Continue,
+  first the bugs then the UI" (CLAUDE.md order 1). It runs on Opus 5.5 at
+  effort high (order 5), with the cap of four builders (order 3).
+  **Bugs first:** resync FX1-4-holds-codex (merge main into
+  `claude/fix-server-a`, give RB-36's test manifests the form byte,
+  re-run the checks), start FX3-5-audit-sim afresh (its claim commit
+  941dd4a5 is on `claude/fix-sim`), then FX4-3-replay-shop-nav and the
+  other open FX tasks (FX1-6, FX2-6, FX4-4, FX4-5, FX1-7). Each builder
+  is started anew with `create_session`. **Then the UI:** once every FX
+  task is merged, unpark P3-S3-settings-4, P4-S1-heist-vault,
+  P4-S2-home-purse and the BT track. **Scheduled tasks:** the working
+  pair in "The program's scheduled tasks and sessions" is re-enabled, as
+  at the restart of 21 November (launcher `trig_01NksvDVV7iRJi4zrU7Uf7Te`
+  and `trig_0155PATecuM4Cm5NGsEsbkX1`, watchdog
+  `trig_01RTRucUN1KoyRtkdMc3BAfH`), after this restart was on main. Every
+  retired scheduled task stays disabled. Where the work stood: the entry
+  "Stopped here, 21 November 2026" below.
 - **Stopped here, 21 November 2026** (the overseer, about 23:15Z). At
   about 21:45 UTC the owner ordered, in the chat of the overseer session,
   "Merge cleanly what we have until now and then stop" (CLAUDE.md
