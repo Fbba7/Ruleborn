@@ -453,10 +453,12 @@ export class Auth {
     const hash = createHash("sha256").update(String(key)).digest("base64url");
     const done = this.db.prepare(
       "INSERT INTO auth_spent (key, expires_at) VALUES (?, ?) ON CONFLICT (key) DO NOTHING").run(hash, until);
-    // A row kept past its life is no longer a reason to refuse.
+    // A row kept past its life is no longer a reason to refuse. Its last
+    // millisecond is still inside it: the proof it spent is accepted then too
+    // (AUD-B-09), and expire() keeps it until then.
     if (done.changes === 0) {
       const row = this.db.prepare("SELECT expires_at FROM auth_spent WHERE key = ?").get(hash);
-      if (row && row.expires_at > now) return false;
+      if (row && row.expires_at >= now) return false;
       this.db.prepare("UPDATE auth_spent SET expires_at = ? WHERE key = ?").run(until, hash);
     }
     return true;
