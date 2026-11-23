@@ -79,7 +79,7 @@ async function booted(env, check) {
 // on an empty value: with stubbed sign-in (where a journal inside the data
 // folder is only warned), the default folder is the one checked and used.
 test("AUD-B-14: an empty RULEBORN_DELETIONS keeps the deletion journal on disk, in the folder checked (F50, SEC-38)", () =>
-  booted({ RULEBORN_DELETIONS: "", RULEBORN_STUB_SIGNIN: "1" }, (run) => {
+  booted({ RULEBORN_DELETIONS: "", RULEBORN_STUB_SIGNIN: "1", RULEBORN_GOOGLE_CLIENT_IDS: "" }, (run) => {
     assert.equal(run.started, true);
     assert.equal(existsSync(join(run.dir, "data", "deletions")), true, "the journal's folder is on disk");
     assert.match(run.stderr(), /RULEBORN_DELETIONS is inside RULEBORN_DATA/, "the folder checked is that folder");
