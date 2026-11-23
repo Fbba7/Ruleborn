@@ -83,7 +83,7 @@ failed.
   no problems.
 - The merge of main `719c4ff3` brought only docs/progress changes, no
   client file.
-- Pre-check on the ready_sha: see `precheck` in `status/FX4.json`.
+- Pre-check on the ready_sha `8be82e6f`: PASS, "All checks passed." (22:25 UTC, bwrap).
 - `python3 tools/coord/owners.py diff FX4-3-replay-shop-nav
   origin/claude/videogame-project-analysis-ewkkk2 8be82e6f`: "every changed
   path is inside its files".
