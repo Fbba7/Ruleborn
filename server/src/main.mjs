@@ -87,6 +87,13 @@ for (const [name, least] of [["RULEBORN_MAX_CONNECTIONS", 1], ["RULEBORN_HEADERS
   }
 }
 
+// An unreadable date would leave no current season, and every caller that
+// reads its id throw (AUD-B-18).
+const seasonStart = Date.parse(process.env.RULEBORN_SEASON_START ?? "2026-01-05T00:00:00Z");
+if (!Number.isFinite(seasonStart)) {
+  throw new Error(`RULEBORN_SEASON_START must be a date, such as 2026-01-05T00:00:00Z (got ${JSON.stringify(process.env.RULEBORN_SEASON_START)})`);
+}
+
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, "..", "..");
 const data = process.env.RULEBORN_DATA ?? join(here, "..", ".data");
@@ -244,7 +251,7 @@ const service = new Service({
   // §18.1's seasons run back to back from the first. RULEBORN_SEASON_START is
   // that moment, in ISO form; without it a fixed Monday, so a local server's
   // seasons do not move between restarts.
-  seasonStart: Date.parse(process.env.RULEBORN_SEASON_START ?? "2026-01-05T00:00:00Z"),
+  seasonStart,
   // §24.3's replays, private: not in the store anyone may fetch by hash.
   // A floor of free space under the replays (SEC-18): below it a heist is
   // refused with 503 storage_low, and the lease kept, until space returns.
