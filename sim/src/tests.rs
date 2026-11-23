@@ -7013,3 +7013,196 @@ fn rb55_a_command_for_actor_16_still_records_a_replay_that_round_trips() {
     assert_eq!(back.commands, heist.commands, "the recorded replay round-trips");
     assert!(verify_on(&island, &back).is_ok(), "{:?}", verify_on(&island, &back).err());
 }
+
+#[test]
+fn sim_1_a_body_in_a_bush_is_not_found() {
+    // Audit finding SIM-1 (docs/security/audit-2026-11/sim.md).
+    // §12.8 (v3.3): "a body is seen exactly as a still crew member lying on
+    // its tile would be, so tall grass, a bush, fog or a tunnel hides it".
+    // A still crew member alone in a bush is hidden (`noticed`'s Bush row).
+    let mut world = vault_world(0);
+    post(&mut world, 0, 3, 6);                    // a Scout, facing north
+    let down = post(&mut world, 1, 3, 3);         // three tiles in front of it
+    world.grid.place(3, 3, Feature::Bush);
+    world.guards[down].knocked_out = true;
+    for _ in 0..TICKS_PER_SECOND {
+        world.step();
+    }
+    assert!(!world.guards[down].found, "a bush hides a body as it hides a still crew member");
+    assert_eq!(world.knockouts_discovered, 0);
+}
+
+#[test]
+fn sim_1_a_body_in_a_thicket_beyond_a_tile_is_not_found() {
+    // Audit finding SIM-1 (docs/security/audit-2026-11/sim.md).
+    // The same rule: "A thicket ... hides anyone inside beyond 1 tile".
+    let mut world = vault_world(0);
+    post(&mut world, 0, 3, 6);                    // a Scout, facing north
+    let down = post(&mut world, 1, 3, 3);         // three tiles in front of it
+    world.grid.place(3, 3, Feature::Thicket);
+    world.guards[down].knocked_out = true;
+    for _ in 0..TICKS_PER_SECOND {
+        world.step();
+    }
+    assert!(!world.guards[down].found, "a thicket hides a body three tiles off");
+    assert_eq!(world.knockouts_discovered, 0);
+}
+
+#[test]
+#[allow(unsafe_code)]
+fn sim_2_the_recorder_never_returns_a_replay_over_2_kb() {
+    // Audit finding SIM-2 (docs/security/audit-2026-11/sim.md).
+    let island = crate::island::Island::example_open();
+    let ib = island.encode();
+    let ticks = crate::MAX_TICKS;
+    // 180 walks, one every 37 ticks (1.2 s), each to a real tile of the island.
+    let side = island.side() as i16;
+    let (lx, ly) = island.landings()[0];
+    let mut log = vec![(0u32, 0u8, Kind::Land, lx as i16 * 256 + 128, ly as i16 * 256 + 128)];
+    for i in 0..180u32 {
+        let (tx, ty) = ((i as i16 * 3) % side, (i as i16 * 7) % side);
+        log.push((30 + i * 37, (i % 3) as u8, Kind::MoveTo, tx * 256 + 128, ty * 256 + 128));
+    }
+    let buf = crate::ffi::rb_buffer();
+    unsafe {
+        std::ptr::copy_nonoverlapping(ib.as_ptr(), buf, ib.len());
+        for (k, &(tick, actor, kind, x, y)) in log.iter().enumerate() {
+            let mut c = [0u8; 10];
+            c[..4].copy_from_slice(&tick.to_le_bytes());
+            c[4] = actor;
+            c[5] = kind as u8;
+            c[6..8].copy_from_slice(&x.to_le_bytes());
+            c[8..10].copy_from_slice(&y.to_le_bytes());
+            std::ptr::copy_nonoverlapping(c.as_ptr(), buf.add(ib.len() + k * 10), 10);
+        }
+    }
+    let n = crate::ffi::rb_record(0, 7, ticks, 3, ib.len() as u32, log.len() as u32, 0);
+    // The simulation itself accepts the recorded heist.
+    let commands: Vec<Command> = log.iter().map(|&(tick, actor, kind, x, y)| Command { tick, actor, kind, x, y }).collect();
+    let heist = crate::record(&island, 7, ticks, 3, commands);
+    assert!(crate::verify_on(&island, &heist).is_ok(), "the sim accepts the honest log: {:?}", crate::verify_on(&island, &heist).err());
+    if n > 0 {
+        // Hand the recorded replay to rb_verify exactly as the server does.
+        let replay = unsafe { std::slice::from_raw_parts(buf, n as usize).to_vec() };
+        unsafe {
+            std::ptr::copy_nonoverlapping(replay.as_ptr(), buf, replay.len());
+            std::ptr::copy_nonoverlapping(ib.as_ptr(), buf.add(replay.len()), ib.len());
+        }
+        let v = crate::ffi::rb_verify(replay.len() as u32, ib.len() as u32);
+        assert!(replay.len() <= MAX_HEIST_BYTES && v == 0,
+            "rb_record returned a {}-byte replay (limit {MAX_HEIST_BYTES}) that rb_verify refuses with {v}", replay.len());
+    } else {
+        assert_eq!(n, -9, "an oversize replay is refused as -9");
+    }
+}
+
+#[test]
+fn sim_5_the_hourkeeper_gives_back_a_hit_taken_in_a_tick_the_ally_was_healed() {
+    // Audit finding SIM-5 (docs/security/audit-2026-11/sim.md).
+    // `step`: "What each crew member lost this tick, kept five seconds for
+    // the Hourkeeper (§11.11). Healing in the same tick is not netted off:
+    // 'all the health it lost'." A thorn at tick 30 lands in the same tick
+    // as a Bloomling's heal; it is still health lost.
+    let mut world = kinds_world(&["hourkeeper", "stormhound", "bloomling"]);
+    in_a_hedge(&mut world, 1, 8, 8);
+    put(&mut world, 2, 8, 9);                          // a tile off: within 3
+    let full = world.raiders[1].health;
+    world.raiders[1].health = full / 2;
+    let each = Role::Scout.health() * 5 / 100;
+    let heal = full * 15 / 100;
+    run_for(&mut world, TICKS_PER_SECOND);            // thorn at tick 0
+    fire_at(&mut world, 2, 0, 0);                      // Bloom at tick 30
+    run_for(&mut world, TICKS_PER_SECOND + 1);        // thorns at 30 and 60
+    assert_eq!(world.raiders[1].health, full / 2 + heal - 3 * each);
+    put(&mut world, 1, 9, 9);
+    fire_at(&mut world, 0, 9, 9);
+    world.step();
+    assert_eq!(world.raiders[1].health, full / 2 + heal,
+               "all three thorns back, the one in the healed tick too");
+}
+
+#[test]
+fn sim_6_a_ramblers_charge_through_a_crystal_wall_counts_for_cracked_gardens() {
+    // Audit finding SIM-6 (docs/security/audit-2026-11/sim.md).
+    let mut world = kinds_world(&["rambler"]);
+    world.place_wards(&[(WardKind::CrystalWall, (3, 2))]);
+    weave(&mut world, &["brittle_stone", "bloom"]);
+    world.wards[0].health = 1;
+    put(&mut world, 0, 1, 2);
+    fire_at(&mut world, 0, 8, 2);
+    for _ in 0..(5 * TICKS_PER_SECOND) {
+        world.step();
+    }
+    assert!(world.wards[0].broken, "the charge breaks the wall");
+    assert_eq!(world.outcome().cracked, 1, "Cracked gardens counts every structure broken");
+}
+
+#[test]
+fn sim_6_a_ramblers_charge_through_a_crystal_wall_under_shattered_glass_leaves_shards() {
+    // Audit finding SIM-6 (docs/security/audit-2026-11/sim.md).
+    let mut world = kinds_world(&["rambler"]);
+    world.place_wards(&[(WardKind::CrystalWall, (3, 2))]);
+    weave(&mut world, &["glass", "brittle_stone"]);
+    let full = world.raiders[0].full(&world.sheet);
+    assert!(full < world.wards[0].health, "the Rambler alone cannot break a whole wall: {full}");
+    put(&mut world, 0, 1, 2);
+    fire_at(&mut world, 0, 8, 2);
+    for _ in 0..(5 * TICKS_PER_SECOND) {
+        world.step();
+    }
+    let t = world.grid.index(3, 2).unwrap();
+    assert!(world.wards[0].broken, "glass walls break in one hit");
+    assert!(world.shards.contains(&t), "leaving shards");
+}
+
+#[test]
+fn sim_7_a_folded_prism_half_is_nobody_and_does_not_block_the_glass_golems_wall() {
+    // Audit finding SIM-7 (docs/security/audit-2026-11/sim.md).
+    let mut world = kinds_world(&["prism_mite", "glass_golem"]);
+    fire_at(&mut world, 0, 2, 10);
+    world.step();
+    assert_eq!(world.raiders.len(), 3, "the mite split");
+    walk_to(&mut world, 2, 6, 4);
+    run_for(&mut world, ruleborn::SPLIT_TICKS);
+    assert_eq!(world.raiders[2].standing, Standing::Gone, "the half folded back");
+    assert_eq!(tile_of(&world, 2), (6, 4), "and was left where it last stood");
+    put(&mut world, 1, 2, 4);
+    fire_at(&mut world, 1, 6, 4);
+    world.step();
+    let t = world.grid.index(6, 4).unwrap();
+    assert!(world.grid.is_raised(t), "\"nobody and nothing on them\": a Gone half is nobody");
+}
+
+#[test]
+fn sim_8_a_gravity_well_does_not_cut_short_a_time_snares_freeze() {
+    // Audit finding SIM-8 (docs/security/audit-2026-11/sim.md).
+    let mut world = vault_world(1);
+    world.place_wards(&[(WardKind::TimeSnare, (3, 3)), (WardKind::GravityWell, (5, 3))]);
+    put(&mut world, 0, 3, 3);                     // on the snare, 2 tiles from the well
+    world.step();
+    assert!(world.wards[1].armed_at > 0, "the well fired too");
+    assert!(world.raiders[0].frozen_until >= h::SNARE_FREEZE_TICKS,
+            "the snare's 2.5 s still stand: frozen until {}", world.raiders[0].frozen_until);
+}
+
+#[test]
+fn sim_9_a_bounce_mushroom_lands_on_a_bridge_three_tiles_on() {
+    // Audit finding SIM-9 (docs/security/audit-2026-11/sim.md).
+    let mut world = vault_world(1);
+    world.grid.place(3, 2, Feature::BounceMushroom);
+    world.grid.place(6, 2, Feature::Pond);
+    let bridge = world.grid.index(6, 2).unwrap();
+    world.grid.set_bridged(bridge, true);
+    assert!(world.grid.standable(bridge) && !world.grid.at(bridge).passable());
+    put(&mut world, 0, 1, 2);
+    order(&mut world, 0, 12, 2);
+    for _ in 0..3 * TICKS_PER_SECOND {
+        world.step();
+        if world.raiders[0].bounced {
+            assert_eq!(tile_of(&world, 0), (6, 2),
+                       "\"the furthest of those tiles it can stand on\": the bridge");
+            return;
+        }
+    }
+    panic!("never launched");
+}

@@ -564,7 +564,7 @@ export class Workshop {
     const now = this.now();
     return this.db.prepare(
       "SELECT * FROM workshop_reports WHERE resolved_at IS NULL ORDER BY at, id").all()
-      .map((r) => ({ report: r.id, item: r.item, reason: r.reason, server: r.reporter === null,
+      .map((r) => ({ report: r.id, item: r.item, reason: r.reason, server: r.reporter === null && r.reason === "completion_spike",
                      at: r.at, overdue: now - r.at > REVIEW_MS }));
   }
 
@@ -592,9 +592,11 @@ export class Workshop {
       }
       if (action === "ban") this.ban(item.creator, reason, now);
       // RB-39: the spike flag clears whenever a server report is among those
-      // the dismissal closes, whichever report the moderator acted on.
+      // the dismissal closes, whichever report the moderator acted on. A
+      // server report is the spike's, not a deleted player's (RB-56).
       if (action === "dismiss" && this.db.prepare(
-        "SELECT 1 FROM workshop_reports WHERE item = ? AND resolved_at IS NULL AND reporter IS NULL LIMIT 1")
+        `SELECT 1 FROM workshop_reports WHERE item = ? AND resolved_at IS NULL AND reporter IS NULL
+            AND reason = 'completion_spike' LIMIT 1`)
         .get(item.id)) {
         this.db.prepare("UPDATE workshop_items SET review = 0 WHERE id = ?").run(item.id);
       }
