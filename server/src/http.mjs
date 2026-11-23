@@ -244,7 +244,7 @@ async function socialRoute(service, social, request, parts, who) {
     if (m === "POST" && a && b === "join") return json(social.join(me, a));
     if (m === "POST" && a && b === "roles") {
       const { account, role } = await body(request);
-      return json(social.appoint(me, text(account), text(role)));
+      return json(social.appoint(me, text(account), text(role), a));
     }
     if (m === "POST" && a && b === "remove") {
       return json(social.remove(me, a, text((await body(request)).account)));

@@ -5412,7 +5412,10 @@ pub fn record_in(island: &island::Island, seed: u64, ticks: u32, crew: u8, era: 
 /// `record_in`, with §12.5's crew manifest when the heist carries one.
 pub fn record_with(island: &island::Island, seed: u64, ticks: u32, crew: u8,
                    era: Option<era::Era>, manifest: Option<replay::Manifest>,
-                   commands: Vec<Command>) -> Heist {
+                   mut commands: Vec<Command>) -> Heist {
+    // The replay packs the actor in four bits: a command for actor 16 or
+    // above names no crew member, so it is not recorded as one (RB-55).
+    commands.retain(|c| c.actor < 16);
     let mut heist = Heist {
         seed,
         island: island.digest(),

@@ -5,6 +5,65 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 161**, 21 November 2026, from about 19:39Z (session
+  `session_01SNkKxq7tRdEEZo5rkVPq4N`, started by the Opus 5.5 launcher).
+  The changes since cycle 160: the three builders it started committed
+  their fixes, merged main and are pre-checking in detached runs, their
+  sessions idle until the runs report. FX1 (`claude/fix-server-a`,
+  bf963538) pre-checks FX1-3-workshop at 24e171e8 (RB-35, RB-37, RB-38,
+  RB-39 among its commits); FX2 (`claude/fix-server-b`, 253f5e73) runs
+  FX2-4-purge-notify's full checks (RB-46, RB-47, RB-48 among its
+  commits); FX3 (`claude/fix-sim`, 7f752660) pre-checks FX3-3-clock-report
+  at 9aa26794 (RB-19, RB-45 among its commits). **Bookkeeping:** the
+  three claims copied into the backlog (FX1-3 and FX3-3 `claimed`, FX2-4
+  `working`; leases to 22:15Z to 22:20Z); `owners.py claims` passes.
+  **FX1-R2** (RB-35's per-play rules column needs `db.mjs`, outside
+  FX1-3's files) is copied and answered with its default: FX1-3 refuses
+  `wrong_rules` for any build but the current one, which closes RB-35's
+  old-build exploit without a schema change. All three sessions are
+  within their expected update (20:06Z to 20:07Z), so none is restarted.
+  **FX4 waits** with FX4-3-replay-shop-nav and FX4-5-problem-strings
+  open: the seven-day bar still reads `allowed_warning`, so the cap stays
+  three. No task is ready: no merge, no gate run, no page republished. No
+  new audit finding. **The UI stays paused.**
+  **Next:** merge FX1-3, FX2-4 and FX3-3 as they turn ready and their
+  checks pass; start each builder's next task; start FX4 on
+  FX4-3-replay-shop-nav when a seat frees or the bar clears.
+
+- **Cycle 160**, 21 November 2026, from about 18:39Z (session
+  `session_01SNkKxniTiRqQzPk2REyWq3`, started by the Opus 5.5 launcher).
+  **Merged** FX1-2-leases (f3849470: RB-12, RB-14, RB-16, RB-17),
+  FX2-3-shop (427a1705: RB-08, RB-09, RB-10, RB-11, RB-13) and
+  FX3-2-island (16a5a961: RB-40, RB-50, RB-57, unproven candidates 7 and
+  34) as one candidate, 590a74fb, onto main at c7cdcbbd. All three turned
+  ready with passing pre-checks. Each RB entry's fail-first test precedes
+  its fix, and `owners.py diff` and `claims` pass on all three. The
+  candidate's full checks ran here (check_all PASS, 19:09Z) and the UI
+  guard passed in its own worktree. The merge lock was set at about
+  18:40Z (8bad3e7c). Main gained only that lock commit while the checks
+  ran, so the candidate was merged onto it and only the docs check rerun
+  (pass); the tree matches the candidate outside `docs/progress`.
+  **Pages:** the roadmap came out byte for byte the same as cycle 155's
+  copy (51abbef0) and is not republished; the audit page changed (sim
+  tests 331 to 336, FX3-2's new tests), so it is committed and republished
+  (version 232). With FX3-2 merged, its two new publish problems
+  (PROBLEM_ENTRANCEBLOCKED, PROBLEM_DUPLICATELAW) have no strings until
+  FX4-5-problem-strings lands; its deps are now merged, and the parked UI
+  shows none of them, so nothing reaches a player meanwhile.
+  **Started** on Opus 5.5 at effort high:
+  - FX1 on FX1-3-workshop (`session_01SNkKxmoNcX1h8LTVeP5XNK`)
+  - FX2 on FX2-4-purge-notify (`session_01SNkKxnBNSWuPYLJtFjoP4M`)
+  - FX3 on FX3-3-clock-report (`session_01SNkKxorHHkqpPHzjNrNryy`)
+
+  The earlier sessions were idle. **FX4 waits** with
+  FX4-3-replay-shop-nav and FX4-5-problem-strings open: the seven-day bar
+  still reads `allowed_warning`, so the cap stays three, and FX4 has the
+  least work left (about 8 hours against FX1's 15.5, FX2's 12 and FX3's
+  11). No new request. **The UI stays paused.**
+  **Next:** merge FX1-3, FX2-4 and FX3-3 as they turn ready and their
+  checks pass; start FX4 on FX4-3-replay-shop-nav when a seat frees or the
+  bar clears.
+
 - **Cycle 159**, 21 November 2026, from about 18:14Z (session
   `session_01SNkKxqKMkJiLRMM5bReP25`, started by the Opus 5.5 launcher).
   The changes since cycle 158: the three builders it started committed

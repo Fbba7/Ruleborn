@@ -6283,6 +6283,56 @@
       "merged_sha": "c7cdcbbd28a81dc244f363e3cca55623ef05e1b7",
       "updated_at": "2026-11-21T19:11:00Z",
       "updated_by": "lead"
+    },
+    {
+      "id": "FX3-3-clock-report",
+      "title": "Medium: RB-44 (a defender's report says 'held' after any Prism mite split), RB-45 (a slowed heist clock never catches the crew still inside), RB-19 (an older pinned wasm build cannot be loaded)",
+      "phase": "fix",
+      "role": "FX3",
+      "model": "Opus 5.5",
+      "assigned_to": "FX3",
+      "files": [
+        "sim/**",
+        "server/src/sim.mjs",
+        "server/src/lab.mjs",
+        "server/test/lab.test.mjs",
+        "server/test/security_sim.test.mjs",
+        "server/test/security_deep_sim.test.mjs",
+        "server/test/stability.test.mjs",
+        "server/test/fix_fx3_*",
+        "docs/security/audit-2026-11/sim.md"
+      ],
+      "deps": [
+        "FX3-2-island"
+      ],
+      "done_when": [
+        "each of RB-44, RB-45, RB-19 in docs/security/bug-report-2026-11.md (its Where, Input, Should happen and Fix): first a test that reproduces the entry's input and fails on current main, committed on its own before the fix, its failure output quoted in the handoff; then the smallest fix that makes it pass, following the report's Fix line unless the handoff says why not; the commit names the RB id",
+        "sim/golden/*.rbh rebaked only if a fix changes a golden replay's outcome, each change named",
+        "no existing test is skipped, disabled or loosened; a test whose expectation encoded the defect is corrected and named in the handoff",
+        "cargo test in sim, then cd server && npm test (the server loads the rebuilt wasm) passes",
+        "current main merged into the branch, then the fresh-container setup line and bash tools/check_all.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed outside the task's files (M48)",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 3.5,
+      "tier": 1,
+      "critical": false,
+      "state": "merged",
+      "claim": {
+        "agent": "FX3",
+        "branch": "claude/fix-sim",
+        "claimed_at": "2026-11-21T19:16:00Z",
+        "seen_at": "2026-11-21T19:21:01Z",
+        "lease_until": "2026-11-21T22:16:00Z"
+      },
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "9aa26794af23cb05626203f1534313153a51bde0",
+      "merged_sha": "e413e4a910d1acee16f7dff0853ca63c90977eda",
+      "updated_at": "2026-11-21T20:58:00Z",
+      "updated_by": "lead"
     }
   ],
   "idle_queue": [
