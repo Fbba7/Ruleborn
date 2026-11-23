@@ -101,6 +101,11 @@ const gameCenter = gameCenterRoots.length > 0 && bundleId ? new GameCenter({
   },
 }) : null;
 const storeKit = storeKitRoots.length > 0 && bundleId;
+// Roots without the app's bundle id would switch the proof off unsaid, and
+// every iOS sign-in or purchase fail (AUD-B-15), as a half-set Play pair would.
+if ((gameCenterRoots.length > 0 || storeKitRoots.length > 0) && !bundleId) {
+  throw new Error("RULEBORN_GAMECENTER_ROOTS and RULEBORN_STOREKIT_ROOTS need RULEBORN_BUNDLE_ID, the app they prove");
+}
 
 // Google's: "Sign in with Google" ID tokens for the server's OAuth client
 // ids, checked against the keys Google publishes; Play Billing purchases for
