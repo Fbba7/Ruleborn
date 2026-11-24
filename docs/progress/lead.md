@@ -119,8 +119,9 @@ then rewrites the "Now" section below and `status/lead.json`, and pushes.
 6. Start and restart agents (cycle step 6) with `create_session`, never a
    scheduled task: `source_url` https://github.com/Fbba7/Ruleborn,
    `source_revision` `claude/videogame-project-analysis-ewkkk2` (main),
-   `model` Opus 5.5 with effort high (the owner's order 5; the roster
-   in the backlog says the same), title `Ruleborn <agent> <task id>`, tags `ruleborn:ui-wave`
+   `model` Opus 5.5 (the owner's order 5), with effort medium, or high
+   when the task is complex by the owner's order 6 (CLAUDE.md), which
+   says what counts; write the effort in the sessions table, title `Ruleborn <agent> <task id>`, tags `ruleborn:ui-wave`
    and `ruleborn:<agent>`, and as prompt a first line giving the reason
    (start, or restart and why) followed by the agent's prompt below. Start
    an agent when its next task is open with its deps merged and it has no
@@ -155,8 +156,8 @@ every other session is created with `create_session`.
 
 | Scheduled task | ID | Fires into | Schedule (UTC) |
 |---|---|---|---|
-| The launcher: one fresh lead cycle session an hour on Opus 5.5 at effort high, unless the last is still working; if `create_session` is refused, it replies with the exact reason (created 15 Nov at 18:45Z) | `trig_01NksvDVV7iRJi4zrU7Uf7Te` | the launcher, `session_01SNkKxqooGx7cgr8Gdcf6S4` (Opus 5.5, effort high) | hourly at :38 |
-| The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself on Opus 5.5 at effort high and alerts, naming any refusal of `create_session` with its exact reason (created 15 Nov at 18:46Z) | `trig_01RTRucUN1KoyRtkdMc3BAfH` | the watchdog, `session_01SNkKxmfz7eY3hZG1QRvPEn` (Opus 5.5, effort high) | every 2 hours at :08 |
+| The launcher: one fresh lead cycle session an hour on Opus 5.5 at effort medium (order 6; effort high until 24 Nov), unless the last is still working; if `create_session` is refused, it replies with the exact reason (created 15 Nov at 18:45Z) | `trig_01NksvDVV7iRJi4zrU7Uf7Te` | the launcher, `session_01SNkKxqooGx7cgr8Gdcf6S4` (Opus 5.5, effort high) | hourly at :38 |
+| The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself on Opus 5.5 at effort medium (order 6; effort high until 24 Nov) and alerts, naming any refusal of `create_session` with its exact reason (created 15 Nov at 18:46Z) | `trig_01RTRucUN1KoyRtkdMc3BAfH` | the watchdog, `session_01SNkKxmfz7eY3hZG1QRvPEn` (Opus 5.5, effort high) | every 2 hours at :08 |
 | The launcher's second firing, so a cycle can start every half hour: the same prompt as the hourly firing, into the same session; it skips while the last cycle is working (created 16 Nov at 23:39Z at the owner's request to speed the program up) | `trig_0155PATecuM4Cm5NGsEsbkX1` | the launcher, `session_01SNkKxqooGx7cgr8Gdcf6S4` (Opus 5.5, effort high) | hourly at :13 |
 
 **The pair in this table is the working pair**, created on 15 November

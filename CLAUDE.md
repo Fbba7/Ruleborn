@@ -176,8 +176,8 @@ be the logic."
   sessions), nothing is lost: the launcher and the watchdog resume the work
   after the limit resets, with no further pause and nothing asked of the
   owner.
-- **Never use Fable 5.1** (order 2), and **use only Opus 5.5, at effort
-  high** (order 5).
+- **Never use Fable 5.1** (order 2), and **use only Opus 5.5**, at the
+  effort order 6 sets (order 5).
 
 ## 4. Use only Fable 5.2 (replaced by order 5)
 
@@ -204,11 +204,12 @@ On 9 November 2026 the owner ordered, in the chat of the overseer session:
 - **A session that finds itself on another model does no work.** It writes
   that in its status file or handoff, and ends its turn.
 
-## 5. Use only Opus 5.5, at effort high
+## 5. Use only Opus 5.5 (its effort is set by order 6)
 
 On 11 November 2026, at about 19:50 UTC, the owner ordered, in the chat of
 the overseer session: "Let's switch to Opus 5.5 everywhere again, effort
-high." This order replaces order 4.
+high." This order replaces order 4. Order 6 replaces its "effort high":
+where this order says effort high, read the effort order 6 sets.
 
 - **Every session runs on Opus 5.5, at effort high, and on no other
   model:** the lead's cycles, the launcher, the watchdog, every agent and
@@ -237,3 +238,38 @@ high." This order replaces order 4.
   scheduled tasks and sessions".
 - **A session that finds itself on another model does no work.** It writes
   that in its status file or handoff, and ends its turn.
+
+## 6. Effort medium by default, high for complex tasks
+
+On 24 November 2026, at about 08:40 UTC, the owner ordered, in the chat of
+the overseer session: "What I want to do to decrease the effort is by
+default using Opus 5.5 Medium and then using Opus 5.5 High if the task is
+complex." This order replaces order 5's "effort high". Order 5's model
+rule stands (Opus 5.5 only), and so does order 2 (never Fable 5.1).
+
+- **Effort medium is the default** for every session and subagent: the
+  lead's cycles, the launcher, the watchdog, the overseer, every builder,
+  and every subagent and workflow model override. The gate's judge
+  inherits the effort of the session that calls it.
+- **Effort high is for complex tasks.** When the lead starts or restarts a
+  builder, it decides the effort from the task and records it in the
+  sessions table of `docs/progress/lead.md`. A task is complex, and its
+  builder runs at effort high, when any of these holds:
+  - it fixes a defect rated high or critical, or touches security, auth,
+    privacy, persistence, money (purses, shops, vaults) or concurrency;
+  - it changes a frozen contract, a wire protocol or a stored schema, or
+    spans more than one of `sim/`, `server/`, `client/` and `tools/`;
+  - it is a `resync` after a failed merge candidate;
+  - an earlier session on it at effort medium failed the full checks or
+    review, stalled, or reported it could not finish it.
+  Otherwise the builder runs at effort medium. When unsure, start at
+  medium: the last rule moves the task to high if medium is not enough.
+- **A subagent** runs at the effort of the session that starts it, or at
+  high when that session judges its piece complex by the rules above.
+- **Sessions already running** at effort high finish their current task;
+  the next session on each seat follows this order. Nothing is
+  interrupted for this order.
+- **The launcher and the watchdog** create the lead's cycles at effort
+  medium. Their prompts were updated to say so on 24 November 2026.
+- If `create_session` refuses the effort setting, create the session on
+  Opus 5.5 without it and say so in your status file.
