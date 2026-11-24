@@ -3522,6 +3522,8 @@ the rest of O1–O7 are AD's or the lead's (`report.md` section 3.4).
   BT-01a's merge candidate. Copied in cycle 185.
   **Answered** by the lead in cycle 185: the default; the lead adds both
   lines in the candidate that merges BT-01a.
+  **Done** in cycle 186: both lines are in candidate 8107ba62, merged
+  onto main as 99c9aa89.
 
 - **SP-bt-04-R1** (from SP-bt-04 to the lead, 24 November 2026 17:55Z;
   due 25 November 21:00Z; not blocking): `tools/check_all.sh` is not in
@@ -3533,6 +3535,10 @@ the rest of O1–O7 are AD's or the lead's (`report.md` section 3.4).
   lead adds that line in the merge candidate, as for AD-R3 and K1-R1.
   Copied in cycle 185.
   **Answered** by the lead in cycle 185: the default.
+  **Cycle 186:** the line was in candidate 84be5f38, which failed on it
+  (render.py's cache folder under a read-only HOME in the check sandbox);
+  BT-04a is in `resync`, and the lead adds the line again in the
+  candidate that merges the resync.
 
 - **SP-bt-04-R2** (from SP-bt-04 to AD through the lead, 24 November 2026
   17:55Z; due 26 November 21:00Z; not blocking): AD adopts the shot list
