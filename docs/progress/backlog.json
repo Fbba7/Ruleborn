@@ -489,7 +489,7 @@
       "estimate_h": 1.25,
       "tier": 2,
       "critical": false,
-      "state": "ready",
+      "state": "merged",
       "claim": {
         "agent": "FX2",
         "branch": "claude/fix-server-b",
@@ -500,8 +500,8 @@
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": "5281e8fbbaf0a55605b0a0c2d0293ff2f3fcedfe",
-      "merged_sha": null,
-      "updated_at": "2026-11-24T05:44:00Z",
+      "merged_sha": "5f32d68a99eb11fa63cba62f827fae352a062605",
+      "updated_at": "2026-11-24T06:26:00Z",
       "updated_by": "lead (cycle 172)",
       "exceptions": [
         "server/test/setup.mjs"
@@ -578,7 +578,7 @@
       "estimate_h": 3.0,
       "tier": 1,
       "critical": false,
-      "state": "ready",
+      "state": "merged",
       "claim": {
         "agent": "FX3",
         "branch": "claude/fix-sim",
@@ -589,8 +589,8 @@
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": "1ecd419f9bb55accfe5b00f8e675edde253ef0ad",
-      "merged_sha": null,
-      "updated_at": "2026-11-24T05:44:00Z",
+      "merged_sha": "5f32d68a99eb11fa63cba62f827fae352a062605",
+      "updated_at": "2026-11-24T06:26:00Z",
       "updated_by": "lead (cycle 172)"
     },
     {
