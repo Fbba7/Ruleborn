@@ -418,9 +418,10 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
-| SP-bt-05 | `session_01SNkKxpZxYqKXESzt9K8ZVK` (Opus 5.5, effort medium) | BT-05 (start, cycle 191: a new agent, once BT-04b merged; effort medium by order 6, a tools-only launcher that adds a new schema and changes no stored one) | `claude/ui-spec-gate-run` | 2026-11-24 23:17Z |
-| SP-bt-06 | `session_01SNkKxr7UeYQUNErvUP7sgQ` (Opus 5.5, effort medium) | BT-06 (start, cycle 191: a new agent; effort medium by order 6, a tools-only check that adds new schemas and changes no stored one) | `claude/ui-spec-docs-check` | 2026-11-24 22:45Z |
-| SP-bt-09 | `session_01SNkKxnPBMN3yNvawTfEeo9` (Opus 5.5, effort medium) | BT-09 (start, cycle 190: a new agent; effort medium by order 6, one tools-only script, tools/setup_env.sh) | `claude/ui-spec-setup` | 2026-11-24 22:16Z |
+| AD | `session_01SNkKxqM8eV1Bdh5Hj1kPrX` (Opus 5.5, effort medium; idle, done) | P3-AD-wave-close (start by the overseer, by the owner's order: M63's O7 re-check; effort medium by order 6) | `claude/ui-ad` | 2026-11-24 23:30Z |
+| SP-bt-05 | `session_01SNkKxpZxYqKXESzt9K8ZVK` (Opus 5.5, effort medium; stopped) | BT-05 (start, cycle 191: a new agent, once BT-04b merged; effort medium by order 6, a tools-only launcher that adds a new schema and changes no stored one) | `claude/ui-spec-gate-run` | 2026-11-24 23:17Z |
+| SP-bt-06 | `session_01SNkKxr7UeYQUNErvUP7sgQ` (Opus 5.5, effort medium; stopped) | BT-06 (start, cycle 191: a new agent; effort medium by order 6, a tools-only check that adds new schemas and changes no stored one) | `claude/ui-spec-docs-check` | 2026-11-24 22:45Z |
+| SP-bt-09 | `session_01SNkKxnPBMN3yNvawTfEeo9` (Opus 5.5, effort medium; stopped) | BT-09 (start, cycle 190: a new agent; effort medium by order 6, one tools-only script, tools/setup_env.sh) | `claude/ui-spec-setup` | 2026-11-24 22:16Z |
 | SP-bt-07 | `session_01SNkKxntUxvJrAmwfuUT8wo` (Opus 5.5, effort medium) | BT-07 (start, cycle 189: a new agent; effort medium by order 6, a read-only tools-only task in tools/coord/metrics.*) | `claude/ui-spec-metrics` | 2026-11-24 21:34Z |
 | SP-bt-04 | `session_01SNkKxooiW2REvhyUn5DXCa` (Opus 5.5, effort medium) | BT-04b (start, cycle 189: BT-04a merged as 56f3662b; effort medium by order 6, a tools-only task in tools/gate/; SP-bt-04's last session, `session_01SNkKxob5FVPEP75EW56UMP`, is idle, its task merged) | `claude/ui-spec-gate-render` | 2026-11-24 21:34Z |
 | SP-bt-04 | `session_01SNkKxob5FVPEP75EW56UMP` (Opus 5.5, effort high) | BT-04a (resync, cycle 186: candidate 84be5f38 failed on render.py's self-test under the check sandbox's read-only HOME; effort high by order 6, a resync; SP-bt-04's last session, `session_01SNkKxnP8NpPyS23jXd4Upa`, is idle, its task ready at f1df3f1e) | `claude/ui-spec-gate-render` | 2026-11-24 19:35Z |
@@ -942,6 +943,26 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Stopped here, 25 November 2026** (the overseer, about 00:00Z). On
+  24 November, about 23:25Z, the owner ordered that "UI done" is
+  report.md's phases 0 to 3 and that every agent stops when phase 3
+  closes (CLAUDE.md order 1). At about 23:30Z the owner approved the
+  overseer's fast close ("Yes, do it"): the overseer did the lead's close
+  steps (M65). **Merged:** P3-AD-wave-close (AD, ready at 3bfb8325; AD-R67
+  and AD-R68 closed) onto main at **e33be6f9**. wave.md's ruling reads "The
+  wave stands at O7". **Phase 3 is closed.** **The program is stopped.**
+  **Builders, all stopped:** SP-bt-05 (BT-05, `claude/ui-spec-gate-run`,
+  tip 64697568, not ready), SP-bt-06 (BT-06, `claude/ui-spec-docs-check`,
+  tip 8b5338c5, not ready), SP-bt-09 (BT-09, `claude/ui-spec-setup`,
+  ready at 1a8a6ea7 with its pre-check passed, not merged). Their status
+  files are on their branches. The BT track, BT-08, icon batches 3 and 4
+  and the wave board's follow-up list are outside "UI done": no phase 4
+  is opened. **Lead:** idle after cycle 191; the merge lock is cleared.
+  **Scheduled tasks:** all disabled (launchers
+  `trig_01NksvDVV7iRJi4zrU7Uf7Te` and `trig_0155PATecuM4Cm5NGsEsbkX1`,
+  watchdog `trig_01RTRucUN1KoyRtkdMc3BAfH`, and last the overseer's
+  hourly status `trig_01B42Tpee2HLXTFaNUMUmofr`). Nothing restarts until
+  the owner, in their own words, says what comes next.
 - **Cycle 191**, 24 November 2026, from about 22:39Z (session
   `session_01SNkKxpEYznsGFjJLSHAYZS`, started by the Opus 5.5 launcher,
   effort medium by order 6). The changes since cycle 190: SP-bt-04 marked

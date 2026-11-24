@@ -125,6 +125,19 @@ the status files, requests and scheduled-task prompts.
     every enabled scheduled task. It stays stopped until the owner, in
     their own words, says what comes next.
 
+- **25 November 2026, about 00:00 UTC:** phase 3 closed, and **the
+  program is stopped**, by the owner's order of 24 November above. At
+  about 23:30 UTC the owner approved the overseer's fast close ("Yes, do
+  it"), in the chat of the overseer session; the overseer did the lead's
+  close steps. AD's line ("The wave stands at O7") merged onto main at
+  e33be6f9, and phase 3 is recorded as closed in `backlog.json` and
+  `docs/progress/lead.md`. Every builder is `stopped` (SP-bt-05, SP-bt-06
+  and SP-bt-09; their work on their branches, BT-09 ready but not
+  merged), the lead is idle, the merge lock is cleared, and no scheduled
+  task is enabled. Where the work stands is in
+  [`docs/progress/lead.md`](docs/progress/lead.md), "Now", entry
+  "Stopped here, 25 November 2026".
+
 A session that is in the middle of a turn when the program is stopped
 finishes cleanly, so no work is lost: commit and push what it has to its
 own branch (never to main), set `agent_state: stopped` in its status file,
