@@ -351,7 +351,7 @@ func _refresh() -> void:
 		(_aim_hint() if not aiming.is_empty() else Strings.t("HEIST_HINT_SHORT")))
 	hand.armed = int(aiming.get("kind", 0)) if not aiming.is_empty() and int(aiming["kind"]) != Kind.ABILITY else 0
 	hand.show_state(controller.world.sage(), controller.world.casts(), controller.world.tick())
-	HeistHud.lead_word(hand.cast_button)
+	HeistHud.lead_cast(hand.cast_button)
 	# Before the crew lands: where, and nothing else (§5.4).
 	var choosing := controller.choosing
 	picker.visible = choosing

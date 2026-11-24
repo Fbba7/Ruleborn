@@ -473,25 +473,35 @@ static func cast_leads() -> bool:
 
 ## The quiet figures' tint while Cast leads: the cream a step darker, so the
 ## loot's, the clock's and the alarm's baked figures, outlined and bold,
-## stand under Cast's word (`lead_word`, cream at 36 points) in value as in size.
+## stand under Cast's gold plate (`lead_cast`) in value as in size.
 static func quiet_tint() -> Color:
 	return Tokens.color("cream").darkened(0.38)
 
 
-## While Cast leads, its word in cream with the figures' dark ink line, so
-## the hand's main order outweighs every figure, spent or not (gate fail on
-## 97ecb94f, Hierarchy). Laid again after each `HeistHand.show_state`, whose
-## re-dressing of a spent Cast in leather resets the word's colours.
-static func lead_word(cast: Button) -> void:
-	if not cast_leads() or not cast.has_meta("words"):
+## While Cast leads, Cast stands on its own gold primary plate even with no
+## cast left (S1-R46, granted in lead cycle 187), the wand dimmed by
+## `HeistHand.show_state`, so in the grayscale it is the lightest, largest
+## plate on the screen (gate fails on 97ecb94f and 85be2fa8, Hierarchy).
+## Its word takes the gold's own ink, as when a cast is left. Laid again
+## after each `HeistHand.show_state`, whose `_dress_cast` puts a spent Cast
+## in leather (AD-R60, which stands at every other size and in high contrast).
+static func lead_cast(cast: Button) -> void:
+	var box := RbBox.of(cast)
+	if not cast_leads() or box == null or not cast.has_meta("words"):
 		return
+	var look := str(cast.get_meta("look", "gold"))
+	if box.look == look:
+		return
+	box = UI.dress(cast, look, box.radius_points)
+	cast.remove_meta("rim")
 	var l := cast.get_meta("words") as Label
-	var ink := Tokens.color("ink_line")
-	if l.get_theme_color("font_color") == Tokens.color("cream") and l.get_theme_color("font_outline_color") == ink:
-		return
-	l.add_theme_color_override("font_color", Tokens.color("cream"))
-	l.add_theme_color_override("font_outline_color", ink)
-	l.add_theme_constant_override("outline_size", UI.px(6))
+	l.add_theme_color_override("font_color", box.spec["text"])
+	if box.spec.has("text_outline"):
+		l.add_theme_color_override("font_outline_color", box.spec["text_outline"][0])
+		l.add_theme_constant_override("outline_size", UI.px(box.spec["text_outline"][1]))
+	else:
+		l.remove_theme_color_override("font_outline_color")
+		l.remove_theme_constant_override("outline_size")
 
 
 ## The loot's rows: what the bags can still take and what is left to load.
