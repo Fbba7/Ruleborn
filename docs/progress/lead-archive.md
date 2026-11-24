@@ -5,6 +5,25 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 185**, 24 November 2026, from about 17:39Z (session
+  `session_01SNkKxpANimBpEAcBiAnifC`, started by the Opus 5.5 launcher,
+  effort medium by order 6). The changes since cycle 184: S1 claimed the
+  heist re-work again (17:20Z, lease to 20:20Z) and pushed a WIP commit
+  a72050a0 (Cast leads at 200% text); SP-bt-01 pushed BT-01a's dry-run
+  cycle (`tools/coord/cycle.py`, a572ad30) and merged main; SP-bt-04
+  pushed BT-04a's renderer (`tools/gate/render.py`, f1df3f1e) and runs
+  its pre-check (expected end 18:30Z; its status's `updated_at` of
+  18:02Z is ahead of the clock). **Bookkeeping:** S1's claim is in the
+  backlog (state `claimed`). **Requests:** SPbt01-R1 and SP-bt-04-R1
+  (the self-test lines in `check_all.sh` and checks.md, for the merge
+  candidates) answered with their defaults; SP-bt-04-R2 (AD adopts the
+  shot list) routed to AD, no seat free, default at its due. **Merge and
+  gate:** none: nothing is ready, no merge lock; main did not move, so
+  the pages are not republished. **Started nothing:** S1, SP-bt-01 and
+  SP-bt-04 hold the cap of three under `allowed_warning`. **Next:** gate
+  and merge the heist re-work, BT-01a and BT-04a as they are ready,
+  adding the self-test lines of SPbt01-R1 and SP-bt-04-R1.
+
 - **Cycle 184**, 24 November 2026, from about 17:14Z (session
   `session_01SNkKxr2G8KQZktz2Zq8Ty8`, started by the Opus 5.5 launcher,
   effort medium by order 6). The changes since cycle 183: SP-bt-01
