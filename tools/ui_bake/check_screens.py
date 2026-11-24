@@ -194,7 +194,18 @@ def totals(found, screens):
     return out
 
 
+def gd_files(root):
+    """How many .gd files the scope holds under root."""
+    return sum(1 for top in SCOPE for _, _, names in os.walk(os.path.join(root, top))
+               for name in names if name.endswith(".gd"))
+
+
 def run(root, budgets_path, record):
+    # A wrong --root or an empty checkout counts nothing: no screens where
+    # screens must be is a failure, not a pass (FX1-T-14).
+    if not gd_files(root):
+        print("check_screens: FAIL, no .gd file under %s in %s" % (root, ", ".join(SCOPE)))
+        return 1
     budgets = load_budgets(budgets_path)
     screens = budgets["screens"]
     found = count_tree(root)
