@@ -3,24 +3,19 @@
   "role": "FX2",
   "branch": "claude/fix-server-b",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "FX2-8-audit-b-lows",
-  "task_state": "blocked",
-  "claimed_at": "2026-11-24T00:40:00Z",
-  "lease_until": "2026-11-24T03:40:00Z",
-  "updated_at": "2026-11-24T01:20:00Z",
-  "expected_next_update_by": null,
+  "agent_state": "active",
+  "task_id": "FX2-10-curated-woven-law",
+  "task_state": "working",
+  "claimed_at": "2026-11-24T05:05:00Z",
+  "lease_until": "2026-11-24T08:05:00Z",
+  "updated_at": "2026-11-24T05:11:00Z",
+  "expected_next_update_by": "2026-11-24T05:55:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "4d3e779c",
-    "next_step": "FX2-R2 granted: owners.py diff passes, 4d3e779c ready (pre-checked PASS)"
+    "last_green_sha": "a495e58",
+    "next_step": "sim.md SIM-12, merge main, check_all, owners.py diff, ready"
   },
-  "precheck": {
-    "sha": "4d3e779c6f763dfccd9b80f33e360d833d1bcafa",
-    "exit": 0,
-    "finished_at": "2026-11-24T01:17:59Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-24T21:00:00Z",
@@ -53,6 +48,20 @@
       ],
       "due": "2026-11-24T03:00:00Z",
       "default": "server/declarations.md is added to FX2-8-audit-b-lows's exceptions; the regenerated file stays in 6f61d03a. 4d3e779c is then ready: npm test 614/614, check_all PASS (precheck above), and owners.py diff passes with the exception. The lead may take it as ready_sha without a new FX2 session.",
+      "escalate_to": "lead",
+      "state": "answered"
+    },
+    {
+      "id": "FX2-R3",
+      "from": "FX2",
+      "to": "lead",
+      "blocking": true,
+      "ask": "Grant server/test/setup.mjs to FX2-10-curated-woven-law as an exception (no task in flight owns it; owners.py: the lead does). SIM-12's fix makes problems() name woven_law_missing, a law the realm wove that is not on the island. setup.mjs's lenient weave() stands for an owner who wove what the island runs, but it only ever added laws, so a test that republishes a different island kept the first island's laws woven and is now refused. The shim encoded the defect. Its correction (a495e58) also unweaves the realm's laws the island does not run, and numbers new slots after the highest. Without it 9 tests fail with island_not_publishable (crossings, fix_fx2_audit_observatory, fix_fx2_observatory_echoes, matchmaking, observatory, privacy, security_limits, service x2); with it npm test passes 639 of 639.",
+      "files": [
+        "server/test/setup.mjs"
+      ],
+      "due": "2026-11-24T07:15:00Z",
+      "default": "server/test/setup.mjs is added to FX2-10-curated-woven-law's exceptions; the correction stays in a495e58 and the ready_sha's owners.py diff passes with it.",
       "escalate_to": "lead",
       "state": "open"
     }

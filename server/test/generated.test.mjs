@@ -53,7 +53,7 @@ test("a thin list reaches for the game's generated islands after echoes and befo
                      candidate("g2", 0.6, { origin: "generated", owner: GENERATOR, realm: "outer-2" }),
                      candidate("g3", 0.66, { origin: "generated", owner: GENERATOR, realm: "heart" })];
   const thin = offer(RAIDER, [candidate("a", 0.63), ...generated]);
-  assert.equal(thin.echoes, true, "echoes first");
+  assert.equal(thin.echoes, false, "no echo is offered: there is none (FX1-A-09)");
   assert.equal(thin.generated, true, "then the generated");
   assert.deepEqual(thin.widened, [], "and no filter widened");
   assert.ok(thin.targets.some((c) => c.origin === "generated") && thin.guaranteed);

@@ -344,9 +344,9 @@ export class Universe {
 
   /** Why an island may not stand for `owner` in `realm`: the realm not
    *  opened, its realm level above the realm's, its Vault above the one
-   *  built, or its `buildings` ([{kind, x, y}]) not the realm's placed ones
-   *  on their tiles. The game's own seeded islands answer to no universe
-   *  (§13.1). */
+   *  built, its `buildings` ([{kind, x, y}]) not the realm's placed ones
+   *  on their tiles, or its `laws` not the ones the realm wove (SR-16). The
+   *  game's own seeded islands answer to no universe (§13.1). */
   problems(owner, realm, realmLevel, vaultLevel, buildings = [], laws = []) {
     if (this.db.prepare("SELECT seeded FROM accounts WHERE id = ?").get(owner)?.seeded) return [];
     const out = [];
@@ -365,6 +365,11 @@ export class Universe {
       "SELECT law FROM law_slots WHERE owner = ? AND realm = ? AND law IS NOT NULL AND ready_at <= ?")
       .all(owner, realm, now).map((w) => w.law));
     if (laws.some((l) => !woven.has(l))) out.push("law_not_woven");
+    // And every law it wove is on the island, one pylon per woven slot
+    // (§13.3): a curated layout can leave one off (more laws than pylon
+    // spots, an id the generator does not know, or the last of its 64 draws),
+    // and a hand-built island is held to the same (SIM-12).
+    if ([...woven].some((l) => !laws.includes(l))) out.push("woven_law_missing");
     return out;
   }
 }

@@ -18,3 +18,4 @@ func run() -> void:
 	await FixTraceEventsTests.new(tree, check).run()
 	await FixReplayShopNavTests.new(tree, check).run()
 	await FixAuditClientTests.new(tree, check).run()
+	FixProblemStringsTests.new(tree, check).run()

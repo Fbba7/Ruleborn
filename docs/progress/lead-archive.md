@@ -5,6 +5,67 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 168**, 23 November 2026, from about 23:13Z (session
+  `session_01SNkKxn1dZLeKHPjZ3mFguK`, started by the Opus 5.5 launcher).
+  Bookkeeping only. **Merged:** nothing; no task is `ready`, no gate
+  request, the merge lock stays clear, main did not move, so the pages
+  need no republish. **Seen:** the four builders started in cycle 167 are
+  active, within their deadlines (next updates due 23:40Z to 23:55Z):
+  FX1 is `working` on FX1-6-audit-server-a (proofs and owned fixes pushed,
+  603 of 603 green, `server-a.md` drafted, `check_all` running; head
+  520cae94); FX2 claimed FX2-7-audit-b-config, FX3 claimed
+  FX3-6-audit-universe and FX4 claimed FX4-4-audit-client, each after
+  merging main. Their claims and leases are copied into the backlog.
+  **Requests:** FX1-R3 to FX1-R10 (not blocking, due 24 November
+  22:36Z) carry FX1-6's audit findings that fall outside its files
+  (accounts.mjs, limits.mjs, seasons.mjs, links.mjs, weaving.mjs,
+  matchmaking.mjs, db.mjs); they are answered, and fix tasks filed, once
+  FX1-6 and its `server-a.md` are merged. **Started:** nothing; the four
+  seats are full (FX4-5-problem-strings is open, waiting for FX4's
+  seat). **Next:** merge FX1-6, FX2-7, FX3-6 and FX4-4 as they turn
+  ready; then file the FX1-6 fix task(s) from FX1-R3 to FX1-R10, and
+  start FX1-7, FX2-8, FX2-9 (after FX1-6) and FX4-5 as seats free; then
+  the UI.
+
+- **Cycle 167**, 23 November 2026, from about 22:05Z (session
+  `session_01SNkKxpBYuqfDPQtPhugfWH`, started by the Opus 5.5 launcher).
+  **Merged:** FX1-4-holds-codex (RB-15, RB-18, RB-36, RB-53, RB-56) at
+  e2e8f5a1, from FX1's ready head 9fe151ad. The candidate differs from
+  9fe151ad only under `docs/progress`, so FX1's passing pre-check at
+  9fe151ad stands for it; `owners.py diff`, `owners.py claims` and
+  `check_docs_consistency.py` passed on the candidate, and the full
+  `check_all` on main e2e8f5a1 passed (server 586 of 586). Then, under
+  the merge lock taken in 876a87fd, FX2-6-audit-server-b at ab25eb88
+  (from d259b10f), FX3-5-audit-sim at 490579d6 (from c333f546) and
+  FX4-3-replay-shop-nav (RB-43 and its sibling fixes) at 60a905ab (from
+  8be82e6f), in one candidate (7b3e05d8) whose full `check_all` passed;
+  main's tree after the three merges differs from 7b3e05d8 only under
+  `docs/progress`, so that pass stands. The lock is cleared. The audit
+  page was regenerated for the new audit reports and committed
+  (1c4fd104) but not republished, as in cycles 162 and 163 (see
+  `owner-inbox.md`); the roadmap changes only in its date stamp, so it is
+  not republished. **Seeded,** from the confirmed findings of
+  `docs/security/audit-2026-11/server-b.md` and `sim.md`: FX2-7-audit-b-config
+  (AUD-B-14 to B-19, `main.mjs`), FX2-8-audit-b-lows (B-05, B-10, B-13,
+  B-20), FX2-9-audit-b-match (B-01, B-06, waits also for FX1-6) and
+  FX3-6-audit-universe (the second part of the simulation's audit, what
+  `sim.md` lists under "Still not read"). **Started**, on Opus 5.5 at
+  effort high: FX1 on FX1-6-audit-server-a
+  (`session_01SNkKxoYkrDKba5f2X3byBm`), open since FX1-4 merged; FX2 on
+  FX2-7-audit-b-config (`session_01SNkKxoWxCgQ4iNNoRWRghi`), FX3 on
+  FX3-6-audit-universe (`session_01SNkKxpC2gbRiL8zzvf5zZc`) and FX4 on
+  FX4-4-audit-client (`session_01SNkKxq3TGnXbTLc3pyMTQd`), each open now
+  that its agent's last task merged and its last session is idle. Four
+  seats, the cap: the five-hour bar reads `allowed`, with no seven-day
+  warning. **Answered:** FX4-R1 (not blocking), with its default: no
+  follow-up for a leased heist's result night, since RB-43's defect is
+  closed by FX4-3's digest check and both files belong to the parked UI.
+  **Noted** from the FX2-6 audit: co-op "Friends only" for ages 13 to 15
+  (design §20.7) and SR-14 need squaring once co-op and the crew thread
+  are built; no task now. **Next:** merge FX1-6, FX2-7, FX3-6 and FX4-4
+  as they turn ready; then FX1-7, FX2-8, FX2-9 (after FX1-6) and FX4-5;
+  file fix tasks from the FX1-6, FX3-6 and FX4-4 audits; then the UI.
+
 - **Cycle 166**, 23 November 2026, from about 21:39Z (session
   `session_01SNkKxr1ZSqi1YJiktk15QA`, started by the Opus 5.5 launcher).
   Bookkeeping only. **Merged:** nothing; no task is `ready`, no gate
