@@ -215,13 +215,20 @@ test("a school's mastery track takes a step for each law woven, crossed in a suc
   const motion = track("Motion");
   assert.deepEqual([motion.steps, motion.total], [0, facts.MASTERY_STEPS_PER_LAW * 4]);
   assert.deepEqual(Object.values(motion.marks), [...facts.MASTERY_MARKS_AT_LAUNCH], "4, 8 and 12 at launch");
-  // Woven: once, however often.
+  // Woven: when the weaving finishes (FX1-A-17), once, however often. A
+  // weave taken out before it finishes is no step.
   t.service.book(me, "aether", 50_000, "a test's grant");
   t.service.weaving.weave(me, { realm: "heart", slot: 1, law: "half_gravity" });
   t.service.weaving.unweave(me, { realm: "heart", slot: 1 });
   t.clock.now += 2 * 60 * 60 * 1000;
+  assert.equal(track("Motion").steps, 0, "taken out before it finished");
   t.service.weaving.weave(me, { realm: "heart", slot: 1, law: "half_gravity" });
+  t.clock.now += facts.WEAVE_MINUTES[0] * 60 * 1000;
   assert.equal(track("Motion").steps, 1, "woven");
+  t.service.weaving.unweave(me, { realm: "heart", slot: 1 });
+  t.clock.now += 2 * 60 * 60 * 1000;
+  t.service.weaving.weave(me, { realm: "heart", slot: 1, law: "half_gravity" });
+  assert.equal(track("Motion").steps, 1, "once, however often");
   // Crossed: a successful heist steps every law on its route; a foiled one none.
   const matter = (id) => track(LAWS.find((l) => l.id === id).school).steps;
   const foiled = raid(t, []);
