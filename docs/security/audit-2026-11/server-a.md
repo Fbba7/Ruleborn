@@ -26,9 +26,9 @@ on main (`9fe151ad`).
 | FX1-A-04 | Low | workshop.mjs | fixed |
 | FX1-A-05 | Medium | holds.mjs | fixed |
 | FX1-A-06 | Medium | matchmaking.mjs | fixed |
-| FX1-A-07 | Medium | matchmaking.mjs | open: request FX1-R11 (= AUD-B-06) |
+| FX1-A-07 | Medium | matchmaking.mjs | fixed (FX2-9-audit-b-match) |
 | FX1-A-08 | Medium | matchmaking.mjs | fixed |
-| FX1-A-09 | Low | matchmaking.mjs | contested, request FX1-R9 |
+| FX1-A-09 | Low | matchmaking.mjs | fixed (FX2-9-audit-b-match) |
 | FX1-A-10 | Low | limits.mjs | request FX1-R4 |
 | FX1-A-11 | Medium | matchmaking.mjs | fixed |
 | FX1-A-12 | Low | service.mjs | fixed |
@@ -162,18 +162,19 @@ on main (`9fe151ad`).
 - **Should happen:** §7.6: "Matchmaking only shows universes running laws
   from open chapters."
 - **Happens:** the chapter-2 island is offered to the chapter-1 raider.
-- **Evidence:** test "FX1-A-07", run as still open.
+- **Evidence:** test "FX1-A-07". It ran as still open until
+  FX2-9-audit-b-match, which made it plain; it fails on main `ad0191ea`.
 - **Same defect:** FX2's AUD-B-06 (`server-b.md`). Its proof in
   `fix_fx2_audit_observatory.test.mjs` is wrapped to pass while the defect
   stands, so a fix here alone fails that wrapper. That file is not this
   task's, so the fix was not kept.
-- **Fix (proposed, request FX1-R11):** the swapped card carries its new
-  bundle's chapter.
+- **Fix (made in FX2-9-audit-b-match, request FX1-R11):** the swapped card
+  carries its new bundle's chapter.
   - `current()` cannot read the raider, so it drops a swap whose chapter is
     above the card it replaces, or whose bytes are gone
     (`bundleChapter()` returns null).
   - The island comes back in the next hourly list, filtered as usual.
-  - The same change unwraps both proofs, AUD-B-06's and FX1-A-07's.
+  - The same change unwrapped both proofs, AUD-B-06's and FX1-A-07's.
 
 ### FX1-A-08: "Recent success" learns from raids that rated nothing
 
@@ -194,21 +195,22 @@ on main (`9fe151ad`).
 ### FX1-A-09: The list says it reached for echoes when there was none to reach for
 
 - **Priority / category:** Low, matchmaking telemetry (§12.22).
-  **Contested.**
-- **Where:** `matchmaking.mjs` `offer()`. On a thin list it sets
-  `echoes = true` whether or not an echo was among the candidates.
+- **Where:** `matchmaking.mjs` `offer()`. On a thin list it set
+  `echoes = true` whether or not an echo was among the candidates or the
+  targets.
 - **Input:** `offer(raider, [two authored candidates])`, with no echo.
-- **Should happen:** if `echoes` means "an echo was reached for", it
-  should be false, as `generated` is false when there is no generated
-  island.
+- **Should happen:** the lead's answer to FX1-R9: `echoes` is true only
+  when the returned list holds an echo, as `generated` is false when there
+  is no generated island.
 - **Happens:** `echoes` is true.
-- **Evidence:** test "FX1-A-09 (contested)". It asserts today's behaviour.
-  `server/test/generated.test.mjs:56` ("echoes first") asserts the same,
-  with no echo candidate. The fix broke that test, so it was not kept.
-- **Fix (request FX1-R9):** the lead decides what the flag means. If it
-  means an echo was there, use
-  `if (!enough(pool) && authored.length > liveOnly.length)` and change
-  generated.test.mjs's line with it.
+- **Evidence:** test "FX1-A-09" in `fix_fx1_audit_server_a.test.mjs`, and
+  `fix_fx2_audit_match.test.mjs` (a thin list that reached for an echo it
+  did not offer, and a control that offers one). Both fail on main
+  `ad0191ea`. `server/test/generated.test.mjs:56` ("echoes first")
+  asserted the defect, with no echo candidate; FX2-9-audit-b-match
+  corrected it to `false`.
+- **Fix (made in FX2-9-audit-b-match):** the reach is unchanged; the flag
+  is `targets.some((c) => c.echo)`.
 
 ### FX1-A-10: IPv4-mapped addresses in hex or full form share one rate-limit bucket
 
