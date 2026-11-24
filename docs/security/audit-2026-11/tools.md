@@ -34,20 +34,20 @@ requests are at the end, grouped by area, and in
 
 | Id | Priority | Where | State |
 | --- | --- | --- | --- |
-| FX1-T-03 | High | tools/run_checks.sh `record` | open: request FX1-R20 |
+| FX1-T-03 | High | tools/run_checks.sh `record` | fixed (FX1-9-tools-gate) |
 | FX1-T-20 | Medium/High | tools/client_contract.py | open: request FX1-R21 |
 | FX1-T-21 | Medium/High | tools/client_contract.py | open: request FX1-R21 |
-| FX1-T-04 | Medium | tools/run_checks.sh `result` | open: request FX1-R20 |
-| FX1-T-09 | Medium | tools/check_all.sh, check_dependencies.py | open: request FX1-R20 |
-| FX1-T-22 | Medium | tools/check_all.sh, build_stamp.py | open: request FX1-R20 |
+| FX1-T-04 | Medium | tools/run_checks.sh `result` | fixed (FX1-9-tools-gate) |
+| FX1-T-09 | Medium | tools/check_all.sh, check_dependencies.py | fixed (FX1-9-tools-gate) |
+| FX1-T-22 | Medium | tools/check_all.sh, build_stamp.py | fixed (FX1-9-tools-gate) |
 | FX1-T-10 | Medium | check_findings_fresh.py, check_docs_consistency.py | open: request FX1-R22 |
 | FX1-T-17 | Medium | check_audit_ui.py, validate_content.py | open: request FX1-R22 |
-| FX1-T-08 | Medium | tools/check_ci.py | open: request FX1-R20 |
+| FX1-T-08 | Medium | tools/check_ci.py | fixed (FX1-9-tools-gate) |
 | FX1-T-07 | Medium | tools/ui_bake/check_screens.py | open: request FX1-R23 |
 | FX1-T-01 | Medium | server/status.py | open: request FX1-R21 |
 | FX1-T-02 | Medium | server/status.py | open: request FX1-R21 |
 | FX1-T-11 | Medium, latent | tools/check_document.py | open: request FX1-R22 |
-| FX1-T-05 | Low | tools/coord/owners.py | open: request FX1-R20 |
+| FX1-T-05 | Low | tools/coord/owners.py | fixed (FX1-9-tools-gate) |
 | FX1-T-06 | Low | art/ui/board/build_tokens.mjs | open: request FX1-R23 |
 | FX1-T-12 | Low | tools/check_docs_consistency.py | open: request FX1-R22 |
 | FX1-T-13 | Low | tools/ui_bake/bake.js | open: request FX1-R23 |
@@ -61,6 +61,8 @@ requests are at the end, grouped by area, and in
 
 ### FX1-T-03: `run_checks.sh record` hands the lead exit 0 for a failed run
 
+- **State:** fixed (FX1-9-tools-gate). The proof is now a plain test in
+  `server/test/fix_fx1_tools_gate.test.mjs`.
 - **Priority / category:** High, gate (a failed run reads as passed).
 - **Where:** `tools/run_checks.sh` `record()` (line 248). It copies `sha`,
   `exit`, `finished_at` and `summary` from `result` into the agent's
@@ -128,6 +130,8 @@ requests are at the end, grouped by area, and in
 
 ### FX1-T-04: a leftover child process can turn a failed run into PASS
 
+- **State:** fixed (FX1-9-tools-gate). The proof is now a plain test in
+  `server/test/fix_fx1_tools_gate.test.mjs`.
 - **Priority / category:** Medium, gate. Only unsandboxed or `CHECK_USER`
   runs: bwrap's `--unshare-pid` and `--die-with-parent` kill the children.
 - **Where:** `tools/run_checks.sh` `result()` (lines 207-223). It reads the
@@ -147,6 +151,8 @@ requests are at the end, grouped by area, and in
 
 ### FX1-T-09: nothing in the gate notices a stale dependencies.md
 
+- **State:** fixed (FX1-9-tools-gate). The proof is now a plain test in
+  `server/test/fix_fx1_tools_gate.test.mjs`.
 - **Priority / category:** Medium, gate (a committed page drifts).
 - **Where:** `tools/check_all.sh:127-128` runs
   `check_dependencies.py --self-test` and `--write`. `--write`
@@ -168,6 +174,8 @@ requests are at the end, grouped by area, and in
 
 ### FX1-T-22: the gate never runs build_stamp's check for escaped markup
 
+- **State:** fixed (FX1-9-tools-gate). The proof is now a plain test in
+  `server/test/fix_fx1_tools_gate.test.mjs`.
 - **Priority / category:** Medium, gate (a published page shows `<code>` as
   text).
 - **Where:** `tools/check_all.sh:122` runs only
@@ -232,6 +240,8 @@ requests are at the end, grouped by area, and in
 
 ### FX1-T-08: check_ci passes wider permissions and a commented-out command
 
+- **State:** fixed (FX1-9-tools-gate). The proof is now a plain test in
+  `server/test/fix_fx1_tools_gate.test.mjs`.
 - **Priority / category:** Medium for the permissions, Low for the
   comment. CI (the workflow can be widened unseen).
 - **Where:** `tools/check_ci.py` `problems()`:
@@ -315,6 +325,8 @@ requests are at the end, grouped by area, and in
 
 ### FX1-T-05: owners.py misses overlaps of `?` and `[..]` globs, and of an exclusion with a re-inclusion
 
+- **State:** fixed (FX1-9-tools-gate). The proof is now a plain test in
+  `server/test/fix_fx1_tools_gate.test.mjs`.
 - **Priority / category:** Low, coordination (two tasks can be given one
   file).
 - **Where:** `tools/coord/owners.py`:
@@ -506,7 +518,8 @@ Each has a default: the lead seeds fix tasks after the FX tasks already
 open, in priority order (High first), one task per group, each with a plain
 test that replaces the proof's `stillOpen` entry.
 
-- **FX1-R20, the gate and coordination tools:** FX1-T-03 (first),
+- **FX1-R20, the gate and coordination tools** (done: FX1-9-tools-gate
+  fixed all six): FX1-T-03 (first),
   FX1-T-04, FX1-T-09, FX1-T-22 (after its source fix), FX1-T-08, FX1-T-05.
   Files: `tools/run_checks.sh`, `tools/check_all.sh`,
   `tools/check_dependencies.py`, `tools/build_stamp.py`,
