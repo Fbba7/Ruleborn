@@ -1,7 +1,7 @@
 # FX4 client fixer: progress
 
-- Status: Green. FX4-5-problem-strings: the fail-first test and the two
-  PROBLEM_ rows are pushed; the pre-check of 3231f78b is in the status file.
+- Status: Green. FX4-5-problem-strings ready at 3231f78b: the fail-first test and the two
+  PROBLEM_ rows; its pre-check passed (All checks passed, 03:40Z).
 - Progress: 4 of 8 tasks merged (FX4-1 to FX4-4); FX4-5 in this session; no
   gate items (fix wave).
 - Done: PROBLEM_ENTRANCEBLOCKED and PROBLEM_DUPLICATELAW in
@@ -16,12 +16,12 @@
 | FX4-2-trace-events: RB-31, RB-32, RB-41, RB-42 | 3.5 | merged | `8ed7538f` |
 | FX4-3-replay-shop-nav: RB-43, RB-20, RB-58, RB-59 | 3.5 | merged | `8be82e6f` on main |
 | FX4-4-audit-client: the client audit | 4 | merged | `d5c16216` on main |
-| FX4-5-problem-strings: FX3-R1's two problem rows | 0.75 | see status | see Handoff |
+| FX4-5-problem-strings: FX3-R1's two problem rows | 0.75 | ready | `3231f78b`, pre-check PASS |
 
 ## Handoff
 
-- Last verified commit: the ready_sha in `status/FX4.json` (3231f78b once
-  its pre-check is recorded).
+- Last verified commit: 3231f78b (pre-check green, 2026-11-24T03:40:54Z),
+  the ready_sha in `status/FX4.json`.
 - Commits, in order:
   - `6293dc4c`: main merged (`7e95009c`, with FX3-2-island's
     `island::Problem` and FX4-4).

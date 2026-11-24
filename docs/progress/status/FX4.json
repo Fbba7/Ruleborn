@@ -3,25 +3,27 @@
   "role": "FX4",
   "branch": "claude/fix-client",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "FX4-5-problem-strings",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-24T03:01:00Z",
   "lease_until": "2026-11-24T06:01:00Z",
-  "updated_at": "2026-11-24T03:12:00Z",
-  "expected_next_update_by": "2026-11-24T03:57:00Z",
-  "long_run": {
-    "log": "/tmp/check-3231f78b77b72eb5b84a166dbd12d3b16c8f616b.log",
-    "expected_end": "2026-11-24T03:40:00Z"
-  },
+  "updated_at": "2026-11-24T03:42:00Z",
+  "expected_next_update_by": null,
+  "long_run": null,
   "progress_marker": {
     "last_green_sha": "3231f78b",
-    "next_step": "FX4-5: test c4cb11d0 (3 not ok on main's strings), rows 3231f78b; client suite 471 of 471; owners diff passes. Pre-check of 3231f78b running; next: record it and set ready.",
-    "at": "2026-11-24T03:12:00Z"
+    "next_step": "FX4-5 ready at 3231f78b: pre-check passed (All checks passed, 03:40Z), owners diff passes, client suite 471 of 471. Waiting for the lead to merge.",
+    "at": "2026-11-24T03:42:00Z"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "3231f78b77b72eb5b84a166dbd12d3b16c8f616b",
+    "exit": 0,
+    "finished_at": "2026-11-24T03:40:54Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "3231f78b77b72eb5b84a166dbd12d3b16c8f616b",
   "stop_at": "2026-11-24T21:00:00Z",
   "acks": [],
   "requests": [
