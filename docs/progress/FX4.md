@@ -1,9 +1,13 @@
 # FX4 client fixer: progress
 
-- Status: FX4-3-replay-shop-nav ready (RB-43, RB-20, RB-58, RB-59 fixed, each after a test that failed on main).
-- Progress: 2 of 5 tasks merged (FX4-1, FX4-2); FX4-3 ready for the lead; no gate items (fix wave).
-- Done: RB-43, RB-20, RB-58 and RB-59 fixed on claude/fix-client.
-- Next: FX4-4-audit-client, in a fresh session once the lead merges FX4-3.
+- Status: FX4-4-audit-client ready. The client audit is written, 12 findings
+  are fixed, each after a test that failed on main, and 2 are proven and
+  still open.
+- Progress: 3 of 5 tasks merged (FX4-1, FX4-2, FX4-3); FX4-4 ready for the
+  lead; no gate items (fix wave).
+- Done: `docs/security/audit-2026-11/client.md`, CLI-1 to CLI-24.
+- Next: the lead merges FX4-4; follow-ups for CLI-1 (server), CLI-18
+  (`stage_rehearsal.gd`) and the unproven items, if wanted.
 - Blocked by: none.
 - Owner decision needed: none.
 
@@ -11,94 +15,72 @@
 |---|---:|---|---|
 | FX4-1-transport: RB-27, RB-03, RB-04 | 3.5 | merged | lead cycle 155, `c28600bb` |
 | FX4-2-trace-events: RB-31, RB-32, RB-41, RB-42 | 3.5 | merged | `8ed7538f` |
-| FX4-3-replay-shop-nav: RB-43, RB-20, RB-58, RB-59 | 3.5 | ready | see Handoff |
+| FX4-3-replay-shop-nav: RB-43, RB-20, RB-58, RB-59 | 3.5 | merged | `8be82e6f` on main |
+| FX4-4-audit-client: the client audit | 4 | ready | see Handoff |
 
 ## Handoff
 
-- Last verified commit: the ready_sha in `status/FX4.json`: the merge of
-  main `719c4ff3` into claude/fix-client plus the fixes (`8be82e6f`), plus
-  this handoff.
+- Last verified commit: the ready_sha in `status/FX4.json`.
+- The report: [`docs/security/audit-2026-11/client.md`](../security/audit-2026-11/client.md).
+  It lists each finding with Where, Input, Should happen, Happens, the
+  proof and the fix, then the report's five client suspicions, Unproven,
+  What was read and Still not read.
 - Commits, in order:
-  - `5c2b7b1e` fail-first tests, committed on their own before any fix:
-    `client/tests/fix_replay_shop_nav_tests.gd` (FixReplayShopNavTests),
-    run from the aggregator `client/tests/fix_tests.gd`; `ae774848` adds
-    its Godot `.uid`. (Both say WIP only because they were pushed before
-    the run below; their content is unchanged since.)
-  - `8433db74` RB-43: `client/ext/src/lib.rs`.
-  - `ea49d46d` RB-20: `client/features/shop/shop_presenter.gd`.
-  - `9309f5fb` RB-58: `client/app/router.gd`.
-  - `041ec423` RB-59: `client/core/action_log.gd`.
+  - `c4a5eb7c`: the proofs, committed before any fix:
+    `client/tests/fix_audit_client_tests.gd` (FixAuditClientTests) and its
+    `.uid`, run from the aggregator `client/tests/fix_tests.gd`.
+  - `4d5a17d3`: the fixes for CLI-2, 4, 5, 6, 7, 10, 11, 13, 15, 22 and 24.
+  - `684353ef`: CLI-11's order (an authored island, then a curated one,
+    then the generator's), after the full suite caught the first version.
+  - `8f91599d`: CLI-14's proof and fix (`client/app/app_lifetime.gd`).
 
-### The tests, failing on main (before the fixes)
+### The proofs, failing on main
 
-Run on `ae774848` (main's client plus the tests), Godot 4.7.2 headless, with
-the server `client/status.py` starts: 450 of 454 passed, the four below
-failed.
+Main is `1c4fd104`, the branch point; its client code is the code the
+proofs ran on.
 
-- **RB-43** (a heist played on an island other than the fixture realm, its
-  replay handed to the result screen with no island, as a leased heist's
-  is): `not ok 172 - RB-43: a leased heist's replay does not load on the
-  fixture realm, so the result screen leaves the night empty; a fixture
-  replay still loads with no island` with `started true, on its island
-  true, on the fixture true, golden true, result night { "moments": 7,
-  "ticks": 4500 }`.
-- **RB-20** (`hatch-outfit` owned, not in the catalogue): `not ok 173 -
-  RB-20: the free hatch outfit is an outfit, wearable from the shop as the
-  server's kindOf reads it` with `kind_of '', shown { "id": "hatch-outfit",
-  "kind": "", "name": " (hatch-outfit)", "wearable": false, "target": "",
-  "worn_in": [] }`.
-- **RB-58** (roster, a character opened with the roster's stage, filter
-  and scroll, then the phone's back): `not ok 174 - RB-58: the phone's back
-  from a character brings the roster back with its stage and filter` with
-  `{ "name": &"roster", "params": {  } }`.
-- **RB-59** (`router.go(&"shop")`): `not ok 175 - RB-59: a navigation in
-  the action log names the screen` with `[{ "ms": 174893, "kind":
-  "action", "what": "navigated", "fields": {  } }]`.
+- The plain checks failed on main, each before its fix:
+  - CLI-2, 4, 5, 6, 7, 10, 11, 13, 15, 22 and 24 (run on `c4a5eb7c`, the
+    scratch runner `FixAuditClientTests` alone: 11 `not ok`);
+  - CLI-14 (run before `8f91599d`'s fix: `not ok 14 - CLI-14: a session
+    the app never closed is ended at the last time it was seen open, not
+    at its start (24)`).
+- After the fixes, all 14 checks pass.
+- The two still-open checks, CLI-1 and CLI-18, pass while their defect
+  holds. They fail once it is fixed, and then they say to make them plain
+  checks.
 
-### The fixes
+### Follow-ups for the lead (not in this task's files)
 
-- **RB-43:** `RulebornReplay::load` checks the realm's digest against the
-  replay's with no island too (the report's Fix line), so a replay played
-  elsewhere is never shown on the fixture realm; the result screen then
-  leaves the night empty, as its comment says. The golden replays, played
-  on the fixture realm, still load with no island (the test checks
-  `planned-clean.rbh`; every golden and stage test still passes). Not done:
-  the report's "ideally keep the leased island in the HEIST state". The
-  leased island's bytes are fetched in `client/scripts/heist_screen.gd`,
-  which is not in this task's files, so a leased heist's result screen now
-  shows no night rather than the right one. Request FX4-R1 in
-  `status/FX4.json` asks for a follow-up task.
-- **RB-20:** `ShopPresenter.kind_of` reads `hatch-outfit` as an outfit, as
-  `server/src/shop.mjs` `kindOf` does; the shop shows it wearable, worn by
-  a crew role.
-- **RB-58:** `Router.go_back` carries the current route's `roster` param to
-  the roster, as the character screen's own back button does.
-- **RB-59:** `ActionLog.add` turns a StringName into a String before its
-  type filter; a route's params (a Dictionary) are still left out (§20.5).
+- **CLI-1 (High):** a curation swap's publish is refused while its law
+  weaves. The fix is on the server (SR-16 takes the slot's weaving law), or
+  the client waits to publish until the law is woven.
+- **CLI-18 (Medium):** `client/scripts/stage_rehearsal.gd`. A run asked for
+  while one plays should start the new style's run.
+- **CLI-3 (High, unproven):** `client/scripts/heist_screen.gd`. An offline
+  heist sends the planner's crew.
+- **CLI-8 and CLI-9:** contract notes for the server. The Observatory card
+  has no owner, and the Defences trace has no `across`.
+- **FX4-R1** (from FX4-3) still stands.
 
 ### Evidence
 
-- On `041ec423`: `bash client/build.sh` exit 0; `python3 client/status.py`:
-  454 of 454 passed; gdlint (with `client/gdlintrc`) on the changed files:
-  no problems.
-- The merge of main `719c4ff3` brought only docs/progress changes, no
-  client file.
-- Pre-check on the ready_sha `8be82e6f`: PASS, "All checks passed." (22:25 UTC, bwrap).
-- `python3 tools/coord/owners.py diff FX4-3-replay-shop-nav
-  origin/claude/videogame-project-analysis-ewkkk2 8be82e6f`: "every changed
-  path is inside its files".
+Filled in below, at ready.
 
 ## Tried and failed
 
-- `client/status.py` cannot start the server until the simulation's
-  WebAssembly is built: `cd sim && cargo build --locked --release --target
-  wasm32-unknown-unknown` first (the setup line adds the target but does not
-  build it).
-- The RB-03 overwrite passed on main by timing alone with the plain
-  FakeTransport: the test's server delays the public route so the renewal
-  lands while the public call is out.
-- `client/tests/run.gd` is at gdlint's 1000-line limit: a later task adds its
-  tests inside an aggregator such as FixTransportTests, not as new run.gd lines.
-- A test that reads its FakeTransport after `Services.close()` hits a freed
-  object (close queue_frees the transport) and aborts with no `ok`/`not ok`
-  line: read what it recorded before close.
+- CLI-11's first fix made every player's generated island equal to an
+  authored one. Three server-backed tests then failed (the leased heist
+  Foiled, the Keeper XP check and the workshop creator test). Under
+  `--example`, the server publishes the `example:universe` account's islands
+  as generated, and those tests want the authored `example:defender`
+  Heart. Keeping authored islands first fixed it.
+- A freed Object reads as null in GDScript: compute a check's flags before
+  `queue_free`.
+- CLI-21's race (roster `collect_all`) needs a slow transport.
+  `FakeTransport` answers at once; the `SessionServer` class in the audit
+  tests shows how to slow one route.
+- `client/status.py` needs the simulation's WebAssembly built first (`cd
+  sim && cargo build --locked --release --target wasm32-unknown-unknown`).
+- `client/tests/run.gd` is at gdlint's 1000-line limit: new tests go in an
+  aggregator such as `fix_tests.gd`.
