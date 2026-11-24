@@ -3,26 +3,21 @@
   "role": "FX3",
   "branch": "claude/fix-sim",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "FX3-6-audit-universe",
-  "task_state": "ready",
-  "claimed_at": "2026-11-23T23:10:00Z",
-  "lease_until": "2026-11-24T03:10:00Z",
-  "updated_at": "2026-11-24T01:40:00Z",
-  "expected_next_update_by": null,
+  "agent_state": "active",
+  "task_id": "FX3-7-audit-client-2",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-24T03:02:00Z",
+  "lease_until": "2026-11-24T06:02:00Z",
+  "updated_at": "2026-11-24T03:02:00Z",
+  "expected_next_update_by": "2026-11-24T03:45:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "92dda030",
-    "next_step": "The lead's merge; answers to FX3-R2 and FX3-R3"
+    "last_green_sha": "f29205a5",
+    "next_step": "read client.md and prove CLI-3, CLI-8, CLI-9, CLI-16, CLI-17, CLI-19, CLI-20, CLI-21"
   },
-  "precheck": {
-    "sha": "92dda0306acf76c7ffae3c0473704c2d407a36c0",
-    "exit": 0,
-    "finished_at": "2026-11-24T01:36:27Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
-  "ready_sha": "92dda0306acf76c7ffae3c0473704c2d407a36c0",
+  "ready_sha": null,
   "stop_at": "2026-11-24T21:00:00Z",
   "acks": [],
   "requests": [
