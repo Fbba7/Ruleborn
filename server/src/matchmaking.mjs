@@ -430,7 +430,9 @@ export class Matchmaking {
  * fewer than three candidates sit in the band, counts echoes, then the
  * game's generated islands (generator.mjs), and only then widens the
  * filters in order: rating, then Keeper level, then Renown. The list says
- * when it reached for echoes, for generated islands, and what it widened.
+ * when it holds an echo, when it reached for generated islands, and what
+ * it widened: `echoes` is true only when an echo is among the targets
+ * (FX1-A-09, request FX1-R9).
  */
 export function offer(raider, candidates, { size = 3 } = {}) {
   const own = new Set(raider.bundles ?? []);
@@ -460,17 +462,17 @@ export function offer(raider, candidates, { size = 3 } = {}) {
   const authored = others.filter((c) => !(c.origin === "generated" && c.owner === GENERATOR));
   const liveOnly = authored.filter((c) => !c.echo);
   let pool = pass(liveOnly);
-  let echoes = false;
+  let withEchoes = false;
   let generated = false;
   if (!enough(pool)) {
     pool = pass(authored);
-    echoes = true;
+    withEchoes = true;
   }
   if (!enough(pool) && others.length > authored.length) {
     pool = pass(others);
     generated = true;
   }
-  const reach = () => (generated ? others : echoes ? authored : liveOnly);
+  const reach = () => (generated ? others : withEchoes ? authored : liveOnly);
   for (const name of ["rating", "keeper", "renown"]) {
     if (enough(pool) || pool.length >= reach().length) break;
     widened.push(name);
@@ -502,5 +504,6 @@ export function offer(raider, candidates, { size = 3 } = {}) {
   // `middle` is the easiest or hardest there is, a neighbour takes the
   // middle (§12.22 step 4: never "silently unfair").
   const median = targets[Math.floor(targets.length / 2)];
-  return { targets, guaranteed: Boolean(median) && inBand(median), echoes, generated, widened };
+  return { targets, guaranteed: Boolean(median) && inBand(median), echoes: targets.some((c) => c.echo),
+           generated, widened };
 }
