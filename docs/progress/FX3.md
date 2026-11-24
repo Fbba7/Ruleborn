@@ -1,6 +1,6 @@
 # FX3 simulation fixes: progress
 
-- Status: Waiting. FX1-9-tools-gate is ready at ad5e56bf (pre-check running). FX3-7-audit-client-2 is ready at 1ecd419f.
+- Status: Waiting. FX1-9-tools-gate is ready at ad5e56bf (pre-check PASS at 07:23Z, recorded). FX3-7-audit-client-2 is ready at 1ecd419f.
 - Progress: FX1-9-tools-gate fixed the six gate and coordination findings of FX1-7's tools audit (FX1-T-03 High; FX1-T-04, 09, 22, 08, 05) and FX2-R4's py() stdout fault. Each has a plain test in `server/test/fix_fx1_tools_gate.test.mjs`, committed alone before its fix and failing on main.
 - Next: the lead's merges of FX1-9-tools-gate and FX3-7-audit-client-2. The lead regenerates `docs/audit/index.html` (FX1-T-22's source fix). FX3 has no further open task.
 - Blocked by: none.
@@ -18,7 +18,7 @@
 | FX1-9-tools-gate: FX1-T-03, 04, 05, 08, 09, 22 and FX2-R4 | 4.0 | ready | `server/test/fix_fx1_tools_gate.test.mjs` (11 tests); `server/test/fix_fx1_audit_tools_proofs.mjs`; `tools/run_checks.sh`, `tools/check_all.sh`, `tools/check_dependencies.py`, `tools/audit_register.py`, `tools/check_ci.py`, `tools/coord/owners.py`, `docs/guides/agent-protocol.md`, `docs/security/audit-2026-11/tools.md` |
 
 ## Handoff
-- FX1-9-tools-gate, ready (2026-11-24). Branch `claude/fix-sim`. Pre-check at ad5e56bf: running. `ready_sha` ad5e56bf is in `docs/progress/status/FX3.json`. It merges main at `eb4b8e59` (lead cycle 172), with no conflict. After the merge I reran the fresh-container setup line (`rustup target add wasm32-unknown-unknown`, `pip install "gdtoolkit==4.*" "playwright==1.63.0"`), `bash client/build.sh` and the sim's WebAssembly build. Then `cd server && npm test` passed 666 of 666, and `bash tools/check_all.sh` ran as the pre-check: `run_checks.sh start`, `wait` in the background, `record ad5e56bf FX3`.
+- FX1-9-tools-gate, ready (2026-11-24). Branch `claude/fix-sim`. Pre-check at ad5e56bf: PASS ("All checks passed.", 07:23Z, sandbox bwrap, recorded). The log shows the new step "the built pages carry no escaped markup (FX1-T-22)" passing. `ready_sha` ad5e56bf is in `docs/progress/status/FX3.json`. It merges main at `eb4b8e59` (lead cycle 172), with no conflict. After the merge I reran the fresh-container setup line (`rustup target add wasm32-unknown-unknown`, `pip install "gdtoolkit==4.*" "playwright==1.63.0"`), `bash client/build.sh` and the sim's WebAssembly build. Then `cd server && npm test` passed 666 of 666, and `bash tools/check_all.sh` ran as the pre-check: `run_checks.sh start`, `wait` in the background, `record ad5e56bf FX3`.
   - **Commits.**
     - Claim: 6c46a801.
     - The fail-first tests, all in one commit before any fix: 4fcb67a5.

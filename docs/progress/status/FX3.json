@@ -3,24 +3,30 @@
   "role": "FX3",
   "branch": "claude/fix-sim",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "FX1-9-tools-gate",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-24T06:32:00Z",
   "lease_until": "2026-11-24T09:32:00Z",
-  "updated_at": "2026-11-24T06:50:00Z",
-  "expected_next_update_by": "2026-11-24T07:35:00Z",
+  "updated_at": "2026-11-24T07:24:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "ad5e56bf",
-    "next_step": "record the pre-check, run the owners diff, write the handoff"
+    "next_step": "none: waiting for the lead's merge"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "ad5e56bfc0ba38c2c68a9b3ff43a63fe701d15c3",
+    "state": "PASS",
+    "exit": 0,
+    "finished_at": "2026-11-24T07:23:13Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "ad5e56bfc0ba38c2c68a9b3ff43a63fe701d15c3",
   "stop_at": "2026-11-24T21:00:00Z",
   "acks": [],
   "requests": [],
   "answers": [],
-  "next_step": "FX1-9: all six findings and FX2-R4 fixed, main merged, npm test 666/666; pre-check of ad5e56bf running"
+  "next_step": "FX1-9-tools-gate ready at ad5e56bf (pre-check PASS, recorded): the lead's merge, and docs/audit/index.html regenerated"
 }
