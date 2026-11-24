@@ -213,8 +213,10 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxn1dZLeKHPjZ3mFguK` (cycle 168,
-23 November 2026 from about 23:13Z, started by the Opus 5.5 launcher).
+Latest lead cycle session: `session_01SNkKxnXrzUVLGqiGNmw1FR` (cycle 169,
+24 November 2026 from about 00:30Z, started by the Opus 5.5 launcher).
+Cycle 168's was `session_01SNkKxn1dZLeKHPjZ3mFguK` (23 November, from
+about 23:13Z).
 Cycle 167's was `session_01SNkKxpBYuqfDPQtPhugfWH` (23 November, from
 about 22:05Z).
 Cycle 166's was `session_01SNkKxr1ZSqi1YJiktk15QA` (23 November, from
@@ -381,6 +383,8 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| FX4 | `session_01SNkKxopnk1iG9R76L2ujyU` (Opus 5.5, effort high) | FX4-5-problem-strings (start, cycle 169: next task after FX4-4-audit-client merged at d5c16216; FX4's last session, `session_01SNkKxq3TGnXbTLc3pyMTQd`, is idle) | `claude/fix-client` | 2026-11-24 02:58Z |
+| FX3 | `session_01SNkKxozbMJGfAJWTEzLykF` (Opus 5.5, effort high) | FX3-7-audit-client-2 (start, cycle 169: seeded from client.md's unproven findings after FX4-4-audit-client merged at d5c16216; FX3's last session, `session_01SNkKxpC2gbRiL8zzvf5zZc`, is idle) | `claude/fix-sim` | 2026-11-24 02:58Z |
 | FX2 | `session_01SNkKxnVeY5BcuXQfbPsPmN` (Opus 5.5, effort high) | FX2-8-audit-b-lows (start, cycle 169: next task after FX2-7-audit-b-config merged at bc7f27e8; FX2's last session, `session_01SNkKxoWxCgQ4iNNoRWRghi`, is idle) | `claude/fix-server-b` | 2026-11-24 00:33Z |
 | FX4 | `session_01SNkKxq3TGnXbTLc3pyMTQd` (Opus 5.5, effort high) | FX4-4-audit-client (start, cycle 167: next task after FX4-3-replay-shop-nav merged at 60a905ab; FX4's last session, `session_01SNkKxpABZrz4Mfhrmhdq7n`, is idle) | `claude/fix-client` | 2026-11-23 23:06Z |
 | FX3 | `session_01SNkKxpC2gbRiL8zzvf5zZc` (Opus 5.5, effort high) | FX3-6-audit-universe (start, cycle 167: seeded from sim.md's "Still not read" after FX3-5-audit-sim merged at 490579d6; FX3's last session, `session_01SNkKxr46k63bAaFiJ5F3gi`, is idle) | `claude/fix-sim` | 2026-11-23 23:06Z |
@@ -750,7 +754,7 @@ You are agent FX3 of the Ruleborn agent program (bug-fix wave). Read docs/guides
 Agent: FX3            Role: fixer (FX3): the simulation: sim/**, server/src/sim.mjs and lab.mjs        Model: Opus 5.5, effort high
 Branch: claude/fix-sim
 Owned files: only the files each FX3 task lists in the backlog, docs/progress/FX3.md, docs/progress/status/FX3.json
-Tasks: FX3-1-heal-alarm, FX3-2-island, FX3-3-clock-report, FX3-4-lab-replay, then the audit FX3-5-audit-sim and its second part FX3-6-audit-universe, in that order (deps chain them). Each fix task names RB entries of docs/security/bug-report-2026-11.md: for each entry, first commit a test that reproduces the entry's Input and fails on current main (quote its failure in your handoff), then commit the smallest fix that makes it pass, naming the RB id in the commit. Never skip, disable or loosen a test; a test whose expectation encoded the defect is corrected and named in the handoff. An audit task reads the code its title names, writes findings in the report's format under docs/security/audit-2026-11/, proves each before calling it confirmed, and fixes nothing outside its own files. Run cargo test in sim, then cd server && npm test (the server tests load the rebuilt wasm) before marking a task ready. Before ready, python3 tools/coord/owners.py diff <task_id> origin/claude/videogame-project-analysis-ewkkk2 <ready_sha> passes (M48).
+Tasks: FX3-1-heal-alarm, FX3-2-island, FX3-3-clock-report, FX3-4-lab-replay, then the audit FX3-5-audit-sim and its second part FX3-6-audit-universe, then FX3-7-audit-client-2 (the client audit's unproven findings, after FX4-4-audit-client), in that order (deps chain them). Each fix task names RB entries of docs/security/bug-report-2026-11.md: for each entry, first commit a test that reproduces the entry's Input and fails on current main (quote its failure in your handoff), then commit the smallest fix that makes it pass, naming the RB id in the commit. Never skip, disable or loosen a test; a test whose expectation encoded the defect is corrected and named in the handoff. An audit task reads the code its title names, writes findings in the report's format under docs/security/audit-2026-11/, proves each before calling it confirmed, and fixes nothing outside its own files. Run cargo test in sim, then cd server && npm test (the server tests load the rebuilt wasm) before marking a task ready. Before ready, python3 tools/coord/owners.py diff <task_id> origin/claude/videogame-project-analysis-ewkkk2 <ready_sha> passes (M48).
 STOP_AT: 2026-11-24T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/security/bug-report-2026-11.md     Phase: fix
 
@@ -765,7 +769,7 @@ You are agent FX4 of the Ruleborn agent program (bug-fix wave). Read docs/guides
 Agent: FX4            Role: fixer (FX4): the Godot client outside the parked UI screens: client/app, data, core, features, ext        Model: Opus 5.5, effort high
 Branch: claude/fix-client
 Owned files: only the files each FX4 task lists in the backlog, docs/progress/FX4.md, docs/progress/status/FX4.json
-Tasks: FX4-1-transport, FX4-2-trace-events, FX4-3-replay-shop-nav, then the audit FX4-4-audit-client, then FX4-5-problem-strings, in that order (deps chain them; take the first open one in the backlog's order). Each fix task names RB entries of docs/security/bug-report-2026-11.md: for each entry, first commit a test that reproduces the entry's Input and fails on current main (quote its failure in your handoff), then commit the smallest fix that makes it pass, naming the RB id in the commit. Never skip, disable or loosen a test; a test whose expectation encoded the defect is corrected and named in the handoff. An audit task reads the code its title names, writes findings in the report's format under docs/security/audit-2026-11/, proves each before calling it confirmed, and fixes nothing outside its own files. Run bash client/build.sh and python3 client/status.py before marking a task ready. Before ready, python3 tools/coord/owners.py diff <task_id> origin/claude/videogame-project-analysis-ewkkk2 <ready_sha> passes (M48).
+Tasks: FX4-1-transport, FX4-2-trace-events, FX4-3-replay-shop-nav, then the audit FX4-4-audit-client, then FX4-5-problem-strings, FX4-6-device-replay-cap, FX4-7-curation-swap-weave and FX4-8-rehearsal-rerun, in that order (deps chain them; take the first open one in the backlog's order). Each fix task names RB entries of docs/security/bug-report-2026-11.md: for each entry, first commit a test that reproduces the entry's Input and fails on current main (quote its failure in your handoff), then commit the smallest fix that makes it pass, naming the RB id in the commit. Never skip, disable or loosen a test; a test whose expectation encoded the defect is corrected and named in the handoff. An audit task reads the code its title names, writes findings in the report's format under docs/security/audit-2026-11/, proves each before calling it confirmed, and fixes nothing outside its own files. Run bash client/build.sh and python3 client/status.py before marking a task ready. Before ready, python3 tools/coord/owners.py diff <task_id> origin/claude/videogame-project-analysis-ewkkk2 <ready_sha> passes (M48).
 STOP_AT: 2026-11-24T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/security/bug-report-2026-11.md     Phase: fix
 

@@ -98,9 +98,10 @@ func load_friends() -> void:
 		_store().dispatch(&"friends_failed", {"code": feed.code})
 		return
 	# §17.8: the players blocked, each to unblock from here.
+	# A blocks call that fails keeps the list shown (CLI-24).
 	var blocked := await services.account.blocks()
 	_store().dispatch(&"friends_loaded", {"friends": f.value, "feed": feed.value,
-		"blocked": blocked.value if blocked.ok else []})
+		"blocked": blocked.value if blocked.ok else _store().get_slice(SocialState.FRIENDS).get("blocked", [])})
 
 
 func make_invite() -> void:
