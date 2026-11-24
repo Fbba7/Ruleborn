@@ -3,17 +3,17 @@
   "role": "FX1",
   "branch": "claude/fix-server-a",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "FX1-8-server-a-lows",
-  "task_state": "in_progress",
+  "task_state": "blocked",
   "claimed_at": "2026-11-24T05:35:00Z",
   "lease_until": "2026-11-24T08:35:00Z",
-  "updated_at": "2026-11-24T05:58:00Z",
-  "expected_next_update_by": "2026-11-24T06:43:00Z",
+  "updated_at": "2026-11-24T06:50:00Z",
+  "expected_next_update_by": "2026-11-24T07:35:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "bad2df32",
-    "next_step": "full npm test 655 of 657 at b91ed734: privacy.test waits on FX1-R24, FX1-T-11 is FX1-R26 (environment-dependent); waiting on FX1-R24 (default at 09:05Z), then merge main, check_all, owners diff, ready"
+    "next_step": "blocked on FX1-R24 (default granted at 09:05Z). Main eb4b8e59 merged at 7a9084a2, npm test 662 of 663 (privacy.test, R24). On the answer: commit the two declarations (FX1.md, FX1-8 entry) as FX1-R24, merge main, npm test, check_all, owners diff, ready"
   },
   "precheck": null,
   "gate_request": null,
