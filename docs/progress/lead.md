@@ -214,8 +214,10 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxqiFeCtTZE4nW7CtE5` (cycle 186,
-24 November 2026 from about 18:14Z, started by the Opus 5.5 launcher).
+Latest lead cycle session: `session_01SNkKxo4wWyrJULuKf9ezgK` (cycle 187,
+24 November 2026 from about 19:45Z, started by the Opus 5.5 launcher).
+Cycle 186's was `session_01SNkKxqiFeCtTZE4nW7CtE5` (24 November, from
+about 18:14Z).
 Cycle 184's was `session_01SNkKxr2G8KQZktz2Zq8Ty8` (24 November, from
 about 17:14Z).
 Cycle 182's was `session_01SNkKxpHsQytV7iJPKhPoRL` (24 November, from
@@ -710,8 +712,8 @@ You are agent S1 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: S1            Role: maker (S1): the heist screens, the phase 1 pilot        Model: Opus 5.5, effort high
 Branch: claude/ui-screens-heist
 Owned files: only the files each S1 task lists in the backlog, docs/progress/S1.md, docs/progress/status/S1.json
-Tasks: P4-S1-heist-vault, re-work after a gate fail (attempts 1, lead cycle 183): your ready_sha 97ecb94f failed 'heist at 200% text, pt_BR' (Hierarchy) 0 of 3. Read the critique in docs/art/ui-quality/gate/verdicts/P4-S1-heist-vault/97ecb94f.json on main and re-work: at 200% text Cast (Lançar) must lead, lighter, gold or larger than Get out (Fugir), not the same dark plum plate at nearly the same size; the loot panel, taller now with the Vault row, gives up weight (a darker or lower-value plate, numerals not heavier than Cast's label), and the 2:25 timer and LEIS AQUI plates must not outweigh Cast. Keep everything the task's done_when already meets: the Vault row at 200% in en, pt_BR and de, the playfield band no narrower than at 150%, the failing-on-main test in heist_fx_tests.gd, FIT=1 'fit ok' at 100%, 150% and 200% in en, pt_BR, de and high contrast (M26), and 'heist at 100% text' and 'heist in high contrast' unchanged. Judge your own 960 px grayscale still against the anchors (pass kf-character-text200, fail today-heist in docs/art/ui-quality/gate/golden/images/) before ready. Continue on claude/ui-screens-heist from its head (cf61eb04) and merge main into it first. guard.sh's heist/200 draw calls: if your re-work still needs more than the recorded 118, keep S1-R45's request with the new figure (the lead writes the record in the merge). A change to KitHud.loot_fit or any kit file is a request to K1 through the lead, with a default. Never commit under docs/art/ui-quality/gate/verdicts/ (M48): before ready, python3 tools/coord/owners.py diff P4-S1-heist-vault origin/claude/videogame-project-analysis-ewkkk2 <ready_sha> passes. Build from the kit (docs/art/ui-quality/kit-spec.md).
-STOP_AT: 2026-11-24T21:00:00Z (= 18:00 America/Sao_Paulo)
+Tasks: P4-S1-heist-vault, restart after a second gate fail (attempts 2, lead cycle 187; the protocol's escalation: a fresh session from your handoff). Your ready_sha 85be2fa8 failed 'heist at 200% text, pt_BR' (Hierarchy) 0 of 3, on the plate's value, as S1-R46 foresaw. Read the critique in docs/art/ui-quality/gate/verdicts/P4-S1-heist-vault/85be2fa8.json on main, and your handoff in docs/progress/S1.md. S1-R46 is granted by the lead (cycle 187): while Cast leads at 200% text (HeistHud.cast_leads: text over 175%, not high contrast), Cast takes the gold primary plate even when spent, with the wand dimmed, in heist_screen.gd's _dress_cast; AD-R60's leather plate stands at every other size and in high contrast. Re-work so that in the 960 px grayscale Cast is the lightest, most saturated and largest control, clearly ahead of Fugir, and the loot panel (508, 0%), the 2:25 timer and the Alarme 0/6 box are neither lighter nor heavier than Cast's word: a darker or lower-value plate and quieter numerals; the gold Batedor label must not outshine Cast. Keep everything the task's done_when already meets: the Vault row at 200% in en, pt_BR and de, the playfield band no narrower than at 150%, the failing-on-main test in heist_fx_tests.gd, FIT=1 'fit ok' at 100%, 150% and 200% in en, pt_BR, de and high contrast (M26), and 'heist at 100% text' and 'heist in high contrast' unchanged. Judge your own 960 px grayscale still against the anchors (pass kf-character-text200, fail today-heist in docs/art/ui-quality/gate/golden/images/) with three ui-judge calls before ready, and mark ready only on a pass. Continue on claude/ui-screens-heist from its head (8922c136) and merge main into it first. guard.sh's heist/200 draw calls: if the re-work needs more than the recorded 118, keep S1-R45's request with the new figure (the lead writes the record in the merge). A change to KitHud.loot_fit or any kit file is a request to K1 through the lead, with a default. Never commit under docs/art/ui-quality/gate/verdicts/ (M48): before ready, python3 tools/coord/owners.py diff P4-S1-heist-vault origin/claude/videogame-project-analysis-ewkkk2 <ready_sha> passes. Build from the kit (docs/art/ui-quality/kit-spec.md).
+STOP_AT: 2026-11-25T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 3
 
 Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-screens-heist from it (create it if it does not exist) and push only to claude/ui-screens-heist with git push -u origin claude/ui-screens-heist, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is S1, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Any commit that changes client/i18n/strings.csv or content.csv also runs node art/ui/keyframes/build_words.mjs and commits words.js with it, and node art/ui/keyframes/check_keyframes.mjs passes before the task is ready (M34). Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
@@ -866,6 +868,29 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 187**, 24 November 2026, from about 19:45Z (session
+  `session_01SNkKxo4wWyrJULuKf9ezgK`, started by the Opus 5.5 launcher,
+  effort medium by order 6). The changes since cycle 186: S1 marked the
+  heist re-work ready at 85be2fa8 (pre-check passed 18:36Z; guard.sh fails
+  only on heist/200, 121 of 118, S1-R45); SP-bt-01 claimed BT-01b and
+  SP-bt-04 claimed BT-04a's resync. **Gate:** 'heist at 200% text, pt_BR'
+  (Hierarchy) at 85be2fa8, rendered here with FIT=1 ('fit ok'), three
+  judge calls in shuffled order against kf-character-text200 and
+  today-heist: fail 0 of 3 (`verdicts/P4-S1-heist-vault/85be2fa8.json`).
+  Cast is larger now, but its spent leather plate has the value of Fugir
+  and the tray, and the loot panel (508, 0%), the timer and the alarm box
+  still outweigh it. Nothing merged; the merge lock was not taken.
+  **Escalation:** attempts 2, so P4-S1-heist-vault is open again from
+  claude/ui-screens-heist (8922c136), and a fresh S1 session takes it
+  from the handoff, at effort high (order 6: the vault, and a failed
+  attempt). **Requests:** S1-R45 to S1-R47 copied. S1-R46 granted: at
+  200% text a spent Cast takes the gold primary plate with the wand
+  dimmed; AD-R60 stands elsewhere. S1-R45 waits for the re-work's figure;
+  S1-R47 routed to its default (no seat for AD). With SP-bt-01 and
+  SP-bt-04, S1 holds the cap of three under `allowed_warning`.
+  **Next:** gate and merge the heist re-work, BT-04a's resync and BT-01b
+  as they are ready.
+
 - **Cycle 186**, 24 November 2026, from about 18:14Z (session
   `session_01SNkKxqiFeCtTZE4nW7CtE5`, started by the Opus 5.5 launcher,
   effort medium by order 6). The changes since cycle 185: SP-bt-01
@@ -913,19 +938,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   SP-bt-04 hold the cap of three under `allowed_warning`. **Next:** gate
   and merge the heist re-work, BT-01a and BT-04a as they are ready,
   adding the self-test lines of SPbt01-R1 and SP-bt-04-R1.
-
-- **Cycle 184**, 24 November 2026, from about 17:14Z (session
-  `session_01SNkKxr2G8KQZktz2Zq8Ty8`, started by the Opus 5.5 launcher,
-  effort medium by order 6). The changes since cycle 183: SP-bt-01
-  claimed BT-01a and SP-bt-04 claimed BT-04a (17:20Z, lease to 20:20Z);
-  S1's new session is working on the heist re-work and has pushed
-  nothing yet. **Bookkeeping:** the two claims are in the backlog
-  (state `claimed`). **Merge and gate:** none: nothing is ready, no
-  merge lock; main did not move, so the pages are not republished.
-  **Started nothing:** S1, SP-bt-01 and SP-bt-04 hold the cap of three
-  under `allowed_warning`, and all three sessions are working.
-  **Next:** gate and merge the heist re-work, BT-01a and BT-04a as they
-  are ready.
 
 - **Restart, 23 November 2026** (the overseer, about 21:20Z). The owner
   restarted the program, in the chat of the overseer session: "Continue,
