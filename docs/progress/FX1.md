@@ -1,6 +1,6 @@
 # FX1 server fixes (A): progress
 
-- Status: Green. FX1-6-audit-server-a: checks pass; pre-check running at 8c973824.
+- Status: Green. FX1-6-audit-server-a: checks pass at 01cb97ac (main ee42bb70 merged); pre-check running.
 - Progress: 4 of 6 tasks merged (FX1-1, FX1-2, FX1-3; FX1-4-holds-codex at e2e8f5a1); no gate items (fix tasks have none).
 - Done: FX1-6: 17 findings (FX1-A-01 to A-17) in `docs/security/audit-2026-11/server-a.md`, each with a test in `server/test/fix_fx1_audit_server_a.test.mjs` that fails on main; 11 fixed in owned files, 1 partly, 5 marked and requested (FX1-R3 to R8); `cd server && npm test` 603 of 603.
 - Next: FX1-7-audit-tools, in a fresh session.
@@ -13,11 +13,11 @@
 | FX1-2-leases: RB-12, RB-14, RB-16, RB-17 | 3.5 | merged (c7cdcbbd) | `server/test/fix_fx1_leases.test.mjs`; test commit d1c34426; fixes 68b8d6f9, 092bc9fd, 2c55de1f, 165fa31f |
 | FX1-3-workshop: RB-35, RB-37, RB-38, RB-39 | 3.5 | merged (e413e4a9) | `server/test/fix_fx1_workshop.test.mjs`; test commit bf0ff93e; fixes c717a9b1, 1faccdd2, 2ac59da1, a4817445 |
 | FX1-4-holds-codex: RB-15, RB-18, RB-36, RB-53, RB-56 | 4.0 | merged (e2e8f5a1) | `server/test/fix_fx1_holds_codex.test.mjs`; test commit 924726b8; fixes 103d4176, 1de6f966, 63f031ad, 07047356, b45dafe6 |
-| FX1-6-audit-server-a: FX1-A-01 to A-17 | 4.0 | ready (8c973824) | `docs/security/audit-2026-11/server-a.md`; `server/test/fix_fx1_audit_server_a.test.mjs`; test commits 6b3556f9, 5d5d2e82, b0e4cd1c, f33ccc18; fixes f1888bba, dfc5bf86, 244b9480, 533b793d, ccda8b22 |
+| FX1-6-audit-server-a: FX1-A-01 to A-17 | 4.0 | ready (01cb97ac) | `docs/security/audit-2026-11/server-a.md`; `server/test/fix_fx1_audit_server_a.test.mjs`; test commits 6b3556f9, 5d5d2e82, b0e4cd1c, f33ccc18; fixes f1888bba, dfc5bf86, 244b9480, 533b793d, ccda8b22; A-07 reverted 01cb97ac (R11) |
 | FX1-7-audit-tools | 4.0 | open | |
 
 ## Handoff
-- Last verified commit: 8c973824 (pre-check running).
+- Last verified commit: 01cb97ac (pre-check running).
 - **FX1-6-audit-server-a (2026-11-23).** Branch `claude/fix-server-a`, from main e2e8f5a1, with main ee42bb70 merged. The audit read the files the report did not (`service.mjs`, `matchmaking.mjs`, `holds.mjs`, `crossings.mjs`, `codex.mjs`, `workshop.mjs`, `fund.mjs`) and followed their calls into the modules they use. The findings, the unproven claims and the rejected ones are in `docs/security/audit-2026-11/server-a.md`.
   - **Tests first.** Every finding's test, in `server/test/fix_fx1_audit_server_a.test.mjs`, was committed before its fix (6b3556f9, 5d5d2e82, b0e4cd1c, f33ccc18), and each fails on main for its defect.
   - **Fixed in owned files:** A-01 (an echo with erased bytes broke every target list), A-03, A-04, A-05, A-06, A-08, A-11, A-12 and A-14. A-13 is fixed in part: the full fix needs a `leases.realm` column in `db.mjs` (FX1-R5).
@@ -27,7 +27,7 @@
   - **Unproven:** the Renown pull-back over skipped seasons (R10, default one pull-back), the 13-15 crew rule (owner decision B4, asserted by SR-14) and curated wards' origin. No tests.
   - **A-03's refusal** reuses `404 no_such_report`. A new `already_resolved` broke `tools/check_all.sh`'s client contract, because `client/i18n/strings.csv` is not this task's.
   - **Existing tests.** No existing test was changed, skipped or loosened.
-  - **Checks.** `cd server && npm test` passes 603 of 603, and `bash tools/check_all.sh` passes. The pre-check at 8c973824 is running. `owners.py diff FX1-6-audit-server-a origin/claude/videogame-project-analysis-ewkkk2 8c973824` reports every changed path inside the task's files.
+  - **Checks.** `cd server && npm test` passes 631 of 631, and `bash tools/check_all.sh` passes. The pre-check at 01cb97ac is running. `owners.py diff FX1-6-audit-server-a origin/claude/videogame-project-analysis-ewkkk2 01cb97ac` reports every changed path inside the task's files.
   - **Next.** FX1-7-audit-tools, in a fresh session.
 - **FX1-4-holds-codex resync (2026-11-23).** The lead set `resync` because candidate ea551636 (FX1-4 with FX2-5-auth-lows) failed RB-36's test with `crew_mismatch` at `server/test/fix_fx1_holds_codex.test.mjs:98`. Cause: FX2-5's RB-25 fix makes `home.crewProblem` compare each manifest member's form byte with the character's. RB-36's test wrote manifests without `form`.
   - Main (79079d43, with FX2-5 at 5f1cc425) merged into the branch at 59b6c398. Only `docs/progress/status/FX1.json` conflicted, and it is FX1's own file.
