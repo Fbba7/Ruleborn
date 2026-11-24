@@ -943,7 +943,7 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
-- **Stopped here, 25 November 2026** (the overseer, about 00:00Z). On
+- **Stopped here, 24 November 2026** (the overseer, about 23:35Z). On
   24 November, about 23:25Z, the owner ordered that "UI done" is
   report.md's phases 0 to 3 and that every agent stops when phase 3
   closes (CLAUDE.md order 1). At about 23:30Z the owner approved the

@@ -125,7 +125,7 @@ the status files, requests and scheduled-task prompts.
     every enabled scheduled task. It stays stopped until the owner, in
     their own words, says what comes next.
 
-- **25 November 2026, about 00:00 UTC:** phase 3 closed, and **the
+- **24 November 2026, about 23:35 UTC:** phase 3 closed, and **the
   program is stopped**, by the owner's order of 24 November above. At
   about 23:30 UTC the owner approved the overseer's fast close ("Yes, do
   it"), in the chat of the overseer session; the overseer did the lead's
@@ -136,7 +136,7 @@ the status files, requests and scheduled-task prompts.
   merged), the lead is idle, the merge lock is cleared, and no scheduled
   task is enabled. Where the work stands is in
   [`docs/progress/lead.md`](docs/progress/lead.md), "Now", entry
-  "Stopped here, 25 November 2026".
+  "Stopped here, 24 November 2026".
 
 A session that is in the middle of a turn when the program is stopped
 finishes cleanly, so no work is lost: commit and push what it has to its
