@@ -74,6 +74,14 @@
     "SP-bt-09": {
       "branch": "claude/ui-spec-setup",
       "model": "Opus 5.5"
+    },
+    "SP-bt-05": {
+      "branch": "claude/ui-spec-gate-run",
+      "model": "Opus 5.5"
+    },
+    "SP-bt-06": {
+      "branch": "claude/ui-spec-docs-check",
+      "model": "Opus 5.5"
     }
   },
   "strings_owner": "lead",
