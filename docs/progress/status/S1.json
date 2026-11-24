@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-24T17:20:00Z",
   "lease_until": "2026-11-24T20:20:00Z",
-  "updated_at": "2026-11-24T17:20:00Z",
-  "expected_next_update_by": "2026-11-24T18:05:00Z",
+  "updated_at": "2026-11-24T18:00:00Z",
+  "expected_next_update_by": "2026-11-24T18:45:00Z",
   "progress_marker": {
     "last_green_sha": "97ecb94ff8d935837168bc37c13357a2d07817c7",
-    "next_step": "re-work after gate fail (attempts 1, cycle 183): heist at 200% text, pt_BR, Hierarchy. Main 43deab02 merged. Cast to lead, loot panel and the timer / LEIS AQUI plates to give up weight.",
-    "at": "2026-11-24T17:20:00Z"
+    "next_step": "re-work committed as 85be2fa8 (Cast leads at 200%: 36 pt cream word, larger plate; loot, clock, alarm and laws a step quieter; heist-pilot.md Part 11). Pre-check running; guard.sh next; then ready with the gate request.",
+    "at": "2026-11-24T18:00:00Z"
   },
   "precheck": {
     "sha": "97ecb94ff8d935837168bc37c13357a2d07817c7",
@@ -746,5 +746,5 @@
       "where": "docs/progress/lead.md, Now, cycle 143 (M60)"
     }
   ],
-  "next_step": "ready at 97ecb94f (main d98cedea merged, pre-check PASS); waiting for the lead's gate run and merge. guard.sh fails only on heist/200 119 of 118 (S1-R45's default: the lead writes the record in the merge)."
+  "next_step": "re-work committed as 85be2fa8 (Cast leads at 200%: 36 pt cream word, larger plate; loot, clock, alarm and laws a step quieter; heist-pilot.md Part 11). Pre-check running; guard.sh next; then ready with the gate request."
 }
