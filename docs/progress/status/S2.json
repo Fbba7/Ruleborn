@@ -3,25 +3,23 @@
   "role": "S2",
   "branch": "claude/ui-screens-home",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P4-S2-home-purse",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-24T15:05:00Z",
   "lease_until": "2026-11-24T18:05:00Z",
-  "updated_at": "2026-11-24T15:35:00Z",
-  "expected_next_update_by": "2026-11-24T16:20:00Z",
-  "long_run": {
-    "log": "/tmp/check-ae1a7c1c261896ae00ae384662b48bda962d54a9.log",
-    "expected_end": "2026-11-24T16:10:00Z"
-  },
+  "updated_at": "2026-11-24T15:50:00Z",
+  "expected_next_update_by": null,
+  "long_run": null,
   "progress_marker": {
-    "last_green_sha": "4e9114ac",
-    "next_step": "P4-S2-home-purse: main 178be84 merged at ae1a7c1c (clean); setup line and build.sh exit 0; check_screens OK; owners.py diff passes. Running: the pre-check on ae1a7c1c and fit_home.sh; then guard.sh, record, ready."
+    "last_green_sha": "ae1a7c1c261896ae00ae384662b48bda962d54a9",
+    "next_step": "P4-S2-home-purse ready at ae1a7c1c (main 178be84 merged): pre-check PASS, guard OK, fit_home.sh 50/50 ok, check_screens OK, owners.py diff passes; gate 'home at 100% text' Hierarchy 3/3 at acb2239b. Waiting for the lead's merge."
   },
   "precheck": {
-    "sha": "4e9114ac84279c77ca1735d1181ccfb280a52bcb",
+    "sha": "ae1a7c1c261896ae00ae384662b48bda962d54a9",
+    "state": "PASS",
     "exit": 0,
-    "finished_at": "2026-11-17T23:31:49Z",
+    "finished_at": "2026-11-24T15:43:31Z",
     "summary": "All checks passed."
   },
   "gate_request": {
@@ -35,7 +33,7 @@
       }
     ]
   },
-  "ready_sha": null,
+  "ready_sha": "ae1a7c1c261896ae00ae384662b48bda962d54a9",
   "stop_at": "2026-11-24T21:00:00Z",
   "acks": [
     "M13",
@@ -740,5 +738,5 @@
     }
   ],
   "answers": [],
-  "next_step": "P4-S2-home-purse: main 178be84 merged at ae1a7c1c (clean); setup line and build.sh exit 0; check_screens OK; owners.py diff passes. Running: the pre-check on ae1a7c1c and fit_home.sh; then guard.sh, record, ready."
+  "next_step": "P4-S2-home-purse ready at ae1a7c1c (main 178be84 merged): pre-check PASS, guard OK, fit_home.sh 50/50 ok, check_screens OK, owners.py diff passes; gate 'home at 100% text' Hierarchy 3/3 at acb2239b. Waiting for the lead's merge."
 }
