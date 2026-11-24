@@ -215,13 +215,13 @@
     },
     {
       "id": "FX4-8-rehearsal-rerun",
-      "title": "Medium, client rehearsal stage (CLI-18, docs/security/audit-2026-11/client.md): a style card tapped while another crew plays shows that crew's result under the new card. client/scripts/stage_rehearsal.gd lines 184-186 and 214-217: a run asked for while one plays finishes the one playing, the style changes, no new run starts",
+      "title": "Medium, client rehearsal stage (CLI-18, docs/security/audit-2026-11/client.md): a style card tapped while another crew plays shows that crew's result under the new card. client/world/stage_rehearsal.gd lines 184-186 and 214-217: a run asked for while one plays finishes the one playing, the style changes, no new run starts",
       "phase": "fix",
       "role": "FX4",
       "model": "Opus 5.5",
       "assigned_to": "FX4",
       "files": [
-        "client/scripts/stage_rehearsal.gd",
+        "client/world/stage_rehearsal.gd",
         "client/tests/fix_*"
       ],
       "deps": [
@@ -242,14 +242,14 @@
       "estimate_h": 0.75,
       "tier": 2,
       "critical": false,
-      "state": "open",
+      "state": "blocked",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-24T02:30:00Z",
-      "updated_by": "lead (cycle 169)"
+      "updated_at": "2026-11-24T11:25:00Z",
+      "updated_by": "lead (cycle 177)"
     },
     {
       "id": "FX1-10-tools-contract",
