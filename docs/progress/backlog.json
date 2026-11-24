@@ -308,7 +308,7 @@
       "estimate_h": 0.75,
       "tier": 2,
       "critical": false,
-      "state": "ready",
+      "state": "merged",
       "claim": {
         "agent": "FX4",
         "branch": "claude/fix-client",
@@ -319,8 +319,8 @@
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": "3231f78b",
-      "merged_sha": null,
-      "updated_at": "2026-11-24T04:25:00Z",
+      "merged_sha": "d3183782",
+      "updated_at": "2026-11-24T04:56:00Z",
       "updated_by": "lead (cycle 171)"
     },
     {
