@@ -177,7 +177,16 @@ class Ledger:
         item is still open is a retirement; one that fails while its item is
         closed means the register claims a fix the document does not carry,
         which is the exact fault C21-C24 were — and it now breaks the build.
+
+        A check that tracks an id the register does not hold breaks too,
+        passing or failing: it once read as open, so a mistyped id made a
+        failing check read as tracked and a passing one as a retirement, and
+        neither failed the build (FX1-T-11).
         """
+        if tracks and not _is_known(tracks):
+            detail = f"tracks {tracks}, which the register does not hold. {detail}".strip()
+            self.rows.append((BREAK, label, detail, tracks))
+            return
         still_open = _is_open(tracks) if tracks else False
         if ok:
             state = RETIRED if (tracks and still_open) else PASS
@@ -217,12 +226,19 @@ _HEADINGS = {
 }
 
 
+def _is_known(item_id: str) -> bool:
+    """Does the register hold an item with this id?"""
+    from audit_register import REGISTER
+    return any(isinstance(i, dict) and i.get("id") == item_id for i in REGISTER)
+
+
 def _is_open(item_id: str) -> bool:
-    """Is this register item still open, according to the register itself?"""
-    from audit_register import REGISTER, is_open
-    if any(isinstance(i, dict) and i.get("id") == item_id for i in REGISTER):
-        return is_open(item_id)
-    return True
+    """Is this register item still open, according to the register itself?
+
+    Ledger.check asks only about an id _is_known has found.
+    """
+    from audit_register import is_open
+    return is_open(item_id)
 
 
 # --------------------------------------------------------------------------
@@ -2766,6 +2782,9 @@ def _self_test_ledger() -> bool:
         ("tracked, passing, item open", True, "C23", True, RETIRED),
         ("tracked, failing, item closed", False, "C7", False, BREAK),
         ("tracked, passing, item closed", True, "C7", False, PASS),
+        # An id the register does not hold, which once read as open (FX1-T-11).
+        ("tracked, failing, id not in the register", False, "C999", True, BREAK),
+        ("tracked, passing, id not in the register", True, "C999", True, BREAK),
     ]
     ok = True
     for name, result, tracks, item_open, expect in cases:
