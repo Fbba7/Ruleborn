@@ -214,8 +214,10 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxqkoC28gn9jAiBuxPc` (cycle 173,
-24 November 2026 from about 06:40Z, started by the Opus 5.5 launcher).
+Latest lead cycle session: `session_01SNkKxnMNhTQKiDu6mShtEP` (cycle 174,
+24 November 2026 from about 07:39Z, started by the Opus 5.5 launcher).
+Cycle 173's was `session_01SNkKxqkoC28gn9jAiBuxPc` (24 November, from
+about 06:40Z).
 Cycle 172's was `session_01SNkKxpgsn8Ad15uPi5ptnD` (24 November, from
 about 05:35Z).
 Cycle 171's was `session_01SNkKxqyMFdbVCW6QjLfJjC` (24 November, from
@@ -392,6 +394,7 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| FX1 | `session_01SNkKxn8R6Rr28GFWpvcWZh` (Opus 5.5, effort high) | FX1-13-codex-woven-at (start, cycle 174: seeded from FX1-R25 after FX1-8-server-a-lows merged at e830e15b; FX1's last session, `session_01SNkKxpLTTBVYS7eUXqeFJr`, is idle) | `claude/fix-server-a` | 2026-11-24 08:29Z |
 | FX4 | `session_01SNkKxoYfNyaJq9rBGUSuzk` (Opus 5.5, effort high) | FX4-7-curation-swap-weave (start, cycle 173: next task after FX4-6-device-replay-cap merged at ee4d64aa; FX4's last session, `session_01SNkKxqMB92sY6KUMaz9NgW`, is idle) | `claude/fix-client` | 2026-11-24 07:21Z |
 | FX1 | `session_01SNkKxpLTTBVYS7eUXqeFJr` (Opus 5.5, effort high) | FX1-8-server-a-lows (restart, cycle 173: FX1-R24 granted; last session session_01SNkKxqoTBnLBZTVS18TPbn is idle, waiting on it) | `claude/fix-server-a` | 2026-11-24 06:48Z |
 | FX1 | `session_01SNkKxqoTBnLBZTVS18TPbn` (Opus 5.5, effort high) | FX1-8-server-a-lows (start, cycle 171: deps FX1-6 and FX2-9 merged; last session session_01SNkKxppNySHfW7azVquQXU is idle) | `claude/fix-server-a` | 2026-11-24 05:30Z |
@@ -741,7 +744,7 @@ You are agent FX1 of the Ruleborn agent program (bug-fix wave). Read docs/guides
 Agent: FX1            Role: fixer (FX1): server A: service, matchmaking, holds, crossings, codex, workshop, fund        Model: Opus 5.5, effort high
 Branch: claude/fix-server-a
 Owned files: only the files each FX1 task lists in the backlog, docs/progress/FX1.md, docs/progress/status/FX1.json
-Tasks: FX1-1-workshop-pairs, FX1-2-leases, FX1-3-workshop, FX1-4-holds-codex, then the audits FX1-6-audit-server-a and FX1-7-audit-tools, then FX1-8-server-a-lows (FX1-6's findings outside its files, after FX2-9-audit-b-match), then the tools fixes from FX1-7's audit FX1-9-tools-gate, FX1-10-tools-contract (after FX4-7-curation-swap-weave too), FX1-11-tools-docs and FX1-12-tools-ui, in that order (deps chain them). Each fix task names RB entries of docs/security/bug-report-2026-11.md: for each entry, first commit a test that reproduces the entry's Input and fails on current main (quote its failure in your handoff), then commit the smallest fix that makes it pass, naming the RB id in the commit. Never skip, disable or loosen a test; a test whose expectation encoded the defect is corrected and named in the handoff. An audit task reads the code its title names, writes findings in the report's format under docs/security/audit-2026-11/, proves each before calling it confirmed, and fixes nothing outside its own files. Run cd server && npm test before marking a task ready. Before ready, python3 tools/coord/owners.py diff <task_id> origin/claude/videogame-project-analysis-ewkkk2 <ready_sha> passes (M48).
+Tasks: FX1-1-workshop-pairs, FX1-2-leases, FX1-3-workshop, FX1-4-holds-codex, then the audits FX1-6-audit-server-a and FX1-7-audit-tools, then FX1-8-server-a-lows (FX1-6's findings outside its files, after FX2-9-audit-b-match), then the tools fixes from FX1-7's audit FX1-9-tools-gate, FX1-10-tools-contract (after FX4-7-curation-swap-weave too), FX1-11-tools-docs and FX1-12-tools-ui, in that order (deps chain them), and FX1-13-codex-woven-at (FX1-R25, after FX1-8-server-a-lows), which comes first while FX1-10 waits. Each fix task names RB entries of docs/security/bug-report-2026-11.md: for each entry, first commit a test that reproduces the entry's Input and fails on current main (quote its failure in your handoff), then commit the smallest fix that makes it pass, naming the RB id in the commit. Never skip, disable or loosen a test; a test whose expectation encoded the defect is corrected and named in the handoff. An audit task reads the code its title names, writes findings in the report's format under docs/security/audit-2026-11/, proves each before calling it confirmed, and fixes nothing outside its own files. Run cd server && npm test before marking a task ready. Before ready, python3 tools/coord/owners.py diff <task_id> origin/claude/videogame-project-analysis-ewkkk2 <ready_sha> passes (M48).
 STOP_AT: 2026-11-24T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/security/bug-report-2026-11.md     Phase: fix
 
@@ -807,6 +810,35 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 174**, 24 November 2026, from about 07:39Z (session
+  `session_01SNkKxnMNhTQKiDu6mShtEP`, started by the Opus 5.5 launcher).
+  **Merged** two tasks, batched in candidate 80ffe664, at e830e15b:
+  - FX1-8-server-a-lows (ready dbf44adf).
+  - FX1-9-tools-gate (ready ad5e56bf, FX3's work).
+  The candidate also regenerated the audit page. The full checks passed at
+  08:27Z ("All checks passed.", exit 0). The claims were disjoint, the lock
+  is cleared, and both pages are republished.
+
+  **Requests:**
+  - FX1-R25 is answered, not with the default: FX1-13-codex-woven-at is
+    seeded for FX1 (deps FX1-8). It is the rest of FX1-A-17: count a woven
+    step only once `woven_at <= now`.
+  - FX1-R26 is answered. Its `py()` half is fixed by FX1-9, merged this
+    cycle. Its docstring half is added to FX1-11-tools-docs's `done_when`.
+
+  **Started**, on Opus 5.5 at effort high: FX1 on FX1-13-codex-woven-at
+  (`session_01SNkKxn8R6Rr28GFWpvcWZh`, 08:29Z). FX1-10 still waits on
+  FX4-7.
+
+  **Seen:**
+  - FX4 is `working` on FX4-7-curation-swap-weave (lease 10:25Z).
+  - FX2 and FX3 have no open task.
+  - The seven-day bar reads `allowed_warning`, so the cap is three.
+
+  Two builders are working: FX1 and FX4. **Next:** merge FX4-7 and FX1-13
+  as each turns ready. Then FX4-8 and FX1-10 to FX1-12 in order. Then the
+  UI: once every FX task is merged, unpark P3-S3-settings-4,
+  P4-S1-heist-vault, P4-S2-home-purse and the BT track.
 - **Cycle 173**, 24 November 2026, from about 06:40Z (session
   `session_01SNkKxqkoC28gn9jAiBuxPc`, started by the Opus 5.5 launcher).
   **Merged** FX4-6-device-replay-cap (ready 484297b1) at ee4d64aa. The
@@ -890,36 +922,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   FX4-8 and FX1-10 to FX1-12 in order. Then the UI: once every FX task is
   merged, unpark P3-S3-settings-4, P4-S1-heist-vault, P4-S2-home-purse
   and the BT track.
-- **Cycle 171**, 24 November 2026, from about 04:14Z (session
-  `session_01SNkKxqyMFdbVCW6QjLfJjC`, started by the Opus 5.5 launcher).
-  **Merged** three tasks:
-  - FX4-5-problem-strings at d3183782, after the full checks of candidate
-    5ffa7103 passed (the server's 631 of 631 tests).
-  - FX2-9-audit-b-match at 6e5045e3 (ready f2181cf5) and FX1-7-audit-tools
-    at 3b162939 (ready b30765cd), batched in candidate 31df4286, whose
-    full checks passed at 05:29Z. The FX2-9-only run (0bee873d) was
-    stopped on purpose when FX1-7 turned ready. `owners.py diff` passed
-    for each task, and the claims were disjoint.
-
-  The audit and roadmap pages are republished. FX2-10-curated-woven-law
-  gained FX2-9's follow-up: observatory.mjs:140 `echoes`, with a
-  fail-first test (db0614f0). **Requests:** FX1-R20 to FX1-R23 (FX1-7's
-  tools audit) are answered with their defaults. Four FX1 tasks are filed
-  in order: FX1-9-tools-gate (FX1-T-03 first), FX1-10-tools-contract
-  (also after FX4-7, because both own `client/i18n/strings.csv`),
-  FX1-11-tools-docs and FX1-12-tools-ui. Until FX1-9 merges, the lead
-  reuses a pre-check only when its summary reads "All checks passed.",
-  as well as exit 0. **Started**, on Opus 5.5 at effort high:
-  - FX4 on FX4-6-device-replay-cap (`session_01SNkKxqMB92sY6KUMaz9NgW`);
-  - FX2 on FX2-10-curated-woven-law (`session_01SNkKxrBzWXR1vS1YHrW8zw`);
-  - FX1 on FX1-8-server-a-lows (`session_01SNkKxqoTBnLBZTVS18TPbn`).
-
-  FX3 is still `active` on FX3-7-audit-client-2, with its pre-check
-  running on 1ecd419f. That makes four builders, the cap. **Next:** merge
-  FX3-7, FX1-8, FX2-10 and FX4-6 as each turns ready. Then FX4-7, FX4-8
-  and FX1-9 to FX1-12 in order. Then the UI: once every FX task is merged,
-  unpark P3-S3-settings-4, P4-S1-heist-vault, P4-S2-home-purse and the BT
-  track.
 - **Restart, 23 November 2026** (the overseer, about 21:20Z). The owner
   restarted the program, in the chat of the overseer session: "Continue,
   first the bugs then the UI" (CLAUDE.md order 1). It runs on Opus 5.5 at

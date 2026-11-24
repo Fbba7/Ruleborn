@@ -1,20 +1,19 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-24T07:25:00Z",
-  "expected_next_update_by": "2026-11-24T10:25:00Z",
-  "cycle": 173,
+  "updated_at": "2026-11-24T09:05:00Z",
+  "expected_next_update_by": "2026-11-24T11:33:00Z",
+  "cycle": 174,
   "merging": {
-    "candidate_sha": "80ffe664fc74caf5fb8daa3bd0d6d06d55e677e0",
+    "candidate_sha": "pending (FX4-7 on 632ab460)",
     "task_ids": [
-      "FX1-8-server-a-lows",
-      "FX1-9-tools-gate"
+      "FX4-7-curation-swap-weave"
     ],
-    "started_at": "2026-11-24T07:43:34Z",
-    "expires_at": "2026-11-24T08:43:34Z"
+    "started_at": "2026-11-24T09:05:00Z",
+    "expires_at": "2026-11-24T10:05:00Z"
   },
   "last_merged": {
-    "task_id": "FX4-6-device-replay-cap",
-    "sha": "ee4d64aa"
+    "task_id": "FX1-8-server-a-lows, FX1-9-tools-gate",
+    "sha": "e830e15b"
   },
   "acks": [
     "M15",
@@ -55,9 +54,9 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Bugs first (the owner's restart of 23 November 2026). Three builders are active on Opus 5.5 at effort high: FX1 on FX1-8-server-a-lows (session_01SNkKxpLTTBVYS7eUXqeFJr, restarted in cycle 173 after FX1-R24 was granted), FX3 on FX1-9-tools-gate (session_01SNkKxqR9zT6xXyz2XFYKXb, pre-check of ad5e56bf running), FX4 on FX4-7-curation-swap-weave (session_01SNkKxoYfNyaJq9rBGUSuzk, started in cycle 173). FX2 has no task left. Merge each as it turns ready (full checks, owners.py diff; reuse a pre-check only when its summary reads 'All checks passed.' and exit is 0, until FX1-9 merges). Then FX4-8 and FX1-10 to FX1-12 in order. Then the UI: once every FX task is merged, unpark P3-S3-settings-4, P4-S1-heist-vault, P4-S2-home-purse and the BT track.",
+  "next_step": "Bugs first (the owner's restart of 23 November 2026). Two builders are active on Opus 5.5 at effort high: FX4 on FX4-7-curation-swap-weave (session_01SNkKxoYfNyaJq9rBGUSuzk, lease 10:25Z) and FX1 on FX1-13-codex-woven-at (session_01SNkKxn8R6Rr28GFWpvcWZh, started in cycle 174 from FX1-R25). FX2 and FX3 have no open task. The seven-day bar reads allowed_warning (cap three). Merge FX4-7 and FX1-13 as each turns ready (full checks, owners.py diff). Then FX4-8 and FX1-10 to FX1-12 in order. Then the UI: once every FX task is merged, unpark P3-S3-settings-4, P4-S1-heist-vault, P4-S2-home-purse and the BT track.",
   "seen": {
-    "at": "2026-11-24T07:21:58Z",
+    "at": "2026-11-24T08:32:09Z",
     "heads": {
       "claude/3d-character-screens": "6053b249bee313648da3509142eeb2ba738bb62f",
       "claude/3d-characters": "35d6ae8f5b84a4d75636f68270848b0949c111f3",
@@ -71,10 +70,10 @@
       "claude/auth": "162e29d2b42a74df530e73e5a4db4b5410897275",
       "claude/db-cost": "1a033fe3d77dd294c53ef27cb1553bc5c754b4c2",
       "claude/docs": "2e0eededbbc1e3c53ba9a4dea3647de87b7ef11b",
-      "claude/fix-client": "a17247c57e416fdb07403a79ef4986e49169a46a",
-      "claude/fix-server-a": "78dc39cd2f29f764182b8e3d6992a2538033d296",
+      "claude/fix-client": "7c6e4f1bffb04fdd9869ffbbc73343b29f5055e7",
+      "claude/fix-server-a": "ec95118c96cb6f86fec50d6330ba5b1ec5878609",
       "claude/fix-server-b": "0ed2bb86a51b9bcfaf1dca025538c4771673e496",
-      "claude/fix-sim": "c55550b48bb4ce9597d49156cbb8a4e094901ac0",
+      "claude/fix-sim": "03ee301181c9f341c1d6ac23534b86d5fb883f21",
       "claude/lead-cycle-84-verdicts": "ae9c5e4effc8070a5e29f589882bc14445520fa4",
       "claude/plan-v3": "57893713636b7753d0b790c5a9dc35c3b126770a",
       "claude/security-review": "dd1e90f06b512b25a74f3f3f73ace84b3969cce9",
@@ -91,6 +90,7 @@
       "claude/ui-screens-heist": "ed443f93cbe84ae052c9621ecb52385068d81a3d",
       "claude/ui-screens-home": "27846b7cdd0b78ce2537c4ae0d076bb18046f260",
       "claude/ui-screens-meta": "e0e4730b37d48ab1494a45ed0c3f0035609f14cd",
+      "lead/candidate-0870a845": "0870a8457836d68256019562d329d8f32a048371",
       "lead/candidate-13f6fb44": "13f6fb4424f2697c762188ee73d27c9980b27964",
       "lead/candidate-276ed4f0": "276ed4f0623d108174022240cba14f4f0ef9f74b",
       "lead/candidate-357efa6d": "357efa6df082f388d17df1ccaec7a7f793baeac2",
@@ -108,7 +108,9 @@
       "main": "2455f3b5392587009f9b8f7ff57f7b26b01566d1"
     },
     "ready": {},
-    "startable": [],
+    "startable": [
+      "FX1-13-codex-woven-at"
+    ],
     "messages": [
       "M10",
       "M3"

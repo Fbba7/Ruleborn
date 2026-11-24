@@ -106,8 +106,13 @@ export class Links {
     this.insert(account, "stone_bridge", realm, to, now);
   }
 
+  /** A new link, numbered one past every number the player's links were
+   *  given, removed ones too: a number is never given again, so a retried
+   *  removal finds nothing (FX1-A-16). */
   insert(account, kind, a, b, now) {
-    const n = (this.db.prepare("SELECT MAX(n) AS n FROM links WHERE owner = ?").get(account).n ?? 0) + 1;
+    const n = Math.max(this.db.prepare("SELECT links_n FROM accounts WHERE id = ?").get(account)?.links_n ?? 0,
+      this.db.prepare("SELECT MAX(n) AS n FROM links WHERE owner = ?").get(account).n ?? 0) + 1;
+    this.db.prepare("UPDATE accounts SET links_n = ? WHERE id = ?").run(n, account);
     this.db.prepare("INSERT INTO links (owner, n, kind, a, b, built_at, paid_to, open) VALUES (?, ?, ?, ?, ?, ?, ?, 1)")
       .run(account, n, kind, a, b, now, now);
     return n;
