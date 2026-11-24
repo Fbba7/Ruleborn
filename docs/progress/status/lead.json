@@ -1,9 +1,17 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-24T20:25:00Z",
+  "updated_at": "2026-11-24T20:50:00Z",
   "expected_next_update_by": "2026-11-24T23:25:00Z",
   "cycle": 188,
-  "merging": null,
+  "merging": {
+    "candidate_sha": "be4adaea",
+    "task_ids": [
+      "BT-01b",
+      "BT-04a"
+    ],
+    "started_at": "2026-11-24T20:50:00Z",
+    "expires_at": "2026-11-24T21:50:00Z"
+  },
   "last_merged": {
     "task_id": "BT-01a",
     "sha": "99c9aa89"
