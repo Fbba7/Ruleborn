@@ -243,6 +243,8 @@ impl RulebornReplay {
         if !(3..=5).contains(&crew) || ticks <= 0 {
             return false;
         }
+        // CLI-23: a clock past u32 is refused, not wrapped onto another.
+        let Ok(ticks) = u32::try_from(ticks) else { return false };
         let manifest = if manifest.is_empty() {
             None
         } else {
@@ -258,7 +260,7 @@ impl RulebornReplay {
             seed,
             island: realm.digest(),
             rules: sim::rules_version(),
-            ticks: ticks as u32,
+            ticks,
             crew: crew as u8,
             era: self.era,
             // §12.5: the planner's crew, or by role when there is none.
