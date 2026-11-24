@@ -1,7 +1,7 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-24T23:20:00Z",
-  "expected_next_update_by": "2026-11-25T01:20:00Z",
+  "updated_at": "2026-11-24T23:25:00Z",
+  "expected_next_update_by": "2026-11-25T02:25:00Z",
   "cycle": 191,
   "merging": null,
   "last_merged": {
@@ -47,9 +47,9 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Merge BT-04b (SP-bt-04) and BT-07 (SP-bt-07, with SP-bt-07-R1's metrics self-test line in check_all.sh and checks.md in its candidate) as they are ready, then BT-09 (SP-bt-09, started cycle 190). BT-05 opens once BT-04b merges; BT-06 and BT-08 wait for a seat (cap of three under allowed_warning).",
+  "next_step": "Merge BT-09 (SP-bt-09), BT-06 (SP-bt-06) and BT-05 (SP-bt-05), all started, as they are ready, wiring their self-test requests in the candidates; apply SP-bt-09-R1 after BT-09 merges. BT-08 waits for a seat (cap of three under allowed_warning); SP-bt-04-R2 waits on AD.",
   "seen": {
-    "at": "2026-11-24T22:17:18Z",
+    "at": "2026-11-24T23:18:04Z",
     "heads": {
       "claude/3d-character-screens": "6053b249bee313648da3509142eeb2ba738bb62f",
       "claude/3d-characters": "35d6ae8f5b84a4d75636f68270848b0949c111f3",
@@ -84,8 +84,10 @@
       "claude/ui-screens-home": "eded364b11d503933f1d657683a2b622f66ca972",
       "claude/ui-screens-meta": "8e73789bd8519aeb195e6e36d013d5290353975b",
       "claude/ui-spec-coord": "6a6815a528aa0a0cef2645e955680bffbad3bc65",
-      "claude/ui-spec-gate-render": "6e20db7c3dc444905b9f9c60c4db4084a38c461f",
-      "claude/ui-spec-metrics": "efea6a0204b25da22092ad3364d9c8dafcecbb02",
+      "claude/ui-spec-docs-check": "b9b4b8a107f39dd51c0b8df542e4291f9736525c",
+      "claude/ui-spec-gate-render": "c0e3a29dc88c94a9ceb5326b9ca8e5e9a933459b",
+      "claude/ui-spec-metrics": "1a366d661fd7fb5168879efbb7f97474e8d94baa",
+      "claude/ui-spec-setup": "29a04d4e003a356d4b98d2135a7b2fc03a3eefc1",
       "lead/candidate-01fb5fb1": "01fb5fb186bb8135c10329750fb9b89f3aef2d50",
       "lead/candidate-0870a845": "0870a8457836d68256019562d329d8f32a048371",
       "lead/candidate-13f6fb44": "13f6fb4424f2697c762188ee73d27c9980b27964",
@@ -100,6 +102,7 @@
       "lead/candidate-791aae3c187caf621ace022ed675004678dc0119": "791aae3c187caf621ace022ed675004678dc0119",
       "lead/candidate-7e80197fdda972e3e4d71458cb06790f856da509": "7e80197fdda972e3e4d71458cb06790f856da509",
       "lead/candidate-80ffe664": "80ffe664fc74caf5fb8daa3bd0d6d06d55e677e0",
+      "lead/candidate-8f1f0cbe": "8f1f0cbe8fba3a2c24a83b7849269b0c1a912c1b",
       "lead/candidate-a724a040": "a724a04087aba63195f1583343bc8e3021ce9d23",
       "lead/candidate-acb2c81d": "acb2c81d4a1830e35e76e148c814bb8a91321dd0",
       "lead/candidate-bb7e4d3328004c6a1ee5afbfd002ed77db76a027": "bb7e4d3328004c6a1ee5afbfd002ed77db76a027",
@@ -112,8 +115,8 @@
     },
     "ready": {},
     "startable": [
-      "BT-04b",
-      "BT-07",
+      "BT-05",
+      "BT-06",
       "BT-09"
     ],
     "messages": [

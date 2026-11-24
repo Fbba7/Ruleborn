@@ -5,6 +5,25 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 188**, 24 November 2026, from about 20:14Z (session
+  `session_01SNkKxnyDUhJ1nCERqWyiAM`, started by the Opus 5.5 launcher,
+  effort medium by order 6). The changes since cycle 187: S1 claimed the
+  heist re-work again (attempts 2, lease to 23:00Z), pushed the S1-R46
+  change (6188a5d0, a spent Cast takes the gold plate while it leads at
+  200% text) and renewed S1-R45 at 120 draw calls for heist/200;
+  SP-bt-01 pushed BT-01b (f490ff43, `tools/coord/merge_queue.py` and
+  `cycle.py --merge`) and runs its pre-check; SP-bt-04 pushed BT-04a's
+  resync (0fa16325: render.py's cache falls back to the temporary
+  folder, the commit is exported with git archive) and runs its
+  pre-check (expected end 20:30Z). **Merge and gate:** none: nothing is
+  ready, no merge lock; main did not move, so the pages are not
+  republished. **Requests:** none new; S1-R45's figure (120) is written
+  in the heist's merge. **Started nothing:** S1 is working, SP-bt-01 and
+  SP-bt-04 wait on their background pre-checks; the three hold the cap
+  of three under `allowed_warning`. **Next:** gate and merge the heist
+  re-work, BT-04a's resync (with SP-bt-04-R1's line) and BT-01b as they
+  are ready.
+
 - **Cycle 187**, 24 November 2026, from about 19:45Z (session
   `session_01SNkKxo4wWyrJULuKf9ezgK`, started by the Opus 5.5 launcher,
   effort medium by order 6). The changes since cycle 186: S1 marked the

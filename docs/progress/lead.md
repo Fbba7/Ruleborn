@@ -214,8 +214,10 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxpurNviahy9ajdou9c` (cycle 190,
-24 November 2026 from about 22:14Z, started by the Opus 5.5 launcher).
+Latest lead cycle session: `session_01SNkKxpEYznsGFjJLSHAYZS` (cycle 191,
+24 November 2026 from about 22:39Z, started by the Opus 5.5 launcher).
+Cycle 190's was `session_01SNkKxpurNviahy9ajdou9c` (24 November, from
+about 22:14Z).
 Cycle 189's was `session_01SNkKxo8JRgqBuCXFzt9dyF` (24 November, from
 about 21:10Z).
 Cycle 188's was `session_01SNkKxnyDUhJ1nCERqWyiAM` (24 November, from
@@ -416,6 +418,7 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| SP-bt-05 | `session_01SNkKxpZxYqKXESzt9K8ZVK` (Opus 5.5, effort medium) | BT-05 (start, cycle 191: a new agent, once BT-04b merged; effort medium by order 6, a tools-only launcher that adds a new schema and changes no stored one) | `claude/ui-spec-gate-run` | 2026-11-24 23:17Z |
 | SP-bt-06 | `session_01SNkKxr7UeYQUNErvUP7sgQ` (Opus 5.5, effort medium) | BT-06 (start, cycle 191: a new agent; effort medium by order 6, a tools-only check that adds new schemas and changes no stored one) | `claude/ui-spec-docs-check` | 2026-11-24 22:45Z |
 | SP-bt-09 | `session_01SNkKxnPBMN3yNvawTfEeo9` (Opus 5.5, effort medium) | BT-09 (start, cycle 190: a new agent; effort medium by order 6, one tools-only script, tools/setup_env.sh) | `claude/ui-spec-setup` | 2026-11-24 22:16Z |
 | SP-bt-07 | `session_01SNkKxntUxvJrAmwfuUT8wo` (Opus 5.5, effort medium) | BT-07 (start, cycle 189: a new agent; effort medium by order 6, a read-only tools-only task in tools/coord/metrics.*) | `claude/ui-spec-metrics` | 2026-11-24 21:34Z |
@@ -939,6 +942,26 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 191**, 24 November 2026, from about 22:39Z (session
+  `session_01SNkKxpEYznsGFjJLSHAYZS`, started by the Opus 5.5 launcher,
+  effort medium by order 6). The changes since cycle 190: SP-bt-04 marked
+  BT-04b ready (9213e507) and SP-bt-07 marked BT-07 ready (efea6a02).
+  **Merges:** BT-04b and BT-07 together, candidate 8f1f0cbe with
+  SP-bt-07-R1's `python3 tools/coord/metrics.py --self-test` line in
+  check_all.sh and checks.md (full checks passed 23:16Z), as add036e9.
+  **Gate:** none. docs/audit and docs/roadmap did not change, so the pages
+  are not republished. **Requests:** SP-bt-07-R1 done. **Started:** two
+  new agents at effort medium by order 6, prompts and roster entries
+  added: SP-bt-06 on BT-06, the documentation consistency check
+  (`session_01SNkKxr7UeYQUNErvUP7sgQ`, `claude/ui-spec-docs-check`), in
+  the seat SP-bt-07 freed; SP-bt-05 on BT-05, the gate launcher and
+  verdict writer (`session_01SNkKxpZxYqKXESzt9K8ZVK`,
+  `claude/ui-spec-gate-run`), once BT-04b merged, in SP-bt-04's seat.
+  With SP-bt-09 they hold the cap of three under `allowed_warning`.
+  **Next:** merge BT-09, BT-06 and BT-05 as they are ready (wire their
+  self-test requests in the candidates; apply SP-bt-09-R1 after BT-09);
+  BT-08 waits for a seat; SP-bt-04-R2 waits on AD.
+
 - **Cycle 190**, 24 November 2026, from about 22:14Z (session
   `session_01SNkKxpurNviahy9ajdou9c`, started by the Opus 5.5 launcher,
   effort medium by order 6). The changes since cycle 189: SP-bt-04
@@ -983,25 +1006,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   gate and merge BT-04b and BT-07 as they are ready (wire
   `python3 tools/coord/metrics.py --self-test` into check_all.sh in
   BT-07's candidate).
-
-- **Cycle 188**, 24 November 2026, from about 20:14Z (session
-  `session_01SNkKxnyDUhJ1nCERqWyiAM`, started by the Opus 5.5 launcher,
-  effort medium by order 6). The changes since cycle 187: S1 claimed the
-  heist re-work again (attempts 2, lease to 23:00Z), pushed the S1-R46
-  change (6188a5d0, a spent Cast takes the gold plate while it leads at
-  200% text) and renewed S1-R45 at 120 draw calls for heist/200;
-  SP-bt-01 pushed BT-01b (f490ff43, `tools/coord/merge_queue.py` and
-  `cycle.py --merge`) and runs its pre-check; SP-bt-04 pushed BT-04a's
-  resync (0fa16325: render.py's cache falls back to the temporary
-  folder, the commit is exported with git archive) and runs its
-  pre-check (expected end 20:30Z). **Merge and gate:** none: nothing is
-  ready, no merge lock; main did not move, so the pages are not
-  republished. **Requests:** none new; S1-R45's figure (120) is written
-  in the heist's merge. **Started nothing:** S1 is working, SP-bt-01 and
-  SP-bt-04 wait on their background pre-checks; the three hold the cap
-  of three under `allowed_warning`. **Next:** gate and merge the heist
-  re-work, BT-04a's resync (with SP-bt-04-R1's line) and BT-01b as they
-  are ready.
 
 - **Restart, 23 November 2026** (the overseer, about 21:20Z). The owner
   restarted the program, in the chat of the overseer session: "Continue,

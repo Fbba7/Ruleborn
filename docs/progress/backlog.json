@@ -173,84 +173,6 @@
       "updated_by": "overseer"
     },
     {
-      "id": "BT-01b",
-      "title": "Coordinator, part 2: the merge-then-test queue (owners.py diff, run_checks.sh on the candidate, the merge lock in status/lead.json, fast-forward) and the owner-inbox entries",
-      "phase": 0,
-      "role": "specialist",
-      "model": "Opus 5.5",
-      "assigned_to": "SP-bt-01",
-      "files": [
-        "tools/coord/**",
-        "!tools/coord/owners.*"
-      ],
-      "deps": [
-        "BT-01a"
-      ],
-      "done_when": [
-        "Unit tests on fixture branches pass",
-        "A dry-run mode prints actions without pushing",
-        "bash tools/check_all.sh"
-      ],
-      "gate_items": [],
-      "attempts": 0,
-      "estimate_h": 4,
-      "tier": 1,
-      "critical": false,
-      "state": "merged",
-      "claim": {
-        "agent": "SP-bt-01",
-        "branch": "claude/ui-spec-coord",
-        "claimed_at": "2026-11-24T19:45:00Z",
-        "seen_at": "2026-11-24T19:55:00Z",
-        "lease_until": "2026-11-24T22:45:00Z"
-      },
-      "prior_branch": null,
-      "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": "56f3662b",
-      "updated_at": "2026-11-24T21:30:00Z",
-      "updated_by": "lead (cycle 189)"
-    },
-    {
-      "id": "BT-04a",
-      "title": "Gate shot renderer, part 1: the shot-list format and still rendering of a listed item at a given sha",
-      "phase": 0,
-      "role": "specialist",
-      "model": "Opus 5.5",
-      "assigned_to": "SP-bt-04",
-      "files": [
-        "tools/gate/render.*",
-        "tools/gate/fixtures/**"
-      ],
-      "deps": [],
-      "done_when": [
-        "Renders a fixture item at a given sha",
-        "bash tools/check_all.sh"
-      ],
-      "gate_items": [],
-      "attempts": 1,
-      "estimate_h": 3,
-      "tier": 1,
-      "critical": false,
-      "state": "merged",
-      "claim": {
-        "agent": "SP-bt-04",
-        "branch": "claude/ui-spec-gate-render",
-        "claimed_at": "2026-11-24T19:40:00Z",
-        "seen_at": "2026-11-24T19:55:00Z",
-        "lease_until": "2026-11-24T22:40:00Z"
-      },
-      "prior_branch": null,
-      "prior_sha": null,
-      "ready_sha": "f1df3f1e",
-      "merged_sha": "56f3662b",
-      "exceptions": [
-        "README.md"
-      ],
-      "updated_at": "2026-11-24T21:30:00Z",
-      "updated_by": "lead (cycle 189)"
-    },
-    {
       "id": "BT-04b",
       "title": "Gate shot renderer, part 2: frame strips, 200% text and high-contrast variants, named crops",
       "phase": 0,
@@ -425,37 +347,6 @@
       "exceptions": [
         "README.md"
       ]
-    },
-    {
-      "id": "BT-07",
-      "title": "Metrics report from coordination data",
-      "phase": 1,
-      "role": "specialist",
-      "model": "Opus 5.5",
-      "assigned_to": "SP-bt-07",
-      "files": [
-        "tools/coord/metrics.*"
-      ],
-      "deps": [
-        "BT-01b"
-      ],
-      "done_when": [
-        "Digest section generated",
-        "bash tools/check_all.sh"
-      ],
-      "gate_items": [],
-      "attempts": 0,
-      "estimate_h": 3,
-      "tier": 2,
-      "critical": false,
-      "state": "merged",
-      "claim": null,
-      "prior_branch": null,
-      "prior_sha": null,
-      "ready_sha": "efea6a02",
-      "merged_sha": "add036e9",
-      "updated_at": "2026-11-24T23:20:00Z",
-      "updated_by": "lead (cycle 191)"
     },
     {
       "id": "BT-08",
