@@ -8,13 +8,13 @@
   "task_state": "working",
   "claimed_at": "2026-11-23T23:10:00Z",
   "lease_until": "2026-11-24T04:30:00Z",
-  "updated_at": "2026-11-24T00:33:00Z",
-  "expected_next_update_by": "2026-11-24T01:15:00Z",
+  "updated_at": "2026-11-24T00:41:00Z",
+  "expected_next_update_by": "2026-11-24T01:25:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "72a8b9a9",
-    "next_step": "Folders read (24 candidate findings); writing the fail-first proofs in client/tests/fix_audit_client_tests.gd, then the small fixes and client.md.",
-    "at": "2026-11-24T00:33:00Z"
+    "next_step": "Writing the fail-first proofs in client/tests/fix_audit_client_tests.gd; then the small fixes and client.md.",
+    "at": "2026-11-24T00:41:00Z"
   },
   "precheck": null,
   "gate_request": null,
