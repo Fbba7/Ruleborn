@@ -175,9 +175,9 @@ Erased: gone. Severed: kept, under an account id that no longer leads to anyone 
 
 ## Outside the database
 
-- `bundles`: the public object store: island bundles and target lists, fetched by hash. Kept islands for good (snapshots); target lists the current one a band, and the one before for an hour after it is superseded (G38). On deletion: an under-13 player's island bytes are deleted, and the lists made again without them.
-- `replays`: the private replay store, fetched only by a heist's two players. Kept 90 days (expireReplays). On deletion: an under-13 player's replays are deleted at once.
-- `deletions`: the deletion journal, in object storage: an account id, a reason, a time and the player's withdraw choice an object, outside the database so a restore cannot undo a deletion; a start makes again the last 31 days of it (F50). Kept for good: it is §20.12's log. On deletion: a deletion is added, never removed.
+- `bundles`: the public object store: island bundles and target lists, fetched by hash. Kept islands for good; target lists the current one a band, and the one before for an hour after it is superseded (G38). On deletion: an under-13 player's island bytes are deleted, and the lists made again without them.
+- `replays`: the private replay store, fetched only by a heist's two players. Kept 90 days. On deletion: an under-13 player's replays are deleted at once.
+- `deletions`: the deletion journal, in object storage: an account id, a reason, a time and whether the player withdrew their Workshop islands, each deletion one object, outside the database so a restore cannot undo a deletion; a start makes again the last 31 days of it (F50). Kept for good: it is the deletion log. On deletion: a deletion is added, never removed.
 - `secret`: the server's own key for tokens and pseudonyms. Kept for good. On deletion: not about a person.
 - the device's requests: a session token naming the account; the bodies of each route; to the server, over HTTPS: the platform's edge terminates TLS and every answer carries Strict-Transport-Security.
 - Game Center sign-in: nothing of the player's: the server fetches Apple's public key by the URL the proof names; to static.gc.apple.com, sandbox.gc.apple.com.

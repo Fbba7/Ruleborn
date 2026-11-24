@@ -9,7 +9,6 @@ import { handler } from "../src/http.mjs";
 import { GAME_CENTER_FRESH_MS } from "../src/stores.mjs";
 import { keyring } from "../src/tokens.mjs";
 import { NOW, WEB, gc, real } from "./auth_fixtures.mjs";
-import { stillOpen } from "./fix_fx2_open.mjs";
 
 async function page(handle) {
   const res = await handle(new Request("https://edge.example/account/delete"));
@@ -25,21 +24,31 @@ const remove = (handle, { idToken, cookie }) =>
                ...(cookie ? { cookie } : {}) },
     body: JSON.stringify({ idToken, withdrawIslands: false }) }));
 
-// AUD-B-05: open. The page's nonce is fixed (web/delete.html's data-nonce),
-// and the first try spends it, so the right account's retry is refused.
+// AUD-B-05: the page's nonce is fixed (web/delete.html's data-nonce),
+// and the first try spends it, so the right account's retry is refused. The
+// nonce stays spent: the 404 hands the page a fresh one, in its body for
+// Google to sign and in the cookie, and the page signs in again with it.
 test("AUD-B-05: after a wrong Google account (404), the right one on the same page can still delete", async () => {
-  await stillOpen("AUD-B-05", async () => {
-    const r = real();
-    const handle = handler(r.t.service, { webClientId: WEB });
-    const me = await r.signIn({ idToken: r.idToken({ nonce: r.t.service.auth.nonce().nonce }) });
-    const p = await page(handle);
-    const wrong = await remove(handle, { idToken: r.idToken({ aud: WEB, nonce: p.nonce, sub: "999999999999" }),
-                                         cookie: p.cookie });
-    assert.equal(wrong.status, 404, "the wrong account has no Ruleborn account");
-    const right = await remove(handle, { idToken: r.idToken({ aud: WEB, nonce: p.nonce }), cookie: p.cookie });
-    assert.equal(right.status, 200, "the retry with the right account deletes it");
-    assert.throws(() => r.t.service.account(me.token));
-  });
+  const r = real();
+  const handle = handler(r.t.service, { webClientId: WEB });
+  const me = await r.signIn({ idToken: r.idToken({ nonce: r.t.service.auth.nonce().nonce }) });
+  const p = await page(handle);
+  const wrong = await remove(handle, { idToken: r.idToken({ aud: WEB, nonce: p.nonce, sub: "999999999999" }),
+                                       cookie: p.cookie });
+  assert.equal(wrong.status, 404, "the wrong account has no Ruleborn account");
+  const { error, nonce } = await wrong.json();
+  assert.equal(error, "no_such_account");
+  assert.equal(typeof nonce, "string", "the 404 hands the page a fresh nonce");
+  assert.notEqual(nonce, p.nonce, "the spent nonce stays spent");
+  const set = wrong.headers.get("set-cookie") ?? "";
+  assert.ok(set.startsWith(`${DELETE_COOKIE}=${nonce};`), "the 404 sets the fresh nonce's cookie");
+  assert.match(set, /; Secure; HttpOnly; SameSite=Strict$/);
+  const stale = await remove(handle, { idToken: r.idToken({ aud: WEB, nonce: p.nonce }), cookie: p.cookie });
+  assert.equal(stale.status, 401, "control: the spent nonce is refused");
+  const right = await remove(handle, { idToken: r.idToken({ aud: WEB, nonce }),
+                                       cookie: `${DELETE_COOKIE}=${nonce}` });
+  assert.equal(right.status, 200, "the retry with the right account deletes it");
+  assert.throws(() => r.t.service.account(me.token));
 });
 
 // AUD-B-08: with no web client id, the audience check is skipped
@@ -69,18 +78,16 @@ test("AUD-B-09: a Game Center proof replayed at the last millisecond of its wind
   await assert.rejects(r.signIn(credential), "the replay at the window's last millisecond signed in");
 });
 
-// AUD-B-10: open. tokens.mjs reads `keys[kid]` on a plain object, so a kid
+// AUD-B-10: tokens.mjs reads `keys[kid]` on a plain object, so a kid
 // that names an Object.prototype member is taken for a key already given.
 test("AUD-B-10: a token key may be named constructor (letters and digits, the kid's own rule)", async () => {
-  await stillOpen("AUD-B-10", () => {
-    let ring = null;
-    try {
-      ring = keyring("x", `constructor:${"a".repeat(32)}`);
-    } catch (e) {
-      assert.fail(`the key is refused: ${e.message}`);
-    }
-    assert.equal(ring.current, "constructor");
-  });
+  let ring = null;
+  try {
+    ring = keyring("x", `constructor:${"a".repeat(32)}`);
+  } catch (e) {
+    assert.fail(`the key is refused: ${e.message}`);
+  }
+  assert.equal(ring.current, "constructor");
 });
 
 // AUD-B-11: an empty variable is an unset one, not zero hours.
