@@ -3,30 +3,27 @@
   "role": "specialist: the gate shot renderer (tools/gate/)",
   "branch": "claude/ui-spec-gate-render",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "BT-04a",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-24T19:40:00Z",
   "lease_until": "2026-11-24T23:20:00Z",
-  "updated_at": "2026-11-24T20:20:00Z",
+  "updated_at": "2026-11-24T20:35:00Z",
   "expected_next_update_by": null,
-  "long_run": {
-    "log": "/tmp/check-0fa163259b80a8daa7fcec4fe8b42976c1d6a37d.log",
-    "expected_end": "2026-11-24T20:50:00Z"
-  },
+  "long_run": null,
   "progress_marker": {
-    "last_green_sha": "ba6b3ab5",
-    "next_step": "full pre-check of 0fa16325 running; then mark BT-04a ready"
+    "last_green_sha": "0fa16325",
+    "next_step": "ready; waiting for the lead's merge (and SP-bt-04-R1's check_all line)"
   },
   "precheck": {
-    "sha": "f1df3f1e38597bd00aff05103a618ad431071578",
+    "sha": "0fa163259b80a8daa7fcec4fe8b42976c1d6a37d",
     "state": "PASS",
     "exit": 0,
-    "finished_at": "2026-11-24T17:54:36Z",
+    "finished_at": "2026-11-24T20:28:16Z",
     "summary": "All checks passed."
   },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "0fa16325",
   "stop_at": "2026-11-25T21:00:00Z",
   "acks": [],
   "requests": [
@@ -34,7 +31,7 @@
       "id": "SP-bt-04-R1",
       "from": "SP-bt-04",
       "to": "lead",
-      "ask": "BT-04a's done_when wires its test into tools/check_all.sh, which is not in the task's files. Add, in the candidate that merges BT-04a, after the line 'python3 tools/ui_gate/sheet.py --self-test' in the section '== the UI wave gate's sheets and image checks, with their planted fails (AD-R3) ==', the line: python3 tools/gate/render.py --self-test . It runs the shot list's parser tests, then renders the fixture item 'settings at 200% text, pt_BR' (tools/gate/fixtures/test_shots.json) at the candidate's HEAD in a temporary worktree: about 15 s with a warm cache, about 3 min the first time in a container (one cargo build of the GDExtension into ~/.cache/ruleborn/gate/target); where Godot, xvfb-run or cargo is absent it prints 'render.py: SKIPPED the fixture render: <why>' and still runs the parser tests. Measured at 548732a3: parser ok, fixture item ok, 14 s warm.",
+      "ask": "BT-04a's done_when wires its test into tools/check_all.sh, which is not in the task's files. Add, in the candidate that merges BT-04a, after the line 'python3 tools/ui_gate/sheet.py --self-test' in the section '== the UI wave gate's sheets and image checks, with their planted fails (AD-R3) ==', the line: python3 tools/gate/render.py --self-test . It runs the shot list's parser tests and the build cache's fallback test, then renders the fixture item 'settings at 200% text, pt_BR' (tools/gate/fixtures/test_shots.json) at the candidate's HEAD, exported with git archive into a temporary folder. Under run_checks.sh's sandbox the cache falls back to the run's private /tmp (HOME is read-only), so that line costs one cargo build of the GDExtension per run: about 5 min on 4 cores; outside the sandbox the cache under ~/.cache/ruleborn/gate stays warm (about 15 s). Where Godot, xvfb-run or cargo is absent it prints 'render.py: SKIPPED the fixture render: <why>' and still runs the other tests.",
       "files": [
         "tools/check_all.sh"
       ],

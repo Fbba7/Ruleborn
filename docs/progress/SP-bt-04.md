@@ -1,6 +1,6 @@
 # SP-bt-04 the gate shot renderer: progress
 
-- Status: Green at the last push; BT-04a resync (cycle 186): render.py now renders under run_checks.sh's sandbox (read-only HOME and .git). Full pre-check running.
+- Status: Green; BT-04a resync (cycle 186) ready at 0fa16325: render.py now renders under run_checks.sh's sandbox (read-only HOME and .git). Full pre-check PASS (bwrap, 2026-11-24T20:28:16Z).
 - Progress: 0 of 2 tasks merged; 0 items passed by the gate (BT-04a has no gate items).
 - Done: `tools/gate/render.py` (shot list format, still rendering of a listed item at a given sha, 960 px grayscale, manifest) and its fixtures; the resync's fix (build cache falls back to the temporary folder; the commit is exported with git archive instead of a worktree).
 - Next: the lead merges BT-04a and adds its self-test to check_all (SP-bt-04-R1); then BT-04b (frame strips, 200% text and high-contrast variants, named crops) in a later session.
@@ -9,12 +9,12 @@
 
 | Deliverable | Weight (h) | Status | Evidence |
 |---|---:|---|---|
-| BT-04a: shot list format and still renderer | 3 | resync, fix pushed | sandboxed self-test at ba6b3ab5: exit 0, "the fixture item at ba6b3ab5, ok"; at the unfixed 55af5f41: OSError Errno 30 (below) |
+| BT-04a: shot list format and still renderer | 3 | ready at 0fa16325 | full pre-check PASS 20:28:16Z; sandboxed self-test at ba6b3ab5: exit 0, "the fixture item at ba6b3ab5, ok"; at the unfixed 55af5f41: OSError Errno 30 (below) |
 | BT-04b: strips, variants, crops | 2 | open | |
 
 ## Handoff
 
-- Last verified commit: ba6b3ab5 (`CHECK_CMD='bash client/build.sh && python3 tools/gate/render.py --self-test' bash tools/run_checks.sh start ba6b3ab5`, bwrap, exit 0, 2026-11-24T19:48:09Z); full pre-check of the ready commit: see the status file's `precheck`.
+- Last verified commit: ba6b3ab5 (`CHECK_CMD='bash client/build.sh && python3 tools/gate/render.py --self-test' bash tools/run_checks.sh start ba6b3ab5`, bwrap, exit 0, 2026-11-24T19:48:09Z); full pre-check of the ready commit 0fa16325: PASS, exit 0, "All checks passed.", bwrap, 2026-11-24T20:28:16Z (recorded in the status file).
 - The resync (cycle 186): under run_checks.sh's bwrap sandbox HOME and the shared .git are read-only. Two things failed there, not one: `cache_dir()` (mkdir and mkdtemp under `~/.cache/ruleborn/gate`) and, behind it, `git worktree add`, which writes `.git/worktrees/<name>` (probed in bwrap: `fatal: could not create leading directories of '.git/worktrees/x': Read-only file system`).
 - The fix, in `tools/gate/render.py`: `cache_dir()` probes its folder ($RULEBORN_GATE_CACHE or ~/.cache/ruleborn/gate) by creating it and a temporary file in it; when that fails it uses `<tempfile.gettempdir()>/ruleborn-gate` (TMPDIR first) and says so on stderr. The commit is exported with `git archive <sha> | tar -x` into a temporary folder in that cache, which only reads the objects; the folder is removed afterwards (`--keep` keeps it and prints where). The render is not skipped and no test is loosened: the self-test gained a case (an unwritable RULEBORN_GATE_CACHE must fall back to the temporary folder, which the old code fails with an OSError), and its "worktree left behind" check became "exported tree left behind".
 - Reproduced before the fix, at 55af5f41 (main merged, old render.py), with `CHECK_CMD='bash client/build.sh && python3 tools/gate/render.py --self-test' bash tools/run_checks.sh start 55af5f41`: `FAIL`, exit 1, `OSError: [Errno 30] Read-only file system: '/root/.cache/ruleborn/gate/gate-55af5f41-pbq8ntg8'` from `render()`'s `tempfile.mkdtemp(..., dir=cache_dir())` (render.py:229). The folder existed on this host from an unsandboxed run, so it failed at mkdtemp rather than at cache_dir()'s mkdir as in the lead's run: the same read-only HOME.
