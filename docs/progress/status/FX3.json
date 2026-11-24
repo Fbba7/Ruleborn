@@ -8,12 +8,12 @@
   "task_state": "in_progress",
   "claimed_at": "2026-11-24T09:20:00Z",
   "lease_until": "2026-11-24T12:20:00Z",
-  "updated_at": "2026-11-24T09:28:00Z",
-  "expected_next_update_by": "2026-11-24T10:10:00Z",
+  "updated_at": "2026-11-24T09:40:00Z",
+  "expected_next_update_by": "2026-11-24T10:40:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": null,
-    "next_step": "FX1-10: fixes for T-01, T-02, T-20, T-21 committed (e7b58529, c75285b3); cargo test and npm test pass; pre-check next"
+    "next_step": "FX1-10: pre-check running at cceacc6d; owners diff passes; client run 492 of 492"
   },
   "precheck": null,
   "gate_request": null,
@@ -38,5 +38,5 @@
     }
   ],
   "answers": [],
-  "next_step": "FX1-10: fixes committed; client run, then pre-check and owners diff"
+  "next_step": "FX1-10: record the pre-check at cceacc6d, then ready"
 }
