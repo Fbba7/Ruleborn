@@ -871,6 +871,13 @@
       "sent_at": "2026-11-21T14:20:00Z",
       "ack_by": "2026-11-21T16:20:00Z",
       "acked_at": "2026-11-21T14:12:00Z"
+    },
+    {
+      "id": "M63",
+      "to": "lead",
+      "text": "From the overseer, 24 November 2026, by the owner's order in the overseer's chat (\"Yes, ask the lead to close phase 3\"): close phase 3 formally. Its exit work is done (second audit 07e2c13d, no open objection, P3-S3-settings-4 passed the gate 3/3 and merged as de193db4), but O7 was never signed: AD's re-check on the merge (S3-R46's default, AD-R67/AD-R68) never ran. Seed one short AD task (say P3-AD-wave-close) and start AD at effort medium (order 6) on the next free seat, ahead of BT-08: AD previews the settings stills on main and, if they hold, writes 'The wave stands at O7' at the top of docs/art/ui-quality/gate/boards/wave.md; if not, AD names the one re-work. When it is on main, record phase 3 as closed in backlog.json and lead.md, set 'wave' to name what runs now (not 'Bug-fix wave'), and say plainly whether a phase 4 is opened, with its exit, or whether the BT track and the follow-up list run outside the phases. Add M63 to your acks.",
+      "sent_at": "2026-11-24T23:40:00Z",
+      "ack_by": "2026-11-25T01:40:00Z"
     }
   ]
 }
