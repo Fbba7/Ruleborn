@@ -8,18 +8,48 @@
   "task_state": "working",
   "claimed_at": "2026-11-23T23:10:00Z",
   "lease_until": "2026-11-24T03:10:00Z",
-  "updated_at": "2026-11-24T00:44:00Z",
-  "expected_next_update_by": "2026-11-24T01:30:00Z",
+  "updated_at": "2026-11-24T01:05:00Z",
+  "expected_next_update_by": "2026-11-24T01:50:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "6e28d564",
-    "next_step": "SIM-12 and SIM-13 fixed; reading grid.rs and sim/examples, then sim.md"
+    "last_green_sha": "92dda030",
+    "next_step": "Pre-check running at 92dda030; record it, then ready"
   },
   "precheck": null,
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-24T21:00:00Z",
   "acks": [],
-  "requests": [],
+  "requests": [
+    {
+      "id": "FX3-R2",
+      "from": "FX3",
+      "to": "lead",
+      "ask": "Audit finding SIM-12 (docs/security/audit-2026-11/sim.md) is fixed in the sim, but Island::curated can still lose a woven law unseen in three cases: more laws than pylon spots, an unknown law id, or 64 failed draws. The server's problems() (server/src/universe.mjs) checks only that each island law was woven, not that each woven law is on the island. A server-side check at curated publish would catch all three, and these files are outside FX3's.",
+      "files": [
+        "server/src/universe.mjs",
+        "server/src/curation.mjs"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-24T01:05:00Z",
+      "due": "2026-11-25T01:05:00Z",
+      "default": "The lead seeds a server task that refuses a curated layout missing a woven law (a new problem, e.g. woven_law_missing, with a fail-first test). The lead decides whether a hand-built island needs the same check.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "FX3-R3",
+      "from": "FX3",
+      "to": "lead",
+      "ask": "The device's universe recorder (client/ext/src/lib.rs, line 391, calling record_universe) does not check the 2 KB replay limit. It has the same gap SIM-2 found in the device's single-island recorder, and these files are outside FX3's.",
+      "files": [
+        "client/ext/src/lib.rs"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-24T01:05:00Z",
+      "due": "2026-11-25T01:05:00Z",
+      "default": "Folded into the task that takes SIM-2's device-recorder proposal. The ext refuses a recorded universe over 2 KB, as rb_record* now does.",
+      "escalate_to": "lead"
+    }
+  ],
   "answers": []
 }

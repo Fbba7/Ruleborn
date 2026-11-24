@@ -1,9 +1,14 @@
 # FX3 simulation fixes: progress
 
-- Status: Waiting. FX3-5-audit-sim is ready at c333f546 (pre-check PASS at 22:24Z, recorded). FX3-4-lab-replay merged.
-- Progress: FX3-5-audit-sim: the sim code the November report did not read is audited; nine findings confirmed (SIM-1 to SIM-9, five Medium, four Low, no High), each with a fail-first test, and all nine fixed. The report's five sim suspicions are settled. Findings in `docs/security/audit-2026-11/sim.md`.
-- Done: `cargo test --release` in `sim` 358 of 358 (seven `stability::` tests now counted), golden replays still verify (no rebake); `cd server && npm test` 580 of 580; `python3 sim/status.py` every gate holds; `python3 sim/test_tools.py` passes.
-- Next: the lead's merge. FX3 has no further open task.
+- Status: Pre-check running. FX3-6-audit-universe is about to be ready at 92dda030, the pre-check sha. FX3-5-audit-sim is merged (lead cycle 167, 490579d6).
+- Progress: FX3-6-audit-universe has audited what the sim audit listed under "Still not read": `universe.rs`, every line of `island.rs` and `grid.rs`, and both `sim/examples/` programs. It confirmed four findings, SIM-10 to SIM-13: one Medium, three Low and no High. Each has a fail-first test and all four are fixed. The findings are in `docs/security/audit-2026-11/sim.md`.
+- Done:
+  - `cargo test --release` in `sim`: 362 of 362 pass.
+  - The golden replays still verify, so none was rebaked.
+  - `cd server && npm test`: 614 of 614 pass.
+  - `python3 sim/status.py`: every gate holds.
+  - `owners.py diff`: every changed path is inside the task's files.
+- Next: the lead's merge, and the lead's answer to FX3-R2 (SIM-12's server-side check) and FX3-R3 (the device universe recorder's 2 KB check). FX3 has no further open task.
 - Blocked by: none.
 - Owner decision needed: none.
 
@@ -13,10 +18,41 @@
 | FX3-2-island: RB-40, RB-50, RB-57, candidates 7 and 34 | 4.0 | merged | `sim/src/tests.rs` `rb40_an_entrance_in_a_wall_or_on_the_vault_is_not_published`, `rb50_weaving_a_law_onto_the_vault_is_refused_and_keeps_the_law`, `rb57_a_ward_or_pylon_on_a_guard_in_tall_grass_replaces_the_grass_too`, `candidate_7_the_same_law_twice_is_not_published`, `candidate_34_a_tunnel_mouth_under_a_raised_wall_is_no_way_out`; `sim/src/island.rs`, `sim/src/path.rs`, `server/src/sim.mjs` |
 | FX3-3-clock-report: RB-44, RB-45, RB-19 | 3.0 | merged | `sim/src/tests.rs` `rb44_a_split_and_rejoined_mite_does_not_hold_the_report_to_the_whole_clock`, `rb44_a_crossings_reports_count_only_the_crew_for_held`, `rb45_a_slowed_clock_still_catches_whoever_is_inside_at_the_last_tick`; `server/test/fix_fx3_older_build.test.mjs`; `sim/src/lib.rs`, `sim/src/universe.rs`, `server/src/sim.mjs` |
 | FX3-4-lab-replay: RB-51, RB-52, RB-54, RB-55 | 3.5 | merged | `server/test/fix_fx3_lab_hints.test.mjs`; `sim/src/tests.rs` `rb54_a_tick_delta_past_u32_is_refused_not_wrapped`, `rb54_a_padded_varint_is_refused`, `rb55_a_command_for_actor_16_still_records_a_replay_that_round_trips`; `server/src/lab.mjs`, `sim/src/replay.rs`, `sim/src/lib.rs` |
-| FX3-5-audit-sim: SIM-1 to SIM-9, the report's sim suspicions | 4.0 | ready | `docs/security/audit-2026-11/sim.md`; `sim/src/tests.rs` `sim_1_*` to `sim_9_*` (nine tests); `sim/test_tools.py` (SIM-3, SIM-4); `sim/src/lib.rs`, `sim/src/ffi.rs`, `sim/no_floats.py`, `sim/status.py`, `sim/run_spike.sh`, `sim/systems.json` |
+| FX3-5-audit-sim: SIM-1 to SIM-9, the report's sim suspicions | 4.0 | merged | `docs/security/audit-2026-11/sim.md`; `sim/src/tests.rs` `sim_1_*` to `sim_9_*` (nine tests); `sim/test_tools.py` (SIM-3, SIM-4); `sim/src/lib.rs`, `sim/src/ffi.rs`, `sim/no_floats.py`, `sim/status.py`, `sim/run_spike.sh`, `sim/systems.json` |
+| FX3-6-audit-universe: SIM-10 to SIM-13, `universe.rs`, `island.rs`, `grid.rs`, `sim/examples/` | 4.0 | ready | `docs/security/audit-2026-11/sim.md`; `sim/src/tests.rs` `sim_10_a_command_for_actor_16_still_records_a_universe_replay_that_round_trips`, `sim_11_a_lantern_wisps_reveal_goes_with_it_across_to_the_next_realm`, `sim_12_a_curated_layout_never_drops_a_woven_law_unseen`, `sim_13_moving_the_vault_onto_a_guard_hidden_in_tall_grass_takes_the_grass_too`; `sim/src/universe.rs`, `sim/src/island.rs`, `sim/systems.json` |
 
 ## Handoff
-- FX3-5-audit-sim, ready (2026-11-23). Branch `claude/fix-sim`. Pre-check at c333f546: PASS ("All checks passed.", 22:24Z, recorded); `ready_sha` c333f546 is in `docs/progress/status/FX3.json`. Main merged at c333f546 (lead cycles 165 and 166, docs/progress bookkeeping only, no conflict). Main has since gained lead cycle 167 and the FX1-4-holds-codex merge (e2e8f5a1, server files and FX1's, none of this task's); not merged, so the pre-checked sha stays the ready one.
+- FX3-6-audit-universe, ready (2026-11-24). Branch `claude/fix-sim`. The pre-check runs at 92dda030, the merge of main at `bc7f27e8`: lead cycles 168 and 169 and the FX2-7 merge, with no conflict. `ready_sha` is set in `docs/progress/status/FX3.json` once the pre-check passes and is recorded.
+  - **Commits.**
+    - Claim: 18c7bd83.
+    - SIM-10: fail-first test d8e552a1, fix 537bf425.
+    - SIM-11: fail-first test 197dd630, fix 9f99e5d8.
+    - SIM-12: fail-first test d4bc63d0, fix 57cd912a.
+    - SIM-13: fail-first test be1a47d3, fix 6e28d564.
+    - Write-up: f1e272db.
+    - Each test fails on main at `1c4fd104`, the branch point.
+  - **Findings.** They are in `docs/security/audit-2026-11/sim.md`, in the report's format.
+    - SIM-12 (Medium): `Island::curated` wove the laws before it placed the buildings. A building whose footprint covered a pylon spot lifted the pylon, and its law with it, while the layout still published. The server's `problems()` checks only that every island law is in the woven set, not the reverse, so it did not catch this. The fix places the buildings first.
+    - SIM-10 (Low): `record_universe` kept commands for actor 16 and above. The replay packs the actor in four bits, so such a command was recorded as actor 0. This is RB-55's defect in the universe recorder. Those commands are now dropped.
+    - SIM-11 (Low): `Crossing::go` started each realm with no reveals, so a Lantern wisp's reveal ended at a link. The next realm now inherits them.
+    - SIM-13 (Low): moving the Vault onto a guard hidden in tall grass left the grass behind. This is RB-57's defect in `set_vault`. The fix now clears the grass too.
+  - **Left for the lead.** Both are in `requests`.
+    - FX3-R2: SIM-12's server-side check. The sim can still lose a law unseen in three cases: more laws than pylon spots, an unknown law id, or 64 failed draws. A check at curated publish would catch all three.
+    - FX3-R3: the device's universe recorder (`client/ext`) has no 2 KB check. It has the same gap SIM-2 found in the device's single-island recorder.
+  - **Unproven.** sim.md's FX3-6 Unproven entry lists each item with what was tried:
+    - a ward's delayed effect at a crossing;
+    - several digests for one universe;
+    - several Land commands at tick 0.
+  - **Still not read** (updated in sim.md):
+    - `replay.rs` and `heist.rs` beyond the parts called;
+    - the generated `laws_table.rs` and `sin_table.rs`;
+    - the client ext and the server's `curation.mjs`, `crossings.mjs` and `universe.mjs`, read only where the findings led.
+  - **Goldens.** No fix changes a golden outcome, and no `sim/golden/*.rbh` was rebaked.
+  - **No existing test was changed.**
+  - **Owners.** `owners.py diff FX3-6-audit-universe origin/claude/videogame-project-analysis-ewkkk2 92dda030` reports "every changed path is inside its files".
+  - **Next.** The lead's merge.
+- FX3-5-audit-sim, merged (lead cycle 167, 490579d6).
+  - Ready (2026-11-23). Branch `claude/fix-sim`. Pre-check at c333f546: PASS ("All checks passed.", 22:24Z, recorded); `ready_sha` c333f546 is in `docs/progress/status/FX3.json`. Main merged at c333f546 (lead cycles 165 and 166, docs/progress bookkeeping only, no conflict). Main has since gained lead cycle 167 and the FX1-4-holds-codex merge (e2e8f5a1, server files and FX1's, none of this task's); not merged, so the pre-checked sha stays the ready one.
   - **Commits.** Claim 039be74f; fail-first tests f32be7db (every proof fails there); fixes f08f52b9; findings commit c7878bcf.
   - **Findings.** `docs/security/audit-2026-11/sim.md`, in the report's format, with its line references against f32be7db (pre-fix code).
     - SIM-1 (Medium): `sees_body` ignored bushes, thickets and lanterns for a knocked-out guard (§12.8 v3.3).
