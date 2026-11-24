@@ -7,6 +7,9 @@ extends RefCounted
 ## replay's bytes or anything that names a player (§20.5).
 
 const CAPACITY := 64
+## The fields that name a player or let one be found, never kept, however
+## short (CLI-22): the account signed in, a friend's, an invite's code.
+const PRIVATE := ["account", "friend", "invite", "owner", "player", "token"]
 
 var _entries: Array[Dictionary] = []
 
@@ -14,6 +17,8 @@ var _entries: Array[Dictionary] = []
 func add(kind: String, what: String, fields := {}) -> void:
 	var safe := {}
 	for key: String in fields:
+		if key in PRIVATE:
+			continue
 		var v: Variant = fields[key]
 		if v is StringName:
 			v = String(v)  # a route's name (RB-59)
