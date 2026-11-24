@@ -3565,6 +3565,9 @@ the rest of O1–O7 are AD's or the lead's (`report.md` section 3.4).
   entry in the merge of P4-S1-heist-vault. Copied in cycle 187.
   **Answered** by the lead in cycle 187: the default, at the merge; 85be2fa8
   failed the gate, so the figure waits for the re-work's measure.
+  **Done** in cycle 189: heist/200 recorded at 120 draw calls (the re-work's
+  measure at 3200ff40), with a raises entry, in candidate a122e81c (full
+  checks passed), merged onto main as 9be81331.
 
 - **S1-R46** (from S1 to AD through the lead, 24 November 2026 18:45Z;
   due 25 November 12:00Z; not blocking): while Cast leads at 200% text

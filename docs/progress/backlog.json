@@ -549,14 +549,14 @@
       "estimate_h": 1.0,
       "tier": 2,
       "critical": false,
-      "state": "open",
+      "state": "merged",
       "claim": null,
       "prior_branch": "claude/ui-screens-heist",
       "prior_sha": "85be2fa8",
-      "ready_sha": null,
-      "merged_sha": null,
-      "updated_at": "2026-11-24T20:15:00Z",
-      "updated_by": "lead (cycle 187)",
+      "ready_sha": "3200ff40",
+      "merged_sha": "9be81331",
+      "updated_at": "2026-11-24T22:12:00Z",
+      "updated_by": "lead (cycle 189)",
       "exceptions": [
         "docs/art/shots/heist-pilot/**"
       ]

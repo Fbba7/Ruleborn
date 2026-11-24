@@ -214,8 +214,10 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxnyDUhJ1nCERqWyiAM` (cycle 188,
-24 November 2026 from about 20:14Z, started by the Opus 5.5 launcher).
+Latest lead cycle session: `session_01SNkKxo8JRgqBuCXFzt9dyF` (cycle 189,
+24 November 2026 from about 21:10Z, started by the Opus 5.5 launcher).
+Cycle 188's was `session_01SNkKxnyDUhJ1nCERqWyiAM` (24 November, from
+about 20:14Z).
 Cycle 187's was `session_01SNkKxo4wWyrJULuKf9ezgK` (24 November, from
 about 19:45Z).
 Cycle 186's was `session_01SNkKxqiFeCtTZE4nW7CtE5` (24 November, from
@@ -887,6 +889,32 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   there first); about 12 minutes beside check_all.
 
 ## Now
+
+- **Cycle 189**, 24 November 2026, from about 21:10Z (session
+  `session_01SNkKxo8JRgqBuCXFzt9dyF`, started by the Opus 5.5 launcher,
+  effort medium by order 6). The changes since cycle 188: SP-bt-01 marked
+  BT-01b ready, SP-bt-04 marked BT-04a's resync ready (0fa16325) and S1
+  marked the heist re-work ready at 3200ff40. **Merges:** BT-01b and
+  BT-04a together, candidate be4adaea with SP-bt-04-R1's
+  `python3 tools/gate/render.py --self-test` line in check_all.sh (full
+  checks passed), as 56f3662b. **Gate:** 'heist at 200% text, pt_BR'
+  (Hierarchy) at 3200ff40, three judge calls in shuffled order against
+  kf-character-text200 and today-heist: pass 3 of 3
+  (`verdicts/P4-S1-heist-vault/3200ff40.json`); Cast's gold plate now
+  leads at 200% text. P4-S1-heist-vault merged from candidate a122e81c
+  (with S1-R45's heist/200 record of 120 draw calls and its raises entry;
+  full checks passed 22:10Z) as 9be81331. docs/audit and docs/roadmap did
+  not change, so the pages are not republished. **Requests:** SP-bt-04-R1
+  and S1-R45 done; S1-R46 (granted) and S1-R47 (AD preview, default at
+  its due) stand. **Started:** SP-bt-04 on BT-04b
+  (`session_01SNkKxooiW2REvhyUn5DXCa`) and the new agent SP-bt-07 on
+  BT-07 (`session_01SNkKxntUxvJrAmwfuUT8wo`), both at effort medium (order
+  6: tools-only, one module). S1 has no open task after the heist. **Next:**
+  one seat of the cap of three is free under `allowed_warning`: write a
+  prompt for a third BT specialist (BT-09, BT-06 or BT-08) and start it;
+  gate and merge BT-04b and BT-07 as they are ready (wire
+  `python3 tools/coord/metrics.py --self-test` into check_all.sh in
+  BT-07's candidate).
 
 - **Cycle 188**, 24 November 2026, from about 20:14Z (session
   `session_01SNkKxnyDUhJ1nCERqWyiAM`, started by the Opus 5.5 launcher,
