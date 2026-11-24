@@ -18,7 +18,13 @@
     "last_green_sha": null,
     "next_step": "Record the pre-check of b9b4b8a1, then mark ready"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "b9b4b8a107f39dd51c0b8df542e4291f9736525c",
+    "state": "FAIL",
+    "exit": 1,
+    "finished_at": "2026-11-24T23:28:44Z",
+    "summary": "== this repository's own documents agree with each other ==:   \u2717 tools/docs/ exists but is not listed in README.md"
+  },
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-25T21:00:00Z",

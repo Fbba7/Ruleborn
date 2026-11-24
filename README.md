@@ -263,6 +263,7 @@ tools/
   completion.py                   how close the app is to built, backend and frontend, from §26.8's costs and passing proofs
   build_stamp.py                  one build stamp for every published page
   check_docs_consistency.py       this repository's own documents, against each other
+  docs/                           the agent program's documents, schemas and live files agree on states, fields and examples (python3 tools/docs/protocol_check.py; --self-test; BT-06)
   # the agent program
   run_checks.sh                   the full checks on a separate worktree of one commit, detached; start, wait, result, record
   check_ci.py                     .github/workflows/checks.yml runs on every push and pull request, pinned, with every check

@@ -51,3 +51,6 @@ Choices the lead may want to revisit:
 - The progress_marker row was first read for every backticked word in
   the row, which pulled in `agent_state` and `active`. It now reads only
   the first sentence.
+- The first pre-check (b9b4b8a1) failed: tools/docs/ was not listed in
+  README.md's tools listing. README.md is in the task's exceptions; it is
+  listed now.
