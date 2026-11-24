@@ -16,7 +16,12 @@
     "next_step": "pre-check running on 9c66e15c (main merged at 710ed402); then record and set ready",
     "at": "2026-11-24T05:20:00Z"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "9c66e15c5df56b33de98e68285e54c0004fdae33",
+    "exit": 0,
+    "finished_at": "2026-11-24T05:52:43Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-24T21:00:00Z",
