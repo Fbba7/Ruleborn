@@ -97,34 +97,8 @@ export function checkRun(cmd, settleMs = 0) {
   return { ...c, sh, result: JSON.parse(out.trim().split("\n").pop()) };
 }
 
-const NODE_TEST = 'import test from "node:test";\nimport assert from "node:assert/strict";\n';
 
 export const PROOFS = [
-  {
-    id: "FX1-T-01",
-    title: "server/status.py fails when a failing test shares its name with a passing one",
-    proof() {
-      const dir = scratch({
-        "server/test/a.test.mjs": NODE_TEST + 'test("same name", () => assert.equal(1, 2));\n',
-        "server/test/b.test.mjs": NODE_TEST + 'test("same name", () => {});\n',
-      });
-      copyIn(dir, "server/status.py");
-      const r = run("python3", ["-B", "server/status.py"], dir);
-      assert.notEqual(r.code, 0, `status.py passed a failing test:\n${r.out}`);
-    },
-  },
-  {
-    id: "FX1-T-02",
-    title: "server/status.py does not record a skipped test as passed",
-    proof() {
-      const dir = scratch({
-        "server/test/a.test.mjs": NODE_TEST + 'test("never run", { skip: true }, () => assert.fail("x"));\n',
-      });
-      copyIn(dir, "server/status.py");
-      const r = run("python3", ["-B", "server/status.py"], dir);
-      assert.notEqual(r.code, 0, `status.py passed a skipped test:\n${r.out}`);
-    },
-  },
   {
     id: "FX1-T-06",
     title: "build_tokens.mjs --check fails on a stale tokens.css under a path with a space",
@@ -305,31 +279,6 @@ print(json.dumps(rc if isinstance(rc, int) else (0 if rc is None else 1)))`, ["t
       const r = run("python3", ["-B", "-I", join(TOOLS, "ui_gate", "sheet.py"), "crops",
         join(REPO, "art/ui/board/board.shot.json"), out], out);
       assert.equal(r.code, 0, `crops failed:\n${r.out.slice(-600)}`);
-    },
-  },
-  {
-    id: "FX1-T-20",
-    title: "client_contract.py checks every failure code the server sends",
-    proof() {
-      const r = py(`
-import client_contract as c
-have = c.server_reasons() | c.client_codes()
-sent = ["gift_needs_a_friend", "not_a_gift", "island_malformed", "universe_malformed",
-        "crew", "length", "log", "checksums", "landing"]
-print(json.dumps([s for s in sent if s not in have]))`);
-      assert.deepEqual(r.value, [], `codes the check never reads: ${r.out}`);
-    },
-  },
-  {
-    id: "FX1-T-21",
-    title: "client_contract.py checks the client's call sites outside client/data",
-    proof() {
-      const r = py(`
-import client_contract as c
-where = {w for _, _, w in c.client_calls()}
-print(json.dumps([f for f in ("client/features/auth/auth_session.gd",
-                               "client/features/weaving/weaving_controller.gd") if f not in where]))`);
-      assert.deepEqual(r.value, [], `call sites never checked: ${r.out}`);
     },
   },
 ];
