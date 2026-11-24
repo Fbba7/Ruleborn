@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-24T03:02:00Z",
   "lease_until": "2026-11-24T06:02:00Z",
-  "updated_at": "2026-11-24T03:36:00Z",
-  "expected_next_update_by": "2026-11-24T04:36:00Z",
+  "updated_at": "2026-11-24T03:40:00Z",
+  "expected_next_update_by": "2026-11-24T04:40:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "8c6391d0",
-    "next_step": "Unread client files read (island_builder.gd, universe_island.gd, client/ui, heist_screen.gd 520-999); ten new findings CLI-25 to CLI-34, each with a still-open check in client/tests/audit_client2_tests.gd. Next: write them up in client.md, then the full checks"
+    "next_step": "Findings CLI-25 to CLI-34 written in client.md (9c8c0bd3); main merged (044e6d88). Next: the full checks, then ready"
   },
   "precheck": null,
   "gate_request": null,
@@ -22,5 +22,5 @@
   "acks": [],
   "requests": [],
   "answers": [],
-  "next_step": "Unread client files read (island_builder.gd, universe_island.gd, client/ui, heist_screen.gd 520-999); ten new findings CLI-25 to CLI-34, each with a still-open check in client/tests/audit_client2_tests.gd. Next: write them up in client.md, then the full checks"
+  "next_step": "Findings CLI-25 to CLI-34 written in client.md (9c8c0bd3); main merged (044e6d88). Next: the full checks, then ready"
 }

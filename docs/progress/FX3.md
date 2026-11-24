@@ -1,14 +1,8 @@
 # FX3 simulation fixes: progress
 
-- Status: Waiting. FX3-6-audit-universe is ready at 92dda030 (pre-check PASS at 01:36Z, recorded). FX3-5-audit-sim is merged (lead cycle 167, 490579d6).
-- Progress: FX3-6-audit-universe has audited what the sim audit listed under "Still not read": `universe.rs`, every line of `island.rs` and `grid.rs`, and both `sim/examples/` programs. It confirmed four findings, SIM-10 to SIM-13: one Medium, three Low and no High. Each has a fail-first test and all four are fixed. The findings are in `docs/security/audit-2026-11/sim.md`.
-- Done:
-  - `cargo test --release` in `sim`: 362 of 362 pass.
-  - The golden replays still verify, so none was rebaked.
-  - `cd server && npm test`: 614 of 614 pass.
-  - `python3 sim/status.py`: every gate holds.
-  - `owners.py diff`: every changed path is inside the task's files.
-- Next: the lead's merge, and the lead's answer to FX3-R2 (SIM-12's server-side check) and FX3-R3 (the device universe recorder's 2 KB check). FX3 has no further open task.
+- Status: Working. FX3-7-audit-client-2: findings written and pushed; the full checks are running. FX3-6-audit-universe is merged (lead cycle 169, 5293e6b7).
+- Progress: FX3-7-audit-client-2 proved CLI-3, CLI-8, CLI-9, CLI-16, CLI-17, CLI-19 and CLI-21, rejected CLI-20, and read the client code FX4-4 did not (`island_builder.gd`, `universe_island.gd`, `client/ui`, `heist_screen.gd` 520-999). It found ten more, CLI-25 to CLI-34 (six Medium, four Low, no High). Each is proven by a still-open check in `client/tests/audit_client2_tests.gd`; nothing is fixed. The findings are in `docs/security/audit-2026-11/client.md`.
+- Next: the full checks, then ready.
 - Blocked by: none.
 - Owner decision needed: none.
 
@@ -19,10 +13,11 @@
 | FX3-3-clock-report: RB-44, RB-45, RB-19 | 3.0 | merged | `sim/src/tests.rs` `rb44_a_split_and_rejoined_mite_does_not_hold_the_report_to_the_whole_clock`, `rb44_a_crossings_reports_count_only_the_crew_for_held`, `rb45_a_slowed_clock_still_catches_whoever_is_inside_at_the_last_tick`; `server/test/fix_fx3_older_build.test.mjs`; `sim/src/lib.rs`, `sim/src/universe.rs`, `server/src/sim.mjs` |
 | FX3-4-lab-replay: RB-51, RB-52, RB-54, RB-55 | 3.5 | merged | `server/test/fix_fx3_lab_hints.test.mjs`; `sim/src/tests.rs` `rb54_a_tick_delta_past_u32_is_refused_not_wrapped`, `rb54_a_padded_varint_is_refused`, `rb55_a_command_for_actor_16_still_records_a_replay_that_round_trips`; `server/src/lab.mjs`, `sim/src/replay.rs`, `sim/src/lib.rs` |
 | FX3-5-audit-sim: SIM-1 to SIM-9, the report's sim suspicions | 4.0 | merged | `docs/security/audit-2026-11/sim.md`; `sim/src/tests.rs` `sim_1_*` to `sim_9_*` (nine tests); `sim/test_tools.py` (SIM-3, SIM-4); `sim/src/lib.rs`, `sim/src/ffi.rs`, `sim/no_floats.py`, `sim/status.py`, `sim/run_spike.sh`, `sim/systems.json` |
-| FX3-6-audit-universe: SIM-10 to SIM-13, `universe.rs`, `island.rs`, `grid.rs`, `sim/examples/` | 4.0 | ready | `docs/security/audit-2026-11/sim.md`; `sim/src/tests.rs` `sim_10_a_command_for_actor_16_still_records_a_universe_replay_that_round_trips`, `sim_11_a_lantern_wisps_reveal_goes_with_it_across_to_the_next_realm`, `sim_12_a_curated_layout_never_drops_a_woven_law_unseen`, `sim_13_moving_the_vault_onto_a_guard_hidden_in_tall_grass_takes_the_grass_too`; `sim/src/universe.rs`, `sim/src/island.rs`, `sim/systems.json` |
+| FX3-6-audit-universe: SIM-10 to SIM-13, `universe.rs`, `island.rs`, `grid.rs`, `sim/examples/` | 4.0 | merged | `docs/security/audit-2026-11/sim.md`; `sim/src/tests.rs` `sim_10_a_command_for_actor_16_still_records_a_universe_replay_that_round_trips`, `sim_11_a_lantern_wisps_reveal_goes_with_it_across_to_the_next_realm`, `sim_12_a_curated_layout_never_drops_a_woven_law_unseen`, `sim_13_moving_the_vault_onto_a_guard_hidden_in_tall_grass_takes_the_grass_too`; `sim/src/universe.rs`, `sim/src/island.rs`, `sim/systems.json` |
+| FX3-7-audit-client-2: CLI-3, 8, 9, 16, 17, 19, 20, 21 settled; CLI-25 to CLI-34 | 3.0 | working | `docs/security/audit-2026-11/client.md`; `client/tests/audit_client2_tests.gd` (18 checks, registered in `client/tests/run.gd`) |
 
 ## Handoff
-- FX3-6-audit-universe, ready (2026-11-24). Branch `claude/fix-sim`. Pre-check at 92dda030: PASS ("All checks passed.", 01:36Z, recorded). `ready_sha` 92dda030 is in `docs/progress/status/FX3.json`. 92dda030 merges main at `bc7f27e8` (lead cycles 168 and 169, the FX2-7 merge), with no conflict. The later commits are docs/progress only, so the pre-checked sha stays the ready one. The local `bash tools/check_all.sh` also passed.
+- FX3-6-audit-universe, merged (lead cycle 169, 5293e6b7). Ready (2026-11-24). Branch `claude/fix-sim`. Pre-check at 92dda030: PASS ("All checks passed.", 01:36Z, recorded). `ready_sha` 92dda030 is in `docs/progress/status/FX3.json`. 92dda030 merges main at `bc7f27e8` (lead cycles 168 and 169, the FX2-7 merge), with no conflict. The later commits are docs/progress only, so the pre-checked sha stays the ready one. The local `bash tools/check_all.sh` also passed.
   - **Commits.**
     - Claim: 18c7bd83.
     - SIM-10: fail-first test d8e552a1, fix 537bf425.
