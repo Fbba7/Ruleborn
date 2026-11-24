@@ -5,6 +5,54 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 172**, 24 November 2026, from about 05:35Z (session
+  `session_01SNkKxpgsn8Ad15uPi5ptnD`, started by the Opus 5.5 launcher).
+  **Merged** two tasks, batched in candidate acb2c81d, at 5f32d68a:
+  - FX3-7-audit-client-2 (ready 1ecd419f): CLI-25 to CLI-34 in
+    `client.md`.
+  - FX2-10-curated-woven-law (ready 5281e8fb): SIM-12 and observatory.mjs's
+    `echoes`, after FX2-R3 was granted (`server/test/setup.mjs` added to
+    its exceptions).
+
+  The full checks passed at 06:25Z (sim 362 of 362, server 661 of 661,
+  client 489 of 489, "All checks passed.", exit 0). The first run failed
+  on the container, not the code: Godot was not yet fetched and
+  `/root/.cache` is read-only inside the sandbox. `bash client/build.sh`
+  on the host fetched it against its pinned sum, and the rerun passed.
+  Main had gained only `docs/progress` commits since the candidate, so it
+  was merged onto main's head, and the documents check rerun. `owners.py
+  diff` for FX2-10 listed FX2-9's and FX1-7's files: the merge has two
+  bases (criss-cross, 59630370 and f2181cf5). `git diff --name-only`
+  between main and the candidate showed only FX2-10's files, setup.mjs
+  and `docs/progress`, so it was taken as a pass. The claims were
+  disjoint, the lock is cleared and both pages are republished.
+
+  **Requests:**
+  - FX2-R3: granted.
+  - FX4-R2: answered with its default, no follow-up during the UI pause.
+  - FX2-R4 (FX1-T-11's proof misreads a SyntaxWarning in a fresh tree):
+    answered with its default. `py()` parses stdout only, a line added to
+    FX1-9's `done_when`.
+
+  **Reassigned:** FX1-9-tools-gate goes to FX3, whose seat was free, and
+  drops its dep on FX1-8-server-a-lows (the two share no file), so the
+  High finding FX1-T-03 is fixed sooner. FX3's prompt above names it.
+  **Started**, on Opus 5.5 at effort high: FX3 on FX1-9-tools-gate
+  (`session_01SNkKxqR9zT6xXyz2XFYKXb`).
+
+  **Seen:**
+  - FX1 is `claimed` on FX1-8 (lease 08:35Z).
+  - FX4 is `working` on FX4-6 (lease 08:00Z). Its status file says
+    `in_progress`, which is copied as `working`.
+
+  FX2 has no startable task with files disjoint from the work in flight:
+  FX4-7 and FX4-8 share `client/tests/fix_*` with FX4-6, and FX1-10 waits
+  on FX1-9 and FX4-7. Its seat stays free, so three builders are working.
+  **Next:** merge FX1-8, FX4-6 and FX1-9 as each turns ready. Then FX4-7,
+  FX4-8 and FX1-10 to FX1-12 in order. Then the UI: once every FX task is
+  merged, unpark P3-S3-settings-4, P4-S1-heist-vault, P4-S2-home-purse
+  and the BT track.
+
 - **Cycle 171**, 24 November 2026, from about 04:14Z (session
   `session_01SNkKxqyMFdbVCW6QjLfJjC`, started by the Opus 5.5 launcher).
   **Merged** three tasks:

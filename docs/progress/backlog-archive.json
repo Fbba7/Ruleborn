@@ -7393,6 +7393,147 @@
       "merged_sha": "6e5045e3",
       "updated_at": "2026-11-24T05:31:00Z",
       "updated_by": "lead (cycle 171)"
+    },
+    {
+      "id": "FX4-5-problem-strings",
+      "title": "Low, client strings (FX3-R1): the two publish problems FX3-2-island adds to island::Problem, EntranceBlocked (RB-40) and DuplicateLaw (candidate 7), get their PROBLEM_ENTRANCEBLOCKED and PROBLEM_DUPLICATELAW rows in client/i18n/strings.csv, so the builder and curation show words instead of the raw key",
+      "phase": "fix",
+      "role": "FX4",
+      "model": "Opus 5.5",
+      "assigned_to": "FX4",
+      "files": [
+        "client/i18n/strings.csv",
+        "art/ui/keyframes/words.js",
+        "client/tests/fix_*"
+      ],
+      "deps": [
+        "FX3-2-island"
+      ],
+      "done_when": [
+        "first a client test that fails on current main because Strings.t('PROBLEM_ENTRANCEBLOCKED') and Strings.t('PROBLEM_DUPLICATELAW') return the raw key, committed on its own before the rows, its failure output quoted in the handoff",
+        "PROBLEM_ENTRANCEBLOCKED (e.g. 'the entrance is on the Vault or inside a wall') and PROBLEM_DUPLICATELAW (e.g. 'a law is woven on two pylons') added to client/i18n/strings.csv in every locale column, worded like the neighbouring PROBLEM_ rows; the problem names checked against island::Problem as merged by FX3-2-island",
+        "node art/ui/keyframes/build_words.mjs rerun (M34); words.js committed only if it changes",
+        "no existing test is skipped, disabled or loosened",
+        "bash client/build.sh and the client test run (client/tests/run.gd) passes",
+        "current main merged into the branch, then the fresh-container setup line and bash tools/check_all.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed outside the task's files (M48)",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 0.75,
+      "tier": 2,
+      "critical": false,
+      "state": "merged",
+      "claim": {
+        "agent": "FX4",
+        "branch": "claude/fix-client",
+        "claimed_at": "2026-11-24T03:01:00Z",
+        "seen_at": "2026-11-24T04:15:00Z",
+        "lease_until": "2026-11-24T06:01:00Z"
+      },
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "3231f78b",
+      "merged_sha": "d3183782",
+      "updated_at": "2026-11-24T04:56:00Z",
+      "updated_by": "lead (cycle 171)"
+    },
+    {
+      "id": "FX1-8-server-a-lows",
+      "title": "Medium and low, server, from FX1-6's audit (FX1-R3 to FX1-R8, FX1-R10) and AUD-B-18's residual: FX1-A-02 (accounts.mjs erase() deletes bytes another row still uses), FX1-A-10 (limits.mjs peerKey and IPv4-mapped addresses in hex or full form), FX1-A-13 (the lease keeps its realm from issue()), FX1-A-15 (seasons.mjs constellationTable refuses as result() does), FX1-A-16 (links.mjs numbers only go up), FX1-A-17 (weaving.mjs counts codex.woven when the weave finishes), Renown's pull over skipped seasons, and the seasons constructor's guard for a seasonStart that is not finite",
+      "phase": "fix",
+      "role": "FX1",
+      "model": "Opus 5.5",
+      "assigned_to": "FX1",
+      "files": [
+        "server/src/accounts.mjs",
+        "server/src/limits.mjs",
+        "server/src/db.mjs",
+        "server/src/service.mjs",
+        "server/src/seasons.mjs",
+        "server/src/links.mjs",
+        "server/src/weaving.mjs",
+        "server/test/codex.test.mjs",
+        "server/test/fix_fx1_audit_server_a.test.mjs",
+        "server/test/fix_fx1_server_a_lows*",
+        "server/test/fix_fx2_audit_config.test.mjs",
+        "docs/security/audit-2026-11/server-a.md",
+        "docs/security/audit-2026-11/server-b.md"
+      ],
+      "deps": [
+        "FX1-6-audit-server-a",
+        "FX2-9-audit-b-match"
+      ],
+      "done_when": [
+        "each finding named in the title: its proof (the still-open one in fix_fx1_audit_server_a.test.mjs, or a new one under server/test/fix_fx1_server_a_lows*) made a plain test that fails on current main, committed on its own before its fix, its failure output quoted in the handoff; then the smallest fix, following the request's Fix line unless the handoff says why not; the commit names the finding id",
+        "FX1-A-13: the realm is stored on the lease at issue() (['leases','realm','TEXT'] in db.mjs's added columns) and grant() rates the heist in that realm; FX1-6's interim pick at grant() is kept only as the fallback for a lease issued before the column",
+        "FX1-A-17: codex.woven counts when the weave finishes, never for a cancelled weave; server/test/codex.test.mjs:211's expectation is corrected with the fix and named in the handoff",
+        "FX1-R10, the lead's answer (cycle 169): 18.1 pulls Renown halfway back toward the league floor 'at the end of a season', so each season that ended pulls once: a player away for several seasons is pulled once per ended season, in order, each from the league the previous pull left them in. A fail-first test for two skipped seasons",
+        "AUD-B-18's residual (server-b.md): the seasons constructor refuses a seasonStart that is not finite; the service proof with seasonStart: NaN is unwrapped from stillOpen in fix_fx2_audit_config.test.mjs and passes; server-b.md's AUD-B-18 entry says the residual is fixed (FX1-8-server-a-lows)",
+        "each fixed entry's State in server-a.md reads 'fixed (FX1-8-server-a-lows)'",
+        "no existing test is skipped, disabled or loosened; a test whose expectation encoded the defect is corrected and named in the handoff",
+        "cd server && npm test passes",
+        "current main merged into the branch, then the fresh-container setup line and bash tools/check_all.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed outside the task's files (M48)",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 3.0,
+      "tier": 1,
+      "critical": false,
+      "state": "merged",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "dbf44adf6f5a2083e2a3e45f14638d7f6b6c2cb2",
+      "merged_sha": "e830e15bb6b3dbffcbe0d4cd288237a564c21ad8",
+      "updated_at": "2026-11-24T08:30:00Z",
+      "updated_by": "lead (cycle 174)",
+      "exceptions": [
+        "server/privacy.json",
+        "server/declarations.md"
+      ]
+    },
+    {
+      "id": "FX1-13-codex-woven-at",
+      "title": "Low, server codex (FX1-R25, FX1-A-17's residual, docs/security/audit-2026-11/server-a.md): weaving.mjs records codex.woven_at at the weave's finish time, but mastery() (codex.mjs) and the profile (profile.mjs) count woven_at != null, so a law's woven step shows while its weave is still unfinished",
+      "phase": "fix",
+      "role": "FX1",
+      "model": "Opus 5.5",
+      "assigned_to": "FX1",
+      "files": [
+        "server/src/codex.mjs",
+        "server/src/profile.mjs",
+        "server/test/fix_fx1_codex_woven*"
+      ],
+      "deps": [
+        "FX1-8-server-a-lows"
+      ],
+      "done_when": [
+        "first a test under server/test/fix_fx1_codex_woven* that starts a weave and reads mastery() and the profile before the weave's finish time, expecting the woven step not to count yet, and after it, expecting it to count; failing on current main, committed on its own before the fix, its failure output quoted in the handoff",
+        "then the smallest fix: mastery() and the profile count the woven step only when woven_at is at or before the current time (the service's clock, as weaving.mjs uses), never from the weave's start; the commit names FX1-A-17 and FX1-R25",
+        "if docs/security/audit-2026-11/server-a.md needs its FX1-A-17 entry to say the residual is fixed, the handoff writes that as a request to the lead (server-a.md is not in this task's files)",
+        "no existing test is skipped, disabled or loosened; a test whose expectation encoded the defect is corrected and named in the handoff",
+        "cd server && npm test passes",
+        "current main merged into the branch, then the fresh-container setup line and bash tools/check_all.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed outside the task's files (M48)",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 1.0,
+      "tier": 1,
+      "critical": false,
+      "state": "merged",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "a1eb8cfb",
+      "merged_sha": "5a90d5ba",
+      "updated_at": "2026-11-24T09:45:00Z",
+      "updated_by": "lead (cycle 175)"
     }
   ],
   "idle_queue": [

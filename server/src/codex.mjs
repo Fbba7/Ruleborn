@@ -67,13 +67,16 @@ const inPlay = (school) => LAWS.filter((l) => l.school === school && l.launch)
 /** §18.5's mastery track for each school, from the Codex's rows by law:
  *  three steps a law in play — woven, crossed in a successful heist, raised
  *  to tier III — and the marks: a title at a third of them, the school's new
- *  style at two thirds, a title at all of them. */
-export function mastery(by) {
+ *  style at two thirds, a title at all of them. A law is woven once its
+ *  weaving has finished: weaving.mjs records `woven_at` at the weave's
+ *  finish time, so a step counts only when that time is at or before `now`
+ *  (FX1-A-17, FX1-R25). */
+export function mastery(by, now) {
   return facts.SCHOOLS.map((school) => {
     const laws = inPlay(school);
     const steps = laws.reduce((n, l) => {
       const r = by[l.id];
-      return n + (r?.woven_at != null) + (r?.crossed_at != null) + (r?.tier === 3);
+      return n + (r?.woven_at != null && r.woven_at <= now) + (r?.crossed_at != null) + (r?.tier === 3);
     }, 0);
     const total = facts.MASTERY_STEPS_PER_LAW * laws.length;
     return { school, steps, total,
@@ -300,7 +303,7 @@ export class Codex {
       return { school, laws, restored,
                milestones: facts.ALBUM_MILESTONES.map((at) => ({ at, reached: restored >= at })) };
     });
-    return { laws: rows.map(entry), albums, mastery: mastery(by), working_on: level.working_on,
+    return { laws: rows.map(entry), albums, mastery: mastery(by, this.service.now()), working_on: level.working_on,
              keeper_level: level.keeper_level, spire: this.service.universe.spire(account),
              aether: this.service.aether(account),
              next_chapter_at: openChapter(level.keeper_level) < 2 ? facts.CHAPTER_TWO_KEEPER : null };

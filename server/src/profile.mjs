@@ -171,7 +171,7 @@ export class Profile {
       friendly: mine.filter((h) => h.mode === "friendly").length,
       paradox: 0,
     };
-    const titles = mastery(Object.fromEntries(codex.map((r) => [r.law, r]))).map((m) => ({
+    const titles = mastery(Object.fromEntries(codex.map((r) => [r.law, r])), now).map((m) => ({
       school: m.school, steps: m.steps, total: m.total,
       titles: (m.steps >= m.marks.title ? 1 : 0) + (m.steps >= m.marks.last_title ? 1 : 0),
     })).filter((t) => t.titles > 0);

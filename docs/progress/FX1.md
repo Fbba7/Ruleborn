@@ -1,11 +1,11 @@
 # FX1 server fixes (A): progress
 
-- Status: Blocked. FX1-8-server-a-lows: every fix committed and main merged (7a9084a2); blocked on FX1-R24 (privacy.json and declarations.md for the two new columns), then check_all and ready.
-- Progress: 6 of 8 tasks merged (FX1-1, FX1-2, FX1-3, FX1-4, FX1-6, FX1-7); no gate items (fix tasks have none).
-- Done: FX1-8: FX1-A-02, A-10, A-13, A-15, A-16, A-17, FX1-R10 and AUD-B-18's residual fixed, each after its fail-first test.
-- Next: on FX1-R24's answer, the two privacy declarations (written out in the FX1-8 entry below), then check_all and ready.
-- Blocked by: FX1-R24 (the lead's, default at 09:05Z: granted).
-- Owner decision needed: none (FX1-R24 to R26 are the lead's, each with a default).
+- Status: Green. FX1-13-codex-woven-at: fail-first test c9693432, fix e6f582a5, main 632ab460 merged at a1eb8cfb; ready at a1eb8cfb (pre-check PASS).
+- Progress: 8 of 12 tasks merged (FX1-1, FX1-2, FX1-3, FX1-4, FX1-6, FX1-7, FX1-8, FX1-9); no gate items (fix tasks have none).
+- Done: FX1-13: FX1-A-17's residual (FX1-R25) fixed after its fail-first test: mastery() counts the woven step only once woven_at is at or before now, in the Codex and the profile.
+- Next: the lead merges FX1-13; then FX1-10-tools-contract once FX4-7-curation-swap-weave merges.
+- Blocked by: none.
+- Owner decision needed: none (FX1-R27 is the lead's, with a default).
 
 | Deliverable | Weight (h) | Status | Evidence |
 |---|---:|---|---|
@@ -15,9 +15,24 @@
 | FX1-4-holds-codex: RB-15, RB-18, RB-36, RB-53, RB-56 | 4.0 | merged (e2e8f5a1) | `server/test/fix_fx1_holds_codex.test.mjs`; test commit 924726b8; fixes 103d4176, 1de6f966, 63f031ad, 07047356, b45dafe6 |
 | FX1-6-audit-server-a: FX1-A-01 to A-17 | 4.0 | merged (ddf4213d) | `docs/security/audit-2026-11/server-a.md`; `server/test/fix_fx1_audit_server_a.test.mjs`; test commits 6b3556f9, 5d5d2e82, b0e4cd1c, f33ccc18; fixes f1888bba, dfc5bf86, 244b9480, 533b793d, ccda8b22; A-07 reverted 01cb97ac (R11) |
 | FX1-7-audit-tools: FX1-T-01 to T-22 | 4.0 | merged | `docs/security/audit-2026-11/tools.md`; `server/test/fix_fx1_audit_tools.test.mjs`, `server/test/fix_fx1_audit_tools_proofs.mjs`; proof commits 3c7ad511, 4ef72ffd; report b5283fa8 |
-| FX1-8-server-a-lows: A-02, A-10, A-13, A-15, A-16, A-17, R10, AUD-B-18 | 3.0 | blocked (FX1-R24) | `server/test/fix_fx1_audit_server_a.test.mjs`, `server/test/fix_fx1_server_a_lows.test.mjs`, `server/test/fix_fx2_audit_config.test.mjs`; test commit e0ea0eab; fixes 3e2e872f, 9c25c35f, 8180b333, 2419848b, ad2bc945, 991324a6, 14807c73, bad2df32 |
+| FX1-8-server-a-lows: A-02, A-10, A-13, A-15, A-16, A-17, R10, AUD-B-18 | 3.0 | ready (dbf44adf) | `server/test/fix_fx1_audit_server_a.test.mjs`, `server/test/fix_fx1_server_a_lows.test.mjs`, `server/test/fix_fx2_audit_config.test.mjs`; test commit e0ea0eab; fixes 3e2e872f, 9c25c35f, 8180b333, 2419848b, ad2bc945, 991324a6, 14807c73, bad2df32; privacy e46fd2a5 (FX1-R24) |
+| FX1-9-tools-gate | 3.0 | merged (e830e15b) | `server/test/fix_fx1_tools_gate.test.mjs`; merge a8b4c0a8 (ad5e56bf) |
+| FX1-13-codex-woven-at: FX1-A-17's residual (FX1-R25) | 1.0 | ready (a1eb8cfb) | `server/test/fix_fx1_codex_woven.test.mjs`; test commit c9693432; fix e6f582a5 |
 
 ## Handoff
+- **FX1-13-codex-woven-at (2026-11-24).** Branch `claude/fix-server-a`, with main 1f0475a4 merged (864c9597) before the claim and main 632ab460 merged at a1eb8cfb. FX1-A-17's residual, from request FX1-R25: `weaving.mjs` records `codex.woven_at` at the weave's finish time (FX1-8), but `mastery()` and the profile counted `woven_at != null`, so a law's woven step showed while its weave was unfinished.
+  - **Test first.** c9693432, alone: `server/test/fix_fx1_codex_woven.test.mjs`. Three of Motion's twelve steps are set in the Codex (half_gravity crossed, bounce at tier III and crossed), so the woven step is the fourth, the school's first title. It weaves half_gravity at tier I (10 minutes, §5.6) and reads `codex.show().mastery` and `profile.view().titles` at the start, at 9 minutes (3 steps, no title expected) and at 10 minutes (4 steps, one title expected). On main, with the wasm simulation built:
+    ```
+    not ok 1 - FX1-A-17, FX1-R25: a weave still unfinished is no mastery step in the Codex or the profile (18.5, 5.6)
+      error: the Codex: the weave has just started   4 !== 3   (expected: 3, actual: 4)
+    ```
+    With the Codex's asserts taken out (a throwaway copy, not committed), the profile's half fails on main too: "the profile: the weave has just started", actual `{ school: 'Motion', steps: 4, titles: 1, total: 12 }`, expected none.
+  - **Fix.** e6f582a5, naming FX1-A-17 and FX1-R25: `mastery(by, now)` counts the woven step only when `woven_at <= now`. `Codex.view()` passes `this.service.now()`; `Profile.view()` passes the `now` it already reads from the service's clock, the clock `weaving.mjs` uses. Crossed and tier-III steps are unchanged.
+  - **Existing tests.** None changed, skipped or loosened. `cd server && npm test` at e6f582a5: 669 of 669, 0 skipped. `owners.py diff FX1-13-codex-woven-at origin/claude/videogame-project-analysis-ewkkk2 HEAD`: "every changed path is inside its files".
+  - **Request FX1-R27 (to the lead):** `docs/security/audit-2026-11/server-a.md`'s FX1-A-17 entry still says "Left as is: while a weave is unfinished, `codex.mjs`'s `mastery()` and the profile still show its step ... (request FX1-R25)". It should say the residual is fixed (FX1-13-codex-woven-at, e6f582a5). Not in this task's files.
+  - **Checks on the merge.** The fresh-container setup line and `bash client/build.sh` ran, then `cargo build --release --target wasm32-unknown-unknown` in `sim/` built the simulation the server tests need. Pre-check of a1eb8cfb: `state` PASS, "All checks passed.", `DONE exit=0`, finished 09:08:50Z, sandbox bwrap; recorded in the status file. `ready_sha` a1eb8cfb; `owners.py diff FX1-13-codex-woven-at <main> a1eb8cfb` passes. Main then moved to 27751cf5, adding only `CLAUDE.md` (the owner's order 6, effort) and lead bookkeeping, none of it in FX1-13's files.
+  - **Next.** The lead merges FX1-13; then FX1-10-tools-contract once FX4-7-curation-swap-weave merges, in a fresh session.
+- Last verified commit: a1eb8cfb (pre-check PASS 2026-11-24T09:08:50Z, sandbox bwrap), FX1-13's ready sha. Before it, dbf44adf (FX1-8, PASS 07:29:36Z).
 - **FX1-8-server-a-lows (2026-11-24).** Branch `claude/fix-server-a`, with main 3b162939 merged (f96e2632) before the claim. The medium and low findings of FX1-6's audit that were outside FX1-6's files, the Renown pull-back over skipped seasons, and AUD-B-18's residual.
   - **Tests first.** e0ea0eab, alone: it turns the "today's behaviour" assertions of `fix_fx1_audit_server_a.test.mjs` (A-02, A-10, A-15, A-16, A-17) into the behaviour that should happen, adds `fix_fx1_server_a_lows.test.mjs` (A-13's republished defender, FX1-R10), and takes AUD-B-18's service proof in `fix_fx2_audit_config.test.mjs` out of `stillOpen` as a plain `assert.throws(..., RangeError)` over NaN, Infinity and a string. On main, with the wasm simulation built, each fails for its defect:
     ```
@@ -51,15 +66,13 @@
   - **A test whose expectation encoded the defect:** `server/test/codex.test.mjs:211` ("mastery"), which counted a weave taken out before it finished as the Motion step. It now asserts 0 steps after the cancelled weave, 1 once a weave has run its `WEAVE_MINUTES`, and still 1 after weaving again. The AUD-B-18 service proof in `fix_fx2_audit_config.test.mjs` left `stillOpen`, as its comment said it would on the fix. No test was skipped or loosened.
   - **Residual (FX1-R25):** while a weave is unfinished, `codex.mjs` `mastery()` and the profile still show its step, as they count `woven_at != null` without the time. Not this task's files; default: left as is.
   - **Docs.** `server-a.md`: the table and each fixed entry read "fixed (FX1-8-server-a-lows)", the Renown entry under Unproven records R10's answer and fix. `server-b.md`: AUD-B-18's residual fixed (FX1-8-server-a-lows).
-  - **Privacy (FX1-R24).** The two new columns need declaring in `server/privacy.json` (`privacy.test.mjs`: "accounts.links_n: stored, not declared", "leases.realm: stored, not declared"), a file outside FX1-8's.
+  - **Privacy (FX1-R24, granted by the lead's cycle 173).** e46fd2a5, named FX1-R24: `server/privacy.json` declares `leases.realm` (`{"type": "gameplay"}`, after `universe`) and `accounts.links_n` (`gameplay`, after `terms_version`, holding the newest link's number, §5.3); `server/declarations.md` regenerated with `node --no-warnings server/src/privacy.mjs --write` (both columns join the Gameplay Content list). Both files are in FX1-8's `exceptions` on main.
   - **FX1-T-11 (FX1-R26).** `npm test` failed FX1-T-11's `stillOpen` once in this container, because no `.pyc` of `check_document.py` was cached: its SyntaxWarning (line 505) becomes the last output line and the proof's value is undefined. It passes once the cache exists. Not this task's files. The lead's cycle 172 answered the same ask (FX2-R4): `py()` parses stdout only, in FX1-9-tools-gate's `done_when`, so R26 needs nothing more.
-  - **Main merged.** Main eb4b8e59 merged at 7a9084a2, with no conflicts. `cd server && npm test` there: 662 of 663; the one failure is privacy.test's two undeclared columns (FX1-R24).
-  - **Blocked here (06:39Z).** Per the protocol's "When someone else's file blocks you", `task_state: blocked`, `agent_state: waiting`, session ended. FX1-R24's due is 09:05Z, with default granted.
-  - **The declarations, ready to apply.** The next session adds them to `server/privacy.json` and runs `node --no-warnings server/src/privacy.mjs --write`, which regenerates `server/declarations.md`. privacy.test passed 25 of 25 with them in this session. Commit both files in one commit named FX1-R24.
-    - `tables.leases.columns.realm`, after `universe`: `{"type": "gameplay"}`.
-    - `tables.accounts.columns.links_n`, after `terms_version`: `{"type": "gameplay", "holds": "the number the player's newest link was given, so a link's number is never given again (§5.3)"}`.
-  - **Then.** Merge main, `cd server && npm test`, the setup line and `bash tools/run_checks.sh start` / `wait` / `record <sha> FX1` on the merge, `owners.py diff FX1-8-server-a-lows`, ready.
-- Last verified commit: b30765cd (pre-check PASS 2026-11-24T04:46:34Z, sandbox bwrap). Main 613f71c9 merged; main has since moved only under `docs/progress/` (to db0614f0).
+  - **Main merged.** Main eb4b8e59 merged at 7a9084a2, then main 66b2943b (cycle 173) at 674b0778, both with no conflicts.
+  - **Checks on the merge.** The fresh-container setup line and `bash client/build.sh` ran (exit 0), then `bash sim/run_spike.sh` built the wasm simulation. `cd server && npm test` at dbf44adf: 663 of 663. The first run failed only FX1-T-11's `stillOpen` ("FX1-T-11 no longer fails"), the environment issue of FX1-R26 (no cached `.pyc` of `check_document.py`); once `tools/__pycache__/check_document.cpython-313.pyc` existed, all 663 passed. `owners.py diff FX1-8-server-a-lows origin/claude/videogame-project-analysis-ewkkk2 dbf44adf`: "every changed path is inside its files".
+  - **Pre-check.** At dbf44adf (main 66b2943b merged): `state` PASS, "All checks passed.", `DONE exit=0`, finished 07:29:36Z, sandbox bwrap; recorded in the status file. `ready_sha` dbf44adf. Main then moved to 70a0f58, adding only FX4-6 (`client/ext/`) and lead bookkeeping, none of it in FX1-8's files; the lead's candidate run covers the two together.
+  - **Next.** The lead merges FX1-8; then FX1-9 onward as the backlog assigns them, in a fresh session.
+- Last verified commit: dbf44adf (pre-check PASS 2026-11-24T07:29:36Z, sandbox bwrap), FX1-8's ready sha. Before it, b30765cd (FX1-7, PASS 04:46:34Z). Main 613f71c9 merged; main has since moved only under `docs/progress/` (to db0614f0).
 - **FX1-7-audit-tools (2026-11-24).** Branch `claude/fix-server-a`, with main 613f71c9 merged at b30765cd. A read-only audit of `tools/` (outside `tools/vendor/`), the art scripts in `art/design/` and `art/ui/`, the client prototypes and the docs scripts, asking whether a check can pass when it should fail, or a tool corrupt a committed file. The findings, the latent ones, the unproven ones and the tools found sound are in `docs/security/audit-2026-11/tools.md`.
   - **Proofs.** Each confirmed finding has a proof in `server/test/fix_fx1_audit_tools_proofs.mjs`, run by `server/test/fix_fx1_audit_tools.test.mjs` under `stillOpen` with its id. A proof runs the tool on disk against a planted input in a temporary folder; a tool that writes is pointed at a copy, so nothing inside the repository is written. Each fails on main 613f71c9.
   - **Highest:** FX1-T-03 (High). `run_checks.sh record` copies `exit` 0 from a run `result` calls FAIL, and the protocol's reuse rule then skips the lead's own `check_all.sh`. Then T-20 and T-21 (Medium/High: the client contract misses nine server failure codes, none with an `ERR_` row, and every client call outside `client/data/`).
