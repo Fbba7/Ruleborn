@@ -5,15 +5,15 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "FX1-9-tools-gate",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-24T06:32:00Z",
   "lease_until": "2026-11-24T09:32:00Z",
   "updated_at": "2026-11-24T06:32:00Z",
-  "expected_next_update_by": "2026-11-24T07:15:00Z",
+  "expected_next_update_by": "2026-11-24T07:45:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "67318228",
-    "next_step": "FX1-9: tests for FX1-T-03 first, then the fix"
+    "next_step": "FX1-9: failing tests committed; fixing FX1-T-03 in run_checks.sh record"
   },
   "precheck": null,
   "gate_request": null,
