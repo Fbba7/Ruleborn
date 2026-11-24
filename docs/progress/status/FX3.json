@@ -5,38 +5,29 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "FX1-11-tools-docs",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-24T11:15:00Z",
   "lease_until": "2026-11-24T14:15:00Z",
-  "updated_at": "2026-11-24T11:15:00Z",
-  "expected_next_update_by": "2026-11-24T12:00:00Z",
+  "updated_at": "2026-11-24T11:40:00Z",
+  "expected_next_update_by": "2026-11-24T12:40:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "cceacc6d7589e75e2395add6a54622d8326b203c",
-    "next_step": "FX1-11: fail-first tests for FX1-T-10, 11, 12, 17 and FX1-R26's SyntaxWarning"
+    "next_step": "FX1-11: all five fixes committed; full local tests, then the pre-check"
   },
   "precheck": null,
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-24T21:00:00Z",
   "acks": [],
-  "requests": [
+  "requests": [],
+  "answers": [
     {
       "id": "FX3-R1",
-      "from": "FX3",
-      "to": "lead",
-      "ask": "FX1-10's broadened client_contract.py asks for 13 ERR_ rows, not the nine granted: era, manifest, method_not_allowed and no_landing_realm are sent by the server too (sim.mjs REFUSED table, main.mjs 405). The gate fails without them.",
-      "files": [
-        "client/i18n/strings.csv",
-        "tools/client_contract.py"
-      ],
-      "blocking": false,
-      "created_at": "2026-11-24T09:28:00Z",
-      "due": "2026-11-24T13:28:00Z",
-      "default": "the four extra rows stay in client/i18n/strings.csv in this task, same file as the grant",
-      "escalate_to": "lead"
+      "by": "lead",
+      "at": "2026-11-24",
+      "answer": "default: the four extra ERR_ rows stay in client/i18n/strings.csv (merged with FX1-10)"
     }
   ],
-  "answers": [],
-  "next_step": "FX1-11: fail-first tests, then the fixes"
+  "next_step": "FX1-11: local tests, pre-check, handoff"
 }
