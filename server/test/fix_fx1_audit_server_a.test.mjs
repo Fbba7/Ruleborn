@@ -13,6 +13,7 @@ import { clockTicks } from "../src/service.mjs";
 import { Build, Builds } from "../src/sim.mjs";
 import { SPIKE_MIN, Workshop } from "../src/workshop.mjs";
 import { WASM, counting, established, openPlan, play, server, twoPlayers } from "./setup.mjs";
+import { stillOpen } from "./fix_fx2_open.mjs";
 
 const DAY = 24 * 60 * 60 * 1000;
 const t0facts = () => JSON.parse(readFileSync(new URL("../src/facts.json", import.meta.url), "utf8"));
@@ -146,19 +147,25 @@ test("FX1-A-06: the defence log offers no Trace on a banned raider, which the le
   assert.equal(t.service.defences.view(t.defender.account).raids[0].trace, null, "no Trace button the lease refuses");
 });
 
-test("FX1-A-07: a card swapped to a republished island shows only laws from the raider's open chapters (7.6)", () => {
-  const t = twoPlayers(true);
-  const mm = t.service.matchmaking;
-  assert.equal(mm.raider(t.raider.account).chapter, 1, "the raider has chapter 1 alone");
-  const before = t.service.observatory.view(t.raider.account);
-  assert.ok(before.targets.find((c) => c.bundle === t.bundle), "the defender's chapter-1 island is offered");
-  // Within the hour, the defender republishes the realm with Haste, chapter 2's.
-  t.clock.now += 60 * 1000;
-  const { bundle: haste } = t.service.publish(t.defender.account, t.build.exampleIsland(false));
-  assert.equal(mm.fresh(t.service.now()).find((c) => c.bundle === haste)?.chapter, 2, "the new island is chapter 2's");
-  const after = t.service.observatory.view(t.raider.account);
-  assert.deepEqual(after.targets.filter((c) => c.bundle === haste).map((c) => c.bundle), [],
-    "a chapter-2 island is not offered to a chapter-1 raider");
+// FX1-A-07 (= AUD-B-06, server-b.md): open. Its code is in matchmaking.mjs,
+// but FX2's AUD-B-06 proof (fix_fx2_audit_observatory.test.mjs) holds it
+// open, so the fix lands with that proof unwrapped (request FX1-R11). Until
+// then this proof runs as still open; the fix turns it back into a plain test.
+test("FX1-A-07: a card swapped to a republished island shows only laws from the raider's open chapters (7.6)", async () => {
+  await stillOpen("FX1-A-07", () => {
+    const t = twoPlayers(true);
+    const mm = t.service.matchmaking;
+    assert.equal(mm.raider(t.raider.account).chapter, 1, "the raider has chapter 1 alone");
+    const before = t.service.observatory.view(t.raider.account);
+    assert.ok(before.targets.find((c) => c.bundle === t.bundle), "the defender's chapter-1 island is offered");
+    // Within the hour, the defender republishes the realm with Haste, chapter 2's.
+    t.clock.now += 60 * 1000;
+    const { bundle: haste } = t.service.publish(t.defender.account, t.build.exampleIsland(false));
+    assert.equal(mm.fresh(t.service.now()).find((c) => c.bundle === haste)?.chapter, 2, "the new island is chapter 2's");
+    const after = t.service.observatory.view(t.raider.account);
+    assert.deepEqual(after.targets.filter((c) => c.bundle === haste).map((c) => c.bundle), [],
+      "a chapter-2 island is not offered to a chapter-1 raider");
+  });
 });
 
 test("FX1-A-08: recentSuccess learns from the heists the rating learns from: a pair's later raids that day rate nothing (G30, G37)", () => {

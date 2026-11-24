@@ -26,7 +26,7 @@ on main (`9fe151ad`).
 | FX1-A-04 | Low | workshop.mjs | fixed |
 | FX1-A-05 | Medium | holds.mjs | fixed |
 | FX1-A-06 | Medium | matchmaking.mjs | fixed |
-| FX1-A-07 | Medium | matchmaking.mjs | fixed |
+| FX1-A-07 | Medium | matchmaking.mjs | open: request FX1-R11 (= AUD-B-06) |
 | FX1-A-08 | Medium | matchmaking.mjs | fixed |
 | FX1-A-09 | Low | matchmaking.mjs | contested, request FX1-R9 |
 | FX1-A-10 | Low | limits.mjs | request FX1-R4 |
@@ -162,11 +162,18 @@ on main (`9fe151ad`).
 - **Should happen:** §7.6: "Matchmaking only shows universes running laws
   from open chapters."
 - **Happens:** the chapter-2 island is offered to the chapter-1 raider.
-- **Evidence:** test "FX1-A-07".
-- **Fix (made):** the swapped card carries its new bundle's chapter.
+- **Evidence:** test "FX1-A-07", run as still open.
+- **Same defect:** FX2's AUD-B-06 (`server-b.md`). Its proof in
+  `fix_fx2_audit_observatory.test.mjs` is wrapped to pass while the defect
+  stands, so a fix here alone fails that wrapper. That file is not this
+  task's, so the fix was not kept.
+- **Fix (proposed, request FX1-R11):** the swapped card carries its new
+  bundle's chapter.
   - `current()` cannot read the raider, so it drops a swap whose chapter is
-    above the card it replaces, or whose bytes are gone.
+    above the card it replaces, or whose bytes are gone
+    (`bundleChapter()` returns null).
   - The island comes back in the next hourly list, filtered as usual.
+  - The same change unwraps both proofs, AUD-B-06's and FX1-A-07's.
 
 ### FX1-A-08: "Recent success" learns from raids that rated nothing
 

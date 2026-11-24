@@ -330,15 +330,7 @@ export class Matchmaking {
       const snap = this.db.prepare("SELECT realm_level, vault_level, exposed FROM snapshots WHERE bundle = ?")
         .get(island.bundle);
       if (!snap) continue;
-      // FX1-A-07: the swapped card's chapter is its new island's. One above
-      // the card it replaces may be past the raider's open chapters (§7.6:
-      // "Matchmaking only shows universes running laws from open
-      // chapters"), which this list was filtered by and current() cannot
-      // read, so it waits for the next hourly list.
-      const chapter = this.bundleChapter(island.bundle);
-      if (chapter === null || chapter > (c.chapter ?? 1)) continue;
-      out.push({ ...c, bundle: island.bundle, realmLevel: snap.realm_level, vaultLevel: snap.vault_level,
-                 exposed: snap.exposed, chapter });
+      out.push({ ...c, bundle: island.bundle, realmLevel: snap.realm_level, vaultLevel: snap.vault_level, exposed: snap.exposed });
     }
     return out;
   }

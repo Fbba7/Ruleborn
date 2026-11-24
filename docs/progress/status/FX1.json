@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-23T22:25:00Z",
   "lease_until": "2026-11-24T04:00:51Z",
-  "updated_at": "2026-11-24T01:00:51Z",
-  "expected_next_update_by": "2026-11-24T01:45:51Z",
+  "updated_at": "2026-11-24T01:15:00Z",
+  "expected_next_update_by": "2026-11-24T02:00:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "8c973824",
-    "next_step": "FX1-6: pre-check at 8c973824 still running (UI key-frame stage); then record and ready"
+    "next_step": "FX1-6: A-07 fix reverted after main's merge (it is AUD-B-06, R11); running checks for a new pre-check"
   },
   "precheck": null,
   "gate_request": null,
@@ -164,6 +164,22 @@
       "created_at": "2026-11-23T22:36:18Z",
       "due": "2026-11-24T22:36:18Z",
       "default": "Leave as is: one pull-back",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "FX1-R11",
+      "from": "FX1",
+      "to": "lead",
+      "ask": "FX1-A-07 is FX2's AUD-B-06 (matchmaking.mjs current() keeps a swapped card's old chapter). Its fix (drop a swap whose bundleChapter() is null or above the card's chapter, and carry the new chapter) fails FX2's stillOpen wrapper in fix_fx2_audit_observatory.test.mjs, which FX1-6 does not own, so it was not kept. Land the fix together with unwrapping both proofs, AUD-B-06's and FX1-A-07's.",
+      "files": [
+        "server/src/matchmaking.mjs",
+        "server/test/fix_fx2_audit_observatory.test.mjs",
+        "server/test/fix_fx1_audit_server_a.test.mjs"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-24T01:15:00Z",
+      "due": "2026-11-25T01:15:00Z",
+      "default": "A small task for FX1 that owns those three files: the fix as written in server-a.md, both proofs turned back into plain tests",
       "escalate_to": "lead"
     }
   ],
