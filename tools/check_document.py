@@ -515,7 +515,7 @@ PAST_TENSE = re.compile(r"\b(ran|was|were|used to|previously|had)\b"
 
 
 def check_constant_restatements(doc: Doc, led: Ledger) -> None:
-    """D38. Every number the document attaches to a constant's unit.
+    r"""D38. Every number the document attaches to a constant's unit.
 
     `check_constants` compares each constant against the one pattern
     `constants.json` declares for it — `fixed (\d+) steps a second` — so a
