@@ -1,6 +1,6 @@
 # FX3 simulation fixes: progress
 
-- Status: Pre-check running. FX3-6-audit-universe is about to be ready at 92dda030, the pre-check sha. FX3-5-audit-sim is merged (lead cycle 167, 490579d6).
+- Status: Waiting. FX3-6-audit-universe is ready at 92dda030 (pre-check PASS at 01:36Z, recorded). FX3-5-audit-sim is merged (lead cycle 167, 490579d6).
 - Progress: FX3-6-audit-universe has audited what the sim audit listed under "Still not read": `universe.rs`, every line of `island.rs` and `grid.rs`, and both `sim/examples/` programs. It confirmed four findings, SIM-10 to SIM-13: one Medium, three Low and no High. Each has a fail-first test and all four are fixed. The findings are in `docs/security/audit-2026-11/sim.md`.
 - Done:
   - `cargo test --release` in `sim`: 362 of 362 pass.
@@ -22,7 +22,7 @@
 | FX3-6-audit-universe: SIM-10 to SIM-13, `universe.rs`, `island.rs`, `grid.rs`, `sim/examples/` | 4.0 | ready | `docs/security/audit-2026-11/sim.md`; `sim/src/tests.rs` `sim_10_a_command_for_actor_16_still_records_a_universe_replay_that_round_trips`, `sim_11_a_lantern_wisps_reveal_goes_with_it_across_to_the_next_realm`, `sim_12_a_curated_layout_never_drops_a_woven_law_unseen`, `sim_13_moving_the_vault_onto_a_guard_hidden_in_tall_grass_takes_the_grass_too`; `sim/src/universe.rs`, `sim/src/island.rs`, `sim/systems.json` |
 
 ## Handoff
-- FX3-6-audit-universe, ready (2026-11-24). Branch `claude/fix-sim`. The pre-check runs at 92dda030, the merge of main at `bc7f27e8`: lead cycles 168 and 169 and the FX2-7 merge, with no conflict. `ready_sha` is set in `docs/progress/status/FX3.json` once the pre-check passes and is recorded.
+- FX3-6-audit-universe, ready (2026-11-24). Branch `claude/fix-sim`. Pre-check at 92dda030: PASS ("All checks passed.", 01:36Z, recorded). `ready_sha` 92dda030 is in `docs/progress/status/FX3.json`. 92dda030 merges main at `bc7f27e8` (lead cycles 168 and 169, the FX2-7 merge), with no conflict. The later commits are docs/progress only, so the pre-checked sha stays the ready one. The local `bash tools/check_all.sh` also passed.
   - **Commits.**
     - Claim: 18c7bd83.
     - SIM-10: fail-first test d8e552a1, fix 537bf425.
