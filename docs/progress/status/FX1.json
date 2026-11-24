@@ -3,21 +3,27 @@
   "role": "FX1",
   "branch": "claude/fix-server-a",
   "model": "Opus 5.5",
-  "agent_state": "active",
-  "task_id": "FX1-7-audit-tools",
-  "task_state": "working",
-  "claimed_at": "2026-11-24T03:39:29Z",
-  "lease_until": "2026-11-24T06:39:29Z",
-  "updated_at": "2026-11-24T04:10:00Z",
-  "expected_next_update_by": "2026-11-24T04:55:00Z",
+  "agent_state": "waiting",
+  "task_id": "FX1-13-codex-woven-at",
+  "task_state": "ready",
+  "claimed_at": "2026-11-24T08:33:00Z",
+  "lease_until": "2026-11-24T11:33:00Z",
+  "updated_at": "2026-11-24T09:11:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "01cb97ac",
-    "next_step": "tools.md written; merge main, npm test, gate"
+    "last_green_sha": "a1eb8cfb",
+    "next_step": "FX1-13 ready at a1eb8cfb (pre-check PASS 09:08:50Z, npm test 669/669, owners diff clean); the lead merges it"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "a1eb8cfbf89eb99e476fe3ea6b93c4e4ac4e50c7",
+    "state": "PASS",
+    "exit": 0,
+    "finished_at": "2026-11-24T09:08:50Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "a1eb8cfbf89eb99e476fe3ea6b93c4e4ac4e50c7",
   "stop_at": "2026-11-24T21:00:00Z",
   "acks": [],
   "requests": [
@@ -94,6 +100,67 @@
       "created_at": "2026-11-24T04:10:00Z",
       "due": "2026-11-25T04:10:00Z",
       "default": "The lead seeds one fix task for this group after the FX tasks already open, in priority order (High first); the task replaces each proof's stillOpen entry in server/test/fix_fx1_audit_tools_proofs.mjs with a plain test",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "FX1-R24",
+      "from": "FX1",
+      "to": "lead",
+      "ask": "Add server/privacy.json and server/declarations.md to FX1-8-server-a-lows's exceptions. FX1-A-13's done_when adds the column leases.realm, and FX1-A-16's up-only counter adds accounts.links_n. server/test/privacy.test.mjs:29 fails on any stored column privacy.json does not declare ('leases.realm: stored, not declared'), and declarations.md is generated from privacy.json (node server/src/privacy.mjs --write). No task in flight owns either file. The edit is two gameplay columns: leases.realm and accounts.links_n.",
+      "files": [
+        "server/privacy.json",
+        "server/declarations.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-24T05:45:00Z",
+      "due": "2026-11-24T09:05:00Z",
+      "default": "The exceptions are granted. FX1 commits the two declarations in one commit named FX1-R24 and marks ready.",
+      "escalate_to": "lead",
+      "answer": "granted (lead cycle 173): exceptions in the backlog; committed e46fd2a"
+    },
+    {
+      "id": "FX1-R25",
+      "from": "FX1",
+      "to": "lead",
+      "ask": "FX1-A-17's residual, for the owner of server/src/codex.mjs and server/src/profile.mjs: weaving.mjs now records codex.woven_at at the weave's finish time, and drops it for a weave taken out before it finishes, but mastery() (codex.mjs:71) and the profile (profile.mjs:162) count woven_at != null, so while a weave is unfinished its step already shows. Comparing woven_at with the time (woven_at <= now) in both would show it only once earned. Not in FX1-8's files.",
+      "files": [
+        "server/src/codex.mjs",
+        "server/src/profile.mjs"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-24T05:49:00Z",
+      "due": "2026-11-24T21:00:00Z",
+      "default": "Left as is: a step shows from the weave's start and goes if the weave is taken out before it finishes. A later task may compare woven_at with the time.",
+      "escalate_to": "lead",
+      "answer": "seeded as FX1-13-codex-woven-at (lead cycle 174)"
+    },
+    {
+      "id": "FX1-R26",
+      "from": "FX1",
+      "to": "lead",
+      "ask": "FX1-T-11's proof (server/test/fix_fx1_audit_tools_proofs.mjs, FX1-7's) is environment-dependent: py() parses the last line of stdout+stderr, and tools/check_document.py:505 prints a SyntaxWarning (invalid escape sequence '\\d') to stderr whenever it is compiled with no cached .pyc (py() runs python3 -B). The last line is then the warning, value is undefined, notEqual(undefined, 0) passes, and stillOpen reports 'FX1-T-11 no longer fails'. In this container npm test failed it until tools/__pycache__/check_document*.pyc existed; with it, it passes. Fix: py() parses the last line of stdout only, and check_document.py:505's docstring becomes a raw string. Neither file is FX1-8's.",
+      "files": [
+        "server/test/fix_fx1_audit_tools_proofs.mjs",
+        "tools/check_document.py"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-24T05:58:00Z",
+      "due": "2026-11-24T21:00:00Z",
+      "default": "Filed as a small fix task after the open FX tasks; FX1-8's checks run with the cache present, as check_all's earlier steps leave it.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "FX1-R27",
+      "from": "FX1",
+      "to": "lead",
+      "ask": "docs/security/audit-2026-11/server-a.md, FX1-A-17's entry: its 'Left as is' sub-bullet (mastery() and the profile still show an unfinished weave's step, request FX1-R25) is now fixed by FX1-13-codex-woven-at (fix e6f582a5, test server/test/fix_fx1_codex_woven.test.mjs). Replace it with: 'FX1-R25's residual: fixed (FX1-13-codex-woven-at). mastery() and the profile count the woven step only once woven_at is at or before the service's clock.' server-a.md is not in FX1-13's files.",
+      "files": [
+        "docs/security/audit-2026-11/server-a.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-24T09:00:00Z",
+      "due": "2026-11-25T09:00:00Z",
+      "default": "The lead makes the edit in its bookkeeping when it merges FX1-13, or adds server-a.md to a later FX1 task's files.",
       "escalate_to": "lead"
     }
   ],

@@ -21,7 +21,7 @@ on main (`9fe151ad`).
 | Id | Priority | Where | State |
 | --- | --- | --- | --- |
 | FX1-A-01 | High | matchmaking.mjs | fixed |
-| FX1-A-02 | Medium | accounts.mjs | request FX1-R3 |
+| FX1-A-02 | Medium | accounts.mjs | fixed (FX1-8-server-a-lows) |
 | FX1-A-03 | Medium | workshop.mjs | fixed |
 | FX1-A-04 | Low | workshop.mjs | fixed |
 | FX1-A-05 | Medium | holds.mjs | fixed |
@@ -29,14 +29,14 @@ on main (`9fe151ad`).
 | FX1-A-07 | Medium | matchmaking.mjs | fixed (FX2-9-audit-b-match) |
 | FX1-A-08 | Medium | matchmaking.mjs | fixed |
 | FX1-A-09 | Low | matchmaking.mjs | fixed (FX2-9-audit-b-match) |
-| FX1-A-10 | Low | limits.mjs | request FX1-R4 |
+| FX1-A-10 | Low | limits.mjs | fixed (FX1-8-server-a-lows) |
 | FX1-A-11 | Medium | matchmaking.mjs | fixed |
 | FX1-A-12 | Low | service.mjs | fixed |
-| FX1-A-13 | Medium | service.mjs | partly fixed, request FX1-R5 |
+| FX1-A-13 | Medium | service.mjs | fixed (FX1-8-server-a-lows) |
 | FX1-A-14 | Low | codex.mjs | fixed |
-| FX1-A-15 | Low | seasons.mjs | request FX1-R6 |
-| FX1-A-16 | Low | links.mjs | request FX1-R7 |
-| FX1-A-17 | Low | weaving.mjs | request FX1-R8 |
+| FX1-A-15 | Low | seasons.mjs | fixed (FX1-8-server-a-lows) |
+| FX1-A-16 | Low | links.mjs | fixed (FX1-8-server-a-lows) |
+| FX1-A-17 | Low | weaving.mjs | fixed (FX1-8-server-a-lows) |
 
 ## Confirmed
 
@@ -73,11 +73,11 @@ on main (`9fe151ad`).
   also another player's snapshot are that player's too, and stay.
 - **Happens:** B's snapshot row stays, its bytes are gone, and B's echo
   cannot be played.
-- **Evidence:** test "FX1-A-02". It asserts today's behaviour: the
-  snapshot is B's and `bundle(X)` is null.
-- **Fix (request FX1-R3):** add
-  `UNION ALL SELECT 1 FROM snapshots WHERE bundle = :b AND owner != :a` to
-  the bytes `erase()` keeps.
+- **Evidence:** test "FX1-A-02". On main it fails: B's echo X keeps its
+  bytes, actual null.
+- **State: fixed (FX1-8-server-a-lows).** `erase()` also keeps bytes that
+  another player's snapshot is
+  (`UNION ALL SELECT 1 FROM snapshots WHERE bundle = :b AND owner != :a`).
 
 ### FX1-A-03: Resolving a decided report again closes the island's newer reports unread
 
@@ -226,12 +226,12 @@ on main (`9fe151ad`).
   `unsigned` bucket.
 - **Reach:** doubtful. `cf-connecting-ip` and nginx's `$remote_addr`
   normally give the dotted form.
-- **Evidence:** test "FX1-A-10". It asserts today's behaviour.
-- **Fix (request FX1-R4):**
-  - Expand the address to eight groups; a dotted tail counts as two.
-  - If the first five groups are 0 and the sixth is `ffff`, key it as the
-    dotted IPv4 address.
-  - Otherwise take the /64 as now.
+- **Evidence:** test "FX1-A-10". On main it fails: three keys
+  `0:0:0:0::/64`.
+- **State: fixed (FX1-8-server-a-lows).** `peerKey()` expands the address
+  to eight groups, a dotted tail counting as two. Five zero groups and
+  `ffff` key as the dotted IPv4 address; anything else takes the /64 as
+  before.
 
 ### FX1-A-11: A refused Trace upload uses up the Trace
 
@@ -290,8 +290,14 @@ on main (`9fe151ad`).
   - B's outer-1 rating stays at 0 games.
   - A B/heart rating row is made, for an island B never published.
   - If B has a real heart island, its rating is moved instead.
-- **Evidence:** test "FX1-A-13".
-- **Fix (made in part):** for a raid that is not an echo, `grant()` takes
+- **Evidence:** test "FX1-A-13", and
+  `fix_fx1_server_a_lows.test.mjs`'s "FX1-A-13" for a defender who
+  republishes before the raid settles (on main: expected 1 game, actual 0).
+- **State: fixed (FX1-8-server-a-lows).** `issue()` stores the realm on the
+  lease (`leases.realm`, added in `db.mjs`), and `grant()` rates in it. The
+  interim pick below stays only as the fallback for a lease issued before
+  the column.
+- **Interim fix (FX1-6):** for a raid that is not an echo, `grant()` takes
   the realm of the defender's own island on that bundle. It prefers the
   snapshot's realm when the defender has an island there, and falls back
   to the snapshot's realm.
@@ -322,8 +328,10 @@ on main (`9fe151ad`).
 - **Should happen:** the same answers as `result()`: 409
   `season_still_open` and 404 `no_such_season`.
 - **Happens:** `[]` for both, which looks like a season nobody placed in.
-- **Evidence:** test "FX1-A-15". It asserts today's behaviour.
-- **Fix (request FX1-R6):** refuse as `result()` does.
+- **Evidence:** test "FX1-A-15". On main it fails: "Missing expected
+  exception: the season is still open".
+- **State: fixed (FX1-8-server-a-lows).** `constellationTable()` refuses as
+  `result()` does.
 
 ### FX1-A-16: A link's number is given again, so a retried DELETE takes down the next link
 
@@ -336,8 +344,10 @@ on main (`9fe151ad`).
   3. The first DELETE is retried.
 - **Should happen:** the retry finds nothing to take down.
 - **Happens:** the retry takes the Chute down.
-- **Evidence:** test "FX1-A-16". It asserts today's behaviour.
-- **Fix (request FX1-R7):** a counter that only goes up.
+- **Evidence:** test "FX1-A-16". On main it fails: "the new link has a
+  number of its own", 4 given again.
+- **State: fixed (FX1-8-server-a-lows).** A counter that only goes up,
+  `accounts.links_n` (added in `db.mjs`).
 
 ### FX1-A-17: A weave taken out before it finishes counts as a mastery step
 
@@ -348,10 +358,15 @@ on main (`9fe151ad`).
   finishes, and wait two hours.
 - **Should happen:** a law counts once its weaving has finished.
 - **Happens:** the Motion school's steps read 1.
-- **Evidence:** test "FX1-A-17". It asserts today's behaviour.
-- **Fix (request FX1-R8):** call `codex.woven` when the weave finishes.
-  `server/test/codex.test.mjs:211` expects the step at the start and
-  changes with the fix.
+- **Evidence:** test "FX1-A-17". On main it fails: expected 0, actual 1.
+- **State: fixed (FX1-8-server-a-lows).** `weave()` records the step at the
+  weave's finish time, and a weave taken out (unweave or swap) before it
+  finishes takes its unearned step with it, or moves it to the soonest
+  finish still in a slot. `server/test/codex.test.mjs:211` expected the
+  step at the start; it is corrected.
+  - FX1-R25's residual: fixed (FX1-13-codex-woven-at). `mastery()` and the
+    profile count the woven step only once `woven_at` is at or before the
+    service's clock (recorded by the lead in cycle 175, FX1-R27).
 
 ## Unproven
 
@@ -364,8 +379,10 @@ on main (`9fe151ad`).
   - Against: the code's comment says the pull-back is "from the last
     season they played", and an absent player gets no season rewards
     either.
-  - This needs a design call (request FX1-R10, default: one pull-back). No
-    test is committed.
+  - The lead's answer to request FX1-R10: one pull-back for each season
+    that ended, in order (§18.1).
+  - **State: fixed (FX1-8-server-a-lows).** Test "FX1-R10" in
+    `fix_fx1_server_a_lows.test.mjs` (on main: expected 267, actual 304).
 - **The 13-15 friends-only crew rule is checked only on the joiner**
   (`social.mjs` `joinCrew`). An adult who is a friend of one member can
   join a crew holding a 13-15 player who is not their friend.

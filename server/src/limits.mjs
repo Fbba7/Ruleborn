@@ -83,18 +83,28 @@ export class Limiter {
   }
 }
 
-/** The key an address is limited by: an IPv4 address as it is; an IPv6 one
- *  by its /64, the block one subscriber is given, so a caller cannot take a
- *  fresh bucket for each of its 2^64 addresses. */
+/** The key an address is limited by: an IPv4 address as it is, and an
+ *  IPv4-mapped IPv6 address (::ffff:a.b.c.d, however it is written) as its
+ *  IPv4 address (FX1-A-10); any other IPv6 one by its /64, the block one
+ *  subscriber is given, so a caller cannot take a fresh bucket for each of
+ *  its 2^64 addresses. */
 export function peerKey(address) {
   const a = String(address ?? "").trim().split("%")[0].toLowerCase();
   if (!a) return null;
   if (!a.includes(":")) return a;
-  const mapped = /^::ffff:(\d+\.\d+\.\d+\.\d+)$/.exec(a);
-  if (mapped) return mapped[1];
+  // A dotted tail is the last two groups.
+  const hex = (part) => part ? part.split(":").flatMap((g) => {
+    const dotted = /^(\d+)\.(\d+)\.(\d+)\.(\d+)$/.exec(g);
+    if (!dotted) return [Number.parseInt(g, 16) || 0];
+    const [b0, b1, b2, b3] = dotted.slice(1).map(Number);
+    return [b0 * 256 + b1, b2 * 256 + b3];
+  }) : [];
   const [head, tail] = a.split("::");
-  const h = head ? head.split(":") : [];
-  const t = tail ? tail.split(":") : [];
-  const groups = a.includes("::") ? [...h, ...Array(Math.max(0, 8 - h.length - t.length)).fill("0"), ...t] : h;
-  return `${groups.slice(0, 4).map((g) => (Number.parseInt(g, 16) || 0).toString(16)).join(":")}::/64`;
+  const h = hex(head);
+  const t = a.includes("::") ? hex(tail) : [];
+  const groups = a.includes("::") ? [...h, ...Array(Math.max(0, 8 - h.length - t.length)).fill(0), ...t] : h;
+  if (groups.length === 8 && groups.slice(0, 5).every((g) => g === 0) && groups[5] === 0xffff) {
+    return [groups[6] >> 8, groups[6] & 255, groups[7] >> 8, groups[7] & 255].join(".");
+  }
+  return `${groups.slice(0, 4).map((g) => g.toString(16)).join(":")}::/64`;
 }
