@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-24T00:40:00Z",
   "lease_until": "2026-11-24T03:40:00Z",
-  "updated_at": "2026-11-24T00:55:00Z",
-  "expected_next_update_by": "2026-11-24T01:40:00Z",
+  "updated_at": "2026-11-24T00:45:00Z",
+  "expected_next_update_by": "2026-11-24T01:30:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "f20cc848",
-    "next_step": "fix AUD-B-10, AUD-B-05, AUD-B-13, AUD-B-20"
+    "next_step": "npm test, merge main, check_all, owners.py, handoff, ready"
   },
   "precheck": null,
   "gate_request": null,
@@ -26,7 +26,7 @@
       "from": "FX2",
       "to": "lead",
       "blocking": true,
-      "ask": "Grant server/test/casts.test.mjs, server/test/rest.test.mjs and server/test/setup.mjs (no task in flight owns them; owners.py: the lead does) to FX2-5-auth-lows as exceptions. RB-25's fix (51c133ad) checks each replay manifest member's form byte against the character's form. These three files build manifests without `form`, which the device always writes, so 11 tests fail (casts 3, rest 2, security_deep_heists 2, and 4 through setup.mjs's crewed). The test expectations encoded the defect. The correction is one line in each: add `form: c.wire.form,` after `kind: \u2026indexOf(c.kind),` (casts.test.mjs:27, rest.test.mjs:21, setup.mjs:166). With it, npm test passes 578 of 578. Details: docs/progress/FX2.md, 'FX2-R1'.",
+      "ask": "Grant server/test/casts.test.mjs, server/test/rest.test.mjs and server/test/setup.mjs (no task in flight owns them; owners.py: the lead does) to FX2-5-auth-lows as exceptions. RB-25's fix (51c133ad) checks each replay manifest member's form byte against the character's form. These three files build manifests without `form`, which the device always writes, so 11 tests fail (casts 3, rest 2, security_deep_heists 2, and 4 through setup.mjs's crewed). The test expectations encoded the defect. The correction is one line in each: add `form: c.wire.form,` after `kind: …indexOf(c.kind),` (casts.test.mjs:27, rest.test.mjs:21, setup.mjs:166). With it, npm test passes 578 of 578. Details: docs/progress/FX2.md, 'FX2-R1'.",
       "files": [
         "server/test/casts.test.mjs",
         "server/test/rest.test.mjs",
@@ -36,6 +36,20 @@
       "default": "The three files are granted as FX2-5-auth-lows's exceptions. FX2 applies the three one-line corrections in a commit naming RB-25, runs npm test (578/578), merges main, runs check_all and owners.py, and sets ready.",
       "escalate_to": "lead",
       "state": "answered"
+    },
+    {
+      "id": "FX2-R2",
+      "from": "FX2",
+      "to": "lead",
+      "blocking": false,
+      "ask": "Grant server/declarations.md to FX2-8-audit-b-lows as an exception. It is written by node server/src/privacy.mjs --write from server/privacy.json (a task file), and privacy.test.mjs fails if it drifts, so AUD-B-13's rewording of privacy.json (6f61d03a) changes it by the same three lines. No task in flight owns it; SV-B7-B9 held both files the same way. Without it owners.py diff fails on that one file.",
+      "files": [
+        "server/declarations.md"
+      ],
+      "due": "2026-11-24T03:00:00Z",
+      "default": "server/declarations.md is added to FX2-8-audit-b-lows's exceptions; the regenerated file stays in 6f61d03a, and FX2 marks the task ready once owners.py diff passes with it.",
+      "escalate_to": "lead",
+      "state": "open"
     }
   ],
   "answers": [
