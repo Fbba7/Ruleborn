@@ -2,7 +2,7 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026. Phase 2 started on 12 November 2026 (lead cycle 70): P1-AD-board-1d let board 1 stand and phase 1's other exit criteria hold (report.md section 3.2); its first tasks are the flow findings (S1, S2) and board 1's note G (AIA-2), within the same cap of three. Since 12 November 2026, about 20:00Z, the cap is four UI builders by the owner's order (CLAUDE.md order 3; three while the seven-day bar reads allowed_warning). Phase 3 (polish and harden, report.md step 12) started on 17 November 2026 (lead cycle 118) under M49: every phase 2 task was merged by 06:55Z, the exit review ran in cycle 118 (boards 3, 4 and 5 stand, board 2 waits on the deferred icon batch 4 by D13 (c), the exceptions queue is empty, every screen passes the gate but result at 200% pt_BR, Hierarchy, which P3-S1-result-7 takes), and the first blind audit (O6) is carried into phase 3 as P3-AD-audit-1. Phase 3 draws from the 20-hour reserve; it exits when no board has an open objection, the second blind audit is done and the wave board (O7) stands. The bug-fix wave started on 21 November 2026 by the owner's order (CLAUDE.md order 1, entry of 21 November): the UI is paused (P3-S3-settings-4, P4-S1-heist-vault and P4-S2-home-purse parked with their work on their branches; the BT track stays parked) while up to four fix builders, FX1 to FX4 within the cap of four, fix the 60 confirmed defects of docs/security/bug-report-2026-11.md, highs first, each with a test that fails before the fix, then recheck the four unproven candidates (7, 21, 23, 34) and audit the code the report did not read (findings in docs/security/audit-2026-11/, from which the lead files fix tasks). The FX tasks' phase is 'fix'; the UI resumes at phase 3 when every FX task is merged.",
   "wave": "Bug-fix wave",
   "phase": 3,
-  "updated_at": "2026-11-24T04:25:00Z",
+  "updated_at": "2026-11-24T05:35:00Z",
   "updated_by": "lead (cycle 171)",
   "stop_at": "2026-11-24T21:00:00Z",
   "lease_hours": 3,
@@ -114,57 +114,6 @@
       "ready_sha": "087a3a2f790b2e735570778fff2be88b07309b22",
       "merged_sha": "23cf8a9012a5154854bc594f885a1d8537eed089",
       "updated_at": "2026-11-21T16:07:15Z",
-      "updated_by": "lead"
-    },
-    {
-      "id": "FX3-2-island",
-      "title": "Medium and low, island.rs: RB-40 (an entrance inside a wall or on the Vault; EntranceBlocked plus its server/src/sim.mjs PROBLEMS entry), RB-50 (the law tool on the Vault deletes that law), RB-57 (a ward or pylon on a guard in tall grass leaves the island unpublishable); then the unproven candidates 7 (the same law woven twice) and 34 (a covered tunnel mouth still an exit) confirmed or rejected",
-      "phase": "fix",
-      "role": "FX3",
-      "model": "Opus 5.5",
-      "assigned_to": "FX3",
-      "files": [
-        "sim/**",
-        "server/src/sim.mjs",
-        "server/src/lab.mjs",
-        "server/test/lab.test.mjs",
-        "server/test/security_sim.test.mjs",
-        "server/test/security_deep_sim.test.mjs",
-        "server/test/stability.test.mjs",
-        "server/test/fix_fx3_*",
-        "docs/security/audit-2026-11/sim.md"
-      ],
-      "deps": [
-        "FX3-1-heal-alarm"
-      ],
-      "done_when": [
-        "each of RB-40, RB-50, RB-57 in docs/security/bug-report-2026-11.md (its Where, Input, Should happen and Fix): first a test that reproduces the entry's input and fails on current main, committed on its own before the fix, its failure output quoted in the handoff; then the smallest fix that makes it pass, following the report's Fix line unless the handoff says why not; the commit names the RB id",
-        "candidates 7 and 34 of the report's 'Batch 2: unproven': a test that tries to reproduce each; a reproduced one is fixed in this task with its fail-first test; one that cannot be reproduced is written under 'Unproven, rechecked' in docs/security/audit-2026-11/sim.md with what was tried",
-        "sim/golden/*.rbh rebaked only if a fix changes a golden replay's outcome, each change named",
-        "no existing test is skipped, disabled or loosened; a test whose expectation encoded the defect is corrected and named in the handoff",
-        "cargo test in sim, then cd server && npm test (the server loads the rebuilt wasm) passes",
-        "current main merged into the branch, then the fresh-container setup line and bash tools/check_all.sh rerun on that merge, said in the handoff evidence (M11, M13)",
-        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed outside the task's files (M48)",
-        "bash tools/check_all.sh"
-      ],
-      "gate_items": [],
-      "attempts": 0,
-      "estimate_h": 4.0,
-      "tier": 1,
-      "critical": false,
-      "state": "merged",
-      "claim": {
-        "agent": "FX3",
-        "branch": "claude/fix-sim",
-        "claimed_at": "2026-11-21T17:53:00Z",
-        "seen_at": "2026-11-21T18:02:19Z",
-        "lease_until": "2026-11-21T20:53:00Z"
-      },
-      "prior_branch": null,
-      "prior_sha": null,
-      "ready_sha": "16a5a961c7f48973ec4cd63f72f6cde9e719d1df",
-      "merged_sha": "c7cdcbbd28a81dc244f363e3cca55623ef05e1b7",
-      "updated_at": "2026-11-21T19:11:00Z",
       "updated_by": "lead"
     },
     {
@@ -354,14 +303,20 @@
       "estimate_h": 1.0,
       "tier": 2,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "working",
+      "claim": {
+        "agent": "FX4",
+        "branch": "claude/fix-client",
+        "claimed_at": "2026-11-24T05:00:00Z",
+        "seen_at": "2026-11-24T05:42:00Z",
+        "lease_until": "2026-11-24T08:00:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-24T02:30:00Z",
-      "updated_by": "lead (cycle 169)"
+      "updated_at": "2026-11-24T05:44:00Z",
+      "updated_by": "lead (cycle 172)"
     },
     {
       "id": "FX4-7-curation-swap-weave",
@@ -445,63 +400,6 @@
       "updated_by": "lead (cycle 169)"
     },
     {
-      "id": "FX2-8-audit-b-lows",
-      "title": "Medium and low, server, from FX2-6's audit: AUD-B-05 (after a wrong Google account the deletion page cannot be retried; auth_http.mjs and server/web/delete.html), AUD-B-10 (a token key named constructor is refused as named twice; tokens.mjs), AUD-B-13 (the privacy page names repository files and functions, with privacy.json's 'withdraw choice an object' rechecked; server/privacy.json), AUD-B-20 (the free plan's daily-player capacity ignores the daily share; server/load.mjs and load.json)",
-      "phase": "fix",
-      "role": "FX2",
-      "model": "Opus 5.5",
-      "assigned_to": "FX2",
-      "files": [
-        "server/src/auth_http.mjs",
-        "server/web/delete.html",
-        "server/src/tokens.mjs",
-        "server/privacy.json",
-        "server/load.mjs",
-        "server/load.json",
-        "server/test/fix_fx2_audit_auth.test.mjs",
-        "server/test/fix_fx2_audit_privacy.test.mjs",
-        "server/test/fix_fx2_audit_load.test.mjs",
-        "server/test/fix_fx2_open.mjs",
-        "server/test/fix_fx2_*",
-        "docs/security/audit-2026-11/server-b.md"
-      ],
-      "deps": [
-        "FX2-7-audit-b-config"
-      ],
-      "done_when": [
-        "each of AUD-B-05, AUD-B-10, AUD-B-13, AUD-B-20 in docs/security/audit-2026-11/server-b.md (its Where, Input, Should happen and Fix): its proof already runs on main inside stillOpen() (server/test/fix_fx2_open.mjs); turn that wrapper back into the plain proof and see it fail on main, committed on its own before the fix, its failure output quoted in the handoff; then the smallest fix that makes it pass, following the entry's Fix line unless the handoff says why not; the commit names the finding id",
-        "AUD-B-20: load.json rewritten by its generator, not by hand; a capacity note outside the task's files that quotes the old figure is named in the handoff as a request to the lead, with a default",
-        "each fixed entry's State in server-b.md's summary reads 'fixed (FX2-8-audit-b-lows)'",
-        "no existing test is skipped, disabled or loosened; a test whose expectation encoded the defect is corrected and named in the handoff",
-        "cd server && npm test passes",
-        "current main merged into the branch, then the fresh-container setup line and bash tools/check_all.sh rerun on that merge, said in the handoff evidence (M11, M13)",
-        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed outside the task's files (M48)",
-        "bash tools/check_all.sh"
-      ],
-      "gate_items": [],
-      "attempts": 0,
-      "estimate_h": 2.0,
-      "tier": 2,
-      "critical": false,
-      "state": "merged",
-      "claim": {
-        "agent": "FX2",
-        "branch": "claude/fix-server-b",
-        "claimed_at": "2026-11-24T00:40:00Z",
-        "seen_at": "2026-11-24T01:20:00Z",
-        "lease_until": "2026-11-24T03:40:00Z"
-      },
-      "prior_branch": null,
-      "prior_sha": null,
-      "ready_sha": "4d3e779c6f763dfccd9b80f33e360d833d1bcafa",
-      "merged_sha": "cd5f98fb",
-      "updated_at": "2026-11-24T01:25:00Z",
-      "updated_by": "lead (cycle 169)",
-      "exceptions": [
-        "server/declarations.md"
-      ]
-    },
-    {
       "id": "FX2-9-audit-b-match",
       "title": "Medium and low, server matchmaking, from FX2-6's audit: AUD-B-01 (the hourly target lists fix an absent island owner's tier price, by opening a season standing; matchmaking.mjs live and fresh) and AUD-B-06 (a republished island keeps its old chapter in the target list; matchmaking.mjs current); with FX1-R11 (FX1-A-07, the same defect as AUD-B-06) and FX1-R9 (FX1-A-09, offer()'s echoes flag)",
       "phase": "fix",
@@ -540,7 +438,7 @@
       "estimate_h": 1.25,
       "tier": 2,
       "critical": false,
-      "state": "ready",
+      "state": "merged",
       "claim": {
         "agent": "FX2",
         "branch": "claude/fix-server-b",
@@ -551,8 +449,8 @@
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": "f2181cf5",
-      "merged_sha": null,
-      "updated_at": "2026-11-24T04:55:00Z",
+      "merged_sha": "6e5045e3",
+      "updated_at": "2026-11-24T05:31:00Z",
       "updated_by": "lead (cycle 171)"
     },
     {
@@ -591,14 +489,23 @@
       "estimate_h": 1.25,
       "tier": 2,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "ready",
+      "claim": {
+        "agent": "FX2",
+        "branch": "claude/fix-server-b",
+        "claimed_at": "2026-11-24T05:05:00Z",
+        "seen_at": "2026-11-24T05:42:00Z",
+        "lease_until": "2026-11-24T08:05:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
+      "ready_sha": "5281e8fbbaf0a55605b0a0c2d0293ff2f3fcedfe",
       "merged_sha": null,
-      "updated_at": "2026-11-24T04:30:00Z",
-      "updated_by": "lead (cycle 171)"
+      "updated_at": "2026-11-24T05:44:00Z",
+      "updated_by": "lead (cycle 172)",
+      "exceptions": [
+        "server/test/setup.mjs"
+      ]
     },
     {
       "id": "FX3-6-audit-universe",
@@ -671,61 +578,20 @@
       "estimate_h": 3.0,
       "tier": 1,
       "critical": false,
-      "state": "working",
+      "state": "ready",
       "claim": {
         "agent": "FX3",
         "branch": "claude/fix-sim",
         "claimed_at": "2026-11-24T03:02:00Z",
-        "seen_at": "2026-11-24T03:45:00Z",
-        "lease_until": "2026-11-24T06:02:00Z"
+        "seen_at": "2026-11-24T05:42:00Z",
+        "lease_until": "2026-11-24T07:01:00Z"
       },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
+      "ready_sha": "1ecd419f9bb55accfe5b00f8e675edde253ef0ad",
       "merged_sha": null,
-      "updated_at": "2026-11-24T03:45:00Z",
-      "updated_by": "lead (cycle 170)"
-    },
-    {
-      "id": "FX1-7-audit-tools",
-      "title": "Audit, last: tools/ (outside tools/vendor/), the art scripts in art/design and art/ui, the client prototypes and the docs scripts, read-only, for defects that would let a check pass when it should fail or corrupt a committed file",
-      "phase": "fix",
-      "role": "FX1",
-      "model": "Opus 5.5",
-      "assigned_to": "FX1",
-      "files": [
-        "docs/security/audit-2026-11/tools.md",
-        "server/test/fix_fx1_audit_tools*"
-      ],
-      "deps": [
-        "FX1-6-audit-server-a"
-      ],
-      "done_when": [
-        "read the folders named in the title, read-only for defects of the report's kind (wrong results, contract mismatches between client and server, races, missing checks); each finding written to docs/security/audit-2026-11/tools.md with Where, Input, Should happen, Happens, a proof (a test that fails on main, committed under the task's test files and kept failing-free by marking it with the finding id in a comment, not by skipping) and a proposed fix, in the report's format and priority levels",
-        "a finding is proven before it is listed as confirmed; one that could not be proven is listed as unproven with what was tried; the lead files fix tasks from the confirmed ones",
-        "the audit fixes nothing outside a proven finding; small proven fixes inside the task's files may ride this task, each with its fail-first test",
-        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready (M48)",
-        "bash tools/check_all.sh"
-      ],
-      "gate_items": [],
-      "attempts": 0,
-      "estimate_h": 4.0,
-      "tier": 2,
-      "critical": false,
-      "state": "ready",
-      "claim": {
-        "agent": "FX1",
-        "branch": "claude/fix-server-a",
-        "claimed_at": "2026-11-24T03:39:29Z",
-        "seen_at": "2026-11-24T04:55:00Z",
-        "lease_until": "2026-11-24T06:39:29Z"
-      },
-      "prior_branch": null,
-      "prior_sha": null,
-      "ready_sha": "b30765cd",
-      "merged_sha": null,
-      "updated_at": "2026-11-24T04:55:00Z",
-      "updated_by": "lead (cycle 171)"
+      "updated_at": "2026-11-24T05:44:00Z",
+      "updated_by": "lead (cycle 172)"
     },
     {
       "id": "FX1-8-server-a-lows",
@@ -771,14 +637,198 @@
       "estimate_h": 3.0,
       "tier": 1,
       "critical": false,
+      "state": "claimed",
+      "claim": {
+        "agent": "FX1",
+        "branch": "claude/fix-server-a",
+        "claimed_at": "2026-11-24T05:35:00Z",
+        "seen_at": "2026-11-24T05:42:00Z",
+        "lease_until": "2026-11-24T08:35:00Z"
+      },
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-24T05:44:00Z",
+      "updated_by": "lead (cycle 172)"
+    },
+    {
+      "id": "FX1-9-tools-gate",
+      "title": "High and medium, gate and coordination tools, from FX1-7's audit (FX1-R20; docs/security/audit-2026-11/tools.md): FX1-T-03 first (run_checks.sh record writes exit 0 for a FAIL run), then FX1-T-04 (a leftover child turns a failed run into PASS), FX1-T-09 (nothing notices a stale dependencies.md), FX1-T-22 (the gate never runs build_stamp's escaped-markup check), FX1-T-08 (check_ci passes wider permissions and a commented-out command) and FX1-T-05 (owners.py misses overlaps of ? and [..] globs and of an exclusion with a re-inclusion)",
+      "phase": "fix",
+      "role": "FX3",
+      "model": "Opus 5.5",
+      "assigned_to": "FX3",
+      "files": [
+        "tools/run_checks.sh",
+        "tools/check_all.sh",
+        "tools/check_dependencies.py",
+        "tools/build_stamp.py",
+        "tools/audit_register.py",
+        "tools/check_ci.py",
+        "tools/coord/owners.py",
+        "docs/guides/agent-protocol.md",
+        "server/test/fix_fx1_audit_tools*",
+        "server/test/fix_fx1_tools_gate*",
+        "docs/security/audit-2026-11/tools.md"
+      ],
+      "deps": [
+        "FX1-7-audit-tools"
+      ],
+      "done_when": [
+        "each finding named in the title: its proof's stillOpen entry in server/test/fix_fx1_audit_tools_proofs.mjs (wrapped by fix_fx1_audit_tools.test.mjs) moved into a plain test under server/test/fix_fx1_tools_gate*, committed on its own before its fix and failing on current main, its failure output quoted in the handoff; then the smallest fix, following the entry's Fix line in tools.md unless the handoff says why not; the commit names the finding id",
+        "FX1-T-03: record writes the run's real state and exit; agent-protocol.md's reuse rule also requires the pre-check's state PASS (summary 'All checks passed.'), not only exit 0",
+        "each fixed entry's State in docs/security/audit-2026-11/tools.md reads 'fixed (<task_id>)'",
+        "no existing test is skipped, disabled or loosened; a test whose expectation encoded the defect is corrected and named in the handoff",
+        "cd server && npm test passes",
+        "current main merged into the branch, then the fresh-container setup line and bash tools/check_all.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed outside the task's files (M48)",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 3.0,
+      "tier": 1,
+      "critical": false,
       "state": "open",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-24T02:40:00Z",
-      "updated_by": "lead (cycle 169)"
+      "updated_at": "2026-11-24T05:44:00Z",
+      "updated_by": "lead (cycle 172)"
+    },
+    {
+      "id": "FX1-10-tools-contract",
+      "title": "Medium/high and medium, contract and status tools, from FX1-7's audit (FX1-R21; docs/security/audit-2026-11/tools.md): FX1-T-20 (nine server failure codes client_contract.py never reads, none with an ERR_ row), FX1-T-21 (client calls outside client/data never checked), FX1-T-01 (server/status.py lets a passing test hide a failing one of the same name) and FX1-T-02 (a skipped test recorded as passed; client/status.py parses the same way)",
+      "phase": "fix",
+      "role": "FX1",
+      "model": "Opus 5.5",
+      "assigned_to": "FX1",
+      "files": [
+        "tools/client_contract.py",
+        "server/status.py",
+        "client/status.py",
+        "client/i18n/strings.csv",
+        "server/test/fix_fx1_audit_tools*",
+        "server/test/fix_fx1_tools_contract*",
+        "docs/security/audit-2026-11/tools.md"
+      ],
+      "deps": [
+        "FX1-9-tools-gate",
+        "FX4-7-curation-swap-weave"
+      ],
+      "done_when": [
+        "each finding named in the title: its proof's stillOpen entry in server/test/fix_fx1_audit_tools_proofs.mjs (wrapped by fix_fx1_audit_tools.test.mjs) moved into a plain test under server/test/fix_fx1_tools_contract*, committed on its own before its fix and failing on current main, its failure output quoted in the handoff; then the smallest fix, following the entry's Fix line in tools.md unless the handoff says why not; the commit names the finding id",
+        "FX1-T-20: the nine ERR_ rows are added to client/i18n/strings.csv (tools.md names it client/ui/strings.csv; the file is client/i18n/strings.csv), in every language column, granted by the strings' owner (the lead, cycle 171)",
+        "each fixed entry's State in docs/security/audit-2026-11/tools.md reads 'fixed (<task_id>)'",
+        "no existing test is skipped, disabled or loosened; a test whose expectation encoded the defect is corrected and named in the handoff",
+        "cd server && npm test passes",
+        "current main merged into the branch, then the fresh-container setup line and bash tools/check_all.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed outside the task's files (M48)",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 2.5,
+      "tier": 1,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-24T05:35:00Z",
+      "updated_by": "lead (cycle 171)"
+    },
+    {
+      "id": "FX1-11-tools-docs",
+      "title": "Medium and low, document checks, from FX1-7's audit (FX1-R22; docs/security/audit-2026-11/tools.md): FX1-T-10 (three-digit register ids such as D100 unseen), FX1-T-17 (two self-tests plant into committed files and leave the plant if killed), FX1-T-11 (check_document treats an unknown tracked id as open) and FX1-T-12 (check_one_fact_home misses a restatement with a type annotation)",
+      "phase": "fix",
+      "role": "FX1",
+      "model": "Opus 5.5",
+      "assigned_to": "FX1",
+      "files": [
+        "tools/check_findings_fresh.py",
+        "tools/check_docs_consistency.py",
+        "tools/check_audit_ui.py",
+        "tools/validate_content.py",
+        "tools/check_document.py",
+        "server/test/fix_fx1_audit_tools*",
+        "server/test/fix_fx1_tools_docs*",
+        "docs/security/audit-2026-11/tools.md"
+      ],
+      "deps": [
+        "FX1-10-tools-contract"
+      ],
+      "done_when": [
+        "each finding named in the title: its proof's stillOpen entry in server/test/fix_fx1_audit_tools_proofs.mjs (wrapped by fix_fx1_audit_tools.test.mjs) moved into a plain test under server/test/fix_fx1_tools_docs*, committed on its own before its fix and failing on current main, its failure output quoted in the handoff; then the smallest fix, following the entry's Fix line in tools.md unless the handoff says why not; the commit names the finding id",
+        "each fixed entry's State in docs/security/audit-2026-11/tools.md reads 'fixed (<task_id>)'",
+        "no existing test is skipped, disabled or loosened; a test whose expectation encoded the defect is corrected and named in the handoff",
+        "cd server && npm test passes",
+        "current main merged into the branch, then the fresh-container setup line and bash tools/check_all.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed outside the task's files (M48)",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 2.0,
+      "tier": 1,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-24T05:35:00Z",
+      "updated_by": "lead (cycle 171)"
+    },
+    {
+      "id": "FX1-12-tools-ui",
+      "title": "Medium and low, UI tools, from FX1-7's audit (FX1-R23; docs/security/audit-2026-11/tools.md): FX1-T-07 (check_screens counts no texture for single quotes or an upper-case extension), FX1-T-06 (build_tokens.mjs --check passes anything under a path with a space), FX1-T-13 (bake.js paginate makes pages taller than MAX_SIDE), FX1-T-14 (check_screens --root passes a folder with no screens), FX1-T-15 (a fill cleared on one branch only is excused), FX1-T-16 (budget_shots --record cannot record a new screen), FX1-T-18 (golden.py passes when labels-blind.md is missing) and FX1-T-19 (sheet.py crops crashes on a name with a slash)",
+      "phase": "fix",
+      "role": "FX1",
+      "model": "Opus 5.5",
+      "assigned_to": "FX1",
+      "files": [
+        "tools/ui_bake/check_screens.py",
+        "tools/ui_bake/bake.js",
+        "tools/ui_bake/budget_shots.py",
+        "tools/ui_gate/golden.py",
+        "tools/ui_gate/sheet.py",
+        "art/ui/board/build_tokens.mjs",
+        "server/test/fix_fx1_audit_tools*",
+        "server/test/fix_fx1_tools_ui*",
+        "docs/security/audit-2026-11/tools.md"
+      ],
+      "deps": [
+        "FX1-11-tools-docs"
+      ],
+      "done_when": [
+        "each finding named in the title: its proof's stillOpen entry in server/test/fix_fx1_audit_tools_proofs.mjs (wrapped by fix_fx1_audit_tools.test.mjs) moved into a plain test under server/test/fix_fx1_tools_ui*, committed on its own before its fix and failing on current main, its failure output quoted in the handoff; then the smallest fix, following the entry's Fix line in tools.md unless the handoff says why not; the commit names the finding id",
+        "each fixed entry's State in docs/security/audit-2026-11/tools.md reads 'fixed (<task_id>)'",
+        "no existing test is skipped, disabled or loosened; a test whose expectation encoded the defect is corrected and named in the handoff",
+        "cd server && npm test passes",
+        "current main merged into the branch, then the fresh-container setup line and bash tools/check_all.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed outside the task's files (M48)",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 3.0,
+      "tier": 1,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-24T05:35:00Z",
+      "updated_by": "lead (cycle 171)"
     },
     {
       "id": "P3-S3-offline-1",

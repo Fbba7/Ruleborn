@@ -3,24 +3,19 @@
   "role": "FX2",
   "branch": "claude/fix-server-b",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "FX2-8-audit-b-lows",
-  "task_state": "blocked",
-  "claimed_at": "2026-11-24T00:40:00Z",
-  "lease_until": "2026-11-24T03:40:00Z",
-  "updated_at": "2026-11-24T01:20:00Z",
-  "expected_next_update_by": null,
+  "agent_state": "active",
+  "task_id": "FX2-9-audit-b-match",
+  "task_state": "working",
+  "claimed_at": "2026-11-24T03:40:00Z",
+  "lease_until": "2026-11-24T06:40:00Z",
+  "updated_at": "2026-11-24T04:05:00Z",
+  "expected_next_update_by": "2026-11-24T05:05:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "4d3e779c",
-    "next_step": "FX2-R2 granted: owners.py diff passes, 4d3e779c ready (pre-checked PASS)"
+    "last_green_sha": "4a0e2258",
+    "next_step": "merge main, full check, owners diff"
   },
-  "precheck": {
-    "sha": "4d3e779c6f763dfccd9b80f33e360d833d1bcafa",
-    "exit": 0,
-    "finished_at": "2026-11-24T01:17:59Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-24T21:00:00Z",
@@ -31,7 +26,7 @@
       "from": "FX2",
       "to": "lead",
       "blocking": true,
-      "ask": "Grant server/test/casts.test.mjs, server/test/rest.test.mjs and server/test/setup.mjs (no task in flight owns them; owners.py: the lead does) to FX2-5-auth-lows as exceptions. RB-25's fix (51c133ad) checks each replay manifest member's form byte against the character's form. These three files build manifests without `form`, which the device always writes, so 11 tests fail (casts 3, rest 2, security_deep_heists 2, and 4 through setup.mjs's crewed). The test expectations encoded the defect. The correction is one line in each: add `form: c.wire.form,` after `kind: …indexOf(c.kind),` (casts.test.mjs:27, rest.test.mjs:21, setup.mjs:166). With it, npm test passes 578 of 578. Details: docs/progress/FX2.md, 'FX2-R1'.",
+      "ask": "Grant server/test/casts.test.mjs, server/test/rest.test.mjs and server/test/setup.mjs (no task in flight owns them; owners.py: the lead does) to FX2-5-auth-lows as exceptions. RB-25's fix (51c133ad) checks each replay manifest member's form byte against the character's form. These three files build manifests without `form`, which the device always writes, so 11 tests fail (casts 3, rest 2, security_deep_heists 2, and 4 through setup.mjs's crewed). The test expectations encoded the defect. The correction is one line in each: add `form: c.wire.form,` after `kind: \u2026indexOf(c.kind),` (casts.test.mjs:27, rest.test.mjs:21, setup.mjs:166). With it, npm test passes 578 of 578. Details: docs/progress/FX2.md, 'FX2-R1'.",
       "files": [
         "server/test/casts.test.mjs",
         "server/test/rest.test.mjs",
@@ -54,7 +49,7 @@
       "due": "2026-11-24T03:00:00Z",
       "default": "server/declarations.md is added to FX2-8-audit-b-lows's exceptions; the regenerated file stays in 6f61d03a. 4d3e779c is then ready: npm test 614/614, check_all PASS (precheck above), and owners.py diff passes with the exception. The lead may take it as ready_sha without a new FX2 session.",
       "escalate_to": "lead",
-      "state": "open"
+      "state": "answered"
     }
   ],
   "answers": [
