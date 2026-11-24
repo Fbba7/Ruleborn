@@ -5,15 +5,18 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "BT-04a",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-24T19:40:00Z",
   "lease_until": "2026-11-24T22:40:00Z",
-  "updated_at": "2026-11-24T19:40:00Z",
-  "expected_next_update_by": "2026-11-24T20:25:00Z",
-  "long_run": null,
+  "updated_at": "2026-11-24T19:55:00Z",
+  "expected_next_update_by": null,
+  "long_run": {
+    "log": "/tmp/check-0fa163259b80a8daa7fcec4fe8b42976c1d6a37d.log",
+    "expected_end": "2026-11-24T20:30:00Z"
+  },
   "progress_marker": {
-    "last_green_sha": "f1df3f1e",
-    "next_step": "BT-04a resync (cycle 186): reproduce render.py's read-only-HOME failure under run_checks.sh's bwrap sandbox, then fix it"
+    "last_green_sha": "ba6b3ab5",
+    "next_step": "full pre-check of 0fa16325 running; then mark BT-04a ready"
   },
   "precheck": {
     "sha": "f1df3f1e38597bd00aff05103a618ad431071578",
