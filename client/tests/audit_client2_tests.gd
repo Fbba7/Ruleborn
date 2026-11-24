@@ -59,6 +59,8 @@ func run() -> void:
 	await _collect_all_clears_another_changes_busy()
 	await _replay_shows_orders_from_its_end()
 	await _replay_of_another_crew_keeps_the_old_one()
+	await _planner_drops_the_cards_owner()
+	await _defences_trace_drops_across_and_owner()
 
 
 ## Audit finding <id>: proven, not fixed here. `holds` is whether the defect
@@ -343,3 +345,43 @@ func _replay_of_another_crew_keeps_the_old_one() -> void:
 	view.queue_free()
 	fresh.queue_free()
 	await tree.process_frame
+
+
+## CLI-8: the Observatory's card is one holder's island, and the lease names
+## none, so server/src/service.mjs line 458 leases its first holder by
+## account. The server's card carries no owner (observatory.mjs `card`), and
+## the planner drops one if it did: Start's target is the bundle, the Trace
+## and `across` only, and heist_screen.gd line 237 leases with its `owner`.
+func _planner_drops_the_cards_owner() -> void:
+	var s := _plain("owner", FakeTransport.new())
+	var d := PlannerTests.slices()
+	s.store.dispatch(&"keeper_loaded", {"view": d["keeper"]["view"]})
+	s.store.dispatch(&"roster_loaded", {"view": d["roster"]["view"]})
+	s.store.dispatch(&"sages_loaded", {"view": d["sages"]["view"]})
+	s.store.dispatch(&"codex_loaded", {"view": d["codex"]["view"], "changes": 0})
+	var card: Dictionary = (d["planner"]["target"] as Dictionary).duplicate(true)
+	card["owner"] = "acct-b"
+	s.observatory_flow.raid(card)
+	for id: int in [1, 2, 3]:
+		s.planner_flow.toggle(id)
+	s.planner_flow.start()
+	var target: Dictionary = s.store.get_slice(AppState.HEIST).get("target", {})
+	_still_open("CLI-8", "a target card that names its owner is started with no owner, so the lease goes to the "
+			+ "bundle's first holder, not the player the card showed (§12.4, §12.5)",
+		target.get("bundle") == card["bundle"] and not target.has("owner"), "%s" % target)
+	s.close()
+
+
+## CLI-9: Defences' Trace (server/src/defences.mjs line 74) is the raider's
+## bundle alone, with no `across`, where the Observatory's Trace card of the
+## same raider has it. The controller passes on neither `across` nor an
+## owner, so the Trace is leased as the Heart alone, where §5.4's skiffs
+## cannot land, even when the raider's realms make a universe.
+func _defences_trace_drops_across_and_owner() -> void:
+	var s := _plain("trace", FakeTransport.new())
+	s.defences_flow.trace({"heist": "h9", "trace": {"bundle": "r1", "across": true, "owner": "acct-r"}})
+	var target: Dictionary = s.store.get_slice(AppState.HEIST).get("target", {})
+	_still_open("CLI-9", "a Defences Trace is started as the raider's bundle and the Trace alone: a trace that says "
+			+ "it crosses a universe, or names its raider, is leased as the Heart alone (§5.4, §12.3)",
+		target == {"bundle": "r1", "trace": true}, "%s" % target)
+	s.close()
