@@ -5,6 +5,72 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 169**, 24 November 2026, from about 00:30Z (session
+  `session_01SNkKxnXrzUVLGqiGNmw1FR`, started by the Opus 5.5 launcher).
+  **Merged** five tasks:
+  - FX2-7-audit-b-config (AUD-B-14 to B-19) at bc7f27e8, from 0006a4d9.
+    The full `check_all` on main failed twice for reasons in the
+    container, not the code: the Godot cache under `/root/.cache` was
+    read-only, and the crates index could not be resolved. The fixes were
+    to fetch Godot 4.7.2 against its pinned SHA-512 and to run
+    `cargo fetch --locked`. The third run passed.
+  - FX2-8-audit-b-lows (B-05, B-10, B-13, B-20) at cd5f98fb, from 4d3e779c,
+    after FX2-R2 was granted (`server/declarations.md` added to its
+    files). Main passed, server 614 of 614.
+  - FX3-6-audit-universe at 5293e6b7 (from 92dda030) and FX4-4-audit-client
+    at d5c16216 (from 7a657582). Both candidates passed: 1d9b23b2 for
+    FX3-6, then 9a74dbe4 for FX3-6 and FX4-4 together. Main's tree after
+    the two merges differs from 9a74dbe4 only under `docs/progress`.
+  - FX1-6-audit-server-a at ddf4213d, from 01cb97ac. Candidate 357efa6d
+    passed: server 631 of 631, sim 362 of 362, client 468 of 468.
+
+  Every merge passed `owners.py diff`, and the merge lock is cleared.
+  The audit and roadmap pages were regenerated and committed but not
+  republished, as in cycles 162 and 163.
+
+  **Answered:** FX3-R2 and FX3-R3; they seeded FX2-10-curated-woven-law
+  and FX4-6-device-replay-cap. FX1-R3 to FX1-R11 are answered in
+  `requests.md`:
+  - R10: Renown is pulled once for each season that ended.
+  - R9: the echoes flag means "an echo is in the offered list".
+  - R11: FX1-A-07 is AUD-B-06.
+
+  **Decided:** CLI-1 (the curation swap of a woven law) is fixed on the
+  client side, and SR-16 stays. By §5.6 a slot being woven is empty.
+  After the weave is accepted, the client publishes the island without
+  the swapped-out law's pylon and shows the slot as weaving, with its
+  ready time. The new pylon is published once the weave is done. The
+  player is never charged for a change that is refused.
+
+  **Seeded:**
+  - from `client.md`: FX4-7-curation-swap-weave (CLI-1),
+    FX4-8-rehearsal-rerun (CLI-18) and FX3-7-audit-client-2. FX3-7
+    proves or rejects CLI-3, 8, 9, 16, 17, 19, 20 and 21, and reads what
+    FX4-4 left unread.
+  - from FX1's requests: FX1-8-server-a-lows (FX1-A-02, 10, 13, 15, 16
+    and 17, AUD-B-18's residual, R10).
+
+  **Changed:**
+  - FX2-9's title and done_when now take in FX1-R9 and FX1-R11.
+  - FX4-6 now also proves or rejects CLI-23 with a cargo test.
+  - The `fix_fx1_*` and `fix_fx2_*` file globs of FX1-7, FX2-9 and FX2-10
+    were narrowed so the tasks in flight own disjoint files.
+  - The Tasks lines of FX1 to FX4's prompts list the new tasks.
+
+  **Started**, on Opus 5.5 at effort high, within the cap of four:
+  - FX2 on FX2-8 (00:33Z, merged since), then on FX2-9-audit-b-match
+    (`session_01SNkKxpD4TA2PFjhTUKW8Eb`, 03:38Z)
+  - FX3 on FX3-7-audit-client-2 (`session_01SNkKxozbMJGfAJWTEzLykF`,
+    02:58Z)
+  - FX4 on FX4-5-problem-strings (`session_01SNkKxopnk1iG9R76L2ujyU`,
+    02:58Z)
+  - FX1 on FX1-7-audit-tools (`session_01SNkKxppNySHfW7azVquQXU`, 03:38Z)
+
+  **Next:** merge each as it turns ready. Then FX1-8 (after FX2-9),
+  FX2-10, and FX4-6 to FX4-8 in order. Then the UI: once every FX task
+  is merged, unpark P3-S3-settings-4, P4-S1-heist-vault,
+  P4-S2-home-purse and the BT track.
+
 - **Cycle 168**, 23 November 2026, from about 23:13Z (session
   `session_01SNkKxn1dZLeKHPjZ3mFguK`, started by the Opus 5.5 launcher).
   Bookkeeping only. **Merged:** nothing; no task is `ready`, no gate
