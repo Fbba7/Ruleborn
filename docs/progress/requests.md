@@ -1576,8 +1576,9 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   `server/test/fix_fx1_audit_tools_proofs.mjs` into a plain test. Copied
   in cycle 171. Until it is fixed, the lead reuses a pre-check only when
   the builder's `precheck.summary` reads "All checks passed.", as well as
-  `exit` 0. Answered, and the task filed, once FX1-7 and `tools.md` are
-  merged.
+  `exit` 0. **Answered** by the lead in cycle 171, after FX1-7 merged at
+  3b162939: the default. FX1-9-tools-gate is filed for FX1, after
+  FX1-8-server-a-lows; the interim reuse rule holds until it merges.
 - **FX1-R21** (from FX1, 24 November 2026 04:10Z; due 25 November 04:10Z;
   not blocking): contract and status files (`tools.md`): FX1-T-20 (nine
   server failure codes `client_contract.py` never reads, none with an
@@ -1585,8 +1586,11 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   FX1-T-01 and FX1-T-02 (`server/status.py` counts a shadowed or skipped
   test as passed; `client/status.py` parses the same way). Files:
   client_contract.py, server/status.py, client/status.py,
-  client/ui/strings.csv. Default as FX1-R20. Copied in cycle 171;
-  answered once FX1-7 is merged.
+  client/ui/strings.csv. Default as FX1-R20. Copied in cycle 171.
+  **Answered** by the lead in cycle 171: the default. FX1-10-tools-contract
+  is filed for FX1, after FX1-9 and FX4-7 (both own the strings file). The
+  strings file is `client/i18n/strings.csv`; the lead, its owner, grants
+  the nine `ERR_` rows to the task.
 - **FX1-R22** (from FX1, 24 November 2026 04:10Z; due 25 November 04:10Z;
   not blocking): document checks (`tools.md`): FX1-T-10 (three-digit
   register ids such as D100 unseen), FX1-T-17 (two self-tests plant into
@@ -1594,14 +1598,17 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   (`check_document` treats an unknown tracked id as open), FX1-T-12
   (annotated restatements missed). Files: check_findings_fresh.py,
   check_docs_consistency.py, check_audit_ui.py, validate_content.py,
-  check_document.py. Default as FX1-R20. Copied in cycle 171; answered
-  once FX1-7 is merged.
+  check_document.py. Default as FX1-R20. Copied in cycle 171.
+  **Answered** by the lead in cycle 171: the default. FX1-11-tools-docs is
+  filed for FX1, after FX1-10.
 - **FX1-R23** (from FX1, 24 November 2026 04:10Z; due 25 November 04:10Z;
   not blocking): UI tools (`tools.md`), after the UI resumes or with it:
   FX1-T-07, 06, 13, 14, 15, 16, 18 and 19. Files: ui_bake/check_screens.py,
   ui_bake/bake.js, ui_bake/budget_shots.py, ui_gate/golden.py,
   ui_gate/sheet.py, art/ui/board/build_tokens.mjs. Default as FX1-R20.
-  Copied in cycle 171; answered once FX1-7 is merged.
+  Copied in cycle 171. **Answered** by the lead in cycle 171: the default.
+  FX1-12-tools-ui is filed for FX1, after FX1-11. It is an FX task, so it
+  is merged before the UI resumes (bugs first, CLAUDE.md order 1).
 
 - **AD-R46** (from AD, 17 November 2026 02:58Z; due 19 November 02:58Z;
   not blocking): AD's preview of P2-S1-result-6 (S1-R35) at 16515088.
