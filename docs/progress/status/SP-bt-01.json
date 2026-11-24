@@ -3,21 +3,27 @@
   "role": "specialist",
   "branch": "claude/ui-spec-coord",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "BT-01a",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-24T17:20:00Z",
   "lease_until": "2026-11-24T20:20:00Z",
-  "updated_at": "2026-11-24T17:25:00Z",
-  "expected_next_update_by": "2026-11-24T18:10:00Z",
+  "updated_at": "2026-11-24T17:48:00Z",
+  "expected_next_update_by": "2026-11-24T18:33:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "c0e8741",
-    "next_step": "Merge main, run the pre-check on tools/coord/cycle.py, mark BT-01a ready"
+    "last_green_sha": "37c99eba",
+    "next_step": "Waiting for the lead to merge BT-01a; BT-01b (merge queue) next"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "37c99eba98657a61a0bcfe31df67943cc65198de",
+    "state": "PASS",
+    "exit": 0,
+    "finished_at": "2026-11-24T17:46:56Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "37c99eba98657a61a0bcfe31df67943cc65198de",
   "stop_at": "2026-11-24T21:00:00Z",
   "acks": [],
   "requests": [
