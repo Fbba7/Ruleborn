@@ -116,13 +116,22 @@ def count_file(path):
     return found
 
 
+def _indent(code):
+    return len(code) - len(code.lstrip())
+
+
 def _clear_later(codes, start, name):
-    """Whether `name.draw_center = false` follows in the same function."""
+    """Whether `name.draw_center = false` follows in the same block as the
+    `new()`, at its indentation: a clear inside an `if` or a loop runs on one
+    path only, so it excuses nothing (FX1-T-15)."""
     clear = re.compile(r"\b%s\.draw_center\s*=\s*false\b" % re.escape(name))
+    depth = _indent(codes[start])
     for code in codes[start + 1:]:
-        if FUNC_DEF.match(code):
+        if not code.strip():
+            continue
+        if FUNC_DEF.match(code) or _indent(code) < depth:
             return False
-        if clear.search(code):
+        if _indent(code) == depth and clear.search(code):
             return True
     return False
 
