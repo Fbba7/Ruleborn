@@ -1,23 +1,34 @@
 # SP-bt-01 the coordinator script: progress
 
-- Status: Green (BT-01a ready at 37c99eba; pre-check PASS).
-- Progress: 0 of 2 tasks merged; 0 items passed by the gate (BT-01a has no gate items).
-- Done: BT-01a ready (tools/coord/cycle.py, the dry-run cycle).
-- Next: BT-01b, the merge queue, once the lead opens it.
+- Status: Green (BT-01b pre-check running at 18570607).
+- Progress: 1 of 2 tasks merged; 0 items passed by the gate (neither task has gate items).
+- Done: BT-01a merged (99c9aa89); BT-01b written (tools/coord/merge_queue.py, `cycle.py --merge`), self-test passes.
+- Next: BT-01b ready once its pre-check passes.
 - Blocked by: none.
 - Owner decision needed: none.
 
 | Deliverable | Weight (h) | Status | Evidence |
 |---|---:|---|---|
-| BT-01a dry-run coordinator cycle | 4 | ready (37c99eba) | `python3 tools/coord/cycle.py --self-test` |
-| BT-01b merge queue | 4 | open (later task) | - |
+| BT-01a dry-run coordinator cycle | 4 | merged (99c9aa89) | `python3 tools/coord/cycle.py --self-test` |
+| BT-01b merge queue | 4 | pre-check running (18570607) | `python3 tools/coord/cycle.py --self-test` (includes `merge_queue.self_test`) |
 
 ## Handoff
-- Last verified commit: 37c99eba (pre-check PASS, 17:46Z; `owners.py diff BT-01a` passes).
-- Done: `tools/coord/cycle.py --dry-run [--json] [--out FILE]` reads the backlog, lead.json and requests.md from origin's main and each roster agent's status from its branch. It prints what a cycle would do: copy states, claims and ready_sha (only moves the agent may make); expire lapsed leases (prior_branch/prior_sha when the branch holds work besides its progress files); list startable tasks (cycle_needed.needs); set acked_at for acknowledged messages and flag missed ones; copy new requests and answers into requests.md (ranges such as "S1-R1 to S1-R7" are parsed); flag past-due requests, stalls, busy stalls and tasks waiting more than 2 h as blocked or ready. It writes and pushes nothing; without `--dry-run` it exits 2. `--self-test` builds fixture branches in local bare repositories (no network) and checks that the remote heads and the working tree are unchanged after a run.
-- Half done: request SPbt01-R1. tools/check_all.sh is not in BT-01a's files, so the lead adds `python3 tools/coord/cycle.py --self-test` after the archive.py self-test line, and adds it to the agent-program row of docs/guides/checks.md.
-- Open hypotheses: on the live repository, the dry run lists 25 acknowledged messages whose acked_at is unset, and about 55 old requests still open in requests.md past due. Both are real lead bookkeeping, not noise from the script.
-- Next step: BT-01b adds the write mode and the merge queue on top of plan().
+- Last verified commit: 18570607 (main 99b7b414 merged in; self-test passes; `owners.py diff BT-01b` passes; pre-check started 19:55Z).
+- Done: `tools/coord/merge_queue.py`, run as `python3 tools/coord/cycle.py --merge [--dry-run] [--json] [--trailer LINE] [--max-batch N] [--max-candidates N]`. Per round:
+  - the lock in status/lead.json: an unexpired one stops the run; an expired one is cleared and noted;
+  - the ready tasks, critical first, then by ready time; a missing ready_sha or a path outside the task's files (`owners.unowned` against main's head) sets resync with a message to the agent;
+  - a candidate of up to three tasks with disjoint files, `git merge --no-ff` in a temporary worktree; a conflict aborts that task to resync with the paths;
+  - the lock `{candidate_sha, task_ids, started_at, expires_at}` (2 × check_minutes + 10 = 60 min) committed and pushed on main before any check, with the round's pending bookkeeping;
+  - the checks through run_checks.sh from the coordinator's checkout: full, or the docs check only when the pre-check counts (single task, PASS at ready_sha, candidate differs only under docs/progress), plus the UI guard for a task with gate_items unless `ui guard: OK` is recorded at its ready_sha; a gated task whose own files the merge changed is held for the lead's gate run;
+  - on a pass: the lock must still be ours; fast-forward, or merge onto main's newer docs-only head and re-run the docs check; main gaining code clears the lock and retries; one bookkeeping commit sets merged, merged_sha, last_merged and clears the lock; after a reused pre-check the full checks run on main and a failure is reverted at once (owner inbox if the revert cannot be pushed);
+  - on a fail: a batch is split and each task re-checked alone; a single task goes to resync, attempts + 1, with the failure lines in resync_reason and in a message;
+  - checks that cannot run (no sandbox, lost) clear the lock and write an owner-inbox entry; the tasks stay ready;
+  - owner-inbox entries (newest first, once per title): a ready task waiting more than 2 h, the checks unable to run, main red.
+- `--dry-run` builds the candidate in a temporary worktree, prints the actions and stops before the first push. Every commit touches only docs/progress/** except the merges that move main.
+- Tests: `merge_queue.self_test()`, called from `cycle.py --self-test` (check_all.sh line 158), on local bare repositories with the real run_checks.sh and stub check commands: dry run pushes and writes nothing, a held lock skips, an expired lock is cleared, owners violation, conflict, batch split, merge onto a newer docs head, pre-check reuse with the full checks after, a reverted merge, the checks unable to run, inbox entries, messages, trailers.
+- Open hypotheses: the lock commit is itself a docs-only commit on main, so a pass is usually merged onto the new head rather than fast-forwarded (as cycle 186 did for BT-01a). The docs check then runs once more on the bookkeeping commit.
+- Next step: the lead may run `cycle.py --merge --dry-run` in a cycle, then `--merge --trailer ...` in place of the hand-run queue. README.md's tools listing and docs/guides/checks.md are not this task's files; the lead may add merge_queue.py there.
 
 ## Tried and failed
 - Copying an old status after its lease lapsed re-claimed the task. Fixed: an unchanged status is copied only while the task's claim is still the agent's.
+- In a dry run, tasks set to resync stayed ready on main and were re-reported each round. Fixed: a dry run skips them in later rounds.
