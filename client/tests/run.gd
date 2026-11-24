@@ -588,9 +588,8 @@ func _run() -> void:
 		await process_frame
 	await _across_the_server(server_url)
 
-	# The season track, the shop and the wallet (tests/shop_tests.gd), and the
-	# league, groups and friends (tests/social_tests.gd): headless, and
-	# against the server when one is named.
+	# The season track, the shop and the wallet (tests/shop_tests.gd), and the league, groups and friends
+	# (tests/social_tests.gd): headless, and against the server when one is named.
 	await ShopTests.new(self, check, server_url).run()
 	await SocialTests.new(self, check, server_url).run()
 	await WorkshopTests.new(self, check, server_url).run()
@@ -598,6 +597,7 @@ func _run() -> void:
 	await AuthTests.new(self, check, server_url).run()
 	await SecurityTests.new(self, check).run()
 	await FixTests.new(self, check).run()
+	await AuditClient2Tests.new(self, check, _mount).run()
 	await KeeperTests.new(self, check, _mount).run()
 	await NoticesTests.new(self, check).run()
 	await UniverseTests.new(self, check, _mount, server_url).run()

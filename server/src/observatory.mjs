@@ -135,9 +135,11 @@ export class Observatory {
     const aside = this.setAside(account);
     if (trace) aside.add(trace.bundle);
     const list = offer(mm.raider(account, now), mm.listed(now).filter((c) => !aside.has(c.bundle)), { size });
+    // current() drops a banned or deleted owner's island, so the echoes
+    // flag is read from what is left (FX2-9's follow-up).
     list.targets = mm.current(list.targets);
     const targets = list.targets.map((c) => this.card(account, c, { raider }));
-    return { size, wanderer, targets, trace, echoes: list.echoes, generated: list.generated,
+    return { size, wanderer, targets, trace, echoes: list.targets.some((c) => c.echo), generated: list.generated,
              refresh: { aether: this.refreshCost(account, now) }, aether: this.service.aether(account),
              protected: mm.shielded(account, now) };
   }

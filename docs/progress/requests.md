@@ -1612,6 +1612,20 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   Copied in cycle 171. **Answered** by the lead in cycle 171: the default.
   FX1-12-tools-ui is filed for FX1, after FX1-11. It is an FX task, so it
   is merged before the UI resumes (bugs first, CLAUDE.md order 1).
+
+- **FX1-R24** (from FX1, 24 November 2026 05:45Z; due 24 November
+  09:05Z; blocking): add `server/privacy.json` and
+  `server/declarations.md` to FX1-8-server-a-lows's exceptions. FX1-A-13
+  adds the column `leases.realm` and FX1-A-16's up-only counter adds
+  `accounts.links_n`; `server/test/privacy.test.mjs:29` fails on a stored
+  column `privacy.json` does not declare, and `declarations.md` is
+  generated from it (`node server/src/privacy.mjs --write`). No task in
+  flight owns either file. Default: the exceptions are granted; FX1
+  commits the two declarations in one commit named FX1-R24 and marks
+  ready. Copied in cycle 173. **Answered** by the lead in cycle 173:
+  granted (the default). Both paths are in FX1-8's `exceptions` in the
+  backlog; `owners.py claims` passes.
+
 - **FX2-R3** (from FX2, 24 November 2026; due 24 November 07:15Z;
   blocking): grant `server/test/setup.mjs` (owned by the lead, no task in
   flight) to FX2-10-curated-woven-law. SIM-12's fix makes `problems()`
@@ -1637,6 +1651,22 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   172: the default, as for FX4-R1. The defect, a replay that could grow
   past its cap, is closed by FX4-6; a hint on screen is a UI improvement
   in the parked heist screen, so no task is seeded during the UI pause.
+- **FX2-R4** (from FX2, 24 November 2026; due 24 November 12:00Z; not
+  blocking): FX1-7's proof FX1-T-11 (`server/test/fix_fx1_audit_tools.test.mjs`)
+  fails in a fresh tree with "FX1-T-11 no longer fails: it is fixed". Its
+  `py()` helper parses the last line of stdout and stderr together, and
+  `tools/check_document.py:505` has an invalid escape (`\d`) in a
+  docstring, so Python 3.13 prints a SyntaxWarning to stderr whenever no
+  `.pyc` is cached (`py()` runs `-B`). The warning becomes the last line
+  and the proof reads as passing. With the `.pyc` cached, npm test passes
+  661 of 661. Files: `server/test/fix_fx1_audit_tools_proofs.mjs`,
+  `tools/check_document.py`. Default: the lead seeds the one-line fix
+  (`py()` parses stdout only) into FX1's next task; FX2-10 is not held for
+  it. Copied in cycle 172. **Answered** by the lead in cycle 172: the
+  default. The fix is added to FX1-9-tools-gate's `done_when` (it owns
+  `server/test/fix_fx1_audit_tools*`; FX3 takes it). The candidate of
+  FX3-7 and FX2-10 passed the full checks with every proof green, so the
+  failure needs a fresh tree, as FX2 says.
 
 - **AD-R46** (from AD, 17 November 2026 02:58Z; due 19 November 02:58Z;
   not blocking): AD's preview of P2-S1-result-6 (S1-R35) at 16515088.

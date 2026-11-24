@@ -226,7 +226,8 @@ owner wove, and the server accepts it.
   one keeps the building and loses the law, which still passes `check`, so
   the server does not see it. Whole draws are the same either way, so no
   existing layout changes. Every golden seed still verifies.
-- **Left for the lead (outside FX3's files):** `curated` can still lose a
+- **Left for the lead (outside FX3's files):** fixed
+  (FX2-10-curated-woven-law). Before it, `curated` could still lose a
   law without the server seeing it in three cases:
   - when it is given more laws than the realm has pylon spots, since `zip`
     stops at the shorter list;
@@ -239,6 +240,15 @@ owner wove, and the server accepts it.
   every woven law is on it. Whether a hand-built island must carry every
   woven law too is the lead's call. This is in FX3's status file as a
   request, with a default.
+
+  The fix (FX2-10-curated-woven-law): `problems()`
+  names `woven_law_missing`, a law the realm wove and finished weaving that
+  the island does not carry, and publish refuses it by name, as
+  `law_not_woven`. It covers all three cases above. Hand-built islands are
+  held to it too: §13.3 gives one pylon per woven slot, and no island was
+  found that may lawfully leave a woven law off. Proof:
+  `server/test/fix_fx2_curated_woven_law.test.mjs`, fail-first commit
+  `5d4e59c`, fix `ac08a0c`.
 
 ## Low
 

@@ -7096,6 +7096,103 @@
       "merged_sha": "3b162939",
       "updated_at": "2026-11-24T05:31:00Z",
       "updated_by": "lead (cycle 171)"
+    },
+    {
+      "id": "FX2-10-curated-woven-law",
+      "title": "Medium, server (FX3-R2, SIM-12's residual): the server refuses a curated layout that lacks a law the realm has woven. universe.mjs problems() checks only that every law on the island is woven, not that every woven law is on it, so Island::curated can still lose a law unseen (more laws than pylon spots, an unknown law id, or 64 failed draws); and FX2-9's follow-up: observatory.mjs:140 says echoes from offer()'s list before current() filters it, so a view whose echo was dropped (owner banned or deleted within the hour) can still say echoes: true",
+      "phase": "fix",
+      "role": "FX2",
+      "model": "Opus 5.5",
+      "assigned_to": "FX2",
+      "files": [
+        "server/src/universe.mjs",
+        "server/src/curation.mjs",
+        "server/test/fix_fx2_curated*",
+        "docs/security/audit-2026-11/sim.md",
+        "server/src/observatory.mjs",
+        "server/test/fix_fx2_observatory_echoes*"
+      ],
+      "deps": [
+        "FX3-6-audit-universe"
+      ],
+      "done_when": [
+        "first a server test that fails on current main: a curated layout for a realm that wove a law, returned without that law (each of the three cases in sim.md's SIM-12 'Left for the lead' where the server can be fed it), is published; committed on its own before the fix, its failure output quoted in the handoff",
+        "then the smallest fix: problems() (or curation's layout step) names a new problem, woven_law_missing, for every woven law the island lacks, and publish refuses it by name like law_not_woven",
+        "hand-built islands: the same check applies wherever problems() runs, unless the builder finds a hand-built island may lawfully leave a woven law off; then the check is scoped to curated layouts and the handoff says why",
+        "FX2-9's follow-up (FX2.md, FX2-9 handoff): first a test under server/test/fix_fx2_observatory_echoes* that fails on current main (an echo whose owner is banned within the hour is dropped from the view's targets, yet the view says echoes: true), committed on its own; then the one-line fix at observatory.mjs:140, echoes: targets.some((c) => c.echo)",
+        "a client words row for the new problem is not in this task's files: if one is needed, a request to the lead names it",
+        "SIM-12's 'Left for the lead' item in docs/security/audit-2026-11/sim.md reads 'fixed (FX2-10-curated-woven-law)'",
+        "no existing test is skipped, disabled or loosened; a test whose expectation encoded the defect is corrected and named in the handoff",
+        "cd server && npm test passes",
+        "current main merged into the branch, then the fresh-container setup line and bash tools/check_all.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed outside the task's files (M48)",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 1.25,
+      "tier": 2,
+      "critical": false,
+      "state": "merged",
+      "claim": {
+        "agent": "FX2",
+        "branch": "claude/fix-server-b",
+        "claimed_at": "2026-11-24T05:05:00Z",
+        "seen_at": "2026-11-24T05:42:00Z",
+        "lease_until": "2026-11-24T08:05:00Z"
+      },
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "5281e8fbbaf0a55605b0a0c2d0293ff2f3fcedfe",
+      "merged_sha": "5f32d68a99eb11fa63cba62f827fae352a062605",
+      "updated_at": "2026-11-24T06:26:00Z",
+      "updated_by": "lead (cycle 172)",
+      "exceptions": [
+        "server/test/setup.mjs"
+      ]
+    },
+    {
+      "id": "FX3-7-audit-client-2",
+      "title": "Audit, client (second pass, from FX4-4's client.md): prove or reject the unproven findings CLI-3 (an offline heist sends the planner's crew), CLI-8 and CLI-9 (server contract notes), CLI-16 and CLI-17 (world_view.gd replays), CLI-19 and CLI-20 (offline outbox slot and key collisions) and CLI-21 (roster collect_all busy guard), and read what FX4-4 left unread: client/world/island_builder.gd, client/world/universe_island.gd, client/ui and client/scripts/heist_screen.gd lines 520-999",
+      "phase": "fix",
+      "role": "FX3",
+      "model": "Opus 5.5",
+      "assigned_to": "FX3",
+      "files": [
+        "docs/security/audit-2026-11/client.md",
+        "client/tests/audit_client2_*",
+        "client/tests/run.gd"
+      ],
+      "deps": [
+        "FX4-4-audit-client"
+      ],
+      "done_when": [
+        "each finding named in the title is proven (a still-open check in client/tests/audit_client2_*, registered in client/tests/run.gd, marked with the finding id in a comment, not skipped) or rejected with what was tried, and client.md's entry is moved to Confirmed or Rejected; the slow fakes or recorded replays a proof needs are built under the task's test files",
+        "the four unread areas are read for defects of the report's kind (wrong results, contract mismatches between client and server, races, missing checks); each new finding written to client.md in its format (Where, Input, Should happen, Happens, proof, proposed fix) and its What was read table updated",
+        "the audit fixes nothing: every client file outside the task's files is read-only here; the lead files fix tasks from the confirmed findings. CLI-23 (the ext's as-casts) is not in this task: FX4-6-device-replay-cap owns the ext",
+        "for CLI-8 and CLI-9 the server's side is read too (server/src is read-only here) and the entry says whether the server or the client is wrong against the design",
+        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready (M48)",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 3.0,
+      "tier": 1,
+      "critical": false,
+      "state": "merged",
+      "claim": {
+        "agent": "FX3",
+        "branch": "claude/fix-sim",
+        "claimed_at": "2026-11-24T03:02:00Z",
+        "seen_at": "2026-11-24T05:42:00Z",
+        "lease_until": "2026-11-24T07:01:00Z"
+      },
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "1ecd419f9bb55accfe5b00f8e675edde253ef0ad",
+      "merged_sha": "5f32d68a99eb11fa63cba62f827fae352a062605",
+      "updated_at": "2026-11-24T06:26:00Z",
+      "updated_by": "lead (cycle 172)"
     }
   ],
   "idle_queue": [
