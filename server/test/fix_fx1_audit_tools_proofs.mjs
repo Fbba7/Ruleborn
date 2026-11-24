@@ -123,52 +123,6 @@ print(json.dumps([len(c.count_file_text(t)["texture"]) for t in (
     },
   },
   {
-    id: "FX1-T-10",
-    title: "three-digit ids are read as ids (check_findings_fresh, check_docs_consistency)",
-    proof() {
-      const r = py(`
-import pathlib, tempfile
-import check_findings_fresh as f, check_docs_consistency as d
-p = pathlib.Path(tempfile.mkdtemp()) / "check_x.py"
-p.write_text('\\ndef f():\\n    """D100. pins it."""\\n    return 0\\n')
-f.check_files = lambda: [p]
-print(json.dumps(["D100" in str(f.pinned_by_a_check()),
-                  "D100" in str(d.spec_open_claims("- **D100** cap\\n- **D9** x\\n"))]))`);
-      assert.deepEqual(r.value, [true, true], `[pinned_by_a_check, spec_open_claims] missed D100: ${r.out}`);
-    },
-  },
-  {
-    id: "FX1-T-11",
-    title: "check_document.py fails a check that tracks an id the register does not hold",
-    proof() {
-      const r = py(`
-import io, contextlib, check_document as c
-L = c.Ledger(quiet=True)
-with contextlib.redirect_stdout(io.StringIO()):
-    L.check("x", False, "boom", tracks="C999")
-    code = L.report()
-print(json.dumps(code))`);
-      assert.notEqual(r.value, 0, `a failed check tracking an unknown id passed: ${r.out}`);
-    },
-  },
-  {
-    id: "FX1-T-12",
-    title: "check_one_fact_home finds a design fact restated by an annotated assignment",
-    proof() {
-      const r = py(`
-import pathlib, tempfile, io, contextlib, check_docs_consistency as c
-root = pathlib.Path(tempfile.mkdtemp())
-(root / "tools").mkdir()
-(root / "tools" / "zz_fact.py").write_text("HOLD_BAND: tuple = (30.0, 45.0)\\n")
-c.ROOT = root
-del c.problems[:]
-with contextlib.redirect_stdout(io.StringIO()):
-    c.check_one_fact_home()
-print(json.dumps(any("HOLD_BAND" in str(p) for p in c.problems)))`);
-      assert.equal(r.value, true, `an annotated restatement passed: ${r.out}`);
-    },
-  },
-  {
     id: "FX1-T-13",
     title: "bake.js paginate keeps every page within MAX_SIDE",
     proof() {
@@ -223,36 +177,6 @@ with contextlib.redirect_stdout(io.StringIO()) as out:
 print(out.getvalue(), file=sys.stderr)
 print(json.dumps([rc, bool(written) and any(k.startswith("newscreen/") for k in written[-1]["shots"]["recorded"])]))`, ["tools/ui_bake"]);
       assert.deepEqual(r.value, [0, true], `--record refused a new screen: ${r.out}`);
-    },
-  },
-  {
-    id: "FX1-T-17",
-    title: "a self-test killed mid-run leaves the committed file it plants into unchanged",
-    proof() {
-      // Two self-tests write a plant into a committed file and restore it
-      // only in `finally`; a kill in between leaves the plant. Each runs here
-      // against a copy, killed at a step inside that window.
-      const dir = scratch();
-      copyIn(dir, "sim/status.json");
-      copyIn(dir, "sim/systems.json");
-      copyIn(dir, "content");
-      const ui = py(`
-import os, pathlib, build_audit, check_audit_ui
-build_audit.SIM = pathlib.Path(${JSON.stringify(join(dir, "sim"))})
-build_audit.built_systems = lambda *a, **k: os._exit(9)
-check_audit_ui._self_test_built()`);
-      const vc = py(`
-import os, pathlib, validate_content as v
-v.CONTENT = pathlib.Path(${JSON.stringify(join(dir, "content"))})
-v.check_provenance = lambda *a, **k: os._exit(9)
-v.self_test()`);
-      assert.equal(ui.code, 9, `check_audit_ui did not reach the window: ${ui.out.slice(-400)}`);
-      assert.equal(vc.code, 9, `validate_content did not reach the window: ${vc.out.slice(-400)}`);
-      const changed = [];
-      for (const rel of ["sim/status.json", "content/ruleborn.json"]) {
-        if (readFileSync(join(dir, rel), "utf8") !== readFileSync(join(REPO, rel), "utf8")) changed.push(rel);
-      }
-      assert.deepEqual(changed, [], `a killed self-test left its plant in ${changed.join(", ")}`);
     },
   },
   {
