@@ -57,6 +57,8 @@ func run() -> void:
 	await _offline_weaves_aim_at_one_slot()
 	await _offline_builds_of_one_building()
 	await _collect_all_clears_another_changes_busy()
+	await _replay_shows_orders_from_its_end()
+	await _replay_of_another_crew_keeps_the_old_one()
 
 
 ## Audit finding <id>: proven, not fixed here. `holds` is whether the defect
@@ -152,7 +154,7 @@ func _offline_heist_plays_another_crew() -> void:
 
 
 # Audit finding CLI-19.
-## CLI-19: §24 lets the device weave offline, confirmed on reconnection. The
+## CLI-19: §24.12 lets the device weave offline, confirmed on reconnection. The
 ## Heart has two free slots; the player weaves Stillness and then Bloom with
 ## no network. A queued weave leaves the view as it was (weaving_state.gd's
 ## `queued`), and the presenter aims every offer at the first free slot of
@@ -179,7 +181,7 @@ func _offline_weaves_aim_at_one_slot() -> void:
 			slots.append(int(a.get("slot", 0)))
 	var refused: Dictionary = s.store.get_slice(WeavingState.WEAVING)["refused"]
 	_still_open("CLI-19", "two weaves queued offline in a realm with two free slots both name its first free "
-			+ "slot, so the second is refused slot_taken on reconnection (§24, §5.6)",
+			+ "slot, so the second is refused slot_taken on reconnection (§24.12, §5.6)",
 		kept == 2 and slots == [1, 1] and str(refused.get("code", "")) == "slot_taken",
 		"queued %d, slots sent %s, refused %s" % [kept, slots, refused])
 	s.close()
@@ -205,7 +207,7 @@ func _offline_builds_of_one_building() -> void:
 	await s.universe_flow.build("heart", "garden", 2, 2)
 	await s.universe_flow.build("heart", "garden", 1, 3)
 	check.call("CLI-20 (rejected): the same offline build tapped twice is kept once, as the server would refuse "
-			+ "it the second time; another building, or another level, is kept beside it (§24, §10.2)",
+			+ "it the second time; another building, or another level, is kept beside it (§24.12, §10.2)",
 		once == 1 and s.outbox.pending() == 3,
 		"after two taps %d, after two more builds %d" % [once, s.outbox.pending()])
 	s.close()
@@ -263,3 +265,81 @@ func _collect_all_clears_another_changes_busy() -> void:
 		"busy %s, after the collect %s while the level was on its way %s, levels sent %d, collects sent %d" % [
 			busy_before, busy_after, still_going, levels, collects])
 	s.close()
+
+
+## A heist of `crew` on the fixture realm, recorded: at tick 100 crew member
+## 0 is sent to (8, 8) and member 1 calls the skiff to (1, 1); it plays on to
+## tick 200. Loaded to be watched, as the replay screen loads one (its line
+## 87), it stands at tick 0.
+static func _recorded(crew: int) -> RulebornReplay:
+	var live := RulebornReplay.new()
+	live.start("7", 4500, crew, PackedByteArray())
+	for i in 100:
+		live.step()
+	live.give(0, HeistController.Kind.MOVE_TO, 8 * 256, 8 * 256)
+	live.give(1, HeistController.Kind.SKIFF, 1 * 256, 1 * 256)
+	for i in 100:
+		live.step()
+	var watched := RulebornReplay.new()
+	watched.load(live.record(), PackedByteArray())
+	return watched
+
+
+## A WorldView in the tree, its frames not run, showing `r`.
+func _view(r: RulebornReplay) -> WorldView:
+	var view := WorldView.new()
+	view.set_process(false)
+	tree.root.add_child(view)
+	await tree.process_frame
+	view.show_replay(r)
+	return view
+
+
+# Audit finding CLI-16.
+## CLI-16: §5.4's skiff is where the last Get out called it, and the ground's
+## goal ring is where the chosen crew member was last sent. Both read the
+## replay's commands from its end (world_view.gd `_sync_skiff`, lines
+## 732-747; fx_ground.gd `order_goal`, line 171) with no look at the tick.
+## While a heist is played that is the same thing, as the log ends now. A
+## replay loaded to be watched holds every command from the start, so at
+## tick 0 the skiff already hovers where the crew calls it at tick 100, and
+## crew member 0's ring marks a goal it is not sent to until then.
+func _replay_shows_orders_from_its_end() -> void:
+	var r := _recorded(3)
+	var orders: Array = r.commands().map(func(c: Dictionary) -> String: return "%d:%d" % [c["tick"], c["kind"]])
+	var view := await _view(r)
+	view._sync_skiff(0.0)
+	var skiff := view._skiff != null and view._skiff.visible
+	var goal := FxGround.order_goal(view, 0)
+	_still_open("CLI-16", "a replay watched from its start shows the skiff and crew member 0's goal ring at tick 0, "
+			+ "where the crew calls and sends them only at tick 100 (§5.4, §21.8)",
+		r.tick() == 0 and orders == ["100:%d" % HeistController.Kind.MOVE_TO, "100:%d" % HeistController.Kind.SKIFF]
+			and skiff and goal == Vector2(8, 8),
+		"tick %d, orders %s, skiff shown %s, goal %s" % [r.tick(), orders, skiff, goal])
+	view.queue_free()
+	await tree.process_frame
+
+
+# Audit finding CLI-17.
+## CLI-17: `show_replay` rebuilds its statics, and with them the crew's
+## figures (`_build_statics` calls `_build_actors`, line 341), only when its
+## key changes (lines 271-283): the island's size, features, heights,
+## surfaces and realm. The crew is not in it. A five-crew replay shown after
+## a three-crew one on the same island keeps the three figures, so two of
+## the crew are never drawn, and `_place_actors` moves only the three.
+func _replay_of_another_crew_keeps_the_old_one() -> void:
+	var three := _recorded(3)
+	var five := _recorded(5)
+	var view := await _view(three)
+	var before := view._crew.size()
+	view.show_replay(five)
+	var after := view._crew.size()
+	var fresh := await _view(five)
+	_still_open("CLI-17", "a five-crew replay shown after a three-crew one on the same island keeps three crew "
+			+ "figures; a view that shows it first has five (§21.8)",
+		before == 3 and five.crew().size() == 5 and after == 3 and fresh._crew.size() == 5,
+		"figures before %d, after %d, the replay's crew %d, a fresh view's %d" % [before, after,
+			five.crew().size(), fresh._crew.size()])
+	view.queue_free()
+	fresh.queue_free()
+	await tree.process_frame
