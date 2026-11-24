@@ -3,7 +3,14 @@
   "updated_at": "2026-11-24T11:55:00Z",
   "expected_next_update_by": "2026-11-24T14:55:00Z",
   "cycle": 177,
-  "merging": null,
+  "merging": {
+    "candidate_sha": "c564b08c",
+    "task_ids": [
+      "FX1-11-tools-docs"
+    ],
+    "started_at": "2026-11-24T12:25:00Z",
+    "expires_at": "2026-11-24T13:25:00Z"
+  },
   "last_merged": {
     "task_id": "FX4-8-rehearsal-rerun",
     "sha": "34459600"
