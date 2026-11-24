@@ -31,10 +31,16 @@ export function simulation() {
 export const T0 = Date.UTC(2026, 8, 23, 9, 0, 0);
 
 /** The laws a bundle runs, woven in the realm's slots: a test that is not
- *  about SR-16 publishes as an owner who wove what the island runs. */
+ *  about SR-16 publishes as an owner who wove what the island runs, and no
+ *  other law, which the island would leave off (woven_law_missing, SIM-12). */
 function weave(db, owner, realm, bundle) {
-  let slot = 1 + db.prepare("SELECT COUNT(*) AS n FROM law_slots WHERE owner = ? AND realm = ?").get(owner, realm).n;
-  for (const law of lawsOf(bundle)) {
+  const laws = lawsOf(bundle);
+  for (const { law } of db.prepare("SELECT law FROM law_slots WHERE owner = ? AND realm = ? AND law IS NOT NULL")
+    .all(owner, realm)) {
+    if (!laws.includes(law)) db.prepare("DELETE FROM law_slots WHERE owner = ? AND realm = ? AND law = ?").run(owner, realm, law);
+  }
+  let slot = 1 + db.prepare("SELECT COALESCE(MAX(slot), 0) AS n FROM law_slots WHERE owner = ? AND realm = ?").get(owner, realm).n;
+  for (const law of laws) {
     if (db.prepare("SELECT 1 FROM law_slots WHERE owner = ? AND realm = ? AND law = ?").get(owner, realm, law)) continue;
     db.prepare("INSERT INTO law_slots (owner, realm, slot, law, tier, ready_at, rests_until) VALUES (?, ?, ?, ?, 1, 0, 0)")
       .run(owner, realm, slot++, law);
