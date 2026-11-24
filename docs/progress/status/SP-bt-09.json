@@ -1,0 +1,25 @@
+{
+  "agent": "SP-bt-09",
+  "role": "specialist: environment setup (tools/setup_env.sh)",
+  "branch": "claude/ui-spec-setup",
+  "model": "Opus 5.5",
+  "agent_state": "active",
+  "task_id": "BT-09",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-24T22:18:00Z",
+  "lease_until": "2026-11-25T01:18:00Z",
+  "updated_at": "2026-11-24T22:18:00Z",
+  "expected_next_update_by": "2026-11-24T23:03:00Z",
+  "long_run": null,
+  "progress_marker": {
+    "last_green_sha": null,
+    "next_step": "survey what the fresh container lacks, then write tools/setup_env.sh"
+  },
+  "precheck": null,
+  "gate_request": null,
+  "ready_sha": null,
+  "stop_at": "2026-11-25T21:00:00Z",
+  "acks": [],
+  "requests": [],
+  "answers": []
+}
