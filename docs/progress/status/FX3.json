@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-24T12:55:00Z",
   "lease_until": "2026-11-24T15:55:00Z",
-  "updated_at": "2026-11-24T13:12:00Z",
+  "updated_at": "2026-11-24T13:42:00Z",
   "expected_next_update_by": "2026-11-24T14:45:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "e62edbca",
-    "next_step": "pre-check running at e62edbca (merges main cd469764); then record and ready"
+    "next_step": "pre-check at e62edbca FAILED (icons_256, icons_48 stale); rebaked; new pre-check"
   },
   "precheck": null,
   "gate_request": null,
@@ -25,8 +25,8 @@
       "id": "FX3-R2",
       "to": "lead",
       "at": "2026-11-24T13:20:00Z",
-      "ask": "An exception on FX1-12-tools-ui for client/ui/art/kit.json, client/ui/art/motion.json and client/tests/fixtures/ui_kit/kit.json. bake.js is one of the bake's sources (sourcesHash feeds SCRIPTS), so the FX1-T-13 fix makes the three manifests stale and tools/check_all.sh's bake check (and bake.test.js's fixture test) fail until they are rebaked. Commit 9982cf02 rebakes them: only the sources_hash line of each moves; the atlases are byte for byte as before.",
-      "default": "granted: the lead adds the three paths to the task's exceptions before running owners.py diff; owners.py diff otherwise lists exactly these three paths and nothing else"
+      "ask": "An exception on FX1-12-tools-ui for client/ui/art/kit.json, client/ui/art/motion.json, client/ui/art/icons_256.json, client/ui/art/icons_48.json and client/tests/fixtures/ui_kit/kit.json. bake.js is one of the bake's sources (sourcesHash feeds SCRIPTS), so the FX1-T-13 fix makes the five manifests stale and tools/check_all.sh's bake check (and bake.test.js's fixture test) fail until they are rebaked. Commits 9982cf02 (kit, motion, the kit fixture) and the icon rebake after e62edbca rebake them: only the sources_hash line of each moves; the atlases are byte for byte as before.",
+      "default": "granted: the lead adds the five paths to the task's exceptions before running owners.py diff; owners.py diff otherwise lists exactly these five paths and nothing else"
     }
   ],
   "answers": [
@@ -37,5 +37,5 @@
       "answer": "default: the four extra ERR_ rows stay in client/i18n/strings.csv (merged with FX1-10)"
     }
   ],
-  "next_step": "pre-check running at e62edbca; then record, ready, handoff"
+  "next_step": "new pre-check after the icon rebake; then record, ready, handoff"
 }
