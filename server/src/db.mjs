@@ -326,7 +326,10 @@ CREATE TABLE IF NOT EXISTS leases (
   era         INTEGER NOT NULL DEFAULT 0,
   -- §5.4: the universe a heist across the defender's realms crosses, its
   -- RBU1 bundle's hash (crossings.mjs); null for the Heart alone.
-  universe    TEXT
+  universe    TEXT,
+  -- FX1-A-13: the realm of the defender's island the lease was issued on,
+  -- the one its raid is rated in (service.mjs issue); null before the column.
+  realm       TEXT
 ) WITHOUT ROWID;
 -- §24.13's one lease a target is kept by the issuing transaction, which
 -- hands back the newest lease the attacker holds on it with no heist; a
@@ -1057,6 +1060,7 @@ const ADDED = [
   ["leases", "challenge", "TEXT"],
   ["leases", "era", "INTEGER NOT NULL DEFAULT 0"],
   ["leases", "universe", "TEXT"],
+  ["leases", "realm", "TEXT"],
   ["target_lists", "previous", "TEXT"],
   ["target_lists", "superseded_at", "INTEGER"],
   ["notifications", "attempts", "INTEGER NOT NULL DEFAULT 0"],
