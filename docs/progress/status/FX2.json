@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-24T00:40:00Z",
   "lease_until": "2026-11-24T03:40:00Z",
-  "updated_at": "2026-11-24T00:45:00Z",
-  "expected_next_update_by": "2026-11-24T01:30:00Z",
+  "updated_at": "2026-11-24T00:58:00Z",
+  "expected_next_update_by": "2026-11-24T01:43:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "f20cc848",
-    "next_step": "npm test, merge main, check_all, owners.py, handoff, ready"
+    "last_green_sha": "4d3e779c",
+    "next_step": "check_all on 4d3e779c, record, then blocked on FX2-R2"
   },
   "precheck": null,
   "gate_request": null,
