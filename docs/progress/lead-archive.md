@@ -5,6 +5,55 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 182**, 24 November 2026, from about 15:15Z (session
+  `session_01SNkKxpHsQytV7iJPKhPoRL`, started by the Opus 5.5 launcher,
+  effort medium by order 6). The changes since cycle 181: S1, S2 and S3
+  claimed their tasks again (15:05Z, lease to 18:05Z), merged main and
+  run their pre-checks in the background; their sessions' turns have
+  ended while they wait, so none is restarted. **Bookkeeping:** the three
+  claims are in the backlog (state `claimed`). **Requests:** S3-R46
+  (AD's check of the re-shot settings stills, AD-R68's second road: the
+  title in display_xl on its gold card) copied; no seat is free for AD
+  (cap three under `allowed_warning`), so its default stands at 19:00Z
+  and AD re-checks on the merge. **Merge and gate:** none: nothing is
+  ready, no merge lock; main did not move, so the pages are not
+  republished. **Started nothing:** S1, S2 and S3 hold the cap of three;
+  the BT track waits for a free seat. **Next:** merge the three UI tasks
+  as they are ready (settings-4 with its gate run, 'settings at 100%
+  text', Hierarchy).
+
+- **Cycle 181**, 24 November 2026, from about 14:00Z (session
+  `session_01SNkKxo8T6d9ouEzGcdPst6`, started by the Opus 5.5 launcher,
+  effort medium by order 6). **Merged** FX1-12-tools-ui (ready_sha
+  1146a02e) onto main as e27e7d04: the builder's pre-check at 1146a02e
+  passed and the candidate differs from it only under docs/progress, and
+  the lead also ran the full checks on the candidate: PASS ("All checks
+  passed.", exit 0). **Every FX task is now merged: the bug-fix wave is
+  done**, so by the owner's order of 23 November the UI resumes.
+  **Unparked** P3-S3-settings-4, P4-S1-heist-vault and P4-S2-home-purse
+  (open, with their prior branches and heads recorded). **Started** S1 and
+  S2 at effort high (order 6: their tasks touch the vault and the purse,
+  "money") and S3 at effort medium (settings layout in the client only);
+  their sessions are in the sessions table.
+  The BT track stays waiting: the cap is three (allowed_warning). The
+  audit and roadmap pages were not republished (FX1-12 changed neither
+  docs/audit nor docs/roadmap). **Next:** merge the three UI tasks as
+  they are ready.
+
+- **Cycle 180**, 24 November 2026, from about 13:40Z (session
+  `session_01SNkKxoEVVxDru4qsQF6zoa`, started by the Opus 5.5 launcher,
+  effort medium by order 6). **Merged nothing**: FX1-12-tools-ui is not
+  ready yet. FX3 (`session_01SNkKxmwFNqhHYqzetHQz3X`, effort high) is
+  idle with its new pre-check at 1146a02e running in the background, so
+  it is not restarted. **Answered** FX3-R2, widened, with its default:
+  granted. `client/ui/art/icons_256.json` and `client/ui/art/icons_48.json`
+  (commit 9e420f61, only `sources_hash` moves) join FX1-12's `exceptions`;
+  `owners.py diff` on `claude/fix-sim` now passes. **Started nothing**:
+  FX1-12 is the last open FX task; the cap is three (allowed_warning).
+  The audit and roadmap pages were not republished. **Next:** merge
+  FX1-12 when ready (full checks), then unpark the UI (P3-S3-settings-4,
+  P4-S1-heist-vault, P4-S2-home-purse, the BT track).
+
 - **Cycle 179**, 24 November 2026, from about 13:19Z (session
   `session_01SNkKxqXwY6qZUJyvhrtRU8`, started by the Opus 5.5 launcher).
   **Merged nothing**: FX1-12-tools-ui is not ready yet. FX3
