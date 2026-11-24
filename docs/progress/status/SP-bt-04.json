@@ -1,0 +1,22 @@
+{
+  "agent": "SP-bt-04",
+  "role": "specialist: the gate shot renderer (tools/gate/)",
+  "branch": "claude/ui-spec-gate-render",
+  "model": "Opus 5.5",
+  "agent_state": "active",
+  "task_id": "BT-04a",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-24T17:20:00Z",
+  "lease_until": "2026-11-24T20:20:00Z",
+  "updated_at": "2026-11-24T17:20:00Z",
+  "expected_next_update_by": "2026-11-24T18:05:00Z",
+  "long_run": null,
+  "progress_marker": {"last_green_sha": null, "next_step": "write tools/gate/render.py and its fixture shot list"},
+  "precheck": null,
+  "gate_request": null,
+  "ready_sha": null,
+  "stop_at": "2026-11-24T21:00:00Z",
+  "acks": [],
+  "requests": [],
+  "answers": []
+}
