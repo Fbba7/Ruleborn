@@ -8,13 +8,13 @@
   "task_state": "working",
   "claimed_at": "2026-11-23T23:10:00Z",
   "lease_until": "2026-11-24T04:30:00Z",
-  "updated_at": "2026-11-24T00:50:00Z",
-  "expected_next_update_by": "2026-11-24T01:35:00Z",
+  "updated_at": "2026-11-24T01:15:00Z",
+  "expected_next_update_by": "2026-11-24T02:00:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "72a8b9a9",
-    "next_step": "Proofs and small fixes committed (13 audit checks pass, 11 failed before their fixes); running the full client suite, then writing docs/security/audit-2026-11/client.md.",
-    "at": "2026-11-24T00:50:00Z"
+    "next_step": "14 audit checks committed (12 failed before their fixes, 2 still-open proofs); CLI-14's fix (sessions marked seen) added. Next: full client suite, then docs/security/audit-2026-11/client.md.",
+    "at": "2026-11-24T01:15:00Z"
   },
   "precheck": null,
   "gate_request": null,
