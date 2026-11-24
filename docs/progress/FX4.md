@@ -1,7 +1,7 @@
 # FX4 client fixer: progress
 
 - Status: Green. FX4-7-curation-swap-weave: the fail-first test and the
-  client fix for CLI-1; ready at 62240757 (main merged).
+  client fix for CLI-1; ready at 62240757 (main merged), its pre-check passed.
 - Progress: 6 of 8 tasks merged (FX4-1 to FX4-6); FX4-7 in this session; no
   gate items (fix wave).
 - Done: while a swapped slot weaves, the island is published without the
@@ -19,7 +19,7 @@
 | FX4-4-audit-client: the client audit | 4 | merged | `d5c16216` on main |
 | FX4-5-problem-strings: FX3-R1's two problem rows | 0.75 | merged | `d3183782` on main |
 | FX4-6-device-replay-cap: SIM-2 and FX3-R3 on the device, CLI-23 | 1.0 | merged | `ee4d64aa` on main |
-| FX4-7-curation-swap-weave: CLI-1 | 2.0 | ready | `62240757`, pre-check below |
+| FX4-7-curation-swap-weave: CLI-1 | 2.0 | ready | `62240757`, pre-check passed |
 
 ## Handoff
 
@@ -102,8 +102,8 @@ four pass.
   origin/claude/videogame-project-analysis-ewkkk2 62240757`: every changed
   path is inside its files.
 - The pre-check (`bash tools/run_checks.sh`, the full checks, which run
-  `tools/check_all.sh`) on `62240757`: running; its result goes in
-  `status/FX4.json` (`precheck`).
+  `tools/check_all.sh`) on `62240757`: passed (08:39:53Z, "All checks passed."), recorded
+  in `status/FX4.json` (`precheck`).
 - `client/status.py` rewrites `client/status.json`; it was put back and
   not committed.
 
