@@ -374,6 +374,7 @@
         "the_rootrunners_bridge_spans_a_gap_of_up_to_three_tiles_for_eight_seconds",
         "the_glass_golems_wall_stands_three_tiles_across_the_way_for_six_seconds_and_is_seen_through",
         "the_lantern_wisps_reveal_shows_what_is_hidden_within_six_tiles_for_six_seconds",
+        "sim_11_a_lantern_wisps_reveal_goes_with_it_across_to_the_next_realm",
         "the_prism_mite_splits_into_two_halves_that_go_different_ways_and_rejoin_after_eight_seconds",
         "a_caught_half_loses_only_its_half_whichever_half_it_is",
         "what_a_half_brings_out_is_banked_and_the_half_is_never_counted_as_crew",

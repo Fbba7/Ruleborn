@@ -7228,3 +7228,41 @@ fn sim_10_a_command_for_actor_16_still_records_a_universe_replay_that_round_trip
     assert_eq!(back.commands, heist.commands, "the recorded replay round-trips");
     assert!(verify_universe(&u, &islands, &back).is_ok(), "{:?}", verify_universe(&u, &islands, &back).err());
 }
+
+#[test]
+fn sim_11_a_lantern_wisps_reveal_goes_with_it_across_to_the_next_realm() {
+    // Audit finding SIM-11 (docs/security/audit-2026-11/sim.md).
+    // The wisp's reveal "shows what is hidden within REVEAL_TILES of the
+    // wisp as it goes" for 6 s (`World::reveals`); the crossing carries the
+    // crew, and the reveal is the crew's, so it carries the reveal too.
+    use crate::universe::{Crossing, LinkKind};
+    let (u, islands) = two_realms(LinkKind::Stone);
+    let land = crate::reference::competent_universe(&u, &islands, 1, 3, None, None, None).unwrap().commands[0];
+    let heist = Heist { seed: 1, island: u.digest(), rules: crate::rules_version(), ticks: 4_950, crew: 3, era: None,
+                        manifest: None, commands: vec![Command { tick: 0, ..land }], checksums: Vec::new() };
+    let mut c = Crossing::new(&u, &islands, &heist).unwrap();
+    c.step();
+    let w = &mut c.world;
+    w.wards.clear();
+    w.tick = 10 * TICKS_PER_SECOND;
+    let beside = w.grid.neighbours(w.vault.tile).into_iter().flatten().find(|&t| w.grid.standable(t)).unwrap();
+    let (x, y) = w.grid.centre(beside);
+    for r in w.raiders.iter_mut() {
+        r.at = Point { x, y };
+        r.route.clear();
+    }
+    // What `Ability::Reveal` leaves running, used the tick before the crew
+    // crosses.
+    let until = w.tick + ruleborn::REVEAL_TICKS;
+    w.reveals.push((0, until));
+    assert!(w.revealed(beside));
+    c.step();
+    assert_eq!(c.leg, 1, "crossed to the Heart");
+    let here = { let p = c.world.raiders[0].at; c.world.grid.tile_at(p.x, p.y).unwrap() };
+    assert!(c.world.revealed(here), "the wisp's reveal ended at the crossing, {} ticks early", until - c.world.tick);
+    while c.world.tick < until {
+        c.step();
+    }
+    let here = { let p = c.world.raiders[0].at; c.world.grid.tile_at(p.x, p.y).unwrap() };
+    assert!(!c.world.revealed(here), "for 6 s, not longer");
+}
