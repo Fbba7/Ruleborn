@@ -259,8 +259,9 @@ export class Matchmaking {
    * owner's season Renown from their standing and newest Renown row (§24.8's
    * running total) — six rows an island, where a read each took seven and
    * every Renown row of the season. An unprotected owner with no standing
-   * yet this season is given one, as their Renown read always has
-   * (seasons.standing).
+   * yet this season is read where it would start, and given none: their
+   * tier price is fixed when they appear in the season, not when they sit
+   * on someone's list (AUD-B-01, §18.8).
    */
   live(now) {
     const season = this.service.seasons.current(now).id;
@@ -285,9 +286,27 @@ export class Matchmaking {
     };
     return rows.map((r) => {
       const shielded = this.shielded(r.owner, now, r);
-      return { ...r, shielded, renown: shielded ? null : r.start === null ? seasons.league(r.owner, now).renown
+      return { ...r, shielded, renown: shielded ? null : r.start === null ? this.renownSeen(r.owner, now)
         : r.start + (r.booked ?? seasons.booked(r.owner, season)) + carried(r) };
     });
+  }
+
+  /**
+   * AUD-B-01: a target owner's Renown this season, read without opening
+   * their standing (seasons.standing fixes its tier price, §18.8): their
+   * standing if they have one, else where it would start — the last
+   * season's close pulled back, or nothing in a first season.
+   */
+  renownSeen(account, now) {
+    const seasons = this.service.seasons;
+    const season = seasons.current(now).id;
+    let row = this.db.prepare("SELECT * FROM standings WHERE season = ? AND account = ?").get(season, account);
+    if (!row) {
+      const last = this.db.prepare(
+        "SELECT * FROM standings WHERE account = ? AND season < ? ORDER BY season DESC LIMIT 1").get(account, season);
+      row = { season, account, ...(last ? seasons.pulledBack(account, last) : { start: 0, ember: 0 }) };
+    }
+    return seasons.renownIn(account, season, row);
   }
 
   /**
@@ -367,7 +386,7 @@ export class Matchmaking {
         : r.rating === null ? null : { rating: r.rating, deviation: r.deviation }) ?? prior(r.realm_level, origin);
       return {
         bundle: r.bundle, owner: r.owner, realm: r.realm, realmLevel: r.realm_level,
-        keeperLevel: r.keeper_level, renown: echo ? this.service.seasons.league(r.owner, now).renown : r.renown,
+        keeperLevel: r.keeper_level, renown: echo ? this.renownSeen(r.owner, now) : r.renown,
         rating: rating.rating, deviation: rating.deviation, echo, chapter: chapter(r.bundle),
         origin,
       };
