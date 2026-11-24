@@ -1,8 +1,8 @@
 # FX3 simulation fixes: progress
 
-- Status: Waiting. FX1-11-tools-docs is ready at a9263449: pre-check PASS (11:45:58Z), recorded. FX1-10-tools-contract is merged (lead cycle 176, bdb052a8); FX3-R1 was answered with its default.
-- Progress: FX1-11-tools-docs fixed the document-check findings of FX1-7's tools audit (FX1-T-10, FX1-T-17, FX1-T-11, FX1-T-12) and FX1-R26's SyntaxWarning in `tools/check_document.py`. Each has a plain test in `server/test/fix_fx1_tools_docs.test.mjs`, committed alone before its fix and failing on main.
-- Next: the pre-check's result, then `record` and ready. FX1-12-tools-ui (the eight UI-tool proofs left still open) follows in a later session.
+- Status: Waiting. FX1-12-tools-ui is ready at 1146a02e: pre-check PASS (14:09:35Z), recorded. FX1-11-tools-docs is merged (lead cycle 178, 7bbb9788). FX3-R2 was granted (lead cycles 179 and 180).
+- Progress: FX1-12-tools-ui fixed the last eight findings of FX1-7's tools audit (FX1-T-06, 07, 13, 14, 15, 16, 18, 19). Each has a plain test in `server/test/fix_fx1_tools_ui.test.mjs`, committed before any fix and failing on main. Every finding of tools.md is now fixed.
+- Next: the lead's merge of FX1-12-tools-ui. FX3 has no next task in the backlog.
 - Blocked by: none.
 - Owner decision needed: none.
 
@@ -17,9 +17,50 @@
 | FX3-7-audit-client-2: CLI-3, 8, 9, 16, 17, 19, 20, 21 settled; CLI-25 to CLI-34 | 3.0 | merged | `docs/security/audit-2026-11/client.md`; `client/tests/audit_client2_tests.gd` (18 checks, registered in `client/tests/run.gd`) |
 | FX1-9-tools-gate: FX1-T-03, 04, 05, 08, 09, 22 and FX2-R4 | 4.0 | merged | `server/test/fix_fx1_tools_gate.test.mjs` (11 tests); `server/test/fix_fx1_audit_tools_proofs.mjs`; `tools/run_checks.sh`, `tools/check_all.sh`, `tools/check_dependencies.py`, `tools/audit_register.py`, `tools/check_ci.py`, `tools/coord/owners.py`, `docs/guides/agent-protocol.md`, `docs/security/audit-2026-11/tools.md` |
 | FX1-10-tools-contract: FX1-T-20, 21, 01, 02 | 2.5 | merged | `server/test/fix_fx1_tools_contract.test.mjs` (10 tests); `server/test/fix_fx1_audit_tools_proofs.mjs`; `tools/client_contract.py`, `server/status.py`, `client/status.py`, `client/i18n/strings.csv`, `docs/security/audit-2026-11/tools.md` |
-| FX1-11-tools-docs: FX1-T-10, 17, 11, 12 and FX1-R26 | 2.0 | ready | `server/test/fix_fx1_tools_docs.test.mjs` (5 tests); `server/test/fix_fx1_audit_tools_proofs.mjs`; `tools/check_findings_fresh.py`, `tools/check_docs_consistency.py`, `tools/check_audit_ui.py`, `tools/validate_content.py`, `tools/check_document.py`, `docs/security/audit-2026-11/tools.md` |
+| FX1-11-tools-docs: FX1-T-10, 17, 11, 12 and FX1-R26 | 2.0 | merged | lead cycle 178 (7bbb9788); `server/test/fix_fx1_tools_docs.test.mjs` (5 tests); `server/test/fix_fx1_audit_tools_proofs.mjs`; `tools/check_findings_fresh.py`, `tools/check_docs_consistency.py`, `tools/check_audit_ui.py`, `tools/validate_content.py`, `tools/check_document.py`, `docs/security/audit-2026-11/tools.md` |
+| FX1-12-tools-ui: FX1-T-06, 07, 13, 14, 15, 16, 18, 19 | 3.0 | ready | `server/test/fix_fx1_tools_ui.test.mjs` (8 tests); `server/test/fix_fx1_audit_tools_proofs.mjs`; `art/ui/board/build_tokens.mjs`, `tools/ui_bake/check_screens.py`, `tools/ui_bake/bake.js`, `tools/ui_bake/budget_shots.py`, `tools/ui_gate/golden.py`, `tools/ui_gate/sheet.py`, `docs/security/audit-2026-11/tools.md`; rebaked manifests `client/ui/art/{kit,motion,icons_256,icons_48}.json`, `client/tests/fixtures/ui_kit/kit.json` |
 
 ## Handoff
+- FX1-12-tools-ui, ready (2026-11-24). Branch `claude/fix-sim`, ready_sha 1146a02e. Pre-check at 1146a02e: PASS ("All checks passed.", exit 0, finished 14:09:35Z, sandbox bwrap), recorded in the status file. A first pre-check at e62edbca FAILED (exit 1, 13:37:04Z) in "the UI kit's bake": "FAIL icons_256: icons_256.json is stale" and the same for icons_48. Those two manifests hash bake.js too, and 9982cf02 had rebaked only kit, motion and the kit fixture. 9e420f61 rebakes them. The branch merges main at `7a601674` (lead cycle 179; main changed only lead documents after FX1-11's merge at 7bbb9788). Main moved to b82535ef (lead cycle 180) with lead documents only, so the branch was not re-merged and ready_sha stays 1146a02e. On that merge, I ran the fresh-container setup line (`rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios`, `pip install "gdtoolkit==4.*" "playwright==1.63.0" pillow numpy`), `bash client/build.sh` and the sim's WebAssembly build (`cargo build --locked --release --target wasm32-unknown-unknown`). Then `bash tools/check_all.sh` ran as the pre-check: `run_checks.sh start`, `wait` in the background, `record 1146a02e FX3` (M11, M13). Locally: `cargo test` in sim passes 362; `cd server && npm test` passes 677 of 677, with 0 skipped, 0 todo and 0 cancelled. The first server run in this container failed 540 tests on "ruleborn_sim.wasm is not built", a container miss; after the WebAssembly build, all pass. The tools' own runs pass:
+  - `check_screens.py --self-test` OK, and the real run OK (212 draw, 25 fill, 25 texture);
+  - `golden.py check` ok (79 items, 406 label rows);
+  - `bake.js --check` ok, and `bake.test.js` 17 of 17;
+  - `check_docs_consistency.py` and `check_findings_fresh.py` pass.
+  - **Commits.**
+    - Claim: 4b7db96a (merges main at 7bbb9788).
+    - The fail-first tests, all in one commit before any fix: 03314f31. It adds `server/test/fix_fx1_tools_ui.test.mjs` (8 tests). The eight proofs left `PROOFS` in `fix_fx1_audit_tools_proofs.mjs`, which is now `[]`: every finding of tools.md is fixed. `copyIn` is exported from it.
+    - The fixes:
+      - FX1-T-06: 046b4f60, then b3aec2b4 (the comparison moved from `resolve` to `realpathSync`, as node loads the main module from its real path);
+      - FX1-T-07: 8f3e4ce5;
+      - FX1-T-15: 1886dbba;
+      - FX1-T-14: b54b76a7;
+      - FX1-T-13: 2e9ad243, and the rebakes 9982cf02 and 9e420f61 (see FX3-R2);
+      - FX1-T-16: 186151e8;
+      - FX1-T-18: 40acf482;
+      - FX1-T-19: 41a5d38f.
+    - tools.md States: 7b130726. Status: 04df98cd, f0605f58, c796971e, 1146a02e. Merges of main: e62edbca, 31b5021c.
+  - **How each test failed on main** (at 03314f31, whose tools are main's):
+    - FX1-T-06: `--check passed a junk tokens.css:` (exit 0, no output). Under a path with a space, the main block never ran.
+    - FX1-T-07: `texture counts: [0, 0, 0, 0, 0]` for `load('….png')`, `preload("….PNG")`, `load('….JPeG')`, a `.gd` load and mismatched quotes; expected [1, 1, 1, 0, 0].
+    - FX1-T-13: `page heights [4096,128]`.
+    - FX1-T-14: `[an empty --root, a missing --root]: [0, 0]`.
+    - FX1-T-15: `[cleared in an if, cleared after]: [0, 0]`.
+    - FX1-T-16: `--record refused a new screen: [1, false]` (exit 1, the new screen not recorded in the copy of budgets.json).
+    - FX1-T-18: `[the real golden set, labels-blind.md missing]: [0, 0]`.
+    - FX1-T-19: `crops failed: … FileNotFoundError: [Errno 2] No such file or directory: '/tmp/fx1-audit-tools-HnbrM3/enamel 1: Chosen for this heist 3 / 4.png'`.
+  - **What changed.** Each fix follows its entry's Fix line in tools.md.
+    - **FX1-T-06.** `art/ui/board/build_tokens.mjs` runs its main block when `fileURLToPath(import.meta.url) === realpathSync(process.argv[1])`, in place of comparing a `file://` URL, which percent-encodes a space, with argv.
+    - **FX1-T-07.** `check_screens.py`'s `IMAGE_LOAD` reads either quote, with the same quote at both ends, and an image extension in any case (`(?i:png|svg|webp|jpe?g)`, scoped so the rest stays case-sensitive). The self-test sample gains two rows (single quotes, `.PNG`). Its expected textures become [15, 16, 18, 19] and its recorded texture count 4. This is the sample's own expectation growing with its rows, not a test loosened.
+    - **FX1-T-15.** `_clear_later` stops at a `func` line or a line indented less than the `new()` line. It excuses the fill only for a `draw_center = false` at the `new()`'s own indentation, so a clear inside an `if` no longer counts.
+    - **FX1-T-14.** `check_screens.py` gains `gd_files(root)`. With no `.gd` under its scope, `run()` prints "check_screens: FAIL, no .gd file under … in client/scripts, client/world" and returns 1. That covers an empty or missing `--root`.
+    - **FX1-T-13.** `bake.js`'s `paginate` tracks `bottom`, the lowest edge placed on the page, and closes a page at `bottom + PAD`, in place of the next shelf's `y`.
+    - **FX1-T-16.** `budget_shots.py` adds "no recorded figures; run --record" for a screen with no figures only outside a plain `--record`. `--record` then records it, as the module's docstring says it should.
+    - **FX1-T-18.** `golden.py check` exits 1 with "golden: labels-blind.md is missing; the held-out third's blind labels are part of the golden set" when the file is gone. Otherwise it passes the file's text to the check, as before.
+    - **FX1-T-19.** `sheet.py crops` names each file by its name with `/` and `\` turned into `-`, adding " (n)" on a collision, so it writes one file per name.
+    - Each fixed entry in `tools.md` reads "fixed (FX1-12-tools-ui)", in the table and in the entry's State. FX1-R23 is marked done.
+  - **FX3-R2 (answered: granted).** `bake.js` is one of the bake's sources (`SCRIPTS = ['bake.js', 'pack.py']` feeds `sources_hash`), so the FX1-T-13 fix makes every family's manifest stale: `client/ui/art/kit.json`, `client/ui/art/motion.json`, `client/ui/art/icons_256.json`, `client/ui/art/icons_48.json` and `client/tests/fixtures/ui_kit/kit.json`. Until they are rebaked, `check_all.sh`'s bake check and `bake.test.js`'s fixture test fail. Commit 9982cf02 rebakes the first three with `node tools/ui_bake/bake.js kit motion` and `node tools/ui_bake/bake.js kit --config client/tests/fixtures/ui_kit/families.json --art client/tests/fixtures/ui_kit/art --out client/tests/fixtures/ui_kit`; 9e420f61 rebakes the icons with `node tools/ui_bake/bake.js icons_256 icons_48`. Only the `sources_hash` line of each moves; the atlases are byte for byte as before. Lead cycle 179 granted the first three as exceptions and cycle 180 the two icon manifests.
+  - **Owners.** `owners.py diff FX1-12-tools-ui origin/claude/videogame-project-analysis-ewkkk2 1146a02e`, with main's backlog at b82535ef (the five granted exceptions), reports "FX1-12-tools-ui: every changed path is inside its files" (exit 0).
+  - **Next.** The lead's merge of FX1-12-tools-ui. FX3 has no next task in the backlog.
 - FX1-11-tools-docs, ready (2026-11-24). Branch `claude/fix-sim`, ready_sha a9263449. Pre-check at a9263449: PASS ("All checks passed.", exit 0, finished 11:45:58Z, sandbox bwrap), recorded in the status file. Main moved to b1d76a67 after a0639d8e with lead docs only (backlog.json, requests.md, status/lead.json), so the branch was not re-merged and ready_sha stays a9263449. The branch merges main at `a0639d8e`. Locally: `cargo test` in sim passes 362; `cd server && npm test` passes 676 of 676, with 0 skipped and 0 todo. `python3 tools/coord/owners.py diff FX1-11-tools-docs origin/claude/videogame-project-analysis-ewkkk2 a9263449` passes. The tools' own self-tests pass: `check_docs_consistency.py --self-test`, `check_findings_fresh.py --self-test`, `check_document.py --self-test`, `check_audit_ui.py --self-test` and `validate_content.py --self-test`. Every `.py` under `tools/` now compiles under `-W error::SyntaxWarning`.
   - **Commits.**
     - Claim: 8e7916c8.
