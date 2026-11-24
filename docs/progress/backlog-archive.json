@@ -8029,6 +8029,96 @@
       "exceptions": [
         "docs/art/shots/home-screen/**"
       ]
+    },
+    {
+      "id": "BT-01a",
+      "title": "Coordinator, part 1: a dry-run cycle that reads every status file from origin, expires leases, copies states into the backlog, flags missed acknowledgements, request deadlines and stalls, and prints the actions",
+      "phase": 0,
+      "role": "specialist",
+      "model": "Opus 5.5",
+      "assigned_to": "SP-bt-01",
+      "files": [
+        "tools/coord/**",
+        "!tools/coord/owners.*"
+      ],
+      "deps": [],
+      "done_when": [
+        "Unit tests on fixture branches pass",
+        "--dry-run prints actions without pushing",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 4,
+      "tier": 1,
+      "critical": false,
+      "state": "merged",
+      "claim": {
+        "agent": "SP-bt-01",
+        "branch": "claude/ui-spec-coord",
+        "claimed_at": "2026-11-24T17:20:00Z",
+        "seen_at": "2026-11-24T17:45:00Z",
+        "lease_until": "2026-11-24T20:20:00Z"
+      },
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "37c99eba",
+      "merged_sha": "99c9aa89",
+      "updated_at": "2026-11-24T19:36:00Z",
+      "updated_by": "lead (cycle 186)"
+    },
+    {
+      "id": "P4-S1-heist-vault",
+      "title": "Heist at 200% text shows the Vault's progress and a wider playfield band (the wave board's phase 4 list, M57, M61)",
+      "phase": 4,
+      "role": "S1",
+      "model": "Opus 5.5",
+      "assigned_to": "S1",
+      "files": [
+        "client/scripts/heist_hud.gd",
+        "client/scripts/heist_screen.gd",
+        "client/tests/shots/screen_heist.gd",
+        "client/tests/heist_fx_tests.gd",
+        "docs/art/tracks/heist-pilot.md"
+      ],
+      "deps": [
+        "P3-S1-marker-1"
+      ],
+      "done_when": [
+        "The wave board's note (docs/art/ui-quality/gate/boards/wave.md on claude/ui-ad, 'Notes, which hold nothing', seeded in cycle 149 under M61 as phase 4's first heist task): at 200% text the loot panel shows the Vault's progress ('Vault 0%' and its crack, REHEARSE_LEGEND_VAULT) while the Vault is shut, in en, pt_BR and de, and the playfield band between the HUD and the hand is no narrower than at 150% text, by laying out the HUD in heist_hud.gd and heist_screen.gd; a change to KitHud.loot_fit or any kit file is a request to K1 through the lead, with a default",
+        "a test in client/tests/heist_fx_tests.gd mounts the heist at 200% text and finds the Vault's progress row in the loot panel while the Vault is shut, failing on main",
+        "M26: the heist's FIT=1 runs at 100%, 150% and 200% text in en, pt_BR and de and in high contrast all print 'fit ok', listed in the handoff; 'heist at 100% text', 'heist at 200% text, pt_BR' and 'heist in high contrast' still pass; the heist stills re-shot, each change named in docs/art/tracks/heist-pilot.md",
+        "AD previews the stills before ready (M10, M12, M23): the builder sends them to AD through the lead while the work can still change, and AD's objections are answered in this task",
+        "python3 tools/ui_bake/check_screens.py",
+        "bash tools/ui_bake/guard.sh",
+        "gate: Screen",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed under docs/art/ui-quality/gate/verdicts/ or outside the task's files (M48)",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [
+        {
+          "item": "heist at 200% text, pt_BR",
+          "qualities": [
+            "Hierarchy"
+          ]
+        }
+      ],
+      "attempts": 2,
+      "estimate_h": 1.0,
+      "tier": 2,
+      "critical": false,
+      "state": "merged",
+      "claim": null,
+      "prior_branch": "claude/ui-screens-heist",
+      "prior_sha": "85be2fa8",
+      "ready_sha": "3200ff40",
+      "merged_sha": "9be81331",
+      "updated_at": "2026-11-24T22:12:00Z",
+      "updated_by": "lead (cycle 189)",
+      "exceptions": [
+        "docs/art/shots/heist-pilot/**"
+      ]
     }
   ],
   "idle_queue": [

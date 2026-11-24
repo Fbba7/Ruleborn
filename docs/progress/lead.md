@@ -958,35 +958,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   **Next:** gate and merge the heist re-work, BT-04a's resync and BT-01b
   as they are ready.
 
-- **Cycle 186**, 24 November 2026, from about 18:14Z (session
-  `session_01SNkKxqiFeCtTZE4nW7CtE5`, started by the Opus 5.5 launcher,
-  effort medium by order 6). The changes since cycle 185: SP-bt-01
-  marked BT-01a ready at 37c99eba and SP-bt-04 marked BT-04a ready at
-  f1df3f1e, both pre-checks passed; S1 is still on the heist re-work.
-  **Merge:** a batch candidate of both, with SPbt01-R1's and
-  SP-bt-04-R1's self-test lines in `check_all.sh` and checks.md, under
-  the merge lock (4efc5f51). Its first run (e79c16e7) failed on this
-  container, not the candidate: the cycle changed `.git/config` during
-  the run (SEC-19's fingerprint) and the fresh-container setup had not
-  been run. Its second run (84be5f38, same tree, 18:58Z) failed on
-  BT-04a: `render.py --self-test` raised `OSError: [Errno 30] Read-only
-  file system: '/root/.cache/ruleborn/gate'` in `cache_dir()`
-  (render.py:171), since the check sandbox's HOME is read-only. BT-04a
-  is in `resync` (attempts 1). A new candidate, 8107ba62 (BT-01a and
-  its self-test line only), passed the full checks at 19:34Z and was
-  merged onto main's head (main had gained only the lock commit) as
-  99c9aa89, after the documentation check. The lock is cleared. Nothing
-  under docs/audit or docs/roadmap changed, so the pages are not
-  republished. The lock commits 4efc5f51 and the cycle's earlier
-  candidate commits carry a non-noreply author; later commits use the
-  noreply identity. **Requests:** SPbt01-R1 done; SP-bt-04-R1 stands
-  for the resync's candidate. **Started:** SP-bt-01 on BT-01b and
-  SP-bt-04 on BT-04a's resync, both at effort high (order 6: the merge
-  queue's lock, and a resync). With S1 they hold the cap of three under
-  `allowed_warning`. **stop_at** moved to 25 November 21:00Z (order 3).
-  **Next:** gate and merge the heist re-work, BT-04a's resync (adding
-  the render self-test line again) and BT-01b as they are ready.
-
 - **Restart, 23 November 2026** (the overseer, about 21:20Z). The owner
   restarted the program, in the chat of the overseer session: "Continue,
   first the bugs then the UI" (CLAUDE.md order 1). It runs on Opus 5.5 at

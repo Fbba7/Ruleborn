@@ -49,7 +49,7 @@
   ],
   "next_step": "One seat of the cap of three is free under allowed_warning (S1's heist merged as 9be81331): write a prompt for a third BT specialist (BT-09, BT-06 or BT-08) and start it at effort medium; gate and merge BT-04b (SP-bt-04) and BT-07 (SP-bt-07, wire `python3 tools/coord/metrics.py --self-test` into check_all.sh in its candidate) as they are ready.",
   "seen": {
-    "at": "2026-11-24T20:15:58Z",
+    "at": "2026-11-24T22:11:25Z",
     "heads": {
       "claude/3d-character-screens": "6053b249bee313648da3509142eeb2ba738bb62f",
       "claude/3d-characters": "35d6ae8f5b84a4d75636f68270848b0949c111f3",
@@ -83,8 +83,8 @@
       "claude/ui-screens-heist": "730e726f38dec6651bcd7008fd67d6b81cf1e58a",
       "claude/ui-screens-home": "eded364b11d503933f1d657683a2b622f66ca972",
       "claude/ui-screens-meta": "8e73789bd8519aeb195e6e36d013d5290353975b",
-      "claude/ui-spec-coord": "9d8caa12e597ac267f2d3fad846e3c2e587e8861",
-      "claude/ui-spec-gate-render": "e7b33acf2e879e43c1d604df40910d73025f6c5b",
+      "claude/ui-spec-coord": "6a6815a528aa0a0cef2645e955680bffbad3bc65",
+      "claude/ui-spec-gate-render": "891eb985fc706dda77f22f6a457dabb9ff31606f",
       "lead/candidate-01fb5fb1": "01fb5fb186bb8135c10329750fb9b89f3aef2d50",
       "lead/candidate-0870a845": "0870a8457836d68256019562d329d8f32a048371",
       "lead/candidate-13f6fb44": "13f6fb4424f2697c762188ee73d27c9980b27964",
@@ -110,7 +110,8 @@
     },
     "ready": {},
     "startable": [
-      "P4-S1-heist-vault"
+      "BT-04b",
+      "BT-07"
     ],
     "messages": [
       "M10",
