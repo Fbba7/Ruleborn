@@ -303,14 +303,20 @@
       "estimate_h": 1.0,
       "tier": 2,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "working",
+      "claim": {
+        "agent": "FX4",
+        "branch": "claude/fix-client",
+        "claimed_at": "2026-11-24T05:00:00Z",
+        "seen_at": "2026-11-24T05:42:00Z",
+        "lease_until": "2026-11-24T08:00:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-24T02:30:00Z",
-      "updated_by": "lead (cycle 169)"
+      "updated_at": "2026-11-24T05:44:00Z",
+      "updated_by": "lead (cycle 172)"
     },
     {
       "id": "FX4-7-curation-swap-weave",
@@ -483,14 +489,23 @@
       "estimate_h": 1.25,
       "tier": 2,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "ready",
+      "claim": {
+        "agent": "FX2",
+        "branch": "claude/fix-server-b",
+        "claimed_at": "2026-11-24T05:05:00Z",
+        "seen_at": "2026-11-24T05:42:00Z",
+        "lease_until": "2026-11-24T08:05:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
+      "ready_sha": "5281e8fbbaf0a55605b0a0c2d0293ff2f3fcedfe",
       "merged_sha": null,
-      "updated_at": "2026-11-24T04:30:00Z",
-      "updated_by": "lead (cycle 171)"
+      "updated_at": "2026-11-24T05:44:00Z",
+      "updated_by": "lead (cycle 172)",
+      "exceptions": [
+        "server/test/setup.mjs"
+      ]
     },
     {
       "id": "FX3-6-audit-universe",
@@ -563,20 +578,20 @@
       "estimate_h": 3.0,
       "tier": 1,
       "critical": false,
-      "state": "working",
+      "state": "ready",
       "claim": {
         "agent": "FX3",
         "branch": "claude/fix-sim",
         "claimed_at": "2026-11-24T03:02:00Z",
-        "seen_at": "2026-11-24T03:45:00Z",
-        "lease_until": "2026-11-24T06:02:00Z"
+        "seen_at": "2026-11-24T05:42:00Z",
+        "lease_until": "2026-11-24T07:01:00Z"
       },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
+      "ready_sha": "1ecd419f9bb55accfe5b00f8e675edde253ef0ad",
       "merged_sha": null,
-      "updated_at": "2026-11-24T03:45:00Z",
-      "updated_by": "lead (cycle 170)"
+      "updated_at": "2026-11-24T05:44:00Z",
+      "updated_by": "lead (cycle 172)"
     },
     {
       "id": "FX1-8-server-a-lows",
@@ -622,22 +637,28 @@
       "estimate_h": 3.0,
       "tier": 1,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "claimed",
+      "claim": {
+        "agent": "FX1",
+        "branch": "claude/fix-server-a",
+        "claimed_at": "2026-11-24T05:35:00Z",
+        "seen_at": "2026-11-24T05:42:00Z",
+        "lease_until": "2026-11-24T08:35:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-24T02:40:00Z",
-      "updated_by": "lead (cycle 169)"
+      "updated_at": "2026-11-24T05:44:00Z",
+      "updated_by": "lead (cycle 172)"
     },
     {
       "id": "FX1-9-tools-gate",
       "title": "High and medium, gate and coordination tools, from FX1-7's audit (FX1-R20; docs/security/audit-2026-11/tools.md): FX1-T-03 first (run_checks.sh record writes exit 0 for a FAIL run), then FX1-T-04 (a leftover child turns a failed run into PASS), FX1-T-09 (nothing notices a stale dependencies.md), FX1-T-22 (the gate never runs build_stamp's escaped-markup check), FX1-T-08 (check_ci passes wider permissions and a commented-out command) and FX1-T-05 (owners.py misses overlaps of ? and [..] globs and of an exclusion with a re-inclusion)",
       "phase": "fix",
-      "role": "FX1",
+      "role": "FX3",
       "model": "Opus 5.5",
-      "assigned_to": "FX1",
+      "assigned_to": "FX3",
       "files": [
         "tools/run_checks.sh",
         "tools/check_all.sh",
@@ -652,7 +673,7 @@
         "docs/security/audit-2026-11/tools.md"
       ],
       "deps": [
-        "FX1-8-server-a-lows"
+        "FX1-7-audit-tools"
       ],
       "done_when": [
         "each finding named in the title: its proof's stillOpen entry in server/test/fix_fx1_audit_tools_proofs.mjs (wrapped by fix_fx1_audit_tools.test.mjs) moved into a plain test under server/test/fix_fx1_tools_gate*, committed on its own before its fix and failing on current main, its failure output quoted in the handoff; then the smallest fix, following the entry's Fix line in tools.md unless the handoff says why not; the commit names the finding id",
@@ -675,8 +696,8 @@
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-24T05:35:00Z",
-      "updated_by": "lead (cycle 171)"
+      "updated_at": "2026-11-24T05:44:00Z",
+      "updated_by": "lead (cycle 172)"
     },
     {
       "id": "FX1-10-tools-contract",

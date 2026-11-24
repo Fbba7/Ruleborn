@@ -1579,6 +1579,9 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   `exit` 0. **Answered** by the lead in cycle 171, after FX1-7 merged at
   3b162939: the default. FX1-9-tools-gate is filed for FX1, after
   FX1-8-server-a-lows; the interim reuse rule holds until it merges.
+  In cycle 172 the lead gave FX1-9 to FX3, whose seat was free, and
+  dropped its dep on FX1-8 (the two share no file), so the High finding
+  FX1-T-03 is fixed sooner.
 - **FX1-R21** (from FX1, 24 November 2026 04:10Z; due 25 November 04:10Z;
   not blocking): contract and status files (`tools.md`): FX1-T-20 (nine
   server failure codes `client_contract.py` never reads, none with an
@@ -1609,6 +1612,31 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   Copied in cycle 171. **Answered** by the lead in cycle 171: the default.
   FX1-12-tools-ui is filed for FX1, after FX1-11. It is an FX task, so it
   is merged before the UI resumes (bugs first, CLAUDE.md order 1).
+- **FX2-R3** (from FX2, 24 November 2026; due 24 November 07:15Z;
+  blocking): grant `server/test/setup.mjs` (owned by the lead, no task in
+  flight) to FX2-10-curated-woven-law. SIM-12's fix makes `problems()`
+  name `woven_law_missing`; setup.mjs's lenient `weave()` only ever added
+  laws, so a test that republishes a different island kept the first
+  island's laws woven and is now refused (9 tests fail with
+  `island_not_publishable`). The correction (a495e586) also unweaves the
+  realm's laws the island does not run and numbers new slots after the
+  highest; with it npm test passes 639 of 639. Default: the file joins
+  FX2-10's exceptions. Copied in cycle 172. **Granted** by the lead in
+  cycle 172: the default. The shim stood for an owner who wove what the
+  island runs, and the old one did not, so the correction makes it match
+  what it stands for; no assertion is removed or loosened. The file is in
+  FX2-10's `exceptions` (`owners.py claims`: disjoint).
+- **FX4-R2** (from FX4, 24 November 2026 05:20Z; due 25 November 05:20Z;
+  not blocking): `RulebornReplay.give` now returns false once the replay
+  has no room left under MAX_HEIST_BYTES (SIM-2), but
+  `client/scripts/heist_screen.gd` (lines 510, 518, 831) ignores the
+  result, so such a tap is dropped with nothing on screen. Files:
+  heist_screen.gd, client/i18n/strings.csv. Default: no follow-up; a tap
+  past the limit is dropped silently, as a tap after the clock has run
+  out already is. Copied in cycle 172. **Answered** by the lead in cycle
+  172: the default, as for FX4-R1. The defect, a replay that could grow
+  past its cap, is closed by FX4-6; a hint on screen is a UI improvement
+  in the parked heist screen, so no task is seeded during the UI pause.
 
 - **AD-R46** (from AD, 17 November 2026 02:58Z; due 19 November 02:58Z;
   not blocking): AD's preview of P2-S1-result-6 (S1-R35) at 16515088.
