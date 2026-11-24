@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-24T12:55:00Z",
   "lease_until": "2026-11-24T15:55:00Z",
-  "updated_at": "2026-11-24T13:20:00Z",
-  "expected_next_update_by": "2026-11-24T14:05:00Z",
+  "updated_at": "2026-11-24T13:12:00Z",
+  "expected_next_update_by": "2026-11-24T14:45:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "7bbb9788",
-    "next_step": "all eight fixed; full tests, merge main, pre-check"
+    "last_green_sha": "e62edbca",
+    "next_step": "pre-check running at e62edbca (merges main cd469764); then record and ready"
   },
   "precheck": null,
   "gate_request": null,
@@ -37,5 +37,5 @@
       "answer": "default: the four extra ERR_ rows stay in client/i18n/strings.csv (merged with FX1-10)"
     }
   ],
-  "next_step": "sim and server tests, merge main, pre-check, owners diff"
+  "next_step": "pre-check running at e62edbca; then record, ready, handoff"
 }
