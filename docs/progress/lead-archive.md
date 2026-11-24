@@ -5,6 +5,43 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 173**, 24 November 2026, from about 06:40Z (session
+  `session_01SNkKxqkoC28gn9jAiBuxPc`, started by the Opus 5.5 launcher).
+  **Merged** FX4-6-device-replay-cap (ready 484297b1) at ee4d64aa. The
+  candidate 0870a845 differed from the ready sha in code (main had gained
+  FX3-7 and FX2-10), so it took the full checks. They passed at 07:18Z:
+  sim 362 of 362, server 661 of 661, client 489 of 489, "All checks
+  passed.", exit 0. Main had gained only the lead's `docs/progress` commit
+  since the candidate, so the candidate was merged onto main's head and
+  the documents check rerun. The claims were disjoint, the lock is
+  cleared and both pages are republished. As FX4-6's `done_when` asks,
+  the lead recorded FX4's CLI-23 result in `client.md`: proven with cargo
+  tests in the ext, and fixed (`start_planned`'s `ticks as u32` fixed the
+  same way, without a cargo test).
+
+  **Requests:** FX1-R24 (FX1-8's privacy declarations) is granted, the
+  default. `server/privacy.json` and `server/declarations.md` are in
+  FX1-8's `exceptions`.
+
+  **Restarted**, on Opus 5.5 at effort high: FX1 on FX1-8-server-a-lows
+  (`session_01SNkKxpLTTBVYS7eUXqeFJr`). It was idle, waiting on FX1-R24.
+  **Started:** FX4 on FX4-7-curation-swap-weave
+  (`session_01SNkKxoYfNyaJq9rBGUSuzk`). FX3's cycle 172 session is now in
+  the sessions table, where it was missing.
+
+  **Seen:**
+  - FX3 is `working` on FX1-9-tools-gate (lease 09:32Z): all six findings
+    and FX2-R4 fixed, `npm test` 666 of 666, its pre-check of ad5e56bf
+    running.
+  - FX2 has no task left: FX2-10 was its last, merged in cycle 172. Its
+    status file still reads `ready` from before that merge.
+
+  Three builders are working: FX1, FX3 and FX4. FX4-8 waits on FX4-7, and
+  FX1-10 on FX1-9 and FX4-7, so no fourth task can start. **Next:** merge
+  FX1-9, FX1-8 and FX4-7 as each turns ready. Then FX4-8 and FX1-10 to
+  FX1-12 in order. Then the UI: once every FX task is merged, unpark
+  P3-S3-settings-4, P4-S1-heist-vault, P4-S2-home-purse and the BT track.
+
 - **Cycle 172**, 24 November 2026, from about 05:35Z (session
   `session_01SNkKxpgsn8Ad15uPi5ptnD`, started by the Opus 5.5 launcher).
   **Merged** two tasks, batched in candidate acb2c81d, at 5f32d68a:

@@ -1695,6 +1695,15 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   FX1-11-tools-docs's `done_when`, since FX1-11 owns
   `tools/check_document.py`: the docstring becomes a raw string, so
   compiling the file prints no warning.
+- **FX3-R1** (from FX3, 24 November 2026 09:28Z; due 13:28Z; not
+  blocking): FX1-10's broadened `tools/client_contract.py` asks for 13
+  `ERR_` rows, not the nine granted: `era`, `manifest`,
+  `method_not_allowed` and `no_landing_realm` are sent by the server too
+  (sim.mjs's REFUSED table, main.mjs's 405). Files:
+  `client/i18n/strings.csv`, `tools/client_contract.py`. Default: the four
+  extra rows stay in `client/i18n/strings.csv` in this task, the same file
+  as the grant. Copied in cycle 176. **Answered** by the lead in cycle 176:
+  the default; the rows are in FX1-10's candidate, merged at bdb052a8.
 
 - **AD-R46** (from AD, 17 November 2026 02:58Z; due 19 November 02:58Z;
   not blocking): AD's preview of P2-S1-result-6 (S1-R35) at 16515088.
