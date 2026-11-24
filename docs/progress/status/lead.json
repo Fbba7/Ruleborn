@@ -1,9 +1,16 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-24T09:48:00Z",
+  "updated_at": "2026-11-24T10:25:00Z",
   "expected_next_update_by": "2026-11-24T12:48:00Z",
   "cycle": 175,
-  "merging": null,
+  "merging": {
+    "candidate_sha": "3295f3d4",
+    "task_ids": [
+      "FX1-10-tools-contract"
+    ],
+    "started_at": "2026-11-24T10:25:00Z",
+    "expires_at": "2026-11-24T11:25:00Z"
+  },
   "last_merged": {
     "task_id": "FX1-13-codex-woven-at",
     "sha": "5a90d5ba"
