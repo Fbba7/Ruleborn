@@ -1,12 +1,13 @@
 # FX4 client fixer: progress
 
-- Status: Green. FX4-6-device-replay-cap: the fail-first ext tests, the fix,
-  and CLI-23 proven and fixed; ready at 484297b1 (main merged), its pre-check passed.
-- Progress: 5 of 8 tasks merged (FX4-1 to FX4-5); FX4-6 in this session; no
+- Status: Green. FX4-7-curation-swap-weave: the fail-first test and the
+  client fix for CLI-1; ready at 62240757 (main merged).
+- Progress: 6 of 8 tasks merged (FX4-1 to FX4-6); FX4-7 in this session; no
   gate items (fix wave).
-- Done: the ext refuses a replay over `MAX_HEIST_BYTES`, both recorders,
-  and `give` stops taking commands before the replay reaches it.
-- Next: the lead merges FX4-6; then FX4-7-curation-swap-weave.
+- Done: while a swapped slot weaves, the island is published without the
+  swapped law's pylon and the slot is shown weaving with its ready time;
+  once woven, the next curation publishes the new law's pylon.
+- Next: the lead merges FX4-7; then FX4-8-rehearsal-rerun.
 - Blocked by: none.
 - Owner decision needed: none.
 
@@ -17,115 +18,110 @@
 | FX4-3-replay-shop-nav: RB-43, RB-20, RB-58, RB-59 | 3.5 | merged | `8be82e6f` on main |
 | FX4-4-audit-client: the client audit | 4 | merged | `d5c16216` on main |
 | FX4-5-problem-strings: FX3-R1's two problem rows | 0.75 | merged | `d3183782` on main |
-| FX4-6-device-replay-cap: SIM-2 and FX3-R3 on the device, CLI-23 | 1.0 | ready | `484297b1`, pre-check passed |
+| FX4-6-device-replay-cap: SIM-2 and FX3-R3 on the device, CLI-23 | 1.0 | merged | `ee4d64aa` on main |
+| FX4-7-curation-swap-weave: CLI-1 | 2.0 | ready | `62240757`, pre-check below |
 
 ## Handoff
 
-- Last verified commit: 484297b1, the ready_sha in `status/FX4.json`; its
-  pre-check passed (06:31:21Z, "All checks passed.").
+- Last verified commit: 62240757, the ready_sha in `status/FX4.json`.
 - Commits, in order:
-  - `e43b0b73`: the tests, on their own. `client/ext/src/tests.rs` (six
-    cargo tests, `#[cfg(test)] mod tests;` in `lib.rs`), and `record()`'s
-    body moved, unchanged, into a plain `recorded() -> Vec<u8>` that
-    `record()` wraps, so a cargo test can read the bytes without Godot's
-    types.
-  - `d72bfb59`: the fix (SIM-2, FX3-R3, CLI-23).
-  - `710ed402`: main merged (lead cycle 171's two commits).
-  - `9c66e15c`: `start_planned`'s `ticks as u32` (CLI-23, below).
-  - `484297b1`: main merged again (lead cycle 172, `844882c3`); clean,
-    no conflict.
-- The fix, in `client/ext/src/lib.rs`:
-  - `recorded()` gives no bytes when either recorder's replay is over
-    `sim::replay::MAX_HEIST_BYTES` (the sim's own constant, not a copy),
-    as `rb_record*` now does (-9).
-  - **The device stops accepting commands**: `give` returns false for a
-    command that would put the replay over the limit. `room_for` projects
-    the replay as the recorder would keep it: the log so far and this
-    command, actor < 16 only, the header, and a 4-byte checksum a second
-    (`ticks / TICKS_PER_SECOND`), and compares its encoded length with
-    `MAX_HEIST_BYTES`. No re-simulation is needed, because a replay's
-    length does not depend on the checksums' values. The screen
-    (`heist_screen.gd` lines 510, 518 and 831) ignores `give`'s result, so
-    such a tap is dropped silently, as a tap after the clock already is.
-    FX4-R2 asked the lead about a hint on screen; the lead answered the
-    default in cycle 172 (no follow-up).
-- CLI-23: **proven** with a cargo test, then fixed.
-  - On main, `give` took an actor of 256, -1 or 16 (the replay cannot carry
-    16, so the recorder dropped it), a kind of 256 or -256, and an x or y
-    past i16, each wrapped onto a valid value.
-  - The universe landing took kind 267 as Land, and x past i16.
-  - `preview` took a clock of 2^32 + 4950 as 4950.
-  - Now each is refused with `try_from`. The actor must also be below 16,
-    the replay's four bits (RB-55).
-  - `start_planned`'s `ticks as u32` is the same defect (client.md, line
-    220). It is fixed the same way in `9c66e15c`, but it has no cargo test:
-    its seed and island arguments are `GString` and `PackedByteArray`,
-    which need the engine to build. `crew as u8` is safe (checked to be
-    3..=5 first). For client.md: CLI-23 is proven and fixed.
+  - `a97ae895`: the test, on its own (`client/tests/fix_audit_client_tests.gd`).
+  - `c1064608`: the fix (CLI-1), in `client/features/curation/` and
+    `client/i18n/strings.csv`.
+  - `77192ea2`: the test's unreachable server answers `unreachable`, a code
+    the client words (`tools/client_contract.py` flagged `unavailable`,
+    which has no `ERR_` row). No expectation changed.
+  - `62240757`: main merged (lead cycles 173 and 174); clean, no conflict.
+- **The corrected test** (done_when f): `_swap_publish_is_refused_while_weaving`
+  in `client/tests/fix_audit_client_tests.gd`. On main it was a
+  `_still_open("CLI-1", ...)` that passed while the defect held (woven,
+  published with the new law's pylon, refused as `island_not_publishable`).
+  It now checks the behaviour in four checks, against an `IslandServer` fake
+  that answers as SR-16 does: `law_not_woven` or `woven_law_missing` as
+  422 `island_not_publishable`, and 503 when it is down.
+- SR-16 stays: no server change. The fix is client-side, in
+  `curation_controller.gd`:
+  - `apply_swap` weaves first. A refused weave goes to `curation_failed`
+    and publishes nothing, so nothing is charged for it. A woven swap
+    whose slot has a ready time is saved as a record
+    `{realm, slot, law, old, at, ready_at}` in
+    `user://curation-weaving.json` (`at` is the tile of the old law's
+    pylon). Then the draft is published.
+  - `_publish` first settles the draft (`_settled`): while a record is not
+    ready, its tile is cleared of the old and the new law's pylon. Once it
+    is ready, the new law's pylon is placed on that tile, if the tile is
+    empty and the law has no pylon elsewhere. The island then passes
+    SR-16 at every step.
+  - The screen: `curation_weaving` puts `{slot: ready_at}` in the slice.
+    `CurationPresenter.laws` shows that slot as `CUR_SLOT_WEAVING` ("Slot
+    %d: %s, weaving, ready in %s", via `WeavingPresenter.duration`) and
+    refuses another swap on it with `CUR_WEAVING_WHY`. A post cannot be
+    moved onto a weaving tile (`post_cannot_move`).
+- **How the new pylon is published once woven** (done_when b): when
+  curation next opens after `ready_at`. `load_curation` ends with
+  `_settle`, which drops records whose slot no longer holds their law,
+  places the woven pylons and publishes, said `CUR_SAID_WOVEN` ("The swap
+  is woven and its pylon is on your defence"). A save or a swap made after
+  `ready_at` with the screen still open does the same, because `_publish`
+  settles first. There is no timer on an open screen:
+  `client/scripts/curation_screen.gd` is not this task's.
+- **A failed publish after the weave** (done_when c) is said as
+  `swap_unsaved` ("the swap is weaving but your defence could not be saved;
+  it is saved when you next open curation"), never as done. The record is
+  kept, so the next curation retries it. A record is dropped only after a
+  publish succeeds once its `ready_at` has passed.
+- Strings: `ERR_SWAP_UNSAVED`, `CUR_SLOT_WEAVING`, `CUR_WEAVING_WHY`,
+  `CUR_SAID_WOVEN`, in all six locales. `node
+  art/ui/keyframes/build_words.mjs` was run again; `words.js` did not
+  change, because none of these strings is in the keyframes.
+- **Request FX4-R3 to the lead** (default: the lead does it when it merges):
+  mark CLI-1 `fixed` in `docs/security/audit-2026-11/client.md` line 43,
+  which FX4-7 does not own.
 
-### The tests, failing on main
+### The test, failing on main
 
-Run on `e43b0b73` (main's `lib.rs` plus the `recorded()` move), `cargo test`
-in `client/ext`, `RUST_BACKTRACE=0`:
+Run on `a97ae895` (main's curation plus the test), `python3 client/status.py`:
 
 ```text
-thread 'tests::cli_23_give_refuses_what_its_casts_would_wrap' panicked at src/tests.rs:138:5:
-give took ["actor 256", "actor -1", "actor 16, which the replay cannot carry", "kind 256", "kind -256", "x past i16", "y past i16"]
-thread 'tests::cli_23_preview_refuses_a_clock_past_u32' panicked at src/tests.rs:160:5:
-a clock past u32
-thread 'tests::cli_23_the_landing_refuses_what_its_casts_would_wrap' panicked at src/tests.rs:148:5:
-kind 267 is no landing
-thread 'tests::sim_2_the_single_island_recorder_refuses_a_log_over_2_kb' panicked at src/tests.rs:84:5:
-the device recorded a 3451-byte replay (limit 2048)
-thread 'tests::sim_2_the_universe_recorder_never_returns_a_replay_over_2_kb' panicked at src/tests.rs:109:5:
-the device recorded a 2131-byte replay (limit 2048)
-thread 'tests::sim_2_the_single_island_recorder_never_returns_a_replay_over_2_kb' panicked at src/tests.rs:62:5:
-the device recorded a 2131-byte replay (limit 2048)
-test result: FAILED. 0 passed; 6 failed
+489 of 492 passed — written to client/status.json
+  FAILED: CLI-1: a swap woven publishes the island without the swapped law's pylon while its slot weaves, and the slot is shown weaving with its ready time (13.3, 5.6)
+  FAILED: CLI-1: once the swapped slot is woven, curation opened publishes the new law's pylon where the old one stood (13.3, 5.6)
+  FAILED: CLI-1: a publish that fails after the swap is woven is said on the screen, never said done, and retried when curation next opens (13.3)
 ```
 
-The tests:
-
-- **Single-island recorder.** This is sim.md's SIM-2 Input given as a
-  player's taps: `example_open`, seed 7, MAX_TICKS, crew 3, the Land, then
-  180 walks one every 37 ticks. After the fix, the replay is at most 2 KB,
-  some taps are refused, and `verify_on` accepts it.
-- **Single-island refusal.** 400 walks pushed straight into the world, past
-  `give`: no bytes are recorded.
-- **Universe recorder.** The sim's `two_realms` fixture (stone link),
-  landed on the outer realm on the one-link clock, then 230 walks one every
-  20 ticks. After the fix, the replay is at most 2 KB and
-  `verify_universe` accepts it.
-- **CLI-23.** Three tests, as above.
-
-After `d72bfb59`, all six pass.
+The fourth check ("a swap the server refuses to weave publishes nothing and
+says why") already held on main; it guards the fix. After `c1064608`, all
+four pass.
 
 ### Evidence
 
-- `cargo test` in `client/ext` on `9c66e15c`: 6 passed.
-- `bash client/build.sh` on `d72bfb59`: passes.
-- `python3 client/status.py` on `d72bfb59`: 471 of 471 passed.
-- `python3 tools/coord/owners.py diff FX4-6-device-replay-cap
-  origin/claude/videogame-project-analysis-ewkkk2 710ed402`: every changed
-  path is inside its files. It was run again on `9c66e15c` and on
-  `484297b1`, with the same result.
-- The pre-check (`bash tools/run_checks.sh`, the full checks) passed on
-  `9c66e15c` (05:52:43Z) and again on the merge of current main,
-  `484297b1` (06:31:21Z, "All checks passed."), recorded in
+- `bash client/build.sh` on `c1064608`: passes.
+- `python3 client/status.py` on `77192ea2`: 492 of 492 passed.
+- `python3 tools/client_contract.py`: passes after `77192ea2`.
+- `python3 tools/coord/owners.py diff FX4-7-curation-swap-weave
+  origin/claude/videogame-project-analysis-ewkkk2 62240757`: every changed
+  path is inside its files.
+- The pre-check (`bash tools/run_checks.sh`, the full checks, which run
+  `tools/check_all.sh`) on `62240757`: running; its result goes in
   `status/FX4.json` (`precheck`).
-- `client/status.py` rewrites `client/status.json`, and main's copy is
-  stale (it lacks AD-R52 and the CLI rows). That file is not FX4-6's, so
-  it was put back and not committed.
+- `client/status.py` rewrites `client/status.json`; it was put back and
+  not committed.
 
 ### Follow-ups still standing (from FX4-4, in the backlog)
 
-- CLI-1 is FX4-7-curation-swap-weave; CLI-18 is FX4-8-rehearsal-rerun;
-  CLI-23 is proven and fixed in FX4-6 (above).
+- CLI-1 is fixed in FX4-7 (above); CLI-18 is FX4-8-rehearsal-rerun;
+  CLI-23 is fixed in FX4-6 (merged, `ee4d64aa`).
 - CLI-3 (High, unproven), CLI-8 and CLI-9 (server contract notes) and
   FX4-R1 stand as written in
   [`client.md`](../security/audit-2026-11/client.md) and the status file.
 
 ## Tried and failed
+
+- FX4-7: a multi-line lambda inside `filter()` is a parse error in this
+  GDScript; use a static func (`_whole`).
+- FX4-7: a test fake's error body must be a code with an `ERR_` row in
+  every language, or `tools/client_contract.py` fails (`unavailable` has
+  none; `unreachable` does).
 
 - FX4-6: a first edit put `recorded()` after a closing brace inside the
   `#[godot_api]` block, which would have moved the remaining `#[func]`s out
