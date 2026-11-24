@@ -1,19 +1,19 @@
 # SP-bt-01 the coordinator script: progress
 
-- Status: Green (BT-01b pre-check running at 18570607).
+- Status: Green (BT-01b ready at 18570607; pre-check PASS).
 - Progress: 1 of 2 tasks merged; 0 items passed by the gate (neither task has gate items).
 - Done: BT-01a merged (99c9aa89); BT-01b written (tools/coord/merge_queue.py, `cycle.py --merge`), self-test passes.
-- Next: BT-01b ready once its pre-check passes.
+- Next: the lead merges BT-01b; no further task.
 - Blocked by: none.
 - Owner decision needed: none.
 
 | Deliverable | Weight (h) | Status | Evidence |
 |---|---:|---|---|
 | BT-01a dry-run coordinator cycle | 4 | merged (99c9aa89) | `python3 tools/coord/cycle.py --self-test` |
-| BT-01b merge queue | 4 | pre-check running (18570607) | `python3 tools/coord/cycle.py --self-test` (includes `merge_queue.self_test`) |
+| BT-01b merge queue | 4 | ready (18570607) | `python3 tools/coord/cycle.py --self-test` (includes `merge_queue.self_test`) |
 
 ## Handoff
-- Last verified commit: 18570607 (main 99b7b414 merged in; self-test passes; `owners.py diff BT-01b` passes; pre-check started 19:55Z).
+- Last verified commit: 18570607 (main 99b7b414 merged in; self-test passes; `owners.py diff BT-01b` passes; pre-check PASS 20:31Z; main 099b746f merged in after it, docs/progress only).
 - Done: `tools/coord/merge_queue.py`, run as `python3 tools/coord/cycle.py --merge [--dry-run] [--json] [--trailer LINE] [--max-batch N] [--max-candidates N]`. Per round:
   - the lock in status/lead.json: an unexpired one stops the run; an expired one is cleared and noted;
   - the ready tasks, critical first, then by ready time; a missing ready_sha or a path outside the task's files (`owners.unowned` against main's head) sets resync with a message to the agent;
