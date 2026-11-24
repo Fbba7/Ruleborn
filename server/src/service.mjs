@@ -444,10 +444,11 @@ export class Service {
     if (holders.length === 0) {
       // A snapshot no island is on any more is an echo for 14 days (§12.3:
       // "Robbing an echo takes nothing from its owner"), and after that not
-      // a target at all.
+      // a target at all. The game's generated islands are no echoes
+      // (generator.mjs: "Yesterday's are no echoes", RB-12).
       const by = this.db.prepare("SELECT banned_at, deleted_at FROM accounts WHERE id = ?").get(snapshot.owner);
       const days = facts.ECHO_DAYS * 24 * 60 * 60 * 1000;
-      if (trace || snapshot.owner === attacker || by.banned_at || by.deleted_at
+      if (trace || snapshot.owner === attacker || snapshot.owner === GENERATOR || by.banned_at || by.deleted_at
           || now - snapshot.published_at > days) {
         throw new Refused(410, "superseded");
       }
@@ -462,7 +463,15 @@ export class Service {
       if (echo || trace) throw new Refused(410, "superseded");
       if (!this.friends.areFriends(attacker, defender)) throw new Refused(403, "not_friends");
     } else if (trace) {
-      traceOf = this.matchmaking.traceable(attacker, defender, now);
+      // A Trace asked for again while one is held is handed back (§24.13),
+      // though traceable() no longer finds its robbery: the held one names
+      // it (RB-14). Only the newest lease on the bundle can be held (issue).
+      const newest = this.db.prepare(
+        "SELECT token, trace_of, expires_at FROM leases WHERE attacker = ? AND bundle = ? ORDER BY issued_at DESC LIMIT 1")
+        .get(attacker, bundle);
+      const heldTrace = newest?.trace_of && newest.expires_at > now
+        && !this.db.prepare("SELECT 1 FROM heists WHERE token = ?").get(newest.token) ? newest.trace_of : null;
+      traceOf = this.matchmaking.traceable(attacker, defender, now) ?? heldTrace;
       if (!traceOf) throw new Refused(403, "nothing_to_trace");
     } else if (this.matchmaking.shielded(defender, now)) {
       throw new Refused(403, "new_player_protected", { hours: facts.NEW_PLAYER_SHIELD_HOURS });
@@ -490,8 +499,11 @@ export class Service {
     const c = this.challenge(attacker, code);
     if (c.bundle !== bundle) throw new Refused(409, "not_this_challenge");
     if (c.account === attacker) throw new Refused(409, "own_island");
+    // Played: a submission the server validated. A refused one is no play
+    // (RB-16); seed re-rolls stay capped by the refusal limits (issue).
     const played = this.db.prepare(
-      "SELECT 1 FROM leases l JOIN heists h ON h.token = l.token WHERE l.attacker = ? AND l.challenge = ?")
+      `SELECT 1 FROM leases l JOIN heists h ON h.token = l.token
+        WHERE l.attacker = ? AND l.challenge = ? AND h.validated = 1`)
       .get(attacker, code);
     if (played) throw new Refused(409, "challenge_already_played");
     return this.issue(attacker, bundle, c.account, now, { mode: "challenge", challenge: code });
@@ -555,6 +567,14 @@ export class Service {
         && this.db.prepare("SELECT 1 FROM heists WHERE token = ? AND validated = 0").get(newest.token);
       // Expired and never submitted, it reserved nothing (§24.13): a fresh
       // one is issued beside it.
+      // FX1-A-13: the island raided is the defender's own, in the realm it
+      // stands in now: players who publish the same bytes share one snapshot,
+      // whose realm is the first publisher's. Kept on the lease, so an island
+      // republished before the raid settles is still rated where it was.
+      const shared = this.db.prepare("SELECT realm FROM snapshots WHERE bundle = ?").get(bundle)?.realm ?? null;
+      const realm = echo ? shared
+        : this.db.prepare("SELECT realm FROM islands WHERE owner = ? AND bundle = ? ORDER BY realm = ? DESC, realm LIMIT 1")
+          .get(defender, bundle, shared)?.realm ?? shared;
       const token = this.random(16).toString("hex");
       const drawn = this.random(8).readBigUInt64LE(0).toString();
       const row = {
@@ -574,12 +594,13 @@ export class Service {
         challenge,
         era: era.wire,
         universe: crossing,
+        realm,
       };
       this.db.prepare(
         `INSERT INTO leases (token, attacker, bundle, defender, seed, ticks, rules, issued_at, expires_at,
-                             echo, trace_of, mode, challenge, era, universe)
+                             echo, trace_of, mode, challenge, era, universe, realm)
          VALUES (:token, :attacker, :bundle, :defender, :seed, :ticks, :rules, :issued_at, :expires_at,
-                 :echo, :trace_of, :mode, :challenge, :era, :universe)`)
+                 :echo, :trace_of, :mode, :challenge, :era, :universe, :realm)`)
         .run(row);
       return this.leaseView(row);
     });
@@ -666,7 +687,8 @@ export class Service {
     // §24.12: "The lease expired — No reward, with one grace submission
     // allowed." Read as one expired submission a day honoured (G17).
     let grace = false;
-    if (now > lease.expires_at) {
+    // FX1-A-12: at expires_at a lease is run out, as issue() reads it.
+    if (now >= lease.expires_at) {
       const used = this.db.prepare(
         "SELECT COUNT(*) AS n FROM heists WHERE attacker = ? AND day = ? AND grace = 1")
         .get(attacker, day(now)).n;
@@ -895,10 +917,13 @@ export class Service {
     // a player in a UTC day; any later one that day pays the raider's haul,
     // within their caps, and nothing else — so two players cannot mint
     // Renown, stars or shares by robbing or foiling each other on a loop.
+    // An echo takes nothing from its owner (§12.3, G30), so a raid on one
+    // counts only against other echo raids, never the pair's real one (RB-05).
     const pairEarlierToday = this.db.prepare(
       `SELECT COUNT(*) AS n FROM heists h JOIN leases l ON l.token = h.token
-        WHERE h.attacker = ? AND h.day = ? AND h.defender = ? AND l.mode = 'raid' AND h.validated = 1`)
-      .get(attacker, day(now), lease.defender).n;
+        WHERE h.attacker = ? AND h.day = ? AND h.defender = ? AND l.mode = 'raid' AND l.echo = ?
+          AND h.validated = 1`)
+      .get(attacker, day(now), lease.defender, lease.echo ? 1 : 0).n;
     const scores = !friendly && pairEarlierToday === 0;
     // The two Keeper levels the raid was played at, read once: the raider's
     // experience below may level them up, and nothing after it — the
@@ -954,8 +979,8 @@ export class Service {
       // one's stays with the game (G37).
       const foiledEarlierToday = this.db.prepare(
         `SELECT COUNT(*) AS n FROM heists h JOIN leases l ON l.token = h.token
-          WHERE h.attacker = ? AND h.day = ? AND h.defender = ? AND l.mode = 'raid' AND h.validated = 1
-            AND json_extract(h.outcome, '$.verdict.grade') = 'foiled'`)
+          WHERE h.attacker = ? AND h.day = ? AND h.defender = ? AND l.mode = 'raid' AND l.echo = 0
+            AND h.validated = 1 AND json_extract(h.outcome, '$.verdict.grade') = 'foiled'`)
         .get(attacker, day(now), lease.defender).n;
       if (foiledEarlierToday === 0) book("defender", "starlight", fee);
       const percent = this.seasons.defenceShare(this.seasons.current(now).id);
@@ -1004,8 +1029,15 @@ export class Service {
     // pair's later raids the same UTC day move no rating either (G37,
     // SEC-39): the pair chooses those outcomes, as it would its Renown.
     const rated = {};
+    // FX1-A-13: the realm the lease was issued in (issue). A lease issued
+    // before that column has none: the defender's island on these bytes
+    // names the realm then, and an echo, or an island republished since,
+    // falls back to the snapshot's.
+    const realm = lease.realm ?? (lease.echo ? snapshot.realm
+      : this.db.prepare("SELECT realm FROM islands WHERE owner = ? AND bundle = ? ORDER BY realm = ? DESC, realm LIMIT 1")
+        .get(lease.defender, lease.bundle, snapshot.realm)?.realm ?? snapshot.realm);
     const rating = !scores || gone ? null
-      : this.matchmaking.settle(lease, snapshot.realm, verdict, now, { raiderOnly: Boolean(lease.echo), keep: rated });
+      : this.matchmaking.settle(lease, realm, verdict, now, { raiderOnly: Boolean(lease.echo), keep: rated });
     // The raider's row, written once: the experience, the raids played and
     // the rating, which were three writes of it (§24.1's writes). The
     // experience is earned at the level the raid was played at, read above.

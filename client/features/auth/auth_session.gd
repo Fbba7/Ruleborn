@@ -160,12 +160,20 @@ func sign_in() -> Result:
 ## This device signed out — or every device, with `everywhere`. The server is
 ## told first, and whatever it answers this device forgets its tokens: a
 ## sign-out never fails on the phone. Answers the server's Result; one it
-## never heard (offline) is sent when it next answers.
+## never heard (offline) is sent when it next answers. A renewal on its way
+## is waited for first, so the session it brings is the one ended, not one
+## the phone adopts after signing out (CLI-2). An access token the server
+## refuses, though the phone thinks it fresh, falls back to the refresh token,
+## so the session is ended either way (CLI-5).
 func sign_out(everywhere := false) -> Result:
+	if _busy:
+		await renewed
 	var refresh := vault.read(REFRESH_KEY)
 	var told := Result.success({"ended": 0})
 	if fresh():
 		told = await api.post_json("/v1/session/end", {"everywhere": everywhere})
+		if not told.ok and told.code == "session_refused" and refresh != "":
+			told = await _end_with(refresh, everywhere)
 	elif refresh != "":
 		told = await _end_with(refresh, everywhere)
 	if not told.ok and Outbox.transient(told) and told.code != "session_refused" and refresh != "":
@@ -319,11 +327,7 @@ func send_revocation() -> void:
 ## /v1/session/end proven by a refresh token alone, with no access token
 ## sent beside it (which would end that session instead).
 func _end_with(refresh: String, everywhere: bool) -> Result:
-	var held := api.token
-	api.token = ""
-	var r := await api.post_json("/v1/session/end", {"everywhere": everywhere, "refreshToken": refresh})
-	api.token = held
-	return r
+	return await api.public_post_json("/v1/session/end", {"everywhere": everywhere, "refreshToken": refresh})
 
 
 func _read() -> void:

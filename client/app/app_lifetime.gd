@@ -6,9 +6,24 @@ extends Node
 ## a static that still holds objects when the engine frees its own memory
 ## corrupts the heap on exit.
 
+## How often an open session is marked seen (CLI-14): one the app never
+## closes, killed or crashed, is ended at the next launch at its last mark.
+const SEEN_EVERY := 30.0
+
+var _since_seen := 0.0
+
+
 func _ready() -> void:
 	if App.services != null:
 		App.services.foreground()
+
+
+func _process(delta: float) -> void:
+	_since_seen += delta
+	if _since_seen < SEEN_EVERY or App.services == null:
+		return
+	_since_seen = 0.0
+	App.services.notices.seen(int(Time.get_unix_time_from_system() * 1000))
 
 
 func _notification(what: int) -> void:

@@ -335,8 +335,8 @@ impl Heist {
         let mut commands = Vec::with_capacity(command_count as usize);
         let mut tick = 0u32;
         for _ in 0..command_count {
-            let delta = read_varint(bytes, &mut at)?;
-            tick = tick.checked_add(delta as u32)?;
+            let delta = u32::try_from(read_varint(bytes, &mut at)?).ok()?;   // never wrapped (RB-54)
+            tick = tick.checked_add(delta)?;
             let packed = take(&mut at, 1)?[0];
             let kind = Kind::from_u8(packed & 0x0f)?;
             let x = i16::from_le_bytes(take(&mut at, 2)?.try_into().ok()?);
@@ -379,9 +379,14 @@ fn read_varint(bytes: &[u8], at: &mut usize) -> Option<u64> {
     for shift in (0..64).step_by(7) {
         let byte = *bytes.get(*at)?;
         *at += 1;
-        value |= ((byte & 0x7f) as u64) << shift;
+        let bits = (byte & 0x7f) as u64;
+        if shift == 63 && bits > 1 {
+            return None;                   // bits past u64 would fall off (RB-54)
+        }
+        value |= bits << shift;
         if byte & 0x80 == 0 {
-            return Some(value);
+            // One heist, one byte string: a zero last byte is padding (RB-54).
+            return if shift > 0 && byte == 0 { None } else { Some(value) };
         }
     }
     None                                   // a varint longer than u64 is malformed

@@ -216,7 +216,17 @@ export function finishErasures(service) {
   }
   // Off every target list now, not at the next regeneration, and off the
   // list before it too.
-  if (pending.some((e) => e.store === "lists")) service.targetLists({ keepPrevious: false });
+  if (pending.some((e) => e.store === "lists")) {
+    const named = () => new Set(db.prepare("SELECT list, previous FROM target_lists").all()
+      .flatMap((r) => [r.list, r.previous]).filter(Boolean));
+    const before = named();
+    service.targetLists({ keepPrevious: false });
+    // RB-34: the edge caches a list for an hour by its hash; every list that
+    // named the child and is no longer named is purged there too.
+    const after = named();
+    const now = service.now();
+    for (const list of before) if (!after.has(list)) queuePurge(db, list, now);
+  }
   db.prepare("DELETE FROM erasures").run();
   return pending.length;
 }
@@ -235,9 +245,10 @@ function erase(db, account, now) {
       pending.run("replays", hash);
     }
   }
-  // Their islands' bytes, unless another player's island, Workshop island or
-  // challenge link is the same bytes, or another player's island was, raided
-  // or leased as theirs: that raid still settles, and its replay still plays.
+  // Their islands' bytes, unless another player's island, Workshop island,
+  // challenge link or snapshot (an echo, FX1-A-02) is the same bytes, or
+  // another player's island was, raided or leased as theirs: that raid still
+  // settles, and its replay still plays.
   const bundles = db.prepare(
     `SELECT bundle FROM snapshots WHERE owner = :a
       UNION SELECT bundle FROM workshop_items WHERE creator = :a`).all({ a: account }).map((r) => r.bundle);
@@ -246,7 +257,8 @@ function erase(db, account, now) {
       `SELECT 1 FROM islands WHERE bundle = :b AND owner != :a
         UNION ALL SELECT 1 FROM workshop_items WHERE bundle = :b AND creator != :a
         UNION ALL SELECT 1 FROM challenges WHERE bundle = :b AND account != :a
-        UNION ALL SELECT 1 FROM leases WHERE bundle = :b AND defender != :a LIMIT 1`)
+        UNION ALL SELECT 1 FROM leases WHERE bundle = :b AND defender != :a
+        UNION ALL SELECT 1 FROM snapshots WHERE bundle = :b AND owner != :a LIMIT 1`)
       .get({ a: account, b: bundle });
     if (!shared) {
       pending.run("bundles", bundle);

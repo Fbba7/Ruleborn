@@ -27,7 +27,6 @@
 import { readFileSync } from "node:fs";
 
 import { transaction } from "./db.mjs";
-import { RAIDED } from "./matchmaking.mjs";
 import { Refused } from "./refused.mjs";
 
 const facts = JSON.parse(readFileSync(new URL("./facts.json", import.meta.url), "utf8"));
@@ -241,8 +240,10 @@ export class Notifications {
     // still settles, and owes nobody a notification.
     const defender = this.db.prepare("SELECT deleted_at, banned_at FROM accounts WHERE id = ?").get(lease.defender);
     if (defender.deleted_at || defender.banned_at) return null;
+    // The newest waiting: one a retried push left (RB-48) has its list
+    // already, and a later raid joins the one that reads the day's since.
     const waiting = this.db.prepare(
-      "SELECT * FROM notifications WHERE account = ? AND kind = 'raided' AND sent_at IS NULL")
+      "SELECT * FROM notifications WHERE account = ? AND kind = 'raided' AND sent_at IS NULL ORDER BY id DESC")
       .get(lease.defender);
     // DB-4: the day's raids are listed by reference. The first raid writes
     // the notification and when it came; a later one that is a lease on
@@ -266,7 +267,9 @@ export class Notifications {
 
   /** The raids a waiting notification tells of: those it carries, then the
    *  heists on record against the player since its first, which it only
-   *  refers to (DB-4). */
+   *  refers to (DB-4). Only validated ones: a refused submission is no raid
+   *  (RB-46). Any mode but an echo's, as grant() notifies: a friendly or
+   *  challenge heist is told whether or not a raid came first (RB-47). */
   raids(n) {
     const data = JSON.parse(n.data);
     if (data.since === undefined) return data.heists;
@@ -274,7 +277,7 @@ export class Notifications {
     const more = this.db.prepare(
       `SELECT h.token, json_extract(h.outcome, '$.verdict.grade') AS grade
          FROM heists h JOIN leases l ON l.token = h.token
-        WHERE h.defender = ? AND h.submitted_at >= ? AND ${RAIDED}
+        WHERE h.defender = ? AND h.submitted_at >= ? AND h.validated = 1 AND l.echo = 0
         ORDER BY h.submitted_at, h.token`).all(n.account, data.since)
       .filter((h) => !known.has(h.token)).map((h) => ({ heist: h.token, grade: h.grade }));
     return [...data.heists, ...more];
@@ -386,9 +389,20 @@ export class Notifications {
         continue;
       }
       // Claimed: a second server sending the same outbox takes none twice.
-      const claimed = this.db.prepare("UPDATE notifications SET sent_at = ? WHERE id = ? AND sent_at IS NULL")
-        .run(now, n.id).changes;
-      if (!claimed) continue;
+      // RB-48: a raid notification's list is read once, as it is claimed,
+      // and kept with it, so a retry tells what this claim told; a raid
+      // that lands after the claim is its own notification's.
+      const data = transaction(this.db, () => {
+        if (!this.db.prepare("UPDATE notifications SET sent_at = ? WHERE id = ? AND sent_at IS NULL")
+          .run(now, n.id).changes) return null;
+        const { since, ...kept } = JSON.parse(n.data);
+        if (n.kind === "raided" && since !== undefined) {
+          kept.heists = this.raids(n);
+          this.db.prepare("UPDATE notifications SET data = ? WHERE id = ?").run(JSON.stringify(kept), n.id);
+        }
+        return kept;
+      });
+      if (!data) continue;
       // The token as it is now: one turned off or replaced meanwhile is not used.
       // And only while the session that registered it lives (SEC-37).
       const a = this.db.prepare(
@@ -397,8 +411,7 @@ export class Notifications {
           WHERE a.id = ?`).get(n.account);
       if (!a?.push_token || !a.time_zone || a.deleted_at) continue;
       if (a.push_session !== null && a.live === null) continue;
-      const { since, ...body } = JSON.parse(n.data);
-      const message = { kind: n.kind, ...body, ...(n.kind === "raided" ? { heists: this.raids(n) } : {}) };
+      const message = { kind: n.kind, ...data };
       const outcome = await push(a.push_token, message, { expiresAt: this.expires(n.account, n.kind, now), now });
       const why = outcome?.status ? `${outcome.status}${outcome.code ? ` ${outcome.code}` : ""}` : (outcome?.reason ?? "unknown");
       if (outcome?.gone) {

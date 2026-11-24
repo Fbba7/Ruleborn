@@ -450,7 +450,9 @@ export function against(result) {
     // every island, an island each monthly player (the lists hold them all).
     readBudget: READS.budget,
     readsOverBudget: +(result.readsPerPlayerDay / READS.budget).toFixed(2),
-    freePlanReadsPlayersADay: Math.floor(READS.freeDay / readsADay(result, 1)),
+    // Each daily player stands for dd/dn islands, as readsAMonth counts them
+    // (AUD-B-20): the periodic jobs read every monthly player's island.
+    freePlanReadsPlayersADay: Math.floor(READS.freeDay / readsADay(result, dd / dn)),
     readDollarsAMonth: Object.fromEntries([1_000, 10_000, 100_000, 1_000_000].map((p) =>
       [p, +(Math.max(0, readsAMonth(result, p) - READS.paidMonth) / 1e6 * READS.pricePerMillion).toFixed(2)])),
   };

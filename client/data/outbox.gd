@@ -161,10 +161,16 @@ func _read() -> void:
 		return
 	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
 	if parsed is Array:
+		# Only items it can send: one the flush could not read would stop it
+		# there, and nothing behind it would ever go (CLI-13).
 		for item: Variant in parsed:
-			if item is Dictionary and item.has("key") and item.has("route") and item.has("body") \
-					and _route.search(str(item["route"])) != null:
-				_items.append(item)
+			if not (item is Dictionary):
+				continue
+			var d: Dictionary = item
+			if d.get("key") is String and d.get("route") is String and d.get("body") is String \
+					and (not d.has("json") or d["json"] is bool) and _route.search(str(d["route"])) != null:
+				d["json"] = d.get("json", false)
+				_items.append(d)
 
 
 func _write() -> void:

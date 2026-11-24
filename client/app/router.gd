@@ -131,12 +131,15 @@ func back_route(name: StringName) -> StringName:
 
 ## The phone's back, or Escape (App.GoBack): a route with no way back stays,
 ## and any other goes to its back route. On home it goes nowhere and answers
-## true: home asks before the game quits, and only its Quit calls `quit`.
+## true: home asks before the game quits, and only its Quit calls `quit`. The
+## roster a character was opened from comes back as it was left (AD-R51), as
+## the character screen's own back button brings it (RB-58).
 func go_back() -> bool:
 	var here := current()
 	if here == &"" or here == &"home":
 		return true
 	var to := back_route(here)
 	if to != here:
-		go(to)
+		var params: Dictionary = store.get_slice(AppState.ROUTE)["params"]
+		go(to, {"roster": params["roster"]} if to == &"roster" and params.has("roster") else {})
 	return false

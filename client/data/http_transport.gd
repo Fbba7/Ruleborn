@@ -39,6 +39,10 @@ static func pinned(path: String) -> TLSOptions:
 
 func send(method: HTTPClient.Method, url: String, headers: PackedStringArray,
 		body: PackedByteArray) -> Dictionary:
+	# An HTTPRequest outside the tree sends nothing: a call made before the
+	# transport has joined it (Services.build on a cold start) waits (RB-27).
+	if not is_inside_tree():
+		await tree_entered
 	var request := HTTPRequest.new()
 	request.timeout = TIMEOUT_SECONDS
 	# The server never redirects, and Godot would send the token on to

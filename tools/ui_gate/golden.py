@@ -313,8 +313,13 @@ def problems(data, label_text, images=True, blind_text=None):
 
 
 def check():
-    bad = problems(load(), LABELS.read_text(),
-                   blind_text=BLIND.read_text() if BLIND.exists() else None)
+    # The blind labels are part of the golden set: a missing file fails the
+    # check instead of skipping its rows' comparison (FX1-T-18).
+    if not BLIND.exists():
+        print(f"golden: {BLIND.name} is missing; the held-out third's blind labels "
+              "are part of the golden set")
+        sys.exit(1)
+    bad = problems(load(), LABELS.read_text(), blind_text=BLIND.read_text())
     for b in bad:
         print("golden:", b)
     if bad:

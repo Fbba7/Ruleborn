@@ -1,0 +1,41 @@
+{
+  "agent": "FX3",
+  "role": "FX3",
+  "branch": "claude/fix-sim",
+  "model": "Opus 5.5",
+  "agent_state": "active",
+  "task_id": "FX1-12-tools-ui",
+  "task_state": "working",
+  "claimed_at": "2026-11-24T12:55:00Z",
+  "lease_until": "2026-11-24T15:55:00Z",
+  "updated_at": "2026-11-24T13:42:00Z",
+  "expected_next_update_by": "2026-11-24T14:45:00Z",
+  "long_run": null,
+  "progress_marker": {
+    "last_green_sha": "e62edbca",
+    "next_step": "pre-check at e62edbca FAILED (icons_256, icons_48 stale); rebaked; new pre-check"
+  },
+  "precheck": null,
+  "gate_request": null,
+  "ready_sha": null,
+  "stop_at": "2026-11-24T21:00:00Z",
+  "acks": [],
+  "requests": [
+    {
+      "id": "FX3-R2",
+      "to": "lead",
+      "at": "2026-11-24T13:20:00Z",
+      "ask": "Lead cycle 179 granted three of the paths (kit.json, motion.json, the kit fixture). Two more are needed: client/ui/art/icons_256.json and client/ui/art/icons_48.json. bake.js is one of the bake's sources (sourcesHash feeds SCRIPTS), so the FX1-T-13 fix makes every family's manifest stale; the pre-check at e62edbca failed on these two in tools/check_all.sh's bake step. Commit 9e420f61 rebakes them: only the sources_hash line of each moves; the atlases are byte for byte as before.",
+      "default": "granted: the lead adds client/ui/art/icons_256.json and client/ui/art/icons_48.json to FX1-12-tools-ui's exceptions before running owners.py diff; with the three granted paths, owners.py diff then lists nothing; without these two it lists exactly these two"
+    }
+  ],
+  "answers": [
+    {
+      "id": "FX3-R1",
+      "by": "lead",
+      "at": "2026-11-24",
+      "answer": "default: the four extra ERR_ rows stay in client/i18n/strings.csv (merged with FX1-10)"
+    }
+  ],
+  "next_step": "new pre-check after the icon rebake; then record, ready, handoff"
+}

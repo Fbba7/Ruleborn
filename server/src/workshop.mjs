@@ -176,6 +176,13 @@ export class Workshop {
       `SELECT 1 FROM workshop_items WHERE bundle = ? AND creator != ?
           AND (withdrawn_at IS NULL OR removed_at IS NOT NULL) LIMIT 1`).get(read.digest, creator);
     if (listedElsewhere) throw new Refused(409, remixOf !== null ? "remix_unchanged" : "already_published");
+    // Nor by its own creator once a moderator took it down: the removal
+    // takes the island out of the Workshop (§18.7, RB-30). The reason is
+    // one the client already has words for in every language.
+    const takenDown = this.db.prepare(
+      `SELECT 1 FROM workshop_items WHERE bundle = ? AND creator = ? AND removed_at IS NOT NULL LIMIT 1`)
+      .get(read.digest, creator);
+    if (takenDown) throw new Refused(409, "island_withdrawn");
 
     const header = readHeader(replay);
     if (!header || header.island !== read.digest) throw new Refused(422, "not_cleared", { why: "wrong_island" });
@@ -359,7 +366,12 @@ export class Workshop {
     else if (header.seed.toString() !== play.seed) outcome = { validated: false, reason: "wrong_seed" };
     else if (header.ticks !== play.ticks) outcome = { validated: false, reason: "wrong_clock" };
     else if (header.era !== 0) outcome = { validated: false, reason: "wrong_era" };
-    else {
+    // RB-35: a play is issued under the current rules (play() hands out no
+    // other), so a replay naming an older build the server still holds is
+    // refused, as a heist is against its lease (SEC-31).
+    else if (header.rules !== this.service.builds.current.rulesVersion) {
+      outcome = { validated: false, reason: "wrong_rules" };
+    } else {
       const build = this.service.builds.get(header.rules);
       const island = this.service.store.get(item.bundle);
       const result = !build ? { status: "refused", reason: "rules_not_held" }
@@ -385,7 +397,13 @@ export class Workshop {
         // SEC-26: recorded either way; on the ladder only from a player
         // who counts.
         const paid = this.counts("workshop_completions", player, item.creator, now);
-        const fresh = this.db.prepare(
+        // RB-37: one completion per player, creator and island: the same
+        // bytes listed again under another name are not a second completion.
+        const copied = this.db.prepare(
+          `SELECT 1 FROM workshop_completions c JOIN workshop_items i ON i.id = c.item
+            WHERE c.player = ? AND i.creator = ? AND i.bundle = ? AND i.id <> ? AND i.removed_at IS NULL
+            LIMIT 1`).get(player, item.creator, item.bundle, item.id);
+        const fresh = copied ? 0 : this.db.prepare(
           `INSERT OR IGNORE INTO workshop_completions (item, player, weight, at, counted)
            VALUES (?, ?, ?, ?, ?)`).run(item.id, player, mate ? facts.KIN_COMPLETION_WEIGHT : 1, now, paid ? 1 : 0)
           .changes;
@@ -472,14 +490,17 @@ export class Workshop {
       throw new Refused(400, "ratings_are_one_to_five");
     }
     // SEC-26: recorded either way; in the island's numbers only from a
-    // player who counts, and once counted, counted still.
+    // player who counts, and once counted, counted still — on the day it
+    // first counted, so a re-rate takes none of a later day's lone-fan
+    // slots (FX1-A-04).
     const now = this.now();
     const paid = this.counts("workshop_ratings", player, item.creator, now) ? 1 : 0;
     this.db.prepare(
       `INSERT INTO workshop_ratings (item, player, fun, cleverness, fairness, at, counted)
        VALUES (?, ?, ?, ?, ?, ?, ?)
        ON CONFLICT (item, player) DO UPDATE SET fun = excluded.fun,
-         cleverness = excluded.cleverness, fairness = excluded.fairness, at = excluded.at,
+         cleverness = excluded.cleverness, fairness = excluded.fairness,
+         at = CASE WHEN workshop_ratings.counted = 1 THEN workshop_ratings.at ELSE excluded.at END,
          counted = MAX(counted, excluded.counted)`)
       .run(id, player, fun, cleverness, fairness, now, paid);
     return this.view(this.row(id)).ratings;
@@ -527,7 +548,8 @@ export class Workshop {
          JOIN workshop_items i ON i.id = c.item
         WHERE i.creator = ? AND i.removed_at IS NULL AND c.counted = 1`).get(creator).n);
     const featured = this.db.prepare(
-      "SELECT COUNT(*) AS n FROM workshop_items WHERE creator = ? AND featured_at IS NOT NULL")
+      // RB-38: a featured island later removed no longer counts.
+      "SELECT COUNT(*) AS n FROM workshop_items WHERE creator = ? AND featured_at IS NOT NULL AND removed_at IS NULL")
       .get(creator).n;
     const level = LADDER.find(([, at]) => completions >= at.completions || featured >= at.featured);
     return { level: level ? level[0] : null, completions, featured };
@@ -545,7 +567,7 @@ export class Workshop {
     const now = this.now();
     return this.db.prepare(
       "SELECT * FROM workshop_reports WHERE resolved_at IS NULL ORDER BY at, id").all()
-      .map((r) => ({ report: r.id, item: r.item, reason: r.reason, server: r.reporter === null,
+      .map((r) => ({ report: r.id, item: r.item, reason: r.reason, server: r.reporter === null && r.reason === "completion_spike",
                      at: r.at, overdue: now - r.at > REVIEW_MS }));
   }
 
@@ -559,6 +581,10 @@ export class Workshop {
     this.moderator(moderator);
     const report = this.db.prepare("SELECT * FROM workshop_reports WHERE id = ?").get(reportId);
     if (!report) throw new Refused(404, "no_such_report");
+    // FX1-A-03: a report a person has decided on is decided; acting on it
+    // again would close the island's newer reports, unread. The queue holds
+    // open reports only, so a decided one is no report to decide.
+    if (report.resolved_at != null) throw new Refused(404, "no_such_report");
     if (!["dismiss", "remove", "ban"].includes(action)) throw new Refused(400, "no_such_action");
     if (action !== "dismiss" && !REMOVAL_REASONS.includes(reason)) {
       throw new Refused(400, "a_reason_is_owed");
@@ -572,7 +598,13 @@ export class Workshop {
           .run(now, reason, item.id);
       }
       if (action === "ban") this.ban(item.creator, reason, now);
-      if (action === "dismiss" && report.reporter === null) {
+      // RB-39: the spike flag clears whenever a server report is among those
+      // the dismissal closes, whichever report the moderator acted on. A
+      // server report is the spike's, not a deleted player's (RB-56).
+      if (action === "dismiss" && this.db.prepare(
+        `SELECT 1 FROM workshop_reports WHERE item = ? AND resolved_at IS NULL AND reporter IS NULL
+            AND reason = 'completion_spike' LIMIT 1`)
+        .get(item.id)) {
         this.db.prepare("UPDATE workshop_items SET review = 0 WHERE id = ?").run(item.id);
       }
       this.db.prepare(

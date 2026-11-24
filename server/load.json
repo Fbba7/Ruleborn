@@ -32,9 +32,9 @@
    "heist: validate and grant": 36.75
   },
   "validationMs": {
-   "p50": 25.2,
-   "p95": 36.9,
-   "max": 59.2
+   "p50": 18.3,
+   "p95": 27.4,
+   "max": 38.5
   },
   "firstHeist": {
    "rows": 34.2,
@@ -51,21 +51,21 @@
    "codex": 1.08,
    "target_lists": 0.4
   },
-  "readsPerPlayerDay": 967.5,
-  "readsPerHeist": 114.8,
+  "readsPerPlayerDay": 987,
+  "readsPerHeist": 116.3,
   "readsByOperation": {
    "session": 19.3,
    "telemetry batch": 30,
    "raid badge": 33.2,
    "defence log": 40.8,
-   "observatory": 384.9,
-   "lease": 94.3,
+   "observatory": 398.5,
+   "lease": 100.3,
    "heist: validate and grant": 364.9
   },
   "readsPerPlayerByDay": [
-   680.5,
-   997.3,
-   1224.7
+   696.3,
+   1018.9,
+   1246
   ],
   "periodicReadsADayAnIsland": {
    "target lists (x24)": 145.6,
@@ -109,12 +109,12 @@
     "SELECT starlight_total AS starlight, essence_total AS essence, aether_total AS aether, at, season, stars_total AS stars, renown_total AS renown FROM ledger WHER"
    ],
    [
-    28,
-    "SELECT keeper_level FROM accounts WHERE id = ?"
+    40.7,
+    "SELECT h.attacker FROM heists h JOIN leases l ON l.token = h.token JOIN accounts a ON a.id = h.attacker WHERE h.defender = ? AND h.submitted_at > ? AND a.banned"
    ],
    [
-    27.1,
-    "SELECT DISTINCT h.attacker FROM heists h JOIN leases l ON l.token = h.token WHERE h.defender = ? AND h.submitted_at > ? ORDER BY h.submitted_at DESC"
+    28,
+    "SELECT keeper_level FROM accounts WHERE id = ?"
    ],
    [
     25.3,
@@ -143,7 +143,7 @@
    },
    "readBudget": 2500,
    "readsOverBudget": 0.39,
-   "freePlanReadsPlayersADay": 4487,
+   "freePlanReadsPlayersADay": 3504,
    "readDollarsAMonth": {
     "1000": 0,
     "10000": 0,
@@ -185,9 +185,9 @@
    "heist: validate and grant": 18.81
   },
   "validationMs": {
-   "p50": 25.6,
-   "p95": 36.1,
-   "max": 57.2
+   "p50": 18.8,
+   "p95": 30.6,
+   "max": 37.7
   },
   "firstHeist": {
    "rows": 34.2,
@@ -204,21 +204,21 @@
    "codex": 0.87,
    "target_lists": 0.4
   },
-  "readsPerPlayerDay": 365,
-  "readsPerHeist": 82.8,
+  "readsPerPlayerDay": 369.5,
+  "readsPerHeist": 83.3,
   "readsByOperation": {
    "session": 11.3,
    "telemetry batch": 18,
    "raid badge": 13.1,
    "defence log": 20.2,
-   "observatory": 136.8,
-   "lease": 29.3,
+   "observatory": 140.3,
+   "lease": 30.3,
    "heist: validate and grant": 136.2
   },
   "readsPerPlayerByDay": [
-   288.1,
-   369.3,
-   437.6
+   292.1,
+   374.2,
+   442.3
   ],
   "periodicReadsADayAnIsland": {
    "target lists (x24)": 145.6,
@@ -296,7 +296,7 @@
    },
    "readBudget": 2500,
    "readsOverBudget": 0.15,
-   "freePlanReadsPlayersADay": 9773,
+   "freePlanReadsPlayersADay": 6178,
    "readDollarsAMonth": {
     "1000": 0,
     "10000": 0,
@@ -338,9 +338,9 @@
    "heist: validate and grant": 9.49
   },
   "validationMs": {
-   "p50": 24.8,
-   "p95": 34.7,
-   "max": 44.7
+   "p50": 19,
+   "p95": 27.8,
+   "max": 35.8
   },
   "firstHeist": {
    "rows": 34.2,
@@ -357,21 +357,21 @@
    "codex": 0.78,
    "target_lists": 0.4
   },
-  "readsPerPlayerDay": 147.6,
+  "readsPerPlayerDay": 148.6,
   "readsPerHeist": 65.6,
   "readsByOperation": {
    "session": 3.3,
    "telemetry batch": 6,
    "raid badge": 4,
    "defence log": 12.8,
-   "observatory": 55.9,
+   "observatory": 56.9,
    "lease": 10.3,
    "heist: validate and grant": 55.3
   },
   "readsPerPlayerByDay": [
-   126.8,
-   148.1,
-   167.9
+   127.8,
+   149.1,
+   168.8
   ],
   "periodicReadsADayAnIsland": {
    "target lists (x24)": 145.6,
@@ -449,7 +449,7 @@
    },
    "readBudget": 2500,
    "readsOverBudget": 0.06,
-   "freePlanReadsPlayersADay": 16995,
+   "freePlanReadsPlayersADay": 8497,
    "readDollarsAMonth": {
     "1000": 0,
     "10000": 0,

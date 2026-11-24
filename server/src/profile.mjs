@@ -32,8 +32,29 @@ import { readFileSync } from "node:fs";
 import { mastery } from "./codex.mjs";
 import { FORMS } from "./home.mjs";
 import { Refused } from "./refused.mjs";
+import { BOUNDS, place } from "./seasons.mjs";
 
 const facts = JSON.parse(readFileSync(new URL("./facts.json", import.meta.url), "utf8"));
+
+/** A player's league as `seasons.league` gives it, read without opening
+ *  their standing: the standing, and the season track's tier price with it,
+ *  is fixed by the player's own first appearance in the season (§18.8), not
+ *  by someone else viewing their profile (candidate 23). */
+function leagueSeen(seasons, account, now) {
+  const season = seasons.current(now).id;
+  const db = seasons.db;
+  let row = db.prepare("SELECT * FROM standings WHERE season = ? AND account = ?").get(season, account);
+  if (!row) {
+    const last = db.prepare("SELECT * FROM standings WHERE account = ? AND season < ? ORDER BY season DESC LIMIT 1")
+      .get(account, season);
+    row = { season, account, ...(last ? seasons.pulledBack(account, last) : { start: 0, ember: 0 }) };
+  }
+  const renown = seasons.renownIn(account, season, row);
+  const p = place(renown);
+  const i = facts.LEAGUES.indexOf(p.league);
+  return { season, renown, ...p,
+           next: i + 1 < facts.LEAGUES.length ? BOUNDS.leagues[facts.LEAGUES[i + 1]] : null };
+}
 
 /** The battle log's length: the latest heists, each with its replay while it
  *  is kept (§24.3). The document gives no number; this is the screen's. */
@@ -150,13 +171,13 @@ export class Profile {
       friendly: mine.filter((h) => h.mode === "friendly").length,
       paradox: 0,
     };
-    const titles = mastery(Object.fromEntries(codex.map((r) => [r.law, r]))).map((m) => ({
+    const titles = mastery(Object.fromEntries(codex.map((r) => [r.law, r])), now).map((m) => ({
       school: m.school, steps: m.steps, total: m.total,
       titles: (m.steps >= m.marks.title ? 1 : 0) + (m.steps >= m.marks.last_title ? 1 : 0),
     })).filter((t) => t.titles > 0);
     const view = {
       keeper_level: a.keeper_level,
-      renown: seasons.league(account, now),
+      renown: own ? seasons.league(account, now) : leagueSeen(seasons, account, now),
       seasons: this.db.prepare("SELECT season, renown, league FROM season_results WHERE account = ? ORDER BY season")
         .all(account).map(({ season, renown, league }) => ({ season, renown, league })),
       heists: Object.fromEntries(["clean", "loud", "partial", "foiled"].map((g) => [g, count(raids.map((h) => h.o), g)])),

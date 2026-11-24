@@ -116,10 +116,12 @@ static func scout(slice: Dictionary) -> Dictionary:
 	var v: Dictionary = slice.get("view", {})
 	var chosen := str(slice.get("chosen", ""))
 	var found: Dictionary = {}
+	# The Trace wins over a target with the same bundle (RB-31): it is the
+	# free revenge the player tapped, leased as one.
 	if v.get("trace") is Dictionary and str(v["trace"]["bundle"]) == chosen:
 		found = v["trace"]
 	for c: Dictionary in v.get("targets", []):
-		if str(c["bundle"]) == chosen:
+		if found.is_empty() and str(c["bundle"]) == chosen:
 			found = c
 	if found.is_empty():
 		return {"ready": false}

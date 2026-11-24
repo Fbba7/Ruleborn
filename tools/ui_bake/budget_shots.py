@@ -170,7 +170,9 @@ def main(argv):
             continue
         measured[key] = {k: got[k] for k in ("draw_calls", "texture_bytes", "words_below")}
         problems = judge(key, got, None if first else recorded.get(key), limits)
-        if not first and key not in recorded:
+        # A screen with no figures yet is what --record is for: refusing it
+        # there left a new screen unrecordable (FX1-T-16).
+        if not first and key not in recorded and not (record and not plant):
             problems.append("no recorded figures; run --record")
         print("budget_shots: %s %s: %d draw calls (recorded %s), %.1f MiB textures "
               "(%.1f MiB glyph caches beside), "
