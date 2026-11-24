@@ -7,13 +7,13 @@
   "task_id": "FX1-6-audit-server-a",
   "task_state": "working",
   "claimed_at": "2026-11-23T22:25:00Z",
-  "lease_until": "2026-11-24T03:30:42Z",
-  "updated_at": "2026-11-24T00:30:42Z",
-  "expected_next_update_by": "2026-11-24T01:15:42Z",
+  "lease_until": "2026-11-24T04:00:51Z",
+  "updated_at": "2026-11-24T01:00:51Z",
+  "expected_next_update_by": "2026-11-24T01:45:51Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "8c973824",
-    "next_step": "FX1-6: server-a.md written; npm test 603/603 and check_all pass; pre-check running at 8c973824, then ready"
+    "next_step": "FX1-6: pre-check at 8c973824 still running (UI key-frame stage); then record and ready"
   },
   "precheck": null,
   "gate_request": null,
