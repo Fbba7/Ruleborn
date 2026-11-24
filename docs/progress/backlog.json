@@ -557,7 +557,7 @@
     },
     {
       "id": "FX2-10-curated-woven-law",
-      "title": "Medium, server (FX3-R2, SIM-12's residual): the server refuses a curated layout that lacks a law the realm has woven. universe.mjs problems() checks only that every law on the island is woven, not that every woven law is on it, so Island::curated can still lose a law unseen (more laws than pylon spots, an unknown law id, or 64 failed draws)",
+      "title": "Medium, server (FX3-R2, SIM-12's residual): the server refuses a curated layout that lacks a law the realm has woven. universe.mjs problems() checks only that every law on the island is woven, not that every woven law is on it, so Island::curated can still lose a law unseen (more laws than pylon spots, an unknown law id, or 64 failed draws); and FX2-9's follow-up: observatory.mjs:140 says echoes from offer()'s list before current() filters it, so a view whose echo was dropped (owner banned or deleted within the hour) can still say echoes: true",
       "phase": "fix",
       "role": "FX2",
       "model": "Opus 5.5",
@@ -566,7 +566,9 @@
         "server/src/universe.mjs",
         "server/src/curation.mjs",
         "server/test/fix_fx2_curated*",
-        "docs/security/audit-2026-11/sim.md"
+        "docs/security/audit-2026-11/sim.md",
+        "server/src/observatory.mjs",
+        "server/test/fix_fx2_observatory_echoes*"
       ],
       "deps": [
         "FX3-6-audit-universe"
@@ -575,6 +577,7 @@
         "first a server test that fails on current main: a curated layout for a realm that wove a law, returned without that law (each of the three cases in sim.md's SIM-12 'Left for the lead' where the server can be fed it), is published; committed on its own before the fix, its failure output quoted in the handoff",
         "then the smallest fix: problems() (or curation's layout step) names a new problem, woven_law_missing, for every woven law the island lacks, and publish refuses it by name like law_not_woven",
         "hand-built islands: the same check applies wherever problems() runs, unless the builder finds a hand-built island may lawfully leave a woven law off; then the check is scoped to curated layouts and the handoff says why",
+        "FX2-9's follow-up (FX2.md, FX2-9 handoff): first a test under server/test/fix_fx2_observatory_echoes* that fails on current main (an echo whose owner is banned within the hour is dropped from the view's targets, yet the view says echoes: true), committed on its own; then the one-line fix at observatory.mjs:140, echoes: targets.some((c) => c.echo)",
         "a client words row for the new problem is not in this task's files: if one is needed, a request to the lead names it",
         "SIM-12's 'Left for the lead' item in docs/security/audit-2026-11/sim.md reads 'fixed (FX2-10-curated-woven-law)'",
         "no existing test is skipped, disabled or loosened; a test whose expectation encoded the defect is corrected and named in the handoff",
@@ -585,7 +588,7 @@
       ],
       "gate_items": [],
       "attempts": 0,
-      "estimate_h": 1.0,
+      "estimate_h": 1.25,
       "tier": 2,
       "critical": false,
       "state": "open",
@@ -594,8 +597,8 @@
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-24T02:40:00Z",
-      "updated_by": "lead (cycle 169)"
+      "updated_at": "2026-11-24T04:30:00Z",
+      "updated_by": "lead (cycle 171)"
     },
     {
       "id": "FX3-6-audit-universe",
