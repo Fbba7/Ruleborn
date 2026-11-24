@@ -7206,3 +7206,106 @@ fn sim_9_a_bounce_mushroom_lands_on_a_bridge_three_tiles_on() {
     }
     panic!("never launched");
 }
+
+#[test]
+fn sim_10_a_command_for_actor_16_still_records_a_universe_replay_that_round_trips() {
+    // Audit finding SIM-10 (docs/security/audit-2026-11/sim.md).
+    // RB-55 on the universe's recorder: the replay packs the actor in four
+    // bits, so a command for actor 16 comes back as actor 0.
+    use crate::universe::{record_universe, verify_universe, LinkKind};
+    let (u, islands) = two_realms(LinkKind::Stone);
+    let played = crate::reference::competent_universe(&u, &islands, 1, 3, None, None, None).unwrap();
+    let mut commands = played.commands.clone();
+    // Past the landing, while the crew walks the outer realm: an order for
+    // actor 0 here would change the heist.
+    let at = commands.iter().position(|c| c.tick > 60).unwrap();
+    let (vx, vy) = (islands[1].vault.0 as i16, islands[1].vault.1 as i16);
+    commands.insert(at, Command { tick: 60, actor: 16, kind: Kind::MoveTo, x: vx * 256 + 128, y: vy * 256 + 128 });
+    assert!(commands.windows(2).all(|w| w[0].tick <= w[1].tick));
+    let heist = record_universe(&u, &islands, 1, played.ticks, 3, None, None, commands).unwrap();
+    let back = Heist::decode(&heist.encode()).expect("a recorded heist decodes");
+    assert!(heist.commands.iter().all(|c| c.actor < 16), "the recorded heist keeps a command for an actor past 15");
+    assert_eq!(back.commands, heist.commands, "the recorded replay round-trips");
+    assert!(verify_universe(&u, &islands, &back).is_ok(), "{:?}", verify_universe(&u, &islands, &back).err());
+}
+
+#[test]
+fn sim_11_a_lantern_wisps_reveal_goes_with_it_across_to_the_next_realm() {
+    // Audit finding SIM-11 (docs/security/audit-2026-11/sim.md).
+    // The wisp's reveal "shows what is hidden within REVEAL_TILES of the
+    // wisp as it goes" for 6 s (`World::reveals`); the crossing carries the
+    // crew, and the reveal is the crew's, so it carries the reveal too.
+    use crate::universe::{Crossing, LinkKind};
+    let (u, islands) = two_realms(LinkKind::Stone);
+    let land = crate::reference::competent_universe(&u, &islands, 1, 3, None, None, None).unwrap().commands[0];
+    let heist = Heist { seed: 1, island: u.digest(), rules: crate::rules_version(), ticks: 4_950, crew: 3, era: None,
+                        manifest: None, commands: vec![Command { tick: 0, ..land }], checksums: Vec::new() };
+    let mut c = Crossing::new(&u, &islands, &heist).unwrap();
+    c.step();
+    let w = &mut c.world;
+    w.wards.clear();
+    w.tick = 10 * TICKS_PER_SECOND;
+    let beside = w.grid.neighbours(w.vault.tile).into_iter().flatten().find(|&t| w.grid.standable(t)).unwrap();
+    let (x, y) = w.grid.centre(beside);
+    for r in w.raiders.iter_mut() {
+        r.at = Point { x, y };
+        r.route.clear();
+    }
+    // What `Ability::Reveal` leaves running, used the tick before the crew
+    // crosses.
+    let until = w.tick + ruleborn::REVEAL_TICKS;
+    w.reveals.push((0, until));
+    assert!(w.revealed(beside));
+    c.step();
+    assert_eq!(c.leg, 1, "crossed to the Heart");
+    let here = { let p = c.world.raiders[0].at; c.world.grid.tile_at(p.x, p.y).unwrap() };
+    assert!(c.world.revealed(here), "the wisp's reveal ended at the crossing, {} ticks early", until - c.world.tick);
+    while c.world.tick <= until {
+        c.step();
+    }
+    let here = { let p = c.world.raiders[0].at; c.world.grid.tile_at(p.x, p.y).unwrap() };
+    assert!(!c.world.revealed(here), "for 6 s, not longer");
+}
+
+// Audit finding SIM-12
+#[test]
+fn sim_12_a_curated_layout_never_drops_a_woven_law_unseen() {
+    // §13.3's curation: `Island::curated` redraws a layout that loses
+    // anything the realm holds, and after 64 draws answers the last,
+    // "problems and all, for the server to refuse by name". The server names
+    // a lost building (buildings_not_as_placed) and every `check` problem;
+    // it reads a realm's laws only as "none it has not woven". So the last
+    // answer may lose a building, or fail `check`, but never keep every
+    // building, pass `check` and quietly have one law fewer than the realm
+    // wove: SR-16, "a realm plays what its owner wove".
+    use crate::island::building_code;
+    let spire = building_code("keeper_s_spire").expect("a spire is a building");
+    let side = Island::empty(1).side() as u8;
+    for y in 0..=side - 3 {
+        for x in 0..=side - 3 {
+            let island = Island::curated(1, 1, 1, &[(spire, x, y)], &["bounce"]);
+            assert!(island.laws.len() == 1 || island.buildings.len() != 1 || !island.check().is_empty(),
+                    "a spire at ({x}, {y}): the island passes check with its building and without its law");
+        }
+    }
+}
+
+// Audit finding SIM-13
+#[test]
+fn sim_13_moving_the_vault_onto_a_guard_hidden_in_tall_grass_takes_the_grass_too() {
+    // `Island::set_vault`: "Move the Vault to a tile, taking what stood
+    // there away", and the Vault needs bare ground (`check`'s Crowded). A
+    // Keeper may hide a guard in tall grass (RB-57): the editor's ground
+    // tool lays grass under a post. Moving the Vault onto plain grass takes
+    // the grass; onto a guard in grass it must take both, as `claim` does.
+    use crate::grid::Feature;
+    let mut island = Island::example_open();
+    assert!(island.check().is_empty(), "the open example is legal");
+    let spot = (6u8, 8u8);
+    assert!(island.post_guard(0, spot.0, spot.1));
+    assert!(island.set_feature(spot.0, spot.1, Some(Feature::TallGrass)), "a guard hidden in tall grass");
+    assert!(island.set_vault(spot.0, spot.1));
+    assert!(island.guards.is_empty(), "the post is taken away");
+    assert_eq!(island.tile(spot.0, spot.1).and_then(|t| t.feature), None, "and the grass with it");
+    assert!(island.check().is_empty(), "the Vault on bare ground: {:?}", island.check());
+}

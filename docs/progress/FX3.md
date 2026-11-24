@@ -1,9 +1,9 @@
 # FX3 simulation fixes: progress
 
-- Status: Waiting. FX3-4-lab-replay is ready at 7db937dd (pre-check PASS at 21:40Z, recorded). FX3-3-clock-report merged.
-- Progress: FX3-4-lab-replay: RB-51 (a crossing hinted only the first chord of each three laws), RB-52 (a Lab hint could name a resonance not found at launch), RB-54 (several byte strings decoded as one heist), RB-55 (a command for actor 16 or above came back as another crew member). Each has a fail-first test, committed before its fix.
-- Done: `cargo test` in `sim` 349 of 349, golden replays still verify (no rebake); `cd server && npm test` 574 of 574; `python3 sim/status.py` every gate holds.
-- Next: the lead's merge, then FX3-5-audit-sim in a fresh session.
+- Status: Waiting. FX3-5-audit-sim is ready at c333f546 (pre-check PASS at 22:24Z, recorded). FX3-4-lab-replay merged.
+- Progress: FX3-5-audit-sim: the sim code the November report did not read is audited; nine findings confirmed (SIM-1 to SIM-9, five Medium, four Low, no High), each with a fail-first test, and all nine fixed. The report's five sim suspicions are settled. Findings in `docs/security/audit-2026-11/sim.md`.
+- Done: `cargo test --release` in `sim` 358 of 358 (seven `stability::` tests now counted), golden replays still verify (no rebake); `cd server && npm test` 580 of 580; `python3 sim/status.py` every gate holds; `python3 sim/test_tools.py` passes.
+- Next: the lead's merge. FX3 has no further open task.
 - Blocked by: none.
 - Owner decision needed: none.
 
@@ -12,10 +12,26 @@
 | FX3-1-heal-alarm: RB-28 and RB-29 | 3.0 | merged | lead cycle 158 |
 | FX3-2-island: RB-40, RB-50, RB-57, candidates 7 and 34 | 4.0 | merged | `sim/src/tests.rs` `rb40_an_entrance_in_a_wall_or_on_the_vault_is_not_published`, `rb50_weaving_a_law_onto_the_vault_is_refused_and_keeps_the_law`, `rb57_a_ward_or_pylon_on_a_guard_in_tall_grass_replaces_the_grass_too`, `candidate_7_the_same_law_twice_is_not_published`, `candidate_34_a_tunnel_mouth_under_a_raised_wall_is_no_way_out`; `sim/src/island.rs`, `sim/src/path.rs`, `server/src/sim.mjs` |
 | FX3-3-clock-report: RB-44, RB-45, RB-19 | 3.0 | merged | `sim/src/tests.rs` `rb44_a_split_and_rejoined_mite_does_not_hold_the_report_to_the_whole_clock`, `rb44_a_crossings_reports_count_only_the_crew_for_held`, `rb45_a_slowed_clock_still_catches_whoever_is_inside_at_the_last_tick`; `server/test/fix_fx3_older_build.test.mjs`; `sim/src/lib.rs`, `sim/src/universe.rs`, `server/src/sim.mjs` |
-| FX3-4-lab-replay: RB-51, RB-52, RB-54, RB-55 | 3.5 | ready | `server/test/fix_fx3_lab_hints.test.mjs`; `sim/src/tests.rs` `rb54_a_tick_delta_past_u32_is_refused_not_wrapped`, `rb54_a_padded_varint_is_refused`, `rb55_a_command_for_actor_16_still_records_a_replay_that_round_trips`; `server/src/lab.mjs`, `sim/src/replay.rs`, `sim/src/lib.rs` |
+| FX3-4-lab-replay: RB-51, RB-52, RB-54, RB-55 | 3.5 | merged | `server/test/fix_fx3_lab_hints.test.mjs`; `sim/src/tests.rs` `rb54_a_tick_delta_past_u32_is_refused_not_wrapped`, `rb54_a_padded_varint_is_refused`, `rb55_a_command_for_actor_16_still_records_a_replay_that_round_trips`; `server/src/lab.mjs`, `sim/src/replay.rs`, `sim/src/lib.rs` |
+| FX3-5-audit-sim: SIM-1 to SIM-9, the report's sim suspicions | 4.0 | ready | `docs/security/audit-2026-11/sim.md`; `sim/src/tests.rs` `sim_1_*` to `sim_9_*` (nine tests); `sim/test_tools.py` (SIM-3, SIM-4); `sim/src/lib.rs`, `sim/src/ffi.rs`, `sim/no_floats.py`, `sim/status.py`, `sim/run_spike.sh`, `sim/systems.json` |
 
 ## Handoff
-- FX3-4-lab-replay, ready (2026-11-21). Branch `claude/fix-sim`. Pre-check at 7db937dd: PASS ("All checks passed.", 21:40Z, recorded); `ready_sha` 7db937dd is in `docs/progress/status/FX3.json`. Main merged at 702b29e6 (lead cycle 162's files only, no conflict). An earlier pre-check at 702b29e6 failed on `sim/status.py` ("tests no system claims") because the new Rust tests were not yet listed in `sim/systems.json`; 7db937dd lists them, and that run is superseded. Main has since gained lead cycle 163 (57c23193, 11aa8614, docs/progress bookkeeping only); not merged, so the pre-checked sha stays the ready one.
+- FX3-5-audit-sim, ready (2026-11-23). Branch `claude/fix-sim`. Pre-check at c333f546: PASS ("All checks passed.", 22:24Z, recorded); `ready_sha` c333f546 is in `docs/progress/status/FX3.json`. Main merged at c333f546 (lead cycles 165 and 166, docs/progress bookkeeping only, no conflict). Main has since gained lead cycle 167 and the FX1-4-holds-codex merge (e2e8f5a1, server files and FX1's, none of this task's); not merged, so the pre-checked sha stays the ready one.
+  - **Commits.** Claim 039be74f; fail-first tests f32be7db (every proof fails there); fixes f08f52b9; findings commit c7878bcf.
+  - **Findings.** `docs/security/audit-2026-11/sim.md`, in the report's format, with its line references against f32be7db (pre-fix code).
+    - SIM-1 (Medium): `sees_body` ignored bushes, thickets and lanterns for a knocked-out guard (§12.8 v3.3).
+    - SIM-2 (Medium): `rb_record`, `rb_record_crew` and `rb_record_drawn` returned replays over 2 KB, which `rb_verify` refuses; they now return -9. The device recorder (`client/ext`) has the same gap: outside these files, so proposed in sim.md.
+    - SIM-3 (Medium): `no_floats.py` let `1f64`, `1e3`, `1_000.5`, `1.` and floats after a `"//"` or on a `*p =` line through.
+    - SIM-4 (Medium): `status.py` counted only `tests::` lines and ignored cargo's exit code, so the seven `stability::` tests could fail unseen. A new system "Stability" (§5.5, TD.14) in `sim/systems.json` claims them.
+    - SIM-6 (Medium): a Rambler's charge through a Crystal Wall ignored Cracked gardens and Shattered glass.
+    - SIM-5, SIM-7, SIM-8, SIM-9 (Low): the Hourkeeper's rewind and a heal in the same tick; a Gone Prism half blocking the golem's wall; a Well cutting a Snare's freeze short; a bounce skipping a bridge.
+  - **The report's suspicions.** `rb_record_drawn` with crew 0: confirmed, but it is SR-07's deliberate trap lever; not fixed (proposed: a dedicated trap export first). `rb_hold`'s ticks: rejected (server-fixed values only). Over 2 KB: SIM-2. Second encodings: rejected at the byte level (every single-byte mutation of twelve islands tried), the semantic half unproven. `tile_at`/`coords` wrap: rejected (needs 65,536 tiles).
+  - **Gate.** `sim/run_spike.sh` now runs `python3 test_tools.py` before `status.py`, so the float ban and the test count are themselves tested.
+  - **Goldens.** No fix changes a golden outcome; no `sim/golden/*.rbh` was rebaked.
+  - **No existing test was changed.**
+  - **Owners.** `owners.py diff FX3-5-audit-sim origin/claude/videogame-project-analysis-ewkkk2 c333f546` reports "every changed path is inside its files".
+  - **Next.** The lead's merge.
+- FX3-4-lab-replay, merged (ready 2026-11-21). Branch `claude/fix-sim`. Pre-check at 7db937dd: PASS ("All checks passed.", 21:40Z, recorded); `ready_sha` 7db937dd is in `docs/progress/status/FX3.json`. Main merged at 702b29e6 (lead cycle 162's files only, no conflict). An earlier pre-check at 702b29e6 failed on `sim/status.py` ("tests no system claims") because the new Rust tests were not yet listed in `sim/systems.json`; 7db937dd lists them, and that run is superseded. Main has since gained lead cycle 163 (57c23193, 11aa8614, docs/progress bookkeeping only); not merged, so the pre-checked sha stays the ready one.
   - **RB-51.** `Lab.crossed` took `chordOf`, the first chord in §8.8's table three laws make, so three laws completing two or more chords hinted only one of them. A new `chordsOf` returns every chord the three complete, each note carried by a different law; `crossed` hints each one not yet found. `chordOf` stays, as `chordsOf(..)[0]`, for `server/test/lab.test.mjs`.
     - Test commit efdc9028, fix commit 812c7e52. The test fails on main:
       ```
@@ -76,3 +92,6 @@
   - **No existing test was changed.**
   - **Owners.** `owners.py diff FX3-3-clock-report origin/claude/videogame-project-analysis-ewkkk2 9aa26794` reports "every changed path is inside its files".
   - **Next.** The lead's merge; the next FX3 task in a fresh session.
+
+## Tried and failed
+- FX3-5-audit-sim: a first insertion of the nine tests into `sim/src/tests.rs` broke the file's last module; redone by appending after the last test. A first `npm test` failed because the wasm build was missing in the fresh container; the wasm was built and the tests rerun. Neither reached a commit.

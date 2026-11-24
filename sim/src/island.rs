@@ -1120,8 +1120,10 @@ impl Island {
         if !self.on_grid(x, y) {
             return false;
         }
+        // A guard may stand in tall grass or fog: clear both, as `claim`
+        // does (RB-57, SIM-13).
         if self.vault != (x, y) {
-            self.clear(x, y);
+            while self.clear(x, y) {}
         }
         self.vault = (x, y);
         true
@@ -1362,11 +1364,14 @@ impl Island {
             island.laws.clear();
             let (guards, wards) = (island.guards.len(), island.wards.len());
             let mut whole = laws.len() <= spots.len();
-            for (id, &(x, y)) in laws.iter().zip(&spots) {
-                whole &= island.weave(id, x, y);
-            }
+            // The buildings first, then the pylons: a pylon spot under a
+            // footprint takes the building, which the server refuses by name,
+            // rather than the law, which it would not see (SIM-12).
             for &(code, x, y) in buildings {
                 whole &= island.place_building(code, x, y);
+            }
+            for (id, &(x, y)) in laws.iter().zip(&spots) {
+                whole &= island.weave(id, x, y);
             }
             whole &= island.laws.len() == laws.len() && island.buildings.len() == buildings.len()
                 && island.guards.len() == guards && island.wards.len() == wards;
