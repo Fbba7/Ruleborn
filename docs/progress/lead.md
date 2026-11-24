@@ -383,6 +383,8 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| FX2 | `session_01SNkKxpD4TA2PFjhTUKW8Eb` (Opus 5.5, effort high) | FX2-9-audit-b-match (start, cycle 169: next task after FX2-8-audit-b-lows merged at cd5f98fb and FX1-6-audit-server-a at ddf4213d; FX2's last session, `session_01SNkKxnVeY5BcuXQfbPsPmN`, is idle) | `claude/fix-server-b` | 2026-11-24 03:38Z |
+| FX1 | `session_01SNkKxppNySHfW7azVquQXU` (Opus 5.5, effort high) | FX1-7-audit-tools (start, cycle 169: next task after FX1-6-audit-server-a merged at ddf4213d; FX1's last session, `session_01SNkKxoYkrDKba5f2X3byBm`, is idle) | `claude/fix-server-a` | 2026-11-24 03:38Z |
 | FX4 | `session_01SNkKxopnk1iG9R76L2ujyU` (Opus 5.5, effort high) | FX4-5-problem-strings (start, cycle 169: next task after FX4-4-audit-client merged at d5c16216; FX4's last session, `session_01SNkKxq3TGnXbTLc3pyMTQd`, is idle) | `claude/fix-client` | 2026-11-24 02:58Z |
 | FX3 | `session_01SNkKxozbMJGfAJWTEzLykF` (Opus 5.5, effort high) | FX3-7-audit-client-2 (start, cycle 169: seeded from client.md's unproven findings after FX4-4-audit-client merged at d5c16216; FX3's last session, `session_01SNkKxpC2gbRiL8zzvf5zZc`, is idle) | `claude/fix-sim` | 2026-11-24 02:58Z |
 | FX2 | `session_01SNkKxnVeY5BcuXQfbPsPmN` (Opus 5.5, effort high) | FX2-8-audit-b-lows (start, cycle 169: next task after FX2-7-audit-b-config merged at bc7f27e8; FX2's last session, `session_01SNkKxoWxCgQ4iNNoRWRghi`, is idle) | `claude/fix-server-b` | 2026-11-24 00:33Z |
@@ -724,7 +726,7 @@ You are agent FX1 of the Ruleborn agent program (bug-fix wave). Read docs/guides
 Agent: FX1            Role: fixer (FX1): server A: service, matchmaking, holds, crossings, codex, workshop, fund        Model: Opus 5.5, effort high
 Branch: claude/fix-server-a
 Owned files: only the files each FX1 task lists in the backlog, docs/progress/FX1.md, docs/progress/status/FX1.json
-Tasks: FX1-1-workshop-pairs, FX1-2-leases, FX1-3-workshop, FX1-4-holds-codex, then the audits FX1-6-audit-server-a and FX1-7-audit-tools, in that order (deps chain them). Each fix task names RB entries of docs/security/bug-report-2026-11.md: for each entry, first commit a test that reproduces the entry's Input and fails on current main (quote its failure in your handoff), then commit the smallest fix that makes it pass, naming the RB id in the commit. Never skip, disable or loosen a test; a test whose expectation encoded the defect is corrected and named in the handoff. An audit task reads the code its title names, writes findings in the report's format under docs/security/audit-2026-11/, proves each before calling it confirmed, and fixes nothing outside its own files. Run cd server && npm test before marking a task ready. Before ready, python3 tools/coord/owners.py diff <task_id> origin/claude/videogame-project-analysis-ewkkk2 <ready_sha> passes (M48).
+Tasks: FX1-1-workshop-pairs, FX1-2-leases, FX1-3-workshop, FX1-4-holds-codex, then the audits FX1-6-audit-server-a and FX1-7-audit-tools, then FX1-8-server-a-lows (FX1-6's findings outside its files, after FX2-9-audit-b-match), in that order (deps chain them). Each fix task names RB entries of docs/security/bug-report-2026-11.md: for each entry, first commit a test that reproduces the entry's Input and fails on current main (quote its failure in your handoff), then commit the smallest fix that makes it pass, naming the RB id in the commit. Never skip, disable or loosen a test; a test whose expectation encoded the defect is corrected and named in the handoff. An audit task reads the code its title names, writes findings in the report's format under docs/security/audit-2026-11/, proves each before calling it confirmed, and fixes nothing outside its own files. Run cd server && npm test before marking a task ready. Before ready, python3 tools/coord/owners.py diff <task_id> origin/claude/videogame-project-analysis-ewkkk2 <ready_sha> passes (M48).
 STOP_AT: 2026-11-24T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/security/bug-report-2026-11.md     Phase: fix
 
@@ -739,7 +741,7 @@ You are agent FX2 of the Ruleborn agent program (bug-fix wave). Read docs/guides
 Agent: FX2            Role: fixer (FX2): server B: db, stores, shop, home, universe, auth, http, edge, pages, notifications, observatory, telemetry, accounts, profile, social        Model: Opus 5.5, effort high
 Branch: claude/fix-server-b
 Owned files: only the files each FX2 task lists in the backlog, docs/progress/FX2.md, docs/progress/status/FX2.json
-Tasks: FX2-1-db-store-home, FX2-2-trace-telemetry, FX2-3-shop, FX2-4-purge-notify, FX2-5-auth-lows, then the audit FX2-6-audit-server-b, then its fixes FX2-7-audit-b-config, FX2-8-audit-b-lows and FX2-9-audit-b-match, in that order (deps chain them; FX2-9 also waits for FX1-6-audit-server-a). Each fix task names RB entries of docs/security/bug-report-2026-11.md: for each entry, first commit a test that reproduces the entry's Input and fails on current main (quote its failure in your handoff), then commit the smallest fix that makes it pass, naming the RB id in the commit. Never skip, disable or loosen a test; a test whose expectation encoded the defect is corrected and named in the handoff. An audit-fix task names AUD entries of a report under docs/security/audit-2026-11/: each entry's proof already runs on main inside stillOpen() (server/test/fix_fx2_open.mjs); turn it back into the plain proof, see it fail on main and commit that first, then the fix. An audit task reads the code its title names, writes findings in the report's format under docs/security/audit-2026-11/, proves each before calling it confirmed, and fixes nothing outside its own files. Run cd server && npm test before marking a task ready. Before ready, python3 tools/coord/owners.py diff <task_id> origin/claude/videogame-project-analysis-ewkkk2 <ready_sha> passes (M48).
+Tasks: FX2-1-db-store-home, FX2-2-trace-telemetry, FX2-3-shop, FX2-4-purge-notify, FX2-5-auth-lows, then the audit FX2-6-audit-server-b, then its fixes FX2-7-audit-b-config, FX2-8-audit-b-lows, FX2-9-audit-b-match and FX2-10-curated-woven-law, in that order (deps chain them; FX2-9 also waits for FX1-6-audit-server-a). Each fix task names RB entries of docs/security/bug-report-2026-11.md: for each entry, first commit a test that reproduces the entry's Input and fails on current main (quote its failure in your handoff), then commit the smallest fix that makes it pass, naming the RB id in the commit. Never skip, disable or loosen a test; a test whose expectation encoded the defect is corrected and named in the handoff. An audit-fix task names AUD entries of a report under docs/security/audit-2026-11/: each entry's proof already runs on main inside stillOpen() (server/test/fix_fx2_open.mjs); turn it back into the plain proof, see it fail on main and commit that first, then the fix. An audit task reads the code its title names, writes findings in the report's format under docs/security/audit-2026-11/, proves each before calling it confirmed, and fixes nothing outside its own files. Run cd server && npm test before marking a task ready. Before ready, python3 tools/coord/owners.py diff <task_id> origin/claude/videogame-project-analysis-ewkkk2 <ready_sha> passes (M48).
 STOP_AT: 2026-11-24T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/security/bug-report-2026-11.md     Phase: fix
 
@@ -790,6 +792,71 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 169**, 24 November 2026, from about 00:30Z (session
+  `session_01SNkKxnXrzUVLGqiGNmw1FR`, started by the Opus 5.5 launcher).
+  **Merged** five tasks:
+  - FX2-7-audit-b-config (AUD-B-14 to B-19) at bc7f27e8, from 0006a4d9.
+    The full `check_all` on main failed twice for reasons in the
+    container, not the code: the Godot cache under `/root/.cache` was
+    read-only, and the crates index could not be resolved. The fixes were
+    to fetch Godot 4.7.2 against its pinned SHA-512 and to run
+    `cargo fetch --locked`. The third run passed.
+  - FX2-8-audit-b-lows (B-05, B-10, B-13, B-20) at cd5f98fb, from 4d3e779c,
+    after FX2-R2 was granted (`server/declarations.md` added to its
+    files). Main passed, server 614 of 614.
+  - FX3-6-audit-universe at 5293e6b7 (from 92dda030) and FX4-4-audit-client
+    at d5c16216 (from 7a657582). Both candidates passed: 1d9b23b2 for
+    FX3-6, then 9a74dbe4 for FX3-6 and FX4-4 together. Main's tree after
+    the two merges differs from 9a74dbe4 only under `docs/progress`.
+  - FX1-6-audit-server-a at ddf4213d, from 01cb97ac. Candidate 357efa6d
+    passed: server 631 of 631, sim 362 of 362, client 468 of 468.
+
+  Every merge passed `owners.py diff`, and the merge lock is cleared.
+  The audit and roadmap pages were regenerated and committed but not
+  republished, as in cycles 162 and 163.
+
+  **Answered:** FX3-R2 and FX3-R3; they seeded FX2-10-curated-woven-law
+  and FX4-6-device-replay-cap. FX1-R3 to FX1-R11 are answered in
+  `requests.md`:
+  - R10: Renown is pulled once for each season that ended.
+  - R9: the echoes flag means "an echo is in the offered list".
+  - R11: FX1-A-07 is AUD-B-06.
+
+  **Decided:** CLI-1 (the curation swap of a woven law) is fixed on the
+  client side, and SR-16 stays. By §5.6 a slot being woven is empty.
+  After the weave is accepted, the client publishes the island without
+  the swapped-out law's pylon and shows the slot as weaving, with its
+  ready time. The new pylon is published once the weave is done. The
+  player is never charged for a change that is refused.
+
+  **Seeded:**
+  - from `client.md`: FX4-7-curation-swap-weave (CLI-1),
+    FX4-8-rehearsal-rerun (CLI-18) and FX3-7-audit-client-2. FX3-7
+    proves or rejects CLI-3, 8, 9, 16, 17, 19, 20 and 21, and reads what
+    FX4-4 left unread.
+  - from FX1's requests: FX1-8-server-a-lows (FX1-A-02, 10, 13, 15, 16
+    and 17, AUD-B-18's residual, R10).
+
+  **Changed:**
+  - FX2-9's title and done_when now take in FX1-R9 and FX1-R11.
+  - FX4-6 now also proves or rejects CLI-23 with a cargo test.
+  - The `fix_fx1_*` and `fix_fx2_*` file globs of FX1-7, FX2-9 and FX2-10
+    were narrowed so the tasks in flight own disjoint files.
+  - The Tasks lines of FX1 to FX4's prompts list the new tasks.
+
+  **Started**, on Opus 5.5 at effort high, within the cap of four:
+  - FX2 on FX2-8 (00:33Z, merged since), then on FX2-9-audit-b-match
+    (`session_01SNkKxpD4TA2PFjhTUKW8Eb`, 03:38Z)
+  - FX3 on FX3-7-audit-client-2 (`session_01SNkKxozbMJGfAJWTEzLykF`,
+    02:58Z)
+  - FX4 on FX4-5-problem-strings (`session_01SNkKxopnk1iG9R76L2ujyU`,
+    02:58Z)
+  - FX1 on FX1-7-audit-tools (`session_01SNkKxppNySHfW7azVquQXU`, 03:38Z)
+
+  **Next:** merge each as it turns ready. Then FX1-8 (after FX2-9),
+  FX2-10, and FX4-6 to FX4-8 in order. Then the UI: once every FX task
+  is merged, unpark P3-S3-settings-4, P4-S1-heist-vault,
+  P4-S2-home-purse and the BT track.
 - **Cycle 168**, 23 November 2026, from about 23:13Z (session
   `session_01SNkKxn1dZLeKHPjZ3mFguK`, started by the Opus 5.5 launcher).
   Bookkeeping only. **Merged:** nothing; no task is `ready`, no gate
