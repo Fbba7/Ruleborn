@@ -44,6 +44,9 @@ CREATE TABLE IF NOT EXISTS accounts (
   keeper_noun       INTEGER,
   -- §20.11's terms-of-use gate: the version of the terms accepted (safety.mjs).
   terms_version     TEXT,
+  -- FX1-A-16: the number the player's newest link was given; a link's
+  -- number is never given again (links.mjs insert).
+  links_n           INTEGER NOT NULL DEFAULT 0,
   created_at        INTEGER NOT NULL,
   -- §20.5: "Age bands instead of birthdates"; §20.7 sets what each may do.
   age_band          TEXT NOT NULL DEFAULT '18+' CHECK (age_band IN ('13-15', '16-17', '18+')),
@@ -1053,6 +1056,8 @@ const ADDED = [
   ["accounts", "keeper_noun", "INTEGER"],
   // The terms of use accepted (safety.mjs).
   ["accounts", "terms_version", "TEXT"],
+  // The number a player's newest link was given (links.mjs).
+  ["accounts", "links_n", "INTEGER NOT NULL DEFAULT 0"],
   ["heists", "replay_gone", "INTEGER NOT NULL DEFAULT 0"],
   ["leases", "echo", "INTEGER NOT NULL DEFAULT 0"],
   ["leases", "trace_of", "TEXT"],
