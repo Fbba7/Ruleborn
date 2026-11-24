@@ -62,6 +62,7 @@ func run() -> void:
 	await _rehearsal_card_runs_its_own_crew()
 	_action_log_keeps_no_account_ids()
 	await _failed_blocks_keep_the_blocked_list()
+	_open_session_is_marked_seen()
 
 
 ## Audit finding <id>: proven, not fixed here. `holds` is whether the defect
@@ -434,4 +435,37 @@ func _failed_blocks_keep_the_blocked_list() -> void:
 	var after: Array = s.store.get_slice(SocialState.FRIENDS).get("blocked", [])
 	check.call("CLI-24: a blocks call that fails keeps the blocked players shown, not an empty list (17.8)",
 		before.size() == 2 and after.size() == 2, "%d blocked, then %d" % [before.size(), after.size()])
+	s.close()
+
+
+## CLI-14: §24's session events. A session the app never closed (killed, or
+## crashed) is ended at the next launch at the last time it was seen open, so
+## the app must mark it seen while it is open: two minutes open and half a
+## minute of frames since, then killed.
+func _open_session_is_marked_seen() -> void:
+	var transport := FakeTransport.new()
+	transport.offline = true
+	var s := _plain("seen", transport)
+	var path := "user://outbox-audit-seen-test-notices.json"
+	DirAccess.remove_absolute(path)
+	s.notices = DeviceNotices.new(path)
+	var now := int(Time.get_unix_time_from_system() * 1000)
+	s.notices.start(now - 120_000)
+	var was := App.services
+	App.services = s
+	var lifetime := AppLifetime.new()
+	if lifetime.has_method("_process"):
+		lifetime.call("_process", 31.0)
+	App.services = was
+	lifetime.free()
+	var relaunch := DeviceNotices.new(path)
+	relaunch.start(now + 60_000)
+	var ended := {}
+	for e: Dictionary in relaunch.pending():
+		if e["kind"] == "session_end":
+			ended = e["data"]
+	check.call("CLI-14: a session the app never closed is ended at the last time it was seen open, not at its "
+			+ "start (24)",
+		bool(ended.get("crashed", false)) and int(ended.get("seconds", 0)) >= 100, str(ended))
+	DirAccess.remove_absolute(path)
 	s.close()
