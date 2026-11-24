@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-24T05:05:00Z",
   "lease_until": "2026-11-24T08:05:00Z",
-  "updated_at": "2026-11-24T05:11:00Z",
-  "expected_next_update_by": "2026-11-24T05:55:00Z",
+  "updated_at": "2026-11-24T05:30:00Z",
+  "expected_next_update_by": "2026-11-24T06:10:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "a495e58",
-    "next_step": "sim.md SIM-12, merge main, check_all, owners.py diff, ready"
+    "last_green_sha": "5281e8fbbaf0a55605b0a0c2d0293ff2f3fcedfe",
+    "next_step": "check_all on 5281e8fb running; then record, ready"
   },
   "precheck": null,
   "gate_request": null,
