@@ -1,12 +1,12 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-24T13:55:00Z",
-  "expected_next_update_by": "2026-11-24T16:55:00Z",
-  "cycle": 180,
+  "updated_at": "2026-11-24T15:05:00Z",
+  "expected_next_update_by": "2026-11-24T18:05:00Z",
+  "cycle": 181,
   "merging": null,
   "last_merged": {
-    "task_id": "FX1-11-tools-docs",
-    "sha": "7bbb9788"
+    "task_id": "FX1-12-tools-ui",
+    "sha": "e27e7d04"
   },
   "acks": [
     "M15",
@@ -47,7 +47,7 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Bugs first (the owner's restart of 23 November 2026). Order 6: effort medium by default, high for complex tasks. Cycle 180 merged nothing and answered FX3-R2 widened (granted: icons_256.json and icons_48.json join the three rebaked manifests in FX1-12's exceptions; owners.py diff passes on claude/fix-sim). One builder is working: FX3 on FX1-12-tools-ui (session_01SNkKxmwFNqhHYqzetHQz3X, effort high), the last open FX task, pre-check running at 1146a02e. The seven-day bar reads allowed_warning (cap three). Merge FX1-12 when it turns ready (full checks, owners.py diff with its exceptions; run the fresh-container setup, including (cd tools/ui_research && npm ci), and bash client/build.sh before run_checks.sh start). Then the UI: once FX1-12 is merged, unpark P3-S3-settings-4, P4-S1-heist-vault, P4-S2-home-purse and the BT track.",
+  "next_step": "Bug-fix wave done (every FX task merged); the UI resumed in cycle 181 with S1 (P4-S1-heist-vault), S2 (P4-S2-home-purse) and S3 (P3-S3-settings-4) at effort medium. Next: merge their tasks as they are ready; the BT track waits for a free seat (cap three under allowed_warning).",
   "seen": {
     "at": "2026-11-24T13:42:36Z",
     "heads": {
