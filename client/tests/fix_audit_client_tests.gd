@@ -515,8 +515,11 @@ func _rehearsal_card_runs_its_own_crew() -> void:
 		var bytes := RulebornReplay.rehearse(island.bytes(), StageRehearsal.STYLES.find("greedy") + 1, str(runs),
 			HeistController.TICKS, HeistController.CREW)
 		var mine := RulebornReplay.new()
-		own = mine.load(bytes, island.bytes()) and mine.commands() == stage.replay.commands() \
-			and mine.report() == stage.replay.report()
+		own = mine.load(bytes, island.bytes()) and mine.commands() == stage.replay.commands()
+		# Its result: the greedy crew played to where the stage stopped it.
+		while own and mine.tick() < stage.replay.tick():
+			mine.step()
+		own = own and mine.report() == stage.replay.report()
 	stage.queue_free()
 	await tree.process_frame
 	check.call("CLI-18: a style card tapped while another crew plays runs its own crew and shows its result (13)",
