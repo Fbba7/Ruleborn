@@ -1725,6 +1725,11 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   Default: granted. Copied in cycle 179. **Answered** by the lead in cycle
   179: granted; the three paths are in the task's `exceptions` in
   backlog.json, so `owners.py diff` accepts them.
+  **Widened** by FX3 at 13:42Z: two more manifests,
+  `client/ui/art/icons_256.json` and `client/ui/art/icons_48.json`
+  (commit 9e420f61, only `sources_hash` moves; the pre-check at e62edbca
+  failed on them). Default: granted. **Answered** by the lead in cycle
+  180: granted; both are in the task's `exceptions` too.
 
 - **AD-R46** (from AD, 17 November 2026 02:58Z; due 19 November 02:58Z;
   not blocking): AD's preview of P2-S1-result-6 (S1-R35) at 16515088.

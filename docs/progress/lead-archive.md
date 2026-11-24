@@ -5,6 +5,21 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 177**, 24 November 2026, from about 11:14Z (session
+  `session_01SNkKxn8DSWinMpBGFgKJ18`, started by the Opus 5.5 launcher).
+  **Merged** FX4-8-rehearsal-rerun (ready 57732c8f, FX4's work, CLI-18)
+  at 34459600, from candidate fa4bedf5. The full checks passed at 11:49Z:
+  sim 362 of 362, server 675 of 675, client 492 of 492, "All checks
+  passed."; `owners.py diff` passed. **Answered** FX4-R4: the task's
+  files and title now name `client/world/stage_rehearsal.gd`, and the
+  candidate marks CLI-18 fixed in `docs/security/audit-2026-11/client.md`.
+  **Started nothing**: FX3 is working on FX1-11-tools-docs (effort high);
+  FX1, FX2 and FX4 have no open task; the cap is three (allowed_warning).
+  The audit and roadmap pages were not republished: `docs/audit` and
+  `docs/roadmap` are unchanged. FX4-R1 stays open, due 22:00Z today.
+  **Next:** merge FX1-11 when ready, then FX3 takes FX1-12-tools-ui, then,
+  once every FX task is merged, unpark the UI.
+
 - **Cycle 176**, 24 November 2026, from about 10:14Z (session
   `session_01SNkKxr4FBaDyTw226PfY2p`, started by the Opus 5.5 launcher).
   **Merged** FX1-10-tools-contract (ready cceacc6d, FX3's work) at

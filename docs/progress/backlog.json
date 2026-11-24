@@ -181,7 +181,9 @@
       "exceptions": [
         "client/ui/art/kit.json",
         "client/ui/art/motion.json",
-        "client/tests/fixtures/ui_kit/kit.json"
+        "client/tests/fixtures/ui_kit/kit.json",
+        "client/ui/art/icons_256.json",
+        "client/ui/art/icons_48.json"
       ],
       "deps": [
         "FX1-11-tools-docs"
@@ -206,8 +208,8 @@
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-24T13:30:00Z",
-      "updated_by": "lead (cycle 179, FX3-R2)"
+      "updated_at": "2026-11-24T13:50:00Z",
+      "updated_by": "lead (cycle 180, FX3-R2 widened)"
     },
     {
       "id": "P3-S3-offline-1",

@@ -214,8 +214,10 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxqXwY6qZUJyvhrtRU8` (cycle 179,
-24 November 2026 from about 13:19Z, started by the Opus 5.5 launcher).
+Latest lead cycle session: `session_01SNkKxoEVVxDru4qsQF6zoa` (cycle 180,
+24 November 2026 from about 13:40Z, started by the Opus 5.5 launcher).
+Cycle 179's was `session_01SNkKxqXwY6qZUJyvhrtRU8` (24 November, from
+about 13:19Z).
 Cycle 178's was `session_01SNkKxomdzcgoV8B8sTfZyr` (24 November, from
 about 12:15Z).
 Cycle 177's was `session_01SNkKxn8DSWinMpBGFgKJ18` (24 November, from
@@ -822,6 +824,20 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 180**, 24 November 2026, from about 13:40Z (session
+  `session_01SNkKxoEVVxDru4qsQF6zoa`, started by the Opus 5.5 launcher,
+  effort medium by order 6). **Merged nothing**: FX1-12-tools-ui is not
+  ready yet. FX3 (`session_01SNkKxmwFNqhHYqzetHQz3X`, effort high) is
+  idle with its new pre-check at 1146a02e running in the background, so
+  it is not restarted. **Answered** FX3-R2, widened, with its default:
+  granted. `client/ui/art/icons_256.json` and `client/ui/art/icons_48.json`
+  (commit 9e420f61, only `sources_hash` moves) join FX1-12's `exceptions`;
+  `owners.py diff` on `claude/fix-sim` now passes. **Started nothing**:
+  FX1-12 is the last open FX task; the cap is three (allowed_warning).
+  The audit and roadmap pages were not republished. **Next:** merge
+  FX1-12 when ready (full checks), then unpark the UI (P3-S3-settings-4,
+  P4-S1-heist-vault, P4-S2-home-purse, the BT track).
+
 - **Cycle 179**, 24 November 2026, from about 13:19Z (session
   `session_01SNkKxqXwY6qZUJyvhrtRU8`, started by the Opus 5.5 launcher).
   **Merged nothing**: FX1-12-tools-ui is not ready yet. FX3
@@ -856,21 +872,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   already answered with their defaults (requests.md). **Next:** merge
   FX1-12 when ready, then unpark the UI (P3-S3-settings-4,
   P4-S1-heist-vault, P4-S2-home-purse, the BT track).
-
-- **Cycle 177**, 24 November 2026, from about 11:14Z (session
-  `session_01SNkKxn8DSWinMpBGFgKJ18`, started by the Opus 5.5 launcher).
-  **Merged** FX4-8-rehearsal-rerun (ready 57732c8f, FX4's work, CLI-18)
-  at 34459600, from candidate fa4bedf5. The full checks passed at 11:49Z:
-  sim 362 of 362, server 675 of 675, client 492 of 492, "All checks
-  passed."; `owners.py diff` passed. **Answered** FX4-R4: the task's
-  files and title now name `client/world/stage_rehearsal.gd`, and the
-  candidate marks CLI-18 fixed in `docs/security/audit-2026-11/client.md`.
-  **Started nothing**: FX3 is working on FX1-11-tools-docs (effort high);
-  FX1, FX2 and FX4 have no open task; the cap is three (allowed_warning).
-  The audit and roadmap pages were not republished: `docs/audit` and
-  `docs/roadmap` are unchanged. FX4-R1 stays open, due 22:00Z today.
-  **Next:** merge FX1-11 when ready, then FX3 takes FX1-12-tools-ui, then,
-  once every FX task is merged, unpark the UI.
 
 - **Restart, 23 November 2026** (the overseer, about 21:20Z). The owner
   restarted the program, in the chat of the overseer session: "Continue,
