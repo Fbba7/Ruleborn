@@ -1,14 +1,10 @@
 # FX4 client fixer: progress
 
-- Status: Green. FX4-7-curation-swap-weave: the fail-first test and the
-  client fix for CLI-1; ready at 62240757 (main merged), its pre-check passed.
-- Progress: 6 of 8 tasks merged (FX4-1 to FX4-6); FX4-7 in this session; no
-  gate items (fix wave).
-- Done: while a swapped slot weaves, the island is published without the
-  swapped law's pylon and the slot is shown weaving with its ready time;
-  once woven, the next curation publishes the new law's pylon.
-- Next: the lead merges FX4-7; then FX4-8-rehearsal-rerun.
-- Blocked by: none.
+- Status: Green on the client run; FX4-8-rehearsal-rerun: the fail-first check and the fix for CLI-18 pushed at 57732c8f, pre-check running.
+- Progress: 7 of 8 tasks merged (FX4-1 to FX4-7); FX4-8 in this session; no gate items (fix wave).
+- Done: a style card tapped while another crew plays stops that run and starts its own crew's; the card shows its own result.
+- Next: the lead corrects FX4-8's `files` (request FX4-R4), then FX4-8 is ready at 57732c8f.
+- Blocked by: FX4-R4: FX4-8's `files` names `client/scripts/stage_rehearsal.gd`, which does not exist; the code is `client/world/stage_rehearsal.gd`, so the M48 guard refuses the change.
 - Owner decision needed: none.
 
 | Deliverable | Weight (h) | Status | Evidence |
@@ -19,101 +15,63 @@
 | FX4-4-audit-client: the client audit | 4 | merged | `d5c16216` on main |
 | FX4-5-problem-strings: FX3-R1's two problem rows | 0.75 | merged | `d3183782` on main |
 | FX4-6-device-replay-cap: SIM-2 and FX3-R3 on the device, CLI-23 | 1.0 | merged | `ee4d64aa` on main |
-| FX4-7-curation-swap-weave: CLI-1 | 2.0 | ready | `62240757`, pre-check passed |
+| FX4-7-curation-swap-weave: CLI-1 | 2.0 | merged | lead, `62240757` |
+| FX4-8-rehearsal-rerun: CLI-18 | 0.75 | blocked (files path, FX4-R4) | `57732c8f` |
 
 ## Handoff
 
-- Last verified commit: 62240757, the ready_sha in `status/FX4.json`.
-- Commits, in order:
-  - `a97ae895`: the test, on its own (`client/tests/fix_audit_client_tests.gd`).
-  - `c1064608`: the fix (CLI-1), in `client/features/curation/` and
-    `client/i18n/strings.csv`.
-  - `77192ea2`: the test's unreachable server answers `unreachable`, a code
-    the client words (`tools/client_contract.py` flagged `unavailable`,
-    which has no `ERR_` row). No expectation changed.
-  - `62240757`: main merged (lead cycles 173 and 174); clean, no conflict.
-- **The corrected test** (done_when f): `_swap_publish_is_refused_while_weaving`
-  in `client/tests/fix_audit_client_tests.gd`. On main it was a
-  `_still_open("CLI-1", ...)` that passed while the defect held (woven,
-  published with the new law's pylon, refused as `island_not_publishable`).
-  It now checks the behaviour in four checks, against an `IslandServer` fake
-  that answers as SR-16 does: `law_not_woven` or `woven_law_missing` as
-  422 `island_not_publishable`, and 503 when it is down.
-- SR-16 stays: no server change. The fix is client-side, in
-  `curation_controller.gd`:
-  - `apply_swap` weaves first. A refused weave goes to `curation_failed`
-    and publishes nothing, so nothing is charged for it. A woven swap
-    whose slot has a ready time is saved as a record
-    `{realm, slot, law, old, at, ready_at}` in
-    `user://curation-weaving.json` (`at` is the tile of the old law's
-    pylon). Then the draft is published.
-  - `_publish` first settles the draft (`_settled`): while a record is not
-    ready, its tile is cleared of the old and the new law's pylon. Once it
-    is ready, the new law's pylon is placed on that tile, if the tile is
-    empty and the law has no pylon elsewhere. The island then passes
-    SR-16 at every step.
-  - The screen: `curation_weaving` puts `{slot: ready_at}` in the slice.
-    `CurationPresenter.laws` shows that slot as `CUR_SLOT_WEAVING` ("Slot
-    %d: %s, weaving, ready in %s", via `WeavingPresenter.duration`) and
-    refuses another swap on it with `CUR_WEAVING_WHY`. A post cannot be
-    moved onto a weaving tile (`post_cannot_move`).
-- **How the new pylon is published once woven** (done_when b): when
-  curation next opens after `ready_at`. `load_curation` ends with
-  `_settle`, which drops records whose slot no longer holds their law,
-  places the woven pylons and publishes, said `CUR_SAID_WOVEN` ("The swap
-  is woven and its pylon is on your defence"). A save or a swap made after
-  `ready_at` with the screen still open does the same, because `_publish`
-  settles first. There is no timer on an open screen:
-  `client/scripts/curation_screen.gd` is not this task's.
-- **A failed publish after the weave** (done_when c) is said as
-  `swap_unsaved` ("the swap is weaving but your defence could not be saved;
-  it is saved when you next open curation"), never as done. The record is
-  kept, so the next curation retries it. A record is dropped only after a
-  publish succeeds once its `ready_at` has passed.
-- Strings: `ERR_SWAP_UNSAVED`, `CUR_SLOT_WEAVING`, `CUR_WEAVING_WHY`,
-  `CUR_SAID_WOVEN`, in all six locales. `node
-  art/ui/keyframes/build_words.mjs` was run again; `words.js` did not
-  change, because none of these strings is in the keyframes.
-- **Request FX4-R3 to the lead** (default: the lead does it when it merges):
-  mark CLI-1 `fixed` in `docs/security/audit-2026-11/client.md` line 43,
-  which FX4-7 does not own.
+- Last verified commit: 57732c8f (client run 492 of 492; pre-check started 10:30Z, result in `status/FX4.json` `precheck`).
+- Commits, in order (on main merged at `b1913643`, lead cycle 176):
+  - `c5eacd74`: the check, on its own (`client/tests/fix_audit_client_tests.gd`).
+  - `5720ba99`: the same check compares the greedy crew's report at the
+    tick the stage reached (a report read at tick 0 never equals one at
+    the end). It still fails on main the same way (runs 1).
+  - `57732c8f`: the fix (CLI-18) in `client/world/stage_rehearsal.gd`
+    `run()`: a run asked for while one plays sets `playing = false` and
+    starts the chosen crew's run, instead of finishing the one playing.
+- **The corrected test** (done_when c): `_rehearsal_card_runs_its_own_crew`.
+  On main it was a `_still_open("CLI-18", ...)` that passed while the
+  defect held. It now checks: the cautious crew playing, the greedy card
+  tapped, style `greedy`, `runs == 2`, and the stage's replay equal to
+  `RulebornReplay.rehearse(island, greedy, "2", ...)`, commands and report.
+  Note: on the `reset(1..8)` islands the cautious and greedy crews play the
+  same replay for one seed (probed); the check tells the new run from the
+  old by its run count and its own seed ("2", not "1").
+- `_still_open` is now unused in that file; kept for the next open finding.
 
 ### The test, failing on main
 
-Run on `a97ae895` (main's curation plus the test), `python3 client/status.py`:
+`c5eacd74`, `python3 client/status.py`:
 
 ```text
-489 of 492 passed — written to client/status.json
-  FAILED: CLI-1: a swap woven publishes the island without the swapped law's pylon while its slot weaves, and the slot is shown weaving with its ready time (13.3, 5.6)
-  FAILED: CLI-1: once the swapped slot is woven, curation opened publishes the new law's pylon where the old one stood (13.3, 5.6)
-  FAILED: CLI-1: a publish that fails after the swap is woven is said on the screen, never said done, and retried when curation next opens (13.3)
+  # playing true, card found true, style greedy, runs 1, greedy's own replay false
+  tests: 491 of 492 passed — written to client/status.json
+  FAILED: CLI-18: a style card tapped while another crew plays runs its own crew and shows its result (13)
 ```
 
-The fourth check ("a swap the server refuses to weave publishes nothing and
-says why") already held on main; it guards the fix. After `c1064608`, all
-four pass.
+And `5720ba99` with main's `stage_rehearsal.gd` (run.gd directly):
+`not ok 187 - CLI-18 ... # playing true, card found true, style greedy, runs 1, greedy's own replay true`
+(the same seed-1 replay, see the note above). After `57732c8f`: `ok 187`.
 
 ### Evidence
 
-- `bash client/build.sh` on `c1064608`: passes.
-- `python3 client/status.py` on `77192ea2`: 492 of 492 passed.
-- `python3 tools/client_contract.py`: passes after `77192ea2`.
-- `python3 tools/coord/owners.py diff FX4-7-curation-swap-weave
-  origin/claude/videogame-project-analysis-ewkkk2 62240757`: every changed
-  path is inside its files.
-- The pre-check (`bash tools/run_checks.sh`, the full checks, which run
-  `tools/check_all.sh`) on `62240757`: passed (08:39:53Z, "All checks passed."), recorded
-  in `status/FX4.json` (`precheck`).
-- `client/status.py` rewrites `client/status.json`; it was put back and
-  not committed.
+- `bash client/build.sh` on `57732c8f`: passes.
+- `python3 client/status.py` on `57732c8f`: 492 of 492 (run.gd: `ok 187`).
+- `python3 tools/coord/owners.py diff FX4-8-rehearsal-rerun
+  origin/claude/videogame-project-analysis-ewkkk2 57732c8f`: fails,
+  `not owned by FX4-8-rehearsal-rerun: client/world/stage_rehearsal.gd`.
+  The task's `files` names `client/scripts/stage_rehearsal.gd` (as does
+  `client.md` line 390), a path that does not exist. Request FX4-R4.
+- The pre-check on `57732c8f`: see `precheck` in `status/FX4.json`.
+- `client/status.json` rewritten by the run was put back, not committed.
 
-### Follow-ups still standing (from FX4-4, in the backlog)
+### Next step
 
-- CLI-1 is fixed in FX4-7 (above); CLI-18 is FX4-8-rehearsal-rerun;
-  CLI-23 is fixed in FX4-6 (merged, `ee4d64aa`).
-- CLI-3 (High, unproven), CLI-8 and CLI-9 (server contract notes) and
-  FX4-R1 stand as written in
-  [`client.md`](../security/audit-2026-11/client.md) and the status file.
+When the lead corrects FX4-8's `files` to `client/world/stage_rehearsal.gd`
+(FX4-R4), re-run the owners diff on 57732c8f (or on a fresh merge of main
+with a fresh pre-check) and mark ready. Also for the lead (FX4-R4): mark
+CLI-18 `fixed` in `docs/security/audit-2026-11/client.md` and correct its
+"Where" path.
 
 ## Tried and failed
 

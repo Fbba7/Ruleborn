@@ -5,16 +5,19 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "FX4-8-rehearsal-rerun",
-  "task_state": "claimed",
+  "task_state": "blocked",
   "claimed_at": "2026-11-24T10:20:00Z",
   "lease_until": "2026-11-24T13:20:00Z",
-  "updated_at": "2026-11-24T10:20:00Z",
-  "expected_next_update_by": "2026-11-24T11:05:00Z",
-  "long_run": null,
+  "updated_at": "2026-11-24T10:58:00Z",
+  "expected_next_update_by": "2026-11-24T11:43:00Z",
+  "long_run": {
+    "log": "/tmp/check-57732c8f93629e30658e21e3a84e54921f083300.log",
+    "expected_end": "2026-11-24T11:00:00Z"
+  },
   "progress_marker": {
-    "last_green_sha": "b1913643",
-    "next_step": "fail-first check for CLI-18",
-    "at": "2026-11-24T10:20:00Z"
+    "last_green_sha": "57732c8f",
+    "next_step": "record the pre-check; ready once FX4-R4 corrects the task's files",
+    "at": "2026-11-24T10:58:00Z"
   },
   "precheck": null,
   "gate_request": null,
@@ -64,6 +67,21 @@
       "created_at": "2026-11-24T08:41:00Z",
       "due": "2026-11-25T08:41:00Z",
       "default": "The lead marks CLI-1 fixed in client.md when it merges FX4-7, as it did for CLI-23",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "FX4-R4",
+      "from": "FX4",
+      "to": "lead",
+      "ask": "FX4-8-rehearsal-rerun's files names client/scripts/stage_rehearsal.gd, which does not exist; the rehearsal stage is client/world/stage_rehearsal.gd, so owners.py diff refuses the fix (57732c8f). Please change the task's files (or add an exception) to client/world/stage_rehearsal.gd. Also, when merging: mark CLI-18 fixed in docs/security/audit-2026-11/client.md and correct its Where path (line 390).",
+      "files": [
+        "docs/progress/backlog.json",
+        "docs/security/audit-2026-11/client.md"
+      ],
+      "blocking": true,
+      "created_at": "2026-11-24T10:58:00Z",
+      "due": "2026-11-24T14:00:00Z",
+      "default": "The lead adds client/world/stage_rehearsal.gd as an exception to FX4-8 and merges 57732c8f once its pre-check passed",
       "escalate_to": "lead"
     }
   ],
