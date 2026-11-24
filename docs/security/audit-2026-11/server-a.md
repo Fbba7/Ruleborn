@@ -387,6 +387,14 @@ on main (`9fe151ad`).
   as `traceable`'s.
 - **Crashes on an erased account's row:** erasure is an UPDATE, so the row
   stays.
+- **The unguarded `lawsOf(store.get(lease.bundle))` reads FX1-4 left for
+  this audit** (`codex.mjs` `afterHeist`, and two in `service.mjs`'s
+  settlement): they would throw if a bundle were erased between lease and
+  submit. `erase()` keeps no bytes for a lease on the erased defender's own
+  island. But `submit()` reads the bytes first and refuses
+  `island_withdrawn` when they are gone. The three reads follow in the same
+  synchronous call, so no erase can come between. The fourth read,
+  `matchmaking.mjs`'s chapter, is FX1-A-01.
 - **Workshop plays deleted at expiry:** intended.
 - **Offline actions:** the shapes in `offline.mjs` match the client's
   queue.
