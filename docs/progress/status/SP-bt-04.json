@@ -3,17 +3,17 @@
   "role": "specialist: the gate shot renderer (tools/gate/)",
   "branch": "claude/ui-spec-gate-render",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
+  "agent_state": "active",
   "task_id": "BT-04a",
-  "task_state": "ready",
-  "claimed_at": "2026-11-24T17:15:00Z",
-  "lease_until": "2026-11-24T20:15:00Z",
-  "updated_at": "2026-11-24T17:56:00Z",
-  "expected_next_update_by": null,
+  "task_state": "claimed",
+  "claimed_at": "2026-11-24T19:40:00Z",
+  "lease_until": "2026-11-24T22:40:00Z",
+  "updated_at": "2026-11-24T19:40:00Z",
+  "expected_next_update_by": "2026-11-24T20:25:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "f1df3f1e",
-    "next_step": "ready; waiting for the lead's merge (and SP-bt-04-R1's check_all line)"
+    "next_step": "BT-04a resync (cycle 186): reproduce render.py's read-only-HOME failure under run_checks.sh's bwrap sandbox, then fix it"
   },
   "precheck": {
     "sha": "f1df3f1e38597bd00aff05103a618ad431071578",
@@ -23,8 +23,8 @@
     "summary": "All checks passed."
   },
   "gate_request": null,
-  "ready_sha": "f1df3f1e",
-  "stop_at": "2026-11-24T21:00:00Z",
+  "ready_sha": null,
+  "stop_at": "2026-11-25T21:00:00Z",
   "acks": [],
   "requests": [
     {
