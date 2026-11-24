@@ -3,17 +3,16 @@
   "role": "S1",
   "branch": "claude/ui-screens-heist",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
+  "agent_state": "active",
   "task_id": "P4-S1-heist-vault",
-  "task_state": "ready",
-  "claimed_at": "2026-11-24T17:20:00Z",
-  "lease_until": "2026-11-24T20:20:00Z",
-  "updated_at": "2026-11-24T18:45:00Z",
-  "expected_next_update_by": "2026-11-24T21:00:00Z",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-24T20:00:00Z",
+  "lease_until": "2026-11-24T23:00:00Z",
+  "updated_at": "2026-11-24T20:00:00Z",
+  "expected_next_update_by": "2026-11-24T20:45:00Z",
   "progress_marker": {
     "last_green_sha": "85be2fa80a1ea97d2f62effe14eb7ac249fe32bc",
-    "next_step": "ready at 85be2fa8 (main 43deab02 merged, pre-check PASS 18:36Z); gate request 'heist at 200% text, pt_BR' (Hierarchy). guard.sh fails only on heist/200 121 of 118 (S1-R45's default: the lead writes the record in the merge). S1-R46 (AD-R60's spent-Cast plate) and S1-R47 (AD preview) are open with defaults.",
-    "at": "2026-11-24T18:45:00Z"
+    "next_step": "re-work after the gate's second fail at 85be2fa8: S1-R46 granted (cycle 187), Cast takes the gold primary plate while it leads at 200%, quieter loot/clock/alarm"
   },
   "precheck": {
     "sha": "85be2fa80a1ea97d2f62effe14eb7ac249fe32bc",
@@ -22,19 +21,9 @@
     "finished_at": "2026-11-24T18:36:11Z",
     "summary": "All checks passed."
   },
-  "gate_request": {
-    "sha": "85be2fa80a1ea97d2f62effe14eb7ac249fe32bc",
-    "items": [
-      {
-        "item": "heist at 200% text, pt_BR",
-        "qualities": [
-          "Hierarchy"
-        ]
-      }
-    ]
-  },
-  "ready_sha": "85be2fa80a1ea97d2f62effe14eb7ac249fe32bc",
-  "stop_at": "2026-11-24T21:00:00Z",
+  "gate_request": null,
+  "ready_sha": null,
+  "stop_at": "2026-11-25T21:00:00Z",
   "acks": [
     "M6",
     "M7",
@@ -780,5 +769,5 @@
       "where": "docs/progress/lead.md, Now, cycle 143 (M60)"
     }
   ],
-  "next_step": "ready at 85be2fa8 (main 43deab02 merged, pre-check PASS 18:36Z); gate request 'heist at 200% text, pt_BR' (Hierarchy). guard.sh fails only on heist/200 121 of 118 (S1-R45's default: the lead writes the record in the merge). S1-R46 (AD-R60's spent-Cast plate) and S1-R47 (AD preview) are open with defaults."
+  "next_step": "P4-S1-heist-vault attempts 2: main merged (faf5651); re-work Cast's plate (S1-R46 granted) and the quieter figures; pre-judge three times; checks; ready on a pass."
 }
