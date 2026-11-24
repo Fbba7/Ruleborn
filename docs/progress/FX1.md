@@ -1,11 +1,11 @@
 # FX1 server fixes (A): progress
 
-- Status: Ready. FX1-6-audit-server-a ready at 01cb97ac: pre-check PASS (02:19 UTC), owners.py pass; waiting for the merge.
-- Progress: 4 of 6 tasks merged (FX1-1, FX1-2, FX1-3; FX1-4-holds-codex at e2e8f5a1); no gate items (fix tasks have none).
-- Done: FX1-6: 17 findings (FX1-A-01 to A-17) in `docs/security/audit-2026-11/server-a.md`, each with a test in `server/test/fix_fx1_audit_server_a.test.mjs` that fails on main; 10 fixed in owned files, 1 partly, 5 marked and requested (FX1-R3 to R8), A-07 open as AUD-B-06 (FX1-R11), A-09 contested (FX1-R9); `cd server && npm test` 631 of 631.
-- Next: FX1-7-audit-tools, in a fresh session.
-- Blocked by: none.
-- Owner decision needed: none (FX1-R9 and FX1-R10 are the lead's, each with a default).
+- Status: Blocked. FX1-8-server-a-lows: every fix committed and main merged (7a9084a2); blocked on FX1-R24 (privacy.json and declarations.md for the two new columns), then check_all and ready.
+- Progress: 6 of 8 tasks merged (FX1-1, FX1-2, FX1-3, FX1-4, FX1-6, FX1-7); no gate items (fix tasks have none).
+- Done: FX1-8: FX1-A-02, A-10, A-13, A-15, A-16, A-17, FX1-R10 and AUD-B-18's residual fixed, each after its fail-first test.
+- Next: on FX1-R24's answer, the two privacy declarations (written out in the FX1-8 entry below), then check_all and ready.
+- Blocked by: FX1-R24 (the lead's, default at 09:05Z: granted).
+- Owner decision needed: none (FX1-R24 to R26 are the lead's, each with a default).
 
 | Deliverable | Weight (h) | Status | Evidence |
 |---|---:|---|---|
@@ -13,11 +13,62 @@
 | FX1-2-leases: RB-12, RB-14, RB-16, RB-17 | 3.5 | merged (c7cdcbbd) | `server/test/fix_fx1_leases.test.mjs`; test commit d1c34426; fixes 68b8d6f9, 092bc9fd, 2c55de1f, 165fa31f |
 | FX1-3-workshop: RB-35, RB-37, RB-38, RB-39 | 3.5 | merged (e413e4a9) | `server/test/fix_fx1_workshop.test.mjs`; test commit bf0ff93e; fixes c717a9b1, 1faccdd2, 2ac59da1, a4817445 |
 | FX1-4-holds-codex: RB-15, RB-18, RB-36, RB-53, RB-56 | 4.0 | merged (e2e8f5a1) | `server/test/fix_fx1_holds_codex.test.mjs`; test commit 924726b8; fixes 103d4176, 1de6f966, 63f031ad, 07047356, b45dafe6 |
-| FX1-6-audit-server-a: FX1-A-01 to A-17 | 4.0 | ready (01cb97ac) | `docs/security/audit-2026-11/server-a.md`; `server/test/fix_fx1_audit_server_a.test.mjs`; test commits 6b3556f9, 5d5d2e82, b0e4cd1c, f33ccc18; fixes f1888bba, dfc5bf86, 244b9480, 533b793d, ccda8b22; A-07 reverted 01cb97ac (R11) |
-| FX1-7-audit-tools | 4.0 | open | |
+| FX1-6-audit-server-a: FX1-A-01 to A-17 | 4.0 | merged (ddf4213d) | `docs/security/audit-2026-11/server-a.md`; `server/test/fix_fx1_audit_server_a.test.mjs`; test commits 6b3556f9, 5d5d2e82, b0e4cd1c, f33ccc18; fixes f1888bba, dfc5bf86, 244b9480, 533b793d, ccda8b22; A-07 reverted 01cb97ac (R11) |
+| FX1-7-audit-tools: FX1-T-01 to T-22 | 4.0 | merged | `docs/security/audit-2026-11/tools.md`; `server/test/fix_fx1_audit_tools.test.mjs`, `server/test/fix_fx1_audit_tools_proofs.mjs`; proof commits 3c7ad511, 4ef72ffd; report b5283fa8 |
+| FX1-8-server-a-lows: A-02, A-10, A-13, A-15, A-16, A-17, R10, AUD-B-18 | 3.0 | blocked (FX1-R24) | `server/test/fix_fx1_audit_server_a.test.mjs`, `server/test/fix_fx1_server_a_lows.test.mjs`, `server/test/fix_fx2_audit_config.test.mjs`; test commit e0ea0eab; fixes 3e2e872f, 9c25c35f, 8180b333, 2419848b, ad2bc945, 991324a6, 14807c73, bad2df32 |
 
 ## Handoff
-- Last verified commit: 01cb97ac (pre-check PASS 2026-11-24T02:19:53Z). Main ee42bb70 merged; main moved to 16c2046c (FX2-8) after the pre-check and merges clean.
+- **FX1-8-server-a-lows (2026-11-24).** Branch `claude/fix-server-a`, with main 3b162939 merged (f96e2632) before the claim. The medium and low findings of FX1-6's audit that were outside FX1-6's files, the Renown pull-back over skipped seasons, and AUD-B-18's residual.
+  - **Tests first.** e0ea0eab, alone: it turns the "today's behaviour" assertions of `fix_fx1_audit_server_a.test.mjs` (A-02, A-10, A-15, A-16, A-17) into the behaviour that should happen, adds `fix_fx1_server_a_lows.test.mjs` (A-13's republished defender, FX1-R10), and takes AUD-B-18's service proof in `fix_fx2_audit_config.test.mjs` out of `stillOpen` as a plain `assert.throws(..., RangeError)` over NaN, Infinity and a string. On main, with the wasm simulation built, each fails for its defect:
+    ```
+    not ok - FX1-A-02: an under-13 deletion keeps bytes another player's echo is (20.11)
+      error: "FX1-A-02: B's echo X keeps its bytes"   (bundle(X) is null)
+    not ok - FX1-A-10: an IPv4-mapped address written in hex or in full is keyed as its IPv4 address
+      + ['0:0:0:0::/64', '0:0:0:0::/64', '0:0:0:0::/64']
+      - ['198.51.100.7', '198.51.100.7', '203.0.113.1']
+    not ok - FX1-A-15: the constellation league refuses an open season and no season, as result() does
+      error: 'Missing expected exception: the season is still open'
+    not ok - FX1-A-16: a link's number is never given again, so a retried DELETE takes down nothing more
+      error: 'the new link has a number of its own'   expected: 4  actual: 4 (notEqual)
+    not ok - FX1-A-17: a weave taken out before it finishes is no mastery step (18.5)
+      expected: 0  actual: 1
+    not ok - FX1-A-13: a raid on an island its owner republished before it settled is rated in the realm it was leased in (12.22)
+      expected: 1  actual: 0
+    not ok - FX1-R10: each season that ended pulls Renown halfway back once, in order (18.1)
+      expected: 267  actual: 304
+    not ok - AUD-B-18: a seasonStart that is not a finite time is refused when the service is made
+      error: 'Missing expected exception (RangeError): seasonStart NaN'
+    ```
+  - **Fixes**, one commit each, naming its id:
+    - 3e2e872f FX1-A-02: `accounts.mjs` `erase()` keeps bytes another player's snapshot is.
+    - 9c25c35f FX1-A-10: `limits.mjs` `peerKey()` expands to eight groups (a dotted tail is two) and keys `::ffff:` addresses, in any form, as dotted IPv4.
+    - 8180b333 FX1-A-13: `issue()` stores the realm on the lease (`leases.realm`, in `db.mjs`'s CREATE TABLE and `ADDED`); `grant()` rates in it, the interim pick kept only as the fallback for an older lease.
+    - 2419848b FX1-A-15: `constellationTable()` refuses 404 `no_such_season` and 409 `season_still_open`, as `result()` does.
+    - ad2bc945 FX1-A-16: `accounts.links_n`, a counter that only goes up; a link's number is one past it (or past the highest in use, for rows from before the column).
+    - 991324a6 FX1-A-17: `weave()` records `codex.woven` at the weave's finish time; a weave taken out (unweave, or a swap) before it finishes takes its unearned step with it, or moves it to the soonest finish still in a slot.
+    - 14807c73 FX1-R10: `pulledBack(account, last, season)` pulls halfway to the league's floor once for each season that ended since the last one played. `standing()` passes its season; `profile.mjs:50` and `matchmaking.mjs:307` use the default, the current season, which is the season they open.
+    - bad2df32 AUD-B-18: the `Seasons` constructor throws a `RangeError` for a `seasonStart` that is not finite.
+  - **A test whose expectation encoded the defect:** `server/test/codex.test.mjs:211` ("mastery"), which counted a weave taken out before it finished as the Motion step. It now asserts 0 steps after the cancelled weave, 1 once a weave has run its `WEAVE_MINUTES`, and still 1 after weaving again. The AUD-B-18 service proof in `fix_fx2_audit_config.test.mjs` left `stillOpen`, as its comment said it would on the fix. No test was skipped or loosened.
+  - **Residual (FX1-R25):** while a weave is unfinished, `codex.mjs` `mastery()` and the profile still show its step, as they count `woven_at != null` without the time. Not this task's files; default: left as is.
+  - **Docs.** `server-a.md`: the table and each fixed entry read "fixed (FX1-8-server-a-lows)", the Renown entry under Unproven records R10's answer and fix. `server-b.md`: AUD-B-18's residual fixed (FX1-8-server-a-lows).
+  - **Privacy (FX1-R24).** The two new columns need declaring in `server/privacy.json` (`privacy.test.mjs`: "accounts.links_n: stored, not declared", "leases.realm: stored, not declared"), a file outside FX1-8's.
+  - **FX1-T-11 (FX1-R26).** `npm test` failed FX1-T-11's `stillOpen` once in this container, because no `.pyc` of `check_document.py` was cached: its SyntaxWarning (line 505) becomes the last output line and the proof's value is undefined. It passes once the cache exists. Not this task's files. The lead's cycle 172 answered the same ask (FX2-R4): `py()` parses stdout only, in FX1-9-tools-gate's `done_when`, so R26 needs nothing more.
+  - **Main merged.** Main eb4b8e59 merged at 7a9084a2, with no conflicts. `cd server && npm test` there: 662 of 663; the one failure is privacy.test's two undeclared columns (FX1-R24).
+  - **Blocked here (06:39Z).** Per the protocol's "When someone else's file blocks you", `task_state: blocked`, `agent_state: waiting`, session ended. FX1-R24's due is 09:05Z, with default granted.
+  - **The declarations, ready to apply.** The next session adds them to `server/privacy.json` and runs `node --no-warnings server/src/privacy.mjs --write`, which regenerates `server/declarations.md`. privacy.test passed 25 of 25 with them in this session. Commit both files in one commit named FX1-R24.
+    - `tables.leases.columns.realm`, after `universe`: `{"type": "gameplay"}`.
+    - `tables.accounts.columns.links_n`, after `terms_version`: `{"type": "gameplay", "holds": "the number the player's newest link was given, so a link's number is never given again (§5.3)"}`.
+  - **Then.** Merge main, `cd server && npm test`, the setup line and `bash tools/run_checks.sh start` / `wait` / `record <sha> FX1` on the merge, `owners.py diff FX1-8-server-a-lows`, ready.
+- Last verified commit: b30765cd (pre-check PASS 2026-11-24T04:46:34Z, sandbox bwrap). Main 613f71c9 merged; main has since moved only under `docs/progress/` (to db0614f0).
+- **FX1-7-audit-tools (2026-11-24).** Branch `claude/fix-server-a`, with main 613f71c9 merged at b30765cd. A read-only audit of `tools/` (outside `tools/vendor/`), the art scripts in `art/design/` and `art/ui/`, the client prototypes and the docs scripts, asking whether a check can pass when it should fail, or a tool corrupt a committed file. The findings, the latent ones, the unproven ones and the tools found sound are in `docs/security/audit-2026-11/tools.md`.
+  - **Proofs.** Each confirmed finding has a proof in `server/test/fix_fx1_audit_tools_proofs.mjs`, run by `server/test/fix_fx1_audit_tools.test.mjs` under `stillOpen` with its id. A proof runs the tool on disk against a planted input in a temporary folder; a tool that writes is pointed at a copy, so nothing inside the repository is written. Each fails on main 613f71c9.
+  - **Highest:** FX1-T-03 (High). `run_checks.sh record` copies `exit` 0 from a run `result` calls FAIL, and the protocol's reuse rule then skips the lead's own `check_all.sh`. Then T-20 and T-21 (Medium/High: the client contract misses nine server failure codes, none with an `ERR_` row, and every client call outside `client/data/`).
+  - **Nothing fixed.** Every affected file is the lead's. Requests: FX1-R20 (gate and coordination tools), R21 (contract and status files), R22 (document checks), R23 (UI tools), each defaulting to one fix task per group after the open FX tasks, in priority order.
+  - **T-22's note.** `python3 tools/build_stamp.py` (its `main()`) exits 1 on main today: a double-escaped `<code>` at `docs/audit/index.html:1583`, from `tools/audit_register.py:13556`. Fix the source before adding `main()` to the gate.
+  - **Unproven:** the ink alpha in `measure.gd` and `colour_check` (needs Godot in the test run), `export_icons --groups` (needs playwright and the design sources), `sheet.py` `_hex`, and `owners.py changed()` with quoted paths (fails safe).
+  - **Existing tests.** No existing test was changed, skipped or loosened.
+  - **Checks.** `cd server && npm test` passes 653 of 653. The pre-check at b30765cd passed ("All checks passed.", `DONE exit=0`) and is recorded. `owners.py diff FX1-7-audit-tools origin/claude/videogame-project-analysis-ewkkk2 b30765cd` reports every changed path inside the task's files.
+  - **Next.** FX1-8-server-a-lows, in a fresh session.
 - **FX1-6-audit-server-a (2026-11-23).** Branch `claude/fix-server-a`, from main e2e8f5a1, with main ee42bb70 merged. The audit read the files the report did not (`service.mjs`, `matchmaking.mjs`, `holds.mjs`, `crossings.mjs`, `codex.mjs`, `workshop.mjs`, `fund.mjs`) and followed their calls into the modules they use. The findings, the unproven claims and the rejected ones are in `docs/security/audit-2026-11/server-a.md`.
   - **Tests first.** Every finding's test, in `server/test/fix_fx1_audit_server_a.test.mjs`, was committed before its fix (6b3556f9, 5d5d2e82, b0e4cd1c, f33ccc18), and each fails on main for its defect.
   - **Fixed in owned files:** A-01 (an echo with erased bytes broke every target list), A-03, A-04, A-05, A-06, A-08, A-11, A-12 and A-14. A-13 is fixed in part: the full fix needs a `leases.realm` column in `db.mjs` (FX1-R5).

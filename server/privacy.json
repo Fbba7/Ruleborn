@@ -250,6 +250,10 @@
      ],
      "holds": "the version of the terms of use the player accepted (§20.11)"
     },
+    "links_n": {
+     "type": "gameplay",
+     "holds": "the number the player's newest link was given, so a link's number is never given again (§5.3)"
+    },
     "created_at": {
      "type": "interaction",
      "holds": "when the account was made, for the new player's shield"
@@ -957,6 +961,9 @@
      "type": "gameplay"
     },
     "universe": {
+     "type": "gameplay"
+    },
+    "realm": {
      "type": "gameplay"
     }
    }

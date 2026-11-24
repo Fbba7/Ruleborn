@@ -55,6 +55,8 @@ export function reward(season, league) {
 export class Seasons {
   /** `first` is when season 1 starts: the day the game opens. */
   constructor(service, first = 0) {
+    // AUD-B-18: a time that is no time would number every season NaN.
+    if (!Number.isFinite(first)) throw new RangeError("seasonStart is not a finite time");
     this.service = service;
     this.first = first;
   }
@@ -87,7 +89,7 @@ export class Seasons {
         .get(account, season);
       // A player's first season starts at nothing, in Dust. A later one starts
       // where the last one's close pulled them back to.
-      const start = last ? this.pulledBack(account, last) : { start: 0, ember: 0 };
+      const start = last ? this.pulledBack(account, last, season) : { start: 0, ember: 0 };
       const { ends_at: ends } = this.db.prepare("SELECT ends_at FROM seasons WHERE id = ?").get(season);
       const tierStars = Track.scaled(ends - this.service.now(), SEASON_MS);
       this.db.prepare(
@@ -99,11 +101,17 @@ export class Seasons {
   }
 
   /** §18.1: "pulled halfway back toward the floor of the player's league",
-   *  from the last season they played; Ember, once reached, stays reached. */
-  pulledBack(account, last) {
-    const end = this.renownIn(account, last.season, last);
-    const floor = place(end).floor;
-    return { start: Math.round(floor + (end - floor) / 2), ember: last.ember };
+   *  once by each season that ended since the last one they played, in order
+   *  (FX1-R10), for a standing opened in `season`; Ember, once reached, stays
+   *  reached. */
+  pulledBack(account, last, season = this.current().id) {
+    let v = this.renownIn(account, last.season, last);
+    for (let n = last.season; n < season; n++) {
+      const floor = place(v).floor;
+      if (v === floor) break;
+      v = Math.round(floor + (v - floor) / 2);
+    }
+    return { start: v, ember: last.ember };
   }
 
   renownIn(account, season, standing = null) {
@@ -305,8 +313,12 @@ export class Seasons {
       .get(season, account) ?? null;
   }
 
-  /** The constellation league for a closed season, best first. */
+  /** The constellation league for a closed season, best first; refused
+   *  while it is open, or for no season, as `result` is (FX1-A-15). */
   constellationTable(season) {
+    const s = this.db.prepare("SELECT closed_at FROM seasons WHERE id = ?").get(season);
+    if (!s) throw new Refused(404, "no_such_season");
+    if (!s.closed_at) throw new Refused(409, "season_still_open");
     return this.db.prepare(
       "SELECT constellation, renown, place FROM constellation_results WHERE season = ? ORDER BY place")
       .all(season);

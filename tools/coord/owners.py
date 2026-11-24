@@ -92,8 +92,11 @@ def _segments_meet(a: str, b: str) -> bool:
         return fnmatch.fnmatchcase(a, b)
     if not _wild(b):
         return fnmatch.fnmatchcase(b, a)
-    head_a, head_b = a.split("*")[0], b.split("*")[0]
-    tail_a, tail_b = a.split("*")[-1], b.split("*")[-1]
+    # FX1-T-05: the literal head runs to the first wildcard of any kind
+    # (*, ? or [..]) and the literal tail from the last, so a ? or a class
+    # is not read as text that must match.
+    head_a, head_b = re.split(r"[*?[]", a)[0], re.split(r"[*?[]", b)[0]
+    tail_a, tail_b = re.split(r"[*?\]]", a)[-1], re.split(r"[*?\]]", b)[-1]
     heads = head_a.startswith(head_b) or head_b.startswith(head_a)
     tails = tail_a.endswith(tail_b) or tail_b.endswith(tail_a)
     return heads and tails
@@ -133,11 +136,17 @@ def _covered(negations: list, pattern: str) -> bool:
 
 def files_overlap(a: list, b: list) -> list:
     """The pairs of positive globs that can match one path in both sets."""
-    neg_a = [p[1:] for p in a if p.startswith("!")]
-    neg_b = [p[1:] for p in b if p.startswith("!")]
+    def positives(files):
+        # FX1-T-05: as in owned(), a negation removes paths only from the
+        # globs listed before it, so each positive keeps only the
+        # negations that follow it.
+        for i, pattern in enumerate(files):
+            if not pattern.startswith("!"):
+                yield pattern, [p[1:] for p in files[i + 1:] if p.startswith("!")]
+
     pairs = []
-    for pa in (p for p in a if not p.startswith("!")):
-        for pb in (p for p in b if not p.startswith("!")):
+    for pa, neg_a in positives(a):
+        for pb, neg_b in positives(b):
             if not overlap(pa, pb):
                 continue
             if _covered(neg_a, pb) or _covered(neg_b, pa):
@@ -270,6 +279,15 @@ def self_test() -> None:
     assert files_overlap(["art/ui/icons/**"], aia) == []
     assert files_overlap(["art/ui/icons/a.svg"], aia) == []
     assert files_overlap(["art/ui/*/a.svg"], aia) == [("art/ui/*/a.svg", "art/ui/**")]
+    # FX1-T-05: ? and [..] are wildcards, and a negation removes paths only
+    # from the globs before it.
+    assert overlap("client/ui/icon_?.svg", "client/ui/icon_a*")
+    assert overlap("client/[ab]x.gd", "client/a*")
+    assert not overlap("client/ui/icon_?.svg", "client/ui/logo_*")
+    assert not overlap("client/[ab]x.gd", "client/c*.py")
+    readd = ["client/ui/**", "!client/ui/art/**", "client/ui/art/x.gd"]
+    assert files_overlap(readd, ["client/ui/art/**"]) == [("client/ui/art/x.gd", "client/ui/art/**")]
+    assert owned(readd, "client/ui/art/x.gd") and not owned(readd, "client/ui/art/y.gd")
     tasks = [
         {"id": "A", "state": "working", "files": ["tools/ui_gate/**"]},
         {"id": "B", "state": "claimed", "files": ["tools/**"]},

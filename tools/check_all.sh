@@ -125,7 +125,7 @@ python3 tools/check_prototype_conformance.py
 echo
 echo "== the dependency graph is well formed =="
 python3 tools/check_dependencies.py --self-test
-python3 tools/check_dependencies.py --write
+python3 tools/check_dependencies.py --check
 
 echo
 echo "== which register numbers can be shown to be current =="
@@ -200,6 +200,10 @@ echo
 echo "== roadmap builds and is internally consistent =="
 python3 tools/completion.py --self-test
 python3 tools/build_roadmap.py
+
+echo
+echo "== the built pages carry no escaped markup (FX1-T-22) =="
+python3 tools/build_stamp.py
 
 echo
 echo "All checks passed."

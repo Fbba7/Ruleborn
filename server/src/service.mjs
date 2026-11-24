@@ -567,6 +567,14 @@ export class Service {
         && this.db.prepare("SELECT 1 FROM heists WHERE token = ? AND validated = 0").get(newest.token);
       // Expired and never submitted, it reserved nothing (§24.13): a fresh
       // one is issued beside it.
+      // FX1-A-13: the island raided is the defender's own, in the realm it
+      // stands in now: players who publish the same bytes share one snapshot,
+      // whose realm is the first publisher's. Kept on the lease, so an island
+      // republished before the raid settles is still rated where it was.
+      const shared = this.db.prepare("SELECT realm FROM snapshots WHERE bundle = ?").get(bundle)?.realm ?? null;
+      const realm = echo ? shared
+        : this.db.prepare("SELECT realm FROM islands WHERE owner = ? AND bundle = ? ORDER BY realm = ? DESC, realm LIMIT 1")
+          .get(defender, bundle, shared)?.realm ?? shared;
       const token = this.random(16).toString("hex");
       const drawn = this.random(8).readBigUInt64LE(0).toString();
       const row = {
@@ -586,12 +594,13 @@ export class Service {
         challenge,
         era: era.wire,
         universe: crossing,
+        realm,
       };
       this.db.prepare(
         `INSERT INTO leases (token, attacker, bundle, defender, seed, ticks, rules, issued_at, expires_at,
-                             echo, trace_of, mode, challenge, era, universe)
+                             echo, trace_of, mode, challenge, era, universe, realm)
          VALUES (:token, :attacker, :bundle, :defender, :seed, :ticks, :rules, :issued_at, :expires_at,
-                 :echo, :trace_of, :mode, :challenge, :era, :universe)`)
+                 :echo, :trace_of, :mode, :challenge, :era, :universe, :realm)`)
         .run(row);
       return this.leaseView(row);
     });
@@ -1020,13 +1029,13 @@ export class Service {
     // pair's later raids the same UTC day move no rating either (G37,
     // SEC-39): the pair chooses those outcomes, as it would its Renown.
     const rated = {};
-    // FX1-A-13: the island raided is the defender's own: players who publish
-    // the same bytes share one snapshot, whose realm is the first
-    // publisher's. The defender's island on these bytes names the realm; an
-    // echo, or an island republished since, falls back to the snapshot's.
-    const realm = lease.echo ? snapshot.realm
+    // FX1-A-13: the realm the lease was issued in (issue). A lease issued
+    // before that column has none: the defender's island on these bytes
+    // names the realm then, and an echo, or an island republished since,
+    // falls back to the snapshot's.
+    const realm = lease.realm ?? (lease.echo ? snapshot.realm
       : this.db.prepare("SELECT realm FROM islands WHERE owner = ? AND bundle = ? ORDER BY realm = ? DESC, realm LIMIT 1")
-        .get(lease.defender, lease.bundle, snapshot.realm)?.realm ?? snapshot.realm;
+        .get(lease.defender, lease.bundle, snapshot.realm)?.realm ?? snapshot.realm);
     const rating = !scores || gone ? null
       : this.matchmaking.settle(lease, realm, verdict, now, { raiderOnly: Boolean(lease.echo), keep: rated });
     // The raider's row, written once: the experience, the raids played and

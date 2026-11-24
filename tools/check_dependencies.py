@@ -3,6 +3,7 @@
 
     python3 tools/check_dependencies.py             # validate and summarise
     python3 tools/check_dependencies.py --write     # also write docs/design/dependencies.md
+    python3 tools/check_dependencies.py --check     # fail if that file is not its rebuild (the gate's)
     python3 tools/check_dependencies.py --self-test # prove the checks can fail
 
 Why this exists
@@ -236,6 +237,15 @@ def main() -> int:
     if "--write" in sys.argv:
         OUT.write_text(brief(by_id, depends, research) + "\n", encoding="utf-8")
         print(f"  {OUT.relative_to(ROOT)} written.")
+    if "--check" in sys.argv:
+        # FX1-T-09: the gate compares, it does not rewrite the committed page.
+        want = brief(by_id, depends, research) + "\n"
+        have = OUT.read_text(encoding="utf-8") if OUT.exists() else None
+        if have != want:
+            print(f"\n  {OUT.relative_to(ROOT)} is not its rebuild from the register: "
+                  f"run python3 tools/check_dependencies.py --write and commit it.")
+            return 1
+        print(f"  {OUT.relative_to(ROOT)} matches its rebuild.")
     print()
     return 0
 

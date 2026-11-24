@@ -44,15 +44,13 @@ test("FX1-A-01: an echo whose bytes are gone is no target, and the others are st
   assert.doesNotThrow(() => t.service.matchmaking.listed(now));
 });
 
-test("FX1-A-02: an under-13 deletion erases bytes another player's echo is (20.11)", () => {
-  // FX1-A-02, not fixed here: accounts.mjs's erase() keeps bytes another
-  // player's island, Workshop island, link or lease still needs, but not
-  // their snapshot, so B's echo X loses its bytes. This asserts what happens
-  // today; the fix (keep bytes whose snapshot is another player's) turns it.
+test("FX1-A-02: an under-13 deletion keeps bytes another player's echo is (20.11)", () => {
+  // FX1-A-02: erase() keeps bytes another player's snapshot still is, as it
+  // keeps those their island, Workshop island, link or lease needs.
   const { t, b, xBundle } = erasedEcho();
   const snap = t.service.db.prepare("SELECT owner FROM snapshots WHERE bundle = ?").get(xBundle);
   assert.equal(snap.owner, b, "X's snapshot is B's");
-  assert.equal(t.service.bundle(xBundle), null, "FX1-A-02: and its bytes are gone");
+  assert.notEqual(t.service.bundle(xBundle), null, "FX1-A-02: B's echo X keeps its bytes");
 });
 
 /** A server with a Workshop and the open example Heart its creator cleared. */
@@ -194,12 +192,13 @@ test("FX1-A-09: the list says echoes only when an echo is among its targets (12.
   assert.equal(out.echoes, false, "no echo is among the targets");
 });
 
-test("FX1-A-10: an IPv4-mapped address written in hex or in full shares one /64 bucket (limits.mjs, not this task's)", () => {
-  // FX1-A-10: this asserts today's behaviour; the fix is limits.mjs's
-  // (server-a.md), which turns these into "198.51.100.7" and "203.0.113.1".
+test("FX1-A-10: an IPv4-mapped address written in hex or in full is keyed as its IPv4 address", () => {
+  // FX1-A-10: however a mapped address is written, its bucket is its IPv4
+  // address, never one /64 every mapped address shares.
   assert.equal(peerKey("::ffff:198.51.100.7"), "198.51.100.7", "the dotted form Node gives is the IPv4 address");
   assert.deepEqual(["::ffff:c633:6407", "0:0:0:0:0:ffff:198.51.100.7", "::ffff:cb00:7101"].map(peerKey),
-    ["0:0:0:0::/64", "0:0:0:0::/64", "0:0:0:0::/64"]);
+    ["198.51.100.7", "198.51.100.7", "203.0.113.1"]);
+  assert.equal(peerKey("2001:db8:1:2:3:4:5:6"), "2001:db8:1:2::/64", "an IPv6 address keeps its /64");
 });
 
 test("FX1-A-11: a refused Trace upload does not use up the Trace (12.3, 24.13)", () => {
@@ -263,18 +262,18 @@ test("FX1-A-14: a law cast in both slots of a foiled heist gives the defender on
   assert.equal(pages() - before, 1, "'the defender gets one page of it' (7.6)");
 });
 
-test("FX1-A-15: the constellation league answers [] for an open season and for no season (seasons.mjs, not this task's)", () => {
-  // FX1-A-15: this asserts today's behaviour; the fix is seasons.mjs's
-  // (server-a.md): 409 season_still_open and 404 no_such_season, as result().
+test("FX1-A-15: the constellation league refuses an open season and no season, as result() does", () => {
+  // FX1-A-15: 409 season_still_open and 404 no_such_season, never [].
   const t = server();
   t.service.seasons.current();
-  assert.deepEqual(t.service.seasons.constellationTable(1), []);
-  assert.deepEqual(t.service.seasons.constellationTable(99), []);
+  assert.throws(() => t.service.seasons.constellationTable(1),
+    (e) => e.status === 409 && e.reason === "season_still_open", "the season is still open");
+  assert.throws(() => t.service.seasons.constellationTable(99),
+    (e) => e.status === 404 && e.reason === "no_such_season", "there is no such season");
 });
 
-test("FX1-A-16: a link's number is given again, so a retried DELETE takes down the next link (links.mjs, not this task's)", () => {
-  // FX1-A-16: this asserts today's behaviour; the fix is links.mjs's
-  // (server-a.md): a link's number is never given again.
+test("FX1-A-16: a link's number is never given again, so a retried DELETE takes down nothing more", () => {
+  // FX1-A-16: a link's number is never given again.
   const facts = t0facts();
   const t = server({ strictUniverse: true });
   const me = t.service.session("gc:links").account;
@@ -285,15 +284,15 @@ test("FX1-A-16: a link's number is given again, so a retried DELETE takes down t
   const n = l.build(me, { a: "outer-1", b: "outer-2", kind: "rope_bridge" }).universe.links.find((x) => x.kind === "rope_bridge").n;
   l.remove(me, n);
   const chute = l.build(me, { a: "outer-2", b: "outer-3", kind: "chute" }).universe.links.find((x) => x.kind === "chute");
-  assert.equal(chute.n, n, "the new link took the number of the one taken down");
+  assert.notEqual(chute.n, n, "the new link has a number of its own");
   l.remove(me, n); // the first DELETE's retry
-  assert.equal(t.service.db.prepare("SELECT COUNT(*) AS n FROM links WHERE owner = ? AND kind = 'chute'").get(me).n, 0,
-    "today the retry takes the Chute down");
+  assert.equal(t.service.db.prepare("SELECT COUNT(*) AS n FROM links WHERE owner = ? AND kind = 'chute'").get(me).n, 1,
+    "the retry leaves the Chute standing");
 });
 
-test("FX1-A-17: a weave taken out before it finishes counts as a mastery step (weaving.mjs, not this task's)", () => {
-  // FX1-A-17: this asserts today's behaviour; the fix is weaving.mjs's with
-  // codex.woven (server-a.md): a law counts once its weaving finishes.
+test("FX1-A-17: a weave taken out before it finishes is no mastery step (18.5)", () => {
+  // FX1-A-17: a law counts once its weaving finishes, never for a weave
+  // taken out before.
   const t = server({ strictUniverse: true });
   const me = t.service.session("gc:weaver").account;
   t.service.book(me, "aether", 10_000, "a test's grant");
@@ -302,5 +301,5 @@ test("FX1-A-17: a weave taken out before it finishes counts as a mastery step (w
   t.service.weaving.weave(me, { realm: "heart", slot: 1, law: "half_gravity" });
   t.service.weaving.unweave(me, { realm: "heart", slot: 1 });
   t.clock.now += 2 * 60 * 60 * 1000;
-  assert.equal(steps(), 1, "today the weave never finished, and still counts");
+  assert.equal(steps(), 0, "the weave never finished");
 });
