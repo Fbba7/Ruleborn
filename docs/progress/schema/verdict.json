@@ -1,0 +1,185 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "docs/progress/schema/verdict.json",
+  "title": "A gate verdict file",
+  "description": "One file per gate run, <verdicts>/<task_id>/<sha>.json: a list with one object per item and quality (agent-protocol.md, 'The gate, step by step', steps 3 to 5). tools/gate/run.py writes and validates it; its 'validate' command also checks what a schema cannot: that the file's folder and name match task_id and sha, and that result follows from samples by the sampling rule.",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "$ref": "#/$defs/verdict"
+  },
+  "$defs": {
+    "verdict": {
+      "type": "object",
+      "required": [
+        "task_id",
+        "sha",
+        "item",
+        "quality",
+        "rubric_version",
+        "judge",
+        "samples",
+        "result",
+        "critique",
+        "at"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "task_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+        },
+        "sha": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{7,40}$"
+        },
+        "item": {
+          "type": "string",
+          "minLength": 1
+        },
+        "quality": {
+          "description": "The quality's name in rubric.md (tools/ui_gate/golden.py QUALITY_NAMES).",
+          "enum": [
+            "Layered materials",
+            "Display type",
+            "Painted or rendered icons",
+            "Hierarchy",
+            "Colour roles and value",
+            "Character presence",
+            "Light behind UI",
+            "One art-direction idea"
+          ]
+        },
+        "rubric_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "judge": {
+          "description": "The judge's model, by its product name, as the caller gave it; never Fable 5.1 (CLAUDE.md order 2) and never an API identifier.",
+          "type": "string",
+          "pattern": "^[A-Z][A-Za-z]+ [0-9]+(\\.[0-9]+)?$",
+          "not": {
+            "pattern": "^[Ff]able 5\\.1$"
+          }
+        },
+        "advisory": {
+          "description": "true while the quality is in shadow mode: the verdict is recorded and blocks nothing.",
+          "type": "boolean"
+        },
+        "samples": {
+          "description": "The judge's answers in the order made: three, or six when the first three split.",
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 6,
+          "not": {
+            "minItems": 4,
+            "maxItems": 5
+          },
+          "items": {
+            "enum": [
+              "pass",
+              "fail",
+              "unknown"
+            ]
+          }
+        },
+        "result": {
+          "enum": [
+            "pass",
+            "fail",
+            "split",
+            "unknown"
+          ]
+        },
+        "critique": {
+          "type": "string",
+          "minLength": 1
+        },
+        "at": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}(:[0-9]{2})?Z$"
+        }
+      },
+      "allOf": [
+        {
+          "description": "Any UNKNOWN sample makes the result unknown: it goes to the exceptions queue.",
+          "if": {
+            "required": [
+              "samples"
+            ],
+            "properties": {
+              "samples": {
+                "contains": {
+                  "const": "unknown"
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "const": "unknown"
+              }
+            }
+          }
+        },
+        {
+          "description": "Six samples always decide: 4 or more fails of 6 fail, otherwise pass.",
+          "if": {
+            "required": [
+              "samples"
+            ],
+            "properties": {
+              "samples": {
+                "minItems": 6,
+                "not": {
+                  "contains": {
+                    "const": "unknown"
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "enum": [
+                  "pass",
+                  "fail"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "description": "Without an UNKNOWN, a result is never unknown.",
+          "if": {
+            "required": [
+              "samples"
+            ],
+            "properties": {
+              "samples": {
+                "not": {
+                  "contains": {
+                    "const": "unknown"
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "result": {
+                "enum": [
+                  "pass",
+                  "fail",
+                  "split"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

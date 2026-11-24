@@ -5,21 +5,36 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "BT-05",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-24T23:30:00Z",
   "lease_until": "2026-11-25T02:30:00Z",
-  "updated_at": "2026-11-24T23:30:00Z",
-  "expected_next_update_by": "2026-11-25T00:15:00Z",
+  "updated_at": "2026-11-24T23:35:00Z",
+  "expected_next_update_by": "2026-11-25T00:20:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": null,
-    "next_step": "Write tools/gate/run.py (prepare, extra, write, validate, --self-test) and docs/progress/schema/verdict.json"
+    "next_step": "Merge main, pre-check with tools/run_checks.sh, owners diff, then ready"
   },
   "precheck": null,
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-25T21:00:00Z",
   "acks": [],
-  "requests": [],
+  "requests": [
+    {
+      "id": "SP-bt-05-R1",
+      "from": "SP-bt-05",
+      "to": "lead",
+      "ask": "BT-05's self-test is not wired into tools/check_all.sh, which is not in the task's files. Add, in the candidate that merges BT-05, after the line 'python3 tools/gate/render.py --self-test' in the section '== the UI wave gate's sheets and image checks, with their planted fails (AD-R3) ==', the line: python3 tools/gate/run.py --self-test . It uses a stub renderer and a stub judge (no Godot, no network, no session), writes verdict files into a temporary folder, validates them against docs/progress/schema/verdict.json, checks the attempt count, and validates every verdict file in docs/art/ui-quality/gate/verdicts/ (all 70 valid at 53fcfa9). It takes about 1 s.",
+      "files": [
+        "tools/check_all.sh"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-24T23:35:00Z",
+      "due": "2026-11-25T21:00:00Z",
+      "default": "the lead adds that one line, as above, in the candidate that merges BT-05 (as it did for SP-bt-04-R1)",
+      "escalate_to": "lead"
+    }
+  ],
   "answers": []
 }
