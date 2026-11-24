@@ -6,14 +6,14 @@
   "agent_state": "active",
   "task_id": "P3-S3-settings-4",
   "task_state": "working",
-  "claimed_at": "2026-11-18T06:00:00Z",
-  "lease_until": "2026-11-18T10:30:00Z",
-  "updated_at": "2026-11-18T08:02:00Z",
-  "expected_next_update_by": "2026-11-18T08:45:00Z",
+  "claimed_at": "2026-11-24T15:05:00Z",
+  "lease_until": "2026-11-24T18:05:00Z",
+  "updated_at": "2026-11-24T15:05:00Z",
+  "expected_next_update_by": "2026-11-24T15:50:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "4a998521c29f39451c8164ec5b642eb37f9835f9",
-    "next_step": "AD-R68, title road, committed at a201e966 and merged with main: the strip stays seg_track_light (no kit strip passes value-steps at a mid value) and the title is display_xl (Lilita One 44, outline, drop) on card_gold, its line box trimmed 15% over and 13% under so the High contrast row stays on the first screen (J). All 21 settings stills re-shot, fit ok; value steps pass but the Game tab's stepper discs, as on main. Next: build, fit_settings.sh, check_screens, guard, client tests, full pre-check, then ready.",
+    "next_step": "Resumed after the bug-fix wave (lead cycle 181): main 178be84 merged at the claim; next: build, re-shoot settings stills on the merge, fit_settings.sh, check_screens, guard, pre-check, AD check of stills, gate request.",
     "at": "2026-11-18T07:45:00Z"
   },
   "precheck": {
@@ -24,7 +24,7 @@
   },
   "gate_request": null,
   "ready_sha": null,
-  "stop_at": "2026-11-18T21:00:00Z",
+  "stop_at": "2026-11-24T21:00:00Z",
   "acks": [
     "M26",
     "M29",
