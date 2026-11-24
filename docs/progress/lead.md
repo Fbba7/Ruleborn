@@ -916,23 +916,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   are built; no task now. **Next:** merge FX1-6, FX2-7, FX3-6 and FX4-4
   as they turn ready; then FX1-7, FX2-8, FX2-9 (after FX1-6) and FX4-5;
   file fix tasks from the FX1-6, FX3-6 and FX4-4 audits; then the UI.
-- **Cycle 166**, 23 November 2026, from about 21:39Z (session
-  `session_01SNkKxr1ZSqi1YJiktk15QA`, started by the Opus 5.5 launcher).
-  Bookkeeping only. **Merged:** nothing; no task is `ready`, no gate
-  request, the merge lock stays clear, main did not move, so the pages
-  need no republish. **Seen:** all four builders started in cycle 165 are
-  active, within their deadlines (next updates due 22:14Z to 22:15Z):
-  FX1 merged main into `claude/fix-server-a`, gave RB-36's test manifests
-  the form byte (9fe151ad) and runs its pre-check (expected end about
-  21:58Z), so FX1-4-holds-codex is `working`; FX2 claimed
-  FX2-6-audit-server-b, FX3 claimed FX3-5-audit-sim afresh, FX4 claimed
-  FX4-3-replay-shop-nav and pushed its fail-first tests (ae774848, not yet
-  run). Their claims and leases are copied into the backlog. **Started:**
-  nothing; the four seats are full. No new message or request (FX1-R1
-  and FX1-R2 are in `requests.md` with their defaults applied); no
-  restart is due. **Next:** merge FX1-4-holds-codex when it turns ready
-  (full checks, `owners.py diff`), then FX1-6 in FX1's seat; FX4-5 and
-  FX4-4 wait for FX4's seat; FX1-7 after FX1-6.
 - **Restart, 23 November 2026** (the overseer, about 21:20Z). The owner
   restarted the program, in the chat of the overseer session: "Continue,
   first the bugs then the UI" (CLAUDE.md order 1). It runs on Opus 5.5 at
