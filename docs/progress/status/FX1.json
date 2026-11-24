@@ -8,12 +8,12 @@
   "task_state": "in_progress",
   "claimed_at": "2026-11-24T05:35:00Z",
   "lease_until": "2026-11-24T08:35:00Z",
-  "updated_at": "2026-11-24T06:05:00Z",
-  "expected_next_update_by": "2026-11-24T06:50:00Z",
+  "updated_at": "2026-11-24T05:49:00Z",
+  "expected_next_update_by": "2026-11-24T06:34:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "b30765cd",
-    "next_step": "fixes: A-02, A-10, A-13 committed, A-15 next; A-16, A-17, R10, AUD-B-18 after"
+    "last_green_sha": "bad2df32",
+    "next_step": "every fix committed (A-02, A-10, A-13, A-15, A-16, A-17, R10, AUD-B-18) and the audit docs updated; waiting on FX1-R24 (privacy.json declarations), then full npm test, merge main, check_all, owners diff, ready"
   },
   "precheck": null,
   "gate_request": null,
@@ -106,9 +106,24 @@
         "server/declarations.md"
       ],
       "blocking": true,
-      "created_at": "2026-11-24T06:05:00Z",
+      "created_at": "2026-11-24T05:45:00Z",
       "due": "2026-11-24T09:05:00Z",
       "default": "The exceptions are granted. FX1 commits the two declarations in one commit named FX1-R24 and marks ready.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "FX1-R25",
+      "from": "FX1",
+      "to": "lead",
+      "ask": "FX1-A-17's residual, for the owner of server/src/codex.mjs and server/src/profile.mjs: weaving.mjs now records codex.woven_at at the weave's finish time, and drops it for a weave taken out before it finishes, but mastery() (codex.mjs:71) and the profile (profile.mjs:162) count woven_at != null, so while a weave is unfinished its step already shows. Comparing woven_at with the time (woven_at <= now) in both would show it only once earned. Not in FX1-8's files.",
+      "files": [
+        "server/src/codex.mjs",
+        "server/src/profile.mjs"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-24T05:49:00Z",
+      "due": "2026-11-24T21:00:00Z",
+      "default": "Left as is: a step shows from the weave's start and goes if the weave is taken out before it finishes. A later task may compare woven_at with the time.",
       "escalate_to": "lead"
     }
   ],
