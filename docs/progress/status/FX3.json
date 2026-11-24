@@ -3,27 +3,21 @@
   "role": "FX3",
   "branch": "claude/fix-sim",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "FX1-10-tools-contract",
-  "task_state": "ready",
-  "claimed_at": "2026-11-24T09:20:00Z",
-  "lease_until": "2026-11-24T12:20:00Z",
-  "updated_at": "2026-11-24T10:00:00Z",
-  "expected_next_update_by": null,
+  "agent_state": "active",
+  "task_id": "FX1-11-tools-docs",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-24T11:15:00Z",
+  "lease_until": "2026-11-24T14:15:00Z",
+  "updated_at": "2026-11-24T11:15:00Z",
+  "expected_next_update_by": "2026-11-24T12:00:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "cceacc6d7589e75e2395add6a54622d8326b203c",
-    "next_step": "FX1-10 ready; pre-check PASS at 09:58Z, recorded"
+    "next_step": "FX1-11: fail-first tests for FX1-T-10, 11, 12, 17 and FX1-R26's SyntaxWarning"
   },
-  "precheck": {
-    "sha": "cceacc6d7589e75e2395add6a54622d8326b203c",
-    "state": "PASS",
-    "exit": 0,
-    "finished_at": "2026-11-24T09:58:37Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
-  "ready_sha": "cceacc6d7589e75e2395add6a54622d8326b203c",
+  "ready_sha": null,
   "stop_at": "2026-11-24T21:00:00Z",
   "acks": [],
   "requests": [
@@ -44,5 +38,5 @@
     }
   ],
   "answers": [],
-  "next_step": "FX1-10 ready at cceacc6d: the lead's merge and its answer to FX3-R1"
+  "next_step": "FX1-11: fail-first tests, then the fixes"
 }
