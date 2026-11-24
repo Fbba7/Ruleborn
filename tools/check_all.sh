@@ -202,4 +202,8 @@ python3 tools/completion.py --self-test
 python3 tools/build_roadmap.py
 
 echo
+echo "== the built pages carry no escaped markup (FX1-T-22) =="
+python3 tools/build_stamp.py
+
+echo
 echo "All checks passed."
