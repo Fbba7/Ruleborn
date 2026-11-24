@@ -8,6 +8,8 @@
 //! on screen rather than show a different heist (§24.10).
 
 mod island;
+#[cfg(test)]
+mod tests;
 
 use godot::prelude::*;
 use ruleborn_sim as sim;
@@ -107,6 +109,28 @@ impl RulebornReplay {
                 _ => {}
             }
         }
+    }
+
+    /// `record`'s bytes, outside Godot's types so a cargo test can read
+    /// them; empty when there is nothing to record.
+    fn recorded(&self) -> Vec<u8> {
+        if let (Some(c), Some((u, islands)), Some(heist)) =
+            (self.crossing.as_ref(), self.universe.as_ref(), self.heist.as_ref())
+        {
+            let Ok(h) = sim::universe::record_universe(u, islands, heist.seed, heist.ticks, heist.crew, heist.era,
+                                                       heist.manifest.clone(), c.commands().to_vec())
+            else {
+                return Vec::new();
+            };
+            return h.encode();
+        }
+        let (Some(world), Some(heist), Some(realm)) =
+            (self.w(), self.heist.as_ref(), self.realm())
+        else {
+            return Vec::new();
+        };
+        sim::record_with(realm, heist.seed, heist.ticks, heist.crew, heist.era,
+                         heist.manifest.clone(), world.commands().to_vec()).encode()
     }
 }
 
@@ -385,24 +409,7 @@ impl RulebornReplay {
     /// re-simulating the log from the start.
     #[func]
     fn record(&self) -> PackedByteArray {
-        if let (Some(c), Some((u, islands)), Some(heist)) =
-            (self.crossing.as_ref(), self.universe.as_ref(), self.heist.as_ref())
-        {
-            let Ok(h) = sim::universe::record_universe(u, islands, heist.seed, heist.ticks, heist.crew, heist.era,
-                                                       heist.manifest.clone(), c.commands().to_vec())
-            else {
-                return PackedByteArray::new();
-            };
-            return PackedByteArray::from(h.encode().as_slice());
-        }
-        let (Some(world), Some(heist), Some(realm)) =
-            (self.w(), self.heist.as_ref(), self.realm())
-        else {
-            return PackedByteArray::new();
-        };
-        let bytes = sim::record_with(realm, heist.seed, heist.ticks, heist.crew, heist.era,
-                                     heist.manifest.clone(), world.commands().to_vec()).encode();
-        PackedByteArray::from(bytes.as_slice())
+        PackedByteArray::from(self.recorded().as_slice())
     }
 
     /// What the server does with a replay (§24.12's Validate), on `island`
