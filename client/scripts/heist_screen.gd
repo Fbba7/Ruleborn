@@ -847,17 +847,18 @@ func _get_out() -> void:
 ## the alarm's alone (the gate's colour roles; §21.8 names no colour for
 ## it). Each keeps its icon over its word at every text size.
 func _dress_hand() -> void:
+	# At 200% text Cast leads the hand (HeistHud.cast_leads): wide, tall, its word at 24 points.
+	var lead := HeistHud.cast_leads()
 	var cast := _hand_order("heistcontrols/cast", Strings.t("HEIST_CAST"), hand._open_casts, "gold",
-		Vector2(92, 76), 34.0)
+		Vector2(120, 96) if lead else Vector2(92, 76), 40.0 if lead else 34.0, 24.0 if lead else 14.0)
+	cast.size_flags_horizontal = Control.SIZE_EXPAND_FILL if lead else Control.SIZE_SHRINK_END
 	var go := _hand_order("heistcontrols/getout", Strings.t("HEIST_GET_OUT"), _get_out, "leather",
 		Vector2(66, 54), 32.0)
 	for pair: Array in [[hand.cast_button, cast], [hand.go_button, go]]:
 		var old: Button = pair[0]
-		var at := old.get_index()
-		hand.remove_child(old)
-		old.free()
 		hand.add_child(pair[1])
-		hand.move_child(pair[1], at)
+		hand.move_child(pair[1], old.get_index())
+		old.free()
 	hand.cast_button = cast
 	hand.go_button = go
 
@@ -867,7 +868,7 @@ func _dress_hand() -> void:
 ## large text. Its icon is meta "icon" and its word meta "words", as the
 ## hand's squares (HeistHand.show_state greys the icon, never the word).
 func _hand_order(icon: String, words: String, call: Callable, look: String, least: Vector2,
-		icon_points: float) -> Button:
+		icon_points: float, points := 14.0) -> Button:
 	var b := KitControls.big_action(icon, words, call, look)
 	b.tooltip_text = words
 	b.size_flags_vertical = Control.SIZE_SHRINK_END
@@ -878,14 +879,13 @@ func _hand_order(icon: String, words: String, call: Callable, look: String, leas
 	pic.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	var l := column.get_child(column.get_child_count() - 1) as Label
 	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	l.add_theme_font_size_override("font_size", UI.text_px(points))
 	b.set_meta("icon", pic)
 	b.set_meta("words", l)
 	var fit := func() -> void:
-		# In the narrow text's single row a long phrase ("Sem lançamentos")
-		# stands on two lines, so the tray keeps inside the frame (§21.1).
-		# With §20.8's large text it does so too once it is too wide to
-		# keep its row beside Get out, so the hand's row never wraps and
-		# the tray stays under the loot (AD-R15).
+		# A long phrase ("Sem lançamentos") stands on two lines so the tray keeps inside the
+		# frame (§21.1), and with large text once too wide for its row beside Get out, so the
+		# hand's row never wraps and the tray stays under the loot (AD-R15).
 		var wide := UI.px(least.x) * (1.5 if Settings.text_scale <= 130 else 2.2)
 		if l.text.contains(" ") and l.get_minimum_size().x + UI.px(16) > wide:
 			l.text = HeistHand.two_lines(l.text)

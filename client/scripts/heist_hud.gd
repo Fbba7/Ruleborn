@@ -100,7 +100,7 @@ func _init() -> void:
 	# AD-R18: gold words outlined in ink were lost on the night sky (ink and
 	# sky a few L* apart), so the header is seated on the kit's tag plate:
 	# dark capitals on gold inside the ink line, which part from any sky.
-	var here := KitStatus.tag(Strings.t("HUD_LAWS_HERE"))
+	var here := KitStatus.tag(Strings.t("HUD_LAWS_HERE"), cast_leads())
 	here.name = "Here"
 	if not large:
 		# The plate's capitals set the laws column's width at normal text:
@@ -307,7 +307,7 @@ static func _sync(l: Label, finish := "") -> void:
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	# A figure tinted (the loot's cream in high contrast, AD-R62): the white
 	# glyphs take it, their ink line stays dark.
-	if l.has_meta("tint"):
+	if l.has_meta("tint") and finish != "num_timer_red":
 		if row is Label:
 			row.add_theme_color_override("font_color", l.get_meta("tint"))
 		else:
@@ -383,6 +383,7 @@ func _build_clock(text: String) -> void:
 	var piece := KitHud.clock_large(text, _red) if KitSkin.is_on("numerals") else KitHud.clock(text, _red)
 	piece.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	_tight(piece)
+	_quiet_clock(piece)
 	clock_panel.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	_swap(clock_panel, piece)
 	clock_panel = piece
@@ -395,7 +396,19 @@ func _build_clock(text: String) -> void:
 ## the live words, which then only name it for a screen reader.
 func _set_clock(text: String) -> void:
 	KitHud.set_clock(clock_panel, text, _red)
+	_quiet_clock(clock_panel)
 	_figures(text)
+
+
+## While Cast leads (`cast_leads`) the clock's light plate is the dark name
+## plate, its figures the smallest numerals in the quiet tint, so the time
+## is read without outweighing Cast; past the alarm's half it keeps the
+## kit's red plate.
+func _quiet_clock(p: PanelContainer) -> void:
+	if not cast_leads() or _red or RbBox.of(p) == null or RbBox.of(p).look == "plate_dark":
+		return
+	UI.dress(p, "plate_dark", 14)
+	(p.get_node("Time") as Label).add_theme_color_override("font_color", Tokens.color("cream"))
 
 
 func _figures(text: String) -> void:
@@ -408,7 +421,11 @@ func _figures(text: String) -> void:
 	if old != null:
 		clock_panel.remove_child(old)
 		old.queue_free()
-	var row := KitNumerals.make(text, "num_timer_red" if _red else "num_timer", "display", text)
+	var quiet := cast_leads() and not _red
+	var row := KitNumerals.make(text, "num_timer_red" if _red else ("num_white" if quiet else "num_timer"),
+		"number" if quiet else "display", text)
+	if quiet:
+		row.modulate = quiet_tint()
 	row.name = "Figures"
 	row.set_meta("shown", shown)
 	row.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
@@ -426,6 +443,10 @@ func _build_alarm() -> void:
 	# off it, so "Alarm" and the count stand inside the plate (gate, display
 	# type: the words ran into the frame at 5).
 	_tight(piece, true, 8.0)
+	if cast_leads():
+		# Cast leads: the count's white is quieted as the loot's figures,
+		# while the alarm is under half; past it the timer's red stays.
+		alarm_label_of(piece).set_meta("tint", quiet_tint())
 	_bake(alarm_label_of(piece), _alarm_finish())
 	_swap(alarm_panel, piece)
 	alarm_panel = piece
@@ -439,6 +460,22 @@ func _build_alarm() -> void:
 ## a narrow band over the hand.
 static func beside_alarm() -> bool:
 	return Settings.text_scale > 175
+
+
+## Whether Cast leads the screen by giving up the HUD's weight: at 200% text
+## outside high contrast (gate fail on 97ecb94f, Hierarchy). The loot, the
+## clock and the laws' header take dark plates and quiet figures, and the
+## screen draws Cast larger than Get out (`HeistScreen._dress_hand`). High
+## contrast keeps its own plates (AD-R60 to AD-R62).
+static func cast_leads() -> bool:
+	return beside_alarm() and not Tokens.high_contrast
+
+
+## The quiet figures' tint while Cast leads: the cream a step darker, so the
+## loot's, the clock's and the alarm's baked figures, outlined and bold,
+## stand under Cast's word (text_on_leather at 24 points) in value as in size.
+static func quiet_tint() -> Color:
+	return Tokens.color("cream").darkened(0.18)
 
 
 ## The loot's rows: what the bags can still take and what is left to load.
@@ -479,11 +516,19 @@ func _build_loot(rows: Array, bags: float, load_words: String, vault: Array) -> 
 	_vault_count = _vault_words(piece, vault)
 	if _vault_count != null:
 		numbers.append(_vault_count)
+	if cast_leads():
+		# Cast leads (`cast_leads`): the panel, taller with the Vault's row,
+		# takes the dark name plate (as the clock), and its figures are the
+		# numerals' white in the quiet tint (`quiet_tint`), so neither plate
+		# nor figures outweigh Cast's word.
+		UI.dress(piece, "plate_dark", 16)
+		for n: Variant in numbers:
+			(n as Label).set_meta("tint", quiet_tint())
 	for n: Variant in numbers:
 		if Tokens.high_contrast:
 			(n as Label).add_theme_color_override("font_color", Tokens.color("cream"))
 			(n as Label).set_meta("tint", Tokens.color("cream"))
-		_bake(n as Label, "num_white" if Tokens.high_contrast else "num_gold")
+		_bake(n as Label, "num_white" if Tokens.high_contrast or cast_leads() else "num_gold")
 	_swap(loot_panel, piece)
 	loot_panel = piece
 	loot_panel.accessibility_name = spoken
