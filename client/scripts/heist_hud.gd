@@ -473,9 +473,25 @@ static func cast_leads() -> bool:
 
 ## The quiet figures' tint while Cast leads: the cream a step darker, so the
 ## loot's, the clock's and the alarm's baked figures, outlined and bold,
-## stand under Cast's word (text_on_leather at 24 points) in value as in size.
+## stand under Cast's word (`lead_word`, cream at 36 points) in value as in size.
 static func quiet_tint() -> Color:
-	return Tokens.color("cream").darkened(0.18)
+	return Tokens.color("cream").darkened(0.38)
+
+
+## While Cast leads, its word in cream with the figures' dark ink line, so
+## the hand's main order outweighs every figure, spent or not (gate fail on
+## 97ecb94f, Hierarchy). Laid again after each `HeistHand.show_state`, whose
+## re-dressing of a spent Cast in leather resets the word's colours.
+static func lead_word(cast: Button) -> void:
+	if not cast_leads() or not cast.has_meta("words"):
+		return
+	var l := cast.get_meta("words") as Label
+	var ink := Tokens.color("ink_line")
+	if l.get_theme_color("font_color") == Tokens.color("cream") and l.get_theme_color("font_outline_color") == ink:
+		return
+	l.add_theme_color_override("font_color", Tokens.color("cream"))
+	l.add_theme_color_override("font_outline_color", ink)
+	l.add_theme_constant_override("outline_size", UI.px(6))
 
 
 ## The loot's rows: what the bags can still take and what is left to load.

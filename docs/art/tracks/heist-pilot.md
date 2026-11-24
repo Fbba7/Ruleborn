@@ -680,3 +680,27 @@ Each still was shot with `FIT=1` on this change. Every run exited 0 and printed 
     env FIT=1 CONTRAST=1 TEXT=200 LOCALE=de bash tools/render/shoot.sh client/tests/shots/screen_heist.gd hc200-de.png
 
 These cover the gate's "heist at 100% text", "heist at 200% text, pt_BR" and "heist in high contrast".
+
+## Part 11: Cast leads the heist at 200% text (P4-S1-heist-vault, re-work)
+
+The gate failed `97ecb94f` on 'heist at 200% text, pt_BR', quality Hierarchy, 0 of 3 (lead cycle 183). In the 960 px grayscale, Lançar (Cast) was a dark plum plate of the same value as Fugir (Get out) and nearly its size, so the two split the primary. The eye went first to the tall loot panel with its heavy 508 and 0% figures, and to the light 2:25 timer and LEIS AQUI plates.
+
+**What changed** (all in S1's files; no kit file changes). Everything below holds only while `HeistHud.cast_leads()` is true: text over 175% (`beside_alarm()`) and not high contrast. At 100% and 150% text, and in high contrast at every size, the heist is drawn as before.
+
+- **Cast leads the hand** (`HeistScreen._dress_hand`). At 200% Cast is 120 by 96 points at least (it was 92 by 76), its wand is 40 points, and it fills the row beside Get out (`SIZE_EXPAND_FILL`). Its word is set at 36 points. `UI.text_px` shows any size from 16 to 32 points at 32 at 200%, so a word must be set above 32 to stand larger. Get out keeps its 66 by 54 points and its word at 32 px. At 40 points 'Wirken' pushed 'Fliehen' onto a row of its own in de; at 36 the two keep one row in en, pt_BR and de.
+- **Cast's word in cream with the figures' ink line** (`HeistHud.lead_word`, called after each `HeistHand.show_state`). At the still's moment no cast is left, so `HeistHand._dress_cast` dresses Cast in leather (AD-R60) with leather's text colour and no outline. While Cast leads, its word takes cream (#FFF3CC) with the ink line (#1A0C14, 6 points), so it is the lightest, largest word in the hand, spent or not. The plate stays leather, as AD-R60 asks.
+- **The loot panel gives up weight** (`HeistHud._build_loot`). The panel is the dark name plate (`plate_dark`, radius 16), and its figures bake white in the quiet tint (`HeistHud.quiet_tint()`, cream darkened by 0.38), not gold.
+- **The clock and the alarm quiet** (`_quiet_clock`, `_figures`, `_build_alarm`). The clock's light plate is the dark name plate, and its figures are the "number" role (16 points, not "display") in the quiet tint. The alarm count takes the same tint while under half the bells. Past half, the timer's and the alarm's red stay as they are.
+- **The laws' header quiet** (`KitStatus.tag(..., cast_leads())`): LEIS AQUI on the tag's quiet plate.
+
+**The self-check** (960 px grayscale, `part11-after-200-pt-gray960.png`, beside the pass anchor `kf-character-text200.png` and the fail anchor `today-heist.png`): Lançar is the largest, lightest word on its plate, and wider than Fugir by about 1.6. The 508, 0/6, 0% and 2:25 figures are a step darker than Cast's word and no larger.
+
+**A pre-judge** (the `ui-judge` agent, advisory, Hierarchy, rubric v3, the same anchors) split 2 pass, 1 fail, where `97ecb94f` had 0 of 3. The two passes found that Lançar leads by size and place (about 2.5 times Fugir's plate), with the 2:25 and LEIS AQUI plates now dark and the figures recessed. The fail found that Lançar's plate has no value step over Fugir and the tray: it is leather, as AD-R60 asks of a Cast with no cast left. The pass anchor's primary is a light card. Lightening a spent Cast's plate would undo AD-R60, so it is asked of AD as S1-R46 and not done here.
+
+### Evidence
+
+- `part11-before-200-pt.png`: the failed `97ecb94f` at 200% text in pt_BR.
+- `part11-after-200-pt.png` and `part11-after-200-pt-gray960.png`: this change at 200% in pt_BR, in colour and in the 960 px grayscale.
+- `part11-200-en.png` and `part11-200-de.png`: the same at 200% in en and de. Cast and Get out keep one row in each.
+
+The 14 FIT runs of Part 10 were run again on this change, one at a time. Every run exited 0 and printed "fit ok". The draw calls the shoot reports: 100% 120, 126 and 122 (en, pt_BR, de); 150% 121, 123 and 123; 200% 121, 123 and 123; high contrast 121 at 100% and 122 at 150% (en), and 120, 122 and 122 at 200% (en, pt_BR, de). At 100%, at 150% and in high contrast the counts are those of `97ecb94f`, since `cast_leads()` is false there. The full client suite passes `_vault_row` (the Vault's words at 200%, band no narrower than at 150%) and `_vault_band` (AD-R65) unchanged.

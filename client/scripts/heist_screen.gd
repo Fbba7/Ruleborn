@@ -351,6 +351,7 @@ func _refresh() -> void:
 		(_aim_hint() if not aiming.is_empty() else Strings.t("HEIST_HINT_SHORT")))
 	hand.armed = int(aiming.get("kind", 0)) if not aiming.is_empty() and int(aiming["kind"]) != Kind.ABILITY else 0
 	hand.show_state(controller.world.sage(), controller.world.casts(), controller.world.tick())
+	HeistHud.lead_word(hand.cast_button)
 	# Before the crew lands: where, and nothing else (§5.4).
 	var choosing := controller.choosing
 	picker.visible = choosing
@@ -844,13 +845,12 @@ func _get_out() -> void:
 ## The hand's two orders as the kit draws them (KitControls.big_action),
 ## in the hand's place and keeping its state: Cast, the main action, in gold
 ## and the largest thing to tap; Get out in leather, smaller, since red is
-## the alarm's alone (the gate's colour roles; §21.8 names no colour for
-## it). Each keeps its icon over its word at every text size.
+## the alarm's alone (the gate's colour roles; §21.8 names none). Icon over
+## word at every text size; at 200% Cast leads (HeistHud.cast_leads), 36 pt.
 func _dress_hand() -> void:
-	# At 200% text Cast leads the hand (HeistHud.cast_leads): wide, tall, its word at 24 points.
 	var lead := HeistHud.cast_leads()
 	var cast := _hand_order("heistcontrols/cast", Strings.t("HEIST_CAST"), hand._open_casts, "gold",
-		Vector2(120, 96) if lead else Vector2(92, 76), 40.0 if lead else 34.0, 24.0 if lead else 14.0)
+		Vector2(120, 96) if lead else Vector2(92, 76), 40.0 if lead else 34.0, 36.0 if lead else 14.0)
 	cast.size_flags_horizontal = Control.SIZE_EXPAND_FILL if lead else Control.SIZE_SHRINK_END
 	var go := _hand_order("heistcontrols/getout", Strings.t("HEIST_GET_OUT"), _get_out, "leather",
 		Vector2(66, 54), 32.0)
