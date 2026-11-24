@@ -43,7 +43,10 @@ DRAW = re.compile(
 FUNC_DEF = re.compile(r"^\s*(?:static\s+)?func\s")
 FILL_NEW = re.compile(r"(?:var\s+(\w+)\s*(?::=|:\s*StyleBoxFlat\s*=|=)\s*)?StyleBoxFlat\.new\s*\(")
 TEXTURE = re.compile(r"\b(?:TextureRect|NinePatchRect|StyleBoxTexture|GradientTexture2D)\.new\s*\(")
-IMAGE_LOAD = re.compile(r"\b(?:pre)?load\(\s*\"[^\"]*\.(?:png|svg|webp|jpe?g)\"")
+# Either quote, the closing one matching the opening one, and any case of the
+# extension: GDScript takes both quotes and Godot imports ".PNG" (FX1-T-07).
+IMAGE_LOAD = re.compile(
+    r"\b(?:pre)?load\(\s*([\"'])(?:(?!\1).)*\.(?i:png|svg|webp|jpe?g)\1")
 
 
 def _code(line):
@@ -248,6 +251,8 @@ def self_test():
         "\tvar t := TextureRect.new()",
         "\tt.texture = load(\"res://world/a.svg\")",
         "\tvar ok := load(\"res://scripts/a.gd\")",
+        "\tvar q := load('res://world/b.png')",
+        "\tvar up := preload(\"res://world/c.PNG\")",
         "func later() -> void:",
         "\tfill.draw_center = false",
         "",
@@ -255,7 +260,7 @@ def self_test():
     found = count_file_text(sample)
     check(found["draw"] == [4, 7, 8], "draw lines %s, want [4, 7, 8]" % found["draw"])
     check(found["fill"] == [14], "fill lines %s, want [14]" % found["fill"])
-    check(found["texture"] == [15, 16], "texture lines %s, want [15, 16]" % found["texture"])
+    check(found["texture"] == [15, 16, 18, 19], "texture lines %s, want [15, 16, 18, 19]" % found["texture"])
 
     scratch = tempfile.mkdtemp(prefix="check_screens_")
     try:
@@ -275,7 +280,7 @@ def self_test():
             check(run(scratch, budgets, False) == 1, "a new file's chrome is not refused")
             check(run(scratch, budgets, True) == 1, "--record raised a count")
             write_budgets(budgets, {"screens": {"counts": {
-                "client/scripts/a_screen.gd": {"draw": 3, "fill": 1, "texture": 2}},
+                "client/scripts/a_screen.gd": {"draw": 3, "fill": 1, "texture": 4}},
                 "data_files": {}}})
             check(run(scratch, budgets, False) == 0, "the recorded counts are refused")
             with open(screen, "a", encoding="utf-8") as f:
