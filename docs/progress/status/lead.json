@@ -1,12 +1,12 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-24T15:20:00Z",
-  "expected_next_update_by": "2026-11-24T18:20:00Z",
-  "cycle": 182,
+  "updated_at": "2026-11-24T20:20:00Z",
+  "expected_next_update_by": "2026-11-24T23:20:00Z",
+  "cycle": 187,
   "merging": null,
   "last_merged": {
-    "task_id": "FX1-12-tools-ui",
-    "sha": "e27e7d04"
+    "task_id": "BT-01a",
+    "sha": "99c9aa89"
   },
   "acks": [
     "M15",
@@ -47,9 +47,9 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "The UI runs: S1 (P4-S1-heist-vault), S2 (P4-S2-home-purse) and S3 (P3-S3-settings-4) are pre-checking after merging main. Next: merge their tasks as they are ready (settings-4 with its gate run, 'settings at 100% text'; S3-R46's default for AD stands at 19:00Z); the BT track waits for a free seat (cap three under allowed_warning).",
+  "next_step": "Gate and merge the heist re-work (S1, restarted at attempts 2 with S1-R46 granted; write S1-R45's heist/200 record in its merge), BT-04a's resync (SP-bt-04, adding render.py --self-test to check_all.sh again, SP-bt-04-R1) and BT-01b (SP-bt-01) as they are ready; cap of three under allowed_warning.",
   "seen": {
-    "at": "2026-11-24T15:19:21Z",
+    "at": "2026-11-24T19:52:13Z",
     "heads": {
       "claude/3d-character-screens": "6053b249bee313648da3509142eeb2ba738bb62f",
       "claude/3d-characters": "35d6ae8f5b84a4d75636f68270848b0949c111f3",
@@ -80,9 +80,11 @@
       "claude/ui-plan": "f1affcea749d007fe1a67931bd3c1f7359d98c44",
       "claude/ui-research": "f19d5d4e5eaffff8869da3b91124d111cf1259a6",
       "claude/ui-screens": "dceb6bfcbc6c5da4e261674fe9301e1854f0aa65",
-      "claude/ui-screens-heist": "97ecb94ff8d935837168bc37c13357a2d07817c7",
-      "claude/ui-screens-home": "730860e4f68c16b2f53320d32549b44842d7d23a",
-      "claude/ui-screens-meta": "e3190f782c2594a200431da07d3746e0726eaf15",
+      "claude/ui-screens-heist": "8922c136f48e724f58ea66e65980a9603e6feb82",
+      "claude/ui-screens-home": "eded364b11d503933f1d657683a2b622f66ca972",
+      "claude/ui-screens-meta": "8e73789bd8519aeb195e6e36d013d5290353975b",
+      "claude/ui-spec-coord": "f14c7266c41f0d3823f224fcf284ad245e372049",
+      "claude/ui-spec-gate-render": "71362564fc1a3c6a7b39a01db63dd1a9f489f553",
       "lead/candidate-01fb5fb1": "01fb5fb186bb8135c10329750fb9b89f3aef2d50",
       "lead/candidate-0870a845": "0870a8457836d68256019562d329d8f32a048371",
       "lead/candidate-13f6fb44": "13f6fb4424f2697c762188ee73d27c9980b27964",
@@ -107,7 +109,9 @@
       "main": "2455f3b5392587009f9b8f7ff57f7b26b01566d1"
     },
     "ready": {},
-    "startable": [],
+    "startable": [
+      "P4-S1-heist-vault"
+    ],
     "messages": [
       "M10",
       "M3"
@@ -148,6 +152,7 @@
       "S3-R2",
       "S3-R3",
       "S3-R4",
+      "S3-R46",
       "S3-R5",
       "S3-R8",
       "S3-R9 to S3-R14"

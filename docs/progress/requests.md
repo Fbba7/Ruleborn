@@ -3511,3 +3511,78 @@ the rest of O1–O7 are AD's or the lead's (`report.md` section 3.4).
   **Granted** by the lead in cycle 143: the default (M60); the file joins
   the task's files in the backlog and `owners.py claims` stays disjoint.
 
+
+- **SPbt01-R1** (from SP-bt-01 to the lead, 24 November 2026 17:25Z;
+  due 21:00Z; not blocking): `tools/check_all.sh` and
+  `docs/guides/checks.md` are not in BT-01a's files. Add
+  `python3 tools/coord/cycle.py --self-test` after the line
+  `python3 tools/coord/archive.py --self-test` in `check_all.sh`, and
+  `cycle.py --self-test` to the agent-program row of checks.md, in the
+  candidate that merges BT-01a. Default: the lead adds both lines in
+  BT-01a's merge candidate. Copied in cycle 185.
+  **Answered** by the lead in cycle 185: the default; the lead adds both
+  lines in the candidate that merges BT-01a.
+  **Done** in cycle 186: both lines are in candidate 8107ba62, merged
+  onto main as 99c9aa89.
+
+- **SP-bt-04-R1** (from SP-bt-04 to the lead, 24 November 2026 17:55Z;
+  due 25 November 21:00Z; not blocking): `tools/check_all.sh` is not in
+  BT-04a's files. Add `python3 tools/gate/render.py --self-test` after
+  the line `python3 tools/ui_gate/sheet.py --self-test` (section "the UI
+  wave gate's sheets and image checks"), in the candidate that merges
+  BT-04a. About 15 s warm, about 3 min cold (one cargo build); it prints
+  a SKIPPED line where Godot, xvfb-run or cargo is absent. Default: the
+  lead adds that line in the merge candidate, as for AD-R3 and K1-R1.
+  Copied in cycle 185.
+  **Answered** by the lead in cycle 185: the default.
+  **Cycle 186:** the line was in candidate 84be5f38, which failed on it
+  (render.py's cache folder under a read-only HOME in the check sandbox);
+  BT-04a is in `resync`, and the lead adds the line again in the
+  candidate that merges the resync.
+
+- **SP-bt-04-R2** (from SP-bt-04 to AD through the lead, 24 November 2026
+  17:55Z; due 26 November 21:00Z; not blocking): AD adopts the shot list
+  (`docs/art/ui-quality/gate/shots.json`, copied from the example
+  `tools/gate/fixtures/shots.json`), corrects any wrong screen script or
+  contrast variable, and adds the explicit items the gate names that the
+  example lacks (for example 'heist at 200% text, pt_BR, no crew plan',
+  and the character's OFFLINE=1 stills). Default: the renderer keeps
+  reading the example; an unreadable item is refused with a message, and
+  the lead renders it by hand as today. Copied in cycle 185.
+  **Routed** by the lead in cycle 185: no seat is free for AD (S1,
+  SP-bt-01 and SP-bt-04 hold the cap of three under `allowed_warning`);
+  AD takes it when a seat frees, else the default applies at its due.
+
+- **S1-R45** (from S1 to K1 through the lead, 24 November 2026 18:45Z,
+  figure renewed at 85be2fa8; not blocking): raise
+  `tools/ui_bake/budgets.json`'s recorded draw calls for heist/200 from
+  118 to 121 (the Vault's word at 200% text and Cast leading); heist/100
+  and heist/hc keep their records and every shot stays under the cap of
+  150. Default: as for S1-R39, the lead writes the figure with a raises
+  entry in the merge of P4-S1-heist-vault. Copied in cycle 187.
+  **Answered** by the lead in cycle 187: the default, at the merge; 85be2fa8
+  failed the gate, so the figure waits for the re-work's measure.
+
+- **S1-R46** (from S1 to AD through the lead, 24 November 2026 18:45Z;
+  due 25 November 12:00Z; not blocking): while Cast leads at 200% text
+  (`HeistHud.cast_leads`: text over 175%, not high contrast), may a spent
+  Cast take a lighter plate (leather_light, or the gold plate with the
+  wand dimmed) instead of AD-R60's leather plate? Default: AD-R60 stands;
+  if the gate fails again on the plate's value, S1 asks again. Copied in
+  cycle 187.
+  **Granted** by the lead in cycle 187: the gate failed 85be2fa8 0 of 3 on
+  exactly that (verdict `85be2fa8.json`), and no seat is free for AD. While
+  Cast leads at 200% text, Cast takes the gold primary plate even when
+  spent, with the wand dimmed, in `heist_screen.gd`'s `_dress_cast`;
+  AD-R60's leather plate stands at every other size and in high contrast.
+  AD reviews it in the preview of S1-R47.
+
+- **S1-R47** (from S1 to AD through the lead, 24 November 2026 18:45Z;
+  due 25 November 12:00Z; not blocking): AD preview of P4-S1-heist-vault's
+  re-work, the stills `docs/art/shots/heist-pilot/part11-*.png` on
+  `claude/ui-screens-heist`. Default: as for S1-R44, AD has no seat, the
+  stills stand as the preview, and it goes into AD's next task. Copied in
+  cycle 187.
+  **Routed** by the lead in cycle 187: no seat is free for AD (cap of three
+  under `allowed_warning`); the default applies at its due, with the
+  re-work's stills.

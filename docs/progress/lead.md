@@ -214,10 +214,14 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxpHsQytV7iJPKhPoRL` (cycle 182,
-24 November 2026 from about 15:15Z, started by the Opus 5.5 launcher).
-Cycle 181's was `session_01SNkKxo8T6d9ouEzGcdPst6` (24 November, from
-about 14:00Z).
+Latest lead cycle session: `session_01SNkKxo4wWyrJULuKf9ezgK` (cycle 187,
+24 November 2026 from about 19:45Z, started by the Opus 5.5 launcher).
+Cycle 186's was `session_01SNkKxqiFeCtTZE4nW7CtE5` (24 November, from
+about 18:14Z).
+Cycle 184's was `session_01SNkKxr2G8KQZktz2Zq8Ty8` (24 November, from
+about 17:14Z).
+Cycle 182's was `session_01SNkKxpHsQytV7iJPKhPoRL` (24 November, from
+about 15:15Z).
 Cycle 180's was `session_01SNkKxoEVVxDru4qsQF6zoa` (24 November, from
 about 13:40Z).
 Cycle 178's was `session_01SNkKxomdzcgoV8B8sTfZyr` (24 November, from
@@ -406,6 +410,11 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| SP-bt-04 | `session_01SNkKxob5FVPEP75EW56UMP` (Opus 5.5, effort high) | BT-04a (resync, cycle 186: candidate 84be5f38 failed on render.py's self-test under the check sandbox's read-only HOME; effort high by order 6, a resync; SP-bt-04's last session, `session_01SNkKxnP8NpPyS23jXd4Upa`, is idle, its task ready at f1df3f1e) | `claude/ui-spec-gate-render` | 2026-11-24 19:35Z |
+| SP-bt-01 | `session_01SNkKxnk1jnaFLfc14YYCAq` (Opus 5.5, effort high) | BT-01b (start, cycle 186: BT-01a merged as 99c9aa89; effort high by order 6, the merge queue and its lock, concurrency; SP-bt-01's last session, `session_01SNkKxnoYoXvgs2BTqD6NXy`, is idle, its task merged) | `claude/ui-spec-coord` | 2026-11-24 19:35Z |
+| SP-bt-04 | `session_01SNkKxnP8NpPyS23jXd4Upa` (Opus 5.5, effort medium) | BT-04a (start, cycle 183: effort medium by order 6, a tools-only task in tools/gate/) | `claude/ui-spec-gate-render` | 2026-11-24 17:12Z |
+| SP-bt-01 | `session_01SNkKxnoYoXvgs2BTqD6NXy` (Opus 5.5, effort medium) | BT-01a (start, cycle 183: effort medium by order 6, a dry-run tools-only task in tools/coord/) | `claude/ui-spec-coord` | 2026-11-24 17:12Z |
+| S1 | `session_01SNkKxrBVFU2PuzXccugcq8` (Opus 5.5, effort high) | P4-S1-heist-vault (re-work, cycle 183: gate fail at 97ecb94f, attempts 1; effort high by order 6, the vault and a failed attempt; S1's last session, `session_01SNkKxp6Vp6uPSGzzYn1CNV`, is idle) | `claude/ui-screens-heist` | 2026-11-24 17:12Z |
 | S1 | `session_01SNkKxp6Vp6uPSGzzYn1CNV` (Opus 5.5, effort high) | P4-S1-heist-vault (restart, cycle 181: reopened after the bug-fix wave; effort high by order 6, the task touches the vault; S1's last session, `session_01SNkKxrGVdaVPxzuPW8vwRg`, is idle) | `claude/ui-screens-heist` | 2026-11-24 14:59Z |
 | S2 | `session_01SNkKxpVmnabuJ8D34eVaFy` (Opus 5.5, effort high) | P4-S2-home-purse (restart, cycle 181: reopened after the bug-fix wave; effort high by order 6, the task touches the purse; S2's last session, `session_01SNkKxneZ4WEHJSJUnhLjUj`, is idle) | `claude/ui-screens-home` | 2026-11-24 14:59Z |
 | S3 | `session_01SNkKxmd5VK7q2FWEmAe3Be` (Opus 5.5, effort medium) | P3-S3-settings-4 (restart, cycle 181: reopened after the bug-fix wave; effort medium by order 6, settings layout in the client only; S3's last session, `session_01SNkKxo7BCcvsUE53DWANpH`, is idle) | `claude/ui-screens-meta` | 2026-11-24 14:59Z |
@@ -703,8 +712,8 @@ You are agent S1 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: S1            Role: maker (S1): the heist screens, the phase 1 pilot        Model: Opus 5.5, effort high
 Branch: claude/ui-screens-heist
 Owned files: only the files each S1 task lists in the backlog, docs/progress/S1.md, docs/progress/status/S1.json
-Tasks: P4-S1-heist-vault, re-work after a gate fail (attempts 1, lead cycle 183): your ready_sha 97ecb94f failed 'heist at 200% text, pt_BR' (Hierarchy) 0 of 3. Read the critique in docs/art/ui-quality/gate/verdicts/P4-S1-heist-vault/97ecb94f.json on main and re-work: at 200% text Cast (Lançar) must lead, lighter, gold or larger than Get out (Fugir), not the same dark plum plate at nearly the same size; the loot panel, taller now with the Vault row, gives up weight (a darker or lower-value plate, numerals not heavier than Cast's label), and the 2:25 timer and LEIS AQUI plates must not outweigh Cast. Keep everything the task's done_when already meets: the Vault row at 200% in en, pt_BR and de, the playfield band no narrower than at 150%, the failing-on-main test in heist_fx_tests.gd, FIT=1 'fit ok' at 100%, 150% and 200% in en, pt_BR, de and high contrast (M26), and 'heist at 100% text' and 'heist in high contrast' unchanged. Judge your own 960 px grayscale still against the anchors (pass kf-character-text200, fail today-heist in docs/art/ui-quality/gate/golden/images/) before ready. Continue on claude/ui-screens-heist from its head (cf61eb04) and merge main into it first. guard.sh's heist/200 draw calls: if your re-work still needs more than the recorded 118, keep S1-R45's request with the new figure (the lead writes the record in the merge). A change to KitHud.loot_fit or any kit file is a request to K1 through the lead, with a default. Never commit under docs/art/ui-quality/gate/verdicts/ (M48): before ready, python3 tools/coord/owners.py diff P4-S1-heist-vault origin/claude/videogame-project-analysis-ewkkk2 <ready_sha> passes. Build from the kit (docs/art/ui-quality/kit-spec.md).
-STOP_AT: 2026-11-24T21:00:00Z (= 18:00 America/Sao_Paulo)
+Tasks: P4-S1-heist-vault, restart after a second gate fail (attempts 2, lead cycle 187; the protocol's escalation: a fresh session from your handoff). Your ready_sha 85be2fa8 failed 'heist at 200% text, pt_BR' (Hierarchy) 0 of 3, on the plate's value, as S1-R46 foresaw. Read the critique in docs/art/ui-quality/gate/verdicts/P4-S1-heist-vault/85be2fa8.json on main, and your handoff in docs/progress/S1.md. S1-R46 is granted by the lead (cycle 187): while Cast leads at 200% text (HeistHud.cast_leads: text over 175%, not high contrast), Cast takes the gold primary plate even when spent, with the wand dimmed, in heist_screen.gd's _dress_cast; AD-R60's leather plate stands at every other size and in high contrast. Re-work so that in the 960 px grayscale Cast is the lightest, most saturated and largest control, clearly ahead of Fugir, and the loot panel (508, 0%), the 2:25 timer and the Alarme 0/6 box are neither lighter nor heavier than Cast's word: a darker or lower-value plate and quieter numerals; the gold Batedor label must not outshine Cast. Keep everything the task's done_when already meets: the Vault row at 200% in en, pt_BR and de, the playfield band no narrower than at 150%, the failing-on-main test in heist_fx_tests.gd, FIT=1 'fit ok' at 100%, 150% and 200% in en, pt_BR, de and high contrast (M26), and 'heist at 100% text' and 'heist in high contrast' unchanged. Judge your own 960 px grayscale still against the anchors (pass kf-character-text200, fail today-heist in docs/art/ui-quality/gate/golden/images/) with three ui-judge calls before ready, and mark ready only on a pass. Continue on claude/ui-screens-heist from its head (8922c136) and merge main into it first. guard.sh's heist/200 draw calls: if the re-work needs more than the recorded 118, keep S1-R45's request with the new figure (the lead writes the record in the merge). A change to KitHud.loot_fit or any kit file is a request to K1 through the lead, with a default. Never commit under docs/art/ui-quality/gate/verdicts/ (M48): before ready, python3 tools/coord/owners.py diff P4-S1-heist-vault origin/claude/videogame-project-analysis-ewkkk2 <ready_sha> passes. Build from the kit (docs/art/ui-quality/kit-spec.md).
+STOP_AT: 2026-11-25T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 3
 
 Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-screens-heist from it (create it if it does not exist) and push only to claude/ui-screens-heist with git push -u origin claude/ui-screens-heist, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is S1, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Any commit that changes client/i18n/strings.csv or content.csv also runs node art/ui/keyframes/build_words.mjs and commits words.js with it, and node art/ui/keyframes/check_keyframes.mjs passes before the task is ready (M34). Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
@@ -820,11 +829,11 @@ Your session was created with the repository checked out at main; work in that c
 ```text
 You are agent SP-bt-01 of the Ruleborn agent program (UI wave, the BT track). Read docs/guides/agent-brief.md first and follow it exactly (its section 'If you are a specialist' applies to you); then docs/guides/agent-protocol.md where the brief links to it.
 
-Agent: SP-bt-01            Role: specialist: the coordinator script (tools/coord/)        Model: Opus 5.5, effort medium
+Agent: SP-bt-01            Role: specialist: the coordinator script (tools/coord/)        Model: Opus 5.5, effort high
 Branch: claude/ui-spec-coord
 Owned files: only the files each SP-bt-01 task lists in the backlog, docs/progress/SP-bt-01.md, docs/progress/status/SP-bt-01.json
-Tasks: BT-01a (started in lead cycle 183): a dry-run coordinator cycle in tools/coord/ (not owners.*) that reads every agent's status file from origin, expires lapsed leases, copies task states into the backlog, flags missed acknowledgements, request deadlines and stalls, and prints the actions it would take, as 'Running a cycle' in docs/progress/lead.md and agent-protocol.md describe them. --dry-run prints actions and pushes nothing; unit tests on fixture branches (local bare repositories in a temp dir, no network) pass and run from bash tools/check_all.sh. Do not change archive.py's or cycle_needed.py's behaviour the lead relies on. BT-01b (the merge queue) is a later task, not this one.
-STOP_AT: 2026-11-24T21:00:00Z (= 18:00 America/Sao_Paulo)
+Tasks: BT-01b (started in lead cycle 186; BT-01a merged in cycle 186): the merge-then-test queue in tools/coord/ (not owners.*), built on BT-01a's cycle.py: for each ready task, owners.py diff against main, a candidate taken from main's head (batching 2-3 disjoint ready tasks), the merge lock `merging` in docs/progress/status/lead.json on main (written and pushed before the checks, expires_at = started_at + 60 min, cleared when main moves or the candidate fails; an expired lock is cleared and noted), bash tools/run_checks.sh on the candidate, fast-forward of main on a pass (merging the candidate onto main's head and re-running only the documentation check when main gained only docs/progress/** commits meanwhile), `resync` with the failure lines on a fail, and the owner-inbox entries, as agent-protocol.md's merge queue and 'Running a cycle' in docs/progress/lead.md describe them. A dry-run mode prints the actions and pushes nothing; unit tests on fixture branches (local bare repositories in a temp dir, no network) pass under cycle.py --self-test, which check_all.sh already runs. Do not change archive.py's or cycle_needed.py's behaviour the lead relies on.
+STOP_AT: 2026-11-25T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 4
 
 Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-spec-coord from it (create it if it does not exist) and push only to claude/ui-spec-coord with git push -u origin claude/ui-spec-coord, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is SP-bt-01, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
@@ -835,14 +844,14 @@ Your session was created with the repository checked out at main; work in that c
 ```text
 You are agent SP-bt-04 of the Ruleborn agent program (UI wave, the BT track). Read docs/guides/agent-brief.md first and follow it exactly (its section 'If you are a specialist' applies to you); then docs/guides/agent-protocol.md where the brief links to it.
 
-Agent: SP-bt-04            Role: specialist: the gate shot renderer (tools/gate/)        Model: Opus 5.5, effort medium
+Agent: SP-bt-04            Role: specialist: the gate shot renderer (tools/gate/)        Model: Opus 5.5, effort high
 Branch: claude/ui-spec-gate-render
 Owned files: only the files each SP-bt-04 task lists in the backlog, docs/progress/SP-bt-04.md, docs/progress/status/SP-bt-04.json
-Tasks: BT-04a (started in lead cycle 183): a shot-list format and a still renderer, tools/gate/render.* with fixtures in tools/gate/fixtures/**: given a listed item (for example 'heist at 200% text, pt_BR') and a sha, it checks the sha out in a temporary worktree, builds as needed and renders the still the way the lead does today (env FIT=1 TEXT=<n> LOCALE=<l> bash tools/render/shoot.sh <shot script> <png>), plus the 960 px grayscale copy. A test renders a fixture item at a given sha and is wired into bash tools/check_all.sh (keep it fast; skip with a clear message only where Godot is absent). README.md is in the task's exceptions. BT-04b is a later task, not this one.
-STOP_AT: 2026-11-24T21:00:00Z (= 18:00 America/Sao_Paulo)
+Tasks: BT-04a (resync, cycle 186): your ready f1df3f1e failed the lead's full checks. The candidate 84be5f38 (BT-01a, BT-04a and the line `python3 tools/gate/render.py --self-test` of SP-bt-04-R1 in check_all.sh) ran under run_checks.sh's bwrap sandbox, where HOME is read-only and only the worktree and a private /tmp are writable. In section '== the UI wave gate's sheets and image checks, with their planted fails (AD-R3) ==', after 'render.py: the shot list's parser, ok', render() at render.py:229 (tempfile.mkdtemp(dir=cache_dir())) called cache_dir() at render.py:171, whose d.mkdir raised `OSError: [Errno 30] Read-only file system: '/root/.cache/ruleborn/gate'`. Fix render.py so its self-test still renders the fixture item in that sandbox (for example, fall back to TMPDIR or tempfile.gettempdir() when the cache folder cannot be created or written). Do not skip the render because HOME is read-only, and do not loosen the test. Reproduce the failure first and prove the fix inside the sandbox, for example with CHECK_CMD='bash client/build.sh && python3 tools/gate/render.py --self-test' bash tools/run_checks.sh start <sha>, and quote both results in your handoff. Then pre-check as usual and mark the task ready on your branch, carrying over the rest of f1df3f1e. The lead adds the check_all.sh line again in the merge candidate (SP-bt-04-R1 stands). README.md is in the task's exceptions. BT-04b is a later task, not this one.
+STOP_AT: 2026-11-25T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 4
 
-Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-spec-gate-render from it (create it if it does not exist) and push only to claude/ui-spec-gate-render with git push -u origin claude/ui-spec-gate-render, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is SP-bt-04, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
+Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-spec-gate-render from it (create it if it does not exist) and push only to claude/ui-spec-gate-render with git push -u origin claude/ui-spec-gate-render, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is SP-bt-04, whose state is open or resync and whose deps are all merged (BT-04a is in resync); when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
 ```
 
 ## Standing notes
@@ -859,54 +868,76 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
-- **Cycle 182**, 24 November 2026, from about 15:15Z (session
-  `session_01SNkKxpHsQytV7iJPKhPoRL`, started by the Opus 5.5 launcher,
-  effort medium by order 6). The changes since cycle 181: S1, S2 and S3
-  claimed their tasks again (15:05Z, lease to 18:05Z), merged main and
-  run their pre-checks in the background; their sessions' turns have
-  ended while they wait, so none is restarted. **Bookkeeping:** the three
-  claims are in the backlog (state `claimed`). **Requests:** S3-R46
-  (AD's check of the re-shot settings stills, AD-R68's second road: the
-  title in display_xl on its gold card) copied; no seat is free for AD
-  (cap three under `allowed_warning`), so its default stands at 19:00Z
-  and AD re-checks on the merge. **Merge and gate:** none: nothing is
-  ready, no merge lock; main did not move, so the pages are not
-  republished. **Started nothing:** S1, S2 and S3 hold the cap of three;
-  the BT track waits for a free seat. **Next:** merge the three UI tasks
-  as they are ready (settings-4 with its gate run, 'settings at 100%
-  text', Hierarchy).
+- **Cycle 187**, 24 November 2026, from about 19:45Z (session
+  `session_01SNkKxo4wWyrJULuKf9ezgK`, started by the Opus 5.5 launcher,
+  effort medium by order 6). The changes since cycle 186: S1 marked the
+  heist re-work ready at 85be2fa8 (pre-check passed 18:36Z; guard.sh fails
+  only on heist/200, 121 of 118, S1-R45); SP-bt-01 claimed BT-01b and
+  SP-bt-04 claimed BT-04a's resync. **Gate:** 'heist at 200% text, pt_BR'
+  (Hierarchy) at 85be2fa8, rendered here with FIT=1 ('fit ok'), three
+  judge calls in shuffled order against kf-character-text200 and
+  today-heist: fail 0 of 3 (`verdicts/P4-S1-heist-vault/85be2fa8.json`).
+  Cast is larger now, but its spent leather plate has the value of Fugir
+  and the tray, and the loot panel (508, 0%), the timer and the alarm box
+  still outweigh it. Nothing merged; the merge lock was not taken.
+  **Escalation:** attempts 2, so P4-S1-heist-vault is open again from
+  claude/ui-screens-heist (8922c136), and a fresh S1 session takes it
+  from the handoff, at effort high (order 6: the vault, and a failed
+  attempt). **Requests:** S1-R45 to S1-R47 copied. S1-R46 granted: at
+  200% text a spent Cast takes the gold primary plate with the wand
+  dimmed; AD-R60 stands elsewhere. S1-R45 waits for the re-work's figure;
+  S1-R47 routed to its default (no seat for AD). With SP-bt-01 and
+  SP-bt-04, S1 holds the cap of three under `allowed_warning`.
+  **Next:** gate and merge the heist re-work, BT-04a's resync and BT-01b
+  as they are ready.
 
-- **Cycle 181**, 24 November 2026, from about 14:00Z (session
-  `session_01SNkKxo8T6d9ouEzGcdPst6`, started by the Opus 5.5 launcher,
-  effort medium by order 6). **Merged** FX1-12-tools-ui (ready_sha
-  1146a02e) onto main as e27e7d04: the builder's pre-check at 1146a02e
-  passed and the candidate differs from it only under docs/progress, and
-  the lead also ran the full checks on the candidate: PASS ("All checks
-  passed.", exit 0). **Every FX task is now merged: the bug-fix wave is
-  done**, so by the owner's order of 23 November the UI resumes.
-  **Unparked** P3-S3-settings-4, P4-S1-heist-vault and P4-S2-home-purse
-  (open, with their prior branches and heads recorded). **Started** S1 and
-  S2 at effort high (order 6: their tasks touch the vault and the purse,
-  "money") and S3 at effort medium (settings layout in the client only);
-  their sessions are in the sessions table.
-  The BT track stays waiting: the cap is three (allowed_warning). The
-  audit and roadmap pages were not republished (FX1-12 changed neither
-  docs/audit nor docs/roadmap). **Next:** merge the three UI tasks as
-  they are ready.
+- **Cycle 186**, 24 November 2026, from about 18:14Z (session
+  `session_01SNkKxqiFeCtTZE4nW7CtE5`, started by the Opus 5.5 launcher,
+  effort medium by order 6). The changes since cycle 185: SP-bt-01
+  marked BT-01a ready at 37c99eba and SP-bt-04 marked BT-04a ready at
+  f1df3f1e, both pre-checks passed; S1 is still on the heist re-work.
+  **Merge:** a batch candidate of both, with SPbt01-R1's and
+  SP-bt-04-R1's self-test lines in `check_all.sh` and checks.md, under
+  the merge lock (4efc5f51). Its first run (e79c16e7) failed on this
+  container, not the candidate: the cycle changed `.git/config` during
+  the run (SEC-19's fingerprint) and the fresh-container setup had not
+  been run. Its second run (84be5f38, same tree, 18:58Z) failed on
+  BT-04a: `render.py --self-test` raised `OSError: [Errno 30] Read-only
+  file system: '/root/.cache/ruleborn/gate'` in `cache_dir()`
+  (render.py:171), since the check sandbox's HOME is read-only. BT-04a
+  is in `resync` (attempts 1). A new candidate, 8107ba62 (BT-01a and
+  its self-test line only), passed the full checks at 19:34Z and was
+  merged onto main's head (main had gained only the lock commit) as
+  99c9aa89, after the documentation check. The lock is cleared. Nothing
+  under docs/audit or docs/roadmap changed, so the pages are not
+  republished. The lock commits 4efc5f51 and the cycle's earlier
+  candidate commits carry a non-noreply author; later commits use the
+  noreply identity. **Requests:** SPbt01-R1 done; SP-bt-04-R1 stands
+  for the resync's candidate. **Started:** SP-bt-01 on BT-01b and
+  SP-bt-04 on BT-04a's resync, both at effort high (order 6: the merge
+  queue's lock, and a resync). With S1 they hold the cap of three under
+  `allowed_warning`. **stop_at** moved to 25 November 21:00Z (order 3).
+  **Next:** gate and merge the heist re-work, BT-04a's resync (adding
+  the render self-test line again) and BT-01b as they are ready.
 
-- **Cycle 180**, 24 November 2026, from about 13:40Z (session
-  `session_01SNkKxoEVVxDru4qsQF6zoa`, started by the Opus 5.5 launcher,
-  effort medium by order 6). **Merged nothing**: FX1-12-tools-ui is not
-  ready yet. FX3 (`session_01SNkKxmwFNqhHYqzetHQz3X`, effort high) is
-  idle with its new pre-check at 1146a02e running in the background, so
-  it is not restarted. **Answered** FX3-R2, widened, with its default:
-  granted. `client/ui/art/icons_256.json` and `client/ui/art/icons_48.json`
-  (commit 9e420f61, only `sources_hash` moves) join FX1-12's `exceptions`;
-  `owners.py diff` on `claude/fix-sim` now passes. **Started nothing**:
-  FX1-12 is the last open FX task; the cap is three (allowed_warning).
-  The audit and roadmap pages were not republished. **Next:** merge
-  FX1-12 when ready (full checks), then unpark the UI (P3-S3-settings-4,
-  P4-S1-heist-vault, P4-S2-home-purse, the BT track).
+- **Cycle 185**, 24 November 2026, from about 17:39Z (session
+  `session_01SNkKxpANimBpEAcBiAnifC`, started by the Opus 5.5 launcher,
+  effort medium by order 6). The changes since cycle 184: S1 claimed the
+  heist re-work again (17:20Z, lease to 20:20Z) and pushed a WIP commit
+  a72050a0 (Cast leads at 200% text); SP-bt-01 pushed BT-01a's dry-run
+  cycle (`tools/coord/cycle.py`, a572ad30) and merged main; SP-bt-04
+  pushed BT-04a's renderer (`tools/gate/render.py`, f1df3f1e) and runs
+  its pre-check (expected end 18:30Z; its status's `updated_at` of
+  18:02Z is ahead of the clock). **Bookkeeping:** S1's claim is in the
+  backlog (state `claimed`). **Requests:** SPbt01-R1 and SP-bt-04-R1
+  (the self-test lines in `check_all.sh` and checks.md, for the merge
+  candidates) answered with their defaults; SP-bt-04-R2 (AD adopts the
+  shot list) routed to AD, no seat free, default at its due. **Merge and
+  gate:** none: nothing is ready, no merge lock; main did not move, so
+  the pages are not republished. **Started nothing:** S1, SP-bt-01 and
+  SP-bt-04 hold the cap of three under `allowed_warning`. **Next:** gate
+  and merge the heist re-work, BT-01a and BT-04a as they are ready,
+  adding the self-test lines of SPbt01-R1 and SP-bt-04-R1.
 
 - **Restart, 23 November 2026** (the overseer, about 21:20Z). The owner
   restarted the program, in the chat of the overseer session: "Continue,
