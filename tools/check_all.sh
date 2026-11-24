@@ -125,7 +125,7 @@ python3 tools/check_prototype_conformance.py
 echo
 echo "== the dependency graph is well formed =="
 python3 tools/check_dependencies.py --self-test
-python3 tools/check_dependencies.py --write
+python3 tools/check_dependencies.py --check
 
 echo
 echo "== which register numbers can be shown to be current =="
