@@ -62,7 +62,12 @@
         "verification_names_the_second_that_diverges",
         "commands_are_what_drives_the_crew",
         "a_command_for_a_crew_member_who_is_not_there_is_dropped",
-        "commands_given_live_record_the_same_heist_as_the_log_they_make"
+        "commands_given_live_record_the_same_heist_as_the_log_they_make",
+        "rb54_a_tick_delta_past_u32_is_refused_not_wrapped",
+        "rb54_a_padded_varint_is_refused",
+        "rb55_a_command_for_actor_16_still_records_a_replay_that_round_trips",
+        "sim_2_the_recorder_never_returns_a_replay_over_2_kb",
+        "sim_10_a_command_for_actor_16_still_records_a_universe_replay_that_round_trips"
       ]
     },
     {
@@ -97,7 +102,8 @@
         "every_crew_member_on_the_island_is_logged_once_a_second",
         "the_log_is_outside_the_checksum",
         "the_decisive_moment_is_chosen_by_twelve_thirteens_rule",
-        "every_golden_heist_has_a_decisive_moment"
+        "every_golden_heist_has_a_decisive_moment",
+        "rb44_a_split_and_rejoined_mite_does_not_hold_the_report_to_the_whole_clock"
       ]
     },
     {
@@ -152,7 +158,8 @@
         "a_waterfall_is_walked_behind_along_its_ledge_and_blocks_sight",
         "rapids_push_anyone_a_tile_a_second_downstream",
         "a_tunnel_is_a_hidden_path_up_to_six_tiles_and_nobody_sees_into_it",
-        "the_six_and_a_tunnel_travel_in_the_island_and_a_second_encoding_is_refused"
+        "the_six_and_a_tunnel_travel_in_the_island_and_a_second_encoding_is_refused",
+        "sim_9_a_bounce_mushroom_lands_on_a_bridge_three_tiles_on"
       ],
       "features": {
         "rock_pillar": "a_rock_pillar_hides_what_is_behind_it",
@@ -219,7 +226,8 @@
         "a_route_into_a_wall_is_refused_rather_than_approximated",
         "the_same_route_is_found_every_time_and_by_both_ends_of_the_grid",
         "slow_ground_does_not_move_the_route",
-        "slow_ground_does_change_how_long_the_walk_takes"
+        "slow_ground_does_change_how_long_the_walk_takes",
+        "candidate_34_a_tunnel_mouth_under_a_raised_wall_is_no_way_out"
       ]
     },
     {
@@ -366,9 +374,12 @@
         "the_rootrunners_bridge_spans_a_gap_of_up_to_three_tiles_for_eight_seconds",
         "the_glass_golems_wall_stands_three_tiles_across_the_way_for_six_seconds_and_is_seen_through",
         "the_lantern_wisps_reveal_shows_what_is_hidden_within_six_tiles_for_six_seconds",
+        "sim_11_a_lantern_wisps_reveal_goes_with_it_across_to_the_next_realm",
         "the_prism_mite_splits_into_two_halves_that_go_different_ways_and_rejoin_after_eight_seconds",
         "a_caught_half_loses_only_its_half_whichever_half_it_is",
-        "what_a_half_brings_out_is_banked_and_the_half_is_never_counted_as_crew"
+        "what_a_half_brings_out_is_banked_and_the_half_is_never_counted_as_crew",
+        "sim_5_the_hourkeeper_gives_back_a_hit_taken_in_a_tick_the_ally_was_healed",
+        "sim_7_a_folded_prism_half_is_nobody_and_does_not_block_the_glass_golems_wall"
       ],
       "abilities": {
         "stormhound": "the_stormhounds_sprint_runs_sixty_percent_faster_for_four_seconds",
@@ -469,7 +480,9 @@
         "an_open_hit_sends_suspicion_straight_to_1000",
         "a_knocked_out_guard_found_by_another_raises_the_realm_alarm",
         "a_posted_guard_holds_its_facing",
-        "a_crouched_step_up_behind_a_guard_is_heard_unless_it_is_on_moss"
+        "a_crouched_step_up_behind_a_guard_is_heard_unless_it_is_on_moss",
+        "sim_1_a_body_in_a_bush_is_not_found",
+        "sim_1_a_body_in_a_thicket_beyond_a_tile_is_not_found"
       ]
     },
     {
@@ -483,7 +496,8 @@
         "the_four_grades_follow_12_9",
         "the_planned_heist_ends_clean_with_every_bag_full",
         "loading_stops_when_the_clock_left_only_covers_getting_out",
-        "dropping_loot_costs_exactly_the_fraction_dropped"
+        "dropping_loot_costs_exactly_the_fraction_dropped",
+        "rb45_a_slowed_clock_still_catches_whoever_is_inside_at_the_last_tick"
       ]
     },
     {
@@ -517,6 +531,7 @@
         "a_replay_carries_the_laws_it_was_made_under",
         "kinship_heals_whoever_stands_beside_an_ally",
         "regrowth_heals_guards_pylons_and_the_vault_and_revives_nothing",
+        "rb28_regrowth_heals_a_vault_up_to_its_own_levels_health",
         "every_one_of_the_48_laws_weaves_and_runs",
         "frictionless_slides_on_past_the_end_of_a_route_until_something_stops_it",
         "frictionless_and_bounce_are_pinball_and_a_warden_absorbs_the_ricochet",
@@ -581,7 +596,9 @@
         "hidden_garden_spreads_tall_grass_a_tile_a_minute",
         "lantern_festival_returns_each_character_once_at_the_revive_health",
         "quicksand_opens_hidden_pits_that_drop_whoever_steps_in",
-        "rebound_bounces_every_stun_on_to_the_nearest_enemy"
+        "rebound_bounces_every_stun_on_to_the_nearest_enemy",
+        "sim_6_a_ramblers_charge_through_a_crystal_wall_counts_for_cracked_gardens",
+        "sim_6_a_ramblers_charge_through_a_crystal_wall_under_shattered_glass_leaves_shards"
       ],
       "combos": {
         "harmony:flow": "a_flow_harmony_makes_movement_a_quarter_stronger",
@@ -640,7 +657,8 @@
         "a_ward_ignores_the_crew_member_disarming_it_and_fires_on_anyone_else",
         "a_glare_still_fires_on_a_disarmer_walking_to_it",
         "a_lantern_glare_fires_when_a_crew_member_comes_within_two_tiles",
-        "smashing_a_ward_is_loud_and_a_breaker_does_it_in_seven_hits"
+        "smashing_a_ward_is_loud_and_a_breaker_does_it_in_seven_hits",
+        "sim_8_a_gravity_well_does_not_cut_short_a_time_snares_freeze"
       ]
     },
     {
@@ -677,7 +695,9 @@
       "tests": [
         "a_generated_island_is_made_from_its_seed_to_5_2s_budget_and_passes_every_check",
         "every_first_draw_of_the_generator_passes_its_checks",
-        "a_curated_layout_keeps_its_owners_buildings_vault_and_woven_laws_and_its_terrain_survives_curation"
+        "a_curated_layout_keeps_its_owners_buildings_vault_and_woven_laws_and_its_terrain_survives_curation",
+        "sim_12_a_curated_layout_never_drops_a_woven_law_unseen",
+        "sim_13_moving_the_vault_onto_a_guard_hidden_in_tall_grass_takes_the_grass_too"
       ]
     },
     {
@@ -709,8 +729,25 @@
         "the_route_to_the_heart_is_the_fewest_links_a_chute_crossed_only_its_own_way_ties_to_the_earlier_realm",
         "a_crew_lands_on_an_outer_realm_crosses_at_its_way_on_and_takes_the_hearts_vault_on_one_clock",
         "a_rift_on_the_route_holds_the_crew_thirty_seconds_after_an_alarm_in_the_realm",
+        "rb29_a_realms_alarm_counts_from_when_the_crew_arrives",
         "a_crew_entering_at_a_fault_jumps_through_the_crack_to_the_hearts_entrance_on_its_realms_clock",
-        "laws_flicker_off_for_two_seconds_in_an_overloaded_universe_every_ten_seconds_at_cracking_and_five_at_breaking"
+        "laws_flicker_off_for_two_seconds_in_an_overloaded_universe_every_ten_seconds_at_cracking_and_five_at_breaking",
+        "rb44_a_crossings_reports_count_only_the_crew_for_held"
+      ]
+    },
+    {
+      "name": "Stability",
+      "section": "5.5",
+      "task": "TD.14",
+      "what": "§5.5's stability, priced once in sim/src/stability.rs: the universe's capacity from the Spire and anchor stones, each woven law's cost with every term §5.5 and §8 give it (tier, crown, school, harmonies, signature resonances, chords, dissonances, the era), the chords that sound and their draw, and the strain and its seven bands. The server charges what this prices through rb_stability and the client shows the same figure; sim/stability_cases.json holds the cases both read. Its tests live in the stability module, so they are named stability::…; until audit finding SIM-4 the gate could not see them.",
+      "tests": [
+        "stability::strain_falls_in_5_5s_seven_bands",
+        "stability::capacity_is_5_5s_spire_and_anchor_stones",
+        "stability::a_harmony_counts_once_per_shared_note",
+        "stability::the_cheapest_chord_is_priced_as_8_5_prices_it",
+        "stability::the_wire_reads_back",
+        "stability::tier_crown_school_dissonance_and_eras_price_as_5_5_and_18_3_say",
+        "stability::stability_cases_match_the_file"
       ]
     },
     {
@@ -721,7 +758,11 @@
       "tests": [
         "an_island_keeps_to_5_2_and_6_1_or_is_not_published",
         "a_blank_island_is_publishable_and_round_trips",
-        "an_edited_island_is_one_the_format_can_write_and_check_can_judge"
+        "an_edited_island_is_one_the_format_can_write_and_check_can_judge",
+        "rb40_an_entrance_in_a_wall_or_on_the_vault_is_not_published",
+        "rb50_weaving_a_law_onto_the_vault_is_refused_and_keeps_the_law",
+        "rb57_a_ward_or_pylon_on_a_guard_in_tall_grass_replaces_the_grass_too",
+        "candidate_7_the_same_law_twice_is_not_published"
       ]
     },
     {

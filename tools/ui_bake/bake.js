@@ -490,9 +490,13 @@ function paginate(pieces, width) {
   let x = PAD;
   let y = PAD;
   let shelf = 0;
+  let bottom = 0; // the lowest piece edge on the page
+  // The page's height from its pieces, not from y: y has already moved to
+  // the next shelf when that shelf opens a new page, and counting it would
+  // add a padding twice and double a page that fits (FX1-T-13).
   const close = () => {
     let H = 1;
-    while (H < y + shelf + PAD) H *= 2;
+    while (H < bottom + PAD) H *= 2;
     page.height = H;
   };
   for (const p of order) {
@@ -508,8 +512,10 @@ function paginate(pieces, width) {
       x = PAD;
       y = PAD;
       shelf = 0;
+      bottom = 0;
     }
     page.places[p.name] = { x, y, page: pages.length };
+    bottom = Math.max(bottom, y + p.h);
     x += p.w + PAD;
     shelf = Math.max(shelf, p.h);
   }

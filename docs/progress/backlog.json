@@ -1,10 +1,10 @@
 {
-  "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026. Phase 2 started on 12 November 2026 (lead cycle 70): P1-AD-board-1d let board 1 stand and phase 1's other exit criteria hold (report.md section 3.2); its first tasks are the flow findings (S1, S2) and board 1's note G (AIA-2), within the same cap of three. Since 12 November 2026, about 20:00Z, the cap is four UI builders by the owner's order (CLAUDE.md order 3; three while the seven-day bar reads allowed_warning). Phase 3 (polish and harden, report.md step 12) started on 17 November 2026 (lead cycle 118) under M49: every phase 2 task was merged by 06:55Z, the exit review ran in cycle 118 (boards 3, 4 and 5 stand, board 2 waits on the deferred icon batch 4 by D13 (c), the exceptions queue is empty, every screen passes the gate but result at 200% pt_BR, Hierarchy, which P3-S1-result-7 takes), and the first blind audit (O6) is carried into phase 3 as P3-AD-audit-1. Phase 3 draws from the 20-hour reserve; it exits when no board has an open objection, the second blind audit is done and the wave board (O7) stands.",
-  "wave": "UI wave",
+  "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026. Phase 2 started on 12 November 2026 (lead cycle 70): P1-AD-board-1d let board 1 stand and phase 1's other exit criteria hold (report.md section 3.2); its first tasks are the flow findings (S1, S2) and board 1's note G (AIA-2), within the same cap of three. Since 12 November 2026, about 20:00Z, the cap is four UI builders by the owner's order (CLAUDE.md order 3; three while the seven-day bar reads allowed_warning). Phase 3 (polish and harden, report.md step 12) started on 17 November 2026 (lead cycle 118) under M49: every phase 2 task was merged by 06:55Z, the exit review ran in cycle 118 (boards 3, 4 and 5 stand, board 2 waits on the deferred icon batch 4 by D13 (c), the exceptions queue is empty, every screen passes the gate but result at 200% pt_BR, Hierarchy, which P3-S1-result-7 takes), and the first blind audit (O6) is carried into phase 3 as P3-AD-audit-1. Phase 3 draws from the 20-hour reserve; it exits when no board has an open objection, the second blind audit is done and the wave board (O7) stands. The bug-fix wave started on 21 November 2026 by the owner's order (CLAUDE.md order 1, entry of 21 November): the UI is paused (P3-S3-settings-4, P4-S1-heist-vault and P4-S2-home-purse parked with their work on their branches; the BT track stays parked) while up to four fix builders, FX1 to FX4 within the cap of four, fix the 60 confirmed defects of docs/security/bug-report-2026-11.md, highs first, each with a test that fails before the fix, then recheck the four unproven candidates (7, 21, 23, 34) and audit the code the report did not read (findings in docs/security/audit-2026-11/, from which the lead files fix tasks). The FX tasks' phase is 'fix'; the UI resumes at phase 3 when every FX task is merged.",
+  "wave": "Bug-fix wave",
   "phase": 3,
-  "updated_at": "2026-11-18T07:42:00Z",
-  "updated_by": "lead (cycle 150)",
-  "stop_at": "2026-11-18T21:00:00Z",
+  "updated_at": "2026-11-24T15:00:00Z",
+  "updated_by": "lead (cycle 181)",
+  "stop_at": "2026-11-24T21:00:00Z",
   "lease_hours": 3,
   "status_every_minutes": 45,
   "check_minutes": 25,
@@ -42,10 +42,80 @@
     "S3": {
       "branch": "claude/ui-screens-meta",
       "model": "Opus 5.5"
+    },
+    "FX1": {
+      "branch": "claude/fix-server-a",
+      "model": "Opus 5.5"
+    },
+    "FX2": {
+      "branch": "claude/fix-server-b",
+      "model": "Opus 5.5"
+    },
+    "FX3": {
+      "branch": "claude/fix-sim",
+      "model": "Opus 5.5"
+    },
+    "FX4": {
+      "branch": "claude/fix-client",
+      "model": "Opus 5.5"
     }
   },
   "strings_owner": "lead",
   "tasks": [
+    {
+      "id": "FX4-1-transport",
+      "title": "High: RB-27 (the HTTP transport is never in the scene tree, so every API call fails), RB-03 (public_json blanks the shared session token), RB-04 (ending other devices fails with a stale access token; client side only: renew before end_device and sign_out_others)",
+      "phase": "fix",
+      "role": "FX4",
+      "model": "Opus 5.5",
+      "assigned_to": "FX4",
+      "files": [
+        "client/app/**",
+        "client/data/**",
+        "client/core/**",
+        "client/features/**",
+        "client/ext/**",
+        "client/scripts/result_screen.gd",
+        "client/tests/run.gd",
+        "client/tests/fix_*",
+        "client/tests/auth_tests.gd",
+        "client/tests/shop_tests.gd",
+        "client/tests/observatory_tests.gd",
+        "client/tests/planner_tests.gd",
+        "client/tests/core_tests.gd",
+        "client/tests/security_tests.gd",
+        "docs/security/audit-2026-11/client.md"
+      ],
+      "deps": [],
+      "done_when": [
+        "each of RB-27, RB-03, RB-04 in docs/security/bug-report-2026-11.md (its Where, Input, Should happen and Fix): first a test that reproduces the entry's input and fails on current main, committed on its own before the fix, its failure output quoted in the handoff; then the smallest fix that makes it pass, following the report's Fix line unless the handoff says why not; the commit names the RB id",
+        "RB-27's test drives a normal launch path (Services built the way app.gd builds it) and shows an API call reaching the transport; the fix stays inside client/app or client/data (home.gd is a parked UI file)",
+        "no existing test is skipped, disabled or loosened; a test whose expectation encoded the defect is corrected and named in the handoff",
+        "bash client/build.sh and the client test run (client/tests/run.gd) passes",
+        "current main merged into the branch, then the fresh-container setup line and bash tools/check_all.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed outside the task's files (M48)",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 3.5,
+      "tier": 1,
+      "critical": true,
+      "state": "merged",
+      "claim": {
+        "agent": "FX4",
+        "branch": "claude/fix-client",
+        "claimed_at": "2026-11-21T14:15:00Z",
+        "seen_at": "2026-11-21T14:17:00Z",
+        "lease_until": "2026-11-21T17:15:00Z"
+      },
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "087a3a2f790b2e735570778fff2be88b07309b22",
+      "merged_sha": "23cf8a9012a5154854bc594f885a1d8537eed089",
+      "updated_at": "2026-11-21T16:07:15Z",
+      "updated_by": "lead"
+    },
     {
       "id": "P3-S3-offline-1",
       "title": "A shorter pt_BR ERR_OFFLINE (S3-R39): the character's and the roster's offline notice stand at full size at 200% text, with no shrink",
@@ -149,20 +219,14 @@
       "estimate_h": 1.0,
       "tier": 2,
       "critical": false,
-      "state": "working",
-      "claim": {
-        "agent": "S3",
-        "branch": "claude/ui-screens-meta",
-        "claimed_at": "2026-11-18T06:00:00Z",
-        "seen_at": "2026-11-18T07:42:00Z",
-        "lease_until": "2026-11-18T10:30:00Z"
-      },
-      "prior_branch": null,
-      "prior_sha": null,
+      "state": "open",
+      "claim": null,
+      "prior_branch": "claude/ui-screens-meta",
+      "prior_sha": "e0e4730b",
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-18T07:42:00Z",
-      "updated_by": "lead (cycle 150)",
+      "updated_at": "2026-11-24T15:00:00Z",
+      "updated_by": "lead (cycle 181)",
       "exceptions": [
         "docs/art/shots/menu-screens/**"
       ]
@@ -178,7 +242,9 @@
         "client/data/http_transport.gd",
         "client/data/tls_pins/**"
       ],
-      "deps": [],
+      "deps": [
+        "FX4-1-transport"
+      ],
       "done_when": [
         "the client refuses a chain outside the pinned authority",
         "bash tools/check_all.sh"
@@ -193,7 +259,9 @@
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
-      "merged_sha": null
+      "merged_sha": null,
+      "updated_at": "2026-11-21T14:20:00Z",
+      "updated_by": "overseer"
     },
     {
       "id": "BT-01a",
@@ -560,20 +628,14 @@
       "estimate_h": 1.0,
       "tier": 2,
       "critical": false,
-      "state": "claimed",
-      "claim": {
-        "agent": "S1",
-        "branch": "claude/ui-screens-heist",
-        "claimed_at": "2026-11-18T07:30:00Z",
-        "seen_at": "2026-11-18T07:42:00Z",
-        "lease_until": "2026-11-18T10:30:00Z"
-      },
-      "prior_branch": null,
-      "prior_sha": null,
+      "state": "open",
+      "claim": null,
+      "prior_branch": "claude/ui-screens-heist",
+      "prior_sha": "ed443f93",
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-18T07:42:00Z",
-      "updated_by": "lead (cycle 150)",
+      "updated_at": "2026-11-24T15:00:00Z",
+      "updated_by": "lead (cycle 181)",
       "exceptions": [
         "docs/art/shots/heist-pilot/**"
       ]
@@ -618,20 +680,14 @@
       "estimate_h": 1.0,
       "tier": 2,
       "critical": false,
-      "state": "claimed",
-      "claim": {
-        "agent": "S2",
-        "branch": "claude/ui-screens-home",
-        "claimed_at": "2026-11-18T07:30:00Z",
-        "seen_at": "2026-11-18T07:42:00Z",
-        "lease_until": "2026-11-18T10:30:00Z"
-      },
-      "prior_branch": null,
-      "prior_sha": null,
+      "state": "open",
+      "claim": null,
+      "prior_branch": "claude/ui-screens-home",
+      "prior_sha": "27846b7c",
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-18T07:42:00Z",
-      "updated_by": "lead (cycle 150)",
+      "updated_at": "2026-11-24T15:00:00Z",
+      "updated_by": "lead (cycle 181)",
       "exceptions": [
         "docs/art/shots/home-screen/**"
       ]
@@ -1121,6 +1177,14 @@
       "sent_at": "2026-11-18T05:55:00Z",
       "ack_by": "2026-11-18T07:55:00Z",
       "acked_at": "2026-11-18T07:25:00Z"
+    },
+    {
+      "id": "M62",
+      "to": "lead",
+      "text": "From the overseer, 21 November 2026, by the owner's order (CLAUDE.md order 1, entry of 21 November): the bug-fix wave runs now and the UI stays paused. Start FX1 to FX4 (prompts in lead.md, 'The agents' prompts') on the FX tasks at the top of 'tasks', highs first, within the cap of four; start no UI or BT builder and reopen no parked task until every FX task is merged. A fix is merged only with its fail-first test committed before the fix. File new FX tasks from confirmed audit findings in docs/security/audit-2026-11/. When the last FX task merges, reopen the three parked UI tasks (parked to open, prior_branch and prior_sha recorded) and resume phase 3. Add M62 to your acks.",
+      "sent_at": "2026-11-21T14:20:00Z",
+      "ack_by": "2026-11-21T16:20:00Z",
+      "acked_at": "2026-11-21T14:12:00Z"
     }
   ]
 }

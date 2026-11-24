@@ -22,6 +22,7 @@ export const HEADER = { magic: 0, seed: 4, island: 12, rules: 44, ticks: 76, cre
 export const PROBLEMS = [
   "too_many_wards", "too_many_guards", "too_many_laws", "unknown_law",
   "crowded", "post_blocked", "landing_blocked", "sealed", "edge_closed",
+  "entrance_blocked", "duplicate_law",
 ];
 
 /** `ffi.rs`'s negative statuses. */
@@ -102,8 +103,11 @@ export class Build {
     // bad input would stop every heist on this rules version until a restart
     // (SR-07). So a trap costs only its own call: the instance is made again,
     // fresh, before the error goes on to the caller.
+    // The methods are read from the prototype, not through `this`: that would
+    // run the getters, and an older build pinned for its replays may lack
+    // the exports they call (RB-19).
     for (const name of Object.getOwnPropertyNames(Build.prototype)) {
-      const f = this[name];
+      const f = Object.getOwnPropertyDescriptor(Build.prototype, name).value;
       if (name === "constructor" || name === "instantiate" || typeof f !== "function") continue;
       this[name] = (...args) => {
         try {

@@ -43,7 +43,10 @@ DRAW = re.compile(
 FUNC_DEF = re.compile(r"^\s*(?:static\s+)?func\s")
 FILL_NEW = re.compile(r"(?:var\s+(\w+)\s*(?::=|:\s*StyleBoxFlat\s*=|=)\s*)?StyleBoxFlat\.new\s*\(")
 TEXTURE = re.compile(r"\b(?:TextureRect|NinePatchRect|StyleBoxTexture|GradientTexture2D)\.new\s*\(")
-IMAGE_LOAD = re.compile(r"\b(?:pre)?load\(\s*\"[^\"]*\.(?:png|svg|webp|jpe?g)\"")
+# Either quote, the closing one matching the opening one, and any case of the
+# extension: GDScript takes both quotes and Godot imports ".PNG" (FX1-T-07).
+IMAGE_LOAD = re.compile(
+    r"\b(?:pre)?load\(\s*([\"'])(?:(?!\1).)*\.(?i:png|svg|webp|jpe?g)\1")
 
 
 def _code(line):
@@ -113,13 +116,22 @@ def count_file(path):
     return found
 
 
+def _indent(code):
+    return len(code) - len(code.lstrip())
+
+
 def _clear_later(codes, start, name):
-    """Whether `name.draw_center = false` follows in the same function."""
+    """Whether `name.draw_center = false` follows in the same block as the
+    `new()`, at its indentation: a clear inside an `if` or a loop runs on one
+    path only, so it excuses nothing (FX1-T-15)."""
     clear = re.compile(r"\b%s\.draw_center\s*=\s*false\b" % re.escape(name))
+    depth = _indent(codes[start])
     for code in codes[start + 1:]:
-        if FUNC_DEF.match(code):
+        if not code.strip():
+            continue
+        if FUNC_DEF.match(code) or _indent(code) < depth:
             return False
-        if clear.search(code):
+        if _indent(code) == depth and clear.search(code):
             return True
     return False
 
@@ -182,7 +194,18 @@ def totals(found, screens):
     return out
 
 
+def gd_files(root):
+    """How many .gd files the scope holds under root."""
+    return sum(1 for top in SCOPE for _, _, names in os.walk(os.path.join(root, top))
+               for name in names if name.endswith(".gd"))
+
+
 def run(root, budgets_path, record):
+    # A wrong --root or an empty checkout counts nothing: no screens where
+    # screens must be is a failure, not a pass (FX1-T-14).
+    if not gd_files(root):
+        print("check_screens: FAIL, no .gd file under %s in %s" % (root, ", ".join(SCOPE)))
+        return 1
     budgets = load_budgets(budgets_path)
     screens = budgets["screens"]
     found = count_tree(root)
@@ -248,6 +271,8 @@ def self_test():
         "\tvar t := TextureRect.new()",
         "\tt.texture = load(\"res://world/a.svg\")",
         "\tvar ok := load(\"res://scripts/a.gd\")",
+        "\tvar q := load('res://world/b.png')",
+        "\tvar up := preload(\"res://world/c.PNG\")",
         "func later() -> void:",
         "\tfill.draw_center = false",
         "",
@@ -255,7 +280,7 @@ def self_test():
     found = count_file_text(sample)
     check(found["draw"] == [4, 7, 8], "draw lines %s, want [4, 7, 8]" % found["draw"])
     check(found["fill"] == [14], "fill lines %s, want [14]" % found["fill"])
-    check(found["texture"] == [15, 16], "texture lines %s, want [15, 16]" % found["texture"])
+    check(found["texture"] == [15, 16, 18, 19], "texture lines %s, want [15, 16, 18, 19]" % found["texture"])
 
     scratch = tempfile.mkdtemp(prefix="check_screens_")
     try:
@@ -275,7 +300,7 @@ def self_test():
             check(run(scratch, budgets, False) == 1, "a new file's chrome is not refused")
             check(run(scratch, budgets, True) == 1, "--record raised a count")
             write_budgets(budgets, {"screens": {"counts": {
-                "client/scripts/a_screen.gd": {"draw": 3, "fill": 1, "texture": 2}},
+                "client/scripts/a_screen.gd": {"draw": 3, "fill": 1, "texture": 4}},
                 "data_files": {}}})
             check(run(scratch, budgets, False) == 0, "the recorded counts are refused")
             with open(screen, "a", encoding="utf-8") as f:

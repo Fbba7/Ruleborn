@@ -2097,6 +2097,26 @@ fn regrowth_heals_guards_pylons_and_the_vault_and_revives_nothing() {
     assert_eq!(world.laws[1].health, 0, "a broken pylon is not rebuilt");
 }
 
+#[test]
+fn rb28_regrowth_heals_a_vault_up_to_its_own_levels_health() {
+    // RB-28: §12.6 gives a Vault 1,500 health a level, and Regrowth heals
+    // "2% of their health each second": a level-10 Vault's 15,000, not a
+    // level-1 Vault's 1,500.
+    use crate::island::Island;
+    let mut island = Island::example();
+    island.vault_level = 10;
+    let mut world = World::on_ground(&island, 3, vec![]);
+    world.weave(&[("regrowth", (0, 0))]);
+    assert_eq!(world.vault.health, 15_000);
+    world.step();
+    assert_eq!(world.vault.health, 15_000, "an untouched Vault stays at full health");
+    world.vault.health = 10_000;
+    for _ in 0..crate::TICKS_PER_SECOND {
+        world.step();
+    }
+    assert_eq!(world.vault.health, 10_000 + 300, "2% of 15,000");
+}
+
 // --------------------------------------------------------------------------
 // Wards (§10.3, as spec/wards.md reads them at level 1)
 // --------------------------------------------------------------------------
@@ -2614,7 +2634,8 @@ fn an_island_keeps_to_5_2_and_6_1_or_is_not_published() {
         }
     }
     assert!(landing.landings().is_empty());
-    assert_eq!(landing.check(), vec![Problem::LandingBlocked, Problem::EdgeClosed]);
+    // The entrance, (11, 11), is an edge tile too, now under a pillar (RB-40).
+    assert_eq!(landing.check(), vec![Problem::LandingBlocked, Problem::EdgeClosed, Problem::EntranceBlocked]);
 
     // F51: each side keeps half its tiles open. The north side is twelve
     // tiles; six closed is still half open, seven is not.
@@ -5991,6 +6012,28 @@ fn the_lantern_wisps_reveal_shows_what_is_hidden_within_six_tiles_for_six_second
 }
 
 #[test]
+fn rb45_a_slowed_clock_still_catches_whoever_is_inside_at_the_last_tick() {
+    // RB-45: §12.6, "Anyone still inside when the clock ends is caught". The
+    // replay stops after its clock's ticks whatever the clock rate, so a
+    // clock slowed by an inverted Haste whose pylon then breaks ends there.
+    let mut world = sage_world(&["stormhound"], 2);   // the Tinkerer: Invert first
+    world.clock = 30 * TICKS_PER_SECOND;
+    world.weave(&[("haste", (3, 4))]);
+    world.step();
+    call_at(&mut world, 0, 3, 4);
+    world.step();
+    assert_eq!(world.sheet.factor(Param::ClockRate), (4, 5), "the clock slowed");
+    run_for(&mut world, 5 * TICKS_PER_SECOND);
+    world.laws[0].broken_at = Some(world.tick);
+    while world.tick < world.clock {
+        world.step();
+    }
+    assert!(world.clock_run < world.clock as u64 * 1000, "the slowed clock has not run its 30 s");
+    assert_eq!(world.raiders[0].standing, Standing::Caught, "inside at the replay's last tick");
+    assert_eq!(world.outcome().caught, 1);
+}
+
+#[test]
 fn invert_turns_a_law_into_its_opposite_for_ten_seconds() {
     let mut world = sage_world(&["stormhound"], 2);   // the Tinkerer: Invert first
     world.weave(&[("haste", (3, 4))]);
@@ -6124,6 +6167,51 @@ fn what_a_half_brings_out_is_banked_and_the_half_is_never_counted_as_crew() {
     world.raiders[1].standing = Standing::Caught;
     let o = world.outcome();
     assert_eq!((o.banked, o.caught, o.left), (26, 0, 25));
+}
+
+#[test]
+fn rb44_a_split_and_rejoined_mite_does_not_hold_the_report_to_the_whole_clock() {
+    // RB-44: "held" is the seconds to the last crew member out or caught
+    // (§13.2). The Prism mite's half is a raider of its own but never one of
+    // the crew, and a half that rejoins logs neither Out nor Caught.
+    use crate::events::Event;
+    let mut world = kinds_world(&["prism_mite", "stormhound", "quarryback"]);
+    fire_at(&mut world, 0, 2, 10);
+    world.step();
+    run_for(&mut world, ruleborn::SPLIT_TICKS);
+    assert_eq!((world.raiders.len(), world.raiders[3].standing), (4, Standing::Gone), "split and rejoined");
+    for crew in 0..3u8 {
+        world.raiders[crew as usize].standing = Standing::Out;
+        world.log.push(300, Event::Out { crew, carried: 0 });
+    }
+    let report = world.report(&crate::island::Island::example());
+    assert_eq!(report.held as u32, 300 / TICKS_PER_SECOND, "all three out at tick 300");
+}
+
+#[test]
+fn rb44_a_crossings_reports_count_only_the_crew_for_held() {
+    // RB-44, in `Crossing::reports`: the same count across a universe.
+    use crate::events::Event;
+    use crate::universe::{Crossing, LinkKind};
+    let (u, islands) = two_realms(LinkKind::Stone);
+    let land = crate::reference::competent_universe(&u, &islands, 1, 3, None, None, None).unwrap().commands[0];
+    let heist = Heist { seed: 1, island: u.digest(), rules: crate::rules_version(), ticks: 4_950, crew: 3, era: None,
+                        manifest: None, commands: vec![Command { tick: 0, ..land }], checksums: Vec::new() };
+    let mut c = Crossing::new(&u, &islands, &heist).unwrap();
+    c.step();
+    // A Prism mite's half, rejoined: a fourth raider, gone, never crew.
+    let mut half = c.world.raiders[0].clone();
+    half.half_of = Some(0);
+    half.standing = Standing::Gone;
+    c.world.raiders.push(half);
+    for crew in 0..3u8 {
+        c.world.raiders[crew as usize].standing = Standing::Out;
+        c.world.log.push(300, Event::Out { crew, carried: 0 });
+    }
+    let reports = c.reports();
+    assert!(!reports.is_empty());
+    assert!(reports.iter().all(|r| r.1.held as u32 == 300 / TICKS_PER_SECOND), "all three out at tick 300: {:?}",
+            reports.iter().map(|r| r.1.held).collect::<Vec<_>>());
 }
 
 // -- Casts and the Wanderer's Copy: laws that hold inside a circle (TD.12) ------
@@ -6537,6 +6625,49 @@ fn a_crew_lands_on_an_outer_realm_crosses_at_its_way_on_and_takes_the_hearts_vau
 }
 
 #[test]
+fn rb29_a_realms_alarm_counts_from_when_the_crew_arrives() {
+    // RB-29: §12.17's realm alarm climbs once every thirty seconds in the
+    // realm the crew is in; each realm keeps its own, from when the crew
+    // arrives (the harness the hold tables were measured on).
+    use crate::universe::{Crossing, LinkKind};
+    let arrive_at = |second: u32| {
+        let (u, islands) = two_realms(LinkKind::Stone);
+        let land = crate::reference::competent_universe(&u, &islands, 1, 3, None, None, None).unwrap().commands[0];
+        let heist = Heist { seed: 1, island: u.digest(), rules: crate::rules_version(), ticks: 4_950, crew: 3, era: None,
+                            manifest: None, commands: vec![Command { tick: 0, ..land }], checksums: Vec::new() };
+        let mut c = Crossing::new(&u, &islands, &heist).unwrap();
+        c.step();
+        let w = &mut c.world;
+        w.wards.clear();
+        w.tick = second * TICKS_PER_SECOND;
+        let beside = w.grid.neighbours(w.vault.tile).into_iter().flatten().find(|&t| w.grid.standable(t)).unwrap();
+        let (x, y) = w.grid.centre(beside);
+        for r in w.raiders.iter_mut() {
+            r.at = Point { x, y };
+            r.route.clear();
+        }
+        c.step();
+        assert_eq!(c.leg, 1, "crossed to the Heart");
+        c
+    };
+    // Across at about 151 s: the Heart's alarm starts at 0, not at 5.
+    let mut c = arrive_at(151);
+    let guards = c.world.guards.len();
+    c.step();
+    assert_eq!((c.world.alarm, c.world.reinforced, c.world.guards.len()), (0, false, guards),
+               "the Heart's alarm on the crew's first tick there");
+    // Across at 61 s: thirty seconds in the Heart, counted from its first
+    // tick, is one level, not three.
+    let mut c = arrive_at(61);
+    for _ in 0..=crate::guard::ALARM_STEP_TICKS {
+        c.step();
+    }
+    let w = &c.world;
+    assert_eq!(w.alarm, (1 + w.knockouts_discovered + w.bells_rung).min(crate::guard::ALARM_MAX),
+               "one level for thirty seconds in the realm, and one a body or bell");
+}
+
+#[test]
 fn a_rift_on_the_route_holds_the_crew_thirty_seconds_after_an_alarm_in_the_realm() {
     // §5.3's Rift: "Closes for 30 seconds when an alarm sounds in either
     // realm". The crew waits at the way on, and crosses once it opens.
@@ -6731,4 +6862,450 @@ fn laws_flicker_off_for_two_seconds_in_an_overloaded_universe_every_ten_seconds_
     assert!(counts[1] * 100 > draws * 24 * 2 && counts[1] * 100 < draws * 24 * 9, "about 5%: {counts:?}");
     assert!(counts[2] > counts[1] * 3 / 2, "twice as often: {counts:?}");
     assert_eq!(blinks(1, 3), blinks(1, 3), "the same heist flickers the same everywhere");
+}
+
+#[test]
+fn rb40_an_entrance_in_a_wall_or_on_the_vault_is_not_published() {
+    // RB-40: the alarm-5 Warden spawns at the entrance, so an entrance in a
+    // wall or on the Vault weakens the alarm-5 penalty. The gate refuses it.
+    use crate::island::Island;
+    let open = Island::example_open();
+    assert_eq!(open.check(), vec![]);
+    let mut walled = open.clone();
+    walled.entrance = (0, 5);                             // the ruin wall
+    assert!(!walled.check().is_empty(), "an entrance in the ruin wall: {:?}", walled.check());
+    let mut vault = open.clone();
+    vault.entrance = vault.vault;
+    assert!(!vault.check().is_empty(), "an entrance on the Vault: {:?}", vault.check());
+}
+
+#[test]
+fn rb50_weaving_a_law_onto_the_vault_is_refused_and_keeps_the_law() {
+    // RB-50: the builder's law tool on the Vault took the law away.
+    use crate::island::Island;
+    let mut island = Island::example_open();
+    assert!(island.weave("haste", 1, 10));
+    let (vx, vy) = island.vault;
+    assert!(!island.weave("haste", vx, vy), "the Vault cannot be covered");
+    assert_eq!(island.laws, vec![("haste".to_string(), 1, 10)], "the law stays where it was");
+}
+
+#[test]
+fn rb57_a_ward_or_pylon_on_a_guard_in_tall_grass_replaces_the_grass_too() {
+    // RB-57: claim cleared the guard and left the grass under it, so the
+    // ward or pylon put there made the island Crowded.
+    use crate::heist::WardKind;
+    use crate::island::{Island, Post};
+    let mut island = Island::example_open();
+    assert_eq!(island.tile(2, 7).and_then(|t| t.feature), Some(crate::grid::Feature::TallGrass));
+    island.guards.push(Post { row: 0, x: 2, y: 7, facing: 0 });  // hidden in the grass
+    assert_eq!(island.check(), vec![]);
+    let mut ward = island.clone();
+    assert!(ward.place_ward(WardKind::TimeSnare, 2, 7));
+    assert_eq!((ward.guards.len(), ward.tile(2, 7).and_then(|t| t.feature)), (0, None));
+    assert_eq!(ward.check(), vec![], "the ward replaced whatever stood there");
+    let mut pylon = island.clone();
+    assert!(pylon.weave("haste", 2, 7));
+    assert_eq!((pylon.guards.len(), pylon.tile(2, 7).and_then(|t| t.feature)), (0, None));
+    assert_eq!(pylon.check(), vec![], "the pylon replaced whatever stood there");
+}
+
+#[test]
+fn candidate_7_the_same_law_twice_is_not_published() {
+    // Bug report, unproven candidate 7: one law on two pylons passed the
+    // gate, and the sheet applied it twice (guard speed 5/4 became
+    // 441/256). A realm weaves each law once.
+    use crate::island::Island;
+    let mut twice = Island::example();
+    assert_eq!(twice.laws.len(), 2);
+    twice.laws[1].0 = twice.laws[0].0.clone();            // haste at (1, 10) and (11, 2)
+    assert!(Island::decode(&twice.encode()).is_err() || !twice.check().is_empty(),
+            "the same law twice passes the gate: {:?}", twice.check());
+}
+
+#[test]
+fn candidate_34_a_tunnel_mouth_under_a_raised_wall_is_no_way_out() {
+    // Bug report, unproven candidate 34: a crew's Crystal Wall raised on a
+    // tunnel's far mouth still let routes come up through it, into the wall.
+    let mut world = vault_world(1);
+    for y in 0..14 {
+        world.grid.place(4, y, Feature::RockPillar);
+    }
+    let at = |w: &World, x, y| w.grid.index(x, y).unwrap();
+    let (from, to) = (at(&world, 2, 2), at(&world, 8, 2));
+    world.grid.dig_tunnel(at(&world, 3, 2), at(&world, 6, 2));
+    assert!(path::find_through(&world.grid, from, to).is_some(), "through the tunnel");
+    world.grid.set_raised(at(&world, 6, 2), true);
+    let route = path::find_through(&world.grid, from, to);
+    assert!(route.as_ref().is_none_or(|r| r.iter().all(|&t| world.grid.at(t).passable())),
+            "a route comes up into the raised wall: {route:?}");
+}
+
+/// The byte at which a replay's first command's tick delta starts: the
+/// header's length, which a copy of the heist with no commands and no
+/// checksums encodes to exactly.
+fn first_delta_at(heist: &Heist) -> usize {
+    Heist { commands: Vec::new(), checksums: Vec::new(), ..heist.clone() }.encode().len()
+}
+
+#[test]
+fn rb54_a_tick_delta_past_u32_is_refused_not_wrapped() {
+    // Bug report RB-54: `delta as u32` truncated the varint before
+    // `checked_add`, so 2^32 + d decoded as d, the same heist.
+    let heist = fixture(3, 600, 3);
+    let bytes = heist.encode();
+    let at = first_delta_at(&heist);
+    let d = heist.commands[0].tick as u64;
+    assert!(d < 0x80, "the fixture's first delta is one byte");
+    let mut wide = bytes[..at].to_vec();
+    let mut value = (1u64 << 32) + d;
+    loop {
+        let byte = (value & 0x7f) as u8;
+        value >>= 7;
+        if value == 0 {
+            wide.push(byte);
+            break;
+        }
+        wide.push(byte | 0x80);
+    }
+    wide.extend_from_slice(&bytes[at + 1..]);
+    assert!(Heist::decode(&wide).is_none(), "2^32 + {d} decodes as {d}");
+}
+
+#[test]
+fn rb54_a_padded_varint_is_refused() {
+    // Bug report RB-54: a varint padded with a trailing zero byte decoded to
+    // the same value, a second byte string for one heist.
+    let heist = fixture(3, 600, 3);
+    let bytes = heist.encode();
+    let at = first_delta_at(&heist);
+    assert!(bytes[at] < 0x80, "the fixture's first delta is one byte");
+    let mut padded = bytes[..at].to_vec();
+    padded.extend_from_slice(&[bytes[at] | 0x80, 0x00]);
+    padded.extend_from_slice(&bytes[at + 1..]);
+    assert!(Heist::decode(&padded).is_none(), "a padded varint decodes");
+    // Ten bytes whose last bit falls past u64's 64th: the same value again.
+    let mut long = bytes[..at].to_vec();
+    long.push(bytes[at] | 0x80);
+    long.extend_from_slice(&[0x80; 8]);
+    long.push(0x02);
+    long.extend_from_slice(&bytes[at + 1..]);
+    assert!(Heist::decode(&long).is_none(), "a varint whose high bits fall off decodes");
+}
+
+#[test]
+fn rb55_a_command_for_actor_16_still_records_a_replay_that_round_trips() {
+    // Bug report RB-55: the replay packs the actor in four bits, so a
+    // command for actor 16 came back as actor 0 and the replay diverged.
+    use crate::island::Island;
+    use crate::{record_in, verify_on};
+    let island = Island::example_open();
+    let (vx, vy) = (island.vault.0 as i16, island.vault.1 as i16);
+    let mut commands = crate::draw(&island, 7, crate::MIN_TICKS, 3);
+    let after_landing = commands.iter().position(|c| c.tick > 0).unwrap_or(commands.len());
+    commands.insert(after_landing, Command { tick: 1, actor: 16, kind: Kind::MoveTo, x: vx * 256 + 128, y: vy * 256 + 128 });
+    assert!(commands.windows(2).all(|w| w[0].tick <= w[1].tick));
+    let heist = record_in(&island, 7, crate::MIN_TICKS, 3, None, commands);
+    let back = Heist::decode(&heist.encode()).expect("a recorded heist decodes");
+    // The replay is the record: what it keeps must come back as written,
+    // never as another crew member.
+    assert!(heist.commands.iter().all(|c| c.actor < 16), "the recorded heist keeps a command for an actor past 15");
+    assert_eq!(back.commands, heist.commands, "the recorded replay round-trips");
+    assert!(verify_on(&island, &back).is_ok(), "{:?}", verify_on(&island, &back).err());
+}
+
+#[test]
+fn sim_1_a_body_in_a_bush_is_not_found() {
+    // Audit finding SIM-1 (docs/security/audit-2026-11/sim.md).
+    // §12.8 (v3.3): "a body is seen exactly as a still crew member lying on
+    // its tile would be, so tall grass, a bush, fog or a tunnel hides it".
+    // A still crew member alone in a bush is hidden (`noticed`'s Bush row).
+    let mut world = vault_world(0);
+    post(&mut world, 0, 3, 6);                    // a Scout, facing north
+    let down = post(&mut world, 1, 3, 3);         // three tiles in front of it
+    world.grid.place(3, 3, Feature::Bush);
+    world.guards[down].knocked_out = true;
+    for _ in 0..TICKS_PER_SECOND {
+        world.step();
+    }
+    assert!(!world.guards[down].found, "a bush hides a body as it hides a still crew member");
+    assert_eq!(world.knockouts_discovered, 0);
+}
+
+#[test]
+fn sim_1_a_body_in_a_thicket_beyond_a_tile_is_not_found() {
+    // Audit finding SIM-1 (docs/security/audit-2026-11/sim.md).
+    // The same rule: "A thicket ... hides anyone inside beyond 1 tile".
+    let mut world = vault_world(0);
+    post(&mut world, 0, 3, 6);                    // a Scout, facing north
+    let down = post(&mut world, 1, 3, 3);         // three tiles in front of it
+    world.grid.place(3, 3, Feature::Thicket);
+    world.guards[down].knocked_out = true;
+    for _ in 0..TICKS_PER_SECOND {
+        world.step();
+    }
+    assert!(!world.guards[down].found, "a thicket hides a body three tiles off");
+    assert_eq!(world.knockouts_discovered, 0);
+}
+
+#[test]
+#[allow(unsafe_code)]
+fn sim_2_the_recorder_never_returns_a_replay_over_2_kb() {
+    // Audit finding SIM-2 (docs/security/audit-2026-11/sim.md).
+    let island = crate::island::Island::example_open();
+    let ib = island.encode();
+    let ticks = crate::MAX_TICKS;
+    // 180 walks, one every 37 ticks (1.2 s), each to a real tile of the island.
+    let side = island.side() as i16;
+    let (lx, ly) = island.landings()[0];
+    let mut log = vec![(0u32, 0u8, Kind::Land, lx as i16 * 256 + 128, ly as i16 * 256 + 128)];
+    for i in 0..180u32 {
+        let (tx, ty) = ((i as i16 * 3) % side, (i as i16 * 7) % side);
+        log.push((30 + i * 37, (i % 3) as u8, Kind::MoveTo, tx * 256 + 128, ty * 256 + 128));
+    }
+    let buf = crate::ffi::rb_buffer();
+    unsafe {
+        std::ptr::copy_nonoverlapping(ib.as_ptr(), buf, ib.len());
+        for (k, &(tick, actor, kind, x, y)) in log.iter().enumerate() {
+            let mut c = [0u8; 10];
+            c[..4].copy_from_slice(&tick.to_le_bytes());
+            c[4] = actor;
+            c[5] = kind as u8;
+            c[6..8].copy_from_slice(&x.to_le_bytes());
+            c[8..10].copy_from_slice(&y.to_le_bytes());
+            std::ptr::copy_nonoverlapping(c.as_ptr(), buf.add(ib.len() + k * 10), 10);
+        }
+    }
+    let n = crate::ffi::rb_record(0, 7, ticks, 3, ib.len() as u32, log.len() as u32, 0);
+    // The simulation itself accepts the recorded heist.
+    let commands: Vec<Command> = log.iter().map(|&(tick, actor, kind, x, y)| Command { tick, actor, kind, x, y }).collect();
+    let heist = crate::record(&island, 7, ticks, 3, commands);
+    assert!(crate::verify_on(&island, &heist).is_ok(), "the sim accepts the honest log: {:?}", crate::verify_on(&island, &heist).err());
+    if n > 0 {
+        // Hand the recorded replay to rb_verify exactly as the server does.
+        let replay = unsafe { std::slice::from_raw_parts(buf, n as usize).to_vec() };
+        unsafe {
+            std::ptr::copy_nonoverlapping(replay.as_ptr(), buf, replay.len());
+            std::ptr::copy_nonoverlapping(ib.as_ptr(), buf.add(replay.len()), ib.len());
+        }
+        let v = crate::ffi::rb_verify(replay.len() as u32, ib.len() as u32);
+        assert!(replay.len() <= MAX_HEIST_BYTES && v == 0,
+            "rb_record returned a {}-byte replay (limit {MAX_HEIST_BYTES}) that rb_verify refuses with {v}", replay.len());
+    } else {
+        assert_eq!(n, -9, "an oversize replay is refused as -9");
+    }
+}
+
+#[test]
+fn sim_5_the_hourkeeper_gives_back_a_hit_taken_in_a_tick_the_ally_was_healed() {
+    // Audit finding SIM-5 (docs/security/audit-2026-11/sim.md).
+    // `step`: "What each crew member lost this tick, kept five seconds for
+    // the Hourkeeper (§11.11). Healing in the same tick is not netted off:
+    // 'all the health it lost'." A thorn at tick 30 lands in the same tick
+    // as a Bloomling's heal; it is still health lost.
+    let mut world = kinds_world(&["hourkeeper", "stormhound", "bloomling"]);
+    in_a_hedge(&mut world, 1, 8, 8);
+    put(&mut world, 2, 8, 9);                          // a tile off: within 3
+    let full = world.raiders[1].health;
+    world.raiders[1].health = full / 2;
+    let each = Role::Scout.health() * 5 / 100;
+    let heal = full * 15 / 100;
+    run_for(&mut world, TICKS_PER_SECOND);            // thorn at tick 0
+    fire_at(&mut world, 2, 0, 0);                      // Bloom at tick 30
+    run_for(&mut world, TICKS_PER_SECOND + 1);        // thorns at 30 and 60
+    assert_eq!(world.raiders[1].health, full / 2 + heal - 3 * each);
+    put(&mut world, 1, 9, 9);
+    fire_at(&mut world, 0, 9, 9);
+    world.step();
+    assert_eq!(world.raiders[1].health, full / 2 + heal,
+               "all three thorns back, the one in the healed tick too");
+}
+
+#[test]
+fn sim_6_a_ramblers_charge_through_a_crystal_wall_counts_for_cracked_gardens() {
+    // Audit finding SIM-6 (docs/security/audit-2026-11/sim.md).
+    let mut world = kinds_world(&["rambler"]);
+    world.place_wards(&[(WardKind::CrystalWall, (3, 2))]);
+    weave(&mut world, &["brittle_stone", "bloom"]);
+    world.wards[0].health = 1;
+    put(&mut world, 0, 1, 2);
+    fire_at(&mut world, 0, 8, 2);
+    for _ in 0..(5 * TICKS_PER_SECOND) {
+        world.step();
+    }
+    assert!(world.wards[0].broken, "the charge breaks the wall");
+    assert_eq!(world.outcome().cracked, 1, "Cracked gardens counts every structure broken");
+}
+
+#[test]
+fn sim_6_a_ramblers_charge_through_a_crystal_wall_under_shattered_glass_leaves_shards() {
+    // Audit finding SIM-6 (docs/security/audit-2026-11/sim.md).
+    let mut world = kinds_world(&["rambler"]);
+    world.place_wards(&[(WardKind::CrystalWall, (3, 2))]);
+    weave(&mut world, &["glass", "brittle_stone"]);
+    let full = world.raiders[0].full(&world.sheet);
+    assert!(full < world.wards[0].health, "the Rambler alone cannot break a whole wall: {full}");
+    put(&mut world, 0, 1, 2);
+    fire_at(&mut world, 0, 8, 2);
+    for _ in 0..(5 * TICKS_PER_SECOND) {
+        world.step();
+    }
+    let t = world.grid.index(3, 2).unwrap();
+    assert!(world.wards[0].broken, "glass walls break in one hit");
+    assert!(world.shards.contains(&t), "leaving shards");
+}
+
+#[test]
+fn sim_7_a_folded_prism_half_is_nobody_and_does_not_block_the_glass_golems_wall() {
+    // Audit finding SIM-7 (docs/security/audit-2026-11/sim.md).
+    let mut world = kinds_world(&["prism_mite", "glass_golem"]);
+    fire_at(&mut world, 0, 2, 10);
+    world.step();
+    assert_eq!(world.raiders.len(), 3, "the mite split");
+    walk_to(&mut world, 2, 6, 4);
+    run_for(&mut world, ruleborn::SPLIT_TICKS);
+    assert_eq!(world.raiders[2].standing, Standing::Gone, "the half folded back");
+    assert_eq!(tile_of(&world, 2), (6, 4), "and was left where it last stood");
+    put(&mut world, 1, 2, 4);
+    fire_at(&mut world, 1, 6, 4);
+    world.step();
+    let t = world.grid.index(6, 4).unwrap();
+    assert!(world.grid.is_raised(t), "\"nobody and nothing on them\": a Gone half is nobody");
+}
+
+#[test]
+fn sim_8_a_gravity_well_does_not_cut_short_a_time_snares_freeze() {
+    // Audit finding SIM-8 (docs/security/audit-2026-11/sim.md).
+    let mut world = vault_world(1);
+    world.place_wards(&[(WardKind::TimeSnare, (3, 3)), (WardKind::GravityWell, (5, 3))]);
+    put(&mut world, 0, 3, 3);                     // on the snare, 2 tiles from the well
+    world.step();
+    assert!(world.wards[1].armed_at > 0, "the well fired too");
+    assert!(world.raiders[0].frozen_until >= h::SNARE_FREEZE_TICKS,
+            "the snare's 2.5 s still stand: frozen until {}", world.raiders[0].frozen_until);
+}
+
+#[test]
+fn sim_9_a_bounce_mushroom_lands_on_a_bridge_three_tiles_on() {
+    // Audit finding SIM-9 (docs/security/audit-2026-11/sim.md).
+    let mut world = vault_world(1);
+    world.grid.place(3, 2, Feature::BounceMushroom);
+    world.grid.place(6, 2, Feature::Pond);
+    let bridge = world.grid.index(6, 2).unwrap();
+    world.grid.set_bridged(bridge, true);
+    assert!(world.grid.standable(bridge) && !world.grid.at(bridge).passable());
+    put(&mut world, 0, 1, 2);
+    order(&mut world, 0, 12, 2);
+    for _ in 0..3 * TICKS_PER_SECOND {
+        world.step();
+        if world.raiders[0].bounced {
+            assert_eq!(tile_of(&world, 0), (6, 2),
+                       "\"the furthest of those tiles it can stand on\": the bridge");
+            return;
+        }
+    }
+    panic!("never launched");
+}
+
+#[test]
+fn sim_10_a_command_for_actor_16_still_records_a_universe_replay_that_round_trips() {
+    // Audit finding SIM-10 (docs/security/audit-2026-11/sim.md).
+    // RB-55 on the universe's recorder: the replay packs the actor in four
+    // bits, so a command for actor 16 comes back as actor 0.
+    use crate::universe::{record_universe, verify_universe, LinkKind};
+    let (u, islands) = two_realms(LinkKind::Stone);
+    let played = crate::reference::competent_universe(&u, &islands, 1, 3, None, None, None).unwrap();
+    let mut commands = played.commands.clone();
+    // Past the landing, while the crew walks the outer realm: an order for
+    // actor 0 here would change the heist.
+    let at = commands.iter().position(|c| c.tick > 60).unwrap();
+    let (vx, vy) = (islands[1].vault.0 as i16, islands[1].vault.1 as i16);
+    commands.insert(at, Command { tick: 60, actor: 16, kind: Kind::MoveTo, x: vx * 256 + 128, y: vy * 256 + 128 });
+    assert!(commands.windows(2).all(|w| w[0].tick <= w[1].tick));
+    let heist = record_universe(&u, &islands, 1, played.ticks, 3, None, None, commands).unwrap();
+    let back = Heist::decode(&heist.encode()).expect("a recorded heist decodes");
+    assert!(heist.commands.iter().all(|c| c.actor < 16), "the recorded heist keeps a command for an actor past 15");
+    assert_eq!(back.commands, heist.commands, "the recorded replay round-trips");
+    assert!(verify_universe(&u, &islands, &back).is_ok(), "{:?}", verify_universe(&u, &islands, &back).err());
+}
+
+#[test]
+fn sim_11_a_lantern_wisps_reveal_goes_with_it_across_to_the_next_realm() {
+    // Audit finding SIM-11 (docs/security/audit-2026-11/sim.md).
+    // The wisp's reveal "shows what is hidden within REVEAL_TILES of the
+    // wisp as it goes" for 6 s (`World::reveals`); the crossing carries the
+    // crew, and the reveal is the crew's, so it carries the reveal too.
+    use crate::universe::{Crossing, LinkKind};
+    let (u, islands) = two_realms(LinkKind::Stone);
+    let land = crate::reference::competent_universe(&u, &islands, 1, 3, None, None, None).unwrap().commands[0];
+    let heist = Heist { seed: 1, island: u.digest(), rules: crate::rules_version(), ticks: 4_950, crew: 3, era: None,
+                        manifest: None, commands: vec![Command { tick: 0, ..land }], checksums: Vec::new() };
+    let mut c = Crossing::new(&u, &islands, &heist).unwrap();
+    c.step();
+    let w = &mut c.world;
+    w.wards.clear();
+    w.tick = 10 * TICKS_PER_SECOND;
+    let beside = w.grid.neighbours(w.vault.tile).into_iter().flatten().find(|&t| w.grid.standable(t)).unwrap();
+    let (x, y) = w.grid.centre(beside);
+    for r in w.raiders.iter_mut() {
+        r.at = Point { x, y };
+        r.route.clear();
+    }
+    // What `Ability::Reveal` leaves running, used the tick before the crew
+    // crosses.
+    let until = w.tick + ruleborn::REVEAL_TICKS;
+    w.reveals.push((0, until));
+    assert!(w.revealed(beside));
+    c.step();
+    assert_eq!(c.leg, 1, "crossed to the Heart");
+    let here = { let p = c.world.raiders[0].at; c.world.grid.tile_at(p.x, p.y).unwrap() };
+    assert!(c.world.revealed(here), "the wisp's reveal ended at the crossing, {} ticks early", until - c.world.tick);
+    while c.world.tick <= until {
+        c.step();
+    }
+    let here = { let p = c.world.raiders[0].at; c.world.grid.tile_at(p.x, p.y).unwrap() };
+    assert!(!c.world.revealed(here), "for 6 s, not longer");
+}
+
+// Audit finding SIM-12
+#[test]
+fn sim_12_a_curated_layout_never_drops_a_woven_law_unseen() {
+    // §13.3's curation: `Island::curated` redraws a layout that loses
+    // anything the realm holds, and after 64 draws answers the last,
+    // "problems and all, for the server to refuse by name". The server names
+    // a lost building (buildings_not_as_placed) and every `check` problem;
+    // it reads a realm's laws only as "none it has not woven". So the last
+    // answer may lose a building, or fail `check`, but never keep every
+    // building, pass `check` and quietly have one law fewer than the realm
+    // wove: SR-16, "a realm plays what its owner wove".
+    use crate::island::building_code;
+    let spire = building_code("keeper_s_spire").expect("a spire is a building");
+    let side = Island::empty(1).side() as u8;
+    for y in 0..=side - 3 {
+        for x in 0..=side - 3 {
+            let island = Island::curated(1, 1, 1, &[(spire, x, y)], &["bounce"]);
+            assert!(island.laws.len() == 1 || island.buildings.len() != 1 || !island.check().is_empty(),
+                    "a spire at ({x}, {y}): the island passes check with its building and without its law");
+        }
+    }
+}
+
+// Audit finding SIM-13
+#[test]
+fn sim_13_moving_the_vault_onto_a_guard_hidden_in_tall_grass_takes_the_grass_too() {
+    // `Island::set_vault`: "Move the Vault to a tile, taking what stood
+    // there away", and the Vault needs bare ground (`check`'s Crowded). A
+    // Keeper may hide a guard in tall grass (RB-57): the editor's ground
+    // tool lays grass under a post. Moving the Vault onto plain grass takes
+    // the grass; onto a guard in grass it must take both, as `claim` does.
+    use crate::grid::Feature;
+    let mut island = Island::example_open();
+    assert!(island.check().is_empty(), "the open example is legal");
+    let spot = (6u8, 8u8);
+    assert!(island.post_guard(0, spot.0, spot.1));
+    assert!(island.set_feature(spot.0, spot.1, Some(Feature::TallGrass)), "a guard hidden in tall grass");
+    assert!(island.set_vault(spot.0, spot.1));
+    assert!(island.guards.is_empty(), "the post is taken away");
+    assert_eq!(island.tile(spot.0, spot.1).and_then(|t| t.feature), None, "and the grass with it");
+    assert!(island.check().is_empty(), "the Vault on bare ground: {:?}", island.check());
 }

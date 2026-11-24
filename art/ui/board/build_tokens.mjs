@@ -14,7 +14,7 @@
 // --d-<name>   a colour the design document states that tokens.json does not
 //              carry; each names its section, and check_board.mjs confirms
 //              the hex is written there.
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, realpathSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -90,7 +90,10 @@ export function build() {
   return lines.join('\n');
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+// Run as a script: compare real paths, not a file:// URL, which
+// percent-encodes a space that argv keeps (FX1-T-06). Node loads the main
+// module from its real path, so argv's is resolved the same way.
+if (process.argv[1] && fileURLToPath(import.meta.url) === realpathSync(process.argv[1])) {
   const out = join(here, 'tokens.css');
   const css = build();
   if (process.argv.includes('--check')) {

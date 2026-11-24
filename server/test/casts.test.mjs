@@ -24,7 +24,7 @@ function heist(t, casts, extra = [], plan = openPlan()) {
   const crew = t.service.home.show(t.raider.account).characters
     .filter((c) => c.state !== "resting").slice(0, 3);
   const lease = t.service.lease(t.raider.account, t.bundle);
-  const manifest = { members: crew.map((c) => ({ kind: KINDS.indexOf(c.kind), level: c.level,
+  const manifest = { members: crew.map((c) => ({ kind: KINDS.indexOf(c.kind), form: c.wire.form, level: c.level,
                                                  traits: c.traits.map((x) => TRAITS.indexOf(x)) })),
                      sage: 0, casts: casts.map(row) };
   // The input log is in tick order (§24.10); a stable sort keeps each

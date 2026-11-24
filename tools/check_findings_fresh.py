@@ -108,7 +108,7 @@ def pinned_by_a_check() -> dict:
             # lead is therefore a list, not a single id.
             lead = LEAD.match(m.group(2).strip())
             if lead:
-                for item in re.findall(r"[CDFGQT]\d{1,2}", lead.group(1)):
+                for item in re.findall(r"[CDFGQT]\d+", lead.group(1)):
                     out.setdefault(item, []).append(f"{path.name}:{m.group(1)}")
     return out
 
@@ -121,7 +121,7 @@ def pinned_by_a_check() -> dict:
 #: pattern required a full stop or a space and silently dropped that pin, which
 #: is this file's own subject: a check that stops asserting something reads
 #: exactly like a check that never did.
-LEAD = re.compile(r"((?:[CDFGQT]\d{1,2})(?:,\s*[CDFGQT]\d{1,2})*)\b")
+LEAD = re.compile(r"((?:[CDFGQT]\d+)(?:,\s*[CDFGQT]\d+)*)\b")
 
 
 #: A register item that names a tool rests on a number that tool produced, and
@@ -199,10 +199,12 @@ def main() -> int:
             "F16's own caveat, which the finding could not settle": ["F16"],
             "F10, D22. Every law written down as the kind of change": ["F10", "D22"],
             "C27 - two rules for partial staffing": ["C27"],
+            # Three digits: a two-digit cap once read D100 as no id at all.
+            "D100. pins a three-digit id": ["D100"],
             "The clock follows 5.4": [],
         }
         for text, want in shapes.items():
-            got = re.findall(r"[CDFGQT]\d{1,2}", m.group(1)) if (
+            got = re.findall(r"[CDFGQT]\d+", m.group(1)) if (
                 m := LEAD.match(text)) else []
             if got != want:
                 print(f"  the docstring lead {text!r} read as {got}, want {want}")

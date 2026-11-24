@@ -32,10 +32,14 @@ static func remix_of() -> String:
 
 
 ## §18.6: a Workshop island becomes the draft, to build on; the island it
-## replaces is kept, with its own original if it had one.
+## replaces is kept, with its own original if it had one. A remix replacing
+## a remix keeps the player's own island kept, not the first remix (CLI-4):
+## the player's creation is the one never lost.
 static func start_remix(bytes: PackedByteArray, id: String) -> bool:
 	var before := island()
-	if not before.is_empty() and before != bytes:
+	var own_kept := has_kept() and remix_of() != "" and (not FileAccess.file_exists(_kept_origin())
+		or FileAccess.get_file_as_string(_kept_origin()).strip_edges() == "")
+	if not before.is_empty() and before != bytes and not own_kept:
 		if not _write(_kept(), before) or not _write_text(_kept_origin(), remix_of()):
 			return false
 	return keep(bytes) and _write_text(_origin(), id)

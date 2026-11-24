@@ -1,0 +1,78 @@
+{
+  "agent": "FX4",
+  "role": "FX4",
+  "branch": "claude/fix-client",
+  "model": "Opus 5.5",
+  "agent_state": "active",
+  "task_id": "FX4-8-rehearsal-rerun",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-24T10:20:00Z",
+  "lease_until": "2026-11-24T13:20:00Z",
+  "updated_at": "2026-11-24T10:20:00Z",
+  "expected_next_update_by": "2026-11-24T11:05:00Z",
+  "long_run": null,
+  "progress_marker": {
+    "last_green_sha": "b1913643",
+    "next_step": "fail-first check for CLI-18",
+    "at": "2026-11-24T10:20:00Z"
+  },
+  "precheck": null,
+  "gate_request": null,
+  "ready_sha": null,
+  "stop_at": "2026-11-24T21:00:00Z",
+  "acks": [],
+  "requests": [
+    {
+      "id": "FX4-R1",
+      "from": "FX4",
+      "to": "lead",
+      "ask": "RB-43's Fix line also says 'ideally keep the leased island in the HEIST state'. With FX4-3's digest check a leased heist's result screen now leaves the night empty (the report's Should happen) instead of showing the real night. Showing it needs client/scripts/heist_screen.gd (outside FX4-3's files) to put the leased island's bytes, which it already fetches, into heist_finished, and AppState.heist_finished to keep them. If wanted, add a small follow-up task owning heist_screen.gd and app_state.gd, after the UI resumes.",
+      "files": [
+        "client/scripts/heist_screen.gd",
+        "client/app/app_state.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-23T22:00:00Z",
+      "due": "2026-11-24T22:00:00Z",
+      "default": "No follow-up: a leased heist's result screen shows no night, as RB-43's Should happen says",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "FX4-R2",
+      "from": "FX4",
+      "to": "lead",
+      "ask": "FX4-6: RulebornReplay.give now returns false once the replay has no room left under MAX_HEIST_BYTES (SIM-2), but heist_screen.gd (lines 510, 518, 831) ignores give's result, so such a tap is dropped with nothing on screen. If wanted, add a small follow-up task owning client/scripts/heist_screen.gd and client/i18n/strings.csv to show a hint (for example 'no more orders fit this heist') when give returns false, after the UI resumes.",
+      "files": [
+        "client/scripts/heist_screen.gd",
+        "client/i18n/strings.csv"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-24T05:20:00Z",
+      "due": "2026-11-25T05:20:00Z",
+      "default": "No follow-up: a tap past the limit is dropped silently, as a tap after the clock has run out already is",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "FX4-R3",
+      "from": "FX4",
+      "to": "lead",
+      "ask": "FX4-7 fixes CLI-1 (client-side, SR-16 stays). Mark CLI-1 'fixed' in docs/security/audit-2026-11/client.md line 43, which FX4-7 does not own.",
+      "files": [
+        "docs/security/audit-2026-11/client.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-24T08:41:00Z",
+      "due": "2026-11-25T08:41:00Z",
+      "default": "The lead marks CLI-1 fixed in client.md when it merges FX4-7, as it did for CLI-23",
+      "escalate_to": "lead"
+    }
+  ],
+  "answers": [
+    {
+      "id": "FX4-R2",
+      "by": "lead",
+      "answer": "the default (lead cycle 172): no follow-up; a tap past the limit is dropped silently",
+      "at": "2026-11-24"
+    }
+  ]
+}

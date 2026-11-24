@@ -32,6 +32,20 @@ export class Holds {
     this.service = service;
     /** The bundle being measured, while it is (`work`). */
     this.running = null;
+    /** The rules every live bundle is queued under (`queueLive`). */
+    this.queued = null;
+  }
+
+  /** FX1-A-05: every bundle some island is now, queued under the current
+   *  rules once they are new — after a new simulation build, an island
+   *  published before it is measured again, and shown as measuring. */
+  queueLive(now = this.service.now()) {
+    const rules = this.service.builds.current.rulesVersion;
+    if (this.queued === rules) return;
+    this.db.prepare(
+      `INSERT OR IGNORE INTO island_holds (bundle, rules, raids, played, held, queued_at)
+       SELECT DISTINCT bundle, ?, ?, 0, 0, ? FROM islands`).run(rules, facts.HOLD_RAIDS, now);
+    this.queued = rules;
   }
 
   get db() { return this.service.db; }
@@ -46,9 +60,12 @@ export class Holds {
   /** What a screen shows: "measuring" with how far it has come, or the
    *  measured hold as raids held of raids played; null for none queued. */
   status(bundle) {
+    this.queueLive();
     const r = this.db.prepare("SELECT * FROM island_holds WHERE bundle = ? AND rules = ?")
       .get(bundle, this.service.builds.current.rulesVersion);
-    if (!r) return null;
+    // A measurement lost to a throw or to its bundle's bytes is no figure
+    // (RB-15): `held` is -1, and the screen shows none.
+    if (!r || r.held < 0) return null;
     return r.measured_at == null
       ? { status: "measuring", played: r.played, raids: r.raids }
       : { status: "measured", held: r.held, raids: r.raids, hold: r.held / r.raids };
@@ -58,6 +75,7 @@ export class Holds {
    *  the measurement that lands rates its islands. Returns the raids played. */
   work(raids = 40, now = this.service.now()) {
     const build = this.service.builds.current;
+    this.queueLive(now);
     // The next measurement is of a bundle some player's island is now — a
     // superseded one waits, measured if it is published again — and owners
     // take turns: each owner's oldest first, then their next. A player who
@@ -95,8 +113,10 @@ export class Holds {
     transaction(this.db, () => {
       const played = failed ? r.raids : r.played + n;
       const done = failed || played >= r.raids || !island;
-      this.db.prepare("UPDATE island_holds SET played = ?, held = held + ?, measured_at = ? WHERE bundle = ? AND rules = ?")
-        .run(played, held, done ? now : null, r.bundle, r.rules);
+      const lost = failed || !island;
+      this.db.prepare(`UPDATE island_holds SET played = ?, held = CASE WHEN ? THEN -1 ELSE held + ? END,
+                         measured_at = ? WHERE bundle = ? AND rules = ?`)
+        .run(played, lost ? 1 : 0, held, done ? now : null, r.bundle, r.rules);
       if (done && island && !failed) this.rate(r.bundle, (r.held + held) / r.raids, now);
     });
     return n;

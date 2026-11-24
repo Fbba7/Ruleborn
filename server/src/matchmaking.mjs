@@ -174,6 +174,10 @@ export class Matchmaking {
     const rows = this.db.prepare(
       `SELECT h.outcome FROM heists h JOIN leases l ON l.token = h.token
         WHERE h.attacker = ? AND h.validated = 1 AND l.mode = 'raid'
+          -- FX1-A-08: a raid that rated nothing (a pair's later raids that
+          -- UTC day, an island whose owner is gone) is no heist that rates
+          -- them, so "recent" does not learn from it either.
+          AND json_extract(h.outcome, '$.rating') IS NOT NULL
         ORDER BY h.day DESC, h.submitted_at DESC, h.token DESC LIMIT ?`).all(account, RECENT);
     if (rows.length === 0) {
       const [lo, hi] = successBand(1, "authored");
@@ -205,7 +209,16 @@ export class Matchmaking {
           AND json_extract(h.outcome, '$.verdict.grade') != 'foiled'
           AND COALESCE(json_extract(h.outcome, '$.haul.cappedBy'), '') != 'week'
           AND h.submitted_at > ?
-          AND NOT EXISTS (SELECT 1 FROM leases t WHERE t.trace_of = h.token)
+          -- FX1-A-11: a Trace whose only uploads were refused is no play
+          -- (24.13, as RB-16 reads it), so it is still owed; a live one not
+          -- yet played still holds it.
+          AND NOT EXISTS (SELECT 1 FROM leases t WHERE t.trace_of = h.token
+                AND NOT EXISTS (SELECT 1 FROM heists th WHERE th.token = t.token AND th.validated = 0))
+          -- FX1-A-06: a banned or deleted raider is no target, as the lease
+          -- and the Observatory read it: the defence log offers no Trace
+          -- the lease would refuse.
+          AND NOT EXISTS (SELECT 1 FROM accounts a WHERE a.id = h.attacker
+                AND (a.banned_at IS NOT NULL OR a.deleted_at IS NOT NULL))
         ORDER BY h.submitted_at DESC LIMIT 1`)
       .get(raider, account, now - facts.TRACE_HOURS * HOUR_MS)?.token ?? null;
   }
@@ -246,8 +259,9 @@ export class Matchmaking {
    * owner's season Renown from their standing and newest Renown row (§24.8's
    * running total) — six rows an island, where a read each took seven and
    * every Renown row of the season. An unprotected owner with no standing
-   * yet this season is given one, as their Renown read always has
-   * (seasons.standing).
+   * yet this season is read where it would start, and given none: their
+   * tier price is fixed when they appear in the season, not when they sit
+   * on someone's list (AUD-B-01, §18.8).
    */
   live(now) {
     const season = this.service.seasons.current(now).id;
@@ -272,9 +286,27 @@ export class Matchmaking {
     };
     return rows.map((r) => {
       const shielded = this.shielded(r.owner, now, r);
-      return { ...r, shielded, renown: shielded ? null : r.start === null ? seasons.league(r.owner, now).renown
+      return { ...r, shielded, renown: shielded ? null : r.start === null ? this.renownSeen(r.owner, now)
         : r.start + (r.booked ?? seasons.booked(r.owner, season)) + carried(r) };
     });
+  }
+
+  /**
+   * AUD-B-01: a target owner's Renown this season, read without opening
+   * their standing (seasons.standing fixes its tier price, §18.8): their
+   * standing if they have one, else where it would start — the last
+   * season's close pulled back, or nothing in a first season.
+   */
+  renownSeen(account, now) {
+    const seasons = this.service.seasons;
+    const season = seasons.current(now).id;
+    let row = this.db.prepare("SELECT * FROM standings WHERE season = ? AND account = ?").get(season, account);
+    if (!row) {
+      const last = this.db.prepare(
+        "SELECT * FROM standings WHERE account = ? AND season < ? ORDER BY season DESC LIMIT 1").get(account, season);
+      row = { season, account, ...(last ? seasons.pulledBack(account, last) : { start: 0, ember: 0 }) };
+    }
+    return seasons.renownIn(account, season, row);
   }
 
   /**
@@ -302,23 +334,43 @@ export class Matchmaking {
    * rows: a banned or deleted owner's taken out, a republished island's
    * card swapped to its current snapshot, an island since taken away
    * dropped (DB-1). An echo is no one's current island, so only its owner is
-   * checked.
+   * checked. The generator's cards are its current islands, swapped to the
+   * day's as any republished island is: yesterday's are no echoes (RB-12).
+   * A swapped card carries its new bundle's chapter (§7.6): one above the
+   * card it replaces, which the list was filtered by, or whose bytes are
+   * gone, is dropped until the next hourly list (AUD-B-06, FX1-A-07).
    */
   current(targets) {
     const out = [];
     for (const c of targets) {
       const owner = this.db.prepare("SELECT banned_at, deleted_at FROM accounts WHERE id = ?").get(c.owner);
       if (!owner || owner.banned_at !== null || owner.deleted_at !== null) continue;
-      if (c.echo || c.origin === "generated" && c.owner === GENERATOR) { out.push(c); continue; }
+      if (c.echo && c.owner !== GENERATOR) { out.push(c); continue; }
       const island = this.db.prepare("SELECT bundle FROM islands WHERE owner = ? AND realm = ?").get(c.owner, c.realm);
       if (!island) continue;
       if (island.bundle === c.bundle) { out.push(c); continue; }
       const snap = this.db.prepare("SELECT realm_level, vault_level, exposed FROM snapshots WHERE bundle = ?")
         .get(island.bundle);
       if (!snap) continue;
-      out.push({ ...c, bundle: island.bundle, realmLevel: snap.realm_level, vaultLevel: snap.vault_level, exposed: snap.exposed });
+      const chapter = this.bundleChapter(island.bundle);
+      if (chapter === null || chapter > (c.chapter ?? 1)) continue;
+      out.push({ ...c, bundle: island.bundle, realmLevel: snap.realm_level, vaultLevel: snap.vault_level,
+                 exposed: snap.exposed, chapter });
     }
     return out;
+  }
+
+  /** A bundle's chapter (§7.6). A bundle never changes (§24.8), so it is
+   *  worked out once. FX1-A-01: a bundle whose bytes an under-13 deletion
+   *  erased has none (null), and nothing is kept of it, as the same bytes
+   *  may come again. */
+  bundleChapter(bundle) {
+    if (!this.chapters.has(bundle)) {
+      const bytes = this.service.store.get(bundle);
+      if (!bytes) return null;
+      this.chapters.set(bundle, chapterOf(lawsOf(bytes)));
+    }
+    return this.chapters.get(bundle);
   }
 
   fresh(now, rows = this.live(now)) {
@@ -332,11 +384,7 @@ export class Matchmaking {
           AND s.owner != ?
           AND NOT EXISTS (SELECT 1 FROM islands i WHERE i.bundle = s.bundle)
         ORDER BY +s.bundle`).all(now - facts.ECHO_DAYS * DAY_MS, GENERATOR);
-    // A bundle never changes (§24.8), so its chapter is worked out once.
-    const chapter = (bundle) => {
-      if (!this.chapters.has(bundle)) this.chapters.set(bundle, chapterOf(lawsOf(this.service.store.get(bundle))));
-      return this.chapters.get(bundle);
-    };
+    const chapter = (bundle) => this.bundleChapter(bundle);
     const view = (r, echo) => {
       // §13.3: a player's curated layout is judged as generated too.
       const origin = r.origin ?? (r.owner === GENERATOR ? "generated" : "authored");
@@ -344,7 +392,7 @@ export class Matchmaking {
         : r.rating === null ? null : { rating: r.rating, deviation: r.deviation }) ?? prior(r.realm_level, origin);
       return {
         bundle: r.bundle, owner: r.owner, realm: r.realm, realmLevel: r.realm_level,
-        keeperLevel: r.keeper_level, renown: echo ? this.service.seasons.league(r.owner, now).renown : r.renown,
+        keeperLevel: r.keeper_level, renown: echo ? this.renownSeen(r.owner, now) : r.renown,
         rating: rating.rating, deviation: rating.deviation, echo, chapter: chapter(r.bundle),
         origin,
       };
@@ -352,7 +400,7 @@ export class Matchmaking {
     return [
       ...live.filter((r) => !r.shielded).map((r) => view(r, false)),
       // The protection covers a new player's echoes too (G30).
-      ...echoes.filter((r) => !this.shielded(r.owner, now)).map((r) => view(r, true)),
+      ...echoes.filter((r) => !this.shielded(r.owner, now) && chapter(r.bundle) !== null).map((r) => view(r, true)),
     ];
   }
 
@@ -382,7 +430,9 @@ export class Matchmaking {
  * fewer than three candidates sit in the band, counts echoes, then the
  * game's generated islands (generator.mjs), and only then widens the
  * filters in order: rating, then Keeper level, then Renown. The list says
- * when it reached for echoes, for generated islands, and what it widened.
+ * when it holds an echo, when it reached for generated islands, and what
+ * it widened: `echoes` is true only when an echo is among the targets
+ * (FX1-A-09, request FX1-R9).
  */
 export function offer(raider, candidates, { size = 3 } = {}) {
   const own = new Set(raider.bundles ?? []);
@@ -406,20 +456,23 @@ export function offer(raider, candidates, { size = 3 } = {}) {
   const pass = (pool) => pool.filter((c) => Object.entries(filters)
     .every(([name, f]) => widened.includes(name) || f(c)));
   const enough = (pool) => pool.filter(inBand).length >= facts.THIN_BAND;
-  const authored = others.filter((c) => c.origin !== "generated");
+  // The game's own islands are the generator's (as current() reads them); a
+  // player's kept curated layout is "generated" too, and is a player's live
+  // island (RB-06).
+  const authored = others.filter((c) => !(c.origin === "generated" && c.owner === GENERATOR));
   const liveOnly = authored.filter((c) => !c.echo);
   let pool = pass(liveOnly);
-  let echoes = false;
+  let withEchoes = false;
   let generated = false;
   if (!enough(pool)) {
     pool = pass(authored);
-    echoes = true;
+    withEchoes = true;
   }
   if (!enough(pool) && others.length > authored.length) {
     pool = pass(others);
     generated = true;
   }
-  const reach = () => (generated ? others : echoes ? authored : liveOnly);
+  const reach = () => (generated ? others : withEchoes ? authored : liveOnly);
   for (const name of ["rating", "keeper", "renown"]) {
     if (enough(pool) || pool.length >= reach().length) break;
     widened.push(name);
@@ -439,7 +492,8 @@ export function offer(raider, candidates, { size = 3 } = {}) {
   if (middle) {
     const i = sorted.indexOf(middle);
     const half = Math.floor(size / 2);
-    const easier = sorted.slice(0, i).slice(-half);
+    // Never slice(-0), which is the whole run before the middle (RB-17).
+    const easier = sorted.slice(Math.max(0, i - half), i);
     const harder = sorted.slice(i + 1).slice(0, size - 1 - easier.length);
     const more = sorted.slice(0, i - easier.length).reverse();
     list = [...easier, middle, ...harder];
@@ -450,5 +504,6 @@ export function offer(raider, candidates, { size = 3 } = {}) {
   // `middle` is the easiest or hardest there is, a neighbour takes the
   // middle (§12.22 step 4: never "silently unfair").
   const median = targets[Math.floor(targets.length / 2)];
-  return { targets, guaranteed: Boolean(median) && inBand(median), echoes, generated, widened };
+  return { targets, guaranteed: Boolean(median) && inBand(median), echoes: targets.some((c) => c.echo),
+           generated, widened };
 }

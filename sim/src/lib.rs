@@ -713,6 +713,8 @@ pub struct Raider {
     /// The health it lost each tick of the last five seconds, for the
     /// Hourkeeper's rewind, by tick.
     pub lost: Vec<i32>,
+    /// What it was healed this tick, so `lost` is not netted against it.
+    pub healed: i32,
     /// What hurt it last, for the event log (`events::Hurt`).
     pub hurt_by: Hurt,
     /// The Prism mite's split (§11.11): on the mite, its other half's index
@@ -725,6 +727,12 @@ pub struct Raider {
 }
 
 impl Raider {
+    /// Heals by `amount` up to `full`, counting what it got for `lost`.
+    fn heal(&mut self, amount: i32, full: i32) {
+        let was = self.health;
+        self.health = (self.health + amount).min(full);
+        self.healed += (self.health - was).max(0);
+    }
     /// Its full health under a sheet, by its own size band.
     pub fn full(&self, sheet: &Sheet) -> i32 {
         full_health_of(sheet, self.role, self.size)
@@ -823,6 +831,10 @@ pub struct World {
     /// The realm alarm, 0 to 6. §12.17: "climbs from 0 to 6 — once every
     /// thirty seconds and once per knocked-out guard discovered".
     pub alarm: i32,
+    /// The tick the crew first arrived in this realm: its alarm climbs with
+    /// the time since then, not since the heist began. Zero in the realm
+    /// the crew lands in.
+    pub alarm_from: u32,
     /// Knocked-out guards found by other guards. Always zero until the crew
     /// can knock anyone out; held so the alarm's rule is whole rather than
     /// half-written.
@@ -1040,6 +1052,7 @@ impl World {
                 free_since: 0,
                 effect_until: 0,
                 lost: vec![0; ruleborn::REWIND_TICKS],
+                healed: 0,
                 hurt_by: Hurt::Law,
                 twin: None,
                 split_until: 0,
@@ -1051,6 +1064,7 @@ impl World {
             guards,
             raiders,
             alarm: 0,
+            alarm_from: 0,
             knockouts_discovered: 0,
             entrance,
             reinforced: false,
@@ -1067,6 +1081,7 @@ impl World {
             vault: Vault {
                 tile: vault_tile,
                 health: heist::VAULT_HEALTH_PER_LEVEL * island.vault_level as i32,
+                full: heist::VAULT_HEALTH_PER_LEVEL * island.vault_level as i32,
                 exposed: island.exposed as i32,
                 opened_at: None,
             },
@@ -1235,6 +1250,7 @@ impl World {
     /// One tick, in §24.10's six phases. Returns the checksum after it.
     pub fn step(&mut self) -> u64 {
         self.start_health = self.raiders.iter().map(|r| r.health).collect();
+        self.raiders.iter_mut().for_each(|r| r.healed = 0);
         self.shared_at = self.start_health.clone();
         self.phase_inputs();
         self.phase_laws();
@@ -1247,7 +1263,7 @@ impl World {
         // "all the health it lost".
         let slot = self.tick as usize % ruleborn::REWIND_TICKS;
         for (r, &was) in self.raiders.iter_mut().zip(self.start_health.iter()) {
-            r.lost[slot] = (was - r.health).max(0);
+            r.lost[slot] = (was + r.healed - r.health).max(0);
         }
         // "every crew member's position once a second" (§24.10), while it is
         // on the island.
@@ -1763,7 +1779,7 @@ impl World {
                 && at.distance(o.at) <= Fx::from_int(ruleborn::BLOOM_TILES)
             {
                 let full = o.full(&sheet);
-                o.health = (o.health + full * n / d).min(full);
+                o.heal(full * n / d, full);
             }
         }
     }
@@ -1776,7 +1792,7 @@ impl World {
         let r = &mut self.raiders[ai];
         let back: i32 = r.lost.iter().sum();
         let full = r.full(&sheet);
-        r.health = (r.health + back).min(full);
+        r.heal(back, full);
         r.lost.iter_mut().for_each(|l| *l = 0);
     }
 
@@ -2361,9 +2377,18 @@ impl World {
         if zoned(&self.sheet, &self.circles, at).flag(Param::StillIsInvisible) == Some(1) {
             return false;
         }
-        let Some((_, _, from, to)) = self.sees_geometry(gi, at) else { return false };
-        if from != to && self.grid.feature(to) == Some(Feature::TallGrass) {
-            return false;
+        let Some((d, _, from, to)) = self.sees_geometry(gi, at) else { return false };
+        let lit = self.lantern_lit(to);
+        if !lit {
+            match self.grid.feature(to) {
+                Some(Feature::TallGrass) if from != to => return false,
+                Some(f) if f.hides_beyond().is_some_and(|n| d > Fx::from_int(n)) => return false,
+                // A bush "hides one still character completely": the body,
+                // unless a crew member shares its tile.
+                Some(Feature::Bush) if !self.raiders.iter().any(|o| o.active()
+                    && self.grid.tile_at(o.at.x, o.at.y) == Some(to)) => return false,
+                _ => {}
+            }
         }
         !self.below_sight(from, to) && self.line_clear(from, to)
     }
@@ -3228,7 +3253,8 @@ impl World {
         self.bells_due.retain(|&t| t > now);
         self.bells_rung += due * grid::BELL_LEVELS;
         let before = self.alarm;
-        self.alarm = ((now / guard::ALARM_STEP_TICKS) as i32 + self.knockouts_discovered
+        self.alarm = ((now.saturating_sub(self.alarm_from) / guard::ALARM_STEP_TICKS) as i32
+            + self.knockouts_discovered
             + self.bells_rung).min(guard::ALARM_MAX);
         if self.alarm > before {
             let found = self.knockouts_discovered > self.found_logged;
@@ -3707,8 +3733,7 @@ impl World {
                 let sheet = self.sheet;
                 for r in self.raiders.iter_mut().filter(|r| r.active()) {
                     let full = r.full(&sheet);
-                    r.health = (r.health + full * n / (d * ruleborn::RENEW_SECONDS as i32))
-                        .min(full);
+                    r.heal(full * n / (d * ruleborn::RENEW_SECONDS as i32), full);
                 }
             }
         }
@@ -3763,8 +3788,9 @@ impl World {
         }
 
         // §12.6: "Anyone still inside when the clock ends is caught and drops
-        // what it carries."
-        if self.clock_run >= self.clock as u64 * 1000 {
+        // what it carries." It ends when it has run, or on the replay's last
+        // tick, which a clock slowed below its rate never reaches (RB-45).
+        if self.clock_run >= self.clock as u64 * 1000 || now.saturating_add(1) >= self.clock {
             for raider in self.raiders.iter_mut() {
                 if matches!(raider.standing, Standing::Active | Standing::Down) {
                     raider.standing = Standing::Caught;
@@ -3921,7 +3947,8 @@ impl World {
         let within = |p: Point, r: i32| p.distance(centre) <= Fx::from_int(r);
         match w.kind {
             WardKind::TimeSnare => {
-                self.raiders[first].frozen_until = now + heist::SNARE_FREEZE_TICKS;
+                let r = &mut self.raiders[first];
+                r.frozen_until = r.frozen_until.max(now + heist::SNARE_FREEZE_TICKS);
             }
             WardKind::GravityWell => {
                 // Everyone within the radius to the centre, held. Where they
@@ -3940,7 +3967,7 @@ impl World {
                     r.route = route;
                     r.along = 0;
                     r.came_from = w.tile;
-                    r.frozen_until = now + heist::WELL_HOLD_TICKS;
+                    r.frozen_until = r.frozen_until.max(now + heist::WELL_HOLD_TICKS);
                 }
             }
             _ => {
@@ -4066,7 +4093,7 @@ impl World {
             } else {
                 let r = &mut self.raiders[k];
                 let full = r.full(&sheet);
-                r.health = (r.health + full * n / d).min(full);
+                r.heal(full * n / d, full);
             }
         }
     }
@@ -4230,8 +4257,12 @@ impl World {
                 _ => {
                     let Some(wi) = self.wards.iter().position(|w| w.tile == t && w.live()
                         && w.kind == WardKind::CrystalWall) else { break };
+                    // Shattered glass: "glass walls break in one hit,
+                    // leaving shards"; Cracked gardens counts the break.
+                    let shatter = self.combos.resonance(Res::ShatteredGlass);
+                    let cracking = self.combos.resonance(Res::CrackedGardens) as u32;
                     let w = &mut self.wards[wi];
-                    w.health -= full;
+                    w.health -= if shatter { w.health } else { full };
                     if w.health > 0 {
                         broke = true;
                         self.raiders[ri].smashed = true;
@@ -4240,7 +4271,11 @@ impl World {
                     w.health = 0;
                     w.broken = true;
                     w.broken_at = Some(now);
+                    self.cracked += cracking;
                     self.grid.clear(t);
+                    if shatter {
+                        self.shards.push(t);
+                    }
                 }
             }
             broke = true;
@@ -4408,8 +4443,8 @@ impl World {
         let free = |t: grid::TileIndex| {
             self.grid.at(t).passable() && !self.grid.is_bridged(t)
                 && !self.wards.iter().any(|w| w.tile == t)
-                && !self.raiders.iter().any(|r| r.standing != Standing::Out
-                    && r.standing != Standing::Caught && self.grid.tile_at(r.at.x, r.at.y) == Some(t))
+                && !self.raiders.iter().any(|r| matches!(r.standing, Standing::Active | Standing::Down)
+                    && self.grid.tile_at(r.at.x, r.at.y) == Some(t))
                 && !self.guards.iter().any(|g| self.grid.tile_at(g.at.x, g.at.y) == Some(t))
         };
         if !free(at) {
@@ -4567,7 +4602,7 @@ impl World {
             if x < 0 || y < 0 {
                 return None;
             }
-            grid.index(x as u16, y as u16).filter(|&t| grid.at(t).passable())
+            grid.index(x as u16, y as u16).filter(|&t| grid.standable(t))
         }) else {
             return;
         };
@@ -4645,7 +4680,7 @@ impl World {
             for r in self.raiders.iter_mut() {
                 if r.active() && on(&self.grid, &self.springs, r.at) {
                     let full = r.full(&sheet);
-                    r.health = (r.health + full * n / d).min(full);
+                    r.heal(full * n / d, full);
                 }
             }
             for g in self.guards.iter_mut() {
@@ -4783,7 +4818,7 @@ impl World {
             for (r, heal) in self.raiders.iter_mut().zip(crew) {
                 if heal {
                     let full = r.full(&self.sheet);
-                    r.health = (r.health + (full as i64 * n / d) as i32).min(full);
+                    r.heal((full as i64 * n / d) as i32, full);
                 }
             }
             for (g, heal) in self.guards.iter_mut().zip(posts) {
@@ -4801,7 +4836,7 @@ impl World {
                 g.health = (g.health + share(full)).min(full);
             }
             if self.vault.opened_at.is_none() {
-                let full = heist::VAULT_HEALTH_PER_LEVEL;
+                let full = self.vault.full;
                 self.vault.health = (self.vault.health + share(full)).min(full);
             }
             for law in self.laws.iter_mut().filter(|l| l.broken_at.is_none()) {
@@ -5404,7 +5439,10 @@ pub fn record_in(island: &island::Island, seed: u64, ticks: u32, crew: u8, era: 
 /// `record_in`, with §12.5's crew manifest when the heist carries one.
 pub fn record_with(island: &island::Island, seed: u64, ticks: u32, crew: u8,
                    era: Option<era::Era>, manifest: Option<replay::Manifest>,
-                   commands: Vec<Command>) -> Heist {
+                   mut commands: Vec<Command>) -> Heist {
+    // The replay packs the actor in four bits: a command for actor 16 or
+    // above names no crew member, so it is not recorded as one (RB-55).
+    commands.retain(|c| c.actor < 16);
     let mut heist = Heist {
         seed,
         island: island.digest(),
@@ -5937,6 +5975,12 @@ impl Report {
 }
 
 impl World {
+    /// Every crew member, not counting a Prism mite's halves, is in `done`:
+    /// out or caught.
+    pub fn crew_all_in(&self, done: &std::collections::BTreeSet<u8>) -> bool {
+        self.raiders.iter().enumerate().filter(|(_, r)| r.half_of.is_none()).all(|(i, _)| done.contains(&(i as u8)))
+    }
+
     /// `Report` from this world's log, the island it was played on beside it.
     pub fn report(&self, island: &island::Island) -> Report {
         use events::{Cause, Event, Hurt};
@@ -5993,8 +6037,9 @@ impl World {
             }
         }
         // Everyone out or caught before the clock: the last of them; else
-        // the clock itself.
-        let ended = if done.len() >= self.raiders.len() { last } else { self.clock };
+        // the clock itself. The crew only: a Prism mite's half is a raider
+        // but never crew, and one that rejoins logs neither (RB-44).
+        let ended = if self.crew_all_in(&done) { last } else { self.clock };
         r.held = (ended / TICKS_PER_SECOND).min(u16::MAX as u32) as u16;
         let posts = island.guards.len();
         r.slept = (0..posts as u16).filter(|g| !noticed.contains(g)).count() as u8;

@@ -64,6 +64,36 @@ import { GOOGLE_KEYS_URL, GameCenter, GoogleSignIn, appStoreNotification, receip
 import { rotateHoursOf } from "./auth.mjs";
 import { platformProofs } from "./auth_proofs.mjs";
 
+// A setting set but empty, as a deployment template's blank line leaves it,
+// is unset, so every `??` below takes its default: an empty RULEBORN_DELETIONS
+// would otherwise be the in-memory store and lose the journal at every restart
+// (AUD-B-14).
+function settled(env) {
+  for (const [name, value] of Object.entries(env)) {
+    if (name.startsWith("RULEBORN_") && value.trim() === "") delete env[name];
+  }
+  return env;
+}
+settled(process.env);
+
+// The whole-number settings: a value that is not one stops the start, where
+// Number() would have read "abc" as no cap and "0" as no connection at all
+// (AUD-B-16). The replay floor alone may be 0, which turns it off.
+for (const [name, least] of [["RULEBORN_MAX_CONNECTIONS", 1], ["RULEBORN_HEADERS_TIMEOUT_MS", 1],
+  ["RULEBORN_REPLAYS_MIN_FREE_MB", 0]]) {
+  const value = process.env[name];
+  if (value !== undefined && !(/^\d+$/.test(value.trim()) && Number(value) >= least && Number.isSafeInteger(Number(value)))) {
+    throw new Error(`${name} must be a whole number of at least ${least}, or unset (got ${JSON.stringify(value)})`);
+  }
+}
+
+// An unreadable date would leave no current season, and every caller that
+// reads its id throw (AUD-B-18).
+const seasonStart = Date.parse(process.env.RULEBORN_SEASON_START ?? "2026-01-05T00:00:00Z");
+if (!Number.isFinite(seasonStart)) {
+  throw new Error(`RULEBORN_SEASON_START must be a date, such as 2026-01-05T00:00:00Z (got ${JSON.stringify(process.env.RULEBORN_SEASON_START)})`);
+}
+
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, "..", "..");
 const data = process.env.RULEBORN_DATA ?? join(here, "..", ".data");
@@ -89,6 +119,11 @@ const gameCenter = gameCenterRoots.length > 0 && bundleId ? new GameCenter({
   },
 }) : null;
 const storeKit = storeKitRoots.length > 0 && bundleId;
+// Roots without the app's bundle id would switch the proof off unsaid, and
+// every iOS sign-in or purchase fail (AUD-B-15), as a half-set Play pair would.
+if ((gameCenterRoots.length > 0 || storeKitRoots.length > 0) && !bundleId) {
+  throw new Error("RULEBORN_GAMECENTER_ROOTS and RULEBORN_STOREKIT_ROOTS need RULEBORN_BUNDLE_ID, the app they prove");
+}
 
 // Google's: "Sign in with Google" ID tokens for the server's OAuth client
 // ids, checked against the keys Google publishes; Play Billing purchases for
@@ -216,7 +251,7 @@ const service = new Service({
   // §18.1's seasons run back to back from the first. RULEBORN_SEASON_START is
   // that moment, in ISO form; without it a fixed Monday, so a local server's
   // seasons do not move between restarts.
-  seasonStart: Date.parse(process.env.RULEBORN_SEASON_START ?? "2026-01-05T00:00:00Z"),
+  seasonStart,
   // §24.3's replays, private: not in the store anyone may fetch by hash.
   // A floor of free space under the replays (SEC-18): below it a heist is
   // refused with 503 storage_low, and the lease kept, until space returns.

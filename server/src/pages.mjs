@@ -16,9 +16,10 @@ import { collected, load } from "./privacy.mjs";
 import { TERMS, TERMS_VERSION } from "./safety.mjs";
 
 /** The declaration's words for a reader, without its references to the
- *  design (§24.8) and the audit (F43), which mean nothing on the page. */
+ *  design (§24.8, §11.2 to §11.6) and the audit (F43, SEC-18), which mean
+ *  nothing on the page (RB-60). */
 export const plain = (s) => String(s)
-  .replace(/\s*\((?:[§A-Z]?[\d.]+[a-z]?|[A-Z]\d+)(?:,\s*(?:[§A-Z]?[\d.]+|[A-Z]\d+))*(?:;[^)]*)?\)/g, "")
+  .replace(/\s*\((?:[§A-Z]?[\d.]+[a-z]?|[A-Z]+-?\d+)(?:(?:,\s*|\s+(?:to|and)\s+)(?:[§A-Z]?[\d.]+|[A-Z]+-?\d+))*(?:;[^)]*)?\)/g, "")
   .replace(/§[\d.]+(?:'s)?\s*/g, "").replace(/\s+([.,;:])/g, "$1");
 
 /** With a capital, for the first word of a cell. */
@@ -73,7 +74,7 @@ export function termsPage() {
 export function privacyPage(doc = load(), { webDeletion = false } = {}) {
   const types = collected(doc);
   const purposes = (t) => [...new Set([...t.purposes].map((p) => doc.purposes[p].google))].sort().join("; ");
-  const kept = (k) => (k.days !== undefined ? `${k.days} days${k.after ? ` after ${plain(k.after)}` : ""}` : {
+  const kept = (k) => (k.days !== undefined ? `${k.days} ${k.days === 1 ? "day" : "days"}${k.after ? ` after ${plain(k.after)}` : ""}` : {
     account: "as long as your account", record: "for good",
     ever: "for good; it is not about a person", current: "while it is current", ban: "as long as a ban lasts" }[k.for]);
   const deletion = (d) => ({

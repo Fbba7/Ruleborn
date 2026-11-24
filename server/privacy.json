@@ -250,6 +250,10 @@
      ],
      "holds": "the version of the terms of use the player accepted (§20.11)"
     },
+    "links_n": {
+     "type": "gameplay",
+     "holds": "the number the player's newest link was given, so a link's number is never given again (§5.3)"
+    },
     "created_at": {
      "type": "interaction",
      "holds": "when the account was made, for the new player's shield"
@@ -957,6 +961,9 @@
      "type": "gameplay"
     },
     "universe": {
+     "type": "gameplay"
+    },
+    "realm": {
      "type": "gameplay"
     }
    }
@@ -2075,7 +2082,7 @@
    }
   },
   "sessions": {
-   "about": "Each signed-in device's session: what its access token names and its refresh token is signed over (docs/security/auth.md).",
+   "about": "Each signed-in device's session: what its access token names and its refresh token is signed over.",
    "purposes": [
     "security",
     "account"
@@ -2135,7 +2142,7 @@
    }
   },
   "linked_identities": {
-   "about": "A second platform identity an account also signs in with, one of the other platform: one account across iPhone, iPad and Android (docs/security/auth.md).",
+   "about": "A second platform identity an account also signs in with, one of the other platform: one account across iPhone, iPad and Android.",
    "purposes": [
     "account",
     "security"
@@ -2462,19 +2469,19 @@
   "bundles": {
    "about": "the public object store: island bundles and target lists, fetched by hash",
    "type": "gameplay",
-   "keep": "islands for good (snapshots); target lists the current one a band, and the one before for an hour after it is superseded (G38)",
+   "keep": "islands for good; target lists the current one a band, and the one before for an hour after it is superseded (G38)",
    "deletion": "an under-13 player's island bytes are deleted, and the lists made again without them"
   },
   "replays": {
    "about": "the private replay store, fetched only by a heist's two players",
    "type": "gameplay",
-   "keep": "90 days (expireReplays)",
+   "keep": "90 days",
    "deletion": "an under-13 player's replays are deleted at once"
   },
   "deletions": {
-   "about": "the deletion journal, in object storage: an account id, a reason, a time and the player's withdraw choice an object, outside the database so a restore cannot undo a deletion; a start makes again the last 31 days of it (F50)",
+   "about": "the deletion journal, in object storage: an account id, a reason, a time and whether the player withdrew their Workshop islands, each deletion one object, outside the database so a restore cannot undo a deletion; a start makes again the last 31 days of it (F50)",
    "type": "none",
-   "keep": "for good: it is §20.12's log",
+   "keep": "for good: it is the deletion log",
    "deletion": "a deletion is added, never removed"
   },
   "secret": {

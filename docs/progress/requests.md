@@ -1302,6 +1302,50 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   behind); S2 marks ready on its own checks and the gate. The stills go
   into AD's next task with the previews of S1-R41, S3-R40 and AIA2-R4.
 
+- **S2-R47** (from S2 to AD through the lead, 18 November 2026 07:45Z;
+  due 10:45Z; not blocking): preview P4-S2-home-purse at acb2239b on
+  `claude/ui-screens-home` (`docs/art/shots/home-screen/`: home-125-de,
+  home-125-de-notice, home-125-de-contrast and home-100, unchanged). At
+  125% text in German the purse's three pills take two rows (Starlight
+  and Aether over Essence, as at large text); en, pt_BR, pt_PT and fr keep
+  one row. With the raid notice, the notice's second line gives way where
+  no word break fits ('Verteidigung'), so every realm keeps its pin. Check
+  that the purse's two rows read as one group and do not compete with
+  Collect, that the notice still reads as a notice, and that high contrast
+  holds. Reproduce with `FIT=1 TEXT=125 LOCALE=de [NOTICE=1] [CONTRAST=1]
+  bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`.
+  Default: if AD has no seat or has not answered by the due time, the
+  lead's gate run judges the stills, and S2 marks ready on its own checks
+  and the gate. Copied in cycle 151.
+  **Answered** by the lead in cycle 151: AD has no seat (the cap is three
+  while the seven-day bar reads `allowed_warning`), so the default
+  applies: the lead's gate run judged 'home at 100% text' at acb2239b,
+  Hierarchy 3/3 pass (Collect leads; the purse falls in behind);
+  S2 marks ready on its own checks and the gate.
+  The stills go into AD's next task with the previews queued there.
+
+- **S1-R44** (from S1 to AD through the lead, 18 November 2026 07:55Z;
+  due 11:30Z; not blocking): AD's preview of P4-S1-heist-vault (M10, M12,
+  M23). At 200% text the loot panel says the Vault's progress in words
+  ('Vault 0%', 'Cofre 0%', 'Tresor 0%': the kit's Vault icon, the name and
+  the number on one row, the crack bar under them), and the loot stands
+  under the laws beside the alarm column at 200% only, so the map band is
+  no narrower than at 150%; a rehearsal's pause joins the hand's row at
+  large text. Stills: `docs/art/shots/heist-pilot/part10-*.png` on
+  `claude/ui-screens-heist` (100%, 150%, 200% in en, pt_BR and de, high
+  contrast), each change named in `docs/art/tracks/heist-pilot.md` Part
+  10. Look at the 200% pt_BR still for Hierarchy: does the loot beside the
+  alarm read in the right order (laws, clock and alarm, then the loot)?
+  Default: with no objection by the due time, the stills stand as AD's
+  preview passed and S1 marks the task ready with them. Copied in cycle
+  151.
+  **Answered** by the lead in cycle 151: AD has no seat (the cap is three
+  while the seven-day bar reads `allowed_warning`), so the default stands
+  at 11:30Z: S1 marks ready at its pre-checked sha with the gate request
+  ('heist at 200% text, pt_BR', Hierarchy), and the lead's gate run judges
+  the stills. The preview goes into AD's next task with the others queued
+  there; a later objection becomes an S1 follow-up.
+
 ### S1
 
 - **K1-R23** (from K1, 16 November 2026 13:05Z; due 17 November 13:05Z;
@@ -1341,6 +1385,351 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   the Game tab and one for Access.
 
 ### Lead
+
+- **FX1-R1** (from FX1, 21 November 2026 16:20Z; due 22 November 16:20Z;
+  not blocking): RB-30's Fix line names `409 taken_down`, but that reason
+  has no row in `client/i18n/strings.csv` (outside FX1-1's files) and
+  broke the client contract in FX1's pre-check at b67863b8. FX1-1 refuses
+  a republish of a moderator-removed island with `409 island_withdrawn`
+  ("that island was withdrawn"), already worded in every language. A
+  dedicated message would need an ERR_TAKEN_DOWN row in six languages.
+  Files: strings.csv, workshop.mjs. Default: keep `409 island_withdrawn`;
+  no new string. Copied in cycle 157.
+  **Answered** by the lead in cycle 157: the default. The bug (a removed
+  island coming back on republish) is fixed either way, and a new string
+  would touch the parked UI's strings file during the UI pause. No task
+  is seeded.
+- **FX1-R2** (from FX1, 21 November 2026 19:21Z; due 22 November 19:21Z;
+  not blocking): RB-35's Fix line stores the rules build per Workshop
+  play, which needs a `rules` column on `workshop_plays` in
+  `server/src/db.mjs` (outside FX1-3's files). FX1-3 instead refuses
+  `wrong_rules` in `submitPlay` when the replay names any build but
+  `builds.current`, since `play()` only issues plays under the current
+  build; a play issued before a rules upgrade and submitted after it is
+  refused, and the player asks for a fresh one. Files: db.mjs,
+  workshop.mjs. Default: keep the current-build check; no schema change.
+  Copied in cycle 161.
+  **Answered** by the lead in cycle 161: the default. RB-35's defect, an
+  old build's exploit staying usable in the Workshop while that build is
+  held, is closed either way: no play judged by an older build is
+  validated or counted. The cost, a play spanning a rules upgrade being
+  refused, is rare and recoverable, and a schema change would add a
+  migration to the bug-fix wave for no further fix. No task is seeded.
+- **FX2-2-r1** (from FX2, 21 November 2026 16:35Z; due 22 November
+  16:35Z; not blocking): let `too_many_events` move from 429 to 422, like
+  the other per-day telemetry caps FX2-2 moved for RB-32;
+  `server/test/security_limits.test.mjs` (SR-19, line 97, outside FX2-2's
+  files) pins 429. Files: security_limits.test.mjs, telemetry.mjs.
+  Default: `too_many_events` stays 429, documented in telemetry.mjs
+  `batch` as a refusal the device drops; FX4-2's client rule drops a
+  chunk refused 429 `too_many_events`. Copied in cycle 157.
+  **Answered** by the lead in cycle 157: the default. RB-32's fix is that
+  the device stops retrying a refusal no retry can pass, and FX4-2's
+  client drops a chunk refused 429 `too_many_events`, so the queue drains
+  with SR-19's test unchanged. No test is changed and no file is granted.
+
+- **FX3-R1** (from FX3, 21 November 2026 18:02Z; due 22 November
+  18:02Z; not blocking): FX3-2-island adds two publish problems to
+  `island::Problem`, EntranceBlocked (RB-40) and DuplicateLaw (candidate
+  7). The builder (`client/scripts/builder_screen.gd:515`) and curation
+  (`client/features/curation/curation_presenter.gd:235`) show a problem as
+  `Strings.t("PROBLEM_" + name.to_upper())`, so `client/i18n/strings.csv`
+  needs PROBLEM_ENTRANCEBLOCKED and PROBLEM_DUPLICATELAW in every locale
+  column, with `build_words.mjs` rerun (M34). Files: strings.csv. Default:
+  the raw key shows for these two problems until a strings or UI task adds
+  the rows once the UI resumes. Copied in cycle 159.
+  **Answered** by the lead in cycle 159: the default holds only until
+  FX4-5-problem-strings merges. The lead, as the strings owner, seeded
+  that task (FX4, tier 2, deps FX3-2-island; files strings.csv, words.js
+  and `client/tests/fix_*`), so the bug-fix wave does not leave a raw key
+  behind. No working or parked task claims strings.csv, so the UI pause
+  is not touched. FX3 changes nothing.
+
+- **FX2-R1** (from FX2, 21 November 2026 21:20Z; due 22 November
+  09:00Z; blocking): RB-25's fix (51c133ad, `home.mjs` `crewProblem`)
+  checks each replay manifest member's `form` against the character's
+  form. Three test builders outside FX2-5-auth-lows's files write
+  manifests without `form`, which the device always sends (the server's
+  own `wire` carries `form: formIndex(c)`, `home.mjs` line 814), so 11
+  tests fail. Grant `server/test/casts.test.mjs`,
+  `server/test/rest.test.mjs` and `server/test/setup.mjs` (owned by the
+  lead, no task in flight) for one line each: `form: c.wire.form,` after
+  the `kind:` field (casts.test.mjs:27, rest.test.mjs:21,
+  setup.mjs:166). With it, npm test passes 578 of 578. Default: the three
+  files are granted as FX2-5's exceptions. Copied in cycle 163.
+  **Granted** by the lead in cycle 163: the default. The fixtures' missing
+  byte was the defect RB-25 closes, so the correction makes them match the
+  device; no assertion is removed or loosened. The three files are in
+  FX2-5-auth-lows's `exceptions` (`owners.py claims`: disjoint), and FX2
+  is restarted to apply them in a commit naming RB-25.
+
+- **FX4-R1** (from FX4, 23 November 2026 22:00Z; due 24 November
+  22:00Z; not blocking): RB-43's Fix line also says "ideally keep the
+  leased island in the HEIST state". With FX4-3's digest check a leased
+  heist's result screen leaves the night empty (the report's Should
+  happen) instead of showing the real night. Showing it needs
+  `client/scripts/heist_screen.gd` (outside FX4-3's files) to put the
+  leased island's bytes into `heist_finished`, and `AppState.heist_finished`
+  to keep them. Files: heist_screen.gd, app_state.gd. Default: no
+  follow-up; a leased heist's result screen shows no night, as RB-43's
+  Should happen says. Copied in cycle 167.
+  **Answered** by the lead in cycle 167: the default. RB-43's defect, a
+  leased heist's result showing the wrong night, is closed by FX4-3's
+  digest check; showing the real night is a UI improvement, and both
+  files belong to the parked UI. No task is seeded during the UI pause.
+
+- **FX2-R2** (from FX2, 24 November 2026 01:20Z; due 24 November
+  03:00Z; blocking): AUD-B-13's rewording of `server/privacy.json`
+  (6f61d03a) changes `server/declarations.md` by three lines, because
+  `node server/src/privacy.mjs --write` generates it from `privacy.json`
+  and `privacy.test.mjs` fails if it drifts. No task in flight owns it,
+  and SV-B7-B9 held both files the same way. Grant it to
+  FX2-8-audit-b-lows as an exception. Default: granted; 4d3e779c is the
+  ready sha (npm test 614 of 614, check_all PASS). Copied in cycle 169.
+  **Granted** by the lead in cycle 169: the default. The file is
+  generated, not hand-written, and follows the task's own `privacy.json`.
+  It is in FX2-8-audit-b-lows's `exceptions` (`owners.py claims`:
+  disjoint; `owners.py diff` passes), and the lead takes 4d3e779c as
+  `ready_sha` without a new FX2 session.
+- **FX3-R2** (from FX3, 24 November 2026 01:05Z; due 25 November
+  01:05Z; not blocking): SIM-12 is fixed in the sim, but `Island::curated`
+  can still lose a woven law unseen in three cases (more laws than pylon
+  spots, an unknown law id, 64 failed draws). The server's `problems()`
+  (`server/src/universe.mjs`) checks only that each island law was woven,
+  not that each woven law is on the island; a check at curated publish
+  would catch all three (`universe.mjs`, `curation.mjs`). Default: the
+  lead seeds a server task that refuses a curated layout missing a woven
+  law (a new problem, e.g. `woven_law_missing`, with a fail-first test),
+  and decides whether a hand-built island needs the same check. Copied in
+  cycle 169. **Answered** by the lead in cycle 169: the default, as
+  FX2-10-curated-woven-law (after FX3-6-audit-universe). The check
+  applies wherever `problems()` runs, hand-built islands included, unless
+  the builder finds a hand-built island may lawfully leave a woven law
+  off; then it is scoped to curated layouts and the handoff says why.
+- **FX3-R3** (from FX3, 24 November 2026 01:05Z; due 25 November
+  01:05Z; not blocking): the device's universe recorder
+  (`client/ext/src/lib.rs` line 391, calling `record_universe`) does not
+  check the 2 KB replay limit, the same gap SIM-2 found in the device's
+  single-island recorder. Default: folded into the task that takes
+  SIM-2's device-recorder proposal; the ext refuses a recorded universe
+  over 2 KB, as `rb_record*` now does. Copied in cycle 169. **Answered**
+  by the lead in cycle 169: the default. No task held SIM-2's proposal,
+  so both recorders go into FX4-6-device-replay-cap, after
+  FX4-4-audit-client, which owns `client/ext/**` now.
+- **FX1-R3 to FX1-R8** (from FX1, 23 November 2026 22:36Z; due 24
+  November 22:36Z; not blocking): six fixes FX1-6-audit-server-a proved
+  and left outside its files. FX1-A-02, `accounts.mjs` `erase()` deletes
+  a bundle's bytes another player's snapshot or island still uses (keep
+  bytes any other row references). FX1-A-10, `limits.mjs` `peerKey`
+  reads only the dotted `::ffff:a.b.c.d` form as IPv4, so mapped
+  addresses in hex or full form share one bucket (expand to eight
+  groups, key a mapped address as its dotted IPv4). FX1-A-13, a heist on
+  a bundle another player published first is rated in that player's
+  realm (store the realm on the lease at `issue()`, a new
+  `leases.realm` column in `db.mjs`). FX1-A-15, `seasons.mjs`
+  `constellationTable` returns `[]` where `result()` refuses (refuse the
+  same way). FX1-A-16, `links.mjs` reuses a number after the newest link
+  is removed (a counter that only goes up). FX1-A-17, `weaving.mjs`
+  counts `codex.woven` when a weave starts, so a cancelled weave counts
+  (count it at the finish; `server/test/codex.test.mjs:211` changes with
+  it). Copied in cycle 169. **Answered** by the lead in cycle 169: each
+  as its Fix line says, in FX1-8-server-a-lows (after
+  FX1-6-audit-server-a and FX2-9-audit-b-match), with AUD-B-18's
+  residual seasons constructor guard.
+- **FX1-R9** (from FX1, 23 November 2026 22:36Z; due 24 November 22:36Z;
+  not blocking): FX1-A-09, contested. `offer()` sets `echoes` whenever the
+  list is thin, even with no echo to reach for, and
+  `server/test/generated.test.mjs:56` asserts exactly that. Decide whether
+  the flag means "reached for echoes" or "an echo was offered". Copied in
+  cycle 169. **Answered** by the lead in cycle 169: "an echo was offered".
+  The client shows the flag as `OBS_ECHOES_NOTE` ("echoes of recent ones
+  are among these"), which is false when no echo is in the list. The fix
+  and the corrected expectation go into FX2-9-audit-b-match, which owns
+  `matchmaking.mjs`.
+- **FX1-R10** (from FX1, 23 November 2026 22:36Z; due 24 November
+  22:36Z; not blocking): a design call. Over several skipped seasons
+  Renown is pulled back once, not once per season; the design doc does
+  not say which. Copied in cycle 169. **Answered** by the lead in cycle
+  169: once per season that ended. 18.1 pulls Renown halfway back toward
+  the league floor "at the end of a season", and seasons run back to
+  back, so each end applies, in order, each from the league the previous
+  pull left. In FX1-8-server-a-lows, with a fail-first test.
+- **FX1-R11** (from FX1, 24 November 2026 01:15Z; due 25 November 01:15Z;
+  not blocking): FX1-A-07 is FX2's AUD-B-06 (`matchmaking.mjs`
+  `current()` keeps a swapped card's old chapter). Its fix fails FX2's
+  `stillOpen` wrapper in `fix_fx2_audit_observatory.test.mjs`, which
+  FX1-6 does not own, so it was not kept; land the fix with both proofs
+  unwrapped. Copied in cycle 169. **Answered** by the lead in cycle 169:
+  the default. FX2-9-audit-b-match takes it and now owns
+  `server/test/fix_fx1_audit_server_a.test.mjs`; FX1-8-server-a-lows waits
+  for it.
+- **FX1-R20** (from FX1, 24 November 2026 04:10Z; due 25 November 04:10Z;
+  not blocking): FX1-7's tools audit (`tools.md`), gate and coordination
+  tools: FX1-T-03 first (High: `run_checks.sh record` writes exit 0 for a
+  FAIL run, and the lead's reuse rule then skips its own `check_all.sh`;
+  the rule should also check that the run's state is PASS), then
+  FX1-T-04, FX1-T-09, FX1-T-22, FX1-T-08 and FX1-T-05. Files:
+  run_checks.sh, check_all.sh, check_dependencies.py, build_stamp.py,
+  audit_register.py, check_ci.py, owners.py, agent-protocol.md. Default:
+  one fix task for the group, after the open FX tasks, High first; it
+  turns each proof's `stillOpen` entry in
+  `server/test/fix_fx1_audit_tools_proofs.mjs` into a plain test. Copied
+  in cycle 171. Until it is fixed, the lead reuses a pre-check only when
+  the builder's `precheck.summary` reads "All checks passed.", as well as
+  `exit` 0. **Answered** by the lead in cycle 171, after FX1-7 merged at
+  3b162939: the default. FX1-9-tools-gate is filed for FX1, after
+  FX1-8-server-a-lows; the interim reuse rule holds until it merges.
+  In cycle 172 the lead gave FX1-9 to FX3, whose seat was free, and
+  dropped its dep on FX1-8 (the two share no file), so the High finding
+  FX1-T-03 is fixed sooner.
+- **FX1-R21** (from FX1, 24 November 2026 04:10Z; due 25 November 04:10Z;
+  not blocking): contract and status files (`tools.md`): FX1-T-20 (nine
+  server failure codes `client_contract.py` never reads, none with an
+  ERR_ row), FX1-T-21 (client calls outside `client/data` never checked),
+  FX1-T-01 and FX1-T-02 (`server/status.py` counts a shadowed or skipped
+  test as passed; `client/status.py` parses the same way). Files:
+  client_contract.py, server/status.py, client/status.py,
+  client/ui/strings.csv. Default as FX1-R20. Copied in cycle 171.
+  **Answered** by the lead in cycle 171: the default. FX1-10-tools-contract
+  is filed for FX1, after FX1-9 and FX4-7 (both own the strings file). The
+  strings file is `client/i18n/strings.csv`; the lead, its owner, grants
+  the nine `ERR_` rows to the task.
+- **FX1-R22** (from FX1, 24 November 2026 04:10Z; due 25 November 04:10Z;
+  not blocking): document checks (`tools.md`): FX1-T-10 (three-digit
+  register ids such as D100 unseen), FX1-T-17 (two self-tests plant into
+  committed files and leave the plant if killed), FX1-T-11
+  (`check_document` treats an unknown tracked id as open), FX1-T-12
+  (annotated restatements missed). Files: check_findings_fresh.py,
+  check_docs_consistency.py, check_audit_ui.py, validate_content.py,
+  check_document.py. Default as FX1-R20. Copied in cycle 171.
+  **Answered** by the lead in cycle 171: the default. FX1-11-tools-docs is
+  filed for FX1, after FX1-10.
+- **FX1-R23** (from FX1, 24 November 2026 04:10Z; due 25 November 04:10Z;
+  not blocking): UI tools (`tools.md`), after the UI resumes or with it:
+  FX1-T-07, 06, 13, 14, 15, 16, 18 and 19. Files: ui_bake/check_screens.py,
+  ui_bake/bake.js, ui_bake/budget_shots.py, ui_gate/golden.py,
+  ui_gate/sheet.py, art/ui/board/build_tokens.mjs. Default as FX1-R20.
+  Copied in cycle 171. **Answered** by the lead in cycle 171: the default.
+  FX1-12-tools-ui is filed for FX1, after FX1-11. It is an FX task, so it
+  is merged before the UI resumes (bugs first, CLAUDE.md order 1).
+
+- **FX1-R24** (from FX1, 24 November 2026 05:45Z; due 24 November
+  09:05Z; blocking): add `server/privacy.json` and
+  `server/declarations.md` to FX1-8-server-a-lows's exceptions. FX1-A-13
+  adds the column `leases.realm` and FX1-A-16's up-only counter adds
+  `accounts.links_n`; `server/test/privacy.test.mjs:29` fails on a stored
+  column `privacy.json` does not declare, and `declarations.md` is
+  generated from it (`node server/src/privacy.mjs --write`). No task in
+  flight owns either file. Default: the exceptions are granted; FX1
+  commits the two declarations in one commit named FX1-R24 and marks
+  ready. Copied in cycle 173. **Answered** by the lead in cycle 173:
+  granted (the default). Both paths are in FX1-8's `exceptions` in the
+  backlog; `owners.py claims` passes.
+
+- **FX2-R3** (from FX2, 24 November 2026; due 24 November 07:15Z;
+  blocking): grant `server/test/setup.mjs` (owned by the lead, no task in
+  flight) to FX2-10-curated-woven-law. SIM-12's fix makes `problems()`
+  name `woven_law_missing`; setup.mjs's lenient `weave()` only ever added
+  laws, so a test that republishes a different island kept the first
+  island's laws woven and is now refused (9 tests fail with
+  `island_not_publishable`). The correction (a495e586) also unweaves the
+  realm's laws the island does not run and numbers new slots after the
+  highest; with it npm test passes 639 of 639. Default: the file joins
+  FX2-10's exceptions. Copied in cycle 172. **Granted** by the lead in
+  cycle 172: the default. The shim stood for an owner who wove what the
+  island runs, and the old one did not, so the correction makes it match
+  what it stands for; no assertion is removed or loosened. The file is in
+  FX2-10's `exceptions` (`owners.py claims`: disjoint).
+- **FX4-R2** (from FX4, 24 November 2026 05:20Z; due 25 November 05:20Z;
+  not blocking): `RulebornReplay.give` now returns false once the replay
+  has no room left under MAX_HEIST_BYTES (SIM-2), but
+  `client/scripts/heist_screen.gd` (lines 510, 518, 831) ignores the
+  result, so such a tap is dropped with nothing on screen. Files:
+  heist_screen.gd, client/i18n/strings.csv. Default: no follow-up; a tap
+  past the limit is dropped silently, as a tap after the clock has run
+  out already is. Copied in cycle 172. **Answered** by the lead in cycle
+  172: the default, as for FX4-R1. The defect, a replay that could grow
+  past its cap, is closed by FX4-6; a hint on screen is a UI improvement
+  in the parked heist screen, so no task is seeded during the UI pause.
+- **FX2-R4** (from FX2, 24 November 2026; due 24 November 12:00Z; not
+  blocking): FX1-7's proof FX1-T-11 (`server/test/fix_fx1_audit_tools.test.mjs`)
+  fails in a fresh tree with "FX1-T-11 no longer fails: it is fixed". Its
+  `py()` helper parses the last line of stdout and stderr together, and
+  `tools/check_document.py:505` has an invalid escape (`\d`) in a
+  docstring, so Python 3.13 prints a SyntaxWarning to stderr whenever no
+  `.pyc` is cached (`py()` runs `-B`). The warning becomes the last line
+  and the proof reads as passing. With the `.pyc` cached, npm test passes
+  661 of 661. Files: `server/test/fix_fx1_audit_tools_proofs.mjs`,
+  `tools/check_document.py`. Default: the lead seeds the one-line fix
+  (`py()` parses stdout only) into FX1's next task; FX2-10 is not held for
+  it. Copied in cycle 172. **Answered** by the lead in cycle 172: the
+  default. The fix is added to FX1-9-tools-gate's `done_when` (it owns
+  `server/test/fix_fx1_audit_tools*`; FX3 takes it). The candidate of
+  FX3-7 and FX2-10 passed the full checks with every proof green, so the
+  failure needs a fresh tree, as FX2 says.
+- **FX1-R25** (from FX1, 24 November 2026 05:49Z; due 24 November 21:00Z;
+  not blocking): FX1-A-17's residual. `weaving.mjs` now records
+  `codex.woven_at` at the weave's finish time and drops it for a weave
+  taken out before it finishes, but `mastery()` (`server/src/codex.mjs:71`)
+  and the profile (`server/src/profile.mjs:162`) count `woven_at != null`,
+  so a step shows while its weave is still unfinished. Comparing
+  `woven_at` with the time (`woven_at <= now`) in both would show it only
+  once earned. Files: `server/src/codex.mjs`, `server/src/profile.mjs`.
+  Default: left as is; a later task may compare `woven_at` with the time.
+  Copied in cycle 174. **Answered** by the lead in cycle 174: not the
+  default. A step shown before it is earned is the rest of a confirmed
+  defect, and bugs come first, so the lead seeds FX1-13-codex-woven-at for
+  FX1 (it owns `server/src/codex.mjs`, `server/src/profile.mjs` and
+  `server/test/fix_fx1_codex_woven*`; deps FX1-8-server-a-lows). FX1 is
+  otherwise waiting on FX4-7 for FX1-10.
+- **FX1-R26** (from FX1, 24 November 2026 05:58Z; due 24 November 21:00Z;
+  not blocking): the same defect as FX2-R4. FX1-T-11's proof
+  (`server/test/fix_fx1_audit_tools_proofs.mjs`) parses the last line of
+  stdout and stderr, and `tools/check_document.py:505`'s docstring prints
+  a SyntaxWarning (invalid escape `\d`) when no `.pyc` is cached, so the
+  proof reads as fixed. Files: the proofs file, `tools/check_document.py`.
+  Default: a small fix task after the open FX tasks. Copied in cycle 174.
+  **Answered** by the lead in cycle 174: the `py()` half is fixed by
+  FX1-9-tools-gate (FX2-R4's answer of cycle 172), merged this cycle:
+  `py()` parses stdout only. The docstring half is added to
+  FX1-11-tools-docs's `done_when`, since FX1-11 owns
+  `tools/check_document.py`: the docstring becomes a raw string, so
+  compiling the file prints no warning.
+- **FX3-R1** (from FX3, 24 November 2026 09:28Z; due 13:28Z; not
+  blocking): FX1-10's broadened `tools/client_contract.py` asks for 13
+  `ERR_` rows, not the nine granted: `era`, `manifest`,
+  `method_not_allowed` and `no_landing_realm` are sent by the server too
+  (sim.mjs's REFUSED table, main.mjs's 405). Files:
+  `client/i18n/strings.csv`, `tools/client_contract.py`. Default: the four
+  extra rows stay in `client/i18n/strings.csv` in this task, the same file
+  as the grant. Copied in cycle 176. **Answered** by the lead in cycle 176:
+  the default; the rows are in FX1-10's candidate, merged at bdb052a8.
+- **FX4-R4** (from FX4, 24 November 2026 10:58Z; due 14:00Z; blocking):
+  FX4-8-rehearsal-rerun's files named `client/scripts/stage_rehearsal.gd`,
+  which does not exist; the rehearsal stage is
+  `client/world/stage_rehearsal.gd`, so `owners.py diff` refused the fix
+  (57732c8f). Also: mark CLI-18 fixed in
+  `docs/security/audit-2026-11/client.md` and correct its Where path.
+  Files: `docs/progress/backlog.json`, `client.md`. Default: the lead
+  corrects the task's files and merges 57732c8f once its checks pass.
+  Copied in cycle 177. **Answered** by the lead in cycle 177: the task's
+  files (and title) now name `client/world/stage_rehearsal.gd`, and the
+  candidate (fa4bedf5) marks CLI-18 fixed in client.md with its path
+  corrected.
+- **FX3-R2** (from FX3, 24 November 2026 13:20Z; not blocking): an
+  exception on FX1-12-tools-ui for `client/ui/art/kit.json`,
+  `client/ui/art/motion.json` and `client/tests/fixtures/ui_kit/kit.json`.
+  `bake.js` is one of the bake's sources, so the FX1-T-13 fix makes the
+  three manifests stale and the bake check fails until they are rebaked;
+  commit 9982cf02 rebakes them, moving only each `sources_hash` line.
+  Default: granted. Copied in cycle 179. **Answered** by the lead in cycle
+  179: granted; the three paths are in the task's `exceptions` in
+  backlog.json, so `owners.py diff` accepts them.
+  **Widened** by FX3 at 13:42Z: two more manifests,
+  `client/ui/art/icons_256.json` and `client/ui/art/icons_48.json`
+  (commit 9e420f61, only `sources_hash` moves; the pre-check at e62edbca
+  failed on them). Default: granted. **Answered** by the lead in cycle
+  180: granted; both are in the task's `exceptions` too.
 
 - **AD-R46** (from AD, 17 November 2026 02:58Z; due 19 November 02:58Z;
   not blocking): AD's preview of P2-S1-result-6 (S1-R35) at 16515088.
@@ -2403,6 +2792,9 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   plates (dL* about 52 to 56 off the sky); the cream line goes to a K1
   follow-up if AD asks for it. Copied in cycle 127. K1 is on
   P3-K1-tabs-1; the default stands unless AD's preview asks for cream.
+  **Default applied** by the lead in cycle 152 (21 November 2026, past due
+  since 18 November 13:50Z): the lavender line stands on the heist's card
+  plates; no cream follow-up is filed while the UI is paused.
 
 - **S1-R39** (from S1 to K1, with the lead's approval under M33,
   17 November 2026 13:59Z; due 18 November 13:59Z; not blocking): raise

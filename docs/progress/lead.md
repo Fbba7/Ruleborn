@@ -1,5 +1,16 @@
 # The lead's handoff
 
+> **Restarted by the owner for bug fixes, 21 November 2026** ("Yes the UI
+> stays paused and do the extra checks", in the overseer's chat, at about
+> 13:50Z). CLAUDE.md order 1 says the program runs, on Opus 5.5 at effort
+> high (order 5), for the bug-fix wave only: the UI stays paused. Start
+> FX1 to FX4 (prompts below, "The agents' prompts") on the FX tasks at the
+> top of `backlog.json`, highs first, within the cap of four; start no UI
+> or BT builder. Where the work stands is in "Now", entry "Bug-fix wave".
+
+> **Stopped by the owner, 18 November 2026** ("You need to stop
+> everything", at about 08:22Z): see CLAUDE.md order 1.
+
 > **Restarted by the owner, 15 November 2026** ("Continue", in the
 > overseer's chat, at about 17:10Z). CLAUDE.md order 1 says the program
 > runs, on Opus 5.5 at effort high (order 5), with the cap of four
@@ -108,8 +119,9 @@ then rewrites the "Now" section below and `status/lead.json`, and pushes.
 6. Start and restart agents (cycle step 6) with `create_session`, never a
    scheduled task: `source_url` https://github.com/Fbba7/Ruleborn,
    `source_revision` `claude/videogame-project-analysis-ewkkk2` (main),
-   `model` Opus 5.5 with effort high (the owner's order 5; the roster
-   in the backlog says the same), title `Ruleborn <agent> <task id>`, tags `ruleborn:ui-wave`
+   `model` Opus 5.5 (the owner's order 5), with effort medium, or high
+   when the task is complex by the owner's order 6 (CLAUDE.md), which
+   says what counts; write the effort in the sessions table, title `Ruleborn <agent> <task id>`, tags `ruleborn:ui-wave`
    and `ruleborn:<agent>`, and as prompt a first line giving the reason
    (start, or restart and why) followed by the agent's prompt below. Start
    an agent when its next task is open with its deps merged and it has no
@@ -144,8 +156,8 @@ every other session is created with `create_session`.
 
 | Scheduled task | ID | Fires into | Schedule (UTC) |
 |---|---|---|---|
-| The launcher: one fresh lead cycle session an hour on Opus 5.5 at effort high, unless the last is still working; if `create_session` is refused, it replies with the exact reason (created 15 Nov at 18:45Z) | `trig_01NksvDVV7iRJi4zrU7Uf7Te` | the launcher, `session_01SNkKxqooGx7cgr8Gdcf6S4` (Opus 5.5, effort high) | hourly at :38 |
-| The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself on Opus 5.5 at effort high and alerts, naming any refusal of `create_session` with its exact reason (created 15 Nov at 18:46Z) | `trig_01RTRucUN1KoyRtkdMc3BAfH` | the watchdog, `session_01SNkKxmfz7eY3hZG1QRvPEn` (Opus 5.5, effort high) | every 2 hours at :08 |
+| The launcher: one fresh lead cycle session an hour on Opus 5.5 at effort medium by order 6 (its stored prompt still says effort high; order 6 wins), unless the last is still working; if `create_session` is refused, it replies with the exact reason (created 15 Nov at 18:45Z) | `trig_01NksvDVV7iRJi4zrU7Uf7Te` | the launcher, `session_01SNkKxqooGx7cgr8Gdcf6S4` (Opus 5.5, effort high) | hourly at :38 |
+| The watchdog (G-67): if `status/lead.json` is stale or the launcher's last run failed, starts one cycle itself on Opus 5.5 at effort medium by order 6 (its stored prompt still says effort high; order 6 wins) and alerts, naming any refusal of `create_session` with its exact reason (created 15 Nov at 18:46Z) | `trig_01RTRucUN1KoyRtkdMc3BAfH` | the watchdog, `session_01SNkKxmfz7eY3hZG1QRvPEn` (Opus 5.5, effort high) | every 2 hours at :08 |
 | The launcher's second firing, so a cycle can start every half hour: the same prompt as the hourly firing, into the same session; it skips while the last cycle is working (created 16 Nov at 23:39Z at the owner's request to speed the program up) | `trig_0155PATecuM4Cm5NGsEsbkX1` | the launcher, `session_01SNkKxqooGx7cgr8Gdcf6S4` (Opus 5.5, effort high) | hourly at :13 |
 
 **The pair in this table is the working pair**, created on 15 November
@@ -202,8 +214,52 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxmm9uYmBksgbVUdjx9` (cycle 150,
-18 November 2026 from about 07:39Z, started by the Opus 5.5 launcher). Cycle
+Latest lead cycle session: `session_01SNkKxo8T6d9ouEzGcdPst6` (cycle 181,
+24 November 2026 from about 14:00Z, started by the Opus 5.5 launcher).
+Cycle 180's was `session_01SNkKxoEVVxDru4qsQF6zoa` (24 November, from
+about 13:40Z).
+Cycle 178's was `session_01SNkKxomdzcgoV8B8sTfZyr` (24 November, from
+about 12:15Z).
+Cycle 177's was `session_01SNkKxn8DSWinMpBGFgKJ18` (24 November, from
+about 11:14Z).
+Cycle 176's was `session_01SNkKxr4FBaDyTw226PfY2p` (24 November, from
+about 10:14Z).
+Cycle 175's was `session_01SNkKxqAuzTc5eTrFD3gtqF` (24 November, from
+about 08:39Z).
+Cycle 174's was `session_01SNkKxnMNhTQKiDu6mShtEP` (24 November, from
+about 07:39Z).
+Cycle 172's was `session_01SNkKxpgsn8Ad15uPi5ptnD` (24 November, from
+about 05:35Z).
+Cycle 171's was `session_01SNkKxqyMFdbVCW6QjLfJjC` (24 November, from
+about 04:14Z).
+Cycle 170's was `session_01SNkKxpQs7VVsV7GiXLmF8A` (24 November, from
+about 03:40Z).
+Cycle 169's was `session_01SNkKxnXrzUVLGqiGNmw1FR` (24 November, from
+about 00:30Z).
+Cycle 168's was `session_01SNkKxn1dZLeKHPjZ3mFguK` (23 November, from
+about 23:13Z).
+Cycle 167's was `session_01SNkKxpBYuqfDPQtPhugfWH` (23 November, from
+about 22:05Z).
+Cycle 166's was `session_01SNkKxr1ZSqi1YJiktk15QA` (23 November, from
+about 21:39Z).
+Cycle 165's was `session_01SNkKxpouhMqDYtpvhRsNr4` (23 November, from
+about 21:20Z, the first cycle after the owner's restart of 23 November).
+Cycle 164's was
+`session_01SNkKxnEwW1ec5DJwnyoz4w` (21 November, from 21:39Z). Cycle
+163's was `session_01SNkKxpcmxyDQn5DN27H68P` (from 21:14Z). Cycle
+162's was `session_01SNkKxpKnFvTro6bdPJL9Ah` (from 20:10Z). Cycle
+161's was `session_01SNkKxq7tRdEEZo5rkVPq4N` (from 19:39Z). Cycle
+160's was `session_01SNkKxniTiRqQzPk2REyWq3` (from 18:39Z). Cycle
+159's was `session_01SNkKxqKMkJiLRMM5bReP25` (from 18:14Z). Cycle
+158's was `session_01SNkKxotqqNutawUf3M2pYb` (from 17:14Z). Cycle
+157's was `session_01SNkKxqS8YH5ACTyg5ANTEz` (from 16:39Z). Cycle
+156's was `session_01SNkKxmoamFWusvtLCG6EYC` (from 16:14Z). Cycle
+155's was `session_01SNkKxo9bZSEQwttAmfNMX2` (from 15:14Z). Cycle
+154's was `session_01SNkKxrGtCCvMiSUGwxCxup` (from 14:38Z). Cycle
+153's was `session_01SNkKxr8vD91wFJCWPCztin` (from 14:15Z). Cycle
+152's was `session_01SNkKxpjqNeDGHxFAxH2tjX` (from 14:06Z). Cycle
+151's was `session_01SNkKxokQpSagJjzwYyeSuc` (18 November, from 08:13Z). Cycle
+150's was `session_01SNkKxmm9uYmBksgbVUdjx9` (from 07:39Z). Cycle
 149's was `session_01SNkKxrEmwKsYJezgFLCenb` (from 07:16Z). Cycle
 148's was `session_01SNkKxnbZyh2sWsw9VhvuzX` (from 06:38Z). Cycle
 147's was `session_01SNkKxpkKtCP2X5qJXco6ET` (from 05:39Z). Cycle
@@ -348,6 +404,50 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| S1 | `session_01SNkKxp6Vp6uPSGzzYn1CNV` (Opus 5.5, effort high) | P4-S1-heist-vault (restart, cycle 181: reopened after the bug-fix wave; effort high by order 6, the task touches the vault; S1's last session, `session_01SNkKxrGVdaVPxzuPW8vwRg`, is idle) | `claude/ui-screens-heist` | 2026-11-24 14:59Z |
+| S2 | `session_01SNkKxpVmnabuJ8D34eVaFy` (Opus 5.5, effort high) | P4-S2-home-purse (restart, cycle 181: reopened after the bug-fix wave; effort high by order 6, the task touches the purse; S2's last session, `session_01SNkKxneZ4WEHJSJUnhLjUj`, is idle) | `claude/ui-screens-home` | 2026-11-24 14:59Z |
+| S3 | `session_01SNkKxmd5VK7q2FWEmAe3Be` (Opus 5.5, effort medium) | P3-S3-settings-4 (restart, cycle 181: reopened after the bug-fix wave; effort medium by order 6, settings layout in the client only; S3's last session, `session_01SNkKxo7BCcvsUE53DWANpH`, is idle) | `claude/ui-screens-meta` | 2026-11-24 14:59Z |
+| FX3 | `session_01SNkKxmwFNqhHYqzetHQz3X` (Opus 5.5, effort high) | FX1-12-tools-ui (start, cycle 178: open since FX1-11-tools-docs merged at 7bbb9788; effort high by order 6, the task spans tools/ and server/ (its tests); FX3's last session, `session_01SNkKxmgmEjoRvu9UzjbupU`, is idle) | `claude/fix-sim` | 2026-11-24 12:50Z |
+| FX3 | `session_01SNkKxmgmEjoRvu9UzjbupU` (Opus 5.5, effort high) | FX1-11-tools-docs (start, cycle 176: open since FX1-10-tools-contract merged at bdb052a8; effort high by order 6, the task spans tools/ and server/; FX3's last session, `session_01SNkKxnryguhFxw93wbzyLx`, is idle) | `claude/fix-sim` | 2026-11-24 11:01Z |
+| FX4 | `session_01SNkKxpfHmWd8HXegEnr3P5` (Opus 5.5, effort medium) | FX4-8-rehearsal-rerun (start, cycle 176: its deps FX4-4 and FX4-7 merged; effort medium by order 6, a medium defect in the client only; FX4's last session, `session_01SNkKxoYfNyaJq9rBGUSuzk`, is idle) | `claude/fix-client` | 2026-11-24 10:17Z |
+| FX3 | `session_01SNkKxnryguhFxw93wbzyLx` (Opus 5.5, effort high) | FX1-10-tools-contract (start, cycle 175: reassigned from FX1 with FX1-11 and FX1-12, its deps FX1-9 and FX4-7 merged; effort high by order 6, the task spans tools/, server/ and client/; FX3's last session, `session_01SNkKxqR9zT6xXyz2XFYKXb`, is idle) | `claude/fix-sim` | 2026-11-24 09:17Z |
+| FX1 | `session_01SNkKxn8R6Rr28GFWpvcWZh` (Opus 5.5, effort high) | FX1-13-codex-woven-at (start, cycle 174: seeded from FX1-R25 after FX1-8-server-a-lows merged at e830e15b; FX1's last session, `session_01SNkKxpLTTBVYS7eUXqeFJr`, is idle) | `claude/fix-server-a` | 2026-11-24 08:29Z |
+| FX4 | `session_01SNkKxoYfNyaJq9rBGUSuzk` (Opus 5.5, effort high) | FX4-7-curation-swap-weave (start, cycle 173: next task after FX4-6-device-replay-cap merged at ee4d64aa; FX4's last session, `session_01SNkKxqMB92sY6KUMaz9NgW`, is idle) | `claude/fix-client` | 2026-11-24 07:21Z |
+| FX1 | `session_01SNkKxpLTTBVYS7eUXqeFJr` (Opus 5.5, effort high) | FX1-8-server-a-lows (restart, cycle 173: FX1-R24 granted; last session session_01SNkKxqoTBnLBZTVS18TPbn is idle, waiting on it) | `claude/fix-server-a` | 2026-11-24 06:48Z |
+| FX1 | `session_01SNkKxqoTBnLBZTVS18TPbn` (Opus 5.5, effort high) | FX1-8-server-a-lows (start, cycle 171: deps FX1-6 and FX2-9 merged; last session session_01SNkKxppNySHfW7azVquQXU is idle) | `claude/fix-server-a` | 2026-11-24 05:30Z |
+| FX3 | `session_01SNkKxqR9zT6xXyz2XFYKXb` (Opus 5.5, effort high) | FX1-9-tools-gate (start, cycle 172: reassigned from FX1, FX3's seat was free; row added by the lead in cycle 173) | `claude/fix-sim` | 2026-11-24 06:28Z |
+| FX2 | `session_01SNkKxrBzWXR1vS1YHrW8zw` (Opus 5.5, effort high) | FX2-10-curated-woven-law (start, cycle 171: next open task, its dep FX3-6 merged; FX2-9-audit-b-match is ready and in the lead's merge; FX2's last session, `session_01SNkKxpD4TA2PFjhTUKW8Eb`, is idle) | `claude/fix-server-b` | 2026-11-24 04:56Z |
+| FX4 | `session_01SNkKxqMB92sY6KUMaz9NgW` (Opus 5.5, effort high) | FX4-6-device-replay-cap (start, cycle 171: next task after FX4-5-problem-strings merged at d3183782; FX4's last session, `session_01SNkKxopnk1iG9R76L2ujyU`, is idle) | `claude/fix-client` | 2026-11-24 04:56Z |
+| FX2 | `session_01SNkKxpD4TA2PFjhTUKW8Eb` (Opus 5.5, effort high) | FX2-9-audit-b-match (start, cycle 169: next task after FX2-8-audit-b-lows merged at cd5f98fb and FX1-6-audit-server-a at ddf4213d; FX2's last session, `session_01SNkKxnVeY5BcuXQfbPsPmN`, is idle) | `claude/fix-server-b` | 2026-11-24 03:38Z |
+| FX1 | `session_01SNkKxppNySHfW7azVquQXU` (Opus 5.5, effort high) | FX1-7-audit-tools (start, cycle 169: next task after FX1-6-audit-server-a merged at ddf4213d; FX1's last session, `session_01SNkKxoYkrDKba5f2X3byBm`, is idle) | `claude/fix-server-a` | 2026-11-24 03:38Z |
+| FX4 | `session_01SNkKxopnk1iG9R76L2ujyU` (Opus 5.5, effort high) | FX4-5-problem-strings (start, cycle 169: next task after FX4-4-audit-client merged at d5c16216; FX4's last session, `session_01SNkKxq3TGnXbTLc3pyMTQd`, is idle) | `claude/fix-client` | 2026-11-24 02:58Z |
+| FX3 | `session_01SNkKxozbMJGfAJWTEzLykF` (Opus 5.5, effort high) | FX3-7-audit-client-2 (start, cycle 169: seeded from client.md's unproven findings after FX4-4-audit-client merged at d5c16216; FX3's last session, `session_01SNkKxpC2gbRiL8zzvf5zZc`, is idle) | `claude/fix-sim` | 2026-11-24 02:58Z |
+| FX2 | `session_01SNkKxnVeY5BcuXQfbPsPmN` (Opus 5.5, effort high) | FX2-8-audit-b-lows (start, cycle 169: next task after FX2-7-audit-b-config merged at bc7f27e8; FX2's last session, `session_01SNkKxoWxCgQ4iNNoRWRghi`, is idle) | `claude/fix-server-b` | 2026-11-24 00:33Z |
+| FX4 | `session_01SNkKxq3TGnXbTLc3pyMTQd` (Opus 5.5, effort high) | FX4-4-audit-client (start, cycle 167: next task after FX4-3-replay-shop-nav merged at 60a905ab; FX4's last session, `session_01SNkKxpABZrz4Mfhrmhdq7n`, is idle) | `claude/fix-client` | 2026-11-23 23:06Z |
+| FX3 | `session_01SNkKxpC2gbRiL8zzvf5zZc` (Opus 5.5, effort high) | FX3-6-audit-universe (start, cycle 167: seeded from sim.md's "Still not read" after FX3-5-audit-sim merged at 490579d6; FX3's last session, `session_01SNkKxr46k63bAaFiJ5F3gi`, is idle) | `claude/fix-sim` | 2026-11-23 23:06Z |
+| FX2 | `session_01SNkKxoWxCgQ4iNNoRWRghi` (Opus 5.5, effort high) | FX2-7-audit-b-config (start, cycle 167: seeded from server-b.md's confirmed findings after FX2-6-audit-server-b merged at ab25eb88; FX2's last session, `session_01SNkKxqkjiqLB1v3Vtjw8hm`, is idle) | `claude/fix-server-b` | 2026-11-23 23:06Z |
+| FX1 | `session_01SNkKxoYkrDKba5f2X3byBm` (Opus 5.5, effort high) | FX1-6-audit-server-a (start, cycle 167: next task after FX1-4-holds-codex merged at e2e8f5a1; FX1's last session, `session_01SNkKxqf8d3D9CxTFED7uAn`, is idle) | `claude/fix-server-a` | 2026-11-23 22:20Z |
+| FX4 | `session_01SNkKxpABZrz4Mfhrmhdq7n` (Opus 5.5, effort high) | FX4-3-replay-shop-nav (start, cycle 165: the owner's restart of 23 November; open since FX4-2-trace-events merged; the fourth seat, cap four with no seven-day warning; FX4's last session, `session_01SNkKxqMQ2aVNKyGDgeZMQy`, is idle, its task merged) | `claude/fix-client` | 2026-11-23 21:23Z |
+| FX3 | `session_01SNkKxr46k63bAaFiJ5F3gi` (Opus 5.5, effort high) | FX3-5-audit-sim (restart, cycle 165: the owner's restart of 23 November; the cycle-164 session, `session_01SNkKxne1a1DLSJJZJn4mc2`, was interrupted at the stop of 21 November after its claim commit 941dd4a5 and is idle) | `claude/fix-sim` | 2026-11-23 21:23Z |
+| FX2 | `session_01SNkKxqkjiqLB1v3Vtjw8hm` (Opus 5.5, effort high) | FX2-6-audit-server-b (start, cycle 165: the owner's restart of 23 November; next task after FX2-5-auth-lows merged at 5f1cc425; FX2's last session, `session_01SNkKxpZ9SYmNgdCeAw8sqx`, is idle) | `claude/fix-server-b` | 2026-11-23 21:23Z |
+| FX1 | `session_01SNkKxqf8d3D9CxTFED7uAn` (Opus 5.5, effort high) | FX1-4-holds-codex (restart, cycle 165: the owner's restart of 23 November; the task is `resync`, its combined candidate with FX2-5 failed RB-36's test on the form byte; merge main, give RB-36's test manifests the form byte, rerun the checks; FX1's last session, `session_01SNkKxoFvZx6Npx6VHRteSw`, is idle) | `claude/fix-server-a` | 2026-11-23 21:23Z |
+| FX3 | `session_01SNkKxne1a1DLSJJZJn4mc2` (Opus 5.5, effort high) | FX3-5-audit-sim (start, cycle 164: next task after FX3-4-lab-replay merged at f5870f77; the audit of the simulation) | `claude/fix-sim` | 2026-11-21 21:43Z |
+| FX2 | `session_01SNkKxpZ9SYmNgdCeAw8sqx` (Opus 5.5, effort high) | FX2-5-auth-lows (restart, cycle 163: FX2-R1 granted, three test files in its exceptions; the session below ended its turn blocked on it) | `claude/fix-server-b` | 2026-11-21 21:16Z |
+| FX1 | `session_01SNkKxoFvZx6Npx6VHRteSw` (Opus 5.5, effort high) | FX1-4-holds-codex (start, cycle 162: next task after FX1-3-workshop merged at e413e4a9; medium tier) | `claude/fix-server-a` | 2026-11-21 20:57Z |
+| FX2 | `session_01SNkKxmg2qQ8HqKBzsGpMCx` (Opus 5.5, effort high; blocked on FX2-R1, replaced in cycle 163) | FX2-5-auth-lows (start, cycle 162: next task after FX2-4-purge-notify merged at e413e4a9; medium tier) | `claude/fix-server-b` | 2026-11-21 20:57Z |
+| FX3 | `session_01SNkKxp6SqCgPtEaiERbSnT` (Opus 5.5, effort high) | FX3-4-lab-replay (start, cycle 162: next task after FX3-3-clock-report merged at e413e4a9; medium tier; cap three while the bar reads `allowed_warning`, FX4 waits) | `claude/fix-sim` | 2026-11-21 20:57Z |
+| FX1 | `session_01SNkKxmoNcX1h8LTVeP5XNK` (Opus 5.5, effort high) | FX1-3-workshop (start, cycle 160: next task after FX1-2-leases merged at c7cdcbbd; medium tier) | `claude/fix-server-a` | 2026-11-21 19:13Z |
+| FX2 | `session_01SNkKxnBNSWuPYLJtFjoP4M` (Opus 5.5, effort high) | FX2-4-purge-notify (start, cycle 160: next task after FX2-3-shop merged at c7cdcbbd; medium tier) | `claude/fix-server-b` | 2026-11-21 19:13Z |
+| FX3 | `session_01SNkKxorHHkqpPHzjNrNryy` (Opus 5.5, effort high) | FX3-3-clock-report (start, cycle 160: next task after FX3-2-island merged at c7cdcbbd; medium tier; cap three while the bar reads `allowed_warning`, FX4 waits with the least work left) | `claude/fix-sim` | 2026-11-21 19:13Z |
+| FX1 | `session_01SNkKxqAwEhhaxa4xEwqmCX` (Opus 5.5, effort high) | FX1-2-leases (start, cycle 158: next task after FX1-1-workshop-pairs merged at 8ed7538f; medium tier) | `claude/fix-server-a` | 2026-11-21 17:47Z |
+| FX2 | `session_01SNkKxrM2E56bY4bUhSx5Q9` (Opus 5.5, effort high) | FX2-3-shop (start, cycle 158: next task after FX2-2-trace-telemetry merged at 8ed7538f; medium tier) | `claude/fix-server-b` | 2026-11-21 17:47Z |
+| FX3 | `session_01SNkKxnzj1jLW96L7CkQ47A` (Opus 5.5, effort high) | FX3-2-island (start, cycle 158: open since FX3-1-heal-alarm merged at 23cf8a90; started in a seat the merge freed, cap three while the bar reads `allowed_warning`; FX4 waits, the least work left) | `claude/fix-sim` | 2026-11-21 17:47Z |
+| FX1 | `session_01SNkKxoJFD1cxymge24jcxS` (Opus 5.5, effort high) | FX1-1-workshop-pairs (start, cycle 155: FX1's first session, high tier, deps none, in the seat FX3-1's merge freed; cap three while the bar reads `allowed_warning`) | `claude/fix-server-a` | 2026-11-21 16:08Z |
+| FX2 | `session_01SNkKxnzeoEZGeu9uZfj2w9` (Opus 5.5, effort high) | FX2-2-trace-telemetry (start, cycle 155: next task after FX2-1-db-store-home merged at 23cf8a90; high tier) | `claude/fix-server-b` | 2026-11-21 16:08Z |
+| FX4 | `session_01SNkKxqMQ2aVNKyGDgeZMQy` (Opus 5.5, effort high) | FX4-2-trace-events (start, cycle 155: next task after FX4-1-transport merged at 23cf8a90; high tier) | `claude/fix-client` | 2026-11-21 16:08Z |
+| FX4 | `session_01SNkKxpaLsMGZP21royWUDx` (Opus 5.5, effort high) | FX4-1-transport (start, cycle 152: the bug-fix wave, M62; FX4's first session, first in the high tier, deps none) | `claude/fix-client` | 2026-11-21 14:09Z |
+| FX2 | `session_01SNkKxnSsbQpjGppmXiBbGG` (Opus 5.5, effort high) | FX2-1-db-store-home (start, cycle 152: the bug-fix wave, M62; FX2's first session, high tier, deps none) | `claude/fix-server-b` | 2026-11-21 14:09Z |
+| FX3 | `session_01SNkKxp7XpKf4e1axKU4F7x` (Opus 5.5, effort high) | FX3-1-heal-alarm (start, cycle 152: the bug-fix wave, M62; FX3's first session, high tier, deps none) | `claude/fix-sim` | 2026-11-21 14:09Z |
 | S2 | `session_01SNkKxneZ4WEHJSJUnhLjUj` (Opus 5.5, effort high) | P4-S2-home-purse (start, cycle 149: seeded under M61 from S2-R44, phase 4's first home task, while phase 3's one exit item is held by S3; S2's last session, `session_01SNkKxpnKSbB1SgaR3ZrjwQ`, is idle, its task merged as 58a9a197) | `claude/ui-screens-home` | 2026-11-18 07:23Z |
 | S1 | `session_01SNkKxrGVdaVPxzuPW8vwRg` (Opus 5.5, effort high) | P4-S1-heist-vault (start, cycle 149: seeded under M61 from the wave board's notes, phase 4's first heist task; S1's last session, `session_01SNkKxqdHWKAJ5VQDWhsTwQ`, is idle, its task merged as 3e8987b0) | `claude/ui-screens-heist` | 2026-11-18 07:23Z |
 | S3 | `session_01SNkKxo7BCcvsUE53DWANpH` (Opus 5.5, effort high) | P3-S3-settings-4 (restart, cycle 149: AD-R68 from AD's preview 3, the tab strip, folded in before the gate run; ready 4a998521 withdrawn; S3's last session, `session_01SNkKxmmGcPDizHBY6ng1zz`, is idle) | `claude/ui-screens-meta` | 2026-11-18 07:23Z |
@@ -601,8 +701,8 @@ You are agent S1 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: S1            Role: maker (S1): the heist screens, the phase 1 pilot        Model: Opus 5.5, effort high
 Branch: claude/ui-screens-heist
 Owned files: only the files each S1 task lists in the backlog, docs/progress/S1.md, docs/progress/status/S1.json
-Tasks: P4-S1-heist-vault (seeded in cycle 149, phase 4's first heist task under M61, from the wave board's notes in docs/art/ui-quality/gate/boards/wave.md on claude/ui-ad): at 200% text the heist's loot panel shows the Vault's progress ('Vault 0%' and its crack) while the Vault is shut, in en, pt_BR and de, and the playfield band between the HUD and the hand is no narrower than at 150% text, laid out in heist_hud.gd and heist_screen.gd; a change to KitHud.loot_fit or any kit file is a request to K1 through the lead, with a default. A test in client/tests/heist_fx_tests.gd mounts the heist at 200% text and finds the Vault's row, failing on main. The heist's FIT=1 runs at 100%, 150% and 200% in en, pt_BR and de and in high contrast print 'fit ok' (M26), listed in the handoff; 'heist at 100% text', 'heist at 200% text, pt_BR' and 'heist in high contrast' still pass. The task's done_when in the backlog lists every point. AD previews your stills before ready (a request to AD through the lead). Never commit under docs/art/ui-quality/gate/verdicts/ (M48): before ready, python3 tools/coord/owners.py diff P4-S1-heist-vault origin/claude/videogame-project-analysis-ewkkk2 <ready_sha> passes. P3-S1-marker-1 merged (3e8987b0); merge main into your branch first. Build from the kit (docs/art/ui-quality/kit-spec.md); a kit change is a request to K1 through the lead.
-STOP_AT: 2026-11-18T21:00:00Z (= 18:00 America/Sao_Paulo)
+Tasks: P4-S1-heist-vault (seeded in cycle 149, phase 4's first heist task under M61, from the wave board's notes in docs/art/ui-quality/gate/boards/wave.md on claude/ui-ad): at 200% text the heist's loot panel shows the Vault's progress ('Vault 0%' and its crack) while the Vault is shut, in en, pt_BR and de, and the playfield band between the HUD and the hand is no narrower than at 150% text, laid out in heist_hud.gd and heist_screen.gd; a change to KitHud.loot_fit or any kit file is a request to K1 through the lead, with a default. A test in client/tests/heist_fx_tests.gd mounts the heist at 200% text and finds the Vault's row, failing on main. The heist's FIT=1 runs at 100%, 150% and 200% in en, pt_BR and de and in high contrast print 'fit ok' (M26), listed in the handoff; 'heist at 100% text', 'heist at 200% text, pt_BR' and 'heist in high contrast' still pass. The task's done_when in the backlog lists every point. AD previews your stills before ready (a request to AD through the lead). Never commit under docs/art/ui-quality/gate/verdicts/ (M48): before ready, python3 tools/coord/owners.py diff P4-S1-heist-vault origin/claude/videogame-project-analysis-ewkkk2 <ready_sha> passes. Resumed after the bug-fix wave (task reopened in lead cycle 181): continue on claude/ui-screens-heist from its head (ed443f93), where the work is done and pre-checked at aaadca6a; merge main into it first, rerun the setup line, build.sh and guard.sh on the merge, then pre-check and mark ready with the gate request. S1-R44 is answered (its default stands). Build from the kit (docs/art/ui-quality/kit-spec.md); a kit change is a request to K1 through the lead.
+STOP_AT: 2026-11-24T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 3
 
 Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-screens-heist from it (create it if it does not exist) and push only to claude/ui-screens-heist with git push -u origin claude/ui-screens-heist, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is S1, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Any commit that changes client/i18n/strings.csv or content.csv also runs node art/ui/keyframes/build_words.mjs and commits words.js with it, and node art/ui/keyframes/check_keyframes.mjs passes before the task is ready (M34). Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
@@ -616,8 +716,8 @@ You are agent S2 of the Ruleborn agent program (UI wave). Read docs/guides/agent
 Agent: S2            Role: maker (S2): the home and entry screens        Model: Opus 5.5, effort high
 Branch: claude/ui-screens-home
 Owned files: only the files each S2 task lists in the backlog, docs/progress/S2.md, docs/progress/status/S2.json
-Tasks: P4-S2-home-purse (seeded in cycle 149, phase 4's first home task under M61, from S2-R44 in docs/progress/requests.md): at 125% text in German (and any locale whose three purse pills do not fit one row) home's purse lays out in two rows in home.gd's _fit_amounts, and universe_home.gd's fit check allows two rows from 125% where the row of three does not fit; with the raid notice at 125% in de the check finds a realm marked, or the reason it cannot is named in docs/art/tracks/home-screen.md Part 8 with a default for the lead. 125% joins M26's cases beside 100%, 150% and 200%, in en, pt_BR and de, with and without the notice, signed in and out, each 'fit ok', listed in the handoff. 'home at 100% text', 'home at 200% text, pt_BR' and 'home in high contrast' still pass. The task's done_when in the backlog lists every point. AD previews your stills before ready (a request to AD through the lead). Never commit under docs/art/ui-quality/gate/verdicts/ (M48): before ready, python3 tools/coord/owners.py diff P4-S2-home-purse origin/claude/videogame-project-analysis-ewkkk2 <ready_sha> passes. P3-S2-back-1 merged (58a9a197); merge main into your branch first. Build from the kit (docs/art/ui-quality/kit-spec.md); a kit change is a request to K1 through the lead.
-STOP_AT: 2026-11-18T21:00:00Z (= 18:00 America/Sao_Paulo)
+Tasks: P4-S2-home-purse (seeded in cycle 149, phase 4's first home task under M61, from S2-R44 in docs/progress/requests.md): at 125% text in German (and any locale whose three purse pills do not fit one row) home's purse lays out in two rows in home.gd's _fit_amounts, and universe_home.gd's fit check allows two rows from 125% where the row of three does not fit; with the raid notice at 125% in de the check finds a realm marked, or the reason it cannot is named in docs/art/tracks/home-screen.md Part 8 with a default for the lead. 125% joins M26's cases beside 100%, 150% and 200%, in en, pt_BR and de, with and without the notice, signed in and out, each 'fit ok', listed in the handoff. 'home at 100% text', 'home at 200% text, pt_BR' and 'home in high contrast' still pass. The task's done_when in the backlog lists every point. AD previews your stills before ready (a request to AD through the lead). Never commit under docs/art/ui-quality/gate/verdicts/ (M48): before ready, python3 tools/coord/owners.py diff P4-S2-home-purse origin/claude/videogame-project-analysis-ewkkk2 <ready_sha> passes. Resumed after the bug-fix wave (task reopened in lead cycle 181): continue on claude/ui-screens-home from its head (27846b7c), where the work is done at acb2239b and the lead's gate passed 'home at 100% text' 3/3 there (S2-R47, cycle 151); merge main into it first, rerun the setup line, build.sh, fit_home.sh and guard.sh on the merge, then pre-check and mark ready. Build from the kit (docs/art/ui-quality/kit-spec.md); a kit change is a request to K1 through the lead.
+STOP_AT: 2026-11-24T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 3
 
 Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-screens-home from it (create it if it does not exist) and push only to claude/ui-screens-home with git push -u origin claude/ui-screens-home, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is S2, whose state is open and whose deps are all merged (or the stacked task your first line names); when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Any commit that changes client/i18n/strings.csv or content.csv also runs node art/ui/keyframes/build_words.mjs and commits words.js with it, and node art/ui/keyframes/check_keyframes.mjs passes before the task is ready (M34). Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
@@ -628,11 +728,11 @@ Your session was created with the repository checked out at main; work in that c
 ```text
 You are agent S3 of the Ruleborn agent program (UI wave). Read docs/guides/agent-brief.md first and follow it exactly; then docs/guides/agent-protocol.md where the brief links to it.
 
-Agent: S3            Role: maker (S3): the character and settings screens        Model: Opus 5.5, effort high
+Agent: S3            Role: maker (S3): the character and settings screens        Model: Opus 5.5, effort medium
 Branch: claude/ui-screens-meta
 Owned files: only the files each S3 task lists in the backlog, docs/progress/S3.md, docs/progress/status/S3.json
-Tasks: P3-S3-settings-4 (seeded in cycle 147, phase 3's exit item, from AD-R67; back to claimed in cycle 149 for AD-R68, both in docs/progress/requests.md): your last session marked it ready at 4a998521 with the ghost switch rows, and AD's preview 3 (docs/art/ui-quality/gate/boards/preview-3.md on claude/ui-ad) lets the ghost rows and both departures stand, but finds the cream tab strip (seg_track_light) still outweighs the title and the gold A / A at 100% text. Fold AD-R68 in before the gate run: in _tabs() of client/scripts/settings_screen.gd the track goes on the kit's ghost, the unchosen tabs clear with cream words and the chosen tab in the kit's dark leather with its gold rim (or, if no kit strip passes value-steps at a mid value, the title in the display face with its outline, outweighing the strip); high contrast, the gold A / A and Back unchanged; each tab passes value-steps on its own ground; the Access, Game and Account tabs re-shot at 100% in en, pt_BR and de; the 200% and high-contrast forms still pass value-steps and fit. 'settings at 100% text' (Hierarchy) must pass 3 of 3. The task's done_when in the backlog lists every point. Send the re-shot stills to AD through the lead before ready (a check, not a new round). Never commit under docs/art/ui-quality/gate/verdicts/ (M48): before ready, python3 tools/coord/owners.py diff P3-S3-settings-4 origin/claude/videogame-project-analysis-ewkkk2 <ready_sha> passes. Continue on claude/ui-screens-meta from its head (f68ce498) and merge main into it first. Build from the kit (docs/art/ui-quality/kit-spec.md); a kit change is a request to K1 through the lead.
-STOP_AT: 2026-11-18T21:00:00Z (= 18:00 America/Sao_Paulo)
+Tasks: P3-S3-settings-4 (seeded in cycle 147, phase 3's exit item, from AD-R67; back to claimed in cycle 149 for AD-R68, both in docs/progress/requests.md): your last session marked it ready at 4a998521 with the ghost switch rows, and AD's preview 3 (docs/art/ui-quality/gate/boards/preview-3.md on claude/ui-ad) lets the ghost rows and both departures stand, but finds the cream tab strip (seg_track_light) still outweighs the title and the gold A / A at 100% text. Fold AD-R68 in before the gate run: in _tabs() of client/scripts/settings_screen.gd the track goes on the kit's ghost, the unchosen tabs clear with cream words and the chosen tab in the kit's dark leather with its gold rim (or, if no kit strip passes value-steps at a mid value, the title in the display face with its outline, outweighing the strip); high contrast, the gold A / A and Back unchanged; each tab passes value-steps on its own ground; the Access, Game and Account tabs re-shot at 100% in en, pt_BR and de; the 200% and high-contrast forms still pass value-steps and fit. 'settings at 100% text' (Hierarchy) must pass 3 of 3. The task's done_when in the backlog lists every point. Send the re-shot stills to AD through the lead before ready (a check, not a new round). Never commit under docs/art/ui-quality/gate/verdicts/ (M48): before ready, python3 tools/coord/owners.py diff P3-S3-settings-4 origin/claude/videogame-project-analysis-ewkkk2 <ready_sha> passes. Resumed after the bug-fix wave (task reopened in lead cycle 181): continue on claude/ui-screens-meta from its head (e0e4730b, AD-R68's title road committed) and merge main into it first. Build from the kit (docs/art/ui-quality/kit-spec.md); a kit change is a request to K1 through the lead.
+STOP_AT: 2026-11-24T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 3
 
 Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-screens-meta from it (create it if it does not exist) and push only to claude/ui-screens-meta with git push -u origin claude/ui-screens-meta, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is S3, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Any commit that changes client/i18n/strings.csv or content.csv also runs node art/ui/keyframes/build_words.mjs and commits words.js with it, and node art/ui/keyframes/check_keyframes.mjs passes before the task is ready (M34). Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
@@ -653,6 +753,66 @@ Wave plan: docs/art/ui-quality/report.md section 3     Phase: 2
 Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/server-decisions from it (create it if it does not exist) and push only to claude/server-decisions with git push -u origin claude/server-decisions, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is SV, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Any commit that changes client/i18n/strings.csv or content.csv also runs node art/ui/keyframes/build_words.mjs and commits words.js with it, and node art/ui/keyframes/check_keyframes.mjs passes before the task is ready (M34). Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
 ```
 
+### FX1
+
+```text
+You are agent FX1 of the Ruleborn agent program (bug-fix wave). Read docs/guides/agent-brief.md first and follow it exactly; then docs/guides/agent-protocol.md where the brief links to it.
+
+Agent: FX1            Role: fixer (FX1): server A: service, matchmaking, holds, crossings, codex, workshop, fund        Model: Opus 5.5, effort high
+Branch: claude/fix-server-a
+Owned files: only the files each FX1 task lists in the backlog, docs/progress/FX1.md, docs/progress/status/FX1.json
+Tasks: FX1-1-workshop-pairs, FX1-2-leases, FX1-3-workshop, FX1-4-holds-codex, then the audits FX1-6-audit-server-a and FX1-7-audit-tools, then FX1-8-server-a-lows (FX1-6's findings outside its files, after FX2-9-audit-b-match), then FX1-13-codex-woven-at (FX1-R25, after FX1-8-server-a-lows), in that order (deps chain them). The tools fixes from FX1-7's audit (FX1-9-tools-gate, FX1-10-tools-contract, FX1-11-tools-docs and FX1-12-tools-ui) are FX3's: FX1-9 reassigned in cycle 172, the other three in cycle 175. Each fix task names RB entries of docs/security/bug-report-2026-11.md: for each entry, first commit a test that reproduces the entry's Input and fails on current main (quote its failure in your handoff), then commit the smallest fix that makes it pass, naming the RB id in the commit. Never skip, disable or loosen a test; a test whose expectation encoded the defect is corrected and named in the handoff. An audit task reads the code its title names, writes findings in the report's format under docs/security/audit-2026-11/, proves each before calling it confirmed, and fixes nothing outside its own files. Run cd server && npm test before marking a task ready. Before ready, python3 tools/coord/owners.py diff <task_id> origin/claude/videogame-project-analysis-ewkkk2 <ready_sha> passes (M48).
+STOP_AT: 2026-11-24T21:00:00Z (= 18:00 America/Sao_Paulo)
+Wave plan: docs/security/bug-report-2026-11.md     Phase: fix
+
+Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci); then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/fix-server-a from it (create it if it does not exist) and push only to claude/fix-server-a with git push -u origin claude/fix-server-a, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is FX1, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
+```
+
+### FX2
+
+```text
+You are agent FX2 of the Ruleborn agent program (bug-fix wave). Read docs/guides/agent-brief.md first and follow it exactly; then docs/guides/agent-protocol.md where the brief links to it.
+
+Agent: FX2            Role: fixer (FX2): server B: db, stores, shop, home, universe, auth, http, edge, pages, notifications, observatory, telemetry, accounts, profile, social        Model: Opus 5.5, effort high
+Branch: claude/fix-server-b
+Owned files: only the files each FX2 task lists in the backlog, docs/progress/FX2.md, docs/progress/status/FX2.json
+Tasks: FX2-1-db-store-home, FX2-2-trace-telemetry, FX2-3-shop, FX2-4-purge-notify, FX2-5-auth-lows, then the audit FX2-6-audit-server-b, then its fixes FX2-7-audit-b-config, FX2-8-audit-b-lows, FX2-9-audit-b-match and FX2-10-curated-woven-law, in that order (deps chain them; FX2-9 also waits for FX1-6-audit-server-a). Each fix task names RB entries of docs/security/bug-report-2026-11.md: for each entry, first commit a test that reproduces the entry's Input and fails on current main (quote its failure in your handoff), then commit the smallest fix that makes it pass, naming the RB id in the commit. Never skip, disable or loosen a test; a test whose expectation encoded the defect is corrected and named in the handoff. An audit-fix task names AUD entries of a report under docs/security/audit-2026-11/: each entry's proof already runs on main inside stillOpen() (server/test/fix_fx2_open.mjs); turn it back into the plain proof, see it fail on main and commit that first, then the fix. An audit task reads the code its title names, writes findings in the report's format under docs/security/audit-2026-11/, proves each before calling it confirmed, and fixes nothing outside its own files. Run cd server && npm test before marking a task ready. Before ready, python3 tools/coord/owners.py diff <task_id> origin/claude/videogame-project-analysis-ewkkk2 <ready_sha> passes (M48).
+STOP_AT: 2026-11-24T21:00:00Z (= 18:00 America/Sao_Paulo)
+Wave plan: docs/security/bug-report-2026-11.md     Phase: fix
+
+Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci); then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/fix-server-b from it (create it if it does not exist) and push only to claude/fix-server-b with git push -u origin claude/fix-server-b, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is FX2, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
+```
+
+### FX3
+
+```text
+You are agent FX3 of the Ruleborn agent program (bug-fix wave). Read docs/guides/agent-brief.md first and follow it exactly; then docs/guides/agent-protocol.md where the brief links to it.
+
+Agent: FX3            Role: fixer (FX3): the simulation: sim/**, server/src/sim.mjs and lab.mjs        Model: Opus 5.5, effort high
+Branch: claude/fix-sim
+Owned files: only the files each FX3 task lists in the backlog, docs/progress/FX3.md, docs/progress/status/FX3.json
+Tasks: FX3-1-heal-alarm, FX3-2-island, FX3-3-clock-report, FX3-4-lab-replay, then the audit FX3-5-audit-sim and its second part FX3-6-audit-universe, then FX3-7-audit-client-2 (the client audit's unproven findings, after FX4-4-audit-client), then the tools fixes from FX1-7's audit, reassigned from FX1: FX1-9-tools-gate (FX1-T-03 first; cycle 172), then FX1-10-tools-contract, FX1-11-tools-docs and FX1-12-tools-ui (cycle 175); their files are listed in the backlog. All in that order (deps chain them). Each fix task names RB entries of docs/security/bug-report-2026-11.md: for each entry, first commit a test that reproduces the entry's Input and fails on current main (quote its failure in your handoff), then commit the smallest fix that makes it pass, naming the RB id in the commit. Never skip, disable or loosen a test; a test whose expectation encoded the defect is corrected and named in the handoff. An audit task reads the code its title names, writes findings in the report's format under docs/security/audit-2026-11/, proves each before calling it confirmed, and fixes nothing outside its own files. Run cargo test in sim, then cd server && npm test (the server tests load the rebuilt wasm) before marking a task ready. Before ready, python3 tools/coord/owners.py diff <task_id> origin/claude/videogame-project-analysis-ewkkk2 <ready_sha> passes (M48).
+STOP_AT: 2026-11-24T21:00:00Z (= 18:00 America/Sao_Paulo)
+Wave plan: docs/security/bug-report-2026-11.md     Phase: fix
+
+Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci); then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/fix-sim from it (create it if it does not exist) and push only to claude/fix-sim with git push -u origin claude/fix-sim, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is FX3, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
+```
+
+### FX4
+
+```text
+You are agent FX4 of the Ruleborn agent program (bug-fix wave). Read docs/guides/agent-brief.md first and follow it exactly; then docs/guides/agent-protocol.md where the brief links to it.
+
+Agent: FX4            Role: fixer (FX4): the Godot client outside the parked UI screens: client/app, data, core, features, ext        Model: Opus 5.5, effort high
+Branch: claude/fix-client
+Owned files: only the files each FX4 task lists in the backlog, docs/progress/FX4.md, docs/progress/status/FX4.json
+Tasks: FX4-1-transport, FX4-2-trace-events, FX4-3-replay-shop-nav, then the audit FX4-4-audit-client, then FX4-5-problem-strings, FX4-6-device-replay-cap, FX4-7-curation-swap-weave and FX4-8-rehearsal-rerun, in that order (deps chain them; take the first open one in the backlog's order). Each fix task names RB entries of docs/security/bug-report-2026-11.md: for each entry, first commit a test that reproduces the entry's Input and fails on current main (quote its failure in your handoff), then commit the smallest fix that makes it pass, naming the RB id in the commit. Never skip, disable or loosen a test; a test whose expectation encoded the defect is corrected and named in the handoff. An audit task reads the code its title names, writes findings in the report's format under docs/security/audit-2026-11/, proves each before calling it confirmed, and fixes nothing outside its own files. Run bash client/build.sh and python3 client/status.py before marking a task ready. Before ready, python3 tools/coord/owners.py diff <task_id> origin/claude/videogame-project-analysis-ewkkk2 <ready_sha> passes (M48).
+STOP_AT: 2026-11-24T21:00:00Z (= 18:00 America/Sao_Paulo)
+Wave plan: docs/security/bug-report-2026-11.md     Phase: fix
+
+Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci); then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/fix-client from it (create it if it does not exist) and push only to claude/fix-client with git push -u origin claude/fix-client, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is FX4, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
+```
+
 ## Standing notes
 
 Notes that stay true from cycle to cycle; `archive.py` never moves them.
@@ -667,89 +827,98 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
-- **Cycle 150**, 18 November 2026, from about 07:39Z (session
-  `session_01SNkKxmm9uYmBksgbVUdjx9`, started by the Opus 5.5 launcher).
-  The changes since cycle 149: S1 claimed P4-S1-heist-vault (7b5328e6,
-  07:30Z, lease to 10:30Z); S2 claimed P4-S2-home-purse and pushed its
-  first work (ebeba33c: the purse in two rows from 125% where three do
-  not fit, the raid notice's second line gives way, `fit_home.sh` with
-  M26's cases); S3 is working on settings-4 for AD-R68 (b9abf210): no kit
-  strip passes value-steps at a mid value, so it takes AD-R68's second
-  road, the title in the display face (display_xl, outline) over the
-  strip, and re-shoots the settings stills. **Bookkeeping:** the three
-  claims copied into their tasks (S1 and S2 `claimed`, settings-4
-  `working`, its lease now S3's 10:30Z), seen_at 07:42Z. **Requests:**
-  none new; M61 stays acked. **Merge and gate:** none: nothing ready, no
-  gate request, no merge lock; main moved only by bookkeeping, so the
-  pages are not republished. **Sessions:** none started or restarted:
-  S1 (`session_01SNkKxrGVdaVPxzuPW8vwRg`), S2
-  (`session_01SNkKxneZ4WEHJSJUnhLjUj`) and S3
-  (`session_01SNkKxo7BCcvsUE53DWANpH`) are inside their update times
-  (08:15Z, 08:19Z, 08:25Z). **Seats:** S3, S1 and S2, the cap of three
-  while the seven-day bar reads `allowed_warning`; nothing seeded. K1,
-  AD, AIA-2 and AIA idle. **Next:** route S3's re-shot settings stills
-  to AD (a check of AD-R68's title road), then merge settings-4 with its
-  gate run ('settings at 100% text', Hierarchy), and the wave stands at
-  O7; route S1's and S2's previews to AD.
-- **Cycle 149**, 18 November 2026, from about 07:16Z (session
-  `session_01SNkKxrEmwKsYJezgFLCenb`, started by the Opus 5.5 launcher).
-  The changes since cycle 148: AD wrote preview 3
-  (`docs/art/ui-quality/gate/boards/preview-3.md` on `claude/ui-ad`,
-  4cb837a2) for S3-R45: the ghost switch rows and both departures stand,
-  but the cream tab strip (`seg_track_light`) still outweighs the title
-  and the gold A / A at 100% text, so AD raises AD-R68. S3's pre-check
-  passed at 4a998521 (06:42Z) and S3 marked settings-4 ready there with a
-  gate request; its session went idle. M61 arrived (seed every exit item
-  that fits, then phase 4's first tasks that touch no exit board, while
-  two or more seats are free): acked. **Requests:** S3-R45 answered by
-  preview 3; AD-R68 copied and answered with its default: settings-4
-  goes back to claimed (ready 4a998521 withdrawn) and AD-R68 joins its
-  done_when, its lease moved to 11:00Z. **Merge and gate:** none: a gate
-  run at 4a998521 would judge the strip AD-R68 names, so it waits for
-  S3's re-shot stills; no merge lock; main moved only by bookkeeping
-  (722c91d7), so the pages are not republished. **Seeded (M61):** phase
-  3's one exit item is held by S3, and two seats were free, so phase 4's
-  first tasks that touch no exit board: P4-S1-heist-vault (1 hour, the
-  wave board's note: 'Vault 0%' shown and a wider playfield band at 200%
-  text) and P4-S2-home-purse (1 hour, S2-R44: the purse in two rows from
-  125% in long locales, 125% in M26's cases); `owners.py claims`: the
-  files of the tasks in flight are disjoint. **Sessions:** S3 restarted
-  as `session_01SNkKxo7BCcvsUE53DWANpH` on settings-4 for AD-R68; S1
-  started as `session_01SNkKxrGVdaVPxzuPW8vwRg` on P4-S1-heist-vault; S2
-  started as `session_01SNkKxneZ4WEHJSJUnhLjUj` on P4-S2-home-purse (all
-  07:23Z); the S1, S2 and S3 prompts above name the new tasks. AD's
-  session (`session_01SNkKxmwmtLQbP3A4xcCpWR`) is idle; AD sees S3's
-  re-shot stills when S3 sends them. **Seats:** S3, S1 and S2, the cap of
-  three while the seven-day bar reads `allowed_warning`; K1, AD, AIA-2
-  and AIA idle. **Next:** S3 sends the re-shot settings stills to AD
-  through the lead (a check), then marks ready: merge settings-4 with its
-  gate run ('settings at 100% text', Hierarchy); then the wave stands at
-  O7 (phase 3's exit). S1 and S2 send their previews to AD.
-- **Cycle 148**, 18 November 2026, from about 06:38Z (session
-  `session_01SNkKxnbZyh2sWsw9VhvuzX`, started by the Opus 5.5 launcher).
-  The changes since cycle 147: S3 claimed P3-S3-settings-4 (06:00Z, lease
-  to 09:00Z), pushed its save point (debcb535: the Access tab's switch
-  rows on the kit's ghost, stills re-shot), merged main, filed S3-R45 and
-  runs its pre-check at 4a998521 (06:07Z, expected end 07:30Z): fit 23 of
-  23, check_screens, guard and `owners.py diff` pass there. S1's status
-  file still reads marker-1 ready past its 06:00Z update time; the task
-  merged as 3e8987b0 in cycle 145, so S1 is idle, not late.
-  **Bookkeeping:** settings-4's claim takes S3's claim, seen_at and lease
-  (06:00Z, 06:07Z, 09:00Z), state `claimed`. **Requests:** S3-R45 (AD's
-  preview of settings-4 before ready, two departures from AD-R67's words:
-  the kit's ghost instead of plate_dark, parchment kept in high contrast)
-  copied and routed to AD; the default stands at 12:00Z. **Merge and
-  gate:** none: nothing is ready, no gate request, no merge lock; main did
-  not move, so the pages are not republished. **Sessions:** AD started as
-  `session_01SNkKxmwmtLQbP3A4xcCpWR` (06:41Z) on S3-R45, writing
-  `gate/boards/preview-3.md`. S3's session
-  (`session_01SNkKxmmGcPDizHBY6ng1zz`) waits on its pre-check, inside its
-  update time (07:30Z). **Seats:** S3 and AD, under the cap of three while
-  the seven-day bar reads `allowed_warning`; K1, S1, S2, AIA-2 and AIA are
-  idle; nothing seeded (M57: only phase 3's exit items). **Next:** S3
-  answers AD's objections, if any, and marks ready; merge settings-4 with
-  its gate run ('settings at 100% text', Hierarchy); then the wave stands
-  at O7 (phase 3's exit).
+- **Cycle 181**, 24 November 2026, from about 14:00Z (session
+  `session_01SNkKxo8T6d9ouEzGcdPst6`, started by the Opus 5.5 launcher,
+  effort medium by order 6). **Merged** FX1-12-tools-ui (ready_sha
+  1146a02e) onto main as e27e7d04: the builder's pre-check at 1146a02e
+  passed and the candidate differs from it only under docs/progress, and
+  the lead also ran the full checks on the candidate: PASS ("All checks
+  passed.", exit 0). **Every FX task is now merged: the bug-fix wave is
+  done**, so by the owner's order of 23 November the UI resumes.
+  **Unparked** P3-S3-settings-4, P4-S1-heist-vault and P4-S2-home-purse
+  (open, with their prior branches and heads recorded). **Started** S1 and
+  S2 at effort high (order 6: their tasks touch the vault and the purse,
+  "money") and S3 at effort medium (settings layout in the client only);
+  their sessions are in the sessions table.
+  The BT track stays waiting: the cap is three (allowed_warning). The
+  audit and roadmap pages were not republished (FX1-12 changed neither
+  docs/audit nor docs/roadmap). **Next:** merge the three UI tasks as
+  they are ready.
+
+- **Cycle 180**, 24 November 2026, from about 13:40Z (session
+  `session_01SNkKxoEVVxDru4qsQF6zoa`, started by the Opus 5.5 launcher,
+  effort medium by order 6). **Merged nothing**: FX1-12-tools-ui is not
+  ready yet. FX3 (`session_01SNkKxmwFNqhHYqzetHQz3X`, effort high) is
+  idle with its new pre-check at 1146a02e running in the background, so
+  it is not restarted. **Answered** FX3-R2, widened, with its default:
+  granted. `client/ui/art/icons_256.json` and `client/ui/art/icons_48.json`
+  (commit 9e420f61, only `sources_hash` moves) join FX1-12's `exceptions`;
+  `owners.py diff` on `claude/fix-sim` now passes. **Started nothing**:
+  FX1-12 is the last open FX task; the cap is three (allowed_warning).
+  The audit and roadmap pages were not republished. **Next:** merge
+  FX1-12 when ready (full checks), then unpark the UI (P3-S3-settings-4,
+  P4-S1-heist-vault, P4-S2-home-purse, the BT track).
+
+- **Cycle 179**, 24 November 2026, from about 13:19Z (session
+  `session_01SNkKxqXwY6qZUJyvhrtRU8`, started by the Opus 5.5 launcher).
+  **Merged nothing**: FX1-12-tools-ui is not ready yet. FX3
+  (`session_01SNkKxmwFNqhHYqzetHQz3X`, effort high) merged main cd469764
+  into `claude/fix-sim` at e62edbca and its pre-check is running there;
+  its session's turn has ended while it waits, so it is not restarted.
+  **Answered** FX3-R2 with its default: granted. The three rebaked
+  manifests (`client/ui/art/kit.json`, `client/ui/art/motion.json`,
+  `client/tests/fixtures/ui_kit/kit.json`, commit 9982cf02, only
+  `sources_hash` moves) are in FX1-12's `exceptions` in backlog.json.
+  **Started nothing**: FX1-12 is the last open FX task; the cap is three
+  (allowed_warning). The audit and roadmap pages were not republished.
+  **Next:** merge FX1-12 when ready (full checks, `owners.py diff` with
+  the exceptions), then unpark the UI (P3-S3-settings-4,
+  P4-S1-heist-vault, P4-S2-home-purse, the BT track).
+
+- **Restart, 23 November 2026** (the overseer, about 21:20Z). The owner
+  restarted the program, in the chat of the overseer session: "Continue,
+  first the bugs then the UI" (CLAUDE.md order 1). It runs on Opus 5.5 at
+  effort high (order 5), with the cap of four builders (order 3).
+  **Bugs first:** resync FX1-4-holds-codex (merge main into
+  `claude/fix-server-a`, give RB-36's test manifests the form byte,
+  re-run the checks), start FX3-5-audit-sim afresh (its claim commit
+  941dd4a5 is on `claude/fix-sim`), then FX4-3-replay-shop-nav and the
+  other open FX tasks (FX1-6, FX2-6, FX4-4, FX4-5, FX1-7). Each builder
+  is started anew with `create_session`. **Then the UI:** once every FX
+  task is merged, unpark P3-S3-settings-4, P4-S1-heist-vault,
+  P4-S2-home-purse and the BT track. **Scheduled tasks:** the working
+  pair in "The program's scheduled tasks and sessions" is re-enabled, as
+  at the restart of 21 November (launcher `trig_01NksvDVV7iRJi4zrU7Uf7Te`
+  and `trig_0155PATecuM4Cm5NGsEsbkX1`, watchdog
+  `trig_01RTRucUN1KoyRtkdMc3BAfH`), after this restart was on main. Every
+  retired scheduled task stays disabled. Where the work stood: the entry
+  "Stopped here, 21 November 2026" below.
+- **Stopped here, 21 November 2026** (the overseer, about 23:15Z). At
+  about 21:45 UTC the owner ordered, in the chat of the overseer session,
+  "Merge cleanly what we have until now and then stop" (CLAUDE.md
+  order 1). **The program is stopped.** **Merged:** FX2-5-auth-lows
+  (ready at 574495aa; RB-23, RB-24, RB-25, RB-26, RB-60) onto main at
+  **5f1cc425**. Its fail-first test 83ba326a precedes its fixes;
+  `owners.py diff` passes. **Checks:** the full check on 5f1cc425 passed
+  at 23:11Z (`tools/run_checks.sh`). Its first run failed on the
+  environment, not a test: the style board step (AIA-R1) raised
+  `ImportError: cannot import name '_imaging' from 'PIL'`, because the
+  container's `python3` is 3.11 while its Debian Pillow is built for
+  3.12. Pillow 10.4.0 was installed for Python 3.11 (checks.md: "Pillow
+  and numpy (`pip install pillow numpy`)") and the re-run passed. Main
+  then took the cycle-164 lead's docs-only commit 55d579a2;
+  `check_docs_consistency.py` passes. **Not merged:** FX1-4-holds-codex
+  is `resync` (ready 2003cc38). It passes alone, but the combined
+  candidate ea551636 with FX2-5 failed RB-36's test with `crew_mismatch`
+  (`server/test/fix_fx1_holds_codex.test.mjs:98`): FX2-5's RB-25 now
+  checks the manifest's form byte. After a restart: merge main into
+  `claude/fix-server-a`, give RB-36's test manifests the form byte,
+  re-run the checks. FX3-5-audit-sim is `open` again: its session
+  `session_01SNkKxne1a1DLSJJZJn4mc2` was interrupted after its claim
+  commit 941dd4a5 on `claude/fix-sim`. **Sessions:** FX1 to FX4 are
+  `stopped`; the cycle-164 lead pushed 55d579a2 at 22:18Z and is idle.
+  **Scheduled tasks:** none is enabled. **Merge lock:** cleared. The UI
+  stays paused. Start nothing until the owner restarts the program.
 - **Stopped here**, 13 November 2026, about 13:20Z (the owner's "Stop
   cleanly"). Cycle 84 (session `session_01SNkKxpqF4gx3yYhsXenUGt`) took
   the merge lock for P2-AD-board-4 (candidate `842f09ab`, AD's ready

@@ -126,13 +126,20 @@ export class Observatory {
     const keeper = this.db.prepare("SELECT keeper_level FROM accounts WHERE id = ?").get(account)?.keeper_level ?? 1;
     const wanderer = keeper >= WANDERER_FROM;
     const size = targetsAt(this.level(account)) + (wanderer ? WANDERER_EXTRA : 0);
-    const aside = this.setAside(account);
-    const list = offer(mm.raider(account, now), mm.listed(now).filter((c) => !aside.has(c.bundle)), { size });
-    list.targets = mm.current(list.targets);
     // The raider's week and Starlight, read once for every card's fee.
     const raider = this.service.raider(account, now);
+    // The Trace first, and its island left out of the paid targets: the
+    // device finds a card by its bundle, and a paid card for the Trace's
+    // island would lease it without the Trace (RB-31).
+    const trace = this.trace(account, now, raider);
+    const aside = this.setAside(account);
+    if (trace) aside.add(trace.bundle);
+    const list = offer(mm.raider(account, now), mm.listed(now).filter((c) => !aside.has(c.bundle)), { size });
+    // current() drops a banned or deleted owner's island, so the echoes
+    // flag is read from what is left (FX2-9's follow-up).
+    list.targets = mm.current(list.targets);
     const targets = list.targets.map((c) => this.card(account, c, { raider }));
-    return { size, wanderer, targets, trace: this.trace(account, now, raider), echoes: list.echoes, generated: list.generated,
+    return { size, wanderer, targets, trace, echoes: list.targets.some((c) => c.echo), generated: list.generated,
              refresh: { aether: this.refreshCost(account, now) }, aether: this.service.aether(account),
              protected: mm.shielded(account, now) };
   }
@@ -141,9 +148,16 @@ export class Observatory {
    *  still answer, with no fee. */
   trace(account, now, raider = this.service.raider(account, now)) {
     const mm = this.service.matchmaking;
+    // Each raider ordered by their own latest heist: SELECT DISTINCT with an
+    // ORDER BY on a column it leaves out orders them by whichever of their
+    // heists SQLite's plan reads (RB-49). A banned or deleted raider is
+    // passed over: the lease would refuse their island (candidate 21).
     const raiders = this.db.prepare(
-      `SELECT DISTINCT h.attacker FROM heists h JOIN leases l ON l.token = h.token
-        WHERE h.defender = ? AND h.submitted_at > ? ORDER BY h.submitted_at DESC`)
+      `SELECT h.attacker FROM heists h JOIN leases l ON l.token = h.token
+         JOIN accounts a ON a.id = h.attacker
+        WHERE h.defender = ? AND h.submitted_at > ?
+          AND a.banned_at IS NULL AND a.deleted_at IS NULL
+        GROUP BY h.attacker ORDER BY MAX(h.submitted_at) DESC`)
       .all(account, now - facts.TRACE_HOURS * HOUR).map((r) => r.attacker);
     for (const raider of raiders) {
       if (!mm.traceable(account, raider, now)) continue;
@@ -163,14 +177,17 @@ export class Observatory {
     const snap = this.db.prepare("SELECT realm, realm_level, vault_level, exposed FROM snapshots WHERE bundle = ?")
       .get(c.bundle);
     const generated = c.owner === GENERATOR;
+    // An echo is one past island, robbed from nobody: never a universe
+    // (service.issue), so its card is that island's alone (AUD-B-07).
+    const single = generated || Boolean(c.echo);
     const owner = generated ? null
       : this.db.prepare("SELECT keeper_level FROM accounts WHERE id = ?").get(c.owner);
     // The Heart and the outer realms, which are the realms table's rows.
-    const realms = generated ? 1
+    const realms = single ? 1
       : 1 + this.db.prepare("SELECT COUNT(*) AS n FROM realms WHERE owner = ?").get(c.owner).n;
     let strain = 0;
     let band = 0;
-    if (!generated && this.db.prepare("SELECT 1 FROM realms WHERE owner = ? LIMIT 1").get(c.owner)) {
+    if (!single && this.db.prepare("SELECT 1 FROM realms WHERE owner = ? LIMIT 1").get(c.owner)) {
       const p = this.service.weaving.stability(c.owner);
       strain = p.strain;
       band = p.band;
@@ -188,16 +205,18 @@ export class Observatory {
       // planner): across a universe, the shortest and the longest by the
       // realm landed on, and whether a raid would cross one (crossings.mjs).
       ...(([clock, longest]) => ({ clock, clock_longest: longest, across: longest > clockTicks() / TICKS_PER_SECOND }))(
-        generated ? [clockTicks() / TICKS_PER_SECOND, clockTicks() / TICKS_PER_SECOND]
+        single ? [clockTicks() / TICKS_PER_SECOND, clockTicks() / TICKS_PER_SECOND]
           : this.service.crossings.clocks(c.owner, c.bundle)),
       keeper_level: owner?.keeper_level ?? null, realms, renown: c.renown ?? null,
-      // G58: the Keeper's name is §12.4's free fact, from the word lists.
-      keeper_name: generated ? null : this.service.keeper.name(c.owner),
+      // G58: the Keeper's name is §12.4's free fact, from the word lists;
+      // across a block it is not shown, the island still is (§17.8, AUD-B-02).
+      keeper_name: generated || this.service.safety.between(account, c.owner) ? null
+        : this.service.keeper.name(c.owner),
       loot: rough(snap.exposed), strain, band, faults: faults(strain, realms - 1),
       // §12.22: "up to N realms to the Heart", the most links any outer
       // realm's shortest route takes, and the realms the faults open from
       // (§5.4, links.mjs); the game's own island is one realm.
-      ...(generated ? { depth: 0, fault_realms: [] } : (({ deepest, faults: at }) =>
+      ...(single ? { depth: 0, fault_realms: [] } : (({ deepest, faults: at }) =>
         ({ depth: deepest, fault_realms: at }))(this.service.links.view(c.owner, strain))),
       ...(generated ? { success: [lo, hi] } : {}),
       realm: { realm: snap.realm, realm_level: snap.realm_level, vault_level: snap.vault_level,

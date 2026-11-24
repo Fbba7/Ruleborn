@@ -24,6 +24,12 @@ SRC = pathlib.Path(__file__).resolve().parent / "src"
 BANNED = [
     (re.compile(r"\bf32\b|\bf64\b"), "a floating-point type"),
     (re.compile(r"(?<![\w.])\d+\.\d+(?![\w.])"), "a decimal literal"),
+    # Audit finding SIM-3: `1f64`, `1.5f32`, `1e3`, `2.5e-1`, `1_000.5` and
+    # `1.` are all floats and the rule above saw none of them. A `.` followed
+    # by a letter, `_` or another `.` is a method call, a field or a range.
+    (re.compile(r"(?<![\w.])\d[\d_]*(?:\.(?![.A-Za-z_])[\d_]*)?(?:[eE][+-]?[\d_]+)?_*f(?:32|64)\b"
+                r"|(?<![\w.])\d[\d_]*(?:\.[\d_]+)?[eE][+-]?[\d_]+(?![\w])"
+                r"|(?<![\w.])\d[\d_]*\.(?![.A-Za-z_])[\d_]*"), "a float literal"),
     (re.compile(r"\bas\s+f(?:32|64)\b"), "a cast to floating point"),
     (re.compile(r"\b(?:std|core)::f(?:32|64)\b"), "the float module"),
 ]
@@ -39,7 +45,9 @@ BANNED = [
 
 #: Lines allowed to mention one, with why. A section number in a comment is
 #: not a decimal literal, and there is no way to tell them apart by pattern.
-ALLOW = re.compile(r"^\s*(//|///|//!|\*)")
+#: A line starting `*` is a block comment's continuation, unless it is a
+#: deref assignment (`*p = 2.5;`), which is code (audit finding SIM-3).
+ALLOW = re.compile(r"^\s*(//|///|//!|\*(?!\s*[\w.\[\]]+\s*[-+*/]?=))")
 
 
 #: A string literal is text, not arithmetic. "§24.10" in a panic message is a
@@ -60,7 +68,9 @@ def main() -> int:
         for n, line in enumerate(path.read_text().splitlines(), 1):
             if ALLOW.match(line):
                 continue
-            code = strip_text(line.split("//")[0])
+            # Strings first, then the comment: a "//" inside a string is not
+            # one, and cutting there hid the rest of the line (SIM-3).
+            code = strip_text(line).split("//")[0]
             for pattern, what in BANNED:
                 m = pattern.search(code)
                 if m:

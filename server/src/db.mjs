@@ -44,6 +44,9 @@ CREATE TABLE IF NOT EXISTS accounts (
   keeper_noun       INTEGER,
   -- §20.11's terms-of-use gate: the version of the terms accepted (safety.mjs).
   terms_version     TEXT,
+  -- FX1-A-16: the number the player's newest link was given; a link's
+  -- number is never given again (links.mjs insert).
+  links_n           INTEGER NOT NULL DEFAULT 0,
   created_at        INTEGER NOT NULL,
   -- §20.5: "Age bands instead of birthdates"; §20.7 sets what each may do.
   age_band          TEXT NOT NULL DEFAULT '18+' CHECK (age_band IN ('13-15', '16-17', '18+')),
@@ -326,7 +329,10 @@ CREATE TABLE IF NOT EXISTS leases (
   era         INTEGER NOT NULL DEFAULT 0,
   -- §5.4: the universe a heist across the defender's realms crosses, its
   -- RBU1 bundle's hash (crossings.mjs); null for the Heart alone.
-  universe    TEXT
+  universe    TEXT,
+  -- FX1-A-13: the realm of the defender's island the lease was issued on,
+  -- the one its raid is rated in (service.mjs issue); null before the column.
+  realm       TEXT
 ) WITHOUT ROWID;
 -- §24.13's one lease a target is kept by the issuing transaction, which
 -- hands back the newest lease the attacker holds on it with no heist; a
@@ -1050,6 +1056,8 @@ const ADDED = [
   ["accounts", "keeper_noun", "INTEGER"],
   // The terms of use accepted (safety.mjs).
   ["accounts", "terms_version", "TEXT"],
+  // The number a player's newest link was given (links.mjs).
+  ["accounts", "links_n", "INTEGER NOT NULL DEFAULT 0"],
   ["heists", "replay_gone", "INTEGER NOT NULL DEFAULT 0"],
   ["leases", "echo", "INTEGER NOT NULL DEFAULT 0"],
   ["leases", "trace_of", "TEXT"],
@@ -1057,6 +1065,7 @@ const ADDED = [
   ["leases", "challenge", "TEXT"],
   ["leases", "era", "INTEGER NOT NULL DEFAULT 0"],
   ["leases", "universe", "TEXT"],
+  ["leases", "realm", "TEXT"],
   ["target_lists", "previous", "TEXT"],
   ["target_lists", "superseded_at", "INTEGER"],
   ["notifications", "attempts", "INTEGER NOT NULL DEFAULT 0"],
@@ -1315,8 +1324,10 @@ export function transaction(db, fn) {
     db.exec("COMMIT");
     return result;
   } catch (err) {
-    // A rollback that fails itself never hides the first error.
-    if (db.isTransaction) {
+    // A rollback that fails itself never hides the first error. Before
+    // Node 22.16 node:sqlite has no isTransaction (undefined): roll back
+    // then too, or the dead transaction holds the connection (RB-01).
+    if (db.isTransaction !== false) {
       try { db.exec("ROLLBACK"); } catch (rollbackErr) { err.rollback = rollbackErr; }
     }
     throw err;
