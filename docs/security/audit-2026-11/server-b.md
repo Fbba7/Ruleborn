@@ -31,17 +31,17 @@ top-level `not ok` as a failure, `todo` included.
 
 | ID | Priority | Where | State |
 |---|---|---|---|
-| AUD-B-14 | High | `main.mjs:149`, `:225` | open |
-| AUD-B-15 | High | `main.mjs:73`, `:83`, `:91` | open |
+| AUD-B-14 | High | `main.mjs:149`, `:225` | fixed (FX2-7-audit-b-config) |
+| AUD-B-15 | High | `main.mjs:73`, `:83`, `:91` | fixed (FX2-7-audit-b-config) |
 | AUD-B-01 | Medium | `matchmaking.mjs:275`, `:348` | open |
 | AUD-B-02 | Medium | `observatory.mjs` card | fixed here |
 | AUD-B-03 | Medium | `telemetry.mjs` report | fixed here |
 | AUD-B-04 | Medium | `telemetry.mjs` batch | fixed here |
 | AUD-B-05 | Medium | `auth_http.mjs` prove, `delete.html` | open |
 | AUD-B-08 | Medium | `auth_http.mjs` deleteByGoogle | fixed here |
-| AUD-B-16 | Medium | `main.mjs:379` | open |
-| AUD-B-17 | Medium | `main.mjs:338` | open |
-| AUD-B-18 | Medium | `main.mjs:219` | open |
+| AUD-B-16 | Medium | `main.mjs:379` | fixed (FX2-7-audit-b-config) |
+| AUD-B-17 | Medium | `main.mjs:338` | fixed (FX2-7-audit-b-config) |
+| AUD-B-18 | Medium | `main.mjs:219` | fixed (FX2-7-audit-b-config) |
 | AUD-B-06 | Low | `matchmaking.mjs:308-323` | open |
 | AUD-B-07 | Low | `observatory.mjs` card | fixed here |
 | AUD-B-09 | Low | `auth.mjs` spend | fixed here |
@@ -49,11 +49,12 @@ top-level `not ok` as a failure, `todo` included.
 | AUD-B-11 | Low | `auth.mjs` rotateHoursOf | fixed here |
 | AUD-B-12 | Low | `pages.mjs` | fixed here |
 | AUD-B-13 | Low | `server/privacy.json` | open |
-| AUD-B-19 | Low | `main.mjs:224` | open |
+| AUD-B-19 | Low | `main.mjs:224` | fixed (FX2-7-audit-b-config) |
 | AUD-B-20 | Low | `load.mjs:453` | open |
 
-Eight are fixed here and twelve are open. Three suspicions stay unproven,
-and eleven were checked and rejected (see the last two sections).
+Eight are fixed here, six in FX2-7-audit-b-config, and six are open. Three suspicions stay unproven.
+Seven were checked and rejected, and the rest of the configuration,
+`refused.mjs` and `store.mjs` showed no defect (see the last two sections).
 
 ## High
 
@@ -73,13 +74,21 @@ and eleven were checked and rejected (see the last two sections).
   in-memory store. The journal of deletions is lost at every restart. Line
   149 checks `resolve("")` (the working directory) instead of the folder
   the journal really uses, so the check against `RULEBORN_DATA` passes too.
-- **Proof:** `fix_fx2_audit_config.test.mjs`, both "AUD-B-14" tests. A
-  journal entry written through `new Store("")` is gone in a second
-  `new Store("")`, and `main.mjs` with real sign-in and an empty
-  `RULEBORN_DELETIONS` starts and listens.
+- **Proof:** `fix_fx2_audit_config.test.mjs`, both "AUD-B-14" tests.
+  `main.mjs` with stubbed sign-in and an empty `RULEBORN_DELETIONS` leaves
+  no journal folder on disk, and with real sign-in it starts and listens.
+  (FX2-6's first proof showed `new Store("")` losing an entry, which is
+  that store's design; FX2-7 replaced it with the boot.)
 - **Fix:** use `||` for the default, or refuse an empty value. Then pass
   `journalDir` to the `Store` at line 225, so the folder checked is the
   folder used.
+- **Fixed (FX2-7-audit-b-config):** `settled()`, at the top of `main.mjs`,
+  deletes every empty or blank `RULEBORN_*` variable before any is read, so
+  each `??` takes its default. The `Store` keeps its own expression, which
+  `security_deep_heists.test.mjs` pins, rather than `journalDir`: after
+  `settled()` both name the same folder, and the first AUD-B-14 proof boots
+  with an empty value and sees the journal's folder on disk and the
+  inside-data warning for that folder.
 
 ### AUD-B-15: Game Center and StoreKit roots without RULEBORN_BUNDLE_ID switch both off silently
 
@@ -98,6 +107,7 @@ and eleven were checked and rejected (see the last two sections).
   the test roots and no bundle id starts and listens.
 - **Fix:** throw at startup when either roots variable is set without
   `RULEBORN_BUNDLE_ID`.
+- **Fixed (FX2-7-audit-b-config):** as written.
 
 ## Medium
 
@@ -226,6 +236,12 @@ and eleven were checked and rejected (see the last two sections).
   boot answering with the defaults.
 - **Fix:** one helper for every numeric variable: empty is unset, and a
   value that is not a finite positive integer stops the start.
+- **Fixed (FX2-7-audit-b-config):** `settled()` unsets empty values
+  (AUD-B-14), and a check after it refuses `RULEBORN_MAX_CONNECTIONS`,
+  `RULEBORN_HEADERS_TIMEOUT_MS` and `RULEBORN_REPLAYS_MIN_FREE_MB` unless
+  each is a whole number of at least 1 (the replay floor at least 0, which
+  the server guide documents as turning it off). The second proof refuses
+  `abc`, `0`, `-1` and `1.5`.
 
 ### AUD-B-17: An empty RULEBORN_HEADERS_TIMEOUT_MS turns the headers timeout off
 
@@ -239,6 +255,7 @@ and eleven were checked and rejected (see the last two sections).
 - **Proof:** `fix_fx2_audit_config.test.mjs`, "AUD-B-17", beside the
   control that sees the default close the socket within 12.5 s.
 - **Fix:** the helper of AUD-B-16.
+- **Fixed (FX2-7-audit-b-config):** by `settled()` (AUD-B-14).
 
 ### AUD-B-18: An unreadable RULEBORN_SEASON_START leaves no current season
 
@@ -252,6 +269,9 @@ and eleven were checked and rejected (see the last two sections).
   boot, and the service with `seasonStart: NaN`).
 - **Fix:** refuse a `seasonStart` that is not finite, in `main.mjs` or in
   the seasons constructor.
+- **Fixed (FX2-7-audit-b-config):** in `main.mjs`. The seasons
+  constructor's own guard is outside FX2-7's files, so the service proof
+  (`seasonStart: NaN`) stays in `stillOpen`, for the owner of `seasons.mjs`.
 
 ## Low
 
@@ -361,6 +381,7 @@ and eleven were checked and rejected (see the last two sections).
   `main.mjs`'s own `minFreeBytes` expression from the file and evaluates
   it with the empty value, so the proof follows the code.
 - **Fix:** the helper of AUD-B-16.
+- **Fixed (FX2-7-audit-b-config):** by `settled()` (AUD-B-14).
 
 ### AUD-B-20: The free plan's daily-player capacity ignores the daily share
 
