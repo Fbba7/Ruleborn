@@ -8,11 +8,11 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-24T20:00:00Z",
   "lease_until": "2026-11-24T23:00:00Z",
-  "updated_at": "2026-11-24T20:15:00Z",
-  "expected_next_update_by": "2026-11-24T21:00:00Z",
+  "updated_at": "2026-11-24T20:47:00Z",
+  "expected_next_update_by": "2026-11-24T21:30:00Z",
   "progress_marker": {
     "last_green_sha": "85be2fa80a1ea97d2f62effe14eb7ac249fe32bc",
-    "next_step": "re-work after the gate's second fail at 85be2fa8: S1-R46 granted (cycle 187), Cast takes the gold primary plate while it leads at 200%, quieter loot/clock/alarm"
+    "next_step": "full checks running on candidate 3200ff40 (Cast's gold plate at 200%, Part 12); pre-judge 3 pass of 3, FIT 14 of 14 fit ok; ready on PASS"
   },
   "precheck": {
     "sha": "85be2fa80a1ea97d2f62effe14eb7ac249fe32bc",
@@ -769,5 +769,5 @@
       "where": "docs/progress/lead.md, Now, cycle 143 (M60)"
     }
   ],
-  "next_step": "P4-S1-heist-vault attempts 2: main merged (faf5651); re-work Cast's plate (S1-R46 granted) and the quieter figures; pre-judge three times; checks; ready on a pass."
+  "next_step": "P4-S1-heist-vault attempts 2: candidate 3200ff40 in the full checks; on PASS record it and mark ready with gate_request 'heist at 200% text, pt_BR' (Hierarchy)."
 }
