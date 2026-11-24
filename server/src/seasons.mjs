@@ -55,6 +55,8 @@ export function reward(season, league) {
 export class Seasons {
   /** `first` is when season 1 starts: the day the game opens. */
   constructor(service, first = 0) {
+    // AUD-B-18: a time that is no time would number every season NaN.
+    if (!Number.isFinite(first)) throw new RangeError("seasonStart is not a finite time");
     this.service = service;
     this.first = first;
   }
