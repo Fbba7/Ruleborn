@@ -3,7 +3,7 @@
 - Status: Green; BT-04a is ready at f1df3f1e (pre-check PASS, 17:54 UTC).
 - Progress: 0 of 2 tasks merged; 0 items passed by the gate (BT-04a has no gate items).
 - Done: `tools/gate/render.py` (shot list format, still rendering of a listed item at a given sha, 960 px grayscale, manifest) and its fixtures.
-- Next: record the pre-check, mark BT-04a ready; then BT-04b (frame strips, 200% text and high-contrast variants, named crops) in a later session.
+- Next: the lead merges BT-04a (and adds its self-test to check_all, SP-bt-04-R1); then BT-04b (frame strips, 200% text and high-contrast variants, named crops) in a later session.
 - Blocked by: none.
 - Owner decision needed: none.
 
