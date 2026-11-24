@@ -404,6 +404,9 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| S1 | `session_01SNkKxp6Vp6uPSGzzYn1CNV` (Opus 5.5, effort high) | P4-S1-heist-vault (restart, cycle 181: reopened after the bug-fix wave; effort high by order 6, the task touches the vault; S1's last session, `session_01SNkKxrGVdaVPxzuPW8vwRg`, is idle) | `claude/ui-screens-heist` | 2026-11-24 14:59Z |
+| S2 | `session_01SNkKxpVmnabuJ8D34eVaFy` (Opus 5.5, effort high) | P4-S2-home-purse (restart, cycle 181: reopened after the bug-fix wave; effort high by order 6, the task touches the purse; S2's last session, `session_01SNkKxneZ4WEHJSJUnhLjUj`, is idle) | `claude/ui-screens-home` | 2026-11-24 14:59Z |
+| S3 | `session_01SNkKxmd5VK7q2FWEmAe3Be` (Opus 5.5, effort medium) | P3-S3-settings-4 (restart, cycle 181: reopened after the bug-fix wave; effort medium by order 6, settings layout in the client only; S3's last session, `session_01SNkKxo7BCcvsUE53DWANpH`, is idle) | `claude/ui-screens-meta` | 2026-11-24 14:59Z |
 | FX3 | `session_01SNkKxmwFNqhHYqzetHQz3X` (Opus 5.5, effort high) | FX1-12-tools-ui (start, cycle 178: open since FX1-11-tools-docs merged at 7bbb9788; effort high by order 6, the task spans tools/ and server/ (its tests); FX3's last session, `session_01SNkKxmgmEjoRvu9UzjbupU`, is idle) | `claude/fix-sim` | 2026-11-24 12:50Z |
 | FX3 | `session_01SNkKxmgmEjoRvu9UzjbupU` (Opus 5.5, effort high) | FX1-11-tools-docs (start, cycle 176: open since FX1-10-tools-contract merged at bdb052a8; effort high by order 6, the task spans tools/ and server/; FX3's last session, `session_01SNkKxnryguhFxw93wbzyLx`, is idle) | `claude/fix-sim` | 2026-11-24 11:01Z |
 | FX4 | `session_01SNkKxpfHmWd8HXegEnr3P5` (Opus 5.5, effort medium) | FX4-8-rehearsal-rerun (start, cycle 176: its deps FX4-4 and FX4-7 merged; effort medium by order 6, a medium defect in the client only; FX4's last session, `session_01SNkKxoYfNyaJq9rBGUSuzk`, is idle) | `claude/fix-client` | 2026-11-24 10:17Z |
@@ -695,7 +698,7 @@ Your session was created with the repository checked out at main; work in that c
 ```text
 You are agent S1 of the Ruleborn agent program (UI wave). Read docs/guides/agent-brief.md first and follow it exactly; then docs/guides/agent-protocol.md where the brief links to it.
 
-Agent: S1            Role: maker (S1): the heist screens, the phase 1 pilot        Model: Opus 5.5, effort medium
+Agent: S1            Role: maker (S1): the heist screens, the phase 1 pilot        Model: Opus 5.5, effort high
 Branch: claude/ui-screens-heist
 Owned files: only the files each S1 task lists in the backlog, docs/progress/S1.md, docs/progress/status/S1.json
 Tasks: P4-S1-heist-vault (seeded in cycle 149, phase 4's first heist task under M61, from the wave board's notes in docs/art/ui-quality/gate/boards/wave.md on claude/ui-ad): at 200% text the heist's loot panel shows the Vault's progress ('Vault 0%' and its crack) while the Vault is shut, in en, pt_BR and de, and the playfield band between the HUD and the hand is no narrower than at 150% text, laid out in heist_hud.gd and heist_screen.gd; a change to KitHud.loot_fit or any kit file is a request to K1 through the lead, with a default. A test in client/tests/heist_fx_tests.gd mounts the heist at 200% text and finds the Vault's row, failing on main. The heist's FIT=1 runs at 100%, 150% and 200% in en, pt_BR and de and in high contrast print 'fit ok' (M26), listed in the handoff; 'heist at 100% text', 'heist at 200% text, pt_BR' and 'heist in high contrast' still pass. The task's done_when in the backlog lists every point. AD previews your stills before ready (a request to AD through the lead). Never commit under docs/art/ui-quality/gate/verdicts/ (M48): before ready, python3 tools/coord/owners.py diff P4-S1-heist-vault origin/claude/videogame-project-analysis-ewkkk2 <ready_sha> passes. Resumed after the bug-fix wave (task reopened in lead cycle 181): continue on claude/ui-screens-heist from its head (ed443f93), where the work is done and pre-checked at aaadca6a; merge main into it first, rerun the setup line, build.sh and guard.sh on the merge, then pre-check and mark ready with the gate request. S1-R44 is answered (its default stands). Build from the kit (docs/art/ui-quality/kit-spec.md); a kit change is a request to K1 through the lead.
@@ -710,7 +713,7 @@ Your session was created with the repository checked out at main; work in that c
 ```text
 You are agent S2 of the Ruleborn agent program (UI wave). Read docs/guides/agent-brief.md first and follow it exactly; then docs/guides/agent-protocol.md where the brief links to it.
 
-Agent: S2            Role: maker (S2): the home and entry screens        Model: Opus 5.5, effort medium
+Agent: S2            Role: maker (S2): the home and entry screens        Model: Opus 5.5, effort high
 Branch: claude/ui-screens-home
 Owned files: only the files each S2 task lists in the backlog, docs/progress/S2.md, docs/progress/status/S2.json
 Tasks: P4-S2-home-purse (seeded in cycle 149, phase 4's first home task under M61, from S2-R44 in docs/progress/requests.md): at 125% text in German (and any locale whose three purse pills do not fit one row) home's purse lays out in two rows in home.gd's _fit_amounts, and universe_home.gd's fit check allows two rows from 125% where the row of three does not fit; with the raid notice at 125% in de the check finds a realm marked, or the reason it cannot is named in docs/art/tracks/home-screen.md Part 8 with a default for the lead. 125% joins M26's cases beside 100%, 150% and 200%, in en, pt_BR and de, with and without the notice, signed in and out, each 'fit ok', listed in the handoff. 'home at 100% text', 'home at 200% text, pt_BR' and 'home in high contrast' still pass. The task's done_when in the backlog lists every point. AD previews your stills before ready (a request to AD through the lead). Never commit under docs/art/ui-quality/gate/verdicts/ (M48): before ready, python3 tools/coord/owners.py diff P4-S2-home-purse origin/claude/videogame-project-analysis-ewkkk2 <ready_sha> passes. Resumed after the bug-fix wave (task reopened in lead cycle 181): continue on claude/ui-screens-home from its head (27846b7c), where the work is done at acb2239b and the lead's gate passed 'home at 100% text' 3/3 there (S2-R47, cycle 151); merge main into it first, rerun the setup line, build.sh, fit_home.sh and guard.sh on the merge, then pre-check and mark ready. Build from the kit (docs/art/ui-quality/kit-spec.md); a kit change is a request to K1 through the lead.
@@ -833,9 +836,10 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   passed.", exit 0). **Every FX task is now merged: the bug-fix wave is
   done**, so by the owner's order of 23 November the UI resumes.
   **Unparked** P3-S3-settings-4, P4-S1-heist-vault and P4-S2-home-purse
-  (open, with their prior branches and heads recorded). **Started** S1,
-  S2 and S3 on them at effort medium (order 6: UI work in the client
-  only, no listed complexity); their sessions are in the sessions table.
+  (open, with their prior branches and heads recorded). **Started** S1 and
+  S2 at effort high (order 6: their tasks touch the vault and the purse,
+  "money") and S3 at effort medium (settings layout in the client only);
+  their sessions are in the sessions table.
   The BT track stays waiting: the cap is three (allowed_warning). The
   audit and roadmap pages were not republished (FX1-12 changed neither
   docs/audit nor docs/roadmap). **Next:** merge the three UI tasks as
@@ -869,25 +873,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   (allowed_warning). The audit and roadmap pages were not republished.
   **Next:** merge FX1-12 when ready (full checks, `owners.py diff` with
   the exceptions), then unpark the UI (P3-S3-settings-4,
-  P4-S1-heist-vault, P4-S2-home-purse, the BT track).
-
-- **Cycle 178**, 24 November 2026, from about 12:15Z (session
-  `session_01SNkKxomdzcgoV8B8sTfZyr`, started by the Opus 5.5 launcher).
-  **Merged** FX1-11-tools-docs (ready a9263449, FX3's work) at 7bbb9788,
-  from candidate c564b08c. The builder's pre-check could not be reused,
-  because main had gained FX4-8's client change since FX3 merged main.
-  The full checks passed at 12:49Z: sim 362 of 362, server 676 of 676,
-  client 492 of 492, "All checks passed.", exit 0; `owners.py diff` passed
-  and the claims were disjoint. Main had gained only this cycle's lock
-  commit, so the candidate was merged onto it and the documents check
-  rerun there (pass). The lock is cleared. The audit and roadmap pages
-  were not republished: `docs/audit` and `docs/roadmap` are unchanged.
-  **Started:** FX3 on FX1-12-tools-ui, the last open FX task, Opus 5.5 at
-  effort high (spans tools/ and server/ tests):
-  `session_01SNkKxmwFNqhHYqzetHQz3X`, 12:50Z. FX1, FX2 and FX4 have no
-  open task; the cap is three (allowed_warning). FX4-R1 and FX4-R2 were
-  already answered with their defaults (requests.md). **Next:** merge
-  FX1-12 when ready, then unpark the UI (P3-S3-settings-4,
   P4-S1-heist-vault, P4-S2-home-purse, the BT track).
 
 - **Restart, 23 November 2026** (the overseer, about 21:20Z). The owner

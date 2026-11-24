@@ -5,6 +5,25 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 178**, 24 November 2026, from about 12:15Z (session
+  `session_01SNkKxomdzcgoV8B8sTfZyr`, started by the Opus 5.5 launcher).
+  **Merged** FX1-11-tools-docs (ready a9263449, FX3's work) at 7bbb9788,
+  from candidate c564b08c. The builder's pre-check could not be reused,
+  because main had gained FX4-8's client change since FX3 merged main.
+  The full checks passed at 12:49Z: sim 362 of 362, server 676 of 676,
+  client 492 of 492, "All checks passed.", exit 0; `owners.py diff` passed
+  and the claims were disjoint. Main had gained only this cycle's lock
+  commit, so the candidate was merged onto it and the documents check
+  rerun there (pass). The lock is cleared. The audit and roadmap pages
+  were not republished: `docs/audit` and `docs/roadmap` are unchanged.
+  **Started:** FX3 on FX1-12-tools-ui, the last open FX task, Opus 5.5 at
+  effort high (spans tools/ and server/ tests):
+  `session_01SNkKxmwFNqhHYqzetHQz3X`, 12:50Z. FX1, FX2 and FX4 have no
+  open task; the cap is three (allowed_warning). FX4-R1 and FX4-R2 were
+  already answered with their defaults (requests.md). **Next:** merge
+  FX1-12 when ready, then unpark the UI (P3-S3-settings-4,
+  P4-S1-heist-vault, P4-S2-home-purse, the BT track).
+
 - **Cycle 177**, 24 November 2026, from about 11:14Z (session
   `session_01SNkKxn8DSWinMpBGFgKJ18`, started by the Opus 5.5 launcher).
   **Merged** FX4-8-rehearsal-rerun (ready 57732c8f, FX4's work, CLI-18)

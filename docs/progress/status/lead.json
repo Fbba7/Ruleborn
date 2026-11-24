@@ -47,9 +47,9 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Bug-fix wave done (every FX task merged); the UI resumed in cycle 181 with S1 (P4-S1-heist-vault), S2 (P4-S2-home-purse) and S3 (P3-S3-settings-4) at effort medium. Next: merge their tasks as they are ready; the BT track waits for a free seat (cap three under allowed_warning).",
+  "next_step": "Bug-fix wave done (every FX task merged); the UI resumed in cycle 181 with S1 (P4-S1-heist-vault), S2 (P4-S2-home-purse) and S3 (P3-S3-settings-4) (S1 and S2 at effort high, S3 at medium, by order 6). Next: merge their tasks as they are ready; the BT track waits for a free seat (cap three under allowed_warning).",
   "seen": {
-    "at": "2026-11-24T13:42:36Z",
+    "at": "2026-11-24T14:59:16Z",
     "heads": {
       "claude/3d-character-screens": "6053b249bee313648da3509142eeb2ba738bb62f",
       "claude/3d-characters": "35d6ae8f5b84a4d75636f68270848b0949c111f3",
@@ -66,7 +66,7 @@
       "claude/fix-client": "0da8e896cfc49bcd4b6300c5c8caa9b0cd185285",
       "claude/fix-server-a": "bbe142c4d18b49c09356297b7ad0851cd1e69c22",
       "claude/fix-server-b": "0ed2bb86a51b9bcfaf1dca025538c4771673e496",
-      "claude/fix-sim": "1146a02e5badd428aac3e48bdfdd1f32b734eccb",
+      "claude/fix-sim": "b0ceb460f8db386e52e4cb1f50ef4435d3834e7a",
       "claude/lead-cycle-84-verdicts": "ae9c5e4effc8070a5e29f589882bc14445520fa4",
       "claude/plan-v3": "57893713636b7753d0b790c5a9dc35c3b126770a",
       "claude/security-review": "dd1e90f06b512b25a74f3f3f73ace84b3969cce9",
@@ -108,7 +108,9 @@
     },
     "ready": {},
     "startable": [
-      "FX1-12-tools-ui"
+      "P3-S3-settings-4",
+      "P4-S1-heist-vault",
+      "P4-S2-home-purse"
     ],
     "messages": [
       "M10",
