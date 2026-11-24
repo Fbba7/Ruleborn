@@ -7260,7 +7260,7 @@ fn sim_11_a_lantern_wisps_reveal_goes_with_it_across_to_the_next_realm() {
     assert_eq!(c.leg, 1, "crossed to the Heart");
     let here = { let p = c.world.raiders[0].at; c.world.grid.tile_at(p.x, p.y).unwrap() };
     assert!(c.world.revealed(here), "the wisp's reveal ended at the crossing, {} ticks early", until - c.world.tick);
-    while c.world.tick < until {
+    while c.world.tick <= until {
         c.step();
     }
     let here = { let p = c.world.raiders[0].at; c.world.grid.tile_at(p.x, p.y).unwrap() };

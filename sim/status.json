@@ -265,6 +265,7 @@
   "sha256_gives_the_standards_answers": "passed",
   "shattered_glass_breaks_a_crystal_wall_in_one_hit_and_its_shards_slow": "passed",
   "sim_10_a_command_for_actor_16_still_records_a_universe_replay_that_round_trips": "passed",
+  "sim_11_a_lantern_wisps_reveal_goes_with_it_across_to_the_next_realm": "passed",
   "sim_1_a_body_in_a_bush_is_not_found": "passed",
   "sim_1_a_body_in_a_thicket_beyond_a_tile_is_not_found": "passed",
   "sim_2_the_recorder_never_returns_a_replay_over_2_kb": "passed",

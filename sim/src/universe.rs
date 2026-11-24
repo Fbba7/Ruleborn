@@ -533,6 +533,9 @@ impl Crossing {
         next.casts_used = prev.casts_used;
         next.zones.retain(|z| z.at.is_some());
         next.zones.extend(prev.zones.iter().filter(|z| z.at.is_none()).cloned());
+        // A Lantern wisp's reveal goes with the wisp (SIM-11); the crew keeps
+        // its places, so its index still names it.
+        next.reveals = prev.reveals.clone();
         let tile = arrive.unwrap_or_else(|| Self::standable_near(&next, next.entrance));
         let (cx, cy) = next.grid.centre(tile);
         next.raiders = prev.raiders.iter().map(|r| {
