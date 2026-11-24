@@ -1,6 +1,6 @@
 # FX1 server fixes (A): progress
 
-- Status: STATUS_LINE
+- Status: Green. FX1-8-server-a-lows ready at dbf44adf (pre-check PASS); the last push adds only FX1's status and handoff.
 - Progress: 6 of 8 tasks merged (FX1-1, FX1-2, FX1-3, FX1-4, FX1-6, FX1-7); no gate items (fix tasks have none).
 - Done: FX1-8: FX1-A-02, A-10, A-13, A-15, A-16, A-17, FX1-R10 and AUD-B-18's residual fixed, each after its fail-first test.
 - Next: the lead merges FX1-8; then FX1-9 onward as the backlog assigns them.
@@ -15,7 +15,7 @@
 | FX1-4-holds-codex: RB-15, RB-18, RB-36, RB-53, RB-56 | 4.0 | merged (e2e8f5a1) | `server/test/fix_fx1_holds_codex.test.mjs`; test commit 924726b8; fixes 103d4176, 1de6f966, 63f031ad, 07047356, b45dafe6 |
 | FX1-6-audit-server-a: FX1-A-01 to A-17 | 4.0 | merged (ddf4213d) | `docs/security/audit-2026-11/server-a.md`; `server/test/fix_fx1_audit_server_a.test.mjs`; test commits 6b3556f9, 5d5d2e82, b0e4cd1c, f33ccc18; fixes f1888bba, dfc5bf86, 244b9480, 533b793d, ccda8b22; A-07 reverted 01cb97ac (R11) |
 | FX1-7-audit-tools: FX1-T-01 to T-22 | 4.0 | merged | `docs/security/audit-2026-11/tools.md`; `server/test/fix_fx1_audit_tools.test.mjs`, `server/test/fix_fx1_audit_tools_proofs.mjs`; proof commits 3c7ad511, 4ef72ffd; report b5283fa8 |
-| FX1-8-server-a-lows: A-02, A-10, A-13, A-15, A-16, A-17, R10, AUD-B-18 | 3.0 | DELIV_STATE | `server/test/fix_fx1_audit_server_a.test.mjs`, `server/test/fix_fx1_server_a_lows.test.mjs`, `server/test/fix_fx2_audit_config.test.mjs`; test commit e0ea0eab; fixes 3e2e872f, 9c25c35f, 8180b333, 2419848b, ad2bc945, 991324a6, 14807c73, bad2df32; privacy e46fd2a5 (FX1-R24) |
+| FX1-8-server-a-lows: A-02, A-10, A-13, A-15, A-16, A-17, R10, AUD-B-18 | 3.0 | ready (dbf44adf) | `server/test/fix_fx1_audit_server_a.test.mjs`, `server/test/fix_fx1_server_a_lows.test.mjs`, `server/test/fix_fx2_audit_config.test.mjs`; test commit e0ea0eab; fixes 3e2e872f, 9c25c35f, 8180b333, 2419848b, ad2bc945, 991324a6, 14807c73, bad2df32; privacy e46fd2a5 (FX1-R24) |
 
 ## Handoff
 - **FX1-8-server-a-lows (2026-11-24).** Branch `claude/fix-server-a`, with main 3b162939 merged (f96e2632) before the claim. The medium and low findings of FX1-6's audit that were outside FX1-6's files, the Renown pull-back over skipped seasons, and AUD-B-18's residual.
@@ -55,8 +55,9 @@
   - **FX1-T-11 (FX1-R26).** `npm test` failed FX1-T-11's `stillOpen` once in this container, because no `.pyc` of `check_document.py` was cached: its SyntaxWarning (line 505) becomes the last output line and the proof's value is undefined. It passes once the cache exists. Not this task's files. The lead's cycle 172 answered the same ask (FX2-R4): `py()` parses stdout only, in FX1-9-tools-gate's `done_when`, so R26 needs nothing more.
   - **Main merged.** Main eb4b8e59 merged at 7a9084a2, then main 66b2943b (cycle 173) at 674b0778, both with no conflicts.
   - **Checks on the merge.** The fresh-container setup line and `bash client/build.sh` ran (exit 0), then `bash sim/run_spike.sh` built the wasm simulation. `cd server && npm test` at dbf44adf: 663 of 663. The first run failed only FX1-T-11's `stillOpen` ("FX1-T-11 no longer fails"), the environment issue of FX1-R26 (no cached `.pyc` of `check_document.py`); once `tools/__pycache__/check_document.cpython-313.pyc` existed, all 663 passed. `owners.py diff FX1-8-server-a-lows origin/claude/videogame-project-analysis-ewkkk2 dbf44adf`: "every changed path is inside its files".
-  - **Pre-check.** PRECHECK_LINE
-- Last verified commit: b30765cd (pre-check PASS 2026-11-24T04:46:34Z, sandbox bwrap). Main 613f71c9 merged; main has since moved only under `docs/progress/` (to db0614f0).
+  - **Pre-check.** At dbf44adf (main 66b2943b merged): `state` PASS, "All checks passed.", `DONE exit=0`, finished 07:29:36Z, sandbox bwrap; recorded in the status file. `ready_sha` dbf44adf. Main then moved to 70a0f58, adding only FX4-6 (`client/ext/`) and lead bookkeeping, none of it in FX1-8's files; the lead's candidate run covers the two together.
+  - **Next.** The lead merges FX1-8; then FX1-9 onward as the backlog assigns them, in a fresh session.
+- Last verified commit: dbf44adf (pre-check PASS 2026-11-24T07:29:36Z, sandbox bwrap), FX1-8's ready sha. Before it, b30765cd (FX1-7, PASS 04:46:34Z). Main 613f71c9 merged; main has since moved only under `docs/progress/` (to db0614f0).
 - **FX1-7-audit-tools (2026-11-24).** Branch `claude/fix-server-a`, with main 613f71c9 merged at b30765cd. A read-only audit of `tools/` (outside `tools/vendor/`), the art scripts in `art/design/` and `art/ui/`, the client prototypes and the docs scripts, asking whether a check can pass when it should fail, or a tool corrupt a committed file. The findings, the latent ones, the unproven ones and the tools found sound are in `docs/security/audit-2026-11/tools.md`.
   - **Proofs.** Each confirmed finding has a proof in `server/test/fix_fx1_audit_tools_proofs.mjs`, run by `server/test/fix_fx1_audit_tools.test.mjs` under `stillOpen` with its id. A proof runs the tool on disk against a planted input in a temporary folder; a tool that writes is pointed at a copy, so nothing inside the repository is written. Each fails on main 613f71c9.
   - **Highest:** FX1-T-03 (High). `run_checks.sh record` copies `exit` 0 from a run `result` calls FAIL, and the protocol's reuse rule then skips the lead's own `check_all.sh`. Then T-20 and T-21 (Medium/High: the client contract misses nine server failure codes, none with an `ERR_` row, and every client call outside `client/data/`).
