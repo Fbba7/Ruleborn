@@ -8,8 +8,8 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-24T20:00:00Z",
   "lease_until": "2026-11-24T23:00:00Z",
-  "updated_at": "2026-11-24T20:00:00Z",
-  "expected_next_update_by": "2026-11-24T20:45:00Z",
+  "updated_at": "2026-11-24T20:15:00Z",
+  "expected_next_update_by": "2026-11-24T21:00:00Z",
   "progress_marker": {
     "last_green_sha": "85be2fa80a1ea97d2f62effe14eb7ac249fe32bc",
     "next_step": "re-work after the gate's second fail at 85be2fa8: S1-R46 granted (cycle 187), Cast takes the gold primary plate while it leads at 200%, quieter loot/clock/alarm"
@@ -691,14 +691,14 @@
       "id": "S1-R45",
       "from": "S1",
       "to": "K1",
-      "ask": "With the lead's approval under M33: raise tools/ui_bake/budgets.json's recorded draw calls for heist/200 from 118 to 121. guard.sh on claude/ui-screens-heist at 85be2fa8 (main 43deab02 merged) measures heist/200 at 121; heist/100 (120 of 120) and heist/hc (121 of 123) keep their records, no word is below 4.5:1, and every shot stays under the cap of 150. One call is the Vault's word at 200% text (M57, M61; 119 at 97ecb94f); the other two come with the gate fail's re-work, where Cast leads at 200% (heist-pilot.md Part 11: Cast's word in cream with the ink line at 36 pt, the quieter tint on the loot's, clock's and alarm's figures).",
+      "ask": "With the lead's approval under M33: raise tools/ui_bake/budgets.json's recorded draw calls for heist/200 from 118 to 120. guard.sh on claude/ui-screens-heist at 6188a5d (the re-work under S1-R46) measures heist/200 at 120; heist/100 (120 of 120) and heist/hc (121 of 123) keep their records, no word is below 4.5:1 (worst 6.87 at 200%), and every shot stays under the cap of 150. One call is the Vault's word at 200% text (M57, M61); the other comes with Cast leading at 200% (heist-pilot.md Parts 11 and 12). Figure renewed 24 November 20:15Z (was 121 at 85be2fa8).",
       "files": [
         "tools/ui_bake/budgets.json"
       ],
       "blocking": false,
       "created_at": "2026-11-18T08:25:00Z",
       "due": "2026-11-18T14:00:00Z",
-      "default": "As for S1-R39: the lead writes heist/200 121 with a raises entry in the merge of P4-S1-heist-vault, and S1 marks ready with guard.sh failing only on this line, named in the handoff.",
+      "default": "As for S1-R39: the lead writes heist/200 120 with a raises entry in the merge of P4-S1-heist-vault, and S1 marks ready with guard.sh failing only on this line, named in the handoff.",
       "escalate_to": "lead"
     },
     {
