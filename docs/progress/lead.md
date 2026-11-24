@@ -214,10 +214,10 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxpHsQytV7iJPKhPoRL` (cycle 182,
-24 November 2026 from about 15:15Z, started by the Opus 5.5 launcher).
-Cycle 181's was `session_01SNkKxo8T6d9ouEzGcdPst6` (24 November, from
-about 14:00Z).
+Latest lead cycle session: `session_01SNkKxpWMFbY8DUU6MwqK7d` (cycle 183,
+24 November 2026 from about 16:00Z, started by the Opus 5.5 launcher).
+Cycle 182's was `session_01SNkKxpHsQytV7iJPKhPoRL` (24 November, from
+about 15:15Z).
 Cycle 180's was `session_01SNkKxoEVVxDru4qsQF6zoa` (24 November, from
 about 13:40Z).
 Cycle 178's was `session_01SNkKxomdzcgoV8B8sTfZyr` (24 November, from
@@ -406,6 +406,9 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| SP-bt-04 | `session_01SNkKxnP8NpPyS23jXd4Upa` (Opus 5.5, effort medium) | BT-04a (start, cycle 183: effort medium by order 6, a tools-only task in tools/gate/) | `claude/ui-spec-gate-render` | 2026-11-24 17:12Z |
+| SP-bt-01 | `session_01SNkKxnoYoXvgs2BTqD6NXy` (Opus 5.5, effort medium) | BT-01a (start, cycle 183: effort medium by order 6, a dry-run tools-only task in tools/coord/) | `claude/ui-spec-coord` | 2026-11-24 17:12Z |
+| S1 | `session_01SNkKxrBVFU2PuzXccugcq8` (Opus 5.5, effort high) | P4-S1-heist-vault (re-work, cycle 183: gate fail at 97ecb94f, attempts 1; effort high by order 6, the vault and a failed attempt; S1's last session, `session_01SNkKxp6Vp6uPSGzzYn1CNV`, is idle) | `claude/ui-screens-heist` | 2026-11-24 17:12Z |
 | S1 | `session_01SNkKxp6Vp6uPSGzzYn1CNV` (Opus 5.5, effort high) | P4-S1-heist-vault (restart, cycle 181: reopened after the bug-fix wave; effort high by order 6, the task touches the vault; S1's last session, `session_01SNkKxrGVdaVPxzuPW8vwRg`, is idle) | `claude/ui-screens-heist` | 2026-11-24 14:59Z |
 | S2 | `session_01SNkKxpVmnabuJ8D34eVaFy` (Opus 5.5, effort high) | P4-S2-home-purse (restart, cycle 181: reopened after the bug-fix wave; effort high by order 6, the task touches the purse; S2's last session, `session_01SNkKxneZ4WEHJSJUnhLjUj`, is idle) | `claude/ui-screens-home` | 2026-11-24 14:59Z |
 | S3 | `session_01SNkKxmd5VK7q2FWEmAe3Be` (Opus 5.5, effort medium) | P3-S3-settings-4 (restart, cycle 181: reopened after the bug-fix wave; effort medium by order 6, settings layout in the client only; S3's last session, `session_01SNkKxo7BCcvsUE53DWANpH`, is idle) | `claude/ui-screens-meta` | 2026-11-24 14:59Z |
@@ -859,6 +862,27 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 183**, 24 November 2026, from about 16:00Z (session
+  `session_01SNkKxpWMFbY8DUU6MwqK7d`, started by the Opus 5.5 launcher,
+  effort medium by order 6). **Merged** P4-S2-home-purse (ready_sha
+  ae1a7c1c) onto main as 1b940055, and P3-S3-settings-4 (ready_sha
+  e3190f78, gate 'settings at 100% text', Hierarchy: pass 3 of 3) as
+  de193db4. The lead ran the full checks on both: PASS ("All checks
+  passed.", exit 0, at 1b940055 and at de193db4). **Gate fail:**
+  P4-S1-heist-vault's ready_sha 97ecb94f failed 'heist at 200% text,
+  pt_BR' (Hierarchy) 0 of 3 (advisory; verdict in
+  docs/art/ui-quality/gate/verdicts/P4-S1-heist-vault/97ecb94f.json):
+  Cast is the same dark plum as Get out at nearly the same size, and the
+  loot panel, timer and LEIS AQUI plates outweigh it. The task is open
+  again, attempts 1, prior head cf61eb04. **Started** S1 anew on the
+  re-work at effort high (order 6: the vault, and a failed attempt), and,
+  with the two seats S2 and S3 freed, the BT track: SP-bt-01 on BT-01a
+  and SP-bt-04 on BT-04a, both at effort medium (tools-only); three
+  builders, the cap under `allowed_warning`. S2 and S3 have no open
+  task. The audit and roadmap pages were not republished (neither merge
+  changed docs/audit or docs/roadmap). **Next:** gate and merge the
+  heist re-work, BT-01a and BT-04a as they are ready.
+
 - **Cycle 182**, 24 November 2026, from about 15:15Z (session
   `session_01SNkKxpHsQytV7iJPKhPoRL`, started by the Opus 5.5 launcher,
   effort medium by order 6). The changes since cycle 181: S1, S2 and S3
@@ -893,20 +917,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   audit and roadmap pages were not republished (FX1-12 changed neither
   docs/audit nor docs/roadmap). **Next:** merge the three UI tasks as
   they are ready.
-
-- **Cycle 180**, 24 November 2026, from about 13:40Z (session
-  `session_01SNkKxoEVVxDru4qsQF6zoa`, started by the Opus 5.5 launcher,
-  effort medium by order 6). **Merged nothing**: FX1-12-tools-ui is not
-  ready yet. FX3 (`session_01SNkKxmwFNqhHYqzetHQz3X`, effort high) is
-  idle with its new pre-check at 1146a02e running in the background, so
-  it is not restarted. **Answered** FX3-R2, widened, with its default:
-  granted. `client/ui/art/icons_256.json` and `client/ui/art/icons_48.json`
-  (commit 9e420f61, only `sources_hash` moves) join FX1-12's `exceptions`;
-  `owners.py diff` on `claude/fix-sim` now passes. **Started nothing**:
-  FX1-12 is the last open FX task; the cap is three (allowed_warning).
-  The audit and roadmap pages were not republished. **Next:** merge
-  FX1-12 when ready (full checks), then unpark the UI (P3-S3-settings-4,
-  P4-S1-heist-vault, P4-S2-home-purse, the BT track).
 
 - **Restart, 23 November 2026** (the overseer, about 21:20Z). The owner
   restarted the program, in the chat of the overseer session: "Continue,
