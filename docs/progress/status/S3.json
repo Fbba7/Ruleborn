@@ -8,8 +8,8 @@
   "task_state": "working",
   "claimed_at": "2026-11-24T15:05:00Z",
   "lease_until": "2026-11-24T18:05:00Z",
-  "updated_at": "2026-11-24T15:05:00Z",
-  "expected_next_update_by": "2026-11-24T15:50:00Z",
+  "updated_at": "2026-11-24T15:45:00Z",
+  "expected_next_update_by": "2026-11-24T16:30:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "4a998521c29f39451c8164ec5b642eb37f9835f9",
@@ -821,6 +821,36 @@
       "created_at": "2026-11-18T06:00:00Z",
       "due": "2026-11-18T12:00:00Z",
       "default": "AD has no objection: the ghost rows stand as named, S3 marks ready at the pre-checked sha, and AD re-checks them on the merge.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S3-R46",
+      "from": "S3",
+      "to": "lead",
+      "ask": "For AD, a check of the re-shot stills before the gate run (P3-S3-settings-4, AD-R68; a check, not a new round): AD's first road (the track on ghost, the unchosen tabs clear, the chosen tab on its dark leather) fails value-steps (the leather 17.7 dL* off the ghost track, 1.8 of 2 steps; no other kit strip sits at a mid value), so S3 took the named second road: the strip stays seg_track_light and the title is set in display_xl (Lilita One 44, ink outline, hard drop) on its gold card, its line box trimmed so the High contrast row stays on the first screen (J). High contrast, the gold A / A and Back unchanged; the ghost rows stand. The Access, Game and Account tabs are shot at 100% in en, pt_BR and de; the 200% and high-contrast forms fit and pass value-steps (the Game tab's stepper discs fail as on main's record). Evidence and measures: docs/art/tracks/menu-screens.md, 'AD's preview 3: the title leads, not the tab strip'. On main 178be84 the stills render pixel for pixel as committed at a201e966. Gate item: settings at 100% text (Hierarchy).",
+      "files": [
+        "docs/art/shots/menu-screens/settings-100.png",
+        "docs/art/shots/menu-screens/settings-pt_BR.png",
+        "docs/art/shots/menu-screens/settings-de.png",
+        "docs/art/shots/menu-screens/settings-game-100.png",
+        "docs/art/shots/menu-screens/settings-game-pt_BR.png",
+        "docs/art/shots/menu-screens/settings-game-de.png",
+        "docs/art/shots/menu-screens/settings-account-100.png",
+        "docs/art/shots/menu-screens/settings-account-pt_BR.png",
+        "docs/art/shots/menu-screens/settings-account-de.png",
+        "docs/art/shots/menu-screens/settings-hc.png",
+        "docs/art/shots/menu-screens/settings-hc-pt_BR.png",
+        "docs/art/shots/menu-screens/settings-200-pt_BR.png",
+        "docs/art/shots/menu-screens/settings-200-de.png",
+        "docs/art/shots/menu-screens/settings-200-pt_BR-comfort.png",
+        "docs/art/shots/menu-screens/settings-200-de-comfort.png",
+        "docs/art/shots/menu-screens/settings-200-hc-de-comfort.png",
+        "docs/art/tracks/menu-screens.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-24T15:45:00Z",
+      "due": "2026-11-24T19:00:00Z",
+      "default": "AD has no objection: the title road stands as named, the lead's gate judges settings at 100% text at S3's pre-checked sha, and AD re-checks on the merge.",
       "escalate_to": "lead"
     }
   ],
