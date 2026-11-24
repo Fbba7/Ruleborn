@@ -8,8 +8,8 @@
   "task_state": "working",
   "claimed_at": "2026-11-24T03:02:00Z",
   "lease_until": "2026-11-24T06:02:00Z",
-  "updated_at": "2026-11-24T03:08:00Z",
-  "expected_next_update_by": "2026-11-24T03:53:00Z",
+  "updated_at": "2026-11-24T03:15:38Z",
+  "expected_next_update_by": "2026-11-24T04:00:38Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "f29205a5",
@@ -51,5 +51,6 @@
       "escalate_to": "lead"
     }
   ],
-  "answers": []
+  "answers": [],
+  "next_step": "CLI-3, 8, 9, 16, 17, 19, 21 proven open and CLI-20 rejected; next the unread client files (island_builder.gd, universe_island.gd, client/ui, heist_screen.gd 520-999), then the report"
 }
