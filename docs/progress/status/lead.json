@@ -1,9 +1,16 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-24T08:33:00Z",
+  "updated_at": "2026-11-24T09:05:00Z",
   "expected_next_update_by": "2026-11-24T11:33:00Z",
   "cycle": 174,
-  "merging": null,
+  "merging": {
+    "candidate_sha": "pending (FX4-7 on 632ab460)",
+    "task_ids": [
+      "FX4-7-curation-swap-weave"
+    ],
+    "started_at": "2026-11-24T09:05:00Z",
+    "expires_at": "2026-11-24T10:05:00Z"
+  },
   "last_merged": {
     "task_id": "FX1-8-server-a-lows, FX1-9-tools-gate",
     "sha": "e830e15b"
