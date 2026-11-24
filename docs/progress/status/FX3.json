@@ -3,27 +3,21 @@
   "role": "FX3",
   "branch": "claude/fix-sim",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "FX1-11-tools-docs",
-  "task_state": "ready",
-  "claimed_at": "2026-11-24T11:15:00Z",
-  "lease_until": "2026-11-24T14:15:00Z",
-  "updated_at": "2026-11-24T11:47:00Z",
-  "expected_next_update_by": "2026-11-24T12:47:00Z",
+  "agent_state": "active",
+  "task_id": "FX1-12-tools-ui",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-24T12:55:00Z",
+  "lease_until": "2026-11-24T15:55:00Z",
+  "updated_at": "2026-11-24T12:55:00Z",
+  "expected_next_update_by": "2026-11-24T13:40:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "a9263449f69297f5c715c489ad350760ec267b58",
-    "next_step": "the lead's merge of FX1-11-tools-docs"
+    "last_green_sha": "7bbb9788",
+    "next_step": "FX1-12: fail-first tests for FX1-T-06, 07, 13, 14, 15, 16, 18, 19"
   },
-  "precheck": {
-    "sha": "a9263449f69297f5c715c489ad350760ec267b58",
-    "state": "PASS",
-    "exit": 0,
-    "finished_at": "2026-11-24T11:45:58Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
-  "ready_sha": "a9263449f69297f5c715c489ad350760ec267b58",
+  "ready_sha": null,
   "stop_at": "2026-11-24T21:00:00Z",
   "acks": [],
   "requests": [],
@@ -35,5 +29,5 @@
       "answer": "default: the four extra ERR_ rows stay in client/i18n/strings.csv (merged with FX1-10)"
     }
   ],
-  "next_step": "the lead's merge of FX1-11-tools-docs"
+  "next_step": "FX1-12: fail-first tests, then the fixes"
 }
