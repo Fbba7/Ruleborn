@@ -1120,8 +1120,10 @@ impl Island {
         if !self.on_grid(x, y) {
             return false;
         }
+        // A guard may stand in tall grass or fog: clear both, as `claim`
+        // does (RB-57, SIM-13).
         if self.vault != (x, y) {
-            self.clear(x, y);
+            while self.clear(x, y) {}
         }
         self.vault = (x, y);
         true
