@@ -3,21 +3,27 @@
   "role": "FX3",
   "branch": "claude/fix-sim",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "FX1-11-tools-docs",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-24T11:15:00Z",
   "lease_until": "2026-11-24T14:15:00Z",
-  "updated_at": "2026-11-24T11:40:00Z",
-  "expected_next_update_by": "2026-11-24T12:40:00Z",
+  "updated_at": "2026-11-24T11:47:00Z",
+  "expected_next_update_by": "2026-11-24T12:47:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "cceacc6d7589e75e2395add6a54622d8326b203c",
-    "next_step": "FX1-11: all five fixes committed; full local tests, then the pre-check"
+    "last_green_sha": "a9263449f69297f5c715c489ad350760ec267b58",
+    "next_step": "the lead's merge of FX1-11-tools-docs"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "a9263449f69297f5c715c489ad350760ec267b58",
+    "state": "PASS",
+    "exit": 0,
+    "finished_at": "2026-11-24T11:45:58Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "a9263449f69297f5c715c489ad350760ec267b58",
   "stop_at": "2026-11-24T21:00:00Z",
   "acks": [],
   "requests": [],
@@ -29,5 +35,5 @@
       "answer": "default: the four extra ERR_ rows stay in client/i18n/strings.csv (merged with FX1-10)"
     }
   ],
-  "next_step": "FX1-11: local tests, pre-check, handoff"
+  "next_step": "the lead's merge of FX1-11-tools-docs"
 }
