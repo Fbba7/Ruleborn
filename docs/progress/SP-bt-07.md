@@ -1,15 +1,15 @@
 # SP-bt-07 the metrics report: progress
 
-- Status: Green (BT-07 working; self-test passes).
+- Status: Green (BT-07 ready at efea6a02; pre-check PASS).
 - Progress: 0 of 1 tasks merged; 0 items passed by the gate (BT-07 has no gate items).
 - Done: `tools/coord/metrics.py`, the digest's metrics section, with `--self-test`.
-- Next: pre-check, then ready.
+- Next: the lead merges BT-07 (no other task).
 - Blocked by: none.
 - Owner decision needed: none.
 
 | Deliverable | Weight (h) | Status | Evidence |
 |---|---:|---|---|
-| BT-07 metrics digest section | 3 | working | `python3 tools/coord/metrics.py --self-test` |
+| BT-07 metrics digest section | 3 | ready (efea6a02) | `python3 tools/coord/metrics.py --self-test` |
 
 ## What it does
 
@@ -44,3 +44,7 @@ records usage.
 
 - Timing ready from the backlog alone: 37 of 53 merges had no ready time.
   The `ready_sha` commit time fixed that for all but one.
+
+## Stopped here
+
+BT-07 is ready at efea6a02 (pre-check PASS, owners diff clean). Waiting for the merge; no task is left for this seat.
