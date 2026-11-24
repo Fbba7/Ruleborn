@@ -23,9 +23,18 @@
   "requests": [
     {
       "id": "FX3-R1",
+      "from": "FX3",
       "to": "lead",
-      "what": "FX1-10's broadened client_contract.py asks for 13 ERR_ rows, not the nine granted: era, manifest, method_not_allowed and no_landing_realm are sent by the server too (sim.mjs REFUSED table, main.mjs 405). The gate fails without them.",
-      "default": "the four extra rows stay in client/i18n/strings.csv in this task, same file as the grant"
+      "ask": "FX1-10's broadened client_contract.py asks for 13 ERR_ rows, not the nine granted: era, manifest, method_not_allowed and no_landing_realm are sent by the server too (sim.mjs REFUSED table, main.mjs 405). The gate fails without them.",
+      "files": [
+        "client/i18n/strings.csv",
+        "tools/client_contract.py"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-24T09:28:00Z",
+      "due": "2026-11-24T13:28:00Z",
+      "default": "the four extra rows stay in client/i18n/strings.csv in this task, same file as the grant",
+      "escalate_to": "lead"
     }
   ],
   "answers": [],
