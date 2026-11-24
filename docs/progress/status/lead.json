@@ -1,9 +1,16 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-24T01:25:00Z",
+  "updated_at": "2026-11-24T01:58:00Z",
   "expected_next_update_by": "2026-11-24T02:20:00Z",
   "cycle": 168,
-  "merging": null,
+  "merging": {
+    "candidate_sha": "1d9b23b2f65039afb8438d166768c1b7e60b6af1",
+    "task_ids": [
+      "FX3-6-audit-universe"
+    ],
+    "started_at": "2026-11-24T01:58:00Z",
+    "expires_at": "2026-11-24T02:58:00Z"
+  },
   "last_merged": {
     "task_id": "FX2-8-audit-b-lows",
     "sha": "cd5f98fb"
