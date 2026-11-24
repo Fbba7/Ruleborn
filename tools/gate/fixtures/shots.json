@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "note": "The shot list's format, by example (the docstring of tools/gate/render.py). This copy lists the screens the UI wave's gate items name today, as the lead renders them; AD's list, once it exists, replaces it as the default.",
+  "note": "The shot list's format, by example (the docstring of tools/gate/render.py). This copy lists the screens the UI wave's gate items name today, as the lead renders them, with named crops where a script writes a shot record, and the motion strips of art/ui/motion/strips.sh; AD's list, once it exists, replaces it as the default.",
   "screens": {
     "heist": {
       "script": "client/tests/shots/screen_heist.gd",
@@ -10,8 +10,16 @@
       "script": "client/tests/shots/screen_result.gd",
       "contrast": "CONTRAST",
       "states": [
-        {"name": "off", "env": {}},
-        {"name": "srv", "env": {"SERVER": "1"}}
+        {
+          "name": "off",
+          "env": {}
+        },
+        {
+          "name": "srv",
+          "env": {
+            "SERVER": "1"
+          }
+        }
       ]
     },
     "home": {
@@ -20,7 +28,11 @@
     },
     "character": {
       "script": "client/tests/shots/screen_character.gd",
-      "contrast": "HC"
+      "contrast": "HC",
+      "record": "RECORD",
+      "crops": [
+        "back"
+      ]
     },
     "roster": {
       "script": "client/tests/shots/screen_roster.gd",
@@ -28,7 +40,123 @@
     },
     "settings": {
       "script": "client/tests/shots/screen_settings.gd",
-      "contrast": "HC"
+      "contrast": "HC",
+      "record": "RECORD",
+      "crops": [
+        "back",
+        "size-a",
+        "row"
+      ]
+    },
+    "press": {
+      "script": "client/tests/shots/motion_press.gd",
+      "contrast": "HC",
+      "states": [
+        {
+          "name": "full",
+          "env": {
+            "FORM": "full"
+          }
+        },
+        {
+          "name": "reduced",
+          "env": {
+            "FORM": "reduced"
+          }
+        }
+      ],
+      "strip": {
+        "pick": "0:43:3",
+        "height": 200
+      }
+    },
+    "reward": {
+      "script": "client/tests/shots/motion_reward.gd",
+      "contrast": "HC",
+      "states": [
+        {
+          "name": "common",
+          "env": {
+            "FORM": "full",
+            "TIER": "common"
+          }
+        },
+        {
+          "name": "rare",
+          "env": {
+            "FORM": "full",
+            "TIER": "rare"
+          }
+        },
+        {
+          "name": "epic",
+          "env": {
+            "FORM": "full",
+            "TIER": "epic"
+          }
+        },
+        {
+          "name": "reduced",
+          "env": {
+            "FORM": "reduced",
+            "TIER": "epic"
+          },
+          "strip": {
+            "pick": "0:999:3"
+          }
+        }
+      ],
+      "strip": {
+        "pick": "0:999:4",
+        "height": 360
+      }
+    },
+    "shine": {
+      "script": "client/tests/shots/motion_shine.gd",
+      "contrast": "HC",
+      "states": [
+        {
+          "name": "full",
+          "env": {
+            "FORM": "full"
+          }
+        },
+        {
+          "name": "reduced",
+          "env": {
+            "FORM": "reduced"
+          },
+          "strip": {
+            "pick": "0:999:24"
+          }
+        }
+      ],
+      "strip": {
+        "pick": "42:66:2",
+        "height": 200
+      }
+    },
+    "screen": {
+      "script": "client/tests/shots/motion_screen.gd",
+      "contrast": "HC",
+      "states": [
+        {
+          "name": "full",
+          "env": {
+            "FORM": "full"
+          }
+        },
+        {
+          "name": "reduced",
+          "env": {
+            "FORM": "reduced"
+          }
+        }
+      ],
+      "strip": {
+        "pick": "0:19:1",
+        "height": 400
+      }
     }
   },
   "items": []
