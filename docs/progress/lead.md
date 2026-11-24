@@ -394,6 +394,7 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| FX4 | `session_01SNkKxpfHmWd8HXegEnr3P5` (Opus 5.5, effort medium) | FX4-8-rehearsal-rerun (start, cycle 176: its deps FX4-4 and FX4-7 merged; effort medium by order 6, a medium defect in the client only; FX4's last session, `session_01SNkKxoYfNyaJq9rBGUSuzk`, is idle) | `claude/fix-client` | 2026-11-24 10:17Z |
 | FX3 | `session_01SNkKxnryguhFxw93wbzyLx` (Opus 5.5, effort high) | FX1-10-tools-contract (start, cycle 175: reassigned from FX1 with FX1-11 and FX1-12, its deps FX1-9 and FX4-7 merged; effort high by order 6, the task spans tools/, server/ and client/; FX3's last session, `session_01SNkKxqR9zT6xXyz2XFYKXb`, is idle) | `claude/fix-sim` | 2026-11-24 09:17Z |
 | FX1 | `session_01SNkKxn8R6Rr28GFWpvcWZh` (Opus 5.5, effort high) | FX1-13-codex-woven-at (start, cycle 174: seeded from FX1-R25 after FX1-8-server-a-lows merged at e830e15b; FX1's last session, `session_01SNkKxpLTTBVYS7eUXqeFJr`, is idle) | `claude/fix-server-a` | 2026-11-24 08:29Z |
 | FX4 | `session_01SNkKxoYfNyaJq9rBGUSuzk` (Opus 5.5, effort high) | FX4-7-curation-swap-weave (start, cycle 173: next task after FX4-6-device-replay-cap merged at ee4d64aa; FX4's last session, `session_01SNkKxqMB92sY6KUMaz9NgW`, is idle) | `claude/fix-client` | 2026-11-24 07:21Z |
