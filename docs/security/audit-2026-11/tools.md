@@ -40,16 +40,16 @@ requests are at the end, grouped by area, and in
 | FX1-T-04 | Medium | tools/run_checks.sh `result` | fixed (FX1-9-tools-gate) |
 | FX1-T-09 | Medium | tools/check_all.sh, check_dependencies.py | fixed (FX1-9-tools-gate) |
 | FX1-T-22 | Medium | tools/check_all.sh, build_stamp.py | fixed (FX1-9-tools-gate) |
-| FX1-T-10 | Medium | check_findings_fresh.py, check_docs_consistency.py | open: request FX1-R22 |
-| FX1-T-17 | Medium | check_audit_ui.py, validate_content.py | open: request FX1-R22 |
+| FX1-T-10 | Medium | check_findings_fresh.py, check_docs_consistency.py | fixed (FX1-11-tools-docs) |
+| FX1-T-17 | Medium | check_audit_ui.py, validate_content.py | fixed (FX1-11-tools-docs) |
 | FX1-T-08 | Medium | tools/check_ci.py | fixed (FX1-9-tools-gate) |
 | FX1-T-07 | Medium | tools/ui_bake/check_screens.py | open: request FX1-R23 |
 | FX1-T-01 | Medium | server/status.py | fixed (FX1-10-tools-contract) |
 | FX1-T-02 | Medium | server/status.py | fixed (FX1-10-tools-contract) |
-| FX1-T-11 | Medium, latent | tools/check_document.py | open: request FX1-R22 |
+| FX1-T-11 | Medium, latent | tools/check_document.py | fixed (FX1-11-tools-docs) |
 | FX1-T-05 | Low | tools/coord/owners.py | fixed (FX1-9-tools-gate) |
 | FX1-T-06 | Low | art/ui/board/build_tokens.mjs | open: request FX1-R23 |
-| FX1-T-12 | Low | tools/check_docs_consistency.py | open: request FX1-R22 |
+| FX1-T-12 | Low | tools/check_docs_consistency.py | fixed (FX1-11-tools-docs) |
 | FX1-T-13 | Low | tools/ui_bake/bake.js | open: request FX1-R23 |
 | FX1-T-14 | Low | tools/ui_bake/check_screens.py | open: request FX1-R23 |
 | FX1-T-15 | Low | tools/ui_bake/check_screens.py | open: request FX1-R23 |
@@ -539,8 +539,8 @@ test that replaces the proof's `stillOpen` entry.
   `server/status.py`, `client/status.py`, and nine `ERR_` rows in
   `client/i18n/strings.csv` (thirteen once the check read every code: era,
   manifest, method_not_allowed and no_landing_realm too).
-- **FX1-R22, the document checks:** FX1-T-10, FX1-T-17, FX1-T-11,
-  FX1-T-12. Files: `tools/check_findings_fresh.py`,
+- **FX1-R22, the document checks** (done: FX1-11-tools-docs fixed all
+  four): FX1-T-10, FX1-T-17, FX1-T-11, FX1-T-12. Files: `tools/check_findings_fresh.py`,
   `tools/check_docs_consistency.py`, `tools/check_audit_ui.py`,
   `tools/validate_content.py`, `tools/check_document.py`.
 - **FX1-R23, the UI tools (after the UI resumes, or with it):** FX1-T-07,

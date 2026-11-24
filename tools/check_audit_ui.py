@@ -467,14 +467,30 @@ def self_test() -> int:
 def _self_test_built() -> bool:
     """The build band must not report more than the last run proved.
 
-    Two plants against the committed status file: a test result flipped to
-    failed, and a test renamed so the manifest's name no longer finds it. The
-    first must read failing and the second proof missing. Neither may read
-    built — a system whose proof has lost its subject reading as proven
-    is the fault this repository exists to catch.
+    Two plants against a copy of the committed status file: a test result
+    flipped to failed, and a test renamed so the manifest's name no longer
+    finds it. The first must read failing and the second proof missing.
+    Neither may read built — a system whose proof has lost its subject
+    reading as proven is the fault this repository exists to catch.
+
+    The plants go into a temporary copy of the simulation's two files, with
+    build_audit.SIM pointed at it: a run killed between a plant and its
+    restore once left the plant in the committed sim/status.json (FX1-T-17).
     """
-    import json
-    import build_audit
+    home = build_audit.SIM
+    work = pathlib.Path(tempfile.mkdtemp(prefix="audit_ui_"))
+    try:
+        for name in ("status.json", "systems.json"):
+            shutil.copyfile(home / name, work / name)
+        build_audit.SIM = work
+        return _plant_built()
+    finally:
+        build_audit.SIM = home
+        shutil.rmtree(work, ignore_errors=True)
+
+
+def _plant_built() -> bool:
+    """The plants of _self_test_built, against whatever build_audit.SIM is."""
     ok = True
     real = build_audit.built_systems
     status = json.loads((build_audit.SIM / "status.json").read_text())
