@@ -4,7 +4,7 @@
   "expected_next_update_by": "2026-11-24T14:05:00Z",
   "cycle": 176,
   "merging": {
-    "candidate_sha": "pending",
+    "candidate_sha": "fa4bedf5",
     "task_ids": [
       "FX4-8-rehearsal-rerun"
     ],
