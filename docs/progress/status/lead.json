@@ -1,19 +1,19 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-24T09:05:00Z",
+  "updated_at": "2026-11-24T09:22:00Z",
   "expected_next_update_by": "2026-11-24T11:33:00Z",
   "cycle": 174,
   "merging": {
-    "candidate_sha": "pending (FX4-7 on 632ab460)",
+    "candidate_sha": "pending (FX1-13 on main)",
     "task_ids": [
-      "FX4-7-curation-swap-weave"
+      "FX1-13-codex-woven-at"
     ],
-    "started_at": "2026-11-24T09:05:00Z",
-    "expires_at": "2026-11-24T10:05:00Z"
+    "started_at": "2026-11-24T09:22:00Z",
+    "expires_at": "2026-11-24T10:22:00Z"
   },
   "last_merged": {
-    "task_id": "FX1-8-server-a-lows, FX1-9-tools-gate",
-    "sha": "e830e15b"
+    "task_id": "FX4-7-curation-swap-weave",
+    "sha": "dc17aa87"
   },
   "acks": [
     "M15",

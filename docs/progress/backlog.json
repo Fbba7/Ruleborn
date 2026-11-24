@@ -2,8 +2,8 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026. Phase 2 started on 12 November 2026 (lead cycle 70): P1-AD-board-1d let board 1 stand and phase 1's other exit criteria hold (report.md section 3.2); its first tasks are the flow findings (S1, S2) and board 1's note G (AIA-2), within the same cap of three. Since 12 November 2026, about 20:00Z, the cap is four UI builders by the owner's order (CLAUDE.md order 3; three while the seven-day bar reads allowed_warning). Phase 3 (polish and harden, report.md step 12) started on 17 November 2026 (lead cycle 118) under M49: every phase 2 task was merged by 06:55Z, the exit review ran in cycle 118 (boards 3, 4 and 5 stand, board 2 waits on the deferred icon batch 4 by D13 (c), the exceptions queue is empty, every screen passes the gate but result at 200% pt_BR, Hierarchy, which P3-S1-result-7 takes), and the first blind audit (O6) is carried into phase 3 as P3-AD-audit-1. Phase 3 draws from the 20-hour reserve; it exits when no board has an open objection, the second blind audit is done and the wave board (O7) stands. The bug-fix wave started on 21 November 2026 by the owner's order (CLAUDE.md order 1, entry of 21 November): the UI is paused (P3-S3-settings-4, P4-S1-heist-vault and P4-S2-home-purse parked with their work on their branches; the BT track stays parked) while up to four fix builders, FX1 to FX4 within the cap of four, fix the 60 confirmed defects of docs/security/bug-report-2026-11.md, highs first, each with a test that fails before the fix, then recheck the four unproven candidates (7, 21, 23, 34) and audit the code the report did not read (findings in docs/security/audit-2026-11/, from which the lead files fix tasks). The FX tasks' phase is 'fix'; the UI resumes at phase 3 when every FX task is merged.",
   "wave": "Bug-fix wave",
   "phase": 3,
-  "updated_at": "2026-11-24T07:22:00Z",
-  "updated_by": "lead (cycle 173)",
+  "updated_at": "2026-11-24T09:20:00Z",
+  "updated_by": "lead (cycle 175)",
   "stop_at": "2026-11-24T21:00:00Z",
   "lease_hours": 3,
   "status_every_minutes": 45,
@@ -249,20 +249,14 @@
       "estimate_h": 2.0,
       "tier": 1,
       "critical": false,
-      "state": "working",
-      "claim": {
-        "agent": "FX4",
-        "branch": "claude/fix-client",
-        "claimed_at": "2026-11-24T07:25:00Z",
-        "seen_at": "2026-11-24T08:30:00Z",
-        "lease_until": "2026-11-24T10:25:00Z"
-      },
+      "state": "merged",
+      "claim": null,
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null,
-      "updated_at": "2026-11-24T08:30:00Z",
-      "updated_by": "lead (cycle 174)"
+      "ready_sha": "62240757",
+      "merged_sha": "dc17aa87",
+      "updated_at": "2026-11-24T09:20:00Z",
+      "updated_by": "lead (cycle 175)"
     },
     {
       "id": "FX4-8-rehearsal-rerun",
@@ -411,9 +405,9 @@
       "id": "FX1-10-tools-contract",
       "title": "Medium/high and medium, contract and status tools, from FX1-7's audit (FX1-R21; docs/security/audit-2026-11/tools.md): FX1-T-20 (nine server failure codes client_contract.py never reads, none with an ERR_ row), FX1-T-21 (client calls outside client/data never checked), FX1-T-01 (server/status.py lets a passing test hide a failing one of the same name) and FX1-T-02 (a skipped test recorded as passed; client/status.py parses the same way)",
       "phase": "fix",
-      "role": "FX1",
+      "role": "FX3",
       "model": "Opus 5.5",
-      "assigned_to": "FX1",
+      "assigned_to": "FX3",
       "files": [
         "tools/client_contract.py",
         "server/status.py",
@@ -448,16 +442,16 @@
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-24T05:35:00Z",
-      "updated_by": "lead (cycle 171)"
+      "updated_at": "2026-11-24T09:20:00Z",
+      "updated_by": "lead (cycle 175)"
     },
     {
       "id": "FX1-11-tools-docs",
       "title": "Medium and low, document checks, from FX1-7's audit (FX1-R22; docs/security/audit-2026-11/tools.md): FX1-T-10 (three-digit register ids such as D100 unseen), FX1-T-17 (two self-tests plant into committed files and leave the plant if killed), FX1-T-11 (check_document treats an unknown tracked id as open) and FX1-T-12 (check_one_fact_home misses a restatement with a type annotation)",
       "phase": "fix",
-      "role": "FX1",
+      "role": "FX3",
       "model": "Opus 5.5",
-      "assigned_to": "FX1",
+      "assigned_to": "FX3",
       "files": [
         "tools/check_findings_fresh.py",
         "tools/check_docs_consistency.py",
@@ -492,16 +486,16 @@
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-24T08:30:00Z",
-      "updated_by": "lead (cycle 174)"
+      "updated_at": "2026-11-24T09:20:00Z",
+      "updated_by": "lead (cycle 175)"
     },
     {
       "id": "FX1-12-tools-ui",
       "title": "Medium and low, UI tools, from FX1-7's audit (FX1-R23; docs/security/audit-2026-11/tools.md): FX1-T-07 (check_screens counts no texture for single quotes or an upper-case extension), FX1-T-06 (build_tokens.mjs --check passes anything under a path with a space), FX1-T-13 (bake.js paginate makes pages taller than MAX_SIDE), FX1-T-14 (check_screens --root passes a folder with no screens), FX1-T-15 (a fill cleared on one branch only is excused), FX1-T-16 (budget_shots --record cannot record a new screen), FX1-T-18 (golden.py passes when labels-blind.md is missing) and FX1-T-19 (sheet.py crops crashes on a name with a slash)",
       "phase": "fix",
-      "role": "FX1",
+      "role": "FX3",
       "model": "Opus 5.5",
-      "assigned_to": "FX1",
+      "assigned_to": "FX3",
       "files": [
         "tools/ui_bake/check_screens.py",
         "tools/ui_bake/bake.js",
@@ -536,8 +530,8 @@
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-24T05:35:00Z",
-      "updated_by": "lead (cycle 171)"
+      "updated_at": "2026-11-24T09:20:00Z",
+      "updated_by": "lead (cycle 175)"
     },
     {
       "id": "FX1-13-codex-woven-at",
