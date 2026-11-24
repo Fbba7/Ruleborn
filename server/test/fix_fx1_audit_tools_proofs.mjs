@@ -45,19 +45,21 @@ export function run(cmd, args, cwd, env = {}) {
   const base = { ...process.env };
   delete base.NODE_TEST_CONTEXT;
   const r = spawnSync(cmd, args, { cwd, encoding: "utf8", env: { ...base, ...env }, timeout: 120_000 });
-  return { code: r.status, signal: r.signal, out: (r.stdout ?? "") + (r.stderr ?? "") };
+  return { code: r.status, signal: r.signal, stdout: r.stdout ?? "", out: (r.stdout ?? "") + (r.stderr ?? "") };
 }
 
 /** Run Python isolated (-I: no cwd or PYTHONPATH on the path; -B: no .pyc
  *  written into the repository), with tools/ and `extra` folders importable,
- *  from a scratch folder. The code prints one JSON line last; it is parsed. */
+ *  from a scratch folder. The code prints one JSON line last on stdout; it is
+ *  parsed. */
 export function py(code, extra = [], { fresh = false } = {}) {
   const path = [TOOLS, ...extra.map((p) => join(REPO, p))];
   const head = `import sys, json\nsys.path[:0] = ${JSON.stringify(path)}\n`;
   // fresh: look for no cached .pyc (as in a tree with no tools/__pycache__).
   const flags = fresh ? ["-X", `pycache_prefix=${scratch()}`] : [];
   const r = run("python3", ["-B", "-I", ...flags, "-c", head + code], scratch());
-  const last = r.out.trim().split("\n").pop();
+  // stdout only: a warning on stderr (FX2-R4) must not become the last line.
+  const last = r.stdout.trim().split("\n").pop();
   let value;
   try { value = JSON.parse(last); } catch { value = undefined; }
   return { ...r, value };
