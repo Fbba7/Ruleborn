@@ -12,10 +12,19 @@ extends Control
 ## heading 35.2, so the title stands well clear of a group's heading too.
 const TITLE_LEAD := 1.5
 const HEADING_LEAD := 1.1
-## The title in the kit's hero slot (34 points), not the title one: the
-## settings screen has no main action, so its title must be where the eye
-## lands first in the squint (the gate's Hierarchy at 5fc97aac).
-const TITLE_ROLE := "hero"
+## The title in the kit's largest display slot (Lilita One, 44 points, its
+## ink outline and hard drop), not the title one: the settings screen has no
+## main action, so its title must be where the eye lands first in the squint
+## (the gate's Hierarchy at 5fc97aac). Marcellus's thin strokes went mid gray
+## in the blur, under the light tab strip and the 100% readout (AD's preview 3,
+## AD-R68: no kit strip passes the value steps at a mid value, so the title
+## takes audit 2's road and outweighs the strip by size and weight).
+const TITLE_ROLE := "display_xl"
+## How much of the title's line box is trimmed over and under its words, as a
+## share of its size: the display face's ascent leaves a gap above the caps,
+## and its descent more room than the outline and the drop need.
+const TITLE_TRIM_TOP := 0.15
+const TITLE_TRIM_BOTTOM := 0.13
 ## A group's heading, in points at 100%: a step over the 16-point rows it
 ## heads and the 20-point heading slot, so the heading outranks its rows.
 const HEADING_POINTS := 22.0
@@ -25,7 +34,7 @@ const SECTION_PAD := 12.0
 const HEAD_PAD := 16.0
 ## The title and heading plates' top and bottom padding, in points: none, as
 ## the display face's own line height leaves room over and under the words.
-## The hero title and the 22-point headings are taller than the slots they
+## The display title and the 22-point headings are taller than the slots they
 ## replaced, and with the old padding they pushed the High contrast row off
 ## the first screen at 100% in pt_BR and German (AD's objection J).
 const PLATE_TOP := 0.0
@@ -144,7 +153,7 @@ func _layout() -> void:
 	game.add_child(_toggle("slow_rehearsals", "SETTINGS_SLOW_REHEARSALS", "playtimereminder"))
 
 	# Key frame 05: the text size and the schools' marks, then "Seeing and
-	# comfort", each switch a whole row framed on parchment.
+	# comfort", each switch a whole row, dark (parchment in high contrast).
 	access.add_child(_section("SCREEN_SETTINGS_ACCESS"))
 	access.add_child(_text_card())
 	access.add_child(_shapes())
@@ -181,7 +190,7 @@ func _layout() -> void:
 	column.add_child(_bottom())
 
 
-## The title on its plate: the settings mark and SETTINGS_TITLE in Marcellus.
+## The title on its plate: the settings mark and SETTINGS_TITLE in the display face.
 func _head() -> Control:
 	var plate := PanelContainer.new()
 	plate.name = "Head"
@@ -198,27 +207,39 @@ func _head() -> Control:
 	var mark := Icons.view("generalui/settings", gear)
 	mark.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	row.add_child(mark)
-	var t := UI.label(Strings.t("SETTINGS_TITLE"), Tokens.type_role(TITLE_ROLE)["points"], true)
+	var role := Tokens.type_role(TITLE_ROLE)
+	var t := UI.label(Strings.t("SETTINGS_TITLE"), role["points"], true)
 	t.name = "Title"
 	t.theme_type_variation = "Title"
+	var face := RbTheme.role_font(TITLE_ROLE)
+	t.add_theme_font_override("font", face)
 	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	t.add_theme_stylebox_override("normal", StyleBoxEmpty.new())
 	t.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_stroked(t, 2.0, 3.0)
+	_stroked(t, float(role["outline"]), float(role["drop"]))
 	_grown(t, TITLE_LEAD)
 	# A title wraps between words only, and a word too long for the row
 	# ("Einstellungen" at 200%, board 5's objection E) shrinks the title until
 	# it fits, rather than breaking: still well above a group's heading.
 	t.autowrap_mode = TextServer.AUTOWRAP_WORD
 	var room := UI.px(SCREEN_POINTS - 2.0 * (Tokens.number("size", "safe_side_points") + HEAD_PAD) - gear - 10.0
-		- 2.0 * 2.0)
+		- 2.0 * float(role["outline"]))
 	var size := t.get_theme_font_size("font_size")
-	var font := Tokens.font("title", 400)
 	var longest := 0.0
 	for word: String in t.text.split(" ", false):
-		longest = maxf(longest, font.get_string_size(word, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x)
+		longest = maxf(longest, face.get_string_size(word, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x)
 	if longest > room:
 		t.add_theme_font_size_override("font_size", floori(size * room / longest))
+	# Lilita One's line box stands well clear of its words, above the caps
+	# most of all: trimmed, the heavier title takes about the height the
+	# Marcellus one did (the same in German, 1.5 points more in English), and
+	# the High contrast row stays on the first screen at 100% in pt_BR and
+	# German (AD's objection J).
+	var points := t.get_theme_font_size("font_size")
+	var tight := face.duplicate() as FontVariation
+	tight.spacing_top = -roundi(points * TITLE_TRIM_TOP)
+	tight.spacing_bottom = -roundi(points * TITLE_TRIM_BOTTOM)
+	t.add_theme_font_override("font", tight)
 	row.add_child(t)
 	plate.add_child(row)
 	return plate
@@ -382,12 +403,20 @@ func _stepper(icon: String, words: Label, down: Callable, up: Callable, spoken_d
 	return row
 
 
-## A switch as a whole row framed on parchment: the setting's icon, its words
-## (which say On or Off), and the switch at its end; the row is the one
-## control.
+## A switch as a whole row: the setting's icon, its words (which say On or
+## Off), and the switch at its end; the row is the one control. On parchment
+## the rows were the heaviest slabs on the access tab in the squint, over the
+## title and the gold As (audit 2, AD-R67), so they stand dark with cream
+## words, as the law's sample does since the gate at 5fc97aac, and the gold As
+## stay the tab's one lead. The dark is the kit's lesser action (`ghost`, the
+## card's violet lifted two value steps): the dark plate itself sits at the
+## night's value and fails value-steps (0.7 steps off the night; 2 needed). In
+## high contrast the rows keep parchment: there the ghost's face darkens and
+## stands 1.7 steps off the night between two rows at 200% text.
 func _toggle(setting: String, words: String, icon: String) -> Control:
 	var on := Settings.flag(setting)
-	var b := UI.action(Strings.t(words + ("_ON" if on else "_OFF")), flip.bind(setting), "parchment")
+	var look := "parchment" if Settings.high_contrast else "ghost"
+	var b := UI.action(Strings.t(words + ("_ON" if on else "_OFF")), flip.bind(setting), look)
 	b.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	# A row keeps its icon where its longest word, said either way, fits
 	# beside it; where one does not ("verschwinden" at 200%, board 5's E),
@@ -413,6 +442,12 @@ func _toggle(setting: String, words: String, icon: String) -> Control:
 		box.content_margin_right = UI.px(12 + 46 + 10)
 		b.add_theme_stylebox_override(state, box)
 	var sw := ScreenSwitch.make(on)
+	# Off, the switch's own dark-plate track would vanish on a dark row
+	# (tried and dropped at 5fc97aac), so there it takes the kit switch's off
+	# track (KitSwitch: the glass chip with its gold line, the toggle's baked
+	# track_off), and the parchment knob stands out on it.
+	if not on and look == "ghost":
+		UI.dress(sw, "chip", 999).skin_shape = "toggle/track_off"
 	sw.anchor_left = 1.0
 	sw.anchor_right = 1.0
 	sw.anchor_top = 0.5

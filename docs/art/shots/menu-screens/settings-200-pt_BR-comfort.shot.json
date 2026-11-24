@@ -1,0 +1,56 @@
+{
+ "controls": [
+  {
+   "interactive": false,
+   "name": "words 1: Visão e conforto",
+   "rect": [
+    30.33,
+    212.33,
+    282.39,
+    52.0
+   ]
+  },
+  {
+   "name": "switch-row 2: Alto contraste: não",
+   "rect": [
+    17.33,
+    273.0,
+    352.44,
+    153.83
+   ]
+  },
+  {
+   "name": "switch-row 3: Movimento: normal",
+   "rect": [
+    17.33,
+    435.5,
+    352.44,
+    106.17
+   ]
+  },
+  {
+   "name": "switch-row 4: Vibração: sim",
+   "rect": [
+    17.33,
+    550.33,
+    352.44,
+    106.17
+   ]
+  },
+  {
+   "name": "back 5: Voltar",
+   "rect": [
+    28.17,
+    723.67,
+    174.06,
+    52.0
+   ]
+  }
+ ],
+ "frame_pt": [
+  390.0,
+  845.0
+ ],
+ "image": "settings-200-pt_BR-comfort.png",
+ "text_scale": 2.0
+}

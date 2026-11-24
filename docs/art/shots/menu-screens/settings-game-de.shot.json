@@ -1,0 +1,130 @@
+{
+ "controls": [
+  {
+   "interactive": false,
+   "name": "set-head 1: Einstellungen",
+   "rect": [
+    17.33,
+    47.67,
+    355.33,
+    50.56
+   ]
+  },
+  {
+   "name": "row 2: Spiel Zugang Konto",
+   "rect": [
+    17.33,
+    106.89,
+    355.33,
+    56.33
+   ]
+  },
+  {
+   "name": "button 3: Deutsch",
+   "rect": [
+    270.11,
+    180.56,
+    91.72,
+    52.0
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "words 4: Ton",
+   "rect": [
+    30.33,
+    249.89,
+    40.08,
+    32.86
+   ]
+  },
+  {
+   "name": "button 5: Musik 7: leiser",
+   "rect": [
+    247.0,
+    302.25,
+    52.0,
+    52.0
+   ]
+  },
+  {
+   "name": "button 6: Musik 7: lauter",
+   "rect": [
+    307.67,
+    302.25,
+    52.0,
+    52.0
+   ]
+  },
+  {
+   "name": "button 7: Effekte 8: leiser",
+   "rect": [
+    247.0,
+    367.25,
+    52.0,
+    52.0
+   ]
+  },
+  {
+   "name": "button 8: Effekte 8: lauter",
+   "rect": [
+    307.67,
+    367.25,
+    52.0,
+    52.0
+   ]
+  },
+  {
+   "name": "button 9: Hinweise 10: leiser",
+   "rect": [
+    247.0,
+    432.25,
+    52.0,
+    52.0
+   ]
+  },
+  {
+   "name": "button 10: Hinweise 10: lauter",
+   "rect": [
+    307.67,
+    432.25,
+    52.0,
+    52.0
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "words 11: Spiel",
+   "rect": [
+    30.33,
+    503.75,
+    49.11,
+    32.86
+   ]
+  },
+  {
+   "name": "switch-row 12: Proben mit 75 %: aus",
+   "rect": [
+    17.33,
+    545.28,
+    355.33,
+    52.0
+   ]
+  },
+  {
+   "name": "back 13: Zurück",
+   "rect": [
+    28.17,
+    723.67,
+    132.17,
+    52.0
+   ]
+  }
+ ],
+ "frame_pt": [
+  390.0,
+  845.0
+ ],
+ "image": "settings-game-de.png",
+ "text_scale": 1.0
+}

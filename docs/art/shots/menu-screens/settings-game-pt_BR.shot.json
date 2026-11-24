@@ -1,0 +1,130 @@
+{
+ "controls": [
+  {
+   "interactive": false,
+   "name": "set-head 1: Ajustes",
+   "rect": [
+    17.33,
+    47.67,
+    355.33,
+    52.0
+   ]
+  },
+  {
+   "name": "row 2: Jogo Acesso Conta",
+   "rect": [
+    17.33,
+    108.33,
+    355.33,
+    56.33
+   ]
+  },
+  {
+   "name": "button 3: Português (Brasil)",
+   "rect": [
+    185.61,
+    182.0,
+    176.22,
+    52.0
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "words 4: Som",
+   "rect": [
+    30.33,
+    251.33,
+    46.22,
+    32.86
+   ]
+  },
+  {
+   "name": "button 5: Música 7: mais baixo",
+   "rect": [
+    247.0,
+    303.69,
+    52.0,
+    52.0
+   ]
+  },
+  {
+   "name": "button 6: Música 7: mais alto",
+   "rect": [
+    307.67,
+    303.69,
+    52.0,
+    52.0
+   ]
+  },
+  {
+   "name": "button 7: Efeitos 8: mais baixo",
+   "rect": [
+    247.0,
+    368.69,
+    52.0,
+    52.0
+   ]
+  },
+  {
+   "name": "button 8: Efeitos 8: mais alto",
+   "rect": [
+    307.67,
+    368.69,
+    52.0,
+    52.0
+   ]
+  },
+  {
+   "name": "button 9: Alertas 10: mais baixo",
+   "rect": [
+    247.0,
+    433.69,
+    52.0,
+    52.0
+   ]
+  },
+  {
+   "name": "button 10: Alertas 10: mais alto",
+   "rect": [
+    307.67,
+    433.69,
+    52.0,
+    52.0
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "words 11: Jogo",
+   "rect": [
+    30.33,
+    505.19,
+    48.39,
+    32.86
+   ]
+  },
+  {
+   "name": "switch-row 12: Ensaios a 75%: não",
+   "rect": [
+    17.33,
+    546.72,
+    355.33,
+    52.0
+   ]
+  },
+  {
+   "name": "back 13: Voltar",
+   "rect": [
+    28.17,
+    723.67,
+    130.0,
+    52.0
+   ]
+  }
+ ],
+ "frame_pt": [
+  390.0,
+  845.0
+ ],
+ "image": "settings-game-pt_BR.png",
+ "text_scale": 1.0
+}

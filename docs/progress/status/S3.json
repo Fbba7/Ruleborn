@@ -3,23 +3,38 @@
   "role": "S3",
   "branch": "claude/ui-screens-meta",
   "model": "Opus 5.5",
-  "agent_state": "active",
-  "task_id": "P3-S3-offline-1",
-  "task_state": "working",
-  "claimed_at": "2026-11-18T01:49:12Z",
-  "lease_until": "2026-11-18T04:49:12Z",
-  "updated_at": "2026-11-18T03:02:00Z",
-  "expected_next_update_by": "2026-11-18T03:47:00Z",
+  "agent_state": "waiting",
+  "task_id": "P3-S3-settings-4",
+  "task_state": "ready",
+  "claimed_at": "2026-11-24T15:05:00Z",
+  "lease_until": "2026-11-24T18:05:00Z",
+  "updated_at": "2026-11-24T15:58:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "7972485a7738ac5cea3f4ac762935d9f2522c1d7",
-    "next_step": "M59 acked: S3-R44 answered by default; AD-R66 joins the task. The stage gives the offline notice its height at large text (character_screen.gd); re-shooting the stills, then checks, pre-check and ready.",
-    "at": "2026-11-18T03:02:00Z"
+    "last_green_sha": "e3190f782c2594a200431da07d3746e0726eaf15",
+    "next_step": "The lead's gate (settings at 100% text: Hierarchy, 3 of 3) and merge; S3-R46 (AD's check of the stills) open with its default. On resync: merge main, re-run the pre-check, mark ready again."
   },
-  "precheck": null,
-  "gate_request": null,
-  "ready_sha": null,
-  "stop_at": "2026-11-18T21:00:00Z",
+  "precheck": {
+    "sha": "e3190f782c2594a200431da07d3746e0726eaf15",
+    "state": "PASS",
+    "exit": 0,
+    "finished_at": "2026-11-24T15:55:59Z",
+    "summary": "All checks passed."
+  },
+  "gate_request": {
+    "sha": "e3190f782c2594a200431da07d3746e0726eaf15",
+    "items": [
+      {
+        "item": "settings at 100% text",
+        "qualities": [
+          "Hierarchy"
+        ]
+      }
+    ]
+  },
+  "ready_sha": "e3190f782c2594a200431da07d3746e0726eaf15",
+  "stop_at": "2026-11-24T21:00:00Z",
   "acks": [
     "M26",
     "M29",
@@ -795,6 +810,57 @@
       "created_at": "2026-11-18T02:13:23Z",
       "due": "2026-11-18T08:13:23Z",
       "default": "AD has no objection: the stills stand as named, S3 marks ready at the pre-checked sha, and AD re-checks them on the merge.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S3-R45",
+      "from": "S3",
+      "to": "lead",
+      "ask": "For AD, a preview before ready (P3-S3-settings-4, AD-R67): on the Access tab at 100% text the High contrast and Motion switch rows leave cream parchment and stand dark with the kit's cream ink, so the gold A / A stay the tab's one lead in the squint; the title, tab strip and Back are unchanged. Two departures from AD-R67's words, each with its evidence in docs/art/tracks/menu-screens.md, 'Audit 2's hierarchy at 100% text': (1) the dark is the kit's ghost (K01, the lesser action AD-R43 put on the account card), not plate_dark: plate_dark sits at the night's value and fails checks.py value-steps (7.4 dL*, 0.7 of 2 steps), ghost passes at 39.5 (rows at 200%: 23.1 to 28.3); words 4.78:1 at worst (budget_shots, 0 of 19 below 4.5). An off switch on a ghost row takes the kit switch's off track (chip, toggle/track_off), since ScreenSwitch's dark-plate track vanished there. (2) In high contrast the rows keep parchment: the ghost's face darkens there and two rows stood 1.7 steps off the night at 200% German; parchment passes at 75 to 83. The game tab's slow-rehearsals row is ghost too (31.5, was failing at 6.8). Every still prints fit ok, its record unchanged, checks.py all no FAIL. The high-contrast and 200% stills differ from effddd03 only by main's outline rule (P3-K1-outline-1). Gate item: settings at 100% text (Hierarchy).",
+      "files": [
+        "docs/art/shots/menu-screens/settings-100.png",
+        "docs/art/shots/menu-screens/settings-pt_BR.png",
+        "docs/art/shots/menu-screens/settings-de.png",
+        "docs/art/shots/menu-screens/settings-hc.png",
+        "docs/art/shots/menu-screens/settings-200-pt_BR-comfort.png",
+        "docs/art/shots/menu-screens/settings-200-de-comfort.png",
+        "docs/art/shots/menu-screens/settings-200-hc-de-comfort.png",
+        "docs/art/tracks/menu-screens.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-18T06:00:00Z",
+      "due": "2026-11-18T12:00:00Z",
+      "default": "AD has no objection: the ghost rows stand as named, S3 marks ready at the pre-checked sha, and AD re-checks them on the merge.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S3-R46",
+      "from": "S3",
+      "to": "lead",
+      "ask": "For AD, a check of the re-shot stills before the gate run (P3-S3-settings-4, AD-R68; a check, not a new round): AD's first road (the track on ghost, the unchosen tabs clear, the chosen tab on its dark leather) fails value-steps (the leather 17.7 dL* off the ghost track, 1.8 of 2 steps; no other kit strip sits at a mid value), so S3 took the named second road: the strip stays seg_track_light and the title is set in display_xl (Lilita One 44, ink outline, hard drop) on its gold card, its line box trimmed so the High contrast row stays on the first screen (J). High contrast, the gold A / A and Back unchanged; the ghost rows stand. The Access, Game and Account tabs are shot at 100% in en, pt_BR and de; the 200% and high-contrast forms fit and pass value-steps (the Game tab's stepper discs fail as on main's record). Evidence and measures: docs/art/tracks/menu-screens.md, 'AD's preview 3: the title leads, not the tab strip'. On main 178be84 the stills render pixel for pixel as committed at a201e966. Gate item: settings at 100% text (Hierarchy).",
+      "files": [
+        "docs/art/shots/menu-screens/settings-100.png",
+        "docs/art/shots/menu-screens/settings-pt_BR.png",
+        "docs/art/shots/menu-screens/settings-de.png",
+        "docs/art/shots/menu-screens/settings-game-100.png",
+        "docs/art/shots/menu-screens/settings-game-pt_BR.png",
+        "docs/art/shots/menu-screens/settings-game-de.png",
+        "docs/art/shots/menu-screens/settings-account-100.png",
+        "docs/art/shots/menu-screens/settings-account-pt_BR.png",
+        "docs/art/shots/menu-screens/settings-account-de.png",
+        "docs/art/shots/menu-screens/settings-hc.png",
+        "docs/art/shots/menu-screens/settings-hc-pt_BR.png",
+        "docs/art/shots/menu-screens/settings-200-pt_BR.png",
+        "docs/art/shots/menu-screens/settings-200-de.png",
+        "docs/art/shots/menu-screens/settings-200-pt_BR-comfort.png",
+        "docs/art/shots/menu-screens/settings-200-de-comfort.png",
+        "docs/art/shots/menu-screens/settings-200-hc-de-comfort.png",
+        "docs/art/tracks/menu-screens.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-24T15:45:00Z",
+      "due": "2026-11-24T19:00:00Z",
+      "default": "AD has no objection: the title road stands as named, the lead's gate judges settings at 100% text at S3's pre-checked sha, and AD re-checks on the merge.",
       "escalate_to": "lead"
     }
   ],
