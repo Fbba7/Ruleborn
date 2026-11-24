@@ -7266,3 +7266,26 @@ fn sim_11_a_lantern_wisps_reveal_goes_with_it_across_to_the_next_realm() {
     let here = { let p = c.world.raiders[0].at; c.world.grid.tile_at(p.x, p.y).unwrap() };
     assert!(!c.world.revealed(here), "for 6 s, not longer");
 }
+
+// Audit finding SIM-12
+#[test]
+fn sim_12_a_curated_layout_never_drops_a_woven_law_unseen() {
+    // §13.3's curation: `Island::curated` redraws a layout that loses
+    // anything the realm holds, and after 64 draws answers the last,
+    // "problems and all, for the server to refuse by name". The server names
+    // a lost building (buildings_not_as_placed) and every `check` problem;
+    // it reads a realm's laws only as "none it has not woven". So the last
+    // answer may lose a building, or fail `check`, but never keep every
+    // building, pass `check` and quietly have one law fewer than the realm
+    // wove: SR-16, "a realm plays what its owner wove".
+    use crate::island::building_code;
+    let spire = building_code("keeper_s_spire").expect("a spire is a building");
+    let side = Island::empty(1).side() as u8;
+    for y in 0..=side - 3 {
+        for x in 0..=side - 3 {
+            let island = Island::curated(1, 1, 1, &[(spire, x, y)], &["bounce"]);
+            assert!(island.laws.len() == 1 || island.buildings.len() != 1 || !island.check().is_empty(),
+                    "a spire at ({x}, {y}): the island passes check with its building and without its law");
+        }
+    }
+}
