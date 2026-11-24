@@ -1,6 +1,6 @@
 # SP-bt-04 the gate shot renderer: progress
 
-- Status: Green; BT-04b ready at 9213e507: frame strips, the 200% text and high-contrast variants, and named crops in `tools/gate/render.py`. Sandboxed proof exit 0 (bwrap, 2026-11-24T21:48:29Z); full pre-check: see the status file.
+- Status: Green; BT-04b ready at 9213e507: frame strips, the 200% text and high-contrast variants, and named crops in `tools/gate/render.py`. Sandboxed proof exit 0 (bwrap, 2026-11-24T21:48:29Z); full pre-check PASS (bwrap, 2026-11-24T22:20:00Z).
 - Progress: 1 of 2 tasks merged (BT-04a); 0 items passed by the gate (BT-04b has no gate items).
 - Done: BT-04a (still renderer, cache fallback); BT-04b: `strip` screens and items "<screen> strip[ in high contrast]", the `variants` command, named crops from a still's shot record (`crops`, `record`, `still --crops`), fixtures for the press, reward, shine and screen strips and the settings and character crops, and the self-test that renders a fixture strip and crop.
 - Next: the lead merges BT-04b; AD adopts the shot list (SP-bt-04-R2).
@@ -10,7 +10,7 @@
 | Deliverable | Weight (h) | Status | Evidence |
 |---|---:|---|---|
 | BT-04a: shot list format and still renderer | 3 | merged | full pre-check PASS at 0fa16325, 20:28:16Z |
-| BT-04b: strips, variants, crops | 2 | ready at 9213e507 | sandboxed proof at 9213e507: exit 0, "the fixture item at 9213e507, ok"; full pre-check in the status file |
+| BT-04b: strips, variants, crops | 2 | ready at 9213e507 | sandboxed proof at 9213e507: exit 0, "the fixture item at 9213e507, ok"; full pre-check PASS, exit 0, "All checks passed.", 22:20:00Z |
 
 ## Handoff
 
