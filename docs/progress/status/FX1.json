@@ -8,8 +8,8 @@
   "task_state": "blocked",
   "claimed_at": "2026-11-24T05:35:00Z",
   "lease_until": "2026-11-24T08:35:00Z",
-  "updated_at": "2026-11-24T06:50:00Z",
-  "expected_next_update_by": "2026-11-24T07:35:00Z",
+  "updated_at": "2026-11-24T06:39:00Z",
+  "expected_next_update_by": "2026-11-24T07:24:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "bad2df32",
