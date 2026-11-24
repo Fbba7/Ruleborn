@@ -4,38 +4,22 @@
   "branch": "claude/ui-spec-coord",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "BT-01a",
+  "task_id": "BT-01b",
   "task_state": "working",
-  "claimed_at": "2026-11-24T17:20:00Z",
-  "lease_until": "2026-11-24T20:20:00Z",
-  "updated_at": "2026-11-24T17:25:00Z",
-  "expected_next_update_by": "2026-11-24T18:10:00Z",
+  "claimed_at": "2026-11-24T19:45:00Z",
+  "lease_until": "2026-11-24T22:45:00Z",
+  "updated_at": "2026-11-24T19:55:00Z",
+  "expected_next_update_by": "2026-11-24T20:40:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "c0e8741",
-    "next_step": "Merge main, run the pre-check on tools/coord/cycle.py, mark BT-01a ready"
+    "last_green_sha": "0893bace",
+    "next_step": "Pre-check on the merged branch, then mark BT-01b ready"
   },
   "precheck": null,
   "gate_request": null,
   "ready_sha": null,
-  "stop_at": "2026-11-24T21:00:00Z",
+  "stop_at": "2026-11-25T21:00:00Z",
   "acks": [],
-  "requests": [
-    {
-      "id": "SPbt01-R1",
-      "from": "SP-bt-01",
-      "to": "lead",
-      "ask": "tools/check_all.sh is not in BT-01a's files. Please add `python3 tools/coord/cycle.py --self-test` after its line `python3 tools/coord/archive.py --self-test` (line 157), and `cycle.py --self-test` to the agent-program row of docs/guides/checks.md, when you merge BT-01a.",
-      "files": [
-        "tools/check_all.sh",
-        "docs/guides/checks.md"
-      ],
-      "blocking": false,
-      "created_at": "2026-11-24T17:25:00Z",
-      "due": "2026-11-24T21:00:00Z",
-      "default": "The lead adds both lines in BT-01a's merge commit; until then the self-test runs by hand and the pre-check covers everything else.",
-      "escalate_to": "lead"
-    }
-  ],
+  "requests": [],
   "answers": []
 }
