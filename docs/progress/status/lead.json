@@ -1,19 +1,12 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-24T02:58:00Z",
+  "updated_at": "2026-11-24T03:38:00Z",
   "expected_next_update_by": "2026-11-24T02:20:00Z",
   "cycle": 168,
-  "merging": {
-    "candidate_sha": "357efa6df082f388d17df1ccaec7a7f793baeac2",
-    "task_ids": [
-      "FX1-6-audit-server-a"
-    ],
-    "started_at": "2026-11-24T02:58:00Z",
-    "expires_at": "2026-11-24T03:58:00Z"
-  },
+  "merging": null,
   "last_merged": {
-    "task_id": "FX4-4-audit-client",
-    "sha": "d5c16216"
+    "task_id": "FX1-6-audit-server-a",
+    "sha": "ddf4213d"
   },
   "acks": [
     "M15",
