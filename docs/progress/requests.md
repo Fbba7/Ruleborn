@@ -1612,6 +1612,20 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   Copied in cycle 171. **Answered** by the lead in cycle 171: the default.
   FX1-12-tools-ui is filed for FX1, after FX1-11. It is an FX task, so it
   is merged before the UI resumes (bugs first, CLAUDE.md order 1).
+
+- **FX1-R24** (from FX1, 24 November 2026 05:45Z; due 24 November
+  09:05Z; blocking): add `server/privacy.json` and
+  `server/declarations.md` to FX1-8-server-a-lows's exceptions. FX1-A-13
+  adds the column `leases.realm` and FX1-A-16's up-only counter adds
+  `accounts.links_n`; `server/test/privacy.test.mjs:29` fails on a stored
+  column `privacy.json` does not declare, and `declarations.md` is
+  generated from it (`node server/src/privacy.mjs --write`). No task in
+  flight owns either file. Default: the exceptions are granted; FX1
+  commits the two declarations in one commit named FX1-R24 and marks
+  ready. Copied in cycle 173. **Answered** by the lead in cycle 173:
+  granted (the default). Both paths are in FX1-8's `exceptions` in the
+  backlog; `owners.py claims` passes.
+
 - **FX2-R3** (from FX2, 24 November 2026; due 24 November 07:15Z;
   blocking): grant `server/test/setup.mjs` (owned by the lead, no task in
   flight) to FX2-10-curated-woven-law. SIM-12's fix makes `problems()`
