@@ -5,15 +5,15 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "FX1-7-audit-tools",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-24T03:39:29Z",
   "lease_until": "2026-11-24T06:39:29Z",
-  "updated_at": "2026-11-24T03:39:29Z",
-  "expected_next_update_by": "2026-11-24T04:24:29Z",
+  "updated_at": "2026-11-24T04:05:00Z",
+  "expected_next_update_by": "2026-11-24T04:50:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "01cb97ac",
-    "next_step": "survey tools/, art scripts, client prototypes, docs scripts"
+    "next_step": "prove the reviewers' candidates; write tools.md"
   },
   "precheck": null,
   "gate_request": null,
