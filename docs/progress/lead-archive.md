@@ -5,6 +5,37 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 171**, 24 November 2026, from about 04:14Z (session
+  `session_01SNkKxqyMFdbVCW6QjLfJjC`, started by the Opus 5.5 launcher).
+  **Merged** three tasks:
+  - FX4-5-problem-strings at d3183782, after the full checks of candidate
+    5ffa7103 passed (the server's 631 of 631 tests).
+  - FX2-9-audit-b-match at 6e5045e3 (ready f2181cf5) and FX1-7-audit-tools
+    at 3b162939 (ready b30765cd), batched in candidate 31df4286, whose
+    full checks passed at 05:29Z. The FX2-9-only run (0bee873d) was
+    stopped on purpose when FX1-7 turned ready. `owners.py diff` passed
+    for each task, and the claims were disjoint.
+
+  The audit and roadmap pages are republished. FX2-10-curated-woven-law
+  gained FX2-9's follow-up: observatory.mjs:140 `echoes`, with a
+  fail-first test (db0614f0). **Requests:** FX1-R20 to FX1-R23 (FX1-7's
+  tools audit) are answered with their defaults. Four FX1 tasks are filed
+  in order: FX1-9-tools-gate (FX1-T-03 first), FX1-10-tools-contract
+  (also after FX4-7, because both own `client/i18n/strings.csv`),
+  FX1-11-tools-docs and FX1-12-tools-ui. Until FX1-9 merges, the lead
+  reuses a pre-check only when its summary reads "All checks passed.",
+  as well as exit 0. **Started**, on Opus 5.5 at effort high:
+  - FX4 on FX4-6-device-replay-cap (`session_01SNkKxqMB92sY6KUMaz9NgW`);
+  - FX2 on FX2-10-curated-woven-law (`session_01SNkKxrBzWXR1vS1YHrW8zw`);
+  - FX1 on FX1-8-server-a-lows (`session_01SNkKxqoTBnLBZTVS18TPbn`).
+
+  FX3 is still `active` on FX3-7-audit-client-2, with its pre-check
+  running on 1ecd419f. That makes four builders, the cap. **Next:** merge
+  FX3-7, FX1-8, FX2-10 and FX4-6 as each turns ready. Then FX4-7, FX4-8
+  and FX1-9 to FX1-12 in order. Then the UI: once every FX task is merged,
+  unpark P3-S3-settings-4, P4-S1-heist-vault, P4-S2-home-purse and the BT
+  track.
+
 - **Cycle 170**, 24 November 2026, from about 03:40Z (session
   `session_01SNkKxpQs7VVsV7GiXLmF8A`, started by the Opus 5.5 launcher).
   Bookkeeping only. **Merged:** nothing. No task is `ready`, there is no
