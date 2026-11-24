@@ -3,17 +3,17 @@
   "role": "S1",
   "branch": "claude/ui-screens-heist",
   "model": "Opus 5.5",
-  "agent_state": "stopped",
+  "agent_state": "active",
   "task_id": "P4-S1-heist-vault",
-  "task_state": "claimed",
-  "claimed_at": "2026-11-18T07:30:00Z",
-  "lease_until": "2026-11-18T11:30:00Z",
-  "updated_at": "2026-11-18T08:58:00Z",
-  "expected_next_update_by": null,
+  "task_state": "working",
+  "claimed_at": "2026-11-24T15:05:00Z",
+  "lease_until": "2026-11-24T18:05:00Z",
+  "updated_at": "2026-11-24T15:05:00Z",
+  "expected_next_update_by": "2026-11-24T15:50:00Z",
   "progress_marker": {
     "last_green_sha": "aaadca6a3bd4269ed4bc70087af958f58efdc47d",
-    "next_step": "Stopped by the owner's order (18 November, about 08:22 UTC). The ready candidate aaadca6a passed its pre-check (recorded); not marked ready: AD's preview S1-R44 (default due 11:30Z) and the gate request wait for the restart. guard.sh fails only on heist/200 119 of 118 (S1-R45).",
-    "at": "2026-11-18T08:10:00Z"
+    "next_step": "resumed after the bug-fix wave: main d98cedea merged; setup line, build.sh, guard.sh, then pre-check and ready",
+    "at": "2026-11-24T15:05:00Z"
   },
   "precheck": {
     "sha": "aaadca6a3bd4269ed4bc70087af958f58efdc47d",
@@ -23,7 +23,7 @@
   },
   "gate_request": null,
   "ready_sha": null,
-  "stop_at": "2026-11-18T21:00:00Z",
+  "stop_at": "2026-11-24T21:00:00Z",
   "acks": [
     "M6",
     "M7",
@@ -745,5 +745,5 @@
       "where": "docs/progress/lead.md, Now, cycle 143 (M60)"
     }
   ],
-  "next_step": "on restart: merge current main, rerun setup line, build.sh and guard.sh on the merge, then ready with ready_sha and the gate request 'heist at 200% text, pt_BR' (Hierarchy) once S1-R44 is answered or its default stands"
+  "next_step": "resumed after the bug-fix wave: main d98cedea merged; setup line, build.sh, guard.sh, then pre-check and ready"
 }
