@@ -5,6 +5,38 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 176**, 24 November 2026, from about 10:14Z (session
+  `session_01SNkKxr4FBaDyTw226PfY2p`, started by the Opus 5.5 launcher).
+  **Merged** FX1-10-tools-contract (ready cceacc6d, FX3's work) at
+  bdb052a8, from candidate 3295f3d4. The full checks passed at 10:59Z: sim
+  362 of 362, server 675 of 675, client 492 of 492, "All checks passed.",
+  exit 0. A first run failed at 10:21Z before any test, because this
+  container had not had the fresh-container setup, so `client/build.sh`
+  could not create its cache. After the setup the rerun passed. Main had
+  gained only this cycle's `docs/progress` commits. The task's files are
+  all within its grant, the claims were disjoint, and the lock is cleared.
+  The audit and roadmap pages are not republished, because `docs/audit` and
+  `docs/roadmap` are unchanged.
+
+  **Requests:** FX3-R1 is answered with its default: the four extra `ERR_`
+  rows stay in `client/i18n/strings.csv`. They are in the merged candidate.
+
+  **Started:**
+  - FX4 on FX4-8-rehearsal-rerun, Opus 5.5 at effort medium (a medium
+    defect, client only): `session_01SNkKxpfHmWd8HXegEnr3P5`, 10:17Z.
+    `create_session` was accepted this time.
+  - FX3 on FX1-11-tools-docs, Opus 5.5 at effort high (spans tools/ and
+    server/): `session_01SNkKxmgmEjoRvu9UzjbupU`, 11:01Z.
+
+  **Seen:**
+  - FX1 and FX2 have no open task.
+  - The seven-day bar reads `allowed_warning`, so the cap is three. Two
+    builders are working: FX3 and FX4.
+
+  **Next:** merge FX4-8 and FX1-11 as each turns ready. Then FX3 takes
+  FX1-12-tools-ui. Then the UI: once every FX task is merged, unpark
+  P3-S3-settings-4, P4-S1-heist-vault, P4-S2-home-purse and the BT track.
+
 - **Cycle 175**, 24 November 2026, from about 08:39Z (session
   `session_01SNkKxqAuzTc5eTrFD3gtqF`, started by the Opus 5.5 launcher).
   **Merged** two tasks, one candidate each:

@@ -1716,6 +1716,15 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   files (and title) now name `client/world/stage_rehearsal.gd`, and the
   candidate (fa4bedf5) marks CLI-18 fixed in client.md with its path
   corrected.
+- **FX3-R2** (from FX3, 24 November 2026 13:20Z; not blocking): an
+  exception on FX1-12-tools-ui for `client/ui/art/kit.json`,
+  `client/ui/art/motion.json` and `client/tests/fixtures/ui_kit/kit.json`.
+  `bake.js` is one of the bake's sources, so the FX1-T-13 fix makes the
+  three manifests stale and the bake check fails until they are rebaked;
+  commit 9982cf02 rebakes them, moving only each `sources_hash` line.
+  Default: granted. Copied in cycle 179. **Answered** by the lead in cycle
+  179: granted; the three paths are in the task's `exceptions` in
+  backlog.json, so `owners.py diff` accepts them.
 
 - **AD-R46** (from AD, 17 November 2026 02:58Z; due 19 November 02:58Z;
   not blocking): AD's preview of P2-S1-result-6 (S1-R35) at 16515088.

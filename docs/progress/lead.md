@@ -214,8 +214,10 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxomdzcgoV8B8sTfZyr` (cycle 178,
-24 November 2026 from about 12:15Z, started by the Opus 5.5 launcher).
+Latest lead cycle session: `session_01SNkKxqXwY6qZUJyvhrtRU8` (cycle 179,
+24 November 2026 from about 13:19Z, started by the Opus 5.5 launcher).
+Cycle 178's was `session_01SNkKxomdzcgoV8B8sTfZyr` (24 November, from
+about 12:15Z).
 Cycle 177's was `session_01SNkKxn8DSWinMpBGFgKJ18` (24 November, from
 about 11:14Z).
 Cycle 176's was `session_01SNkKxr4FBaDyTw226PfY2p` (24 November, from
@@ -820,6 +822,22 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 179**, 24 November 2026, from about 13:19Z (session
+  `session_01SNkKxqXwY6qZUJyvhrtRU8`, started by the Opus 5.5 launcher).
+  **Merged nothing**: FX1-12-tools-ui is not ready yet. FX3
+  (`session_01SNkKxmwFNqhHYqzetHQz3X`, effort high) merged main cd469764
+  into `claude/fix-sim` at e62edbca and its pre-check is running there;
+  its session's turn has ended while it waits, so it is not restarted.
+  **Answered** FX3-R2 with its default: granted. The three rebaked
+  manifests (`client/ui/art/kit.json`, `client/ui/art/motion.json`,
+  `client/tests/fixtures/ui_kit/kit.json`, commit 9982cf02, only
+  `sources_hash` moves) are in FX1-12's `exceptions` in backlog.json.
+  **Started nothing**: FX1-12 is the last open FX task; the cap is three
+  (allowed_warning). The audit and roadmap pages were not republished.
+  **Next:** merge FX1-12 when ready (full checks, `owners.py diff` with
+  the exceptions), then unpark the UI (P3-S3-settings-4,
+  P4-S1-heist-vault, P4-S2-home-purse, the BT track).
+
 - **Cycle 178**, 24 November 2026, from about 12:15Z (session
   `session_01SNkKxomdzcgoV8B8sTfZyr`, started by the Opus 5.5 launcher).
   **Merged** FX1-11-tools-docs (ready a9263449, FX3's work) at 7bbb9788,
@@ -854,37 +872,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   **Next:** merge FX1-11 when ready, then FX3 takes FX1-12-tools-ui, then,
   once every FX task is merged, unpark the UI.
 
-- **Cycle 176**, 24 November 2026, from about 10:14Z (session
-  `session_01SNkKxr4FBaDyTw226PfY2p`, started by the Opus 5.5 launcher).
-  **Merged** FX1-10-tools-contract (ready cceacc6d, FX3's work) at
-  bdb052a8, from candidate 3295f3d4. The full checks passed at 10:59Z: sim
-  362 of 362, server 675 of 675, client 492 of 492, "All checks passed.",
-  exit 0. A first run failed at 10:21Z before any test, because this
-  container had not had the fresh-container setup, so `client/build.sh`
-  could not create its cache. After the setup the rerun passed. Main had
-  gained only this cycle's `docs/progress` commits. The task's files are
-  all within its grant, the claims were disjoint, and the lock is cleared.
-  The audit and roadmap pages are not republished, because `docs/audit` and
-  `docs/roadmap` are unchanged.
-
-  **Requests:** FX3-R1 is answered with its default: the four extra `ERR_`
-  rows stay in `client/i18n/strings.csv`. They are in the merged candidate.
-
-  **Started:**
-  - FX4 on FX4-8-rehearsal-rerun, Opus 5.5 at effort medium (a medium
-    defect, client only): `session_01SNkKxpfHmWd8HXegEnr3P5`, 10:17Z.
-    `create_session` was accepted this time.
-  - FX3 on FX1-11-tools-docs, Opus 5.5 at effort high (spans tools/ and
-    server/): `session_01SNkKxmgmEjoRvu9UzjbupU`, 11:01Z.
-
-  **Seen:**
-  - FX1 and FX2 have no open task.
-  - The seven-day bar reads `allowed_warning`, so the cap is three. Two
-    builders are working: FX3 and FX4.
-
-  **Next:** merge FX4-8 and FX1-11 as each turns ready. Then FX3 takes
-  FX1-12-tools-ui. Then the UI: once every FX task is merged, unpark
-  P3-S3-settings-4, P4-S1-heist-vault, P4-S2-home-purse and the BT track.
 - **Restart, 23 November 2026** (the overseer, about 21:20Z). The owner
   restarted the program, in the chat of the overseer session: "Continue,
   first the bugs then the UI" (CLAUDE.md order 1). It runs on Opus 5.5 at
