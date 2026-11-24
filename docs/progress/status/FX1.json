@@ -3,21 +3,27 @@
   "role": "FX1",
   "branch": "claude/fix-server-a",
   "model": "Opus 5.5",
-  "agent_state": "active",
-  "task_id": "FX1-8-server-a-lows",
-  "task_state": "working",
-  "claimed_at": "2026-11-24T05:35:00Z",
-  "lease_until": "2026-11-24T09:58:00Z",
-  "updated_at": "2026-11-24T06:58:00Z",
-  "expected_next_update_by": "2026-11-24T07:43:00Z",
+  "agent_state": "waiting",
+  "task_id": "FX1-13-codex-woven-at",
+  "task_state": "ready",
+  "claimed_at": "2026-11-24T08:33:00Z",
+  "lease_until": "2026-11-24T11:33:00Z",
+  "updated_at": "2026-11-24T09:11:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "bad2df32",
-    "next_step": "FX1-R24 granted (lead cycle 173) and committed at e46fd2a; main 66b2943 merged. Next: npm test, pre-check, owners diff, ready"
+    "last_green_sha": "a1eb8cfb",
+    "next_step": "FX1-13 ready at a1eb8cfb (pre-check PASS 09:08:50Z, npm test 669/669, owners diff clean); the lead merges it"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "a1eb8cfbf89eb99e476fe3ea6b93c4e4ac4e50c7",
+    "state": "PASS",
+    "exit": 0,
+    "finished_at": "2026-11-24T09:08:50Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "a1eb8cfbf89eb99e476fe3ea6b93c4e4ac4e50c7",
   "stop_at": "2026-11-24T21:00:00Z",
   "acks": [],
   "requests": [
@@ -125,7 +131,8 @@
       "created_at": "2026-11-24T05:49:00Z",
       "due": "2026-11-24T21:00:00Z",
       "default": "Left as is: a step shows from the weave's start and goes if the weave is taken out before it finishes. A later task may compare woven_at with the time.",
-      "escalate_to": "lead"
+      "escalate_to": "lead",
+      "answer": "seeded as FX1-13-codex-woven-at (lead cycle 174)"
     },
     {
       "id": "FX1-R26",
@@ -140,6 +147,20 @@
       "created_at": "2026-11-24T05:58:00Z",
       "due": "2026-11-24T21:00:00Z",
       "default": "Filed as a small fix task after the open FX tasks; FX1-8's checks run with the cache present, as check_all's earlier steps leave it.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "FX1-R27",
+      "from": "FX1",
+      "to": "lead",
+      "ask": "docs/security/audit-2026-11/server-a.md, FX1-A-17's entry: its 'Left as is' sub-bullet (mastery() and the profile still show an unfinished weave's step, request FX1-R25) is now fixed by FX1-13-codex-woven-at (fix e6f582a5, test server/test/fix_fx1_codex_woven.test.mjs). Replace it with: 'FX1-R25's residual: fixed (FX1-13-codex-woven-at). mastery() and the profile count the woven step only once woven_at is at or before the service's clock.' server-a.md is not in FX1-13's files.",
+      "files": [
+        "docs/security/audit-2026-11/server-a.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-24T09:00:00Z",
+      "due": "2026-11-25T09:00:00Z",
+      "default": "The lead makes the edit in its bookkeeping when it merges FX1-13, or adds server-a.md to a later FX1 task's files.",
       "escalate_to": "lead"
     }
   ],
