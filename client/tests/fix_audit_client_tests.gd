@@ -61,7 +61,7 @@ class IslandServer:
 		calls.append({"route": "PUT /v1/islands/heart", "url": path, "headers": headers, "body": body})
 		await (Engine.get_main_loop() as SceneTree).process_frame
 		if down:
-			return {"status": 503, "body": JSON.stringify({"error": "unavailable"}).to_utf8_buffer()}
+			return {"status": 503, "body": JSON.stringify({"error": "unreachable"}).to_utf8_buffer()}
 		var island := RulebornIsland.new()
 		var carried: Array[String] = []
 		if island.read(body):
