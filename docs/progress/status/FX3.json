@@ -3,29 +3,24 @@
   "role": "FX3",
   "branch": "claude/fix-sim",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "FX3-7-audit-client-2",
-  "task_state": "ready",
-  "claimed_at": "2026-11-24T03:02:00Z",
-  "lease_until": "2026-11-24T07:01:00Z",
-  "updated_at": "2026-11-24T05:06:00Z",
-  "expected_next_update_by": "2026-11-24T05:51:00Z",
+  "agent_state": "active",
+  "task_id": "FX1-9-tools-gate",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-24T06:32:00Z",
+  "lease_until": "2026-11-24T09:32:00Z",
+  "updated_at": "2026-11-24T06:32:00Z",
+  "expected_next_update_by": "2026-11-24T07:15:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "1ecd419f",
-    "next_step": "FX3-7-audit-client-2 ready at 1ecd419f (pre-check PASS, recorded; owners.py diff passes). Next: the lead's merge. FX3 has no further open task"
+    "last_green_sha": "67318228",
+    "next_step": "FX1-9: tests for FX1-T-03 first, then the fix"
   },
-  "precheck": {
-    "sha": "1ecd419f9bb55accfe5b00f8e675edde253ef0ad",
-    "exit": 0,
-    "finished_at": "2026-11-24T05:04:14Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
-  "ready_sha": "1ecd419f9bb55accfe5b00f8e675edde253ef0ad",
+  "ready_sha": null,
   "stop_at": "2026-11-24T21:00:00Z",
   "acks": [],
   "requests": [],
   "answers": [],
-  "next_step": "FX3-7-audit-client-2 ready at 1ecd419f (pre-check PASS, recorded; owners.py diff passes). Next: the lead's merge. FX3 has no further open task"
+  "next_step": "FX1-9: tests for FX1-T-03 first, then the fix"
 }
