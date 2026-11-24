@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-24T03:40:00Z",
   "lease_until": "2026-11-24T06:40:00Z",
-  "updated_at": "2026-11-24T04:05:00Z",
-  "expected_next_update_by": "2026-11-24T05:05:00Z",
+  "updated_at": "2026-11-24T03:47:00Z",
+  "expected_next_update_by": "2026-11-24T04:47:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "4a0e2258",
-    "next_step": "merge main, full check, owners diff"
+    "next_step": "check_all running on f2181cf5"
   },
   "precheck": null,
   "gate_request": null,
