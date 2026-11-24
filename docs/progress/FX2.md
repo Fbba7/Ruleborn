@@ -1,6 +1,6 @@
 # FX2 fixer, server B: progress
 
-- Status: Green, blocked on one file grant. FX2-8-audit-b-lows's four findings are fixed, each proof plain and failing on main first. `cd server && npm test` passes 614 of 614 on the merge 4d3e779c. check_all runs on it (below).
+- Status: Green, blocked on one file grant. FX2-8-audit-b-lows's four findings are fixed, each proof plain and failing on main first. `cd server && npm test` passes 614 of 614 on the merge 4d3e779c. check_all PASS on it.
 - Progress: 7 of 8 tasks merged (FX2-1 at 23cf8a90, FX2-2 at 8ed7538f, FX2-3 at c7cdcbbd, FX2-4 at e413e4a9, FX2-5 at 5f1cc425, FX2-6 at ab25eb88, FX2-7 at bc7f27e8). FX2-8 waits on FX2-R2. No gate items.
 - Done: AUD-B-05 (Medium), AUD-B-10, AUD-B-13 and AUD-B-20 (Low) of the server-b audit.
 - Next: the lead grants `server/declarations.md` (FX2-R2); then 4d3e779c can be taken as ready.
@@ -52,7 +52,8 @@ Each `stillOpen` wrapper of the three test files became the plain proof, committ
 ### Merge and evidence
 - **`cd server && npm test`** on 4d3e779c: 614 tests, 614 pass, 0 fail, 0 skipped.
 - **`python3 tools/coord/owners.py diff FX2-8-audit-b-lows origin/claude/videogame-project-analysis-ewkkk2 4d3e779c`:** "not owned by FX2-8-audit-b-lows: server/declarations.md", the one path of FX2-R2. With the grant it passes, since every other path is a task file.
-- **check_all:** `bash tools/run_checks.sh start 4d3e779c`, in bwrap: see the status file's `precheck`.
+- **check_all:** `bash tools/run_checks.sh start 4d3e779c`, in bwrap: PASS, finished 2026-11-24T01:17:59Z. The log ends `DONE exit=0` and contains "All checks passed." Recorded with `record 4d3e779c… FX2`.
+- **Stopped here:** `task_state: blocked` on FX2-R2 (blocking), not answered by 01:18Z. Once it is granted, 4d3e779c is the ready sha: nothing else is left to do.
 
 ## Tried and failed
 - 2026-11-21 The first RB-32 drain test passed on main, for the wrong reason (`401 session_refused`). Its session was made before the clock moved 12 h, and a session lasts an hour. It now signs in after the clock moves.
