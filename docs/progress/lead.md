@@ -214,8 +214,10 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxo8JRgqBuCXFzt9dyF` (cycle 189,
-24 November 2026 from about 21:10Z, started by the Opus 5.5 launcher).
+Latest lead cycle session: `session_01SNkKxpurNviahy9ajdou9c` (cycle 190,
+24 November 2026 from about 22:14Z, started by the Opus 5.5 launcher).
+Cycle 189's was `session_01SNkKxo8JRgqBuCXFzt9dyF` (24 November, from
+about 21:10Z).
 Cycle 188's was `session_01SNkKxnyDUhJ1nCERqWyiAM` (24 November, from
 about 20:14Z).
 Cycle 187's was `session_01SNkKxo4wWyrJULuKf9ezgK` (24 November, from
@@ -414,6 +416,7 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| SP-bt-09 | `session_01SNkKxnPBMN3yNvawTfEeo9` (Opus 5.5, effort medium) | BT-09 (start, cycle 190: a new agent; effort medium by order 6, one tools-only script, tools/setup_env.sh) | `claude/ui-spec-setup` | 2026-11-24 22:16Z |
 | SP-bt-07 | `session_01SNkKxntUxvJrAmwfuUT8wo` (Opus 5.5, effort medium) | BT-07 (start, cycle 189: a new agent; effort medium by order 6, a read-only tools-only task in tools/coord/metrics.*) | `claude/ui-spec-metrics` | 2026-11-24 21:34Z |
 | SP-bt-04 | `session_01SNkKxooiW2REvhyUn5DXCa` (Opus 5.5, effort medium) | BT-04b (start, cycle 189: BT-04a merged as 56f3662b; effort medium by order 6, a tools-only task in tools/gate/; SP-bt-04's last session, `session_01SNkKxob5FVPEP75EW56UMP`, is idle, its task merged) | `claude/ui-spec-gate-render` | 2026-11-24 21:34Z |
 | SP-bt-04 | `session_01SNkKxob5FVPEP75EW56UMP` (Opus 5.5, effort high) | BT-04a (resync, cycle 186: candidate 84be5f38 failed on render.py's self-test under the check sandbox's read-only HOME; effort high by order 6, a resync; SP-bt-04's last session, `session_01SNkKxnP8NpPyS23jXd4Upa`, is idle, its task ready at f1df3f1e) | `claude/ui-spec-gate-render` | 2026-11-24 19:35Z |
@@ -905,6 +908,25 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 190**, 24 November 2026, from about 22:14Z (session
+  `session_01SNkKxpurNviahy9ajdou9c`, started by the Opus 5.5 launcher,
+  effort medium by order 6). The changes since cycle 189: SP-bt-04
+  pushed BT-04b (9213e507, frame strips, variants and named crops) and
+  runs its pre-check; SP-bt-07 pushed BT-07 (b6593beb, merged main as
+  efea6a02) and runs its pre-check; S1's status push (24bfbadb) only
+  records the heist ready, which merged in cycle 189. **Merge and gate:**
+  none: nothing is ready, no merge lock; main did not move, so the pages
+  are not republished. **Requests:** SP-bt-07-R1 (the metrics self-test
+  in check_all.sh and checks.md) copied, granted for BT-07's candidate.
+  **Started:** the new agent SP-bt-09 on BT-09, environment setup with
+  pinned versions (`session_01SNkKxnPBMN3yNvawTfEeo9`, effort medium by
+  order 6: one tools-only script), on `claude/ui-spec-setup`; with
+  SP-bt-04 and SP-bt-07 it holds the cap of three under
+  `allowed_warning`. **Next:** merge BT-04b and BT-07 as they are ready
+  (wire SP-bt-07-R1's line in BT-07's candidate), then BT-09; BT-05
+  (SP-bt-05) opens once BT-04b is merged; BT-06 and BT-08 wait for a
+  seat.
+
 - **Cycle 189**, 24 November 2026, from about 21:10Z (session
   `session_01SNkKxo8JRgqBuCXFzt9dyF`, started by the Opus 5.5 launcher,
   effort medium by order 6). The changes since cycle 188: SP-bt-01 marked
@@ -949,29 +971,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   of three under `allowed_warning`. **Next:** gate and merge the heist
   re-work, BT-04a's resync (with SP-bt-04-R1's line) and BT-01b as they
   are ready.
-
-- **Cycle 187**, 24 November 2026, from about 19:45Z (session
-  `session_01SNkKxo4wWyrJULuKf9ezgK`, started by the Opus 5.5 launcher,
-  effort medium by order 6). The changes since cycle 186: S1 marked the
-  heist re-work ready at 85be2fa8 (pre-check passed 18:36Z; guard.sh fails
-  only on heist/200, 121 of 118, S1-R45); SP-bt-01 claimed BT-01b and
-  SP-bt-04 claimed BT-04a's resync. **Gate:** 'heist at 200% text, pt_BR'
-  (Hierarchy) at 85be2fa8, rendered here with FIT=1 ('fit ok'), three
-  judge calls in shuffled order against kf-character-text200 and
-  today-heist: fail 0 of 3 (`verdicts/P4-S1-heist-vault/85be2fa8.json`).
-  Cast is larger now, but its spent leather plate has the value of Fugir
-  and the tray, and the loot panel (508, 0%), the timer and the alarm box
-  still outweigh it. Nothing merged; the merge lock was not taken.
-  **Escalation:** attempts 2, so P4-S1-heist-vault is open again from
-  claude/ui-screens-heist (8922c136), and a fresh S1 session takes it
-  from the handoff, at effort high (order 6: the vault, and a failed
-  attempt): `session_01SNkKxnAiVmwbdBsQYix7Y8`, started 19:52Z. **Requests:** S1-R45 to S1-R47 copied. S1-R46 granted: at
-  200% text a spent Cast takes the gold primary plate with the wand
-  dimmed; AD-R60 stands elsewhere. S1-R45 waits for the re-work's figure;
-  S1-R47 routed to its default (no seat for AD). With SP-bt-01 and
-  SP-bt-04, S1 holds the cap of three under `allowed_warning`.
-  **Next:** gate and merge the heist re-work, BT-04a's resync and BT-01b
-  as they are ready.
 
 - **Restart, 23 November 2026** (the overseer, about 21:20Z). The owner
   restarted the program, in the chat of the overseer session: "Continue,

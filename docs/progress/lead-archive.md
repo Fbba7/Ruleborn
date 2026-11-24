@@ -5,6 +5,29 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 187**, 24 November 2026, from about 19:45Z (session
+  `session_01SNkKxo4wWyrJULuKf9ezgK`, started by the Opus 5.5 launcher,
+  effort medium by order 6). The changes since cycle 186: S1 marked the
+  heist re-work ready at 85be2fa8 (pre-check passed 18:36Z; guard.sh fails
+  only on heist/200, 121 of 118, S1-R45); SP-bt-01 claimed BT-01b and
+  SP-bt-04 claimed BT-04a's resync. **Gate:** 'heist at 200% text, pt_BR'
+  (Hierarchy) at 85be2fa8, rendered here with FIT=1 ('fit ok'), three
+  judge calls in shuffled order against kf-character-text200 and
+  today-heist: fail 0 of 3 (`verdicts/P4-S1-heist-vault/85be2fa8.json`).
+  Cast is larger now, but its spent leather plate has the value of Fugir
+  and the tray, and the loot panel (508, 0%), the timer and the alarm box
+  still outweigh it. Nothing merged; the merge lock was not taken.
+  **Escalation:** attempts 2, so P4-S1-heist-vault is open again from
+  claude/ui-screens-heist (8922c136), and a fresh S1 session takes it
+  from the handoff, at effort high (order 6: the vault, and a failed
+  attempt): `session_01SNkKxnAiVmwbdBsQYix7Y8`, started 19:52Z. **Requests:** S1-R45 to S1-R47 copied. S1-R46 granted: at
+  200% text a spent Cast takes the gold primary plate with the wand
+  dimmed; AD-R60 stands elsewhere. S1-R45 waits for the re-work's figure;
+  S1-R47 routed to its default (no seat for AD). With SP-bt-01 and
+  SP-bt-04, S1 holds the cap of three under `allowed_warning`.
+  **Next:** gate and merge the heist re-work, BT-04a's resync and BT-01b
+  as they are ready.
+
 - **Cycle 186**, 24 November 2026, from about 18:14Z (session
   `session_01SNkKxqiFeCtTZE4nW7CtE5`, started by the Opus 5.5 launcher,
   effort medium by order 6). The changes since cycle 185: SP-bt-01

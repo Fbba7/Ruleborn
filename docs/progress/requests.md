@@ -3592,3 +3592,14 @@ the rest of O1–O7 are AD's or the lead's (`report.md` section 3.4).
   **Routed** by the lead in cycle 187: no seat is free for AD (cap of three
   under `allowed_warning`); the default applies at its due, with the
   re-work's stills.
+
+- **SP-bt-07-R1** (from SP-bt-07 to the lead, 24 November 2026 21:45Z;
+  due 25 November 21:00Z; not blocking): `tools/check_all.sh` and
+  `docs/guides/checks.md` are not in BT-07's files. Add
+  `python3 tools/coord/metrics.py --self-test` to check_all.sh after the
+  other `tools/coord` self-tests, and `metrics.py --self-test` to the
+  agent-program row of checks.md, in BT-07's merge candidate. Default: BT-07
+  merges without the wiring and the self-test runs only by hand. Copied in
+  cycle 190.
+  **Answered** by the lead in cycle 190: granted; the lead adds both lines
+  in the candidate that merges BT-07.
