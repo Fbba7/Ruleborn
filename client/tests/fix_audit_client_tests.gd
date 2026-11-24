@@ -43,6 +43,44 @@ class SessionServer:
 		return await super.send(method, url, headers, body)
 
 
+## The server's island check on publish (universe.mjs `problems`, SR-16): an
+## island may carry only the laws whose slots are woven, and must carry each
+## of them. `woven` is those laws; an island it takes is served as the
+## realm's bundle, as the server then names it. `down` answers every publish
+## 503, as a server that cannot be reached does.
+class IslandServer:
+	extends FakeTransport
+	var woven: Array[String] = []
+	var down := false
+
+	func send(method: HTTPClient.Method, url: String, headers: PackedStringArray,
+			body: PackedByteArray) -> Dictionary:
+		var path := ("/" + url.split("/", false, 2)[2] if url.contains("://") else url).get_slice("?", 0)
+		if method != HTTPClient.METHOD_PUT or path != "/v1/islands/heart":
+			return await super.send(method, url, headers, body)
+		calls.append({"route": "PUT /v1/islands/heart", "url": path, "headers": headers, "body": body})
+		await (Engine.get_main_loop() as SceneTree).process_frame
+		if down:
+			return {"status": 503, "body": JSON.stringify({"error": "unreachable"}).to_utf8_buffer()}
+		var island := RulebornIsland.new()
+		var carried: Array[String] = []
+		if island.read(body):
+			for y in island.side():
+				for x in island.side():
+					var o := str(island.occupant(x, y))
+					if o.begins_with("pylon:"):
+						carried.append(o.substr(6))
+		var problems: Array[String] = []
+		if carried.any(func(law: String) -> bool: return not woven.has(law)):
+			problems.append("law_not_woven")
+		if woven.any(func(law: String) -> bool: return not carried.has(law)):
+			problems.append("woven_law_missing")
+		if not problems.is_empty():
+			return {"status": 422, "body": JSON.stringify({"error": "island_not_publishable",
+				"problems": problems}).to_utf8_buffer()}
+		on("GET /v1/bundles/b-cur", body)
+		return {"status": 200, "body": JSON.stringify({"snapshot": "s-cur"}).to_utf8_buffer()}
+
 func _init(t: SceneTree, c: Callable) -> void:
 	tree = t
 	check = c
@@ -252,30 +290,105 @@ func _swap_not_on_the_island_is_refused() -> void:
 
 
 ## CLI-1: a swap is woven (its Aether spent, the slot set to the new law,
-## ready in §5.6's minutes) and the draft published at once; the server's
-## island check (universe.mjs's publish, SR-16) takes only ready laws, so
-## the publish is refused as law_not_woven and the island keeps the old
-## pylon. The fake answers as the server does.
+## ready in §5.6's minutes) and the server's island check (universe.mjs,
+## SR-16) takes only woven laws. So while the slot weaves the island is
+## published with neither law's pylon, the slot shown weaving with its
+## ready time; once it is woven, the next curation publishes the new law's
+## pylon where the old one stood. A weave refused publishes nothing, and a
+## publish that fails after the weave is said and retried, never said done.
 func _swap_publish_is_refused_while_weaving() -> void:
-	var transport := FakeTransport.new()
+	var path := "user://outbox-audit-weaving-test-curation.json"
+	DirAccess.remove_absolute(path)
+	var transport := IslandServer.new()
 	var s := await _curation("weaving", transport)
+	var ready := int(Time.get_unix_time_from_system() * 1000) + 10 * 60 * 1000
+	var weaving_view := CurationTests.sample()
+	weaving_view["swaps"][0]["law"] = "bloom"
 	s.curation_flow.preview_swap(1, "bloom")
-	transport.on("POST /v1/weaving", {"weaving": {}})
-	transport.on("PUT /v1/islands/heart", {"error": "island_not_publishable", "problems": ["law_not_woven"]}, 422)
+	transport.on("POST /v1/weaving", {"weaving": {"aether": 840, "realms": [{"realm": "heart",
+		"slots": [{"slot": 1, "law": "bloom", "tier": 1, "ready_at": ready, "weaving": true}]}]}})
+	transport.on("GET /v1/curation/heart", weaving_view)
 	await s.curation_flow.apply_swap()
 	var slice: Dictionary = s.store.get_slice(CurationState.CURATION)
-	var sent := PackedByteArray()
-	for c: Dictionary in transport.calls:
-		if c["route"] == "PUT /v1/islands/heart":
-			sent = c["body"]
-	var island := RulebornIsland.new()
-	var carried := not sent.is_empty() and island.read(sent) \
-		and CurationPresenter.pylon(island, "bloom") != CurationState.NO_POST
-	# Audit finding CLI-1
-	_still_open("CLI-1", "a curation swap is woven and paid, then its publish is refused while it weaves (13.3, 5.6)",
-		_routes(transport).has("POST /v1/weaving") and carried and slice["error"] == "island_not_publishable",
-		"woven, published with bloom %s, error '%s'" % [carried, slice["error"]])
+	var sent := _published(transport)
+	var bare := sent != null and CurationPresenter.pylon(sent, "bloom") == CurationState.NO_POST \
+		and CurationPresenter.pylon(sent, "slow_rivers") == CurationState.NO_POST
+	var c := CurationPresenter.screen(slice)
+	var row: Dictionary = (c.get("laws", [{}]) as Array)[0] if not (c.get("laws", []) as Array).is_empty() else {}
+	var shown := str(row.get("weaving", "")) != "" \
+		and (row.get("offers", []) as Array).all(func(o: Dictionary) -> bool: return not o["can"])
+	check.call("CLI-1: a swap woven publishes the island without the swapped law's pylon while its slot weaves, "
+			+ "and the slot is shown weaving with its ready time (13.3, 5.6)",
+		_routes(transport).has("POST /v1/weaving") and bare and slice["error"] == "" and shown
+			and slice["said"] == "swapped",
+		"bare %s, error '%s', said '%s', row %s" % [bare, slice["error"], slice["said"], row])
+	# Woven: curation opened after ready_at publishes bloom on Slow rivers' tile.
+	transport.woven = ["bloom"]
+	s.curation_flow.set("clock", func() -> int: return ready + 1000)
+	var before := transport.calls.size()
+	s.curation_flow.open("heart")
+	await s.curation_flow.load_curation()
+	slice = s.store.get_slice(CurationState.CURATION)
+	var after := _published(transport, before)
+	var placed := after != null and after.occupant(9, 9) == "pylon:bloom"
+	var base := RulebornIsland.new()
+	var held := base.read(slice["base"]) and base.occupant(9, 9) == "pylon:bloom"
+	check.call("CLI-1: once the swapped slot is woven, curation opened publishes the new law's pylon where the "
+			+ "old one stood (13.3, 5.6)",
+		placed and held and slice["error"] == "",
+		"placed %s, held %s, error '%s'" % [placed, held, slice["error"]])
 	s.close()
+	DirAccess.remove_absolute(path)
+	# A weave the server refuses publishes nothing.
+	var refused_t := IslandServer.new()
+	var r := await _curation("weaving", refused_t)
+	r.curation_flow.preview_swap(1, "bloom")
+	refused_t.on("POST /v1/weaving", {"error": "not_enough_aether", "cost": 160}, 409)
+	await r.curation_flow.apply_swap()
+	slice = r.store.get_slice(CurationState.CURATION)
+	check.call("CLI-1: a swap the server refuses to weave publishes nothing and says why (13.3)",
+		not _routes(refused_t).has("PUT /v1/islands/heart") and slice["error"] == "not_enough_aether"
+			and slice["said"] == "",
+		"routes %s, error '%s'" % [_routes(refused_t), slice["error"]])
+	r.close()
+	DirAccess.remove_absolute(path)
+	# A publish that fails after the weave is said, not said done, and retried.
+	var down_t := IslandServer.new()
+	var d := await _curation("weaving", down_t)
+	d.curation_flow.preview_swap(1, "bloom")
+	down_t.on("POST /v1/weaving", {"weaving": {"aether": 840, "realms": [{"realm": "heart",
+		"slots": [{"slot": 1, "law": "bloom", "tier": 1, "ready_at": ready, "weaving": true}]}]}})
+	down_t.on("GET /v1/curation/heart", weaving_view)
+	down_t.down = true
+	await d.curation_flow.apply_swap()
+	var failed: Dictionary = d.store.get_slice(CurationState.CURATION)
+	var failed_c := CurationPresenter.screen(failed)
+	down_t.down = false
+	var mark := down_t.calls.size()
+	d.curation_flow.open("heart")
+	await d.curation_flow.load_curation()
+	var retried := _published(down_t, mark)
+	var retried_bare := retried != null and CurationPresenter.pylon(retried, "bloom") == CurationState.NO_POST \
+		and CurationPresenter.pylon(retried, "slow_rivers") == CurationState.NO_POST
+	var settled: Dictionary = d.store.get_slice(CurationState.CURATION)
+	check.call("CLI-1: a publish that fails after the swap is woven is said on the screen, never said done, and "
+			+ "retried when curation next opens (13.3)",
+		str(failed["error"]) != "" and str(failed_c.get("error", "")) != "" and failed["said"] != "swapped"
+			and retried_bare and settled["error"] == "",
+		"failed error '%s' said '%s'; retried bare %s, error '%s'" % [failed["error"], failed["said"],
+			retried_bare, settled["error"]])
+	d.close()
+	DirAccess.remove_absolute(path)
+
+
+## The island last published through `t`, from its call `from` on, or null.
+static func _published(t: FakeTransport, from := 0) -> RulebornIsland:
+	var sent := PackedByteArray()
+	for i in range(from, t.calls.size()):
+		if t.calls[i]["route"] == "PUT /v1/islands/heart":
+			sent = t.calls[i]["body"]
+	var island := RulebornIsland.new()
+	return island if not sent.is_empty() and island.read(sent) else null
 
 
 ## CLI-10: the realm view opened on one realm, then another before the
