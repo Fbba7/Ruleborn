@@ -704,3 +704,26 @@ The gate failed `97ecb94f` on 'heist at 200% text, pt_BR', quality Hierarchy, 0 
 - `part11-200-en.png` and `part11-200-de.png`: the same at 200% in en and de. Cast and Get out keep one row in each.
 
 The 14 FIT runs of Part 10 were run again on this change, one at a time. Every run exited 0 and printed "fit ok". The draw calls the shoot reports: 100% 120, 126 and 122 (en, pt_BR, de); 150% 121, 123 and 123; 200% 121, 123 and 123; high contrast 121 at 100% and 122 at 150% (en), and 120, 122 and 122 at 200% (en, pt_BR, de). At 100%, at 150% and in high contrast the counts are those of `97ecb94f`, since `cast_leads()` is false there. The full client suite passes `_vault_row` (the Vault's words at 200%, band no narrower than at 150%) and `_vault_band` (AD-R65) unchanged.
+
+## Part 12: Cast's gold plate while it leads (P4-S1-heist-vault, S1-R46)
+
+The gate failed `85be2fa8` on 'heist at 200% text, pt_BR', quality Hierarchy, 0 of 3 (lead cycle 187), on the plate's value: a spent Cast stood on AD-R60's leather plate, as dark as Fugir (Get out) and the tray, so in the 960 px grayscale only its word, not its plate, led. The lead granted S1-R46 in the same cycle: while Cast leads at 200% text, Cast takes the gold primary plate even when spent, with the wand dimmed. AD-R60's leather plate stands at every other size and in high contrast.
+
+**What changed** (all in S1's files; no kit file changes). It holds only while `HeistHud.cast_leads()` is true (text over 175%, not high contrast).
+
+- **Cast keeps its gold plate** (`HeistHud.lead_cast`, which replaces Part 11's `lead_word` and is called after each `HeistHand.show_state`). `HeistHand._dress_cast` (the lead's file) still dresses a spent Cast in leather. While Cast leads, `lead_cast` dresses it again in the look the hand stored for it (`meta "look"`, gold) at the same radius, and sets its word in the plate's own text colour and outline (`text_on_gold`, no outline), as a Cast with casts left. The wand stays dimmed to 0.4 by `show_state`, so a spent Cast still reads as spent. The rim shader is not put back: the dimmed wand and the empty pips carry "spent".
+- **Part 11's quieting stands:** the loot panel on the dark name plate with its figures in the quiet tint, the clock on the dark plate with "number" figures, the alarm count in the quiet tint, and LEIS AQUI on the tag's quiet plate. With Cast's plate now the lightest thing on the screen, the 508, 0%, 2:25 and 0/6 figures sit well below it in value and in size, and the selected crew's gold name (Batedor) is a word on the dark tray, smaller and darker than Cast's plate.
+
+**The self-check** (960 px grayscale, `part12-after-200-pt-gray960.png`, beside the pass anchor `kf-character-text200.png` and the fail anchor `today-heist.png`): Lançar is the lightest, largest and most saturated control, about 2.5 times Fugir's plate, at the foot of the screen. The loot panel is larger but dark and holds no action.
+
+**A pre-judge** (the `ui-judge` agent, advisory, Hierarchy, rubric v3, the same anchors, three calls in shuffled orders) gave 3 pass of 3, where `85be2fa8` had 0 of 3 at the gate. Each found that the eye lands first on the light Lançar block, that Fugir and pause are about half its size or less and dark, and that the loot panel and timer are dark boxes not heavier than Lançar.
+
+**Words on the plate:** guard.sh reads every heist word at 4.5:1 or better (worst 6.87 at 200%).
+
+**Draw calls:** heist/200 measures 120 (recorded 118; S1-R45 renewed at 120, one under the 121 of `85be2fa8`). heist/100 stays at 120 and heist/hc at 121 of 123.
+
+### Evidence
+
+- Before: `part11-after-200-pt.png` and `part11-after-200-pt-gray960.png` are the failed `85be2fa8` at 200% text in pt_BR.
+- `part12-after-200-pt.png` and `part12-after-200-pt-gray960.png`: this change at 200% in pt_BR, in colour and in the 960 px grayscale.
+- `part12-200-en.png` and `part12-200-de.png`: the same at 200% in en and de.
