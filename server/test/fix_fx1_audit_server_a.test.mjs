@@ -13,7 +13,6 @@ import { clockTicks } from "../src/service.mjs";
 import { Build, Builds } from "../src/sim.mjs";
 import { SPIKE_MIN, Workshop } from "../src/workshop.mjs";
 import { WASM, counting, established, openPlan, play, server, twoPlayers } from "./setup.mjs";
-import { stillOpen } from "./fix_fx2_open.mjs";
 
 const DAY = 24 * 60 * 60 * 1000;
 const t0facts = () => JSON.parse(readFileSync(new URL("../src/facts.json", import.meta.url), "utf8"));
@@ -147,25 +146,21 @@ test("FX1-A-06: the defence log offers no Trace on a banned raider, which the le
   assert.equal(t.service.defences.view(t.defender.account).raids[0].trace, null, "no Trace button the lease refuses");
 });
 
-// FX1-A-07 (= AUD-B-06, server-b.md): open. Its code is in matchmaking.mjs,
-// but FX2's AUD-B-06 proof (fix_fx2_audit_observatory.test.mjs) holds it
-// open, so the fix lands with that proof unwrapped (request FX1-R11). Until
-// then this proof runs as still open; the fix turns it back into a plain test.
+// FX1-A-07 (= AUD-B-06, server-b.md): fixed in FX2-9-audit-b-match, with
+// AUD-B-06's proof (fix_fx2_audit_observatory.test.mjs), request FX1-R11.
 test("FX1-A-07: a card swapped to a republished island shows only laws from the raider's open chapters (7.6)", async () => {
-  await stillOpen("FX1-A-07", () => {
-    const t = twoPlayers(true);
-    const mm = t.service.matchmaking;
-    assert.equal(mm.raider(t.raider.account).chapter, 1, "the raider has chapter 1 alone");
-    const before = t.service.observatory.view(t.raider.account);
-    assert.ok(before.targets.find((c) => c.bundle === t.bundle), "the defender's chapter-1 island is offered");
-    // Within the hour, the defender republishes the realm with Haste, chapter 2's.
-    t.clock.now += 60 * 1000;
-    const { bundle: haste } = t.service.publish(t.defender.account, t.build.exampleIsland(false));
-    assert.equal(mm.fresh(t.service.now()).find((c) => c.bundle === haste)?.chapter, 2, "the new island is chapter 2's");
-    const after = t.service.observatory.view(t.raider.account);
-    assert.deepEqual(after.targets.filter((c) => c.bundle === haste).map((c) => c.bundle), [],
-      "a chapter-2 island is not offered to a chapter-1 raider");
-  });
+  const t = twoPlayers(true);
+  const mm = t.service.matchmaking;
+  assert.equal(mm.raider(t.raider.account).chapter, 1, "the raider has chapter 1 alone");
+  const before = t.service.observatory.view(t.raider.account);
+  assert.ok(before.targets.find((c) => c.bundle === t.bundle), "the defender's chapter-1 island is offered");
+  // Within the hour, the defender republishes the realm with Haste, chapter 2's.
+  t.clock.now += 60 * 1000;
+  const { bundle: haste } = t.service.publish(t.defender.account, t.build.exampleIsland(false));
+  assert.equal(mm.fresh(t.service.now()).find((c) => c.bundle === haste)?.chapter, 2, "the new island is chapter 2's");
+  const after = t.service.observatory.view(t.raider.account);
+  assert.deepEqual(after.targets.filter((c) => c.bundle === haste).map((c) => c.bundle), [],
+    "a chapter-2 island is not offered to a chapter-1 raider");
 });
 
 test("FX1-A-08: recentSuccess learns from the heists the rating learns from: a pair's later raids that day rate nothing (G30, G37)", () => {
@@ -187,16 +182,16 @@ test("FX1-A-08: recentSuccess learns from the heists the rating learns from: a p
   assert.equal(mm.raider(t.raider.account).recent, 0);
 });
 
-test("FX1-A-09 (contested): the list says it reached for echoes when there was no echo to reach for (12.22)", () => {
-  // FX1-A-09: this asserts today's behaviour, which generated.test.mjs
-  // asserts too ("echoes first"); server-a.md lists it as contested.
+test("FX1-A-09: the list says echoes only when an echo is among its targets (12.22)", () => {
+  // FX1-A-09, settled by the lead (FX1-R9, cycle 169): the client shows the
+  // flag as OBS_ECHOES_NOTE, "echoes of recent ones are among these".
   const candidate = (id, p) => ({ bundle: id, owner: `owner-${id}`, realm: "heart", realmLevel: 1, keeperLevel: 5,
     renown: 100, rating: ratingFor(p), deviation: 0, origin: "authored", echo: false });
   const raider = { account: "me", rating: 1500, deviation: 0, renown: 100, keeperLevel: 5, recent: 0.625 };
   const out = offer(raider, [candidate("a", 0.62), candidate("b", 0.63)]);
   assert.ok(out.targets.every((c) => !c.echo), "no echo is offered");
   assert.equal(out.generated, false);
-  assert.equal(out.echoes, true, "today echoes is claimed with no echo candidate");
+  assert.equal(out.echoes, false, "no echo is among the targets");
 });
 
 test("FX1-A-10: an IPv4-mapped address written in hex or in full shares one /64 bucket (limits.mjs, not this task's)", () => {
