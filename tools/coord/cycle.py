@@ -46,10 +46,15 @@ history). Then it works out, without writing anything:
   waiting more than 2 hours, are alerts.
 
 It prints the actions and, with `--out`, writes the backlog it would leave
-to a file outside the repository, so the lead can diff it. It never
-commits, never pushes and never writes the repository's files: only
-`--dry-run` exists in part 1. The merge queue (owners.py diff, the
-candidate's checks, the merge lock, the fast-forward) is part 2, BT-01b.
+to a file outside the repository, so the lead can diff it. This part never
+commits, never pushes and never writes the repository's files: it runs only
+with `--dry-run`.
+
+The merge queue (part 2, BT-01b) is `merge_queue.py`: `--merge` runs it
+(owners.py diff, the candidate, the merge lock in status/lead.json, the
+checks through run_checks.sh, main moved on a pass, `resync` on a fail, the
+owner-inbox entries), and `--merge --dry-run` prints what it would do and
+pushes nothing. Its docstring has the steps.
 """
 
 import argparse
@@ -679,6 +684,11 @@ def self_test() -> int:
         check("cli json", r.returncode == 0 and len(json.loads(r.stdout)["actions"]) == len(acts))
         r = subprocess.run([c for c in cmd if c != "--dry-run"], capture_output=True, text=True)
         check("needs --dry-run", r.returncode == 2)
+        r = subprocess.run(cmd[:-2] + ["--merge", "--no-fetch"], capture_output=True, text=True)
+        check("merge dry-run cli", r.returncode == 0
+              and "dry run: nothing written, nothing pushed" in r.stdout)
+        check("merge dry-run pushes nothing", Repo(coord, main="main").heads() == before
+              and repo.git("status", "--porcelain") == status_before)
         r = subprocess.run(cmd[:-1] + [str(coord / "x.json")], capture_output=True, text=True)
         check("out inside refused", r.returncode != 0 and not (coord / "x.json").exists())
 
@@ -689,6 +699,9 @@ def self_test() -> int:
             info["new"] = False
         again = plan(world, now)
         check("idempotent copies", not [a for a in again["actions"] if a["kind"] in ("copy", "ack", "expire")])
+
+    import merge_queue
+    fails += merge_queue.self_test()
 
     if fails:
         print("self-test FAILED: " + ", ".join(fails))
@@ -708,13 +721,30 @@ def main(argv=None) -> int:
     ap.add_argument("--main", default=MAIN, help="main's branch name")
     ap.add_argument("--now", help="the time to judge by (UTC, for tests)")
     ap.add_argument("--no-fetch", action="store_true", help="use the remote refs already fetched")
+    ap.add_argument("--merge", action="store_true",
+                    help="run the merge queue (merge_queue.py); with --dry-run, print it and push nothing")
+    ap.add_argument("--trailer", action="append", default=[],
+                    help="a line to end the merge queue's commit messages with (repeatable)")
+    ap.add_argument("--max-batch", type=int, default=3, help="the most tasks in one candidate")
+    ap.add_argument("--max-candidates", type=int, default=3,
+                    help="the most candidates checked in one run")
     ap.add_argument("--self-test", action="store_true")
     args = ap.parse_args(argv)
     if args.self_test:
         return self_test()
-    if not args.dry_run:
-        ap.error("only --dry-run exists in part 1 (BT-01a); writing and pushing come with BT-01b")
     now = cn._ts(args.now) if args.now else None
+    if args.merge:
+        import merge_queue as mq
+        repo = mq.Git(args.repo, main=args.main)
+        rep = mq.run_queue(repo, mq.Checks(repo), dry_run=args.dry_run,
+                           now_fn=(lambda: now) if now else cn._now, fetch=not args.no_fetch,
+                           max_batch=args.max_batch, max_candidates=args.max_candidates,
+                           trailers=tuple(args.trailer))
+        print(json.dumps({"actions": rep.actions, "merged": rep.merged, "resync": rep.resync},
+                         indent=2) if args.json else rep.render())
+        return 0
+    if not args.dry_run:
+        ap.error("the cycle's plan runs only with --dry-run; --merge runs the merge queue")
     print(run(args.repo, now=now, fetch=not args.no_fetch, as_json=args.json, out=args.out,
               main=args.main))
     return 0

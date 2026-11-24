@@ -5,15 +5,15 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "BT-01b",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-24T19:45:00Z",
   "lease_until": "2026-11-24T22:45:00Z",
-  "updated_at": "2026-11-24T19:45:00Z",
-  "expected_next_update_by": "2026-11-24T20:30:00Z",
+  "updated_at": "2026-11-24T19:55:00Z",
+  "expected_next_update_by": "2026-11-24T20:40:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "0893bace",
-    "next_step": "Write the merge queue (tools/coord/merge_queue.py) on BT-01a's cycle.py, with its fixture self-test"
+    "next_step": "Pre-check on the merged branch, then mark BT-01b ready"
   },
   "precheck": null,
   "gate_request": null,
