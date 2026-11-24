@@ -7193,6 +7193,95 @@
       "merged_sha": "5f32d68a99eb11fa63cba62f827fae352a062605",
       "updated_at": "2026-11-24T06:26:00Z",
       "updated_by": "lead (cycle 172)"
+    },
+    {
+      "id": "FX4-6-device-replay-cap",
+      "title": "Low, client ext (FX3-R3 and SIM-2's residual): the device's recorders keep the 2 KB replay limit. client/ext/src/lib.rs record() and the universe recorder (line 391, record_universe) return or keep replays over MAX_HEIST_BYTES (2048), which the server refuses as too_large",
+      "phase": "fix",
+      "role": "FX4",
+      "model": "Opus 5.5",
+      "assigned_to": "FX4",
+      "files": [
+        "client/ext/src/**",
+        "client/tests/fix_*"
+      ],
+      "deps": [
+        "FX4-4-audit-client",
+        "FX3-6-audit-universe"
+      ],
+      "done_when": [
+        "first a test that fails on current main: the ext's single-island and universe recorders each return a replay over 2048 bytes for an honest long heist (as sim.md's SIM-2 Input), committed on its own before the fix, its failure output quoted in the handoff",
+        "then the smallest fix, following SIM-2's proposal: the ext refuses a recorded replay over the sim's MAX_HEIST_BYTES (the same constant, not a copy) as rb_record* now do, and the device stops accepting commands, or warns, before the encoded size reaches it; the handoff says which",
+        "if FX4-4-audit-client already fixed this, the task adds only the missing test and says so in the handoff",
+        "CLI-23 (client.md, unproven: the ext's as-casts) proven with a cargo test in the ext, or rejected with what was tried, and the result written in the handoff for the lead to record in client.md",
+        "no existing test is skipped, disabled or loosened; a test whose expectation encoded the defect is corrected and named in the handoff",
+        "bash client/build.sh and the client test run (client/tests/run.gd) passes, with the ext's cargo tests",
+        "current main merged into the branch, then the fresh-container setup line and bash tools/check_all.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed outside the task's files (M48)",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 1.0,
+      "tier": 2,
+      "critical": false,
+      "state": "merged",
+      "claim": {
+        "agent": "FX4",
+        "branch": "claude/fix-client",
+        "claimed_at": "2026-11-24T05:00:00Z",
+        "seen_at": "2026-11-24T06:32:00Z",
+        "lease_until": "2026-11-24T08:00:00Z"
+      },
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "484297b1d938186897cc749f819cb9aad9697f92",
+      "merged_sha": "ee4d64aa",
+      "updated_at": "2026-11-24T07:22:00Z",
+      "updated_by": "lead (cycle 173)"
+    },
+    {
+      "id": "FX3-6-audit-universe",
+      "title": "Audit, the rest of the simulation: the files FX3-5-audit-sim lists under 'Still not read' in docs/security/audit-2026-11/sim.md: sim/src/universe.rs (beyond what ffi.rs calls, and its own suspicions), sim/src/island.rs and sim/src/grid.rs (beyond the suspicions already followed) and the sim/examples/ programs; read-only for code outside the task's files",
+      "phase": "fix",
+      "role": "FX3",
+      "model": "Opus 5.5",
+      "assigned_to": "FX3",
+      "files": [
+        "sim/**",
+        "server/test/fix_fx3_*",
+        "docs/security/audit-2026-11/sim.md"
+      ],
+      "deps": [
+        "FX3-5-audit-sim"
+      ],
+      "done_when": [
+        "read the files named in the title for defects of the report's kind (wrong results, contract mismatches between client and server, races, missing checks); each finding added to docs/security/audit-2026-11/sim.md with Where, Input, Should happen, Happens, a proof (a test that fails on main, committed under the task's test files and kept failing-free by marking it with the finding id in a comment, not by skipping) and a proposed fix, in the report's format and priority levels; 'Still not read' updated",
+        "a finding is proven before it is listed as confirmed; one that could not be proven is listed as unproven with what was tried; the lead files fix tasks from the confirmed ones",
+        "the audit fixes nothing outside a proven finding; small proven fixes inside the task's files may ride this task, each with its fail-first test",
+        "no existing test is skipped, disabled or loosened",
+        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready (M48)",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 2.5,
+      "tier": 2,
+      "critical": false,
+      "state": "merged",
+      "claim": {
+        "agent": "FX3",
+        "branch": "claude/fix-sim",
+        "claimed_at": "2026-11-23T23:10:00Z",
+        "seen_at": "2026-11-23T23:20:00Z",
+        "lease_until": "2026-11-24T02:10:00Z"
+      },
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "92dda0306acf76c7ffae3c0473704c2d407a36c0",
+      "merged_sha": "5293e6b7",
+      "updated_at": "2026-11-24T02:58:00Z",
+      "updated_by": "lead (cycle 169)"
     }
   ],
   "idle_queue": [

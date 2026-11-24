@@ -1,8 +1,8 @@
 # FX3 simulation fixes: progress
 
-- Status: Working. FX3-7-audit-client-2: findings written and pushed; the full checks are running. FX3-6-audit-universe is merged (lead cycle 169, 5293e6b7).
+- Status: Waiting. FX3-7-audit-client-2 is ready at 1ecd419f (pre-check PASS at 05:04Z, recorded). FX3-6-audit-universe is merged (lead cycle 169, 5293e6b7).
 - Progress: FX3-7-audit-client-2 proved CLI-3, CLI-8, CLI-9, CLI-16, CLI-17, CLI-19 and CLI-21, rejected CLI-20, and read the client code FX4-4 did not (`island_builder.gd`, `universe_island.gd`, `client/ui`, `heist_screen.gd` 520-999). It found ten more, CLI-25 to CLI-34 (six Medium, four Low, no High). Each is proven by a still-open check in `client/tests/audit_client2_tests.gd`; nothing is fixed. The findings are in `docs/security/audit-2026-11/client.md`.
-- Next: the full checks, then ready.
+- Next: the lead's merge. FX3 has no further open task.
 - Blocked by: none.
 - Owner decision needed: none.
 
@@ -14,9 +14,29 @@
 | FX3-4-lab-replay: RB-51, RB-52, RB-54, RB-55 | 3.5 | merged | `server/test/fix_fx3_lab_hints.test.mjs`; `sim/src/tests.rs` `rb54_a_tick_delta_past_u32_is_refused_not_wrapped`, `rb54_a_padded_varint_is_refused`, `rb55_a_command_for_actor_16_still_records_a_replay_that_round_trips`; `server/src/lab.mjs`, `sim/src/replay.rs`, `sim/src/lib.rs` |
 | FX3-5-audit-sim: SIM-1 to SIM-9, the report's sim suspicions | 4.0 | merged | `docs/security/audit-2026-11/sim.md`; `sim/src/tests.rs` `sim_1_*` to `sim_9_*` (nine tests); `sim/test_tools.py` (SIM-3, SIM-4); `sim/src/lib.rs`, `sim/src/ffi.rs`, `sim/no_floats.py`, `sim/status.py`, `sim/run_spike.sh`, `sim/systems.json` |
 | FX3-6-audit-universe: SIM-10 to SIM-13, `universe.rs`, `island.rs`, `grid.rs`, `sim/examples/` | 4.0 | merged | `docs/security/audit-2026-11/sim.md`; `sim/src/tests.rs` `sim_10_a_command_for_actor_16_still_records_a_universe_replay_that_round_trips`, `sim_11_a_lantern_wisps_reveal_goes_with_it_across_to_the_next_realm`, `sim_12_a_curated_layout_never_drops_a_woven_law_unseen`, `sim_13_moving_the_vault_onto_a_guard_hidden_in_tall_grass_takes_the_grass_too`; `sim/src/universe.rs`, `sim/src/island.rs`, `sim/systems.json` |
-| FX3-7-audit-client-2: CLI-3, 8, 9, 16, 17, 19, 20, 21 settled; CLI-25 to CLI-34 | 3.0 | working | `docs/security/audit-2026-11/client.md`; `client/tests/audit_client2_tests.gd` (18 checks, registered in `client/tests/run.gd`) |
+| FX3-7-audit-client-2: CLI-3, 8, 9, 16, 17, 19, 20, 21 settled; CLI-25 to CLI-34 | 3.0 | ready | `docs/security/audit-2026-11/client.md`; `client/tests/audit_client2_tests.gd` (18 checks, registered in `client/tests/run.gd`) |
 
 ## Handoff
+- FX3-7-audit-client-2, ready (2026-11-24). Branch `claude/fix-sim`. Pre-check at 1ecd419f: PASS ("All checks passed.", 05:04Z, recorded). `ready_sha` 1ecd419f is in `docs/progress/status/FX3.json`. It merges main at `85e5697e` (lead cycle 169), with no conflict. Locally, `python3 client/status.py` passes 486 of 486, `cd server && npm test` 631 of 631, `bash tools/check_all.sh` passes ("All checks passed.") and `check_docs_consistency.py` finds nothing.
+  - **Commits.**
+    - Claim: 111aa29d.
+    - Proofs of the first pass's unproven findings: 585be289 (CLI-3, CLI-19, CLI-21; CLI-20 rejected), 153106cf (CLI-16, CLI-17), 9c1dbd59 (CLI-8, CLI-9). Write-up: 8c6391d0.
+    - New findings CLI-25 to CLI-34, their checks and the write-up: 9c8c0bd3.
+    - `client/tests/run.gd` kept within gdlint's 1000 lines: 9b65c40e. Main had it at exactly 1000; the new registration took it over, so one three-line comment became two and the registration has no comment of its own.
+  - **The first pass's unproven findings.** All in `docs/security/audit-2026-11/client.md`.
+    - Proven, open: CLI-3 (High: an offline heist plays three default crew and submits the planner's four ids, refused `crew_mismatch`), CLI-8, CLI-9, CLI-16, CLI-17, CLI-19 and CLI-21 (Medium).
+    - CLI-8 and CLI-9: the client and the server are both wrong against the design. CLI-8: the observatory card and `service.mjs` `lease` name no owner, so the lease goes to `holders[0]`. CLI-9: `defences.mjs` gives the trace with no `across`. client.md's "Notes for other tasks" says what each side should send.
+    - Rejected: CLI-20, with what was tried.
+    - CLI-23 is not in this task (FX4-6 owns the ext); CLI-12 is RB-32, already on main.
+  - **New findings.** Slice F of "What was read": `client/world/island_builder.gd`, `client/world/universe_island.gd`, every file in `client/ui`, `client/scripts/heist_screen.gd` 520-999.
+    - Medium: CLI-25 (a Workshop island that does not load still takes orders and its reason is overwritten), CLI-26 (a held tap on the Vault offers gaits and Walk cracks it; the load target cannot be changed), CLI-27 (the held-tap menu is not modal), CLI-28 (`ColourCheck.lc_needed` gives Lc 60 to bold text at any size), CLI-29 (the Heart draws its Spire twice and moves its pin), CLI-30 (17 buildings and 16 spots: a full realm's eighth ward is not drawn).
+    - Low: CLI-31 (the notice pulse overshoots and runs 500 ms), CLI-32 (a locked control still acts on ui_accept), CLI-33 (curtains hang from part of the rim), CLI-34 (the Heart's corner pool lies on the grid). CLI-31 and CLI-32 are latent: no screen calls `notice` or `locked` yet.
+    - Smaller items not proven are under "Smaller, not proven", with why.
+  - **Proofs.** 18 checks in `client/tests/audit_client2_tests.gd`, registered in `client/tests/run.gd`. Each is marked `# Audit finding CLI-N` and none is skipped. Each still-open check passes while its defect is there, and says to become a plain check once fixed.
+  - **Nothing is fixed.** No file outside the task's files changed. `client/status.json` and `server/status.json`, which the runs regenerate, were restored.
+  - **Still not read** (updated in client.md): the `client/scripts` other than the three read in full, and the `client/world` files not named in slices E and F.
+  - **Owners.** `owners.py diff FX3-7-audit-client-2 origin/claude/videogame-project-analysis-ewkkk2 1ecd419f` reports "every changed path is inside its files".
+  - **Next.** The lead's merge, and fix tasks for CLI-25 to CLI-34. FX3 has no further open task.
 - FX3-6-audit-universe, merged (lead cycle 169, 5293e6b7). Ready (2026-11-24). Branch `claude/fix-sim`. Pre-check at 92dda030: PASS ("All checks passed.", 01:36Z, recorded). `ready_sha` 92dda030 is in `docs/progress/status/FX3.json`. 92dda030 merges main at `bc7f27e8` (lead cycles 168 and 169, the FX2-7 merge), with no conflict. The later commits are docs/progress only, so the pre-checked sha stays the ready one. The local `bash tools/check_all.sh` also passed.
   - **Commits.**
     - Claim: 18c7bd83.

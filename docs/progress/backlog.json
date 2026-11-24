@@ -2,7 +2,7 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026. Phase 2 started on 12 November 2026 (lead cycle 70): P1-AD-board-1d let board 1 stand and phase 1's other exit criteria hold (report.md section 3.2); its first tasks are the flow findings (S1, S2) and board 1's note G (AIA-2), within the same cap of three. Since 12 November 2026, about 20:00Z, the cap is four UI builders by the owner's order (CLAUDE.md order 3; three while the seven-day bar reads allowed_warning). Phase 3 (polish and harden, report.md step 12) started on 17 November 2026 (lead cycle 118) under M49: every phase 2 task was merged by 06:55Z, the exit review ran in cycle 118 (boards 3, 4 and 5 stand, board 2 waits on the deferred icon batch 4 by D13 (c), the exceptions queue is empty, every screen passes the gate but result at 200% pt_BR, Hierarchy, which P3-S1-result-7 takes), and the first blind audit (O6) is carried into phase 3 as P3-AD-audit-1. Phase 3 draws from the 20-hour reserve; it exits when no board has an open objection, the second blind audit is done and the wave board (O7) stands. The bug-fix wave started on 21 November 2026 by the owner's order (CLAUDE.md order 1, entry of 21 November): the UI is paused (P3-S3-settings-4, P4-S1-heist-vault and P4-S2-home-purse parked with their work on their branches; the BT track stays parked) while up to four fix builders, FX1 to FX4 within the cap of four, fix the 60 confirmed defects of docs/security/bug-report-2026-11.md, highs first, each with a test that fails before the fix, then recheck the four unproven candidates (7, 21, 23, 34) and audit the code the report did not read (findings in docs/security/audit-2026-11/, from which the lead files fix tasks). The FX tasks' phase is 'fix'; the UI resumes at phase 3 when every FX task is merged.",
   "wave": "Bug-fix wave",
   "phase": 3,
-  "updated_at": "2026-11-24T06:55:00Z",
+  "updated_at": "2026-11-24T07:22:00Z",
   "updated_by": "lead (cycle 173)",
   "stop_at": "2026-11-24T21:00:00Z",
   "lease_hours": 3,
@@ -273,52 +273,6 @@
       "updated_by": "lead (cycle 171)"
     },
     {
-      "id": "FX4-6-device-replay-cap",
-      "title": "Low, client ext (FX3-R3 and SIM-2's residual): the device's recorders keep the 2 KB replay limit. client/ext/src/lib.rs record() and the universe recorder (line 391, record_universe) return or keep replays over MAX_HEIST_BYTES (2048), which the server refuses as too_large",
-      "phase": "fix",
-      "role": "FX4",
-      "model": "Opus 5.5",
-      "assigned_to": "FX4",
-      "files": [
-        "client/ext/src/**",
-        "client/tests/fix_*"
-      ],
-      "deps": [
-        "FX4-4-audit-client",
-        "FX3-6-audit-universe"
-      ],
-      "done_when": [
-        "first a test that fails on current main: the ext's single-island and universe recorders each return a replay over 2048 bytes for an honest long heist (as sim.md's SIM-2 Input), committed on its own before the fix, its failure output quoted in the handoff",
-        "then the smallest fix, following SIM-2's proposal: the ext refuses a recorded replay over the sim's MAX_HEIST_BYTES (the same constant, not a copy) as rb_record* now do, and the device stops accepting commands, or warns, before the encoded size reaches it; the handoff says which",
-        "if FX4-4-audit-client already fixed this, the task adds only the missing test and says so in the handoff",
-        "CLI-23 (client.md, unproven: the ext's as-casts) proven with a cargo test in the ext, or rejected with what was tried, and the result written in the handoff for the lead to record in client.md",
-        "no existing test is skipped, disabled or loosened; a test whose expectation encoded the defect is corrected and named in the handoff",
-        "bash client/build.sh and the client test run (client/tests/run.gd) passes, with the ext's cargo tests",
-        "current main merged into the branch, then the fresh-container setup line and bash tools/check_all.sh rerun on that merge, said in the handoff evidence (M11, M13)",
-        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed outside the task's files (M48)",
-        "bash tools/check_all.sh"
-      ],
-      "gate_items": [],
-      "attempts": 0,
-      "estimate_h": 1.0,
-      "tier": 2,
-      "critical": false,
-      "state": "ready",
-      "claim": {
-        "agent": "FX4",
-        "branch": "claude/fix-client",
-        "claimed_at": "2026-11-24T05:00:00Z",
-        "seen_at": "2026-11-24T06:32:00Z",
-        "lease_until": "2026-11-24T08:00:00Z"
-      },
-      "prior_branch": null,
-      "prior_sha": null,
-      "ready_sha": "484297b1d938186897cc749f819cb9aad9697f92",
-      "merged_sha": null,
-      "updated_at": "2026-11-24T06:55:00Z",
-      "updated_by": "lead (cycle 173)"
-    },
-    {
       "id": "FX4-7-curation-swap-weave",
       "title": "High, client curation (CLI-1, docs/security/audit-2026-11/client.md): a curation swap is woven and paid, then its publish is refused while it weaves. curation_controller.gd apply_swap posts the weave and at once publishes the draft with the new law's pylon, which universe.mjs's SR-16 check refuses (law_not_woven) until ready_at; the live island keeps the old law's pylon, now in no slot, so every publish of the realm is refused until then",
       "phase": "fix",
@@ -352,14 +306,20 @@
       "estimate_h": 2.0,
       "tier": 1,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "working",
+      "claim": {
+        "agent": "FX4",
+        "branch": "claude/fix-client",
+        "claimed_at": "2026-11-24T07:25:00Z",
+        "seen_at": "2026-11-24T08:30:00Z",
+        "lease_until": "2026-11-24T10:25:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-24T02:30:00Z",
-      "updated_by": "lead (cycle 169)"
+      "updated_at": "2026-11-24T08:30:00Z",
+      "updated_by": "lead (cycle 174)"
     },
     {
       "id": "FX4-8-rehearsal-rerun",
@@ -454,49 +414,6 @@
       "updated_by": "lead (cycle 171)"
     },
     {
-      "id": "FX3-6-audit-universe",
-      "title": "Audit, the rest of the simulation: the files FX3-5-audit-sim lists under 'Still not read' in docs/security/audit-2026-11/sim.md: sim/src/universe.rs (beyond what ffi.rs calls, and its own suspicions), sim/src/island.rs and sim/src/grid.rs (beyond the suspicions already followed) and the sim/examples/ programs; read-only for code outside the task's files",
-      "phase": "fix",
-      "role": "FX3",
-      "model": "Opus 5.5",
-      "assigned_to": "FX3",
-      "files": [
-        "sim/**",
-        "server/test/fix_fx3_*",
-        "docs/security/audit-2026-11/sim.md"
-      ],
-      "deps": [
-        "FX3-5-audit-sim"
-      ],
-      "done_when": [
-        "read the files named in the title for defects of the report's kind (wrong results, contract mismatches between client and server, races, missing checks); each finding added to docs/security/audit-2026-11/sim.md with Where, Input, Should happen, Happens, a proof (a test that fails on main, committed under the task's test files and kept failing-free by marking it with the finding id in a comment, not by skipping) and a proposed fix, in the report's format and priority levels; 'Still not read' updated",
-        "a finding is proven before it is listed as confirmed; one that could not be proven is listed as unproven with what was tried; the lead files fix tasks from the confirmed ones",
-        "the audit fixes nothing outside a proven finding; small proven fixes inside the task's files may ride this task, each with its fail-first test",
-        "no existing test is skipped, disabled or loosened",
-        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready (M48)",
-        "bash tools/check_all.sh"
-      ],
-      "gate_items": [],
-      "attempts": 0,
-      "estimate_h": 2.5,
-      "tier": 2,
-      "critical": false,
-      "state": "merged",
-      "claim": {
-        "agent": "FX3",
-        "branch": "claude/fix-sim",
-        "claimed_at": "2026-11-23T23:10:00Z",
-        "seen_at": "2026-11-23T23:20:00Z",
-        "lease_until": "2026-11-24T02:10:00Z"
-      },
-      "prior_branch": null,
-      "prior_sha": null,
-      "ready_sha": "92dda0306acf76c7ffae3c0473704c2d407a36c0",
-      "merged_sha": "5293e6b7",
-      "updated_at": "2026-11-24T02:58:00Z",
-      "updated_by": "lead (cycle 169)"
-    },
-    {
       "id": "FX1-8-server-a-lows",
       "title": "Medium and low, server, from FX1-6's audit (FX1-R3 to FX1-R8, FX1-R10) and AUD-B-18's residual: FX1-A-02 (accounts.mjs erase() deletes bytes another row still uses), FX1-A-10 (limits.mjs peerKey and IPv4-mapped addresses in hex or full form), FX1-A-13 (the lease keeps its realm from issue()), FX1-A-15 (seasons.mjs constellationTable refuses as result() does), FX1-A-16 (links.mjs numbers only go up), FX1-A-17 (weaving.mjs counts codex.woven when the weave finishes), Renown's pull over skipped seasons, and the seasons constructor's guard for a seasonStart that is not finite",
       "phase": "fix",
@@ -540,20 +457,14 @@
       "estimate_h": 3.0,
       "tier": 1,
       "critical": false,
-      "state": "blocked",
-      "claim": {
-        "agent": "FX1",
-        "branch": "claude/fix-server-a",
-        "claimed_at": "2026-11-24T05:35:00Z",
-        "seen_at": "2026-11-24T06:39:00Z",
-        "lease_until": "2026-11-24T08:35:00Z"
-      },
+      "state": "merged",
+      "claim": null,
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null,
-      "updated_at": "2026-11-24T06:55:00Z",
-      "updated_by": "lead (cycle 173)",
+      "ready_sha": "dbf44adf6f5a2083e2a3e45f14638d7f6b6c2cb2",
+      "merged_sha": "e830e15bb6b3dbffcbe0d4cd288237a564c21ad8",
+      "updated_at": "2026-11-24T08:30:00Z",
+      "updated_by": "lead (cycle 174)",
       "exceptions": [
         "server/privacy.json",
         "server/declarations.md"
@@ -598,20 +509,14 @@
       "estimate_h": 3.0,
       "tier": 1,
       "critical": false,
-      "state": "working",
-      "claim": {
-        "agent": "FX3",
-        "branch": "claude/fix-sim",
-        "claimed_at": "2026-11-24T06:32:00Z",
-        "seen_at": "2026-11-24T06:32:00Z",
-        "lease_until": "2026-11-24T09:32:00Z"
-      },
+      "state": "merged",
+      "claim": null,
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null,
-      "updated_at": "2026-11-24T06:55:00Z",
-      "updated_by": "lead (cycle 173)"
+      "ready_sha": "ad5e56bfc0ba38c2c68a9b3ff43a63fe701d15c3",
+      "merged_sha": "e830e15bb6b3dbffcbe0d4cd288237a564c21ad8",
+      "updated_at": "2026-11-24T08:30:00Z",
+      "updated_by": "lead (cycle 174)"
     },
     {
       "id": "FX1-10-tools-contract",
@@ -679,6 +584,7 @@
       ],
       "done_when": [
         "each finding named in the title: its proof's stillOpen entry in server/test/fix_fx1_audit_tools_proofs.mjs (wrapped by fix_fx1_audit_tools.test.mjs) moved into a plain test under server/test/fix_fx1_tools_docs*, committed on its own before its fix and failing on current main, its failure output quoted in the handoff; then the smallest fix, following the entry's Fix line in tools.md unless the handoff says why not; the commit names the finding id",
+        "FX1-R26's second half (the lead's answer, cycle 174): the docstring of check_constant_restatements in tools/check_document.py (line 505, `fixed (\\d+) steps a second`) becomes a raw string, so compiling the file with no cached .pyc prints no SyntaxWarning; a test under server/test/fix_fx1_tools_docs* compiles it with warnings as errors (python3 -W error -B) and fails on current main",
         "each fixed entry's State in docs/security/audit-2026-11/tools.md reads 'fixed (<task_id>)'",
         "no existing test is skipped, disabled or loosened; a test whose expectation encoded the defect is corrected and named in the handoff",
         "cd server && npm test passes",
@@ -697,8 +603,8 @@
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-24T05:35:00Z",
-      "updated_by": "lead (cycle 171)"
+      "updated_at": "2026-11-24T08:30:00Z",
+      "updated_by": "lead (cycle 174)"
     },
     {
       "id": "FX1-12-tools-ui",
@@ -743,6 +649,45 @@
       "merged_sha": null,
       "updated_at": "2026-11-24T05:35:00Z",
       "updated_by": "lead (cycle 171)"
+    },
+    {
+      "id": "FX1-13-codex-woven-at",
+      "title": "Low, server codex (FX1-R25, FX1-A-17's residual, docs/security/audit-2026-11/server-a.md): weaving.mjs records codex.woven_at at the weave's finish time, but mastery() (codex.mjs) and the profile (profile.mjs) count woven_at != null, so a law's woven step shows while its weave is still unfinished",
+      "phase": "fix",
+      "role": "FX1",
+      "model": "Opus 5.5",
+      "assigned_to": "FX1",
+      "files": [
+        "server/src/codex.mjs",
+        "server/src/profile.mjs",
+        "server/test/fix_fx1_codex_woven*"
+      ],
+      "deps": [
+        "FX1-8-server-a-lows"
+      ],
+      "done_when": [
+        "first a test under server/test/fix_fx1_codex_woven* that starts a weave and reads mastery() and the profile before the weave's finish time, expecting the woven step not to count yet, and after it, expecting it to count; failing on current main, committed on its own before the fix, its failure output quoted in the handoff",
+        "then the smallest fix: mastery() and the profile count the woven step only when woven_at is at or before the current time (the service's clock, as weaving.mjs uses), never from the weave's start; the commit names FX1-A-17 and FX1-R25",
+        "if docs/security/audit-2026-11/server-a.md needs its FX1-A-17 entry to say the residual is fixed, the handoff writes that as a request to the lead (server-a.md is not in this task's files)",
+        "no existing test is skipped, disabled or loosened; a test whose expectation encoded the defect is corrected and named in the handoff",
+        "cd server && npm test passes",
+        "current main merged into the branch, then the fresh-container setup line and bash tools/check_all.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed outside the task's files (M48)",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 1.0,
+      "tier": 1,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-24T08:30:00Z",
+      "updated_by": "lead (cycle 174)"
     },
     {
       "id": "P3-S3-offline-1",

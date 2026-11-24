@@ -13553,7 +13553,7 @@ EDITS = {
     dict(section="31.5", action="insert",
          find="which the phrase ban could not see",
          replace="Wrap this column in the "
-                 "<code>&lt;!--allow-retired--&gt;</code> marker the rename "
+                 "<!--allow-retired--> marker the rename "
                  "tables use. It quotes retired models in order to say they "
                  "are banned, which is the one place they belong and exactly "
                  "what the marker is for \u2014 without it a checker reads "

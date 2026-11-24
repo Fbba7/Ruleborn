@@ -66,6 +66,7 @@ client suite's result after the fixes (`python3 client/status.py`) is in
 | CLI-29 | Medium | frontend/UI | `client/world/universe_island.gd _buildings` | The Heart draws its Spire a second time at a ring spot and moves its pin there | proven, open |
 | CLI-30 | Medium | frontend/UI | `client/world/universe_island.gd _buildings`, `_spots` | A realm full at level 1 has 17 buildings and 16 spots: its eighth ward is not drawn | proven, open |
 | CLI-22 | Low | security | `client/core/action_log.gd add` | The action log keeps account ids | fixed |
+| CLI-23 | Low | security | `client/ext/src/lib.rs` `give`, `preview`, the universe landing, `start_planned` | The ext's `as` casts wrap an out-of-range actor, kind, x, y or clock onto a valid one | fixed |
 | CLI-24 | Low | frontend/UI | `client/features/social/social_controller.gd load_friends` | A failed blocks call empties the blocked list on screen | fixed |
 | CLI-31 | Low | frontend/UI | `client/ui/kit_status.gd notice` | The notice mark's pulse overshoots and runs 500 ms, eased in and out | proven, open |
 | CLI-32 | Low | frontend/UI | `client/ui/kit_status.gd locked` | A locked control keeps its focus, so ui_accept still runs its action | proven, open |
@@ -75,6 +76,8 @@ client suite's result after the fixes (`python3 client/status.py`) is in
 FX3-7's second pass proved CLI-3, CLI-8, CLI-9, CLI-16, CLI-17, CLI-19 and
 CLI-21, and rejected CLI-20 (see "Rejected"). CLI-23 is still not proven:
 see "Unproven". CLI-12 is covered by RB-32, already on main.
+FX4-6-device-replay-cap then proved CLI-23 with cargo tests in the ext and
+fixed it (recorded by the lead in cycle 173; see below).
 
 It then read the code FX4-4 did not (slice F of "What was read") and found
 ten more, CLI-25 to CLI-34, each proven by a still-open check in
@@ -659,7 +662,7 @@ in kit pieces no screen uses yet: they are latent until one does.
 ## The report's client suspicions
 
 ### `client/ext/src/lib.rs`: ticks and kind values are wrapped with `as` casts
-Real, Low, and not proven (CLI-23 under "Unproven"). `ticks as u32`
+Real, Low: CLI-23, proven and fixed in FX4-6-device-replay-cap. `ticks as u32`
 (lines 220 and 301), `crew as u8` (221), `kind as u8` (340), and `actor as
 u8` with `x as i16` and `y as i16` (361, 364) wrap an out-of-range value
 onto a valid one, where they should refuse it. Every caller in the client
@@ -686,8 +689,14 @@ Each item below was suspected while reading. It was not proven with a
 failing test, so it is listed rather than fixed.
 
 ### Found, not proven
-- **CLI-23 (Low): the ext's `as` casts** (above). A proof needs the ext
-  rebuilt with a test entry point, outside this task's checks.
+- **CLI-23 (Low): the ext's `as` casts** (above). Proven later, by
+  FX4-6-device-replay-cap's cargo tests in the ext: on main, `give` took an
+  actor of 256, -1 or 16, a kind of 256 or -256 and an x or y past i16, the
+  universe landing took kind 267 as Land, and `preview` took a clock of
+  2^32 + 4950 as 4950, each wrapped onto a valid value. Each is now refused
+  with `try_from`. `start_planned`'s `ticks as u32` is fixed the same way
+  but has no cargo test (its arguments need the engine). Fixed; recorded by
+  the lead in cycle 173.
 
 ### Covered elsewhere
 - **CLI-12: telemetry past 24 session starts a day.** `services.gd` lines

@@ -28,6 +28,55 @@ REQUIRED = [
 ]
 
 
+def permissions(lines):
+    """The top-level permissions: block, as {key: value}, or None if absent.
+
+    FX1-T-08: the block runs to the next top-level key, so a line added
+    under it is read, not ignored. A value on the permissions: line itself
+    (write-all, read-all) is kept under the key "".
+    """
+    for i, line in enumerate(lines):
+        m = re.match(r"^permissions:(.*)$", line)
+        if not m:
+            continue
+        block = {}
+        if m.group(1).split("#")[0].strip():
+            block[""] = m.group(1).split("#")[0].strip()
+        for entry in lines[i + 1:]:
+            if entry.strip() == "" or entry.lstrip().startswith("#"):
+                continue
+            if not entry.startswith((" ", "\t")):
+                break
+            key, _, value = entry.split("#")[0].strip().partition(":")
+            block[key.strip()] = value.strip()
+        return block
+    return None
+
+
+def run_lines(lines):
+    """The shell lines of every run: step, with comments cut away.
+
+    FX1-T-08: a required command counts only where a step runs it, so one
+    turned into a comment, or sitting in a step's name, does not.
+    """
+    out = []
+    i = 0
+    while i < len(lines):
+        m = re.match(r"^(\s*)(?:- )?run:\s*(.*)$", lines[i])
+        i += 1
+        if not m:
+            continue
+        indent, first = len(m.group(1)), m.group(2)
+        if first.strip() in ("|", ">", "|-", ">-", "|+", ">+"):
+            while i < len(lines) and (lines[i].strip() == ""
+                                      or len(lines[i]) - len(lines[i].lstrip()) > indent):
+                out.append(lines[i])
+                i += 1
+        else:
+            out.append(first)
+    return [re.split(r"(?:^|\s)#", line, maxsplit=1)[0].strip() for line in out]
+
+
 def problems(text):
     out = []
     lines = text.splitlines()
@@ -37,7 +86,7 @@ def problems(text):
     for event in ("push", "pull_request"):
         if not re.search(rf"^  {event}:", text, re.M):
             out.append(f"does not run on {event}")
-    if not re.search(r"^permissions:\n  contents: read\s*$", text, re.M):
+    if permissions(lines) != {"contents": "read"}:
         out.append("permissions is not exactly contents: read")
     uses = re.findall(r"uses:\s*(\S+)", text)
     if not uses:
@@ -45,8 +94,9 @@ def problems(text):
     for ref in uses:
         if not re.fullmatch(r"[\w.-]+/[\w.-]+@[0-9a-f]{40}", ref):
             out.append(f"action not pinned to a commit SHA: {ref}")
+    runs = run_lines(lines)
     for command in REQUIRED:
-        if command not in text:
+        if not any(command in line for line in runs):
             out.append(f"does not run: {command}")
     return out
 
@@ -62,6 +112,19 @@ def self_test():
         assert expected in problems(text), (expected, problems(text))
     if good is not None:
         assert "does not run: npm test" in problems(good.replace("npm test", "npm tst"))
+        # FX1-T-08: a wider block, a commented-out command, and one that is
+        # only named, not run.
+        perm = "permissions:\n  contents: read\n"
+        assert perm in good
+        for extra in ("  actions: write\n", "  # a note\n  id-token: write\n"):
+            assert "permissions is not exactly contents: read" in problems(
+                good.replace(perm, perm + extra)), extra
+        assert "permissions is not exactly contents: read" in problems(
+            good.replace(perm, "permissions: write-all\n"))
+        for cut in ("# npm test", "echo ok # npm test"):
+            assert "does not run: npm test" in problems(good.replace("npm test", cut, 1)), cut
+        named = good.replace("run: npm test", "run: echo skipped")
+        assert named != good and "does not run: npm test" in problems(named)
 
 
 def main():
