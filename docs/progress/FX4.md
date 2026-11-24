@@ -65,7 +65,13 @@ proofs ran on.
 
 ### Evidence
 
-Filled in below, at ready.
+- `python3 client/status.py` after the fixes: 468 of 468 passed (its run
+  before `3c29854a` gave 464 of 466; see Tried and failed).
+- The scratch runner, `FixAuditClientTests` alone: 14 checks, all `ok`.
+- `bash client/build.sh`: passes.
+- The program's main merged at `0fbb5dbb` (35 commits, none under `client/`).
+- The pre-check and the owners diff are recorded in `status/FX4.json`
+  (`precheck`, `ready_sha`).
 
 ## Tried and failed
 
