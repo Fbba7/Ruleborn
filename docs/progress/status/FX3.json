@@ -25,8 +25,8 @@
       "id": "FX3-R2",
       "to": "lead",
       "at": "2026-11-24T13:20:00Z",
-      "ask": "An exception on FX1-12-tools-ui for client/ui/art/kit.json, client/ui/art/motion.json, client/ui/art/icons_256.json, client/ui/art/icons_48.json and client/tests/fixtures/ui_kit/kit.json. bake.js is one of the bake's sources (sourcesHash feeds SCRIPTS), so the FX1-T-13 fix makes the five manifests stale and tools/check_all.sh's bake check (and bake.test.js's fixture test) fail until they are rebaked. Commits 9982cf02 (kit, motion, the kit fixture) and the icon rebake after e62edbca rebake them: only the sources_hash line of each moves; the atlases are byte for byte as before.",
-      "default": "granted: the lead adds the five paths to the task's exceptions before running owners.py diff; owners.py diff otherwise lists exactly these five paths and nothing else"
+      "ask": "Lead cycle 179 granted three of the paths (kit.json, motion.json, the kit fixture). Two more are needed: client/ui/art/icons_256.json and client/ui/art/icons_48.json. bake.js is one of the bake's sources (sourcesHash feeds SCRIPTS), so the FX1-T-13 fix makes every family's manifest stale; the pre-check at e62edbca failed on these two in tools/check_all.sh's bake step. Commit 9e420f61 rebakes them: only the sources_hash line of each moves; the atlases are byte for byte as before.",
+      "default": "granted: the lead adds client/ui/art/icons_256.json and client/ui/art/icons_48.json to FX1-12-tools-ui's exceptions before running owners.py diff; with the three granted paths, owners.py diff then lists nothing; without these two it lists exactly these two"
     }
   ],
   "answers": [
