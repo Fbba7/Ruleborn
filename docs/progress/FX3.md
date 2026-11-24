@@ -1,8 +1,8 @@
 # FX3 simulation fixes: progress
 
-- Status: Waiting. FX3-7-audit-client-2 is ready at 1ecd419f (pre-check PASS at 05:04Z, recorded). FX3-6-audit-universe is merged (lead cycle 169, 5293e6b7).
-- Progress: FX3-7-audit-client-2 proved CLI-3, CLI-8, CLI-9, CLI-16, CLI-17, CLI-19 and CLI-21, rejected CLI-20, and read the client code FX4-4 did not (`island_builder.gd`, `universe_island.gd`, `client/ui`, `heist_screen.gd` 520-999). It found ten more, CLI-25 to CLI-34 (six Medium, four Low, no High). Each is proven by a still-open check in `client/tests/audit_client2_tests.gd`; nothing is fixed. The findings are in `docs/security/audit-2026-11/client.md`.
-- Next: the lead's merge. FX3 has no further open task.
+- Status: Waiting. FX1-9-tools-gate is ready at ad5e56bf (pre-check PASS at 07:23Z, recorded). FX3-7-audit-client-2 is ready at 1ecd419f.
+- Progress: FX1-9-tools-gate fixed the six gate and coordination findings of FX1-7's tools audit (FX1-T-03 High; FX1-T-04, 09, 22, 08, 05) and FX2-R4's py() stdout fault. Each has a plain test in `server/test/fix_fx1_tools_gate.test.mjs`, committed alone before its fix and failing on main.
+- Next: the lead's merges of FX1-9-tools-gate and FX3-7-audit-client-2. The lead regenerates `docs/audit/index.html` (FX1-T-22's source fix). FX3 has no further open task.
 - Blocked by: none.
 - Owner decision needed: none.
 
@@ -15,8 +15,68 @@
 | FX3-5-audit-sim: SIM-1 to SIM-9, the report's sim suspicions | 4.0 | merged | `docs/security/audit-2026-11/sim.md`; `sim/src/tests.rs` `sim_1_*` to `sim_9_*` (nine tests); `sim/test_tools.py` (SIM-3, SIM-4); `sim/src/lib.rs`, `sim/src/ffi.rs`, `sim/no_floats.py`, `sim/status.py`, `sim/run_spike.sh`, `sim/systems.json` |
 | FX3-6-audit-universe: SIM-10 to SIM-13, `universe.rs`, `island.rs`, `grid.rs`, `sim/examples/` | 4.0 | merged | `docs/security/audit-2026-11/sim.md`; `sim/src/tests.rs` `sim_10_a_command_for_actor_16_still_records_a_universe_replay_that_round_trips`, `sim_11_a_lantern_wisps_reveal_goes_with_it_across_to_the_next_realm`, `sim_12_a_curated_layout_never_drops_a_woven_law_unseen`, `sim_13_moving_the_vault_onto_a_guard_hidden_in_tall_grass_takes_the_grass_too`; `sim/src/universe.rs`, `sim/src/island.rs`, `sim/systems.json` |
 | FX3-7-audit-client-2: CLI-3, 8, 9, 16, 17, 19, 20, 21 settled; CLI-25 to CLI-34 | 3.0 | ready | `docs/security/audit-2026-11/client.md`; `client/tests/audit_client2_tests.gd` (18 checks, registered in `client/tests/run.gd`) |
+| FX1-9-tools-gate: FX1-T-03, 04, 05, 08, 09, 22 and FX2-R4 | 4.0 | ready | `server/test/fix_fx1_tools_gate.test.mjs` (11 tests); `server/test/fix_fx1_audit_tools_proofs.mjs`; `tools/run_checks.sh`, `tools/check_all.sh`, `tools/check_dependencies.py`, `tools/audit_register.py`, `tools/check_ci.py`, `tools/coord/owners.py`, `docs/guides/agent-protocol.md`, `docs/security/audit-2026-11/tools.md` |
 
 ## Handoff
+- FX1-9-tools-gate, ready (2026-11-24). Branch `claude/fix-sim`. Pre-check at ad5e56bf: PASS ("All checks passed.", 07:23Z, sandbox bwrap, recorded). The log shows the new step "the built pages carry no escaped markup (FX1-T-22)" passing. `ready_sha` ad5e56bf is in `docs/progress/status/FX3.json`. It merges main at `eb4b8e59` (lead cycle 172), with no conflict. After the merge I reran the fresh-container setup line (`rustup target add wasm32-unknown-unknown`, `pip install "gdtoolkit==4.*" "playwright==1.63.0"`), `bash client/build.sh` and the sim's WebAssembly build. Then `cd server && npm test` passed 666 of 666, and `bash tools/check_all.sh` ran as the pre-check: `run_checks.sh start`, `wait` in the background, `record ad5e56bf FX3`.
+  - **Commits.**
+    - Claim: 6c46a801.
+    - The fail-first tests, all in one commit before any fix: 4fcb67a5.
+    - The fixes:
+      - FX2-R4: b37987d3;
+      - FX1-T-03: ce84cfe2;
+      - FX1-T-04: e64548f0;
+      - FX1-T-09: a84687ea;
+      - FX1-T-22: 2001157d;
+      - FX1-T-08: f83a8454;
+      - FX1-T-05: c55550b4.
+    - tools.md States: be3badee. Merge of main: ad5e56bf.
+  - **How each test failed on main** (at 4fcb67a5, whose tools are main's):
+    - FX1-T-03, failed run: `record wrote a FAIL as {"sha":"…","exit":0,"finished_at":"…","summary":"== gdlint ==: skipped"}`.
+    - FX1-T-03, passed run: `state` was `undefined`.
+    - FX1-T-04: `a run that exited 101 reads {"sha":"…","state":"PASS","exit":0,…,"summary":"All checks passed.",…}`.
+    - FX1-T-05: `overlaps missed: [false, false, false]`. Its disjoint-globs companion passes on main and still passes.
+    - FX1-T-08: `[wide permissions, commented command] passed: [true, true, false, false, []]`.
+    - FX1-T-09: `every gate command passed a stale file: [[0,0],false]`. The second value means the gate rewrote the file.
+    - FX1-T-22, the gate's commands: `every gate command passed escaped markup: [0]`.
+    - FX1-T-22, the order of the gate's steps: `check_all.sh has no plain build_stamp.py line`.
+    - FX2-R4, a planted warning: `py() read undefined from: [1, 2]` followed by `SyntaxWarning: planted`.
+    - FX2-R4, a tree with no cache: `py() read undefined from: "imported"` followed by `tools/check_document.py:505: SyntaxWarning: invalid escape sequence '\d'`.
+    - FX1-T-11's stillOpen test also failed on main ("no longer fails"), because py() read the warning in place of the proof's value. It passes again after FX2-R4's fix.
+  - **What changed.**
+    - **FX1-T-03.**
+      - `record` writes `state` and `exit`, and `exit` is 1 when the state is not PASS but the run exited 0.
+      - The reuse rule in `agent-protocol.md` ("Reusing the builder's checks") now requires `state` `PASS`, `exit` 0 and the summary "All checks passed." at `ready_sha`.
+      - **A precheck recorded before this fix has no `state` and is not reused.** That includes FX3-7's at 1ecd419f: the lead runs its own check for it.
+    - **FX1-T-04.**
+      - The detached runner writes a separate `check-<sha>.done` file holding its exit and the log's length at that moment.
+      - `result` reads PASS and the summary only from that much of the log, so a leftover child that writes later cannot turn a failure into a pass.
+      - The DONE line is still appended to the log, for readers.
+    - **FX1-T-09.**
+      - `check_dependencies.py --check` fails when `docs/design/dependencies.md` is not its rebuild.
+      - The gate runs `--check` in place of `--write`. The committed page matches its rebuild today.
+    - **FX1-T-22.**
+      - The gate runs a plain `python3 tools/build_stamp.py` after `build_audit.py` and `build_roadmap.py`.
+      - Its one hit on main came from the D50 edit text in `tools/audit_register.py`. That text put a `<code>` tag inside a field the page escapes; it now names the marker as plain text.
+      - **The committed `docs/audit/index.html` still has the escaped tag.** It is not in this task's files. The gate rebuilds it before the new check, so the gate passes. The lead regenerates and commits it with `python3 tools/build_audit.py`, which changes two lines.
+    - **FX1-T-08.**
+      - `check_ci.py` parses the top-level `permissions:` block to the next top-level key, and requires exactly `{contents: read}`.
+      - It counts a required command only on an uncommented `run:` line, single-line or block.
+      - There are new self-test cases.
+      - Not covered: a `permissions:` key inside a job is still not checked. A follow-up could refuse one.
+    - **FX1-T-05.**
+      - `_segments_meet` takes a segment's literal head and tail around any wildcard (`*`, `?`, `[..]`).
+      - `files_overlap` gives each positive only the negations that follow it, as `owned()` does.
+      - There are new self-test cases. `owners.py claims` still reports disjoint files.
+    - **FX2-R4.** The proofs' `py()` parses the last line of stdout only.
+      - The module now exports `TOOLS`, `run`, `py` and `checkRun` for the new test file.
+      - `py(..., {fresh: true})` runs with an empty `pycache_prefix`, to reproduce a tree with no cache.
+    - The six proofs left `PROOFS` in `fix_fx1_audit_tools_proofs.mjs`, and 16 remain still open. Each fixed entry in `tools.md` reads "fixed (FX1-9-tools-gate)", in the table and in the entry.
+  - **Checks.**
+    - Each tool's self-test passes: `run_checks.sh --self-test`, `bash tools/test_run_checks.sh`, `check_dependencies.py --self-test`, `owners.py --self-test` and `check_ci.py`.
+    - `check_docs_consistency.py` finds nothing.
+  - **Owners.** `owners.py diff FX1-9-tools-gate origin/claude/videogame-project-analysis-ewkkk2 ad5e56bf` reports "every changed path is inside its files".
+  - **Next.** The lead's merge. FX3 has no further open task.
 - FX3-7-audit-client-2, ready (2026-11-24). Branch `claude/fix-sim`. Pre-check at 1ecd419f: PASS ("All checks passed.", 05:04Z, recorded). `ready_sha` 1ecd419f is in `docs/progress/status/FX3.json`. It merges main at `85e5697e` (lead cycle 169), with no conflict. Locally, `python3 client/status.py` passes 486 of 486, `cd server && npm test` 631 of 631, `bash tools/check_all.sh` passes ("All checks passed.") and `check_docs_consistency.py` finds nothing.
   - **Commits.**
     - Claim: 111aa29d.
