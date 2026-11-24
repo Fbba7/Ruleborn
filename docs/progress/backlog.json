@@ -308,14 +308,20 @@
       "estimate_h": 0.75,
       "tier": 2,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "working",
+      "claim": {
+        "agent": "FX4",
+        "branch": "claude/fix-client",
+        "claimed_at": "2026-11-24T03:01:00Z",
+        "seen_at": "2026-11-24T03:45:00Z",
+        "lease_until": "2026-11-24T06:01:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-21T18:18:00Z",
-      "updated_by": "lead"
+      "updated_at": "2026-11-24T03:45:00Z",
+      "updated_by": "lead (cycle 170)"
     },
     {
       "id": "FX4-6-device-replay-cap",
@@ -656,14 +662,20 @@
       "estimate_h": 3.0,
       "tier": 1,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "working",
+      "claim": {
+        "agent": "FX3",
+        "branch": "claude/fix-sim",
+        "claimed_at": "2026-11-24T03:02:00Z",
+        "seen_at": "2026-11-24T03:45:00Z",
+        "lease_until": "2026-11-24T06:02:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-24T02:30:00Z",
-      "updated_by": "lead (cycle 169)"
+      "updated_at": "2026-11-24T03:45:00Z",
+      "updated_by": "lead (cycle 170)"
     },
     {
       "id": "FX1-7-audit-tools",
@@ -691,14 +703,20 @@
       "estimate_h": 4.0,
       "tier": 2,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "claimed",
+      "claim": {
+        "agent": "FX1",
+        "branch": "claude/fix-server-a",
+        "claimed_at": "2026-11-24T03:39:29Z",
+        "seen_at": "2026-11-24T03:45:00Z",
+        "lease_until": "2026-11-24T06:39:29Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-24T02:40:00Z",
-      "updated_by": "overseer"
+      "updated_at": "2026-11-24T03:45:00Z",
+      "updated_by": "lead (cycle 170)"
     },
     {
       "id": "FX1-8-server-a-lows",

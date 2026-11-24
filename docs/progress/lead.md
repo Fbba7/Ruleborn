@@ -213,8 +213,10 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxnXrzUVLGqiGNmw1FR` (cycle 169,
-24 November 2026 from about 00:30Z, started by the Opus 5.5 launcher).
+Latest lead cycle session: `session_01SNkKxpQs7VVsV7GiXLmF8A` (cycle 170,
+24 November 2026 from about 03:40Z, started by the Opus 5.5 launcher).
+Cycle 169's was `session_01SNkKxnXrzUVLGqiGNmw1FR` (24 November, from
+about 00:30Z).
 Cycle 168's was `session_01SNkKxn1dZLeKHPjZ3mFguK` (23 November, from
 about 23:13Z).
 Cycle 167's was `session_01SNkKxpBYuqfDPQtPhugfWH` (23 November, from
@@ -792,6 +794,27 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 170**, 24 November 2026, from about 03:40Z (session
+  `session_01SNkKxpQs7VVsV7GiXLmF8A`, started by the Opus 5.5 launcher).
+  Bookkeeping only. **Merged:** nothing. No task is `ready`, there is no
+  gate request, the merge lock stays clear and main did not move, so the
+  pages need no republish. **Seen:** the four builders started in cycle
+  169 are active on Opus 5.5 at effort high, within their deadlines:
+  - FX1 claimed FX1-7-audit-tools after merging main (bb481c89).
+  - FX2's session on FX2-9-audit-b-match is working; its status file
+    on `claude/fix-server-b` has not been updated yet.
+  - FX3 is `working` on FX3-7-audit-client-2. Findings CLI-25 to CLI-34
+    are written in `client.md` (9c8c0bd3); the full checks are next.
+  - FX4 is `working` on FX4-5-problem-strings. The test c4cb11d0 fails
+    on main; the rows are in 3231f78b, whose pre-check is running.
+
+  The claims and leases of FX1-7, FX3-7 and FX4-5 are copied into the
+  backlog. **Requests:** none new; none is open and due. **Started:**
+  nothing, because the four seats are full. **Next:** merge FX4-5,
+  FX3-7, FX1-7 and FX2-9 as they turn ready. Then FX1-8 (after FX2-9),
+  FX2-10, and FX4-6 to FX4-8 in order. Then the UI: once every FX task
+  is merged, unpark P3-S3-settings-4, P4-S1-heist-vault,
+  P4-S2-home-purse and the BT track.
 - **Cycle 169**, 24 November 2026, from about 00:30Z (session
   `session_01SNkKxnXrzUVLGqiGNmw1FR`, started by the Opus 5.5 launcher).
   **Merged** five tasks:
@@ -878,44 +901,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   ready; then file the FX1-6 fix task(s) from FX1-R3 to FX1-R10, and
   start FX1-7, FX2-8, FX2-9 (after FX1-6) and FX4-5 as seats free; then
   the UI.
-- **Cycle 167**, 23 November 2026, from about 22:05Z (session
-  `session_01SNkKxpBYuqfDPQtPhugfWH`, started by the Opus 5.5 launcher).
-  **Merged:** FX1-4-holds-codex (RB-15, RB-18, RB-36, RB-53, RB-56) at
-  e2e8f5a1, from FX1's ready head 9fe151ad. The candidate differs from
-  9fe151ad only under `docs/progress`, so FX1's passing pre-check at
-  9fe151ad stands for it; `owners.py diff`, `owners.py claims` and
-  `check_docs_consistency.py` passed on the candidate, and the full
-  `check_all` on main e2e8f5a1 passed (server 586 of 586). Then, under
-  the merge lock taken in 876a87fd, FX2-6-audit-server-b at ab25eb88
-  (from d259b10f), FX3-5-audit-sim at 490579d6 (from c333f546) and
-  FX4-3-replay-shop-nav (RB-43 and its sibling fixes) at 60a905ab (from
-  8be82e6f), in one candidate (7b3e05d8) whose full `check_all` passed;
-  main's tree after the three merges differs from 7b3e05d8 only under
-  `docs/progress`, so that pass stands. The lock is cleared. The audit
-  page was regenerated for the new audit reports and committed
-  (1c4fd104) but not republished, as in cycles 162 and 163 (see
-  `owner-inbox.md`); the roadmap changes only in its date stamp, so it is
-  not republished. **Seeded,** from the confirmed findings of
-  `docs/security/audit-2026-11/server-b.md` and `sim.md`: FX2-7-audit-b-config
-  (AUD-B-14 to B-19, `main.mjs`), FX2-8-audit-b-lows (B-05, B-10, B-13,
-  B-20), FX2-9-audit-b-match (B-01, B-06, waits also for FX1-6) and
-  FX3-6-audit-universe (the second part of the simulation's audit, what
-  `sim.md` lists under "Still not read"). **Started**, on Opus 5.5 at
-  effort high: FX1 on FX1-6-audit-server-a
-  (`session_01SNkKxoYkrDKba5f2X3byBm`), open since FX1-4 merged; FX2 on
-  FX2-7-audit-b-config (`session_01SNkKxoWxCgQ4iNNoRWRghi`), FX3 on
-  FX3-6-audit-universe (`session_01SNkKxpC2gbRiL8zzvf5zZc`) and FX4 on
-  FX4-4-audit-client (`session_01SNkKxq3TGnXbTLc3pyMTQd`), each open now
-  that its agent's last task merged and its last session is idle. Four
-  seats, the cap: the five-hour bar reads `allowed`, with no seven-day
-  warning. **Answered:** FX4-R1 (not blocking), with its default: no
-  follow-up for a leased heist's result night, since RB-43's defect is
-  closed by FX4-3's digest check and both files belong to the parked UI.
-  **Noted** from the FX2-6 audit: co-op "Friends only" for ages 13 to 15
-  (design §20.7) and SR-14 need squaring once co-op and the crew thread
-  are built; no task now. **Next:** merge FX1-6, FX2-7, FX3-6 and FX4-4
-  as they turn ready; then FX1-7, FX2-8, FX2-9 (after FX1-6) and FX4-5;
-  file fix tasks from the FX1-6, FX3-6 and FX4-4 audits; then the UI.
 - **Restart, 23 November 2026** (the overseer, about 21:20Z). The owner
   restarted the program, in the chat of the overseer session: "Continue,
   first the bugs then the UI" (CLAUDE.md order 1). It runs on Opus 5.5 at
