@@ -32,7 +32,7 @@ skipped or loosened. Anything not proven that way is listed under
 
 Twelve findings are fixed on `claude/fix-client` (commits `4d5a17d3`,
 `684353ef` and `8f91599d`). Two are proven and still open: CLI-1, whose cause
-is on the server (fixed later on the client, by FX4-7-curation-swap-weave), and CLI-18, whose code is read-only for this task. The full
+is on the server (fixed later on the client, by FX4-7-curation-swap-weave), and CLI-18, whose code is read-only for this task (fixed later by FX4-8-rehearsal-rerun). The full
 client suite's result after the fixes (`python3 client/status.py`) is in
 `docs/progress/FX4.md`, Evidence.
 
@@ -56,7 +56,7 @@ client suite's result after the fixes (`python3 client/status.py`) is in
 | CLI-15 | Medium | frontend/UI | `client/scripts/result_screen.gd _study` | A study tile tapped twice sends two studies | fixed |
 | CLI-16 | Medium | frontend/UI | `client/world/world_view.gd _sync_skiff` | A replay shows its last skiff and goal ring from tick 0 | proven, open |
 | CLI-17 | Medium | frontend/UI | `client/world/world_view.gd show_replay` | A replay of a larger crew, shown after a smaller one, keeps the old figures | proven, open |
-| CLI-18 | Medium | frontend/UI | `client/scripts/stage_rehearsal.gd` | A style card tapped while another crew plays shows that crew's result under the new card | proven, open |
+| CLI-18 | Medium | frontend/UI | `client/world/stage_rehearsal.gd` | A style card tapped while another crew plays shows that crew's result under the new card | fixed |
 | CLI-19 | Medium | integration | `client/features/weaving/weaving_presenter.gd` | Two offline weaves aim at the same free slot, so the second is refused | proven, open |
 | CLI-21 | Medium | frontend/UI | `client/features/roster/roster_controller.gd collect_all` | The roster's collect has no busy guard, and clears another change's | proven, open |
 | CLI-25 | Medium | frontend/UI | `client/scripts/heist_screen.gd _ready`, `_gait_pill`, `_tap_world` | A heist whose Workshop island does not load still takes orders, and hides why | proven, open |
@@ -387,7 +387,7 @@ in kit pieces no screen uses yet: they are latent until one does.
 
 ### CLI-18: A style card tapped while another crew plays shows that crew's result under the new card
 - **Priority / category:** Medium / frontend/UI.
-- **Where:** `client/scripts/stage_rehearsal.gd`, lines 184-186 and 214-217
+- **Where:** `client/world/stage_rehearsal.gd`, lines 184-186 and 214-217
   (read-only for this task).
 - **Input:** on the rehearsal stage, tap the "greedy" style card while the
   cautious crew's run plays.
@@ -398,9 +398,9 @@ in kit pieces no screen uses yet: they are latent until one does.
 - **Proof:** `_rehearsal_card_runs_its_own_crew`, a still-open check. It
   passes on main and on this branch: playing, card found, style `greedy`,
   runs 1.
-- **Fix (not applied):** a run asked for while one plays stops it and
-  starts the new style's run. Needs a task that owns
-  `client/scripts/stage_rehearsal.gd`.
+- **Fix (applied by FX4-8-rehearsal-rerun):** a run asked for while one
+  plays stops it and starts the new style's run, in
+  `client/world/stage_rehearsal.gd`.
 
 ### CLI-19: Two offline weaves aim at the same free slot, so the second is refused
 - **Priority / category:** Medium / integration.

@@ -209,12 +209,10 @@ func _choose(s: String) -> void:
 
 
 ## Run the chosen crew against the island: the simulation plays it whole
-## (it is cheap), then the card plays it back at its pace. A tap while one
-## plays shows its end at once.
+## (it is cheap), then the card plays it back at its pace. A run asked for
+## while one plays stops that one and starts the chosen crew's (CLI-18).
 func run() -> void:
-	if playing and replay != null:
-		_finish()
-		return
+	playing = false
 	runs += 1
 	var bytes := RulebornReplay.rehearse(_island, STYLES.find(style) + 1, str(runs), HeistController.TICKS,
 		HeistController.CREW)
