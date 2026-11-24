@@ -1,10 +1,10 @@
 # FX2 fixer, server B: progress
 
-- Status: Green. check_all PASS on 5281e8fb. Main moved (FX2-9 and FX1-7 merged): check_all is running on the new merge 5023396c. FX2-10-curated-woven-law: SIM-12's server half and FX2-9's observatory.mjs:140 follow-up are fixed, each proof failing first. `cd server && npm test` passes 639 of 639.
-- Progress: 8 of 10 tasks merged. FX2-9 is ready at f2181cf5, in the lead's merge. FX2-10 is built on it. No gate items.
+- Status: Green. FX2-10 is ready at 5023396c: check_all PASS, owners.py diff passes, npm test 661 of 661 with the `.pyc` cached (see FX2-R4). FX2-10-curated-woven-law: SIM-12's server half and FX2-9's observatory.mjs:140 follow-up are fixed, each proof failing first. `cd server && npm test` passes 639 of 639.
+- Progress: 9 of 10 tasks merged (FX2-9 at 6e5045e). FX2-10 is ready at 5023396c. No gate items.
 - Done: SIM-12's "Left for the lead" (`woven_law_missing`); the Observatory's `echoes` flag after `current()`.
-- Next: the lead answers FX2-R3 (server/test/setup.mjs), merges f2181cf5, then FX2-10's ready_sha (5023396c once its check_all passes).
-- Blocked by: FX2-R3 (blocking, default: granted).
+- Next: the lead merges 5023396c. 5281e8fb, its earlier ready, holds the same FX2-10 code.
+- Blocked by: nothing. FX2-R3 was granted in cycle 172. FX2-R4 is a non-blocking note.
 - Owner decision needed: none.
 
 | Deliverable | Weight (h) | Status | Evidence |
@@ -17,12 +17,12 @@
 | FX2-6-audit-server-b: the audit of main.mjs's configuration and fourteen server modules | 4.0 | merged at ab25eb88 | `docs/security/audit-2026-11/server-b.md`; `server/test/fix_fx2_audit_*.test.mjs`, `server/test/fix_fx2_open.mjs`. Commits: 1080f1f9 (proofs), 8e5040b9 (AUD-B-11), aff2441c (AUD-B-09), 40f375df and 53796600 (AUD-B-08), b0f8519b (AUD-B-12), 2235e681 (AUD-B-03, AUD-B-04), 7d713b26 (AUD-B-02, AUD-B-07), a8886d67 (report), 1cb9620a (merge of main), d259b10f (status) |
 | FX2-7-audit-b-config: AUD-B-14, 15, 16, 17, 18, 19 (main.mjs's configuration) | 1.5 | merged at bc7f27e8 | `server/test/fix_fx2_audit_config.test.mjs`; `docs/security/audit-2026-11/server-b.md`. Commits: bfe73490 (proofs), 51006c1a (AUD-B-14 proof corrected), c0a00136 (AUD-B-14, 17, 19), 323293f8 (AUD-B-15), c7e630cc (AUD-B-16), 35a8ea86 (AUD-B-18), 4372844d (report), 0006a4d9 (merge of main 92beb32b) |
 | FX2-8-audit-b-lows: AUD-B-05, 10, 13, 20 | 2.0 | merged at cd5f98fb | `server/test/fix_fx2_audit_auth.test.mjs`, `fix_fx2_audit_privacy.test.mjs`, `fix_fx2_audit_load.test.mjs`; `docs/security/audit-2026-11/server-b.md`. Commits: 35be457f (proofs), 85dfb089 (AUD-B-10), d049bd61 (AUD-B-05), 6f61d03a (AUD-B-13), 5229de90 (AUD-B-20), 3820abc7 (report), 708d5e5d (status, FX2-R2), 4d3e779c (merge of main ee42bb70) |
-| FX2-9-audit-b-match: AUD-B-01, AUD-B-06 (= FX1-A-07), FX1-A-09 | 1.25 | ready at f2181cf5, in the lead's merge | `server/test/fix_fx2_audit_match.test.mjs`, `fix_fx2_audit_season.test.mjs`, `fix_fx2_audit_observatory.test.mjs`, `fix_fx1_audit_server_a.test.mjs`, `generated.test.mjs`; `docs/security/audit-2026-11/server-b.md`, `server-a.md`. Commits: 965a64bd (proofs), 10a603a0 (AUD-B-01), 832c247d (AUD-B-06, FX1-A-07), 0201e4f2 (FX1-A-09), 4a0e2258 (reports), aa9b046f (status), f2181cf5 (merge of main 613f71c9) |
-| FX2-10-curated-woven-law: SIM-12's Left for the lead, FX2-9's observatory.mjs:140 follow-up | n/a (no weight in backlog.json) | working; 5281e8fb passed, rechecking on 5023396c | `server/test/fix_fx2_curated_woven_law.test.mjs`, `fix_fx2_observatory_echoes.test.mjs`; `docs/security/audit-2026-11/sim.md`. Commits: 9fe9f86 (echoes proof), 5d4e59c (woven-law proof), ac08a0c (SIM-12), c4f746a (echoes), a495e58 (setup.mjs, FX2-R3), 22928c2 (status), 8713e6a and 61b1c9b (report), 5281e8f (merge of main 5963037) |
+| FX2-9-audit-b-match: AUD-B-01, AUD-B-06 (= FX1-A-07), FX1-A-09 | 1.25 | merged at 6e5045e | `server/test/fix_fx2_audit_match.test.mjs`, `fix_fx2_audit_season.test.mjs`, `fix_fx2_audit_observatory.test.mjs`, `fix_fx1_audit_server_a.test.mjs`, `generated.test.mjs`; `docs/security/audit-2026-11/server-b.md`, `server-a.md`. Commits: 965a64bd (proofs), 10a603a0 (AUD-B-01), 832c247d (AUD-B-06, FX1-A-07), 0201e4f2 (FX1-A-09), 4a0e2258 (reports), aa9b046f (status), f2181cf5 (merge of main 613f71c9) |
+| FX2-10-curated-woven-law: SIM-12's Left for the lead, FX2-9's observatory.mjs:140 follow-up | n/a (no weight in backlog.json) | ready at 5023396c | `server/test/fix_fx2_curated_woven_law.test.mjs`, `fix_fx2_observatory_echoes.test.mjs`; `docs/security/audit-2026-11/sim.md`. Commits: 9fe9f86 (echoes proof), 5d4e59c (woven-law proof), ac08a0c (SIM-12), c4f746a (echoes), a495e58 (setup.mjs, FX2-R3), 22928c2 (status), 8713e6a and 61b1c9b (report), 5281e8f (merge of main 5963037) |
 
 ## Handoff
 - **Last verified commit:** 5281e8fb, the merge of main (lead cycle 171, 5963037) into 61b1c9b with no conflict. The merge changed only the lead's files.
-- **FX2-9:** merged on main (6e5045e, lead cycle 171), not resynced. 5023396c merges main 3bb18e3, after which `owners.py diff` lists only `server/test/setup.mjs` (FX2-R3).
+- **FX2-9:** merged on main (6e5045e, lead cycle 171), not resynced. 5023396c merges main 3bb18e3, and FX2-R3 granted `server/test/setup.mjs` (cycle 172), so `owners.py diff` passes.
 - **A flaky proof on main (FX2-R4, non-blocking):** FX1-7's FX1-T-11 fails in a fresh tree. Its `py()` parses the last line of stdout+stderr, and `tools/check_document.py:505`'s invalid `\d` escape makes Python 3.13 print a SyntaxWarning there whenever no `.pyc` is cached. On 5023396c, npm test gave 660 of 661 with that one failing. With the `.pyc` cached it passes 661 of 661. It also fails on clean main, and it is outside FX2's files.
 
 ### The proofs, committed alone, before any fix
@@ -67,9 +67,9 @@ not ok 5 - SR-16: a hand-built island without a law its realm wove is named wove
 - No row is needed. The client shows any 422 `island_not_publishable` as ERR_ISLAND_NOT_PUBLISHABLE ("the island breaks a building rule", strings.csv:232). It has no row per server problem, `law_not_woven` included. So I sent no request. If the lead wants one, it is `PROBLEM_WOVEN_LAW_MISSING`, with its owner in the client.
 
 ### Merge and evidence
-- **`cd server && npm test`** on 5281e8fb: 639 tests, 639 pass, 0 fail.
+- **`cd server && npm test`** on 5281e8fb: 639 tests, 639 pass, 0 fail. On 5023396c: 661 of 661 with `tools/__pycache__` holding check_document's `.pyc`, and 660 of 661 without it (FX1-T-11, FX2-R4).
 - **`python3 tools/coord/owners.py diff FX2-10-curated-woven-law origin/claude/videogame-project-analysis-ewkkk2 5281e8fb…`:** lists `server/test/setup.mjs` (FX2-R3) and FX2-9's files, which are not on main yet. Measured from f2181cf5, FX2-10 changes only its own files, setup.mjs and files already on main.
-- **check_all:** `bash tools/run_checks.sh start` on 5281e8fb, in bwrap, after the setup line: PASS, finished 2026-11-24T05:39:10Z. The log ends `DONE exit=0` and contains "All checks passed." Recorded with `record 5281e8fb… FX2`. The commits after 5281e8fb change only this handoff and the status file.
+- **check_all:** `bash tools/run_checks.sh start` on 5281e8fb, in bwrap, after the setup line: PASS, finished 2026-11-24T05:39:10Z. The log ends `DONE exit=0` and contains "All checks passed." Recorded with `record 5281e8fb… FX2`. Main then moved (FX2-9 and FX1-7 merged, 3bb18e3). The merge 5023396c: check_all PASS in bwrap, finished 2026-11-24T06:07:50Z, `DONE exit=0`, recorded with `record 5023396c… FX2`. `owners.py diff FX2-10-curated-woven-law origin/claude/videogame-project-analysis-ewkkk2 5023396c…`: "every changed path is inside its files". The commits after 5281e8fb change only this handoff and the status file.
 
 ## Tried and failed
 - 2026-11-21 The first RB-32 drain test passed on main, for the wrong reason (`401 session_refused`). Its session was made before the clock moved 12 h, and a session lasts an hour. It now signs in after the clock moves.
@@ -92,3 +92,4 @@ not ok 5 - SR-16: a hand-built island without a law its realm wove is named wove
 - 2026-11-24 Case 3's stub of the shared `build.curated` leaked into the next test. It is now restored in a `finally`.
 - 2026-11-24 The global `woven_law_missing` broke 9 tests through setup.mjs's add-only `weave()`. Corrected the shim: FX2-R3.
 - 2026-11-24 Numbered the shim's new slots by COUNT after its deletes, and slots collided. Numbered them after MAX(slot) instead.
+- 2026-11-24 npm test on the merge of main 3bb18e3 failed FX1-7's FX1-T-11 in a fresh tree. Its proof parses stderr's SyntaxWarning as its last line. Outside FX2's files: FX2-R4.

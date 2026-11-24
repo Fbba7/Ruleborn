@@ -3,26 +3,26 @@
   "role": "FX2",
   "branch": "claude/fix-server-b",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "FX2-10-curated-woven-law",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-24T05:05:00Z",
   "lease_until": "2026-11-24T08:05:00Z",
-  "updated_at": "2026-11-24T06:05:00Z",
-  "expected_next_update_by": "2026-11-24T06:50:00Z",
+  "updated_at": "2026-11-24T06:12:00Z",
+  "expected_next_update_by": "2026-11-24T06:55:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "5281e8fbbaf0a55605b0a0c2d0293ff2f3fcedfe",
-    "next_step": "check_all on 5023396c (merge of main 3bb18e3) running; then record, ready"
+    "last_green_sha": "5023396c98269b5753c792a374e16d236bf6cd1b",
+    "next_step": "the lead merges 5023396c (or 5281e8fb, its parent's candidate: same FX2-10 code)"
   },
   "precheck": {
-    "sha": "5281e8fbbaf0a55605b0a0c2d0293ff2f3fcedfe",
+    "sha": "5023396c98269b5753c792a374e16d236bf6cd1b",
     "exit": 0,
-    "finished_at": "2026-11-24T05:39:10Z",
+    "finished_at": "2026-11-24T06:07:50Z",
     "summary": "All checks passed."
   },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "5023396c98269b5753c792a374e16d236bf6cd1b",
   "stop_at": "2026-11-24T21:00:00Z",
   "acks": [],
   "requests": [
@@ -68,7 +68,7 @@
       "due": "2026-11-24T07:15:00Z",
       "default": "server/test/setup.mjs is added to FX2-10-curated-woven-law's exceptions; the correction stays in a495e58 and the ready_sha's owners.py diff passes with it.",
       "escalate_to": "lead",
-      "state": "open"
+      "state": "answered"
     },
     {
       "id": "FX2-R4",
@@ -91,6 +91,11 @@
       "id": "FX2-R1",
       "by": "lead",
       "text": "granted with its default (cycle 163, main 57c23193)"
+    },
+    {
+      "id": "FX2-R3",
+      "by": "lead",
+      "text": "granted (cycle 172, main f73904e): server/test/setup.mjs joins FX2-10's files"
     }
   ]
 }
