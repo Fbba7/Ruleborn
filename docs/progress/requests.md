@@ -1576,8 +1576,12 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   `server/test/fix_fx1_audit_tools_proofs.mjs` into a plain test. Copied
   in cycle 171. Until it is fixed, the lead reuses a pre-check only when
   the builder's `precheck.summary` reads "All checks passed.", as well as
-  `exit` 0. Answered, and the task filed, once FX1-7 and `tools.md` are
-  merged.
+  `exit` 0. **Answered** by the lead in cycle 171, after FX1-7 merged at
+  3b162939: the default. FX1-9-tools-gate is filed for FX1, after
+  FX1-8-server-a-lows; the interim reuse rule holds until it merges.
+  In cycle 172 the lead gave FX1-9 to FX3, whose seat was free, and
+  dropped its dep on FX1-8 (the two share no file), so the High finding
+  FX1-T-03 is fixed sooner.
 - **FX1-R21** (from FX1, 24 November 2026 04:10Z; due 25 November 04:10Z;
   not blocking): contract and status files (`tools.md`): FX1-T-20 (nine
   server failure codes `client_contract.py` never reads, none with an
@@ -1585,8 +1589,11 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   FX1-T-01 and FX1-T-02 (`server/status.py` counts a shadowed or skipped
   test as passed; `client/status.py` parses the same way). Files:
   client_contract.py, server/status.py, client/status.py,
-  client/ui/strings.csv. Default as FX1-R20. Copied in cycle 171;
-  answered once FX1-7 is merged.
+  client/ui/strings.csv. Default as FX1-R20. Copied in cycle 171.
+  **Answered** by the lead in cycle 171: the default. FX1-10-tools-contract
+  is filed for FX1, after FX1-9 and FX4-7 (both own the strings file). The
+  strings file is `client/i18n/strings.csv`; the lead, its owner, grants
+  the nine `ERR_` rows to the task.
 - **FX1-R22** (from FX1, 24 November 2026 04:10Z; due 25 November 04:10Z;
   not blocking): document checks (`tools.md`): FX1-T-10 (three-digit
   register ids such as D100 unseen), FX1-T-17 (two self-tests plant into
@@ -1594,14 +1601,58 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   (`check_document` treats an unknown tracked id as open), FX1-T-12
   (annotated restatements missed). Files: check_findings_fresh.py,
   check_docs_consistency.py, check_audit_ui.py, validate_content.py,
-  check_document.py. Default as FX1-R20. Copied in cycle 171; answered
-  once FX1-7 is merged.
+  check_document.py. Default as FX1-R20. Copied in cycle 171.
+  **Answered** by the lead in cycle 171: the default. FX1-11-tools-docs is
+  filed for FX1, after FX1-10.
 - **FX1-R23** (from FX1, 24 November 2026 04:10Z; due 25 November 04:10Z;
   not blocking): UI tools (`tools.md`), after the UI resumes or with it:
   FX1-T-07, 06, 13, 14, 15, 16, 18 and 19. Files: ui_bake/check_screens.py,
   ui_bake/bake.js, ui_bake/budget_shots.py, ui_gate/golden.py,
   ui_gate/sheet.py, art/ui/board/build_tokens.mjs. Default as FX1-R20.
-  Copied in cycle 171; answered once FX1-7 is merged.
+  Copied in cycle 171. **Answered** by the lead in cycle 171: the default.
+  FX1-12-tools-ui is filed for FX1, after FX1-11. It is an FX task, so it
+  is merged before the UI resumes (bugs first, CLAUDE.md order 1).
+- **FX2-R3** (from FX2, 24 November 2026; due 24 November 07:15Z;
+  blocking): grant `server/test/setup.mjs` (owned by the lead, no task in
+  flight) to FX2-10-curated-woven-law. SIM-12's fix makes `problems()`
+  name `woven_law_missing`; setup.mjs's lenient `weave()` only ever added
+  laws, so a test that republishes a different island kept the first
+  island's laws woven and is now refused (9 tests fail with
+  `island_not_publishable`). The correction (a495e586) also unweaves the
+  realm's laws the island does not run and numbers new slots after the
+  highest; with it npm test passes 639 of 639. Default: the file joins
+  FX2-10's exceptions. Copied in cycle 172. **Granted** by the lead in
+  cycle 172: the default. The shim stood for an owner who wove what the
+  island runs, and the old one did not, so the correction makes it match
+  what it stands for; no assertion is removed or loosened. The file is in
+  FX2-10's `exceptions` (`owners.py claims`: disjoint).
+- **FX4-R2** (from FX4, 24 November 2026 05:20Z; due 25 November 05:20Z;
+  not blocking): `RulebornReplay.give` now returns false once the replay
+  has no room left under MAX_HEIST_BYTES (SIM-2), but
+  `client/scripts/heist_screen.gd` (lines 510, 518, 831) ignores the
+  result, so such a tap is dropped with nothing on screen. Files:
+  heist_screen.gd, client/i18n/strings.csv. Default: no follow-up; a tap
+  past the limit is dropped silently, as a tap after the clock has run
+  out already is. Copied in cycle 172. **Answered** by the lead in cycle
+  172: the default, as for FX4-R1. The defect, a replay that could grow
+  past its cap, is closed by FX4-6; a hint on screen is a UI improvement
+  in the parked heist screen, so no task is seeded during the UI pause.
+- **FX2-R4** (from FX2, 24 November 2026; due 24 November 12:00Z; not
+  blocking): FX1-7's proof FX1-T-11 (`server/test/fix_fx1_audit_tools.test.mjs`)
+  fails in a fresh tree with "FX1-T-11 no longer fails: it is fixed". Its
+  `py()` helper parses the last line of stdout and stderr together, and
+  `tools/check_document.py:505` has an invalid escape (`\d`) in a
+  docstring, so Python 3.13 prints a SyntaxWarning to stderr whenever no
+  `.pyc` is cached (`py()` runs `-B`). The warning becomes the last line
+  and the proof reads as passing. With the `.pyc` cached, npm test passes
+  661 of 661. Files: `server/test/fix_fx1_audit_tools_proofs.mjs`,
+  `tools/check_document.py`. Default: the lead seeds the one-line fix
+  (`py()` parses stdout only) into FX1's next task; FX2-10 is not held for
+  it. Copied in cycle 172. **Answered** by the lead in cycle 172: the
+  default. The fix is added to FX1-9-tools-gate's `done_when` (it owns
+  `server/test/fix_fx1_audit_tools*`; FX3 takes it). The candidate of
+  FX3-7 and FX2-10 passed the full checks with every proof green, so the
+  failure needs a fresh tree, as FX2 says.
 
 - **AD-R46** (from AD, 17 November 2026 02:58Z; due 19 November 02:58Z;
   not blocking): AD's preview of P2-S1-result-6 (S1-R35) at 16515088.
