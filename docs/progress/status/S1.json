@@ -3,27 +3,27 @@
   "role": "S1",
   "branch": "claude/ui-screens-heist",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "P3-S1-marker-1",
-  "task_state": "blocked",
-  "claimed_at": "2026-11-18T00:30:00Z",
-  "lease_until": "2026-11-18T03:30:00Z",
-  "updated_at": "2026-11-18T02:50:00Z",
-  "expected_next_update_by": "2026-11-18T05:00:00Z",
+  "agent_state": "active",
+  "task_id": "P4-S1-heist-vault",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-24T20:00:00Z",
+  "lease_until": "2026-11-24T23:00:00Z",
+  "updated_at": "2026-11-24T20:15:00Z",
+  "expected_next_update_by": "2026-11-24T21:00:00Z",
   "progress_marker": {
-    "last_green_sha": "1bfb3193f198c7a9590c341c6f29c6f1921c196c",
-    "next_step": "blocked on S1-R43 (AD-R65, M58): the heist's follow framing is in client/world/world_view.gd, outside the task's files; once granted, a computed opening-frame lift, the en/pt_BR/de TEXT=200 stills, a test, the checks, then ready",
-    "at": "2026-11-18T02:50:00Z"
+    "last_green_sha": "85be2fa80a1ea97d2f62effe14eb7ac249fe32bc",
+    "next_step": "re-work after the gate's second fail at 85be2fa8: S1-R46 granted (cycle 187), Cast takes the gold primary plate while it leads at 200%, quieter loot/clock/alarm"
   },
   "precheck": {
-    "sha": "1bfb3193f198c7a9590c341c6f29c6f1921c196c",
+    "sha": "85be2fa80a1ea97d2f62effe14eb7ac249fe32bc",
+    "state": "PASS",
     "exit": 0,
-    "finished_at": "2026-11-18T02:32:26Z",
+    "finished_at": "2026-11-24T18:36:11Z",
     "summary": "All checks passed."
   },
   "gate_request": null,
   "ready_sha": null,
-  "stop_at": "2026-11-18T21:00:00Z",
+  "stop_at": "2026-11-25T21:00:00Z",
   "acks": [
     "M6",
     "M7",
@@ -36,7 +36,8 @@
     "M45",
     "M47",
     "M53",
-    "M58"
+    "M58",
+    "M60"
   ],
   "requests": [
     {
@@ -673,6 +674,56 @@
       "due": "2026-11-18T05:00:00Z",
       "default": "With no answer by the due time, client/world/world_view.gd is granted to P3-S1-marker-1 for the one public lift var and its use in _frame_camera only; S1 makes no other change in that file.",
       "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R44",
+      "from": "S1",
+      "to": "AD",
+      "ask": "AD preview for P4-S1-heist-vault (M10, M12, M23), sent through the lead while the work can still change. At 200% text the heist's loot panel now says the Vault's progress in words ('Vault 0%' / 'Cofre 0%' / 'Tresor 0%': the kit's Vault icon, the name and the number in the loot's baked figures on one row, the crack bar under them across the panel), and the loot stands under the laws beside the alarm column at 200% only (150% keeps the full-width loot), so the map band between the HUD and the crew tray is no narrower than at 150%; a rehearsal's pause joins the hand's row at large text; at 200% a hint that would take two lines hides, as it already did on main. The stills will be docs/art/shots/heist-pilot/part10-*.png on claude/ui-screens-heist (100%, 150%, 200% in en, pt_BR and de, and high contrast), with each change named in docs/art/tracks/heist-pilot.md Part 10. Please look at the 200% pt_BR still for Hierarchy (the gate item) and say whether the loot beside the alarm reads in the right order (laws, clock and alarm, then the loot).",
+      "files": [],
+      "blocking": false,
+      "created_at": "2026-11-18T07:55:00Z",
+      "due": "2026-11-18T11:30:00Z",
+      "default": "With no objection by the due time, the stills stand as AD's preview passed and S1 marks the task ready with them.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R45",
+      "from": "S1",
+      "to": "K1",
+      "ask": "With the lead's approval under M33: raise tools/ui_bake/budgets.json's recorded draw calls for heist/200 from 118 to 120. guard.sh on claude/ui-screens-heist at 6188a5d (the re-work under S1-R46) measures heist/200 at 120; heist/100 (120 of 120) and heist/hc (121 of 123) keep their records, no word is below 4.5:1 (worst 6.87 at 200%), and every shot stays under the cap of 150. One call is the Vault's word at 200% text (M57, M61); the other comes with Cast leading at 200% (heist-pilot.md Parts 11 and 12). Figure renewed 24 November 20:15Z (was 121 at 85be2fa8).",
+      "files": [
+        "tools/ui_bake/budgets.json"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-18T08:25:00Z",
+      "due": "2026-11-18T14:00:00Z",
+      "default": "As for S1-R39: the lead writes heist/200 120 with a raises entry in the merge of P4-S1-heist-vault, and S1 marks ready with guard.sh failing only on this line, named in the handoff.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R46",
+      "from": "S1",
+      "to": "AD",
+      "ask": "Sent through the lead. The gate's re-work of 'heist at 200% text, pt_BR' (Hierarchy) makes Cast (Lançar) lead by size and word: a plate about 2.5 times Fugir's, with its word in cream at 36 pt. A pre-judge (advisory) split 2 pass, 1 fail; the fail is that Cast's plate has no value step over Fugir and the tray, since with no casts left AD-R60 dresses Cast in the leather secondary plate. May a spent Cast take a lighter plate (leather_light, or the gold plate with the wand dimmed) while it leads at 200% text (HeistHud.cast_leads: text over 175%, not high contrast)? That would be a change to AD-R60 for this one case, in heist_hand.gd's _dress_cast or in S1's heist_screen.gd.",
+      "files": [],
+      "blocking": false,
+      "created_at": "2026-11-24T18:45:00Z",
+      "due": "2026-11-25T12:00:00Z",
+      "default": "AD-R60 stands: a spent Cast stays on the leather plate at every text size, and at 200% it leads by size, place and word only (85be2fa8). If the gate fails again on the plate's value, S1 asks again here.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R47",
+      "from": "S1",
+      "to": "AD",
+      "ask": "AD preview for P4-S1-heist-vault's re-work (M10, M12, M23), sent through the lead. At 200% text Cast leads the heist (bigger plate, cream word at 36 pt), the loot panel sits on a darker plate, and the loot's, clock's (2:25), alarm's and laws' (LEIS AQUI) figures and plates are a step quieter. 100%, 150% and high contrast are unchanged. The stills are docs/art/shots/heist-pilot/part11-*.png on claude/ui-screens-heist, with each change in docs/art/tracks/heist-pilot.md Part 11.",
+      "files": [],
+      "blocking": false,
+      "created_at": "2026-11-24T18:45:00Z",
+      "due": "2026-11-25T12:00:00Z",
+      "default": "As for S1-R44: AD has no seat, the stills stand as the preview, and the preview goes into AD's next task.",
+      "escalate_to": "lead"
     }
   ],
   "answers": [
@@ -702,7 +753,21 @@
       "at": "2026-11-17T02:32:00Z",
       "summary": "Both departures from key frame 03 stand (the kit's gold numerals on every reward total; all three reward tiles on parchment). One objection, AD-R46 (H): at 200% German 'Sternenlicht' broke by its letters in the Starlight row and FIT missed it. Answered in P2-S1-result-6 at b5843368: the reward rows are measured at the baked totals' width, and FIT fails a reward word broken inside itself.",
       "where": "docs/progress/lead.md, Now, cycle 112; docs/art/ui-quality/board-4.md, 'Preview of result-6 (S1-R35)'; docs/art/tracks/result-screen.md, 'AD's objection H, a reward word broken (AD-R46)'"
+    },
+    {
+      "request_id": "S1-R42",
+      "from": "AD",
+      "at": "2026-11-18T01:56:00Z",
+      "summary": "AD's preview of marker-1 (preview-2.md): the layer fix stands; one objection, AD-R65, the vault and its label under the crew tray at 200% text, folded into the task by M58. Answered at c8de146b: the follow frame is lifted on the opening frame so the vault and its label sit in the map band in en, pt_BR and de.",
+      "where": "docs/art/ui-quality/gate/boards/preview-2.md; docs/progress/lead.md, Now, cycle 142 (M58); docs/art/tracks/heist-pilot.md, part 9, 'The vault kept in the map band (AD-R65)'"
+    },
+    {
+      "request_id": "S1-R43",
+      "from": "lead",
+      "at": "2026-11-18T02:43:00Z",
+      "answer": "Granted with its default (M60): client/world/world_view.gd joins P3-S1-marker-1's files for the one public var lift and its use in _frame_camera only. Done at c8de146b: no other change in that file.",
+      "where": "docs/progress/lead.md, Now, cycle 143 (M60)"
     }
   ],
-  "next_step": "blocked on S1-R43: world_view.gd for AD-R65's opening-frame lift; marker-1 itself passed its pre-check at 1bfb3193 (recorded), main 95aea764 merged as 0e820471"
+  "next_step": "P4-S1-heist-vault attempts 2: main merged (faf5651); re-work Cast's plate (S1-R46 granted) and the quieter figures; pre-judge three times; checks; ready on a pass."
 }
