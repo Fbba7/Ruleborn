@@ -75,6 +75,10 @@ Filled in below, at ready.
   `--example`, the server publishes the `example:universe` account's islands
   as generated, and those tests want the authored `example:defender`
   Heart. Keeping authored islands first fixed it.
+- CLI-14's first test freed an `AppLifetime` after putting `App.services`
+  back. Its teardown then ended and closed the suite's services and set
+  `App.services` to null, so home showed no controls in the layout checks
+  (464 of 466). Free the node while `App.services` is null.
 - A freed Object reads as null in GDScript: compute a check's flags before
   `queue_free`.
 - CLI-21's race (roster `collect_all`) needs a slow transport.

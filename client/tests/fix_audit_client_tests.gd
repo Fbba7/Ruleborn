@@ -456,8 +456,10 @@ func _open_session_is_marked_seen() -> void:
 	var lifetime := AppLifetime.new()
 	if lifetime.has_method("_process"):
 		lifetime.call("_process", 31.0)
-	App.services = was
+	# Freed with no services: its teardown ends and closes App.services.
+	App.services = null
 	lifetime.free()
+	App.services = was
 	var relaunch := DeviceNotices.new(path)
 	relaunch.start(now + 60_000)
 	var ended := {}
