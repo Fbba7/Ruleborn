@@ -912,21 +912,31 @@ def self_test() -> int:
     ok = ok and not bad
 
     # D42's guard, shown to fail. Planted in the content rather than in a
-    # fixture, because the check walks the committed files and a fixture would
-    # prove the `in` works rather than that the walk arrives.
+    # fixture, because the check walks the content files and a fixture would
+    # prove the `in` works rather than that the walk arrives. The walk goes
+    # over a temporary copy of content/, with CONTENT pointed at it: a run
+    # killed between the plant and its restore once left the plant in the
+    # committed content/ruleborn.json (FX1-T-17).
     import json as _json
-    path = CONTENT / "ruleborn.json"
-    original = path.read_text(encoding="utf-8")
-    rows = _json.loads(original)
-    # An era's name, from \u00a718.3. (A Sage's name no longer serves: \u00a721.6,
-    # which the cards now read, describes the Sages too.)
-    rows[0]["look"] = "The Long Night"
-    path.write_text(_json.dumps(rows, indent=1, ensure_ascii=False) + "\n",
-                    encoding="utf-8")
+    import shutil
+    import tempfile
+    global CONTENT
+    home = CONTENT
+    work = pathlib.Path(tempfile.mkdtemp(prefix="content_"))
     try:
+        shutil.copytree(home, work / "content")
+        CONTENT = work / "content"
+        path = CONTENT / "ruleborn.json"
+        rows = _json.loads(path.read_text(encoding="utf-8"))
+        # An era's name, from \u00a718.3. (A Sage's name no longer serves:
+        # \u00a721.6, which the cards now read, describes the Sages too.)
+        rows[0]["look"] = "The Long Night"
+        path.write_text(_json.dumps(rows, indent=1, ensure_ascii=False) + "\n",
+                        encoding="utf-8")
         caught = any("look" in p and "not in" in p for p in check_provenance())
     finally:
-        path.write_text(original, encoding="utf-8")
+        CONTENT = home
+        shutil.rmtree(work, ignore_errors=True)
     print(f"  [{'PASS' if caught else 'FAIL'}] a value read from outside its "
           f"own section is caught")
     ok = ok and caught
