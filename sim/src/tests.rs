@@ -7289,3 +7289,23 @@ fn sim_12_a_curated_layout_never_drops_a_woven_law_unseen() {
         }
     }
 }
+
+// Audit finding SIM-13
+#[test]
+fn sim_13_moving_the_vault_onto_a_guard_hidden_in_tall_grass_takes_the_grass_too() {
+    // `Island::set_vault`: "Move the Vault to a tile, taking what stood
+    // there away", and the Vault needs bare ground (`check`'s Crowded). A
+    // Keeper may hide a guard in tall grass (RB-57): the editor's ground
+    // tool lays grass under a post. Moving the Vault onto plain grass takes
+    // the grass; onto a guard in grass it must take both, as `claim` does.
+    use crate::grid::Feature;
+    let mut island = Island::example_open();
+    assert!(island.check().is_empty(), "the open example is legal");
+    let spot = (6u8, 8u8);
+    assert!(island.post_guard(0, spot.0, spot.1));
+    assert!(island.set_feature(spot.0, spot.1, Some(Feature::TallGrass)), "a guard hidden in tall grass");
+    assert!(island.set_vault(spot.0, spot.1));
+    assert!(island.guards.is_empty(), "the post is taken away");
+    assert_eq!(island.tile(spot.0, spot.1).and_then(|t| t.feature), None, "and the grass with it");
+    assert!(island.check().is_empty(), "the Vault on bare ground: {:?}", island.check());
+}
