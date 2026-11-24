@@ -1,6 +1,6 @@
 # FX2 fixer, server B: progress
 
-- Status: Green. FX2-9-audit-b-match's four findings are fixed, each proof plain and failing on main first. `cd server && npm test` passes 633 of 633. check_all: running on f2181cf5.
+- Status: Green. FX2-9-audit-b-match's four findings are fixed, each proof plain and failing on main first. `cd server && npm test` passes 633 of 633. check_all PASS on f2181cf5.
 - Progress: 8 of 9 tasks merged (FX2-1 at 23cf8a90, FX2-2 at 8ed7538f, FX2-3 at c7cdcbbd, FX2-4 at e413e4a9, FX2-5 at 5f1cc425, FX2-6 at ab25eb88, FX2-7 at bc7f27e8, FX2-8 at cd5f98fb). FX2-9 is ready at f2181cf5. No gate items.
 - Done: AUD-B-01 (Medium) and AUD-B-06 (Low) of the server-b audit; FX1-A-07 (= AUD-B-06, FX1-R11) and FX1-A-09 (FX1-R9) of the server-a audit.
 - Next: the lead merges f2181cf5.
@@ -55,7 +55,7 @@ The control in `fix_fx2_audit_match.test.mjs` (a thin list that offers an echo s
 ### Merge and evidence
 - **`cd server && npm test`** on 4a0e2258: 633 tests, 633 pass, 0 fail, 0 skipped.
 - **`python3 tools/coord/owners.py diff FX2-9-audit-b-match origin/claude/videogame-project-analysis-ewkkk2 f2181cf5…`:** "every changed path is inside its files".
-- **check_all:** `bash tools/run_checks.sh start` on f2181cf5, in bwrap: running (started 03:44Z).
+- **check_all:** `bash tools/run_checks.sh start` on f2181cf5, in bwrap: PASS, finished 2026-11-24T04:19:09Z. The log ends `DONE exit=0` and contains "All checks passed." Recorded with `record f2181cf5… FX2`.
 
 ## Tried and failed
 - 2026-11-21 The first RB-32 drain test passed on main, for the wrong reason (`401 session_refused`). Its session was made before the clock moved 12 h, and a session lasts an hour. It now signs in after the clock moves.
