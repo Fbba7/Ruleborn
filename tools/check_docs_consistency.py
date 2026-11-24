@@ -416,7 +416,7 @@ def spec_open_claims(text: str) -> list[str]:
         lead = re.match(r"\*\*(.+?)\*\*", bullet.group(1))
         if not lead:
             continue
-        out += re.findall(r"\b([A-Z]{1,2}\d{1,2})\b", lead.group(1))
+        out += re.findall(r"\b([A-Z]{1,2}\d+)\b", lead.group(1))
     return sorted(set(out))
 
 
@@ -797,6 +797,10 @@ def _self_test() -> None:
     for name in ("first-build.md", "economy.md", "check_all_2.md"):
         assert pattern.findall(f"[x]({name})") == [name], name
     print("  hyphenated and numeric spec file names are matched")
+    # A "Still open" bullet's id may run to three digits; a two-digit cap once
+    # read D100 as no id, so its claim went unchecked.
+    assert spec_open_claims("- **D100** cap\n- **D9** x\n") == ["D100", "D9"]
+    print("  a three-digit id in a bullet's bold lead is read as an id")
 
     # The tools listing is read out of a fenced block by shape, so the shape is
     # what can break: a row indented differently, or a directory without its
