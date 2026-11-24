@@ -108,12 +108,20 @@ func face_post(facing: int) -> void:
 
 
 ## A swap previewed, at once and free (G54): `law` on the pylon of the law
-## woven in slot `slot`, on the draft only.
+## woven in slot `slot`, on the draft only. A swap previewed before is taken
+## back first, so the draft shows the one swap that would be woven (CLI-6);
+## a slot whose law has no pylon on the island is refused, as the swap would
+## change nothing the island shows (CLI-7).
 func preview_swap(slot: int, law: String) -> void:
-	var old := CurationPresenter.slot_law(_slice()["view"], slot)
+	var view: Dictionary = _slice()["view"]
+	var before: Dictionary = _slice()["swap"]
 	var island := CurationPresenter.draft_island(_slice())
-	if island != null:
-		CurationPresenter.swapped(island, old, law)
+	if island != null and not before.is_empty():
+		CurationPresenter.swapped(island, str(before["law"]), CurationPresenter.slot_law(view, int(before["slot"])))
+	if island != null and not CurationPresenter.swapped(island, CurationPresenter.slot_law(view, slot), law):
+		_store().dispatch(&"curation_drafted", {"draft": island.bytes(), "swap": {}})
+		_store().dispatch(&"curation_failed", {"code": "swap_not_on_island"})
+		return
 	_store().dispatch(&"curation_drafted", {"draft": island.bytes() if island != null else _slice()["draft"],
 		"swap": {"slot": slot, "law": law}})
 

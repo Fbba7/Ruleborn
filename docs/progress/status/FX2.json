@@ -3,19 +3,24 @@
   "role": "FX2",
   "branch": "claude/fix-server-b",
   "model": "Opus 5.5",
-  "agent_state": "active",
-  "task_id": "FX2-7-audit-b-config",
-  "task_state": "claimed",
-  "claimed_at": "2026-11-23T23:10:00Z",
-  "lease_until": "2026-11-24T02:10:00Z",
-  "updated_at": "2026-11-23T23:10:00Z",
-  "expected_next_update_by": "2026-11-23T23:55:00Z",
+  "agent_state": "waiting",
+  "task_id": "FX2-8-audit-b-lows",
+  "task_state": "blocked",
+  "claimed_at": "2026-11-24T00:40:00Z",
+  "lease_until": "2026-11-24T03:40:00Z",
+  "updated_at": "2026-11-24T01:20:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "08e4d55d",
-    "next_step": "turn AUD-B-14..19 stillOpen wrappers back into plain proofs, commit, then fix main.mjs"
+    "last_green_sha": "4d3e779c",
+    "next_step": "FX2-R2 granted: owners.py diff passes, 4d3e779c ready (pre-checked PASS)"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "4d3e779c6f763dfccd9b80f33e360d833d1bcafa",
+    "exit": 0,
+    "finished_at": "2026-11-24T01:17:59Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-24T21:00:00Z",
@@ -36,6 +41,20 @@
       "default": "The three files are granted as FX2-5-auth-lows's exceptions. FX2 applies the three one-line corrections in a commit naming RB-25, runs npm test (578/578), merges main, runs check_all and owners.py, and sets ready.",
       "escalate_to": "lead",
       "state": "answered"
+    },
+    {
+      "id": "FX2-R2",
+      "from": "FX2",
+      "to": "lead",
+      "blocking": true,
+      "ask": "Grant server/declarations.md to FX2-8-audit-b-lows as an exception. It is written by node server/src/privacy.mjs --write from server/privacy.json (a task file), and privacy.test.mjs fails if it drifts, so AUD-B-13's rewording of privacy.json (6f61d03a) changes it by the same three lines. No task in flight owns it; SV-B7-B9 held both files the same way. Without it owners.py diff fails on that one file.",
+      "files": [
+        "server/declarations.md"
+      ],
+      "due": "2026-11-24T03:00:00Z",
+      "default": "server/declarations.md is added to FX2-8-audit-b-lows's exceptions; the regenerated file stays in 6f61d03a. 4d3e779c is then ready: npm test 614/614, check_all PASS (precheck above), and owners.py diff passes with the exception. The lead may take it as ready_sha without a new FX2 session.",
+      "escalate_to": "lead",
+      "state": "open"
     }
   ],
   "answers": [

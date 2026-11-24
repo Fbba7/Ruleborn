@@ -37,7 +37,7 @@ top-level `not ok` as a failure, `todo` included.
 | AUD-B-02 | Medium | `observatory.mjs` card | fixed here |
 | AUD-B-03 | Medium | `telemetry.mjs` report | fixed here |
 | AUD-B-04 | Medium | `telemetry.mjs` batch | fixed here |
-| AUD-B-05 | Medium | `auth_http.mjs` prove, `delete.html` | open |
+| AUD-B-05 | Medium | `auth_http.mjs` prove, `delete.html` | fixed (FX2-8-audit-b-lows) |
 | AUD-B-08 | Medium | `auth_http.mjs` deleteByGoogle | fixed here |
 | AUD-B-16 | Medium | `main.mjs:379` | fixed (FX2-7-audit-b-config) |
 | AUD-B-17 | Medium | `main.mjs:338` | fixed (FX2-7-audit-b-config) |
@@ -45,14 +45,14 @@ top-level `not ok` as a failure, `todo` included.
 | AUD-B-06 | Low | `matchmaking.mjs:308-323` | open |
 | AUD-B-07 | Low | `observatory.mjs` card | fixed here |
 | AUD-B-09 | Low | `auth.mjs` spend | fixed here |
-| AUD-B-10 | Low | `tokens.mjs:55` | open |
+| AUD-B-10 | Low | `tokens.mjs:55` | fixed (FX2-8-audit-b-lows) |
 | AUD-B-11 | Low | `auth.mjs` rotateHoursOf | fixed here |
 | AUD-B-12 | Low | `pages.mjs` | fixed here |
-| AUD-B-13 | Low | `server/privacy.json` | open |
+| AUD-B-13 | Low | `server/privacy.json` | fixed (FX2-8-audit-b-lows) |
 | AUD-B-19 | Low | `main.mjs:224` | fixed (FX2-7-audit-b-config) |
-| AUD-B-20 | Low | `load.mjs:453` | open |
+| AUD-B-20 | Low | `load.mjs:453` | fixed (FX2-8-audit-b-lows) |
 
-Eight are fixed here, six in FX2-7-audit-b-config, and six are open. Three suspicions stay unproven.
+Eight are fixed here, six in FX2-7-audit-b-config, four in FX2-8-audit-b-lows, and two are open. Two suspicions stay unproven; a third was settled in FX2-8-audit-b-lows.
 Seven were checked and rejected, and the rest of the configuration,
 `refused.mjs` and `store.mjs` showed no defect (see the last two sections).
 
@@ -200,6 +200,10 @@ Seven were checked and rejected, and the rest of the configuration,
   failure, or the 404 answer carries a fresh nonce and sets its cookie.
   The nonce stays spent either way. `delete.html` is outside this task's
   files.
+- **Fixed (FX2-8-audit-b-lows):** the second way. The 404 answers
+  `{error: "no_such_account", nonce}` with the fresh nonce's cookie, and
+  the page initialises Google's sign-in again with it. The proof's retry
+  uses that nonce: with the spent one it is still refused, as it should be.
 
 ### AUD-B-08: With no web client id, the game's own token can delete through the web route
 
@@ -328,6 +332,7 @@ Seven were checked and rejected, and the rest of the configuration,
 - **Happens:** "token key constructor is named twice", and the start fails.
 - **Proof:** `fix_fx2_audit_auth.test.mjs`, "AUD-B-10".
 - **Fix:** `Object.hasOwn(keys, kid)`, or a `Map`. Not this task's file.
+- **Fixed (FX2-8-audit-b-lows):** `Object.hasOwn(keys, kid)`.
 
 ### AUD-B-11: An empty RULEBORN_REFRESH_ROTATE_HOURS rotates every refresh
 
@@ -368,6 +373,9 @@ Seven were checked and rejected, and the rest of the configuration,
   task's files; at line 2477, for example, "for good: it is the deletion
   log". Do not widen `plain`, which would also strip prose
   parentheses.
+- **Fixed (FX2-8-audit-b-lows):** the four texts reworded, "for good: it
+  is the deletion log" among them, and `declarations.md` written again
+  from `privacy.json`. `plain` is unchanged.
 
 ### AUD-B-19: An empty RULEBORN_REPLAYS_MIN_FREE_MB removes the free-space floor
 
@@ -401,6 +409,11 @@ Seven were checked and rejected, and the rest of the configuration,
   `READS.freeDay / readsADay(result, dd / dn)`, rewrite `load.json`, and
   recheck the capacity notes that quote the figure. `load.mjs` is outside this
   task's files.
+- **Fixed (FX2-8-audit-b-lows):** as written. `load.json` is rewritten by
+  `node server/load.mjs --write`: engaged 3504, regular 6178, casual 8497
+  daily players (the reads moved by about 2% with main's queries since the
+  figures above). No capacity note outside the report quoted the old
+  figures.
 
 ## Unproven
 
@@ -425,6 +438,9 @@ Seven were checked and rejected, and the rest of the configuration,
 - **`privacy.json:2475`: "withdraw choice an object".** It reads as a
   stripped reference, but the source text may be meant that way. **Tried:**
   the rendered page and the source. Left for whoever rewords AUD-B-13.
+  **Settled (FX2-8-audit-b-lows):** a garble, not a reference. The
+  journal (`accounts.mjs`, `Journal.append`) writes one object a deletion,
+  `{account, reason, withdraw, at}`; the text now says so.
 
 ## Checked and rejected
 

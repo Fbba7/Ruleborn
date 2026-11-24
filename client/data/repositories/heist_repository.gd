@@ -4,6 +4,9 @@ extends RefCounted
 ## from §24.8's lists, a lease on one, and the replay sent through the outbox
 ## so a submission survives no network.
 
+## The account the game's own generated islands stand under (server/src/generator.mjs).
+const GENERATOR := "the-game-generator"
+
 var api: Api
 var outbox: Outbox
 ## Leases kept for a heist with no network (G41).
@@ -30,11 +33,13 @@ func fetch(key: String) -> Result:
 ## list file is fetched by hash, as §24.8 intends. §12.22's ordering runs on
 ## the server (GET /v1/offer); this is the fallback on a list alone, and like
 ## §12.22 it reaches for the game's generated islands only when no player's
-## island is there.
+## island is there. Among players' islands an authored one comes first, then a
+## curated one, each in the lists' order.
 func first_target(account: String, skip: Array[String] = []) -> Result:
 	var index := await target_index()
 	if not index.ok:
 		return index
+	var curated: Dictionary = {}
 	var generated: Dictionary = {}
 	for band: String in index.value:
 		var file := await fetch(str(index.value[band]))
@@ -47,8 +52,16 @@ func first_target(account: String, skip: Array[String] = []) -> Result:
 					continue
 				if candidate.get("origin") != "generated":
 					return Result.success(candidate)
-				if generated.is_empty():
+				# The game's own islands are the generator's (server's GENERATOR):
+				# a player's curated island is generated too, and still a
+				# player's, so it comes before them (CLI-11, §13.3).
+				if candidate.get("owner") != GENERATOR:
+					if curated.is_empty():
+						curated = candidate
+				elif generated.is_empty():
 					generated = candidate
+	if not curated.is_empty():
+		return Result.success(curated)
 	if not generated.is_empty():
 		return Result.success(generated)
 	return Result.failure("no_target")
