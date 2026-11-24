@@ -678,7 +678,8 @@ export class Service {
     // §24.12: "The lease expired — No reward, with one grace submission
     // allowed." Read as one expired submission a day honoured (G17).
     let grace = false;
-    if (now > lease.expires_at) {
+    // FX1-A-12: at expires_at a lease is run out, as issue() reads it.
+    if (now >= lease.expires_at) {
       const used = this.db.prepare(
         "SELECT COUNT(*) AS n FROM heists WHERE attacker = ? AND day = ? AND grace = 1")
         .get(attacker, day(now)).n;
@@ -1019,8 +1020,15 @@ export class Service {
     // pair's later raids the same UTC day move no rating either (G37,
     // SEC-39): the pair chooses those outcomes, as it would its Renown.
     const rated = {};
+    // FX1-A-13: the island raided is the defender's own: players who publish
+    // the same bytes share one snapshot, whose realm is the first
+    // publisher's. The defender's island on these bytes names the realm; an
+    // echo, or an island republished since, falls back to the snapshot's.
+    const realm = lease.echo ? snapshot.realm
+      : this.db.prepare("SELECT realm FROM islands WHERE owner = ? AND bundle = ? ORDER BY realm = ? DESC, realm LIMIT 1")
+        .get(lease.defender, lease.bundle, snapshot.realm)?.realm ?? snapshot.realm;
     const rating = !scores || gone ? null
-      : this.matchmaking.settle(lease, snapshot.realm, verdict, now, { raiderOnly: Boolean(lease.echo), keep: rated });
+      : this.matchmaking.settle(lease, realm, verdict, now, { raiderOnly: Boolean(lease.echo), keep: rated });
     // The raider's row, written once: the experience, the raids played and
     // the rating, which were three writes of it (§24.1's writes). The
     // experience is earned at the level the raid was played at, read above.

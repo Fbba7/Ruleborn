@@ -157,7 +157,8 @@ export class Codex {
         "SELECT a.id FROM accounts a WHERE a.id = ? AND a.deleted_at IS NULL").get(lease.defender)?.id;
       if (owner) {
         this.ensure(owner, now);
-        for (const law of cast) this.add(owner, law, 1, now);
+        // FX1-A-14: one page of a law, however many slots cast it.
+        for (const law of new Set(cast)) this.add(owner, law, 1, now);
       }
     }
     // Only the pair's first friendly heist of the day pays them (SEC-24).
