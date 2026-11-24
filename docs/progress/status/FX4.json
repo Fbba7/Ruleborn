@@ -5,16 +5,16 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "FX4-7-curation-swap-weave",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-24T07:25:00Z",
   "lease_until": "2026-11-24T10:25:00Z",
-  "updated_at": "2026-11-24T07:25:00Z",
-  "expected_next_update_by": "2026-11-24T08:25:00Z",
+  "updated_at": "2026-11-24T07:36:00Z",
+  "expected_next_update_by": "2026-11-24T08:36:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "8b1a366a",
-    "next_step": "commit the fail-first CLI-1 test, then fix the swap publish in client/features/curation",
-    "at": "2026-11-24T07:25:00Z"
+    "next_step": "fail-first test a97ae895 committed; fix the swap publish in client/features/curation",
+    "at": "2026-11-24T07:36:00Z"
   },
   "precheck": null,
   "gate_request": null,
