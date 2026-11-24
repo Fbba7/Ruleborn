@@ -3,17 +3,17 @@
   "role": "FX2",
   "branch": "claude/fix-server-b",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
+  "agent_state": "active",
   "task_id": "FX2-10-curated-woven-law",
-  "task_state": "ready",
+  "task_state": "working",
   "claimed_at": "2026-11-24T05:05:00Z",
   "lease_until": "2026-11-24T08:05:00Z",
-  "updated_at": "2026-11-24T05:41:00Z",
-  "expected_next_update_by": "2026-11-24T06:25:00Z",
+  "updated_at": "2026-11-24T06:05:00Z",
+  "expected_next_update_by": "2026-11-24T06:50:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "5281e8fbbaf0a55605b0a0c2d0293ff2f3fcedfe",
-    "next_step": "the lead answers FX2-R3, merges FX2-9 (f2181cf5), then 5281e8fb"
+    "next_step": "check_all on 5023396c (merge of main 3bb18e3) running; then record, ready"
   },
   "precheck": {
     "sha": "5281e8fbbaf0a55605b0a0c2d0293ff2f3fcedfe",
@@ -22,7 +22,7 @@
     "summary": "All checks passed."
   },
   "gate_request": null,
-  "ready_sha": "5281e8fbbaf0a55605b0a0c2d0293ff2f3fcedfe",
+  "ready_sha": null,
   "stop_at": "2026-11-24T21:00:00Z",
   "acks": [],
   "requests": [
@@ -67,6 +67,21 @@
       ],
       "due": "2026-11-24T07:15:00Z",
       "default": "server/test/setup.mjs is added to FX2-10-curated-woven-law's exceptions; the correction stays in a495e58 and the ready_sha's owners.py diff passes with it.",
+      "escalate_to": "lead",
+      "state": "open"
+    },
+    {
+      "id": "FX2-R4",
+      "from": "FX2",
+      "to": "lead",
+      "blocking": false,
+      "ask": "A note, outside FX2's files. FX1-7's proof FX1-T-11 (server/test/fix_fx1_audit_tools.test.mjs) fails on main 3bb18e3 in a fresh tree: 'FX1-T-11 no longer fails: it is fixed'. Its py() helper parses the last line of stdout+stderr. tools/check_document.py:505 has an invalid escape (\\d) in a docstring, so Python 3.13 prints a SyntaxWarning to stderr whenever tools/__pycache__ holds no .pyc for it (py() runs -B). That warning is then the last line, the value is undefined, and stillOpen reads the proof as passing. With the .pyc cached, npm test passes 661 of 661. Either fix closes it: make that docstring raw (r\"\"\"), or have py() parse stdout only.",
+      "files": [
+        "server/test/fix_fx1_audit_tools_proofs.mjs",
+        "tools/check_document.py"
+      ],
+      "due": "2026-11-24T12:00:00Z",
+      "default": "The lead seeds the one-line fix into FX1's next task (py() parses stdout only). FX2-10 is not held for it.",
       "escalate_to": "lead",
       "state": "open"
     }

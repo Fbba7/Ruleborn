@@ -1,9 +1,9 @@
 # FX2 fixer, server B: progress
 
-- Status: Green. check_all PASS on 5281e8fb. FX2-10-curated-woven-law: SIM-12's server half and FX2-9's observatory.mjs:140 follow-up are fixed, each proof failing first. `cd server && npm test` passes 639 of 639.
+- Status: Green. check_all PASS on 5281e8fb. Main moved (FX2-9 and FX1-7 merged): check_all is running on the new merge 5023396c. FX2-10-curated-woven-law: SIM-12's server half and FX2-9's observatory.mjs:140 follow-up are fixed, each proof failing first. `cd server && npm test` passes 639 of 639.
 - Progress: 8 of 10 tasks merged. FX2-9 is ready at f2181cf5, in the lead's merge. FX2-10 is built on it. No gate items.
 - Done: SIM-12's "Left for the lead" (`woven_law_missing`); the Observatory's `echoes` flag after `current()`.
-- Next: the lead answers FX2-R3 (server/test/setup.mjs), merges f2181cf5, then FX2-10's ready_sha 5281e8fb.
+- Next: the lead answers FX2-R3 (server/test/setup.mjs), merges f2181cf5, then FX2-10's ready_sha (5023396c once its check_all passes).
 - Blocked by: FX2-R3 (blocking, default: granted).
 - Owner decision needed: none.
 
@@ -18,11 +18,12 @@
 | FX2-7-audit-b-config: AUD-B-14, 15, 16, 17, 18, 19 (main.mjs's configuration) | 1.5 | merged at bc7f27e8 | `server/test/fix_fx2_audit_config.test.mjs`; `docs/security/audit-2026-11/server-b.md`. Commits: bfe73490 (proofs), 51006c1a (AUD-B-14 proof corrected), c0a00136 (AUD-B-14, 17, 19), 323293f8 (AUD-B-15), c7e630cc (AUD-B-16), 35a8ea86 (AUD-B-18), 4372844d (report), 0006a4d9 (merge of main 92beb32b) |
 | FX2-8-audit-b-lows: AUD-B-05, 10, 13, 20 | 2.0 | merged at cd5f98fb | `server/test/fix_fx2_audit_auth.test.mjs`, `fix_fx2_audit_privacy.test.mjs`, `fix_fx2_audit_load.test.mjs`; `docs/security/audit-2026-11/server-b.md`. Commits: 35be457f (proofs), 85dfb089 (AUD-B-10), d049bd61 (AUD-B-05), 6f61d03a (AUD-B-13), 5229de90 (AUD-B-20), 3820abc7 (report), 708d5e5d (status, FX2-R2), 4d3e779c (merge of main ee42bb70) |
 | FX2-9-audit-b-match: AUD-B-01, AUD-B-06 (= FX1-A-07), FX1-A-09 | 1.25 | ready at f2181cf5, in the lead's merge | `server/test/fix_fx2_audit_match.test.mjs`, `fix_fx2_audit_season.test.mjs`, `fix_fx2_audit_observatory.test.mjs`, `fix_fx1_audit_server_a.test.mjs`, `generated.test.mjs`; `docs/security/audit-2026-11/server-b.md`, `server-a.md`. Commits: 965a64bd (proofs), 10a603a0 (AUD-B-01), 832c247d (AUD-B-06, FX1-A-07), 0201e4f2 (FX1-A-09), 4a0e2258 (reports), aa9b046f (status), f2181cf5 (merge of main 613f71c9) |
-| FX2-10-curated-woven-law: SIM-12's Left for the lead, FX2-9's observatory.mjs:140 follow-up | n/a (no weight in backlog.json) | ready at 5281e8fb | `server/test/fix_fx2_curated_woven_law.test.mjs`, `fix_fx2_observatory_echoes.test.mjs`; `docs/security/audit-2026-11/sim.md`. Commits: 9fe9f86 (echoes proof), 5d4e59c (woven-law proof), ac08a0c (SIM-12), c4f746a (echoes), a495e58 (setup.mjs, FX2-R3), 22928c2 (status), 8713e6a and 61b1c9b (report), 5281e8f (merge of main 5963037) |
+| FX2-10-curated-woven-law: SIM-12's Left for the lead, FX2-9's observatory.mjs:140 follow-up | n/a (no weight in backlog.json) | working; 5281e8fb passed, rechecking on 5023396c | `server/test/fix_fx2_curated_woven_law.test.mjs`, `fix_fx2_observatory_echoes.test.mjs`; `docs/security/audit-2026-11/sim.md`. Commits: 9fe9f86 (echoes proof), 5d4e59c (woven-law proof), ac08a0c (SIM-12), c4f746a (echoes), a495e58 (setup.mjs, FX2-R3), 22928c2 (status), 8713e6a and 61b1c9b (report), 5281e8f (merge of main 5963037) |
 
 ## Handoff
 - **Last verified commit:** 5281e8fb, the merge of main (lead cycle 171, 5963037) into 61b1c9b with no conflict. The merge changed only the lead's files.
-- **FX2-9:** not resynced. f2181cf5 is still not on main. FX2-10's branch holds it, so until the lead merges it, `owners.py diff` against main also lists FX2-9's files (matchmaking.mjs, server-a.md, server-b.md and five tests).
+- **FX2-9:** merged on main (6e5045e, lead cycle 171), not resynced. 5023396c merges main 3bb18e3, after which `owners.py diff` lists only `server/test/setup.mjs` (FX2-R3).
+- **A flaky proof on main (FX2-R4, non-blocking):** FX1-7's FX1-T-11 fails in a fresh tree. Its `py()` parses the last line of stdout+stderr, and `tools/check_document.py:505`'s invalid `\d` escape makes Python 3.13 print a SyntaxWarning there whenever no `.pyc` is cached. On 5023396c, npm test gave 660 of 661 with that one failing. With the `.pyc` cached it passes 661 of 661. It also fails on clean main, and it is outside FX2's files.
 
 ### The proofs, committed alone, before any fix
 Both were run on the branch before the fix. Its server code was main's plus FX2-9's `matchmaking.mjs`, which touches neither `universe.mjs` nor the view's flag.
