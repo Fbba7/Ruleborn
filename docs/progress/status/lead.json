@@ -1,12 +1,19 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-24T19:36:00Z",
-  "expected_next_update_by": "2026-11-24T20:50:00Z",
-  "cycle": 185,
-  "merging": null,
+  "updated_at": "2026-11-24T21:37:00Z",
+  "expected_next_update_by": "2026-11-24T23:25:00Z",
+  "cycle": 188,
+  "merging": {
+    "candidate_sha": "a122e81c",
+    "task_ids": [
+      "P4-S1-heist-vault"
+    ],
+    "started_at": "2026-11-24T21:37:00Z",
+    "expires_at": "2026-11-24T22:37:00Z"
+  },
   "last_merged": {
-    "task_id": "BT-01a",
-    "sha": "99c9aa89"
+    "task_id": "BT-04a",
+    "sha": "56f3662b"
   },
   "acks": [
     "M15",
@@ -47,9 +54,9 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "The UI runs: S1 re-works P4-S1-heist-vault (WIP a72050a0, effort high); SP-bt-01 has BT-01a's cycle.py pushed (a572ad30) and SP-bt-04 BT-04a's render.py (f1df3f1e, pre-check running); leases to 20:20Z. Next: gate and merge the heist re-work, BT-01a and BT-04a as they are ready, adding SPbt01-R1's and SP-bt-04-R1's self-test lines in their merge candidates; three builders, the cap under allowed_warning.",
+  "next_step": "Gate and merge the heist re-work (S1, attempts 2, S1-R46 in; write S1-R45's heist/200 record of 120 in its merge), BT-04a's resync (SP-bt-04, pre-check of 0fa16325 running; add SP-bt-04-R1's render.py --self-test line) and BT-01b (SP-bt-01, pre-check running) as they are ready; cap of three under allowed_warning.",
   "seen": {
-    "at": "2026-11-24T17:42:21Z",
+    "at": "2026-11-24T20:15:58Z",
     "heads": {
       "claude/3d-character-screens": "6053b249bee313648da3509142eeb2ba738bb62f",
       "claude/3d-characters": "35d6ae8f5b84a4d75636f68270848b0949c111f3",
@@ -80,11 +87,11 @@
       "claude/ui-plan": "f1affcea749d007fe1a67931bd3c1f7359d98c44",
       "claude/ui-research": "f19d5d4e5eaffff8869da3b91124d111cf1259a6",
       "claude/ui-screens": "dceb6bfcbc6c5da4e261674fe9301e1854f0aa65",
-      "claude/ui-screens-heist": "a72050a0fafb63eab4e013668018638ecd0b8ffa",
+      "claude/ui-screens-heist": "730e726f38dec6651bcd7008fd67d6b81cf1e58a",
       "claude/ui-screens-home": "eded364b11d503933f1d657683a2b622f66ca972",
       "claude/ui-screens-meta": "8e73789bd8519aeb195e6e36d013d5290353975b",
-      "claude/ui-spec-coord": "37c99eba98657a61a0bcfe31df67943cc65198de",
-      "claude/ui-spec-gate-render": "3e54985ab04a0502f499c2fd51a24b39a32d6eba",
+      "claude/ui-spec-coord": "9d8caa12e597ac267f2d3fad846e3c2e587e8861",
+      "claude/ui-spec-gate-render": "e7b33acf2e879e43c1d604df40910d73025f6c5b",
       "lead/candidate-01fb5fb1": "01fb5fb186bb8135c10329750fb9b89f3aef2d50",
       "lead/candidate-0870a845": "0870a8457836d68256019562d329d8f32a048371",
       "lead/candidate-13f6fb44": "13f6fb4424f2697c762188ee73d27c9980b27964",
@@ -109,7 +116,9 @@
       "main": "2455f3b5392587009f9b8f7ff57f7b26b01566d1"
     },
     "ready": {},
-    "startable": [],
+    "startable": [
+      "P4-S1-heist-vault"
+    ],
     "messages": [
       "M10",
       "M3"
@@ -150,6 +159,7 @@
       "S3-R2",
       "S3-R3",
       "S3-R4",
+      "S3-R46",
       "S3-R5",
       "S3-R8",
       "S3-R9 to S3-R14"

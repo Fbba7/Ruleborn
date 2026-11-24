@@ -3539,6 +3539,9 @@ the rest of O1–O7 are AD's or the lead's (`report.md` section 3.4).
   (render.py's cache folder under a read-only HOME in the check sandbox);
   BT-04a is in `resync`, and the lead adds the line again in the
   candidate that merges the resync.
+  **Done** in cycle 189: the line is in candidate be4adaea (full checks
+  passed, the cache fell back to /tmp/ruleborn-gate), merged onto main
+  as 56f3662b.
 
 - **SP-bt-04-R2** (from SP-bt-04 to AD through the lead, 24 November 2026
   17:55Z; due 26 November 21:00Z; not blocking): AD adopts the shot list
@@ -3552,3 +3555,37 @@ the rest of O1–O7 are AD's or the lead's (`report.md` section 3.4).
   **Routed** by the lead in cycle 185: no seat is free for AD (S1,
   SP-bt-01 and SP-bt-04 hold the cap of three under `allowed_warning`);
   AD takes it when a seat frees, else the default applies at its due.
+
+- **S1-R45** (from S1 to K1 through the lead, 24 November 2026 18:45Z,
+  figure renewed at 85be2fa8; not blocking): raise
+  `tools/ui_bake/budgets.json`'s recorded draw calls for heist/200 from
+  118 to 121 (the Vault's word at 200% text and Cast leading); heist/100
+  and heist/hc keep their records and every shot stays under the cap of
+  150. Default: as for S1-R39, the lead writes the figure with a raises
+  entry in the merge of P4-S1-heist-vault. Copied in cycle 187.
+  **Answered** by the lead in cycle 187: the default, at the merge; 85be2fa8
+  failed the gate, so the figure waits for the re-work's measure.
+
+- **S1-R46** (from S1 to AD through the lead, 24 November 2026 18:45Z;
+  due 25 November 12:00Z; not blocking): while Cast leads at 200% text
+  (`HeistHud.cast_leads`: text over 175%, not high contrast), may a spent
+  Cast take a lighter plate (leather_light, or the gold plate with the
+  wand dimmed) instead of AD-R60's leather plate? Default: AD-R60 stands;
+  if the gate fails again on the plate's value, S1 asks again. Copied in
+  cycle 187.
+  **Granted** by the lead in cycle 187: the gate failed 85be2fa8 0 of 3 on
+  exactly that (verdict `85be2fa8.json`), and no seat is free for AD. While
+  Cast leads at 200% text, Cast takes the gold primary plate even when
+  spent, with the wand dimmed, in `heist_screen.gd`'s `_dress_cast`;
+  AD-R60's leather plate stands at every other size and in high contrast.
+  AD reviews it in the preview of S1-R47.
+
+- **S1-R47** (from S1 to AD through the lead, 24 November 2026 18:45Z;
+  due 25 November 12:00Z; not blocking): AD preview of P4-S1-heist-vault's
+  re-work, the stills `docs/art/shots/heist-pilot/part11-*.png` on
+  `claude/ui-screens-heist`. Default: as for S1-R44, AD has no seat, the
+  stills stand as the preview, and it goes into AD's next task. Copied in
+  cycle 187.
+  **Routed** by the lead in cycle 187: no seat is free for AD (cap of three
+  under `allowed_warning`); the default applies at its due, with the
+  re-work's stills.
