@@ -4,17 +4,17 @@
   "branch": "claude/fix-client",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "FX4-5-problem-strings",
-  "task_state": "claimed",
-  "claimed_at": "2026-11-24T03:01:00Z",
-  "lease_until": "2026-11-24T06:01:00Z",
-  "updated_at": "2026-11-24T03:01:00Z",
-  "expected_next_update_by": "2026-11-24T03:45:00Z",
+  "task_id": "FX4-7-curation-swap-weave",
+  "task_state": "working",
+  "claimed_at": "2026-11-24T07:25:00Z",
+  "lease_until": "2026-11-24T10:25:00Z",
+  "updated_at": "2026-11-24T07:36:00Z",
+  "expected_next_update_by": "2026-11-24T08:36:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "6293dc4c",
-    "next_step": "FX4-5 claimed: write the failing Strings test, then the two PROBLEM_ rows",
-    "at": "2026-11-24T03:01:00Z"
+    "last_green_sha": "8b1a366a",
+    "next_step": "fail-first test a97ae895 committed; fix the swap publish in client/features/curation",
+    "at": "2026-11-24T07:36:00Z"
   },
   "precheck": null,
   "gate_request": null,
@@ -36,7 +36,29 @@
       "due": "2026-11-24T22:00:00Z",
       "default": "No follow-up: a leased heist's result screen shows no night, as RB-43's Should happen says",
       "escalate_to": "lead"
+    },
+    {
+      "id": "FX4-R2",
+      "from": "FX4",
+      "to": "lead",
+      "ask": "FX4-6: RulebornReplay.give now returns false once the replay has no room left under MAX_HEIST_BYTES (SIM-2), but heist_screen.gd (lines 510, 518, 831) ignores give's result, so such a tap is dropped with nothing on screen. If wanted, add a small follow-up task owning client/scripts/heist_screen.gd and client/i18n/strings.csv to show a hint (for example 'no more orders fit this heist') when give returns false, after the UI resumes.",
+      "files": [
+        "client/scripts/heist_screen.gd",
+        "client/i18n/strings.csv"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-24T05:20:00Z",
+      "due": "2026-11-25T05:20:00Z",
+      "default": "No follow-up: a tap past the limit is dropped silently, as a tap after the clock has run out already is",
+      "escalate_to": "lead"
     }
   ],
-  "answers": []
+  "answers": [
+    {
+      "id": "FX4-R2",
+      "by": "lead",
+      "answer": "the default (lead cycle 172): no follow-up; a tap past the limit is dropped silently",
+      "at": "2026-11-24"
+    }
+  ]
 }

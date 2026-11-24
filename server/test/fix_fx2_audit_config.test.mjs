@@ -1,7 +1,6 @@
 // FX2-6's audit (docs/security/audit-2026-11/server-b.md), main.mjs's
-// configuration: AUD-B-14 to AUD-B-19, fixed in FX2-7-audit-b-config. The one
-// proof still in stillOpen (fix_fx2_open.mjs) is AUD-B-18's guard in the
-// seasons service, outside FX2-7's files: main.mjs refuses the value first.
+// configuration: AUD-B-14 to AUD-B-19, fixed in FX2-7-audit-b-config, and
+// AUD-B-18's guard in the seasons service, fixed in FX1-8-server-a-lows.
 import test from "node:test";
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
@@ -12,7 +11,6 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { server } from "./setup.mjs";
-import { stillOpen } from "./fix_fx2_open.mjs";
 
 const MAIN = fileURLToPath(new URL("../src/main.mjs", import.meta.url));
 const APPLE = fileURLToPath(new URL("./fixtures/apple/", import.meta.url));
@@ -124,11 +122,13 @@ test("AUD-B-17: an empty RULEBORN_HEADERS_TIMEOUT_MS keeps the 10 s headers time
 test("AUD-B-18: an unreadable RULEBORN_SEASON_START is refused at startup", () =>
   booted({ RULEBORN_SEASON_START: "next monday" }, (run) => assert.equal(run.started, false)));
 
-// The seasons service's own guard (seasons.mjs, outside FX2-7's files): main.mjs
-// now refuses the value above before it reaches the service.
-test("AUD-B-18: with seasonStart NaN there is no current season", () => {
-  const { service } = server({ seasonStart: NaN });
-  return stillOpen("AUD-B-18 (seasons.mjs)", () => assert.ok(service.seasons.current(), "the current season is a row"));
+// The seasons service's own guard: a start that is no time is refused when
+// the service is made, as main.mjs refuses the variable above, never a
+// service with no current season.
+test("AUD-B-18: a seasonStart that is not a finite time is refused when the service is made", () => {
+  for (const seasonStart of [NaN, Infinity, "next monday"]) {
+    assert.throws(() => server({ seasonStart }), RangeError, `seasonStart ${String(seasonStart)}`);
+  }
 });
 
 test("AUD-B-19: an empty RULEBORN_REPLAYS_MIN_FREE_MB keeps the 512 MiB floor (SEC-18)", () => {

@@ -1612,6 +1612,20 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   Copied in cycle 171. **Answered** by the lead in cycle 171: the default.
   FX1-12-tools-ui is filed for FX1, after FX1-11. It is an FX task, so it
   is merged before the UI resumes (bugs first, CLAUDE.md order 1).
+
+- **FX1-R24** (from FX1, 24 November 2026 05:45Z; due 24 November
+  09:05Z; blocking): add `server/privacy.json` and
+  `server/declarations.md` to FX1-8-server-a-lows's exceptions. FX1-A-13
+  adds the column `leases.realm` and FX1-A-16's up-only counter adds
+  `accounts.links_n`; `server/test/privacy.test.mjs:29` fails on a stored
+  column `privacy.json` does not declare, and `declarations.md` is
+  generated from it (`node server/src/privacy.mjs --write`). No task in
+  flight owns either file. Default: the exceptions are granted; FX1
+  commits the two declarations in one commit named FX1-R24 and marks
+  ready. Copied in cycle 173. **Answered** by the lead in cycle 173:
+  granted (the default). Both paths are in FX1-8's `exceptions` in the
+  backlog; `owners.py claims` passes.
+
 - **FX2-R3** (from FX2, 24 November 2026; due 24 November 07:15Z;
   blocking): grant `server/test/setup.mjs` (owned by the lead, no task in
   flight) to FX2-10-curated-woven-law. SIM-12's fix makes `problems()`
@@ -1653,6 +1667,34 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   `server/test/fix_fx1_audit_tools*`; FX3 takes it). The candidate of
   FX3-7 and FX2-10 passed the full checks with every proof green, so the
   failure needs a fresh tree, as FX2 says.
+- **FX1-R25** (from FX1, 24 November 2026 05:49Z; due 24 November 21:00Z;
+  not blocking): FX1-A-17's residual. `weaving.mjs` now records
+  `codex.woven_at` at the weave's finish time and drops it for a weave
+  taken out before it finishes, but `mastery()` (`server/src/codex.mjs:71`)
+  and the profile (`server/src/profile.mjs:162`) count `woven_at != null`,
+  so a step shows while its weave is still unfinished. Comparing
+  `woven_at` with the time (`woven_at <= now`) in both would show it only
+  once earned. Files: `server/src/codex.mjs`, `server/src/profile.mjs`.
+  Default: left as is; a later task may compare `woven_at` with the time.
+  Copied in cycle 174. **Answered** by the lead in cycle 174: not the
+  default. A step shown before it is earned is the rest of a confirmed
+  defect, and bugs come first, so the lead seeds FX1-13-codex-woven-at for
+  FX1 (it owns `server/src/codex.mjs`, `server/src/profile.mjs` and
+  `server/test/fix_fx1_codex_woven*`; deps FX1-8-server-a-lows). FX1 is
+  otherwise waiting on FX4-7 for FX1-10.
+- **FX1-R26** (from FX1, 24 November 2026 05:58Z; due 24 November 21:00Z;
+  not blocking): the same defect as FX2-R4. FX1-T-11's proof
+  (`server/test/fix_fx1_audit_tools_proofs.mjs`) parses the last line of
+  stdout and stderr, and `tools/check_document.py:505`'s docstring prints
+  a SyntaxWarning (invalid escape `\d`) when no `.pyc` is cached, so the
+  proof reads as fixed. Files: the proofs file, `tools/check_document.py`.
+  Default: a small fix task after the open FX tasks. Copied in cycle 174.
+  **Answered** by the lead in cycle 174: the `py()` half is fixed by
+  FX1-9-tools-gate (FX2-R4's answer of cycle 172), merged this cycle:
+  `py()` parses stdout only. The docstring half is added to
+  FX1-11-tools-docs's `done_when`, since FX1-11 owns
+  `tools/check_document.py`: the docstring becomes a raw string, so
+  compiling the file prints no warning.
 
 - **AD-R46** (from AD, 17 November 2026 02:58Z; due 19 November 02:58Z;
   not blocking): AD's preview of P2-S1-result-6 (S1-R35) at 16515088.

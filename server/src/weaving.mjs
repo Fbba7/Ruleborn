@@ -229,8 +229,12 @@ export class Weaving {
          ON CONFLICT (owner, realm, slot) DO UPDATE SET law = excluded.law, tier = excluded.tier,
            ready_at = excluded.ready_at, rests_until = 0`)
         .run(account, realm, slot, law, tier, now + facts.WEAVE_MINUTES[tier - 1] * MINUTE);
-      // §18.5: a law woven is a step on its school's mastery track.
-      this.service.codex.woven(account, law, now);
+      // §18.5: a law woven is a step on its school's mastery track, when its
+      // weaving finishes (FX1-A-17); a law swapped out before its weaving
+      // finished was never woven.
+      this.service.codex.woven(account, law, now + facts.WEAVE_MINUTES[tier - 1] * MINUTE);
+      this.unearned(account, law, now);
+      if (here?.law) this.unearned(account, here.law, now);
       this.service.book(account, "aether", -cost,
         `${LAWS[law].name} woven in ${realm === CROWN ? "the crown" : realm} (5.6)`, now);
       return this.done(account, false, view);
@@ -275,8 +279,19 @@ export class Weaving {
       this.db.prepare(
         "UPDATE law_slots SET law = NULL, tier = NULL, ready_at = NULL, rests_until = ? WHERE owner = ? AND realm = ? AND slot = ?")
         .run(now + facts.SLOT_REST_MINUTES * MINUTE, account, realm, slot);
+      this.unearned(account, here.law, now);
       return this.done(account, false, view);
     });
+  }
+
+  /** FX1-A-17: a mastery step not yet earned, its weaving unfinished, moves
+   *  to the soonest finish of `law`'s weaves still in a slot, or goes with
+   *  the last of them taken out. A step earned stays earned. */
+  unearned(account, law, now) {
+    this.db.prepare(
+      `UPDATE codex SET woven_at = (SELECT MIN(ready_at) FROM law_slots WHERE owner = :a AND law = :l)
+        WHERE owner = :a AND law = :l AND woven_at > :now`)
+      .run({ a: account, l: law, now });
   }
 
   /** §23.2's Harmony view: for each realm, the laws working there — its
