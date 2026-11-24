@@ -678,6 +678,7 @@
       "done_when": [
         "each finding named in the title: its proof's stillOpen entry in server/test/fix_fx1_audit_tools_proofs.mjs (wrapped by fix_fx1_audit_tools.test.mjs) moved into a plain test under server/test/fix_fx1_tools_gate*, committed on its own before its fix and failing on current main, its failure output quoted in the handoff; then the smallest fix, following the entry's Fix line in tools.md unless the handoff says why not; the commit names the finding id",
         "FX1-T-03: record writes the run's real state and exit; agent-protocol.md's reuse rule also requires the pre-check's state PASS (summary 'All checks passed.'), not only exit 0",
+        "FX2-R4: the py() helper of server/test/fix_fx1_audit_tools_proofs.mjs parses stdout only, so a SyntaxWarning on stderr (tools/check_document.py:505's '\\d' with no .pyc cached) no longer makes FX1-T-11's proof read as fixed; the test that shows it fails first, in a tree with no tools/__pycache__",
         "each fixed entry's State in docs/security/audit-2026-11/tools.md reads 'fixed (<task_id>)'",
         "no existing test is skipped, disabled or loosened; a test whose expectation encoded the defect is corrected and named in the handoff",
         "cd server && npm test passes",
