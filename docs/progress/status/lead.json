@@ -1,9 +1,16 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-23T23:20:00Z",
+  "updated_at": "2026-11-24T01:24:37Z",
   "expected_next_update_by": "2026-11-24T02:20:00Z",
   "cycle": 168,
-  "merging": null,
+  "merging": {
+    "candidate_sha": "cf2e402ba5cd2f3e1d179ee886cc33c53dbd9d02",
+    "task_ids": [
+      "FX2-8-audit-b-lows"
+    ],
+    "started_at": "2026-11-24T01:24:37Z",
+    "expires_at": "2026-11-24T02:24:37Z"
+  },
   "last_merged": {
     "task_id": "FX4-3-replay-shop-nav",
     "sha": "60a905ab"
