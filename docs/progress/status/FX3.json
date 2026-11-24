@@ -7,13 +7,13 @@
   "task_id": "FX3-7-audit-client-2",
   "task_state": "working",
   "claimed_at": "2026-11-24T03:02:00Z",
-  "lease_until": "2026-11-24T06:02:00Z",
-  "updated_at": "2026-11-24T04:22:00Z",
-  "expected_next_update_by": "2026-11-24T05:22:00Z",
+  "lease_until": "2026-11-24T07:01:00Z",
+  "updated_at": "2026-11-24T05:01:00Z",
+  "expected_next_update_by": "2026-11-24T06:01:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "8c6391d0",
-    "next_step": "client/status.py 486 of 486 and server npm test 631 of 631 pass at 044e6d88; run.gd kept within the 1000-line lint limit (9b65c40e). Next: check_all.sh (running), then the recorded pre-check, owners.py diff, ready"
+    "last_green_sha": "9b65c40e",
+    "next_step": "check_all.sh passed locally at 9b65c40e; owners.py diff passes; recorded pre-check of 1ecd419f running. Next: record, ready"
   },
   "precheck": null,
   "gate_request": null,
@@ -22,5 +22,5 @@
   "acks": [],
   "requests": [],
   "answers": [],
-  "next_step": "client/status.py 486 of 486 and server npm test 631 of 631 pass at 044e6d88; run.gd kept within the 1000-line lint limit (9b65c40e). Next: check_all.sh (running), then the recorded pre-check, owners.py diff, ready"
+  "next_step": "check_all.sh passed locally at 9b65c40e; owners.py diff passes; recorded pre-check of 1ecd419f running. Next: record, ready"
 }
