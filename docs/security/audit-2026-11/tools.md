@@ -43,19 +43,19 @@ requests are at the end, grouped by area, and in
 | FX1-T-10 | Medium | check_findings_fresh.py, check_docs_consistency.py | fixed (FX1-11-tools-docs) |
 | FX1-T-17 | Medium | check_audit_ui.py, validate_content.py | fixed (FX1-11-tools-docs) |
 | FX1-T-08 | Medium | tools/check_ci.py | fixed (FX1-9-tools-gate) |
-| FX1-T-07 | Medium | tools/ui_bake/check_screens.py | open: request FX1-R23 |
+| FX1-T-07 | Medium | tools/ui_bake/check_screens.py | fixed (FX1-12-tools-ui) |
 | FX1-T-01 | Medium | server/status.py | fixed (FX1-10-tools-contract) |
 | FX1-T-02 | Medium | server/status.py | fixed (FX1-10-tools-contract) |
 | FX1-T-11 | Medium, latent | tools/check_document.py | fixed (FX1-11-tools-docs) |
 | FX1-T-05 | Low | tools/coord/owners.py | fixed (FX1-9-tools-gate) |
-| FX1-T-06 | Low | art/ui/board/build_tokens.mjs | open: request FX1-R23 |
+| FX1-T-06 | Low | art/ui/board/build_tokens.mjs | fixed (FX1-12-tools-ui) |
 | FX1-T-12 | Low | tools/check_docs_consistency.py | fixed (FX1-11-tools-docs) |
-| FX1-T-13 | Low | tools/ui_bake/bake.js | open: request FX1-R23 |
-| FX1-T-14 | Low | tools/ui_bake/check_screens.py | open: request FX1-R23 |
-| FX1-T-15 | Low | tools/ui_bake/check_screens.py | open: request FX1-R23 |
-| FX1-T-16 | Low | tools/ui_bake/budget_shots.py | open: request FX1-R23 |
-| FX1-T-18 | Low | tools/ui_gate/golden.py | open: request FX1-R23 |
-| FX1-T-19 | Low | tools/ui_gate/sheet.py | open: request FX1-R23 |
+| FX1-T-13 | Low | tools/ui_bake/bake.js | fixed (FX1-12-tools-ui) |
+| FX1-T-14 | Low | tools/ui_bake/check_screens.py | fixed (FX1-12-tools-ui) |
+| FX1-T-15 | Low | tools/ui_bake/check_screens.py | fixed (FX1-12-tools-ui) |
+| FX1-T-16 | Low | tools/ui_bake/budget_shots.py | fixed (FX1-12-tools-ui) |
+| FX1-T-18 | Low | tools/ui_gate/golden.py | fixed (FX1-12-tools-ui) |
+| FX1-T-19 | Low | tools/ui_gate/sheet.py | fixed (FX1-12-tools-ui) |
 
 ## Confirmed
 
@@ -265,6 +265,8 @@ requests are at the end, grouped by area, and in
 
 ### FX1-T-07: check_screens counts no texture for single quotes or an upper-case extension
 
+- **State:** fixed (FX1-12-tools-ui). The proof is now a plain test in
+  `server/test/fix_fx1_tools_ui.test.mjs`.
 - **Priority / category:** Medium, UI budget (chrome outside the kit goes
   uncounted).
 - **Where:** `tools/ui_bake/check_screens.py:46`, `IMAGE_LOAD`:
@@ -359,6 +361,8 @@ requests are at the end, grouped by area, and in
 
 ### FX1-T-06: build_tokens.mjs `--check` passes anything under a path with a space
 
+- **State:** fixed (FX1-12-tools-ui). The proof is now a plain test in
+  `server/test/fix_fx1_tools_ui.test.mjs`.
 - **Priority / category:** Low, art script (a stale `tokens.css` passes).
 - **Where:** `art/ui/board/build_tokens.mjs:93`:
   `import.meta.url === \`file://${process.argv[1]}\``. The URL is
@@ -388,6 +392,11 @@ requests are at the end, grouped by area, and in
 
 ### FX1-T-13: bake.js paginate makes pages taller than MAX_SIDE
 
+- **State:** fixed (FX1-12-tools-ui). The proof is now a plain test in
+  `server/test/fix_fx1_tools_ui.test.mjs`. bake.js is one of
+  the bake's sources, so `client/ui/art/kit.json`, `motion.json` and the
+  kit fixture were rebaked: only their `sources_hash` moved, the atlases are
+  byte for byte as before.
 - **Priority / category:** Low, UI bake (a valid family is refused).
 - **Where:** `tools/ui_bake/bake.js` `paginate()` (line 476 on). A shelf is
   added to a page when it fits the width; the page's height is then rounded
@@ -402,6 +411,8 @@ requests are at the end, grouped by area, and in
 
 ### FX1-T-14: check_screens `--root` passes a folder with no screens
 
+- **State:** fixed (FX1-12-tools-ui). The proof is now a plain test in
+  `server/test/fix_fx1_tools_ui.test.mjs`.
 - **Priority / category:** Low, UI budget.
 - **Where:** `tools/ui_bake/check_screens.py:315-322`, `main()`: `--root`
   with a wrong path (or an empty checkout) counts nothing and passes.
@@ -413,6 +424,8 @@ requests are at the end, grouped by area, and in
 
 ### FX1-T-15: check_screens excuses a fill cleared on one branch only
 
+- **State:** fixed (FX1-12-tools-ui). The proof is now a plain test in
+  `server/test/fix_fx1_tools_ui.test.mjs`.
 - **Priority / category:** Low, UI budget.
 - **Where:** `tools/ui_bake/check_screens.py:116-124`, `_clear_later()`:
   any later `name.draw_center = false` in the function excuses the fill,
@@ -426,6 +439,8 @@ requests are at the end, grouped by area, and in
 
 ### FX1-T-16: budget_shots `--record` cannot record a new screen
 
+- **State:** fixed (FX1-12-tools-ui). The proof is now a plain test in
+  `server/test/fix_fx1_tools_ui.test.mjs`.
 - **Priority / category:** Low, UI budget (the documented path is blocked).
 - **Where:** `tools/ui_bake/budget_shots.py:172-186`. A screen with no
   figures gets "no recorded figures; run --record" in `failures`, and
@@ -441,6 +456,8 @@ requests are at the end, grouped by area, and in
 
 ### FX1-T-18: golden.py passes when labels-blind.md is missing
 
+- **State:** fixed (FX1-12-tools-ui). The proof is now a plain test in
+  `server/test/fix_fx1_tools_ui.test.mjs`.
 - **Priority / category:** Low, UI gate (the blind labels' check is skipped).
 - **Where:** `tools/ui_gate/golden.py:317`:
   `blind_text=BLIND.read_text() if BLIND.exists() else None`.
@@ -454,6 +471,8 @@ requests are at the end, grouped by area, and in
 
 ### FX1-T-19: sheet.py `crops` crashes on a name with a slash
 
+- **State:** fixed (FX1-12-tools-ui). The proof is now a plain test in
+  `server/test/fix_fx1_tools_ui.test.mjs`.
 - **Priority / category:** Low, UI gate (a crash, not a silent pass).
 - **Where:** `tools/ui_gate/sheet.py:288`, `im.save(out / f"{name}.png")`.
 - **Input:** `sheet.py crops art/ui/board/board.shot.json <out>`. Some of
@@ -543,7 +562,7 @@ test that replaces the proof's `stillOpen` entry.
   four): FX1-T-10, FX1-T-17, FX1-T-11, FX1-T-12. Files: `tools/check_findings_fresh.py`,
   `tools/check_docs_consistency.py`, `tools/check_audit_ui.py`,
   `tools/validate_content.py`, `tools/check_document.py`.
-- **FX1-R23, the UI tools (after the UI resumes, or with it):** FX1-T-07,
+- **FX1-R23, the UI tools** (done: FX1-12-tools-ui fixed all eight): FX1-T-07,
   FX1-T-06, FX1-T-13, FX1-T-14, FX1-T-15, FX1-T-16, FX1-T-18, FX1-T-19.
   Files: `tools/ui_bake/`, `tools/ui_gate/`,
   `art/ui/board/build_tokens.mjs`.

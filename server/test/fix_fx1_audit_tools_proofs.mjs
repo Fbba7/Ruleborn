@@ -33,7 +33,7 @@ export function scratch(files = {}, prefix = "fx1-audit-tools-") {
 }
 
 /** Copy the repository's `rel` (a file or a folder) into `dir`. */
-function copyIn(dir, rel) {
+export function copyIn(dir, rel) {
   mkdirSync(dirname(join(dir, rel)), { recursive: true });
   cpSync(join(REPO, rel), join(dir, rel), { recursive: true });
 }
@@ -98,111 +98,8 @@ export function checkRun(cmd, settleMs = 0) {
 }
 
 
-export const PROOFS = [
-  {
-    id: "FX1-T-06",
-    title: "build_tokens.mjs --check fails on a stale tokens.css under a path with a space",
-    proof() {
-      const dir = scratch({}, "fx1 audit tools ");
-      copyIn(dir, "art/ui/board/build_tokens.mjs");
-      copyIn(dir, "client/ui/tokens.json");
-      writeFileSync(join(dir, "art/ui/board/tokens.css"), "junk\n");
-      const r = run("node", [join(dir, "art/ui/board/build_tokens.mjs"), "--check"], dir);
-      assert.notEqual(r.code, 0, `--check passed a junk tokens.css:\n${r.out}`);
-    },
-  },
-  {
-    id: "FX1-T-07",
-    title: "check_screens.py counts a texture loaded with single quotes or an upper-case extension",
-    proof() {
-      const r = py(`
-import check_screens as c
-print(json.dumps([len(c.count_file_text(t)["texture"]) for t in (
-  "var t = load('res://world/a.png')\\n", 'var t = preload("res://world/a.PNG")\\n')]))`, ["tools/ui_bake"]);
-      assert.deepEqual(r.value, [1, 1], `textures uncounted: ${r.out}`);
-    },
-  },
-  {
-    id: "FX1-T-13",
-    title: "bake.js paginate keeps every page within MAX_SIDE",
-    proof() {
-      const require = createRequire(import.meta.url);
-      const bake = require(join(TOOLS, "ui_bake", "bake.js"));
-      const pages = bake.paginate([{ name: "a", w: 2000, h: 1021 }, { name: "b", w: 2000, h: 1020 },
-        { name: "c", w: 2000, h: 100 }], 1024);
-      const heights = pages.map((p) => p.height);
-      assert.ok(heights.every((h) => h <= 2048), `page heights ${JSON.stringify(heights)}`);
-    },
-  },
-  {
-    id: "FX1-T-14",
-    title: "check_screens.py --root fails on a folder with no screens in it",
-    proof() {
-      const r = py(`
-import io, contextlib, tempfile, check_screens as c
-with contextlib.redirect_stdout(io.StringIO()):
-    code = c.main(["--root", tempfile.mkdtemp()])
-print(json.dumps(code))`, ["tools/ui_bake"]);
-      assert.notEqual(r.value, 0, `an empty --root passed: ${r.out}`);
-    },
-  },
-  {
-    id: "FX1-T-15",
-    title: "check_screens.py counts a fill that is cleared only on one branch",
-    proof() {
-      const r = py(`
-import check_screens as c
-text = "func f():\\n\\tvar box := StyleBoxFlat.new()\\n\\tif flag:\\n\\t\\tbox.draw_center = false\\n"
-print(json.dumps(len(c.count_file_text(text)["fill"])))`, ["tools/ui_bake"]);
-      assert.equal(r.value, 1, `a fill cleared inside an if went uncounted: ${r.out}`);
-    },
-  },
-  {
-    id: "FX1-T-16",
-    title: "budget_shots.py --record records a screen that has no figures yet",
-    proof() {
-      const r = py(`
-import io, contextlib, budget_shots as b
-data = {"shots": {"limits": {"draw_calls_below": 150, "texture_bytes_max": 25165824, "contrast_floor": 4.5},
-        "screens": {"home": {"script": "client/tests/shots/home.gd"}, "newscreen": {"script": "client/tests/shots/new.gd"}},
-        "recorded": {f"home/{m}": {"draw_calls": 50, "texture_bytes": 100, "words_below": 0} for m in b.MODES}}}
-b.load_budgets = lambda: data
-written = []
-b.write_budgets = lambda d: written.append(json.loads(json.dumps(d)))
-b.subprocess.run = lambda *a, **k: None
-got = {"draw_calls": 40, "texture_bytes": 100, "words_below": 0, "words": 10, "font_cache_bytes": 0, "worst_ratio": 7.0, "below": []}
-b.shoot = lambda key, *a: (dict(got), "log")
-with contextlib.redirect_stdout(io.StringIO()) as out:
-    rc = b.main(["--record"])
-print(out.getvalue(), file=sys.stderr)
-print(json.dumps([rc, bool(written) and any(k.startswith("newscreen/") for k in written[-1]["shots"]["recorded"])]))`, ["tools/ui_bake"]);
-      assert.deepEqual(r.value, [0, true], `--record refused a new screen: ${r.out}`);
-    },
-  },
-  {
-    id: "FX1-T-18",
-    title: "golden.py fails when labels-blind.md is missing",
-    proof() {
-      const r = py(`
-import io, contextlib, pathlib, golden as g
-g.BLIND = pathlib.Path("/nonexistent/labels-blind.md")
-try:
-    with contextlib.redirect_stdout(io.StringIO()):
-        rc = g.check()
-except SystemExit as e:
-    rc = e.code
-print(json.dumps(rc if isinstance(rc, int) else (0 if rc is None else 1)))`, ["tools/ui_gate"]);
-      assert.notEqual(r.value, 0, `golden passed without labels-blind.md: ${r.out}`);
-    },
-  },
-  {
-    id: "FX1-T-19",
-    title: "sheet.py crops writes a crop for a name with a slash in it",
-    proof() {
-      const out = scratch();
-      const r = run("python3", ["-B", "-I", join(TOOLS, "ui_gate", "sheet.py"), "crops",
-        join(REPO, "art/ui/board/board.shot.json"), out], out);
-      assert.equal(r.code, 0, `crops failed:\n${r.out.slice(-600)}`);
-    },
-  },
-];
+// Every finding of tools.md is now fixed, and its proof is a plain test:
+// FX1-9-tools-gate, FX1-10-tools-contract, FX1-11-tools-docs and
+// FX1-12-tools-ui (fix_fx1_tools_gate, _contract, _docs and _ui.test.mjs).
+// A new finding's proof goes here, wrapped in stillOpen, until it is fixed.
+export const PROOFS = [];
