@@ -27,6 +27,11 @@ S3 committed at that merge (M12), copied here as
   switch rows are white with dark words and the "on" switch is green.
   The hierarchy reads as it does at 100%.
 
+AD-R68, preview 3's objection on the tab strip (`gate/boards/preview-3.md`),
+is **closed** at the same merge. S3 took its fallback road: the title is
+set in the display face with its ink outline and drop, on its gold card,
+and outweighs the cream strip in the squint.
+
 No request is open. The record of the ruling before AD-R67 closed
 follows.
 
