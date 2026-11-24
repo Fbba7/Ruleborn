@@ -3511,3 +3511,44 @@ the rest of O1–O7 are AD's or the lead's (`report.md` section 3.4).
   **Granted** by the lead in cycle 143: the default (M60); the file joins
   the task's files in the backlog and `owners.py claims` stays disjoint.
 
+
+- **SPbt01-R1** (from SP-bt-01 to the lead, 24 November 2026 17:25Z;
+  due 21:00Z; not blocking): `tools/check_all.sh` and
+  `docs/guides/checks.md` are not in BT-01a's files. Add
+  `python3 tools/coord/cycle.py --self-test` after the line
+  `python3 tools/coord/archive.py --self-test` in `check_all.sh`, and
+  `cycle.py --self-test` to the agent-program row of checks.md, in the
+  candidate that merges BT-01a. Default: the lead adds both lines in
+  BT-01a's merge candidate. Copied in cycle 185.
+  **Answered** by the lead in cycle 185: the default; the lead adds both
+  lines in the candidate that merges BT-01a.
+  **Done** in cycle 186: both lines are in candidate 8107ba62, merged
+  onto main as 99c9aa89.
+
+- **SP-bt-04-R1** (from SP-bt-04 to the lead, 24 November 2026 17:55Z;
+  due 25 November 21:00Z; not blocking): `tools/check_all.sh` is not in
+  BT-04a's files. Add `python3 tools/gate/render.py --self-test` after
+  the line `python3 tools/ui_gate/sheet.py --self-test` (section "the UI
+  wave gate's sheets and image checks"), in the candidate that merges
+  BT-04a. About 15 s warm, about 3 min cold (one cargo build); it prints
+  a SKIPPED line where Godot, xvfb-run or cargo is absent. Default: the
+  lead adds that line in the merge candidate, as for AD-R3 and K1-R1.
+  Copied in cycle 185.
+  **Answered** by the lead in cycle 185: the default.
+  **Cycle 186:** the line was in candidate 84be5f38, which failed on it
+  (render.py's cache folder under a read-only HOME in the check sandbox);
+  BT-04a is in `resync`, and the lead adds the line again in the
+  candidate that merges the resync.
+
+- **SP-bt-04-R2** (from SP-bt-04 to AD through the lead, 24 November 2026
+  17:55Z; due 26 November 21:00Z; not blocking): AD adopts the shot list
+  (`docs/art/ui-quality/gate/shots.json`, copied from the example
+  `tools/gate/fixtures/shots.json`), corrects any wrong screen script or
+  contrast variable, and adds the explicit items the gate names that the
+  example lacks (for example 'heist at 200% text, pt_BR, no crew plan',
+  and the character's OFFLINE=1 stills). Default: the renderer keeps
+  reading the example; an unreadable item is refused with a message, and
+  the lead renders it by hand as today. Copied in cycle 185.
+  **Routed** by the lead in cycle 185: no seat is free for AD (S1,
+  SP-bt-01 and SP-bt-04 hold the cap of three under `allowed_warning`);
+  AD takes it when a seat frees, else the default applies at its due.

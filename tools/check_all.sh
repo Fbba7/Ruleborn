@@ -155,6 +155,7 @@ python3 tools/check_ci.py
 python3 tools/coord/owners.py --self-test
 python3 tools/coord/cycle_needed.py --self-test
 python3 tools/coord/archive.py --self-test
+python3 tools/coord/cycle.py --self-test
 if [ -f docs/progress/backlog.json ]; then python3 tools/coord/owners.py claims; fi
 
 echo
