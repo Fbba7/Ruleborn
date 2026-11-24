@@ -1,7 +1,7 @@
 # FX4 client fixer: progress
 
 - Status: Green. FX4-6-device-replay-cap: the fail-first ext tests, the fix,
-  and CLI-23 proven and fixed; the pre-check on 9c66e15c is in `status/FX4.json`.
+  and CLI-23 proven and fixed; ready at 484297b1 (main merged), its pre-check passed.
 - Progress: 5 of 8 tasks merged (FX4-1 to FX4-5); FX4-6 in this session; no
   gate items (fix wave).
 - Done: the ext refuses a replay over `MAX_HEIST_BYTES`, both recorders,
@@ -17,12 +17,12 @@
 | FX4-3-replay-shop-nav: RB-43, RB-20, RB-58, RB-59 | 3.5 | merged | `8be82e6f` on main |
 | FX4-4-audit-client: the client audit | 4 | merged | `d5c16216` on main |
 | FX4-5-problem-strings: FX3-R1's two problem rows | 0.75 | merged | `d3183782` on main |
-| FX4-6-device-replay-cap: SIM-2 and FX3-R3 on the device, CLI-23 | 1.0 | ready | `9c66e15c`, pre-check in the status file |
+| FX4-6-device-replay-cap: SIM-2 and FX3-R3 on the device, CLI-23 | 1.0 | ready | `484297b1`, pre-check passed |
 
 ## Handoff
 
-- Last verified commit: 9c66e15c, the ready_sha in `status/FX4.json` once
-  its pre-check passed.
+- Last verified commit: 484297b1, the ready_sha in `status/FX4.json`; its
+  pre-check passed (06:31:21Z, "All checks passed.").
 - Commits, in order:
   - `e43b0b73`: the tests, on their own. `client/ext/src/tests.rs` (six
     cargo tests, `#[cfg(test)] mod tests;` in `lib.rs`), and `record()`'s
@@ -32,6 +32,8 @@
   - `d72bfb59`: the fix (SIM-2, FX3-R3, CLI-23).
   - `710ed402`: main merged (lead cycle 171's two commits).
   - `9c66e15c`: `start_planned`'s `ticks as u32` (CLI-23, below).
+  - `484297b1`: main merged again (lead cycle 172, `844882c3`); clean,
+    no conflict.
 - The fix, in `client/ext/src/lib.rs`:
   - `recorded()` gives no bytes when either recorder's replay is over
     `sim::replay::MAX_HEIST_BYTES` (the sim's own constant, not a copy),
@@ -45,7 +47,8 @@
     length does not depend on the checksums' values. The screen
     (`heist_screen.gd` lines 510, 518 and 831) ignores `give`'s result, so
     such a tap is dropped silently, as a tap after the clock already is.
-    FX4-R2 asks the lead about a hint on screen.
+    FX4-R2 asked the lead about a hint on screen; the lead answered the
+    default in cycle 172 (no follow-up).
 - CLI-23: **proven** with a cargo test, then fixed.
   - On main, `give` took an actor of 256, -1 or 16 (the replay cannot carry
     16, so the recorder dropped it), a kind of 256 or -256, and an x or y
@@ -104,10 +107,12 @@ After `d72bfb59`, all six pass.
 - `python3 client/status.py` on `d72bfb59`: 471 of 471 passed.
 - `python3 tools/coord/owners.py diff FX4-6-device-replay-cap
   origin/claude/videogame-project-analysis-ewkkk2 710ed402`: every changed
-  path is inside its files. It was run again on `9c66e15c`; the result is
-  in the status file.
-- The pre-check (`bash tools/run_checks.sh`, the full checks on the merge
-  of current main) is recorded in `status/FX4.json` (`precheck`).
+  path is inside its files. It was run again on `9c66e15c` and on
+  `484297b1`, with the same result.
+- The pre-check (`bash tools/run_checks.sh`, the full checks) passed on
+  `9c66e15c` (05:52:43Z) and again on the merge of current main,
+  `484297b1` (06:31:21Z, "All checks passed."), recorded in
+  `status/FX4.json` (`precheck`).
 - `client/status.py` rewrites `client/status.json`, and main's copy is
   stale (it lacks AD-R52 and the CLI rows). That file is not FX4-6's, so
   it was put back and not committed.

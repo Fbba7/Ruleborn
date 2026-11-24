@@ -3,27 +3,27 @@
   "role": "FX4",
   "branch": "claude/fix-client",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "FX4-6-device-replay-cap",
-  "task_state": "in_progress",
+  "task_state": "ready",
   "claimed_at": "2026-11-24T05:00:00Z",
   "lease_until": "2026-11-24T08:00:00Z",
-  "updated_at": "2026-11-24T05:20:00Z",
-  "expected_next_update_by": "2026-11-24T06:05:00Z",
+  "updated_at": "2026-11-24T06:32:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "9c66e15c",
-    "next_step": "pre-check running on 9c66e15c (main merged at 710ed402); then record and set ready",
-    "at": "2026-11-24T05:20:00Z"
+    "last_green_sha": "484297b1",
+    "next_step": "ready at 484297b1 (main 844882c3 merged, pre-check passed); the lead merges FX4-6",
+    "at": "2026-11-24T06:32:00Z"
   },
   "precheck": {
-    "sha": "9c66e15c5df56b33de98e68285e54c0004fdae33",
+    "sha": "484297b1d938186897cc749f819cb9aad9697f92",
     "exit": 0,
-    "finished_at": "2026-11-24T05:52:43Z",
+    "finished_at": "2026-11-24T06:31:21Z",
     "summary": "All checks passed."
   },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "484297b1d938186897cc749f819cb9aad9697f92",
   "stop_at": "2026-11-24T21:00:00Z",
   "acks": [],
   "requests": [
@@ -58,5 +58,12 @@
       "escalate_to": "lead"
     }
   ],
-  "answers": []
+  "answers": [
+    {
+      "id": "FX4-R2",
+      "by": "lead",
+      "answer": "the default (lead cycle 172): no follow-up; a tap past the limit is dropped silently",
+      "at": "2026-11-24"
+    }
+  ]
 }
