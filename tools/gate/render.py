@@ -2,10 +2,10 @@
 """The gate's stills, rendered from the shot list at a given commit (BT-04a).
 
     render.py still "<item>" --sha <sha> --out <dir> [--list <shots.json>]
-        Check <sha> out in a temporary worktree, build what the client needs
-        there, and render each still of <item> the way the lead does by hand:
-        FIT=1 <the item's settings> bash tools/render/shoot.sh <script> <png>,
-        run from that worktree. Beside each still goes its grayscale at
+        Export <sha>'s tree (git archive) into a temporary folder, build what
+        the client needs there, and render each still of <item> the way the
+        lead does by hand: FIT=1 <the item's settings> bash
+        tools/render/shoot.sh <script> <png>, run from that folder. Beside each still goes its grayscale at
         960 px on the long edge (tools/ui_gate/sheet.py still --gray), and in
         <dir> a stills.json naming the sha, the list, each still's settings
         and whether its run printed "fit ok". Exits 1 if a still is missing
@@ -44,8 +44,13 @@ The shot list (JSON; tools/gate/fixtures/shots.json is the example):
 Builds are cached under ~/.cache/ruleborn/gate (or $RULEBORN_GATE_CACHE):
 the simulation's GDExtension by the git trees of sim/ and client/ext/, and
 cargo's target directory is shared, so only a commit that changes the
-simulation compiles anything. Godot's import cache is seeded from this
-checkout's client/.godot when it has one.
+simulation compiles anything. Where that folder cannot be created or written
+(a read-only HOME, as under tools/run_checks.sh's sandbox), the cache goes to
+<temp>/ruleborn-gate instead (TMPDIR, else the system's temporary folder),
+and the render says so on stderr. Nothing is written to the repository's
+.git: the commit is exported, not checked out as a worktree, so a read-only
+.git renders too. Godot's import cache is seeded from this checkout's
+client/.godot when it has one.
 """
 import argparse
 import hashlib
@@ -166,10 +171,48 @@ def git(*args, cwd=ROOT, check=True):
     return subprocess.run(["git", *args], cwd=cwd, check=check, capture_output=True, text=True).stdout.strip()
 
 
+_cache = None
+
+
+def _writable(d):
+    """None if folder d can be created and written, else why not."""
+    try:
+        d.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryFile(dir=d):
+            pass
+    except OSError as e:
+        return e.strerror or str(e)
+    return None
+
+
 def cache_dir():
-    d = pathlib.Path(os.environ.get("RULEBORN_GATE_CACHE", pathlib.Path.home() / ".cache" / "ruleborn" / "gate"))
-    d.mkdir(parents=True, exist_ok=True)
-    return d
+    """The build cache: $RULEBORN_GATE_CACHE or ~/.cache/ruleborn/gate, else <temp>/ruleborn-gate."""
+    global _cache
+    if _cache is None:
+        want = pathlib.Path(os.environ.get("RULEBORN_GATE_CACHE")
+                            or pathlib.Path.home() / ".cache" / "ruleborn" / "gate")
+        why = _writable(want)
+        if why is None:
+            _cache = want
+        else:
+            alt = pathlib.Path(tempfile.gettempdir()) / "ruleborn-gate"
+            alt_why = _writable(alt)
+            if alt_why is not None:
+                raise RuntimeError(f"no build cache: {want}: {why}; {alt}: {alt_why}")
+            print(f"render.py: the build cache is {alt}: {want} cannot be written ({why})", file=sys.stderr)
+            _cache = alt
+    return _cache
+
+
+def export(sha, dest):
+    """<sha>'s tree into folder dest, reading the repository's objects only."""
+    arc = subprocess.Popen(["git", "archive", "--format=tar", sha], cwd=ROOT,
+                           stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    tar = subprocess.run(["tar", "-x", "-C", str(dest)], stdin=arc.stdout, capture_output=True, text=True)
+    arc.stdout.close()
+    err = arc.stderr.read().decode(errors="replace")
+    if arc.wait() or tar.returncode:
+        raise RuntimeError(f"could not export {sha[:8]}: {(err + tar.stderr).strip()}")
 
 
 def godot_path():
@@ -188,7 +231,7 @@ def godot_can_run():
 
 
 def build(wt, sha, log):
-    """What client/build.sh makes, in the worktree, from the caches."""
+    """What client/build.sh makes, in the exported tree, from the caches."""
     trees = "\n".join(git("rev-parse", f"{sha}:{p}") for p in ("sim", "client/ext"))
     key = hashlib.sha256(trees.encode()).hexdigest()[:16]
     lib = cache_dir() / "lib" / f"{key}.so"
@@ -230,7 +273,7 @@ def render(item, sha, out, list_path=None, keep=False):
     stills, ok = [], True
     with open(out / "render.log", "w") as log:
         try:
-            git("worktree", "add", "--detach", "--force", str(wt), full)
+            export(full, wt)
             key = build(wt, full, log)
             for run in runs:
                 if not (wt / run["script"]).is_file():
@@ -262,10 +305,10 @@ def render(item, sha, out, list_path=None, keep=False):
                     ok = False
                 stills.append(rec)
         finally:
-            if not keep:
-                git("worktree", "remove", "--force", str(wt), check=False)
+            if keep:
+                print(f"render.py: kept the tree at {wt}", file=sys.stderr)
+            else:
                 shutil.rmtree(wt, ignore_errors=True)
-                git("worktree", "prune", check=False)
     manifest = {"item": item, "sha": full, "list": str(list_path.relative_to(ROOT)) if list_path.is_relative_to(ROOT) else str(list_path),
                 "list_sha256": hashlib.sha256(list_path.read_bytes()).hexdigest(),
                 "build": key, "ok": ok, "stills": stills}
@@ -319,6 +362,27 @@ def self_test():
                 pass
     print(f"render.py: the shot list's parser, {'FAIL' if failures else 'ok'}")
 
+    # The build cache falls back to the temporary folder when its own cannot
+    # be written (a read-only HOME under tools/run_checks.sh's sandbox).
+    global _cache
+    saved, saved_env = _cache, os.environ.get("RULEBORN_GATE_CACHE")
+    with tempfile.NamedTemporaryFile() as f:
+        try:
+            _cache = None
+            os.environ["RULEBORN_GATE_CACHE"] = str(pathlib.Path(f.name) / "gate")
+            d = cache_dir()
+            expect(d == pathlib.Path(tempfile.gettempdir()) / "ruleborn-gate" and _writable(d) is None,
+                   f"an unwritable cache falls back to the temporary folder: {d}")
+        except (OSError, RuntimeError) as e:
+            expect(False, f"an unwritable cache should fall back to the temporary folder: {e}")
+        finally:
+            _cache = saved
+            if saved_env is None:
+                os.environ.pop("RULEBORN_GATE_CACHE", None)
+            else:
+                os.environ["RULEBORN_GATE_CACHE"] = saved_env
+    print(f"render.py: the build cache's fallback, {'FAIL' if failures else 'ok'}")
+
     why = godot_can_run()
     if why:
         print(f"render.py: SKIPPED the fixture render: {why}")
@@ -342,7 +406,7 @@ def self_test():
             expect(len(np.unique(px[:, 0])) > 8, "the gray copy is blank")
         else:
             expect(False, f"no still: {s}")
-        expect(not [w for w in git("worktree", "list").splitlines() if "/gate-" in w], "a worktree was left behind")
+        expect(not list(cache_dir().glob(f"gate-{sha[:8]}-*")), "the exported tree was left behind")
     print(f"render.py: the fixture item at {sha[:8]}, {'FAIL' if failures else 'ok'}")
     return 1 if failures else 0
 
@@ -357,7 +421,7 @@ def main(argv):
     s.add_argument("--sha", required=True)
     s.add_argument("--out", required=True)
     s.add_argument("--list")
-    s.add_argument("--keep", action="store_true", help="keep the worktree, for debugging")
+    s.add_argument("--keep", action="store_true", help="keep the exported tree, for debugging")
     ls = sub.add_parser("list")
     ls.add_argument("--list")
     pl = sub.add_parser("plan")
