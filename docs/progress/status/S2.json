@@ -5,15 +5,18 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "P4-S2-home-purse",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-24T15:05:00Z",
   "lease_until": "2026-11-24T18:05:00Z",
-  "updated_at": "2026-11-24T15:05:00Z",
-  "expected_next_update_by": "2026-11-24T15:50:00Z",
-  "long_run": null,
+  "updated_at": "2026-11-24T15:35:00Z",
+  "expected_next_update_by": "2026-11-24T16:20:00Z",
+  "long_run": {
+    "log": "/tmp/check-ae1a7c1c261896ae00ae384662b48bda962d54a9.log",
+    "expected_end": "2026-11-24T16:10:00Z"
+  },
   "progress_marker": {
     "last_green_sha": "4e9114ac",
-    "next_step": "P4-S2-home-purse, reopened in lead cycle 181: merge main into 27846b7c, rerun the setup line, build.sh, fit_home.sh, check_screens and guard.sh on the merge, pre-check, then ready (gate at acb2239b: 'home at 100% text' Hierarchy 3/3, S2-R47 answered in cycle 151)."
+    "next_step": "P4-S2-home-purse: main 178be84 merged at ae1a7c1c (clean); setup line and build.sh exit 0; check_screens OK; owners.py diff passes. Running: the pre-check on ae1a7c1c and fit_home.sh; then guard.sh, record, ready."
   },
   "precheck": {
     "sha": "4e9114ac84279c77ca1735d1181ccfb280a52bcb",
@@ -737,5 +740,5 @@
     }
   ],
   "answers": [],
-  "next_step": "P4-S2-home-purse, reopened in lead cycle 181: merge main into 27846b7c, rerun the setup line, build.sh, fit_home.sh, check_screens and guard.sh on the merge, pre-check, then ready (gate at acb2239b: 'home at 100% text' Hierarchy 3/3, S2-R47 answered in cycle 151)."
+  "next_step": "P4-S2-home-purse: main 178be84 merged at ae1a7c1c (clean); setup line and build.sh exit 0; check_screens OK; owners.py diff passes. Running: the pre-check on ae1a7c1c and fit_home.sh; then guard.sh, record, ready."
 }
