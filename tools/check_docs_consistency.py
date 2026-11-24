@@ -652,9 +652,16 @@ def check_one_fact_home() -> None:
         except SyntaxError:
             continue                      # check_tools_parse reports this
         for node in tree.body:
-            if not isinstance(node, ast.Assign):
+            # `HOLD_BAND: tuple = (30.0, 45.0)` restates a fact as surely as
+            # the bare assignment does; it once passed unread (FX1-T-12). An
+            # annotation with no value states nothing.
+            if isinstance(node, ast.Assign):
+                targets = node.targets
+            elif isinstance(node, ast.AnnAssign) and node.value is not None:
+                targets = [node.target]
+            else:
                 continue
-            for target in node.targets:
+            for target in targets:
                 if isinstance(target, ast.Name) and target.id in owned:
                     fail(f"{rel(path)}:{node.lineno} states {target.id} for "
                          f"itself; import it from design_facts "
