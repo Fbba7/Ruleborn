@@ -1,8 +1,8 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-24T05:35:00Z",
-  "expected_next_update_by": "2026-11-24T08:35:00Z",
-  "cycle": 171,
+  "updated_at": "2026-11-24T06:28:00Z",
+  "expected_next_update_by": "2026-11-24T09:28:00Z",
+  "cycle": 172,
   "merging": null,
   "last_merged": {
     "task_id": "FX2-10-curated-woven-law",
@@ -47,9 +47,9 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Bugs first (the owner's restart of 23 November 2026). Four builders are active on Opus 5.5 at effort high: FX1 on FX1-8-server-a-lows (session_01SNkKxqoTBnLBZTVS18TPbn), FX2 on FX2-10-curated-woven-law (session_01SNkKxrBzWXR1vS1YHrW8zw), FX3 on FX3-7-audit-client-2 (session_01SNkKxozbMJGfAJWTEzLykF), FX4 on FX4-6-device-replay-cap (session_01SNkKxqMB92sY6KUMaz9NgW). Merge each as it turns ready (full checks, owners.py diff; reuse a pre-check only when its summary reads 'All checks passed.' and exit is 0, until FX1-9 merges). Then FX4-7, FX4-8 and FX1-9 to FX1-12 in order, as seats free. Then the UI: once every FX task is merged, unpark P3-S3-settings-4, P4-S1-heist-vault, P4-S2-home-purse and the BT track.",
+  "next_step": "Bugs first (the owner's restart of 23 November 2026). Three builders are active on Opus 5.5 at effort high: FX1 on FX1-8-server-a-lows (session_01SNkKxqoTBnLBZTVS18TPbn), FX3 on FX1-9-tools-gate (session_01SNkKxqR9zT6xXyz2XFYKXb, reassigned in cycle 172), FX4 on FX4-6-device-replay-cap (session_01SNkKxqMB92sY6KUMaz9NgW). FX2's seat is free: no startable task is disjoint from the work in flight. Merge each as it turns ready (full checks, owners.py diff; reuse a pre-check only when its summary reads 'All checks passed.' and exit is 0, until FX1-9 merges). Then FX4-7, FX4-8 and FX1-10 to FX1-12 in order, as seats free. Then the UI: once every FX task is merged, unpark P3-S3-settings-4, P4-S1-heist-vault, P4-S2-home-purse and the BT track.",
   "seen": {
-    "at": "2026-11-24T05:34:26Z",
+    "at": "2026-11-24T06:29:33Z",
     "heads": {
       "claude/3d-character-screens": "6053b249bee313648da3509142eeb2ba738bb62f",
       "claude/3d-characters": "35d6ae8f5b84a4d75636f68270848b0949c111f3",
@@ -63,10 +63,10 @@
       "claude/auth": "162e29d2b42a74df530e73e5a4db4b5410897275",
       "claude/db-cost": "1a033fe3d77dd294c53ef27cb1553bc5c754b4c2",
       "claude/docs": "2e0eededbbc1e3c53ba9a4dea3647de87b7ef11b",
-      "claude/fix-client": "af10f516662a88167f21b0b003129891ab22678c",
-      "claude/fix-server-a": "d81514f9f56a28764ad31b671b74f4515e9f7d97",
-      "claude/fix-server-b": "e8efebc562dd1f291d35e711d4b90545604180aa",
-      "claude/fix-sim": "d95596ab4740d58419f697b14afbf050ede80b9c",
+      "claude/fix-client": "263277c0eb88f8c74cc319ec198d090477d1dfd9",
+      "claude/fix-server-a": "64816b1431fdff6842925b782f9ecc6680e9ba39",
+      "claude/fix-server-b": "6b44cb51789cd772aefbca55bbc508f252574644",
+      "claude/fix-sim": "fe88343f582122ed02645b78747a2f77d269c787",
       "claude/lead-cycle-84-verdicts": "ae9c5e4effc8070a5e29f589882bc14445520fa4",
       "claude/plan-v3": "57893713636b7753d0b790c5a9dc35c3b126770a",
       "claude/security-review": "dd1e90f06b512b25a74f3f3f73ace84b3969cce9",
@@ -99,12 +99,7 @@
       "main": "2455f3b5392587009f9b8f7ff57f7b26b01566d1"
     },
     "ready": {},
-    "startable": [
-      "FX1-8-server-a-lows",
-      "FX2-10-curated-woven-law",
-      "FX4-6-device-replay-cap",
-      "FX4-7-curation-swap-weave"
-    ],
+    "startable": [],
     "messages": [
       "M10",
       "M3"
@@ -151,6 +146,7 @@
     ],
     "leases": [],
     "stale": [
+      "FX4@2026-11-24T06:05:00Z",
       "S2@2026-11-18T08:39:13Z",
       "S2@2026-11-18T08:39:13Z+late",
       "S3@2026-11-18T08:45:00Z",
