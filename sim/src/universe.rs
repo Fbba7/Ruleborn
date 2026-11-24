@@ -533,6 +533,9 @@ impl Crossing {
         next.casts_used = prev.casts_used;
         next.zones.retain(|z| z.at.is_some());
         next.zones.extend(prev.zones.iter().filter(|z| z.at.is_none()).cloned());
+        // A Lantern wisp's reveal goes with the wisp (SIM-11); the crew keeps
+        // its places, so its index still names it.
+        next.reveals = prev.reveals.clone();
         let tile = arrive.unwrap_or_else(|| Self::standable_near(&next, next.entrance));
         let (cx, cy) = next.grid.centre(tile);
         next.raiders = prev.raiders.iter().map(|r| {
@@ -669,7 +672,10 @@ pub fn verified(universe: &Universe, islands: &[Island], heist: &Heist) -> Resul
 #[allow(clippy::too_many_arguments)]
 pub fn record_universe(universe: &Universe, islands: &[Island], seed: u64, ticks: u32, crew: u8,
                        era: Option<crate::era::Era>, manifest: Option<crate::replay::Manifest>,
-                       commands: Vec<Command>) -> Result<Heist, Refusal> {
+                       mut commands: Vec<Command>) -> Result<Heist, Refusal> {
+    // The replay packs the actor in four bits, as `record_with`'s does: a
+    // command for actor 16 or above names no crew member (RB-55, SIM-10).
+    commands.retain(|c| c.actor < 16);
     let mut heist = Heist { seed, island: universe.digest(), rules: crate::rules_version(), ticks, crew, era, manifest,
                             commands, checksums: Vec::new() };
     let mut c = Crossing::new(universe, islands, &heist)?;

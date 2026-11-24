@@ -1491,6 +1491,78 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   It is in FX2-8-audit-b-lows's `exceptions` (`owners.py claims`:
   disjoint; `owners.py diff` passes), and the lead takes 4d3e779c as
   `ready_sha` without a new FX2 session.
+- **FX3-R2** (from FX3, 24 November 2026 01:05Z; due 25 November
+  01:05Z; not blocking): SIM-12 is fixed in the sim, but `Island::curated`
+  can still lose a woven law unseen in three cases (more laws than pylon
+  spots, an unknown law id, 64 failed draws). The server's `problems()`
+  (`server/src/universe.mjs`) checks only that each island law was woven,
+  not that each woven law is on the island; a check at curated publish
+  would catch all three (`universe.mjs`, `curation.mjs`). Default: the
+  lead seeds a server task that refuses a curated layout missing a woven
+  law (a new problem, e.g. `woven_law_missing`, with a fail-first test),
+  and decides whether a hand-built island needs the same check. Copied in
+  cycle 169. **Answered** by the lead in cycle 169: the default, as
+  FX2-10-curated-woven-law (after FX3-6-audit-universe). The check
+  applies wherever `problems()` runs, hand-built islands included, unless
+  the builder finds a hand-built island may lawfully leave a woven law
+  off; then it is scoped to curated layouts and the handoff says why.
+- **FX3-R3** (from FX3, 24 November 2026 01:05Z; due 25 November
+  01:05Z; not blocking): the device's universe recorder
+  (`client/ext/src/lib.rs` line 391, calling `record_universe`) does not
+  check the 2 KB replay limit, the same gap SIM-2 found in the device's
+  single-island recorder. Default: folded into the task that takes
+  SIM-2's device-recorder proposal; the ext refuses a recorded universe
+  over 2 KB, as `rb_record*` now does. Copied in cycle 169. **Answered**
+  by the lead in cycle 169: the default. No task held SIM-2's proposal,
+  so both recorders go into FX4-6-device-replay-cap, after
+  FX4-4-audit-client, which owns `client/ext/**` now.
+- **FX1-R3 to FX1-R8** (from FX1, 23 November 2026 22:36Z; due 24
+  November 22:36Z; not blocking): six fixes FX1-6-audit-server-a proved
+  and left outside its files. FX1-A-02, `accounts.mjs` `erase()` deletes
+  a bundle's bytes another player's snapshot or island still uses (keep
+  bytes any other row references). FX1-A-10, `limits.mjs` `peerKey`
+  reads only the dotted `::ffff:a.b.c.d` form as IPv4, so mapped
+  addresses in hex or full form share one bucket (expand to eight
+  groups, key a mapped address as its dotted IPv4). FX1-A-13, a heist on
+  a bundle another player published first is rated in that player's
+  realm (store the realm on the lease at `issue()`, a new
+  `leases.realm` column in `db.mjs`). FX1-A-15, `seasons.mjs`
+  `constellationTable` returns `[]` where `result()` refuses (refuse the
+  same way). FX1-A-16, `links.mjs` reuses a number after the newest link
+  is removed (a counter that only goes up). FX1-A-17, `weaving.mjs`
+  counts `codex.woven` when a weave starts, so a cancelled weave counts
+  (count it at the finish; `server/test/codex.test.mjs:211` changes with
+  it). Copied in cycle 169. **Answered** by the lead in cycle 169: each
+  as its Fix line says, in FX1-8-server-a-lows (after
+  FX1-6-audit-server-a and FX2-9-audit-b-match), with AUD-B-18's
+  residual seasons constructor guard.
+- **FX1-R9** (from FX1, 23 November 2026 22:36Z; due 24 November 22:36Z;
+  not blocking): FX1-A-09, contested. `offer()` sets `echoes` whenever the
+  list is thin, even with no echo to reach for, and
+  `server/test/generated.test.mjs:56` asserts exactly that. Decide whether
+  the flag means "reached for echoes" or "an echo was offered". Copied in
+  cycle 169. **Answered** by the lead in cycle 169: "an echo was offered".
+  The client shows the flag as `OBS_ECHOES_NOTE` ("echoes of recent ones
+  are among these"), which is false when no echo is in the list. The fix
+  and the corrected expectation go into FX2-9-audit-b-match, which owns
+  `matchmaking.mjs`.
+- **FX1-R10** (from FX1, 23 November 2026 22:36Z; due 24 November
+  22:36Z; not blocking): a design call. Over several skipped seasons
+  Renown is pulled back once, not once per season; the design doc does
+  not say which. Copied in cycle 169. **Answered** by the lead in cycle
+  169: once per season that ended. 18.1 pulls Renown halfway back toward
+  the league floor "at the end of a season", and seasons run back to
+  back, so each end applies, in order, each from the league the previous
+  pull left. In FX1-8-server-a-lows, with a fail-first test.
+- **FX1-R11** (from FX1, 24 November 2026 01:15Z; due 25 November 01:15Z;
+  not blocking): FX1-A-07 is FX2's AUD-B-06 (`matchmaking.mjs`
+  `current()` keeps a swapped card's old chapter). Its fix fails FX2's
+  `stillOpen` wrapper in `fix_fx2_audit_observatory.test.mjs`, which
+  FX1-6 does not own, so it was not kept; land the fix with both proofs
+  unwrapped. Copied in cycle 169. **Answered** by the lead in cycle 169:
+  the default. FX2-9-audit-b-match takes it and now owns
+  `server/test/fix_fx1_audit_server_a.test.mjs`; FX1-8-server-a-lows waits
+  for it.
 
 - **AD-R46** (from AD, 17 November 2026 02:58Z; due 19 November 02:58Z;
   not blocking): AD's preview of P2-S1-result-6 (S1-R35) at 16515088.

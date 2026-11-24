@@ -9,6 +9,11 @@ paths the report proved, `path.rs`, `stability.rs`, `events.rs`, `guard.rs`,
 also settles the report's five sim suspicions ("Still not read", `ffi.rs`,
 `island.rs` and `grid.rs`).
 
+A second pass (task FX3-6-audit-universe) read what the first listed under
+"Still not read": `sim/src/universe.rs` beyond `ffi.rs`'s calls, every line
+of `island.rs` and `grid.rs`, and the `sim/examples/` programs. It found
+SIM-10 to SIM-13. Its tests fail on main at `1c4fd104`, the branch point.
+
 **The proof rule.** A finding is **confirmed** only when a test fails on
 main (`f32be7db`, the branch point after the tests were committed). Each such
 test stays in the suite, marked in a comment with its finding id
@@ -18,7 +23,9 @@ skipped or loosened. Anything not proven that way is listed under
 
 All nine findings are fixed on `claude/fix-sim` (commit `f08f52b9`). After
 the fixes, `cargo test --release` passes 358 of 358, the five goldens
-still verify, and native and WebAssembly agree at all five seeds.
+still verify, and native and WebAssembly agree at all five seeds. SIM-10 to
+SIM-13 are fixed on the same branch (last fix `6e28d564`), each after its
+fail-first commit. `sim/status.py` reports every gate holding.
 
 ## Summary
 
@@ -29,15 +36,20 @@ still verify, and native and WebAssembly agree at all five seeds.
 | SIM-3 | Medium | tooling (gate) | `sim/no_floats.py` | The float ban lets `1f64`, `1e3`, `1_000.5`, `1.`, and floats after a `"//"` or on a `*p =` line through |
 | SIM-4 | Medium | tooling (gate) | `sim/status.py tests()` | The gate counts only `tests::` and ignores cargo's exit code, so stability's tests can fail unseen |
 | SIM-6 | Medium | backend (simulation) | `sim/src/lib.rs World::charge` | A Rambler's charge through a Crystal Wall ignores Cracked gardens and Shattered glass |
+| SIM-12 | Medium | backend (simulation) | `sim/src/island.rs Island::curated` | A curated layout can drop a woven law that the server never notices |
 | SIM-5 | Low | backend (simulation) | `sim/src/lib.rs World::step` | The Hourkeeper's rewind loses a hit taken in a tick the ally was healed |
 | SIM-7 | Low | backend (simulation) | `sim/src/lib.rs World::raise_wall` | A Prism half that has folded back still blocks the Glass golem's wall |
 | SIM-8 | Low | backend (simulation) | `sim/src/lib.rs World::fire_ward` | A Gravity Well cuts a Time Snare's freeze short |
 | SIM-9 | Low | backend (simulation) | `sim/src/lib.rs World::bounce` | A bounce mushroom never lands a crew member on a bridge |
+| SIM-10 | Low | frontend-backend contract | `sim/src/universe.rs record_universe` | The universe recorder keeps commands for actor 16 and above, which the replay records as another crew member |
+| SIM-11 | Low | backend (simulation) | `sim/src/universe.rs Crossing::go` | A Lantern wisp's reveal ends when the crew crosses to the next realm |
+| SIM-13 | Low | backend (simulation) | `sim/src/island.rs Island::set_vault` | Moving the Vault onto a guard hidden in tall grass leaves the grass under it |
 
 No High was found. The Mediums change a heist's result, which the server
 then agrees with because it runs the same simulation (SIM-1, SIM-6). Or they
 refuse an honest player (SIM-2), or they let the gate pass what it exists to
-refuse (SIM-3, SIM-4).
+refuse (SIM-3, SIM-4). SIM-12 publishes a realm that plays without a law its
+owner wove, and the server accepts it.
 
 ## Medium
 
@@ -179,6 +191,55 @@ refuse (SIM-3, SIM-4).
     tile is pushed to `shards`.
   - A break adds Cracked gardens' count to `cracked`.
 
+### SIM-12: A curated layout can drop a woven law that the server never notices
+- **Priority / category:** Medium / backend (simulation).
+- **Where:** `sim/src/island.rs` `Island::curated`, line 1356. On main it
+  wove the laws first (`island.weave(id, x, y)` at the drawn pylon spots)
+  and then placed the owner's buildings. `place_building` takes whatever
+  stands under its footprint, a pylon included, so a footprint over a pylon
+  spot lifted the law.
+- **Input:** a realm-level-1 island at seed 1, with one law (`bounce`) and
+  one Keeper's Spire (3x3). The spire is at any of 30 of the 64 positions,
+  for example (3, 3).
+- **Should happen:** §13.3's curation redraws a layout that loses anything
+  the realm holds. After 64 draws it answers the last one, "problems and
+  all, for the server to refuse by name". The server
+  (`server/src/curation.mjs` `layout`, then `service.publish`, which calls
+  `server/src/universe.mjs` `problems()`) names:
+  - a lost building (`buildings_not_as_placed`);
+  - every `check` problem;
+  - a law the realm did not weave (`law_not_woven`).
+
+  It does not name a woven law that is missing. A lost law must therefore
+  show up as one of those problems, or not happen at all. SR-16: "a realm
+  plays what its owner wove".
+- **Happens:** every draw lost the law under the spire, so the 64th was
+  answered. It keeps the spire, passes `check`, has no law, and the server
+  publishes it as it is.
+- **Proof:** `sim/src/tests.rs`,
+  `sim_12_a_curated_layout_never_drops_a_woven_law_unseen`. It tries the
+  spire at every position. On main it fails at (3, 3). Fail-first commit
+  `d4bc63d0`.
+- **Fix (applied, `57cd912a`):** `curated` places the buildings first and
+  weaves the laws after. A pylon spot under a footprint now fails `weave`,
+  so the draw is not whole and is redrawn. If all 64 draws fail, the last
+  one keeps the building and loses the law, which still passes `check`, so
+  the server does not see it. Whole draws are the same either way, so no
+  existing layout changes. Every golden seed still verifies.
+- **Left for the lead (outside FX3's files):** `curated` can still lose a
+  law without the server seeing it in three cases:
+  - when it is given more laws than the realm has pylon spots, since `zip`
+    stops at the shorter list;
+  - when a law id is unknown to `weave`;
+  - when every draw fails, as above.
+
+  The fix that covers all three is on the server. When `layout` publishes
+  a curated island, refuse it if it lacks a law the realm has woven. Today
+  `problems()` checks only that every law on the island is woven, not that
+  every woven law is on it. Whether a hand-built island must carry every
+  woven law too is the lead's call. This is in FX3's status file as a
+  request, with a default.
+
 ## Low
 
 ### SIM-5: The Hourkeeper's rewind loses a hit taken in a tick the ally was healed
@@ -247,6 +308,70 @@ refuse (SIM-3, SIM-4).
 - **Happens:** the bridge is skipped, and the crew member lands short.
 - **Proof:** `sim/src/tests.rs`, `sim_9_a_bounce_mushroom_lands_on_a_bridge_three_tiles_on`.
 - **Fix (applied):** the filter uses `grid.standable(t)`.
+
+### SIM-10: The universe recorder keeps commands for actor 16 and above
+- **Priority / category:** Low / frontend-backend contract.
+- **Where:** `sim/src/universe.rs` `record_universe`, line 673. RB-55's fix
+  (`commands.retain(|c| c.actor < 16)`) is in `lib.rs` `record_with`, line
+  5445, but not in the universe's recorder. The Godot ext records universe
+  heists through it (`client/ext/src/lib.rs`, line 391).
+- **Input:** a universe heist whose commands include one for actor 16, in
+  the test a MoveTo at tick 60 while the crew walks the outer realm.
+- **Should happen:** as with RB-55, a command for a crew member who is not
+  there is dropped. The replay that is recorded is the heist that was
+  played.
+- **Happens:** the recorder keeps the command. `Heist::encode` packs the
+  actor in four bits, so the replay sends actor 0 to the Vault instead. The
+  device then shows one heist, and the server re-simulates another.
+- **Proof:** `sim/src/tests.rs`,
+  `sim_10_a_command_for_actor_16_still_records_a_universe_replay_that_round_trips`.
+  On main it fails at "the recorded heist keeps a command for an actor past
+  15". Fail-first commit `d8e552a1`.
+- **Fix (applied, `537bf425`):** `record_universe` drops commands for actor
+  16 and above before it records, as `record_with` does.
+
+### SIM-11: A Lantern wisp's reveal ends when the crew crosses to the next realm
+- **Priority / category:** Low / backend (simulation).
+- **Where:** `sim/src/universe.rs` `Crossing::go`, line 510. The crossing
+  carries the crew's health, carry, casts and realm-wide zones into the
+  next realm's world, but not `World::reveals`. That list holds the wisps'
+  reveals, each a crew member and the tick it runs until.
+- **Input:** a Lantern wisp reveals (6 s), and the crew crosses a link
+  before those 6 s are up.
+- **Should happen:** the reveal "shows what is hidden within REVEAL_TILES of
+  the wisp as it goes" for its 6 s. It belongs to the crew member, who goes
+  across, so the reveal goes too.
+- **Happens:** the reveal ends at the crossing. Hidden things near the wisp
+  in the next realm are not shown for the rest of the 6 s.
+- **Proof:** `sim/src/tests.rs`,
+  `sim_11_a_lantern_wisps_reveal_goes_with_it_across_to_the_next_realm`.
+  On main it fails at "the wisp's reveal ended at the crossing". Fail-first
+  commit `197dd630`.
+- **Fix (applied, `9f99e5d8`):** `go` copies `reveals` across. The crew
+  keeps its places, so each entry still names the same crew member. The
+  test also checks that the reveal still ends after its 6 s.
+
+### SIM-13: Moving the Vault onto a guard hidden in tall grass leaves the grass under it
+- **Priority / category:** Low / backend (simulation).
+- **Where:** `sim/src/island.rs` `Island::set_vault`, line 1119. It cleared
+  its tile once. `clear` takes away one thing a call, so a guard went and
+  the grass under the guard stayed. `claim` already loops
+  (`while self.clear(x, y) {}`, RB-57).
+- **Input:** the open example island. A guard is posted at (6, 8), and tall
+  grass is laid under it (the editor's ground tool can do this, RB-57).
+  Then the Vault is moved to (6, 8).
+- **Should happen:** "Move the Vault to a tile, taking what stood there
+  away". The guard and the grass both go, and the island stays legal.
+- **Happens:** the guard goes and the grass stays under the Vault. `check`
+  then reports the Vault as Crowded, and the editor's island cannot be
+  published until the owner finds the grass.
+- **Proof:** `sim/src/tests.rs`,
+  `sim_13_moving_the_vault_onto_a_guard_hidden_in_tall_grass_takes_the_grass_too`.
+  On main it fails at "and the grass with it". Fail-first commit
+  `be1a47d3`.
+- **Fix (applied, `6e28d564`):** `set_vault` clears its tile until nothing
+  is left, as `claim` does. Grass alone was already taken. The same fix
+  covers a pylon or ward over ground that was laid later.
 
 ## The report's sim suspicions
 
@@ -350,7 +475,57 @@ failing test, so it is listed rather than fixed.
   at its own clock, so no harm was shown.
 - `Heist::encode` writes the command count `as u16`. 65,536 commands
   cannot fit in a 2 KB replay, so after SIM-2 a wrap cannot be returned.
-- `universe.rs`'s own suspicions were not investigated by this task.
+- `universe.rs`'s own suspicions: see the next entry (FX3-6).
+
+### `universe.rs`, `island.rs`, `grid.rs` and the examples (FX3-6)
+- **A ward's delayed effect at a crossing.** Effects still pending in one
+  realm's world are not carried into the next. §5.4 does not say whether a
+  realm's ward follows the crew across, so no test was written.
+- **Several digests for one universe.** `Universe::decode` accepts the links
+  in any order, so one universe has several encodings. The server encodes
+  each universe itself and the lease names that digest, so no harm was
+  found. This is like the islands' "second encodings" above.
+- **More than one Land command at tick 0.** `Crossing::new` takes the first
+  one, and the rest are dropped. No input was found where that differs from
+  what the device played.
+- **Ruled out (read, no failing test):**
+  - Prism halves at a crossing;
+  - no landing noise at a fault entry;
+  - `reports()`;
+  - `route`'s tie-break, which goes to the realm earlier in the order, as
+    its comment says;
+  - the rng reseed at each realm;
+  - how `start_health` and `shared_at` are carried;
+  - the realm-local state (glares, `wards_shown_at`, decoys), which is
+    meant to stay behind.
+- **Not in the sim's files.** The client's universe `record` path
+  (`client/ext/src/lib.rs`, line 391) does not check the 2 KB replay limit
+  that SIM-2 added to `ffi.rs`. That is a note for the lead.
+- **`island.rs`, read in full, no other defect:**
+  - the draw's wards and pylons keep clear of occupants;
+  - `dig_tunnel` keeps the tunnels sorted and clears both mouths;
+  - `place_building` refuses a footprint over the Vault;
+  - `weave` refuses before it lifts a law (RB-50);
+  - `default_facing` reads its ways in `grid.rs`'s order (NORTH is -y, as
+    in `neighbours`);
+  - `check`'s `claim` indexes tiles without a bounds check, but `decode`
+    bounds every position;
+  - when two buildings given to `curated` overlap, one is lost, but the
+    server names it (`buildings_not_as_placed`).
+- **`grid.rs`, read in full, no other defect.** `tile_at`'s `u16` cast is
+  safe:
+  - a command's target is at most 256 tiles (`x / 256`);
+  - every other position comes from movement on the grid.
+
+  Also read: `can_step`'s waterfall, updraft and climb rules, `place`,
+  `clear` and `dig_tunnel`.
+- **The examples.** `outcomes` and `planned` build and run:
+  - `outcomes`: Foiled at all 200 seeds. Its own comment says it is "not a
+    balance claim".
+  - `planned`: Clean, 508 of 508 banked, all three crew out by 54 s.
+
+  They are reading aids, and nothing in their output contradicts the
+  simulation's tests.
 
 ## What was read
 
@@ -360,9 +535,14 @@ failing test, so it is listed rather than fixed.
 | B | `sim/src/lib.rs` lines 3020-6035; the parts of `grid.rs`, `replay.rs`, `heist.rs` and `ruleborn.rs` it calls | every line of lib.rs; the rest in part |
 | C | `path.rs`, `stability.rs`, `events.rs`, `guard.rs`, `sight.rs`, `era.rs`, `rng.rs`, `fixed.rs`, `noise.rs`, `combos.rs`, `reference.rs`, `ruleborn.rs`, `trig.rs`, `sha256.rs`, `bin/golden.rs`, `bin/spike.rs`; every Python tool in `sim/` (`status.py`, `no_floats.py`, `content_gate.py`, the `build_*.py` generators) | every line |
 | D | `sim/src/ffi.rs`; `island.rs` and `grid.rs` for the suspicions; `server/src/sim.mjs`, `holds.mjs`, `service.mjs`, `lab.mjs`; `client/ext/src/lib.rs` | every line of ffi.rs; the rest where the suspicions led |
+| E (FX3-6) | `sim/src/universe.rs`, `island.rs`, `grid.rs`; `sim/examples/outcomes.rs`, `planned.rs`; `server/src/curation.mjs`, `crossings.mjs` and `universe.mjs problems()` for SIM-12 | every line of the sim files, and both examples run; the server files where SIM-12 led |
 
 ### Still not read
-- `sim/src/universe.rs`, beyond what `ffi.rs` calls.
-- `sim/src/island.rs` and `grid.rs`, beyond the suspicions above.
-- The `sim/examples/` programs, apart from `where_diverge`, which the gate
-  runs.
+- `sim/src/replay.rs` and `heist.rs`, beyond the parts that `lib.rs`,
+  `ffi.rs` and `universe.rs` call (slice B).
+- The generated `laws_table.rs` and `sin_table.rs`. Their generators were
+  read (slice C), but they were not re-run (Unproven, item 12).
+- These were read only where the findings led:
+  - `client/ext/src/island.rs` and `lib.rs`, the Godot ext's calls into
+    `island.rs` and `universe.rs`;
+  - the server's `curation.mjs`, `crossings.mjs` and `universe.mjs`.
