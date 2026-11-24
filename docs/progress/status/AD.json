@@ -12,17 +12,17 @@
   "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "2dbd2c1256266eb9450a7eb6cc20cd1d55435f32",
+    "last_green_sha": "3bfb83251cef13f8c3a506adeec25737df7b4d13",
     "next_step": "stopped: the wave stands at O7 (wave.md); AD-R67 closed at de193db4 after AD previewed the settings stills at 100%, 200% pt_BR and hc. Phase 3 closes when the lead records it on main."
   },
   "precheck": {
-    "sha": "2dbd2c1256266eb9450a7eb6cc20cd1d55435f32",
+    "sha": "3bfb83251cef13f8c3a506adeec25737df7b4d13",
     "exit": 0,
     "finished_at": "2026-11-24T23:31:37Z",
     "summary": "Docs-only change: check_docs_consistency.py passed; status file passes json.tool."
   },
   "gate_request": null,
-  "ready_sha": "2dbd2c1256266eb9450a7eb6cc20cd1d55435f32",
+  "ready_sha": "3bfb83251cef13f8c3a506adeec25737df7b4d13",
   "stop_at": "2026-11-18T21:00:00Z",
   "acks": [
     "M12",
