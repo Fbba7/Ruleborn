@@ -598,6 +598,8 @@ func _run() -> void:
 	await AuthTests.new(self, check, server_url).run()
 	await SecurityTests.new(self, check).run()
 	await FixTests.new(self, check).run()
+	# The client audit's second pass (FX3-7): the findings the first left unproven.
+	await AuditClient2Tests.new(self, check, _mount).run()
 	await KeeperTests.new(self, check, _mount).run()
 	await NoticesTests.new(self, check).run()
 	await UniverseTests.new(self, check, _mount, server_url).run()

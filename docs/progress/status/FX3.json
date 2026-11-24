@@ -5,15 +5,15 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "FX3-7-audit-client-2",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-24T03:02:00Z",
   "lease_until": "2026-11-24T06:02:00Z",
-  "updated_at": "2026-11-24T03:02:00Z",
-  "expected_next_update_by": "2026-11-24T03:45:00Z",
+  "updated_at": "2026-11-24T03:08:00Z",
+  "expected_next_update_by": "2026-11-24T03:53:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "f29205a5",
-    "next_step": "read client.md and prove CLI-3, CLI-8, CLI-9, CLI-16, CLI-17, CLI-19, CLI-20, CLI-21"
+    "next_step": "CLI-3, CLI-19, CLI-20, CLI-21 proven; next CLI-16, CLI-17 (world_view replays), CLI-8, CLI-9 (server contract), then the unread client files"
   },
   "precheck": null,
   "gate_request": null,
