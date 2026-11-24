@@ -3,17 +3,17 @@
   "role": "S1",
   "branch": "claude/ui-screens-heist",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
+  "agent_state": "active",
   "task_id": "P4-S1-heist-vault",
-  "task_state": "ready",
-  "claimed_at": "2026-11-24T15:05:00Z",
-  "lease_until": "2026-11-24T18:05:00Z",
-  "updated_at": "2026-11-24T15:58:00Z",
-  "expected_next_update_by": null,
+  "task_state": "working",
+  "claimed_at": "2026-11-24T17:20:00Z",
+  "lease_until": "2026-11-24T20:20:00Z",
+  "updated_at": "2026-11-24T17:20:00Z",
+  "expected_next_update_by": "2026-11-24T18:05:00Z",
   "progress_marker": {
     "last_green_sha": "97ecb94ff8d935837168bc37c13357a2d07817c7",
-    "next_step": "ready at 97ecb94f (main d98cedea merged, pre-check PASS); waiting for the lead's gate run and merge. guard.sh fails only on heist/200 119 of 118 (S1-R45's default: the lead writes the record in the merge).",
-    "at": "2026-11-24T15:58:00Z"
+    "next_step": "re-work after gate fail (attempts 1, cycle 183): heist at 200% text, pt_BR, Hierarchy. Main 43deab02 merged. Cast to lead, loot panel and the timer / LEIS AQUI plates to give up weight.",
+    "at": "2026-11-24T17:20:00Z"
   },
   "precheck": {
     "sha": "97ecb94ff8d935837168bc37c13357a2d07817c7",
@@ -22,18 +22,8 @@
     "finished_at": "2026-11-24T15:54:30Z",
     "summary": "All checks passed."
   },
-  "gate_request": {
-    "sha": "97ecb94ff8d935837168bc37c13357a2d07817c7",
-    "items": [
-      {
-        "item": "heist at 200% text, pt_BR",
-        "qualities": [
-          "Hierarchy"
-        ]
-      }
-    ]
-  },
-  "ready_sha": "97ecb94ff8d935837168bc37c13357a2d07817c7",
+  "gate_request": null,
+  "ready_sha": null,
   "stop_at": "2026-11-24T21:00:00Z",
   "acks": [
     "M6",
