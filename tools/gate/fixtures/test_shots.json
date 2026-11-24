@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "note": "The renderer's test list (tools/gate/render.py --self-test): one fast screen, and one explicit item with a state of its own.",
+  "screens": {
+    "settings": {
+      "script": "client/tests/shots/screen_settings.gd",
+      "contrast": "HC"
+    },
+    "result": {
+      "script": "client/tests/shots/screen_result.gd",
+      "contrast": "CONTRAST",
+      "states": [
+        {"name": "off", "env": {}},
+        {"name": "srv", "env": {"SERVER": "1"}}
+      ]
+    }
+  },
+  "items": [
+    {
+      "item": "settings, signed in, at 200% text, pt_BR",
+      "screen": "settings",
+      "env": {"SIGNED": "1", "TEXT": "200", "LOCALE": "pt_BR"}
+    }
+  ]
+}

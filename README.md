@@ -295,6 +295,7 @@ tools/
   ui_gate/                        the UI wave gate's scripts: stills, contact sheets, frame strips, crops and colour-blindness sheets (python3 tools/ui_gate/sheet.py), the image checks (checks.py); docs/art/ui-quality/gate/shots.md
   ui_research/                    T14's UI quality research: authored HUD art baked in headless Chromium into one atlas (node tools/ui_research/bake_hud.js), the AI UI artist's icons rendered in three.js (bake_icons.js), side-by-sides (compare.py); docs/art/ui-quality/report.md
   render/                         renders a still from the Godot client on a machine with no screen
+  gate/                           the gate's stills from the shot list at a given commit, in a temporary worktree, with their 960 px grayscale (python3 tools/gate/render.py still "<item>" --sha <sha> --out <dir>; BT-04)
   # the superseded prototype
   parse_gate_results.py           scores the gates from testers' result codes
   build_prototype.py              renders the throwaway browser build of the two pre-code gates
