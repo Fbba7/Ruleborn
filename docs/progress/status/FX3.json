@@ -3,21 +3,27 @@
   "role": "FX3",
   "branch": "claude/fix-sim",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "FX1-10-tools-contract",
-  "task_state": "in_progress",
+  "task_state": "ready",
   "claimed_at": "2026-11-24T09:20:00Z",
   "lease_until": "2026-11-24T12:20:00Z",
-  "updated_at": "2026-11-24T09:40:00Z",
-  "expected_next_update_by": "2026-11-24T10:40:00Z",
+  "updated_at": "2026-11-24T10:00:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": null,
-    "next_step": "FX1-10: pre-check running at cceacc6d; owners diff passes; client run 492 of 492"
+    "last_green_sha": "cceacc6d7589e75e2395add6a54622d8326b203c",
+    "next_step": "FX1-10 ready; pre-check PASS at 09:58Z, recorded"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "cceacc6d7589e75e2395add6a54622d8326b203c",
+    "state": "PASS",
+    "exit": 0,
+    "finished_at": "2026-11-24T09:58:37Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "cceacc6d7589e75e2395add6a54622d8326b203c",
   "stop_at": "2026-11-24T21:00:00Z",
   "acks": [],
   "requests": [
@@ -38,5 +44,5 @@
     }
   ],
   "answers": [],
-  "next_step": "FX1-10: record the pre-check at cceacc6d, then ready"
+  "next_step": "FX1-10 ready at cceacc6d: the lead's merge and its answer to FX3-R1"
 }

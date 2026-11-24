@@ -1,6 +1,6 @@
 # FX3 simulation fixes: progress
 
-- Status: Waiting. FX1-10-tools-contract is ready at cceacc6d (pre-check below). FX1-9-tools-gate is merged (lead cycle 174, e830e15b); FX3-7-audit-client-2 is merged (lead cycle 172).
+- Status: Waiting. FX1-10-tools-contract is ready at cceacc6d (pre-check PASS at 09:58Z, recorded). FX1-9-tools-gate is merged (lead cycle 174, e830e15b); FX3-7-audit-client-2 is merged (lead cycle 172).
 - Progress: FX1-10-tools-contract fixed the contract and status findings of FX1-7's tools audit (FX1-T-20, FX1-T-21, FX1-T-01, FX1-T-02). Each has a plain test in `server/test/fix_fx1_tools_contract.test.mjs`, committed alone before its fix and failing on main. The 13 ERR_ rows the broadened check asks for are in `client/i18n/strings.csv` (request FX3-R1: four more than the nine granted).
 - Next: the lead's merge of FX1-10-tools-contract, and its answer to FX3-R1. Then FX1-11-tools-docs, as the backlog orders.
 - Blocked by: none.
@@ -19,7 +19,7 @@
 | FX1-10-tools-contract: FX1-T-20, 21, 01, 02 | 2.5 | ready | `server/test/fix_fx1_tools_contract.test.mjs` (10 tests); `server/test/fix_fx1_audit_tools_proofs.mjs`; `tools/client_contract.py`, `server/status.py`, `client/status.py`, `client/i18n/strings.csv`, `docs/security/audit-2026-11/tools.md` |
 
 ## Handoff
-- FX1-10-tools-contract, ready (2026-11-24). Branch `claude/fix-sim`. `ready_sha` cceacc6d; its pre-check, run as `run_checks.sh start`, `wait` in the background, `record cceacc6d FX3`, is in `docs/progress/status/FX3.json`. The branch merges main at `1b1fb00f` (main had nothing newer at 09:30Z). Locally: `cargo test` in sim passes 362; `cd server && npm test` passes 674 of 674, with 0 skipped and 0 todo; `python3 client/status.py` passes 492 of 492 under the new TAP reader, with no repeated or skipped name. `client/status.json`, which that run rewrites, was restored.
+- FX1-10-tools-contract, ready (2026-11-24). Branch `claude/fix-sim`. Pre-check at cceacc6d: PASS ("All checks passed.", exit 0, 09:58Z, sandbox bwrap, recorded). `ready_sha` cceacc6d; the pre-check, run as `run_checks.sh start`, `wait` in the background, `record cceacc6d FX3`, is in `docs/progress/status/FX3.json`. The branch merges main at `1b1fb00f` (main had nothing newer at 09:30Z). Locally: `cargo test` in sim passes 362; `cd server && npm test` passes 674 of 674, with 0 skipped and 0 todo; `python3 client/status.py` passes 492 of 492 under the new TAP reader, with no repeated or skipped name. `client/status.json`, which that run rewrites, was restored.
   - **Commits.**
     - Claim and merge of main: 536a3cf6.
     - The fail-first tests, all in one commit before any fix: d968b3fd. The four proofs left `PROOFS` in `fix_fx1_audit_tools_proofs.mjs`; 12 remain still open.
