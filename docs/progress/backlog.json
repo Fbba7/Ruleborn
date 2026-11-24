@@ -545,14 +545,14 @@
         "agent": "FX2",
         "branch": "claude/fix-server-b",
         "claimed_at": "2026-11-24T03:40:00Z",
-        "seen_at": "2026-11-24T05:00:00Z",
+        "seen_at": "2026-11-24T04:55:00Z",
         "lease_until": "2026-11-24T06:40:00Z"
       },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": "f2181cf5",
       "merged_sha": null,
-      "updated_at": "2026-11-24T05:00:00Z",
+      "updated_at": "2026-11-24T04:55:00Z",
       "updated_by": "lead (cycle 171)"
     },
     {
@@ -717,14 +717,14 @@
         "agent": "FX1",
         "branch": "claude/fix-server-a",
         "claimed_at": "2026-11-24T03:39:29Z",
-        "seen_at": "2026-11-24T05:00:00Z",
+        "seen_at": "2026-11-24T04:55:00Z",
         "lease_until": "2026-11-24T06:39:29Z"
       },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": "b30765cd",
       "merged_sha": null,
-      "updated_at": "2026-11-24T05:00:00Z",
+      "updated_at": "2026-11-24T04:55:00Z",
       "updated_by": "lead (cycle 171)"
     },
     {

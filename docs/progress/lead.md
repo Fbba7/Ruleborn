@@ -385,6 +385,8 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| FX2 | `session_01SNkKxrBzWXR1vS1YHrW8zw` (Opus 5.5, effort high) | FX2-10-curated-woven-law (start, cycle 171: next open task, its dep FX3-6 merged; FX2-9-audit-b-match is ready and in the lead's merge; FX2's last session, `session_01SNkKxpD4TA2PFjhTUKW8Eb`, is idle) | `claude/fix-server-b` | 2026-11-24 04:56Z |
+| FX4 | `session_01SNkKxqMB92sY6KUMaz9NgW` (Opus 5.5, effort high) | FX4-6-device-replay-cap (start, cycle 171: next task after FX4-5-problem-strings merged at d3183782; FX4's last session, `session_01SNkKxopnk1iG9R76L2ujyU`, is idle) | `claude/fix-client` | 2026-11-24 04:56Z |
 | FX2 | `session_01SNkKxpD4TA2PFjhTUKW8Eb` (Opus 5.5, effort high) | FX2-9-audit-b-match (start, cycle 169: next task after FX2-8-audit-b-lows merged at cd5f98fb and FX1-6-audit-server-a at ddf4213d; FX2's last session, `session_01SNkKxnVeY5BcuXQfbPsPmN`, is idle) | `claude/fix-server-b` | 2026-11-24 03:38Z |
 | FX1 | `session_01SNkKxppNySHfW7azVquQXU` (Opus 5.5, effort high) | FX1-7-audit-tools (start, cycle 169: next task after FX1-6-audit-server-a merged at ddf4213d; FX1's last session, `session_01SNkKxoYkrDKba5f2X3byBm`, is idle) | `claude/fix-server-a` | 2026-11-24 03:38Z |
 | FX4 | `session_01SNkKxopnk1iG9R76L2ujyU` (Opus 5.5, effort high) | FX4-5-problem-strings (start, cycle 169: next task after FX4-4-audit-client merged at d5c16216; FX4's last session, `session_01SNkKxq3TGnXbTLc3pyMTQd`, is idle) | `claude/fix-client` | 2026-11-24 02:58Z |
