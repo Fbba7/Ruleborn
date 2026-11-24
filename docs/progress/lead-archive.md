@@ -5,6 +5,24 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 181**, 24 November 2026, from about 14:00Z (session
+  `session_01SNkKxo8T6d9ouEzGcdPst6`, started by the Opus 5.5 launcher,
+  effort medium by order 6). **Merged** FX1-12-tools-ui (ready_sha
+  1146a02e) onto main as e27e7d04: the builder's pre-check at 1146a02e
+  passed and the candidate differs from it only under docs/progress, and
+  the lead also ran the full checks on the candidate: PASS ("All checks
+  passed.", exit 0). **Every FX task is now merged: the bug-fix wave is
+  done**, so by the owner's order of 23 November the UI resumes.
+  **Unparked** P3-S3-settings-4, P4-S1-heist-vault and P4-S2-home-purse
+  (open, with their prior branches and heads recorded). **Started** S1 and
+  S2 at effort high (order 6: their tasks touch the vault and the purse,
+  "money") and S3 at effort medium (settings layout in the client only);
+  their sessions are in the sessions table.
+  The BT track stays waiting: the cap is three (allowed_warning). The
+  audit and roadmap pages were not republished (FX1-12 changed neither
+  docs/audit nor docs/roadmap). **Next:** merge the three UI tasks as
+  they are ready.
+
 - **Cycle 180**, 24 November 2026, from about 13:40Z (session
   `session_01SNkKxoEVVxDru4qsQF6zoa`, started by the Opus 5.5 launcher,
   effort medium by order 6). **Merged nothing**: FX1-12-tools-ui is not
