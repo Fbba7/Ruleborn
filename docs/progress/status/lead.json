@@ -1,8 +1,8 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-24T15:05:00Z",
-  "expected_next_update_by": "2026-11-24T18:05:00Z",
-  "cycle": 181,
+  "updated_at": "2026-11-24T15:20:00Z",
+  "expected_next_update_by": "2026-11-24T18:20:00Z",
+  "cycle": 182,
   "merging": null,
   "last_merged": {
     "task_id": "FX1-12-tools-ui",
@@ -47,9 +47,9 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Bug-fix wave done (every FX task merged); the UI resumed in cycle 181 with S1 (P4-S1-heist-vault), S2 (P4-S2-home-purse) and S3 (P3-S3-settings-4) (S1 and S2 at effort high, S3 at medium, by order 6). Next: merge their tasks as they are ready; the BT track waits for a free seat (cap three under allowed_warning).",
+  "next_step": "The UI runs: S1 (P4-S1-heist-vault), S2 (P4-S2-home-purse) and S3 (P3-S3-settings-4) are pre-checking after merging main. Next: merge their tasks as they are ready (settings-4 with its gate run, 'settings at 100% text'; S3-R46's default for AD stands at 19:00Z); the BT track waits for a free seat (cap three under allowed_warning).",
   "seen": {
-    "at": "2026-11-24T14:59:16Z",
+    "at": "2026-11-24T15:19:21Z",
     "heads": {
       "claude/3d-character-screens": "6053b249bee313648da3509142eeb2ba738bb62f",
       "claude/3d-characters": "35d6ae8f5b84a4d75636f68270848b0949c111f3",
@@ -80,9 +80,9 @@
       "claude/ui-plan": "f1affcea749d007fe1a67931bd3c1f7359d98c44",
       "claude/ui-research": "f19d5d4e5eaffff8869da3b91124d111cf1259a6",
       "claude/ui-screens": "dceb6bfcbc6c5da4e261674fe9301e1854f0aa65",
-      "claude/ui-screens-heist": "ed443f93cbe84ae052c9621ecb52385068d81a3d",
-      "claude/ui-screens-home": "27846b7cdd0b78ce2537c4ae0d076bb18046f260",
-      "claude/ui-screens-meta": "e0e4730b37d48ab1494a45ed0c3f0035609f14cd",
+      "claude/ui-screens-heist": "97ecb94ff8d935837168bc37c13357a2d07817c7",
+      "claude/ui-screens-home": "730860e4f68c16b2f53320d32549b44842d7d23a",
+      "claude/ui-screens-meta": "e3190f782c2594a200431da07d3746e0726eaf15",
       "lead/candidate-01fb5fb1": "01fb5fb186bb8135c10329750fb9b89f3aef2d50",
       "lead/candidate-0870a845": "0870a8457836d68256019562d329d8f32a048371",
       "lead/candidate-13f6fb44": "13f6fb4424f2697c762188ee73d27c9980b27964",
@@ -107,11 +107,7 @@
       "main": "2455f3b5392587009f9b8f7ff57f7b26b01566d1"
     },
     "ready": {},
-    "startable": [
-      "P3-S3-settings-4",
-      "P4-S1-heist-vault",
-      "P4-S2-home-purse"
-    ],
+    "startable": [],
     "messages": [
       "M10",
       "M3"
@@ -157,11 +153,6 @@
       "S3-R9 to S3-R14"
     ],
     "leases": [],
-    "stale": [
-      "S2@2026-11-18T08:39:13Z",
-      "S2@2026-11-18T08:39:13Z+late",
-      "S3@2026-11-18T08:45:00Z",
-      "S3@2026-11-18T08:45:00Z+late"
-    ]
+    "stale": []
   }
 }

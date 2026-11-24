@@ -219,14 +219,20 @@
       "estimate_h": 1.0,
       "tier": 2,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "claimed",
+      "claim": {
+        "agent": "S3",
+        "branch": "claude/ui-screens-meta",
+        "claimed_at": "2026-11-24T15:05:00Z",
+        "seen_at": "2026-11-24T15:18:00Z",
+        "lease_until": "2026-11-24T18:05:00Z"
+      },
       "prior_branch": "claude/ui-screens-meta",
       "prior_sha": "e0e4730b",
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-24T15:00:00Z",
-      "updated_by": "lead (cycle 181)",
+      "updated_at": "2026-11-24T15:18:00Z",
+      "updated_by": "lead (cycle 182)",
       "exceptions": [
         "docs/art/shots/menu-screens/**"
       ]
@@ -628,14 +634,20 @@
       "estimate_h": 1.0,
       "tier": 2,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "claimed",
+      "claim": {
+        "agent": "S1",
+        "branch": "claude/ui-screens-heist",
+        "claimed_at": "2026-11-24T15:05:00Z",
+        "seen_at": "2026-11-24T15:18:00Z",
+        "lease_until": "2026-11-24T18:05:00Z"
+      },
       "prior_branch": "claude/ui-screens-heist",
       "prior_sha": "ed443f93",
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-24T15:00:00Z",
-      "updated_by": "lead (cycle 181)",
+      "updated_at": "2026-11-24T15:18:00Z",
+      "updated_by": "lead (cycle 182)",
       "exceptions": [
         "docs/art/shots/heist-pilot/**"
       ]
@@ -680,14 +692,20 @@
       "estimate_h": 1.0,
       "tier": 2,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "claimed",
+      "claim": {
+        "agent": "S2",
+        "branch": "claude/ui-screens-home",
+        "claimed_at": "2026-11-24T15:05:00Z",
+        "seen_at": "2026-11-24T15:18:00Z",
+        "lease_until": "2026-11-24T18:05:00Z"
+      },
       "prior_branch": "claude/ui-screens-home",
       "prior_sha": "27846b7c",
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-24T15:00:00Z",
-      "updated_by": "lead (cycle 181)",
+      "updated_at": "2026-11-24T15:18:00Z",
+      "updated_by": "lead (cycle 182)",
       "exceptions": [
         "docs/art/shots/home-screen/**"
       ]

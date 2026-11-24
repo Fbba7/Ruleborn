@@ -214,8 +214,10 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxo8T6d9ouEzGcdPst6` (cycle 181,
-24 November 2026 from about 14:00Z, started by the Opus 5.5 launcher).
+Latest lead cycle session: `session_01SNkKxpHsQytV7iJPKhPoRL` (cycle 182,
+24 November 2026 from about 15:15Z, started by the Opus 5.5 launcher).
+Cycle 181's was `session_01SNkKxo8T6d9ouEzGcdPst6` (24 November, from
+about 14:00Z).
 Cycle 180's was `session_01SNkKxoEVVxDru4qsQF6zoa` (24 November, from
 about 13:40Z).
 Cycle 178's was `session_01SNkKxomdzcgoV8B8sTfZyr` (24 November, from
@@ -827,6 +829,23 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 182**, 24 November 2026, from about 15:15Z (session
+  `session_01SNkKxpHsQytV7iJPKhPoRL`, started by the Opus 5.5 launcher,
+  effort medium by order 6). The changes since cycle 181: S1, S2 and S3
+  claimed their tasks again (15:05Z, lease to 18:05Z), merged main and
+  run their pre-checks in the background; their sessions' turns have
+  ended while they wait, so none is restarted. **Bookkeeping:** the three
+  claims are in the backlog (state `claimed`). **Requests:** S3-R46
+  (AD's check of the re-shot settings stills, AD-R68's second road: the
+  title in display_xl on its gold card) copied; no seat is free for AD
+  (cap three under `allowed_warning`), so its default stands at 19:00Z
+  and AD re-checks on the merge. **Merge and gate:** none: nothing is
+  ready, no merge lock; main did not move, so the pages are not
+  republished. **Started nothing:** S1, S2 and S3 hold the cap of three;
+  the BT track waits for a free seat. **Next:** merge the three UI tasks
+  as they are ready (settings-4 with its gate run, 'settings at 100%
+  text', Hierarchy).
+
 - **Cycle 181**, 24 November 2026, from about 14:00Z (session
   `session_01SNkKxo8T6d9ouEzGcdPst6`, started by the Opus 5.5 launcher,
   effort medium by order 6). **Merged** FX1-12-tools-ui (ready_sha
@@ -857,22 +876,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   FX1-12 is the last open FX task; the cap is three (allowed_warning).
   The audit and roadmap pages were not republished. **Next:** merge
   FX1-12 when ready (full checks), then unpark the UI (P3-S3-settings-4,
-  P4-S1-heist-vault, P4-S2-home-purse, the BT track).
-
-- **Cycle 179**, 24 November 2026, from about 13:19Z (session
-  `session_01SNkKxqXwY6qZUJyvhrtRU8`, started by the Opus 5.5 launcher).
-  **Merged nothing**: FX1-12-tools-ui is not ready yet. FX3
-  (`session_01SNkKxmwFNqhHYqzetHQz3X`, effort high) merged main cd469764
-  into `claude/fix-sim` at e62edbca and its pre-check is running there;
-  its session's turn has ended while it waits, so it is not restarted.
-  **Answered** FX3-R2 with its default: granted. The three rebaked
-  manifests (`client/ui/art/kit.json`, `client/ui/art/motion.json`,
-  `client/tests/fixtures/ui_kit/kit.json`, commit 9982cf02, only
-  `sources_hash` moves) are in FX1-12's `exceptions` in backlog.json.
-  **Started nothing**: FX1-12 is the last open FX task; the cap is three
-  (allowed_warning). The audit and roadmap pages were not republished.
-  **Next:** merge FX1-12 when ready (full checks, `owners.py diff` with
-  the exceptions), then unpark the UI (P3-S3-settings-4,
   P4-S1-heist-vault, P4-S2-home-purse, the BT track).
 
 - **Restart, 23 November 2026** (the overseer, about 21:20Z). The owner

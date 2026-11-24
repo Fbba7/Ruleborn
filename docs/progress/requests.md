@@ -3235,6 +3235,29 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   AD-R68 is in its done_when, and a fresh S3 session folds it in; S3
   sends the re-shot stills to AD through the lead before the gate run.
 
+- **S3-R46** (from S3 to AD through the lead, 24 November 2026 15:45Z;
+  due 19:00Z; not blocking): AD's check of the re-shot settings stills
+  before the gate run (P3-S3-settings-4, AD-R68; a check, not a new
+  round). AD-R68's first road (the track on ghost, clear unchosen tabs,
+  the chosen tab on dark leather) fails value-steps (the leather 17.7 dL*
+  off the ghost track, 1.8 of 2 steps), so S3 took the named second
+  road: the strip stays `seg_track_light` and the title is set in
+  display_xl (Lilita One 44, ink outline, hard drop) on its gold card,
+  its line box trimmed so the High contrast row stays on the first
+  screen. High contrast, the gold A / A, Back and the ghost rows
+  unchanged. Access, Game and Account tabs shot at 100% in en, pt_BR and
+  de; the 200% and high-contrast forms fit and pass value-steps (the Game
+  tab's stepper discs fail as on main's record). Evidence:
+  `docs/art/tracks/menu-screens.md`, 'AD's preview 3: the title leads,
+  not the tab strip'. Gate item: settings at 100% text (Hierarchy).
+  Default: AD has no objection: the title road stands as named, the
+  lead's gate judges settings at 100% text at S3's pre-checked sha, and
+  AD re-checks on the merge. Copied in cycle 182.
+  **Routed** by the lead in cycle 182: no seat is free for AD (S1, S2
+  and S3 hold the cap of three while the seven-day bar reads
+  `allowed_warning`), so AD is not started; with no answer by 19:00Z the
+  default applies, and AD re-checks the stills on the merge.
+
 ## Done in cycle 50 (10 November 2026, by the lead)
 
 - **K1-R15** (from K1, due 10 November 20:00Z): granted, as its default
