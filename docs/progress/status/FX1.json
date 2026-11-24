@@ -8,18 +8,94 @@
   "task_state": "working",
   "claimed_at": "2026-11-24T03:39:29Z",
   "lease_until": "2026-11-24T06:39:29Z",
-  "updated_at": "2026-11-24T04:02:30Z",
-  "expected_next_update_by": "2026-11-24T04:45:00Z",
+  "updated_at": "2026-11-24T04:10:00Z",
+  "expected_next_update_by": "2026-11-24T04:55:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "01cb97ac",
-    "next_step": "proofs FX1-T-01..22 committed, npm test 653/653; write tools.md"
+    "next_step": "tools.md written; merge main, npm test, gate"
   },
   "precheck": null,
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-24T21:00:00Z",
   "acks": [],
-  "requests": [],
+  "requests": [
+    {
+      "id": "FX1-R20",
+      "from": "FX1",
+      "to": "lead",
+      "ask": "Gate and coordination tools (docs/security/audit-2026-11/tools.md): FX1-T-03 first (High: run_checks.sh record writes exit 0 for a FAIL run, and the lead's reuse rule then skips its own check_all.sh; also check state == PASS in the reuse rule), then FX1-T-04, FX1-T-09, FX1-T-22 (fix the double-escaped <code> from tools/audit_register.py:13556 before adding build_stamp main() to the gate), FX1-T-08, FX1-T-05.",
+      "files": [
+        "tools/run_checks.sh",
+        "tools/check_all.sh",
+        "tools/check_dependencies.py",
+        "tools/build_stamp.py",
+        "tools/audit_register.py",
+        "tools/check_ci.py",
+        "tools/coord/owners.py",
+        "docs/guides/agent-protocol.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-24T04:10:00Z",
+      "due": "2026-11-25T04:10:00Z",
+      "default": "The lead seeds one fix task for this group after the FX tasks already open, in priority order (High first); the task replaces each proof's stillOpen entry in server/test/fix_fx1_audit_tools_proofs.mjs with a plain test",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "FX1-R21",
+      "from": "FX1",
+      "to": "lead",
+      "ask": "Contract and status files (tools.md): FX1-T-20 (nine server failure codes client_contract.py never reads, none with an ERR_ row), FX1-T-21 (client calls outside client/data never checked), FX1-T-01 and FX1-T-02 (server/status.py counts a shadowed or skipped test as passed; client/status.py parses the same way).",
+      "files": [
+        "tools/client_contract.py",
+        "server/status.py",
+        "client/status.py",
+        "client/ui/strings.csv"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-24T04:10:00Z",
+      "due": "2026-11-25T04:10:00Z",
+      "default": "The lead seeds one fix task for this group after the FX tasks already open, in priority order (High first); the task replaces each proof's stillOpen entry in server/test/fix_fx1_audit_tools_proofs.mjs with a plain test",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "FX1-R22",
+      "from": "FX1",
+      "to": "lead",
+      "ask": "Document checks (tools.md): FX1-T-10 (three-digit register ids such as D100 unseen), FX1-T-17 (two self-tests plant into committed files and leave the plant if killed), FX1-T-11 (check_document treats an unknown tracked id as open), FX1-T-12 (annotated restatements missed).",
+      "files": [
+        "tools/check_findings_fresh.py",
+        "tools/check_docs_consistency.py",
+        "tools/check_audit_ui.py",
+        "tools/validate_content.py",
+        "tools/check_document.py"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-24T04:10:00Z",
+      "due": "2026-11-25T04:10:00Z",
+      "default": "The lead seeds one fix task for this group after the FX tasks already open, in priority order (High first); the task replaces each proof's stillOpen entry in server/test/fix_fx1_audit_tools_proofs.mjs with a plain test",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "FX1-R23",
+      "from": "FX1",
+      "to": "lead",
+      "ask": "UI tools (tools.md), after the UI resumes or with it: FX1-T-07, FX1-T-06, FX1-T-13, FX1-T-14, FX1-T-15, FX1-T-16, FX1-T-18, FX1-T-19.",
+      "files": [
+        "tools/ui_bake/check_screens.py",
+        "tools/ui_bake/bake.js",
+        "tools/ui_bake/budget_shots.py",
+        "tools/ui_gate/golden.py",
+        "tools/ui_gate/sheet.py",
+        "art/ui/board/build_tokens.mjs"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-24T04:10:00Z",
+      "due": "2026-11-25T04:10:00Z",
+      "default": "The lead seeds one fix task for this group after the FX tasks already open, in priority order (High first); the task replaces each proof's stillOpen entry in server/test/fix_fx1_audit_tools_proofs.mjs with a plain test",
+      "escalate_to": "lead"
+    }
+  ],
   "answers": []
 }
