@@ -140,7 +140,7 @@ its own with the command shown.
 | The UI wave's style board | `node art/ui/board/build_tokens.mjs --check`, `node art/ui/board/check_board.mjs` (and `--self-test`) | the tokens out of date with the board; a contrast or colour off the tokens |
 | The UI kit's bake | `node tools/ui_bake/bake.js --check`, `node --test tools/ui_bake/test/bake.test.js` | an atlas or manifest out of date with `art/ui/`, or edited by hand; a bake test |
 | The UI kit's screens | `python3 tools/ui_bake/check_screens.py` and its `--self-test` | a screen drawing chrome of its own (kit-spec.md section 7) past `tools/ui_bake/budgets.json`'s counts; the check missing a planted draw call, fill or texture |
-| The UI wave gate's tools | `python3 tools/ui_gate/sheet.py --self-test` (also runs `colour.py`'s and `checks.py`'s tests) | a contact sheet, strip or crop drawn wrong; an image check missing its planted fail |
+| The UI wave gate's tools | `python3 tools/ui_gate/sheet.py --self-test` (also runs `colour.py`'s and `checks.py`'s tests), `python3 tools/gate/render.py --self-test` (the shot list's parser, the build cache's fallback and a fixture render at HEAD; SP-bt-04-R1) | a contact sheet, strip or crop drawn wrong; an image check missing its planted fail |
 | **This repository's own documents** | `python3 tools/check_docs_consistency.py` (and `--self-test`) | see below |
 | Audit register | `python3 tools/build_audit.py`, `python3 tools/check_audit_ui.py` (and `--self-test`) | rewrites `docs/audit/index.html`; fails on an inconsistent register |
 | Roadmap | `python3 tools/completion.py --self-test`, `python3 tools/build_roadmap.py` | rewrites `docs/roadmap/index.html`; refuses a roadmap that contradicts itself |
