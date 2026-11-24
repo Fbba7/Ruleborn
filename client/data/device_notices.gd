@@ -23,6 +23,8 @@ const RESTED := "rested"
 const EXPERIMENT := "experiment"
 const MINUTE_MS := 60 * 1000
 const DAY_MS := 24 * 60 * MINUTE_MS
+## The oldest event the server takes (server/src/telemetry.mjs LATE_MS).
+const LATE_MS := 7 * DAY_MS
 
 var path := FILE
 var sessions := 0
@@ -78,6 +80,15 @@ func pending() -> Array:
 func sent(n: int) -> void:
 	_pending = _pending.slice(n)
 	_write()
+
+
+## Events dated before `at` let go: the server refuses them, and the whole
+## batch with them (RB-32).
+func drop_before(at: int) -> void:
+	var kept := _pending.filter(func(e: Dictionary) -> bool: return int(e["at"]) >= at)
+	if kept.size() != _pending.size():
+		_pending = kept
+		_write()
 
 
 ## Whether to ask for the push permission now: from the third session, once.

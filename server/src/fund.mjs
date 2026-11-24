@@ -105,19 +105,21 @@ export class Fund {
    *  counted when they played (SEC-26, workshop.mjs `qualified`). */
   played(from, to) {
     const rows = this.db.prepare(
-      `SELECT p.player, p.item, p.ticks, p.outcome, i.creator, i.published_at FROM workshop_plays p
+      `SELECT p.player, p.item, p.ticks, p.outcome, i.creator, i.bundle, i.published_at FROM workshop_plays p
          JOIN workshop_items i ON i.id = p.item
         WHERE p.submitted_at >= ? AND p.submitted_at < ? AND i.removed_at IS NULL
           AND p.counted = 1`).all(from, to);
     // SR-12: one player's time on one island counts to at most
     // ONE_PLAYER_ONE_ISLAND_S a quarter, cleared plays and uncleared alike.
+    // RB-37: an island is its creator's bytes, so the same bundle listed
+    // again under another name shares the one cap.
     const by = new Map();
     for (const r of rows) {
       const o = r.outcome ? JSON.parse(r.outcome) : null;
       // A play submitted once its island was no longer listed (SEC-40).
       if (!o?.validated || o.listed === false || r.player === r.creator) continue;
       const seconds = Number.isInteger(o.report?.held) ? o.report.held : r.ticks / TICKS_PER_SECOND;
-      const key = `${r.player}\n${r.item}`;
+      const key = `${r.player}\n${r.creator}\n${r.bundle}`;
       const was = by.get(key);
       if (was) was.seconds += seconds;
       else by.set(key, { creator: r.creator, seconds, weight: kin(this.db, r.player, r.creator, r.published_at)

@@ -164,6 +164,7 @@ import { readFileSync } from "node:fs";
 
 import { deleteAccount, reapplyDeletions } from "./accounts.mjs";
 import { deleteByGoogle, deletePage, sessionRoute } from "./auth_http.mjs";
+import { bundlePath } from "./edge.mjs";
 import { planning } from "./keeper.mjs";
 import { offer } from "./matchmaking.mjs";
 import { PAGE_HEADERS, privacyPage, supportPage, termsPage } from "./pages.mjs";
@@ -243,7 +244,7 @@ async function socialRoute(service, social, request, parts, who) {
     if (m === "POST" && a && b === "join") return json(social.join(me, a));
     if (m === "POST" && a && b === "roles") {
       const { account, role } = await body(request);
-      return json(social.appoint(me, text(account), text(role)));
+      return json(social.appoint(me, text(account), text(role), a));
     }
     if (m === "POST" && a && b === "remove") {
       return json(social.remove(me, a, text((await body(request)).account)));
@@ -675,7 +676,13 @@ export function handler(service, { webClientId = null, appleNotifications = null
           return json(service.publish(owner, island, realm, service.curation.origin(owner, realm, island)), 201);
         }
         case "GET /v1/bundles": {
-          const body = service.bundle(parts[2] ?? "");
+          // RB-33: served at the one URL the edge is asked to purge
+          // (edge.mjs bundlePath), with no query string or further segment,
+          // so no cached copy outlives a child's deletion.
+          if (parts.length !== 3 || url.pathname !== bundlePath(parts[2]) || request.url.includes("?")) {
+            return json({ error: "not_found" }, 404);
+          }
+          const body = service.bundle(parts[2]);
           if (!body) return json({ error: "not_found" }, 404);
           // §24.1: "cached at the edge for a year" — safe because a bundle is
           // addressed by its own hash and never changes. A target list names

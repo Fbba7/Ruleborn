@@ -284,8 +284,17 @@ def main(argv):
         out = pathlib.Path(args.out_dir)
         out.mkdir(parents=True, exist_ok=True)
         names = [n for n in args.names.split(",") if n] or None
+        # A name may hold a slash ("3 / 4"): it is not a folder, so it becomes
+        # "-" in the file name, and a name that then meets another gets a
+        # number, one crop per name (FX1-T-19).
+        taken = set()
         for name, im in crops(checks.Shot.load(args.shot), names, args.margin).items():
-            im.save(out / f"{name}.png")
+            stem = name.replace("/", "-").replace("\\", "-")
+            base, n = stem, 2
+            while stem in taken:
+                stem, n = f"{base} ({n})", n + 1
+            taken.add(stem)
+            im.save(out / f"{stem}.png")
     elif args.cmd == "cvd":
         cvd(Image.open(args.src), args.long).save(args.out)
     return 0

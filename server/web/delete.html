@@ -56,10 +56,20 @@ the contact address on the game's store listing.</p>
     if (res.ok) {
       document.getElementById("done").hidden = false;
     } else {
-      const { error } = await res.json().catch(() => ({ error: "internal" }));
-      failed.textContent = error === "no_such_account"
-        ? "No Ruleborn account is signed in with that Google account."
-        : "That did not work. Please try again.";
+      const { error, nonce } = await res.json().catch(() => ({ error: "internal" }));
+      if (error === "no_such_account" && typeof nonce === "string") {
+        // The nonce Google signed is spent: sign in again with the fresh
+        // one the server set in this browser's cookie.
+        const onload = document.getElementById("g_id_onload");
+        google.accounts.id.initialize({ client_id: onload.dataset.client_id, nonce, callback: signedIn,
+                                        auto_select: false, itp_support: true });
+        google.accounts.id.renderButton(document.querySelector(".g_id_signin"),
+                                        { type: "standard", text: "continue_with" });
+        failed.textContent = "No Ruleborn account is signed in with that Google account. "
+          + "Continue with the Google account you play with.";
+      } else {
+        failed.textContent = "That did not work. Please reload this page and try again.";
+      }
       failed.hidden = false;
     }
   }

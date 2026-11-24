@@ -73,7 +73,9 @@ export const ROTATE_HOURS_DEFAULT = 24;
 export function rotateHoursOf(env, { example = false } = {}) {
   // The example server (--example) is for trying the game and its tests: it
   // rotates on every refresh, as the device's contract is written.
-  const h = Number(env.RULEBORN_REFRESH_ROTATE_HOURS ?? (example ? 0 : ROTATE_HOURS_DEFAULT));
+  // An empty variable is unset, as the deploy files leave it, never 0 (AUD-B-11).
+  const set = env.RULEBORN_REFRESH_ROTATE_HOURS;
+  const h = set === undefined || set === "" ? (example ? 0 : ROTATE_HOURS_DEFAULT) : Number(set);
   if (!Number.isInteger(h) || h < 0 || h > 24 * 30) {
     throw new Error("RULEBORN_REFRESH_ROTATE_HOURS is a whole number of hours, 0 to 720");
   }
@@ -193,8 +195,12 @@ export class Auth {
       if (now - s.used_at > IDLE_MS || now - s.created_at >= ABSOLUTE_MS) return null;
       // Rotated less often, when the owner chose so: inside the span the
       // same refresh token stands, and nothing is written; its last use and
-      // place are as old as the span at most.
-      if (this.rotateMs > 0 && now - s.used_at < this.rotateMs) return this.#tokens(s, now);
+      // place are as old as the span at most. The span stops an access
+      // token's life short of the idle lapse, so a device refreshing on
+      // time is never taken for one unused (RB-23).
+      if (this.rotateMs > 0 && now - s.used_at < Math.min(this.rotateMs, IDLE_MS - SESSION_MS)) {
+        return this.#tokens(s, now);
+      }
       const next = s.generation + 1;
       // The same write records where it was last seen (the devices list):
       // a country, kept as it was when the edge names none.
@@ -397,13 +403,16 @@ export class Auth {
   signOutWith(refreshToken, { everywhere = false, admit = () => {} } = {}) {
     const peek = peekRefresh(refreshToken);
     const s = peek && this.db.prepare(
-      "SELECT id, account, salt, generation, ended_at FROM sessions WHERE id = ?").get(peek.session);
+      "SELECT id, account, salt, generation, ended_at, used_at, created_at FROM sessions WHERE id = ?")
+      .get(peek.session);
     if (!s || !refreshSigned(this.keys, refreshToken, s.salt)) throw refused();
     admit();
     const now = this.service.now();
     if (everywhere) {
-      // Only the session's current token, while it lives (T12's SR-24).
+      // Only the session's current token, while it lives (T12's SR-24):
+      // not lapsed, as `refresh` holds it (RB-24).
       if (s.ended_at !== null || peek.generation !== s.generation) throw refused();
+      if (now - s.used_at > IDLE_MS || now - s.created_at >= ABSOLUTE_MS) throw refused();
       return this.endAll(s.account, "everywhere", now);
     }
     return this.#end("id", s.id, "signed_out", now);
@@ -444,10 +453,12 @@ export class Auth {
     const hash = createHash("sha256").update(String(key)).digest("base64url");
     const done = this.db.prepare(
       "INSERT INTO auth_spent (key, expires_at) VALUES (?, ?) ON CONFLICT (key) DO NOTHING").run(hash, until);
-    // A row kept past its life is no longer a reason to refuse.
+    // A row kept past its life is no longer a reason to refuse. Its last
+    // millisecond is still inside it: the proof it spent is accepted then too
+    // (AUD-B-09), and expire() keeps it until then.
     if (done.changes === 0) {
       const row = this.db.prepare("SELECT expires_at FROM auth_spent WHERE key = ?").get(hash);
-      if (row && row.expires_at > now) return false;
+      if (row && row.expires_at >= now) return false;
       this.db.prepare("UPDATE auth_spent SET expires_at = ? WHERE key = ?").run(until, hash);
     }
     return true;

@@ -52,7 +52,7 @@ export function keyring(secret, list = "") {
     const key = pair.slice(cut + 1);
     if (cut < 1 || !KID.test(kid)) throw new Error(`a token key needs an id of letters and digits: ${kid || "(none)"}`);
     if (key.length < 32) throw new Error(`token key ${kid} is shorter than 32 characters`);
-    if (keys[kid]) throw new Error(`token key ${kid} is named twice`);
+    if (Object.hasOwn(keys, kid)) throw new Error(`token key ${kid} is named twice`);
     keys[kid] = derive(key);
     current ??= kid;
   }

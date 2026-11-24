@@ -15,7 +15,6 @@ makes it a gate in tools/check_all.sh.
 import json
 import os
 import pathlib
-import re
 import socket
 import subprocess
 import sys
@@ -23,6 +22,8 @@ import tempfile
 
 HERE = pathlib.Path(__file__).resolve().parent
 ROOT = HERE.parent
+sys.path.insert(0, str(ROOT / "server"))
+from status import tap_results  # noqa: E402  server/status.py: one reading of TAP for both
 
 
 def free_port() -> int:
@@ -63,9 +64,9 @@ def run() -> dict[str, str]:
         server.terminate()
         server.wait()
         data.cleanup()
-    results = {}
-    for m in re.finditer(r"^(not ok|ok) \d+ - (.+)$", out.stdout, re.M):
-        results[m.group(2).strip()] = "passed" if m.group(1) == "ok" else "failed"
+    # A skipped test and two results under one name fail the run (FX1-T-01,
+    # FX1-T-02), as on the server.
+    results = tap_results(out.stdout)
     if not results or out.returncode not in (0, 1):
         sys.stdout.write(out.stdout + out.stderr)
         raise SystemExit("no test results were read from the client's headless run")
@@ -88,7 +89,7 @@ def main() -> int:
     print(f"  tests: {len(results) - len(failed)} of {len(results)} passed — "
           f"written to client/status.json")
     for name in failed:
-        print(f"  FAILED: {name}")
+        print(f"  {results[name].upper()}: {name}")
     return 1 if failed else 0
 
 

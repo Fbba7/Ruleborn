@@ -5,7 +5,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 
 import { Refused } from "../src/service.mjs";
-import { ROW_EVENTS, SESSION_ENDS_A_DAY, WORTH_A_DAY, lawsOf } from "../src/telemetry.mjs";
+import { CLOCK_SKEW_MS, ROW_EVENTS, SESSION_ENDS_A_DAY, WORTH_A_DAY, lawsOf } from "../src/telemetry.mjs";
 import { T0, openPlan, play, server, twoPlayers } from "./setup.mjs";
 
 const refusal = (fn, reason) => assert.throws(fn, (e) => e instanceof Refused && e.reason === reason);
@@ -64,7 +64,8 @@ test("a device's batch is checked whole: known events, known fields, no position
   refusal(() => tel.batch(me, [{ kind: "heist", data: {} }]), "no_such_event");
   refusal(() => tel.batch(me, [{ kind: "worth", data: { rating: 6 } }]), "bad_field");
   refusal(() => tel.batch(me, [{ kind: "worth", data: { mood: 1 } }]), "no_such_field");
-  refusal(() => tel.batch(me, [{ kind: "worth", data: { rating: 4 }, at: T0 + 1 }]), "bad_time");
+  // A device clock a little ahead is taken (AUD-B-04); one past that is refused.
+  refusal(() => tel.batch(me, [{ kind: "worth", data: { rating: 4 }, at: T0 + CLOCK_SKEW_MS + 1 }]), "bad_time");
   refusal(() => tel.batch(me, [{ kind: "worth", data: { rating: 4 }, at: T0 - 8 * DAY }]), "bad_time");
   refusal(() => tel.batch(me, Array(101).fill({ kind: "worth", data: { rating: 4 } })), "batch_too_large");
   // One bad event and none of the batch is written.

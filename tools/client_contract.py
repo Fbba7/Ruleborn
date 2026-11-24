@@ -9,11 +9,14 @@ this fails the build on either (TC.2):
 
 * A route the client calls that the server does not serve. The server's
   routes are the table at the top of server/src/http.mjs; the client's are
-  the paths its repositories and API pass (client/data/). A path with a
-  token in it matches a route's :param.
+  the paths every script under client/ passes (its repositories, its API,
+  a feature's own calls, its outbox and its step-up), skipping .godot/ and
+  tests/. A path with a token in it matches a route's :param (FX1-T-21).
 * A refusal the player cannot read. Every reason the server refuses with
-  (`new Refused(status, "reason")`, `json({ error: "reason" })`, a settled
-  heist's `refuse("reason")`) and every failure code the client makes
+  (`new Refused(status, "reason")`, both arms of
+  `new Refused(status, test ? "a" : "b")`, `error: "reason"` in any object,
+  a settled heist's `refuse("reason")`, and the sim's own code table,
+  `REFUSED = { [-1]: "reason", ... }`: FX1-T-20) and every failure code the client makes
   (`Result.failure("code")`, a controller's `_fail("code")`) must have an ERR_ key in the client's catalogue
   (client/i18n/strings.csv) in every language, so `Errors.message` shows
   words, not a code.
@@ -32,8 +35,12 @@ CLIENT = ROOT / "client"
 
 DOC_ROUTE = re.compile(r"^//\s+(GET|POST|PUT|DELETE|PATCH)\s+(/\S+)", re.M)
 REFUSED = [re.compile(r'new Refused\(\d+,\s*"([a-z0-9_]+)"'),
-           re.compile(r'json\(\{\s*error:\s*"([a-z0-9_]+)"'),
+           re.compile(r'new Refused\(\d+,\s*[^"(),;]+\?\s*"([a-z0-9_]+)"\s*:\s*"([a-z0-9_]+)"'),
+           re.compile(r'\berror:\s*"([a-z0-9_]+)"'),
            re.compile(r'\brefuse\("([a-z0-9_]+)"\)')]
+# A table of codes by number, as sim.mjs keeps ffi.rs's negative statuses.
+CODE_TABLE = re.compile(r'\bREFUSED\s*=\s*\{([^}]*)\}')
+CODE = re.compile(r'"([a-z0-9_]+)"')
 CLIENT_FAILURE = re.compile(r'(?:Result\.failure|_fail)\("([a-z0-9_]+)"')
 TRANSPORT_ERROR = re.compile(r'\{"error":\s*"([a-z0-9_]+)"\}')
 CALLS = [
@@ -43,7 +50,15 @@ CALLS = [
     (re.compile(r'api\.(?:json|raw)\(HTTPClient\.METHOD_(\w+),\s*"(/v1/[^"]*)"\s*(\+\s*\w+)?'), None),
     (re.compile(r'route := "(/v1/[^"]*)"\s*(\+\s*\w+)?'), "POST"),
     (re.compile(r'outbox\.send\(api,\s*\w+,\s*"(/v1/[^"]*)"\s*(\+\s*\w+)?'), "POST"),
+    (re.compile(r'outbox\.put\([^,()]+,\s*"(/v1/[^"]*)"\s*(\+\s*\w+)?'), "POST"),
+    (re.compile(r'\b_step_up\("(/v1/[^"]*)"\s*(\+\s*\w+)?'), "POST"),
 ]
+
+
+def client_scripts() -> list[Path]:
+    """Every script of the client's own: not Godot's cache, not the tests."""
+    return sorted(p for p in CLIENT.rglob("*.gd")
+                  if not {".godot", "tests"} & set(p.relative_to(CLIENT).parts))
 
 
 def server_routes() -> list[tuple[str, list[str]]]:
@@ -53,7 +68,7 @@ def server_routes() -> list[tuple[str, list[str]]]:
 
 def client_calls() -> list[tuple[str, str, str]]:
     out = []
-    for path in sorted((CLIENT / "data").rglob("*.gd")):
+    for path in client_scripts():
         text = path.read_text(encoding="utf-8")
         for pattern, method in CALLS:
             for m in pattern.finditer(text):
@@ -86,7 +101,10 @@ def server_reasons() -> set[str]:
     for path in SERVER.glob("*.mjs"):
         text = path.read_text(encoding="utf-8")
         for pattern in REFUSED:
-            reasons.update(pattern.findall(text))
+            for m in pattern.finditer(text):
+                reasons.update(g for g in m.groups() if g)
+        for table in CODE_TABLE.finditer(text):
+            reasons.update(CODE.findall(table.group(1)))
     return reasons
 
 

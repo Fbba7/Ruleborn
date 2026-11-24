@@ -117,6 +117,8 @@ export function appStoreTransaction(jws, { roots, bundleId, now, oids = STOREKIT
   const payload = appleSigned(jws, { roots, now, oids });
   if (!payload || payload.bundleId !== bundleId || payload.revocationDate) return null;
   if (payload.environment !== "Production" && !(sandbox && payload.environment === "Sandbox")) return null;
+  // One transaction is one grant, so one item, as Play's is (RB-11).
+  if (payload.quantity !== undefined && payload.quantity !== 1) return null;
   return {
     transaction: String(payload.transactionId),
     product: payload.productId,
@@ -246,7 +248,9 @@ export class GameCenter {
     const { kind, n } = GameCenter.keyOf(url);
     const now = this.now();
     const known = this.certificates.get(url);
-    if (known) {
+    // Past its validTo a cached key is fetched again: Apple renews it at the
+    // same URL, and the expired one would refuse every sign-in (RB-02).
+    if (known && now <= Date.parse(known.cert.validTo)) {
       // Recently used: to the back of the queue.
       this.certificates.delete(url);
       this.certificates.set(url, known);
@@ -282,7 +286,8 @@ export class GameCenter {
       map.delete(key);
       map.set(key, value);
       while (map.size > most) {
-        const unproven = [...map].find(([, v]) => !v?.proven);
+        // Never the key just kept: it has had no chance to prove itself (RB-13).
+        const unproven = [...map].find(([k, v]) => k !== key && !v?.proven);
         map.delete(unproven ? unproven[0] : map.keys().next().value);
       }
     };
@@ -332,6 +337,18 @@ const GOOGLE_MOST = 8192;
  * Play Developer API says before the grant (googleapi.mjs, D67).
  */
 export function playPurchase(receipt, { licenceKey, packageName }) {
+  // The client sends the purchase as the JSON string Play's billing plugin
+  // gives it (RB-10): read it as an object, within the length both parts
+  // could have.
+  if (typeof receipt === "string") {
+    if (receipt.length > 4 * GOOGLE_MOST) return null;
+    try {
+      receipt = JSON.parse(receipt);
+    } catch {
+      return null;
+    }
+    if (typeof receipt !== "object" || receipt === null || Array.isArray(receipt)) return null;
+  }
   const { data, signature } = receipt ?? {};
   if (typeof data !== "string" || typeof signature !== "string") return null;
   if (data.length > GOOGLE_MOST || signature.length > GOOGLE_MOST) return null;

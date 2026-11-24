@@ -276,7 +276,7 @@ git show origin/<their-branch>:docs/progress/status/<agent>.json
 | `expected_next_update_by` | At most `updated_at` + 45 min, unless `long_run` is set |
 | `long_run` | `{"log": "<path>", "expected_end": "<UTC>"}` while a run longer than 45 minutes is going; `expected_end` at most 90 minutes after `updated_at` |
 | `progress_marker` | `last_green_sha` and `next_step`. If it is unchanged for 2 hours while `agent_state` is `active`, the coordinator flags a busy stall |
-| `precheck` | `{"sha", "exit", "finished_at", "summary"}` from the pre-check's log: the last check heading reached and its last line |
+| `precheck` | `{"sha", "state", "exit", "finished_at", "summary"}` from the pre-check's log: `state` `PASS` or `FAIL` (a `FAIL` is never written with `exit` 0), and the last check heading reached and its last line |
 | `gate_request` | `{"sha", "items"}`: asks the lead to launch the gate on those items at that commit |
 | `requests` | Every field above is required. `due` is at most 6 hours after `created_at` for a blocking request (inference) |
 | `answers` | Answers to requests addressed to this agent |
@@ -467,7 +467,9 @@ ready").
    and attach the failure lines.
    **Reusing the builder's checks** (the owner's decision of 16 November
    2026, to speed up the queue). The lead skips its own `check_all.sh` when
-   the task's `precheck` has `exit` 0 at `sha` equal to `ready_sha`, and the
+   the task's `precheck` has `state` `PASS`, `exit` 0 and `summary` "All
+   checks passed." at `sha` equal to `ready_sha` (a precheck with no
+   `state`, recorded before FX1-T-03's fix, is not reused), and the
    candidate differs from `ready_sha` only under `docs/progress/`:
    `git diff --quiet <ready_sha> <candidate> -- . ':(exclude)docs/progress'`.
    It skips the guard on the same terms when the builder's status or
