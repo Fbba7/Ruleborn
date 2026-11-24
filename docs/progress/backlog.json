@@ -117,63 +117,6 @@
       "updated_by": "lead"
     },
     {
-      "id": "FX1-6-audit-server-a",
-      "title": "Audit: the server modules the report touched least, in FX1's area and beside it: workshop.mjs, codex.mjs, matchmaking.mjs, service.mjs, fund.mjs, holds.mjs, crossings.mjs, plus curation.mjs, weaving.mjs, seasons.mjs, links.mjs, keeper.mjs, defences.mjs, eras.mjs, economy.mjs, friends.mjs, generator.mjs, glicko.mjs, track.mjs, safety.mjs, limits.mjs, offline.mjs, push.mjs; including the report's server suspicions for these modules",
-      "phase": "fix",
-      "role": "FX1",
-      "model": "Opus 5.5",
-      "assigned_to": "FX1",
-      "files": [
-        "server/src/service.mjs",
-        "server/src/matchmaking.mjs",
-        "server/src/holds.mjs",
-        "server/src/crossings.mjs",
-        "server/src/codex.mjs",
-        "server/src/workshop.mjs",
-        "server/src/fund.mjs",
-        "server/test/service.test.mjs",
-        "server/test/matchmaking.test.mjs",
-        "server/test/holds.test.mjs",
-        "server/test/crossings.test.mjs",
-        "server/test/codex.test.mjs",
-        "server/test/workshop.test.mjs",
-        "server/test/fund.test.mjs",
-        "server/test/security_heists.test.mjs",
-        "server/test/security_deep_heists.test.mjs",
-        "server/test/fix_fx1_*",
-        "docs/security/audit-2026-11/server-a.md"
-      ],
-      "deps": [
-        "FX1-4-holds-codex"
-      ],
-      "done_when": [
-        "read the modules named in the title (read-only for those outside the task's files: a finding there is written up, not fixed) for defects of the report's kind (wrong results, contract mismatches between client and server, races, missing checks); each finding written to docs/security/audit-2026-11/server-a.md with Where, Input, Should happen, Happens, a proof (a test that fails on main, committed under the task's test files and kept failing-free by marking it with the finding id in a comment, not by skipping) and a proposed fix, in the report's format and priority levels",
-        "a finding is proven before it is listed as confirmed; one that could not be proven is listed as unproven with what was tried; the lead files fix tasks from the confirmed ones",
-        "the audit fixes nothing outside a proven finding; small proven fixes inside the task's files may ride this task, each with its fail-first test",
-        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready (M48)",
-        "bash tools/check_all.sh"
-      ],
-      "gate_items": [],
-      "attempts": 0,
-      "estimate_h": 4.0,
-      "tier": 1,
-      "critical": false,
-      "state": "merged",
-      "claim": {
-        "agent": "FX1",
-        "branch": "claude/fix-server-a",
-        "claimed_at": "2026-11-23T22:25:00Z",
-        "seen_at": "2026-11-24T00:30:42Z",
-        "lease_until": "2026-11-24T03:30:42Z"
-      },
-      "prior_branch": null,
-      "prior_sha": null,
-      "ready_sha": "01cb97ac1a299011e7ede0d0b79648d6c297cff0",
-      "merged_sha": "ddf4213d",
-      "updated_at": "2026-11-24T03:38:00Z",
-      "updated_by": "lead (cycle 169)"
-    },
-    {
       "id": "FX4-4-audit-client",
       "title": "Audit: the Godot client the report did not read: client/features (beyond auth and network), client/core, client/app, client/data, client/ext and, read-only, client/scripts, client/world and client/ui; including the report's client suspicions (ext as-casts, action_log player ids, the store_purchases stub, notices.seen, sign_out's refresh fallback)",
       "phase": "fix",
@@ -358,60 +301,6 @@
       "merged_sha": null,
       "updated_at": "2026-11-24T02:30:00Z",
       "updated_by": "lead (cycle 169)"
-    },
-    {
-      "id": "FX2-9-audit-b-match",
-      "title": "Medium and low, server matchmaking, from FX2-6's audit: AUD-B-01 (the hourly target lists fix an absent island owner's tier price, by opening a season standing; matchmaking.mjs live and fresh) and AUD-B-06 (a republished island keeps its old chapter in the target list; matchmaking.mjs current); with FX1-R11 (FX1-A-07, the same defect as AUD-B-06) and FX1-R9 (FX1-A-09, offer()'s echoes flag)",
-      "phase": "fix",
-      "role": "FX2",
-      "model": "Opus 5.5",
-      "assigned_to": "FX2",
-      "files": [
-        "server/src/matchmaking.mjs",
-        "server/test/fix_fx2_audit_season.test.mjs",
-        "server/test/fix_fx2_audit_observatory.test.mjs",
-        "server/test/fix_fx2_open.mjs",
-        "docs/security/audit-2026-11/server-b.md",
-        "server/test/fix_fx2_audit_match*",
-        "server/test/fix_fx1_audit_server_a.test.mjs",
-        "server/test/generated.test.mjs",
-        "docs/security/audit-2026-11/server-a.md"
-      ],
-      "deps": [
-        "FX2-8-audit-b-lows",
-        "FX1-6-audit-server-a"
-      ],
-      "done_when": [
-        "each of AUD-B-01, AUD-B-06 in docs/security/audit-2026-11/server-b.md (its Where, Input, Should happen and Fix): its proof already runs on main inside stillOpen() (server/test/fix_fx2_open.mjs); turn that wrapper back into the plain proof and see it fail on main, committed on its own before the fix, its failure output quoted in the handoff; then the smallest fix that makes it pass, following the entry's Fix line unless the handoff says why not; the commit names the finding id",
-        "FX1-6-audit-server-a's findings in matchmaking.mjs, merged first, are kept; a finding of server-a.md that falls on the same lines is named in the handoff",
-        "FX1-R11: FX1-A-07 (server-a.md) is AUD-B-06; the one fix lands with both proofs unwrapped, AUD-B-06's in fix_fx2_audit_observatory.test.mjs and FX1-A-07's in fix_fx1_audit_server_a.test.mjs, and server-a.md's FX1-A-07 State reads 'fixed (FX2-9-audit-b-match)'",
-        "FX1-R9, the lead's answer (cycle 169): offer()'s echoes flag means an echo is in the offered list, because the client shows it as OBS_ECHOES_NOTE ('echoes of recent ones are among these'). So echoes is true only when the returned list holds an echo; server/test/generated.test.mjs:56's expectation, which encodes the defect, is corrected and named in the handoff, with a fail-first test for a thin list and no echo candidate; server-a.md's FX1-A-09 State reads 'fixed (FX2-9-audit-b-match)'",
-        "each fixed entry's State in server-b.md's summary reads 'fixed (FX2-9-audit-b-match)'",
-        "no existing test is skipped, disabled or loosened; a test whose expectation encoded the defect is corrected and named in the handoff",
-        "cd server && npm test passes",
-        "current main merged into the branch, then the fresh-container setup line and bash tools/check_all.sh rerun on that merge, said in the handoff evidence (M11, M13)",
-        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed outside the task's files (M48)",
-        "bash tools/check_all.sh"
-      ],
-      "gate_items": [],
-      "attempts": 0,
-      "estimate_h": 1.25,
-      "tier": 2,
-      "critical": false,
-      "state": "merged",
-      "claim": {
-        "agent": "FX2",
-        "branch": "claude/fix-server-b",
-        "claimed_at": "2026-11-24T03:40:00Z",
-        "seen_at": "2026-11-24T04:55:00Z",
-        "lease_until": "2026-11-24T06:40:00Z"
-      },
-      "prior_branch": null,
-      "prior_sha": null,
-      "ready_sha": "f2181cf5",
-      "merged_sha": "6e5045e3",
-      "updated_at": "2026-11-24T05:31:00Z",
-      "updated_by": "lead (cycle 171)"
     },
     {
       "id": "FX1-8-server-a-lows",
