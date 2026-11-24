@@ -4,23 +4,39 @@
   "branch": "claude/fix-sim",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "FX1-9-tools-gate",
-  "task_state": "working",
-  "claimed_at": "2026-11-24T06:32:00Z",
-  "lease_until": "2026-11-24T09:32:00Z",
-  "updated_at": "2026-11-24T06:32:00Z",
-  "expected_next_update_by": "2026-11-24T07:45:00Z",
+  "task_id": "FX1-10-tools-contract",
+  "task_state": "in_progress",
+  "claimed_at": "2026-11-24T09:20:00Z",
+  "lease_until": "2026-11-24T12:20:00Z",
+  "updated_at": "2026-11-24T09:28:00Z",
+  "expected_next_update_by": "2026-11-24T10:10:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "67318228",
-    "next_step": "FX1-9: failing tests committed; fixing FX1-T-03 in run_checks.sh record"
+    "last_green_sha": null,
+    "next_step": "FX1-10: fixes for T-01, T-02, T-20, T-21 committed (e7b58529, c75285b3); cargo test and npm test pass; pre-check next"
   },
   "precheck": null,
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-24T21:00:00Z",
   "acks": [],
-  "requests": [],
+  "requests": [
+    {
+      "id": "FX3-R1",
+      "from": "FX3",
+      "to": "lead",
+      "ask": "FX1-10's broadened client_contract.py asks for 13 ERR_ rows, not the nine granted: era, manifest, method_not_allowed and no_landing_realm are sent by the server too (sim.mjs REFUSED table, main.mjs 405). The gate fails without them.",
+      "files": [
+        "client/i18n/strings.csv",
+        "tools/client_contract.py"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-24T09:28:00Z",
+      "due": "2026-11-24T13:28:00Z",
+      "default": "the four extra rows stay in client/i18n/strings.csv in this task, same file as the grant",
+      "escalate_to": "lead"
+    }
+  ],
   "answers": [],
-  "next_step": "FX1-9: tests for FX1-T-03 first, then the fix"
+  "next_step": "FX1-10: fixes committed; client run, then pre-check and owners diff"
 }

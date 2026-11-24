@@ -35,8 +35,8 @@ requests are at the end, grouped by area, and in
 | Id | Priority | Where | State |
 | --- | --- | --- | --- |
 | FX1-T-03 | High | tools/run_checks.sh `record` | fixed (FX1-9-tools-gate) |
-| FX1-T-20 | Medium/High | tools/client_contract.py | open: request FX1-R21 |
-| FX1-T-21 | Medium/High | tools/client_contract.py | open: request FX1-R21 |
+| FX1-T-20 | Medium/High | tools/client_contract.py | fixed (FX1-10-tools-contract) |
+| FX1-T-21 | Medium/High | tools/client_contract.py | fixed (FX1-10-tools-contract) |
 | FX1-T-04 | Medium | tools/run_checks.sh `result` | fixed (FX1-9-tools-gate) |
 | FX1-T-09 | Medium | tools/check_all.sh, check_dependencies.py | fixed (FX1-9-tools-gate) |
 | FX1-T-22 | Medium | tools/check_all.sh, build_stamp.py | fixed (FX1-9-tools-gate) |
@@ -44,8 +44,8 @@ requests are at the end, grouped by area, and in
 | FX1-T-17 | Medium | check_audit_ui.py, validate_content.py | open: request FX1-R22 |
 | FX1-T-08 | Medium | tools/check_ci.py | fixed (FX1-9-tools-gate) |
 | FX1-T-07 | Medium | tools/ui_bake/check_screens.py | open: request FX1-R23 |
-| FX1-T-01 | Medium | server/status.py | open: request FX1-R21 |
-| FX1-T-02 | Medium | server/status.py | open: request FX1-R21 |
+| FX1-T-01 | Medium | server/status.py | fixed (FX1-10-tools-contract) |
+| FX1-T-02 | Medium | server/status.py | fixed (FX1-10-tools-contract) |
 | FX1-T-11 | Medium, latent | tools/check_document.py | open: request FX1-R22 |
 | FX1-T-05 | Low | tools/coord/owners.py | fixed (FX1-9-tools-gate) |
 | FX1-T-06 | Low | art/ui/board/build_tokens.mjs | open: request FX1-R23 |
@@ -87,6 +87,8 @@ requests are at the end, grouped by area, and in
 
 ### FX1-T-20: the contract check never reads nine failure codes the server sends
 
+- **State:** fixed (FX1-10-tools-contract). The proof is now a plain test in
+  `server/test/fix_fx1_tools_contract.test.mjs`.
 - **Priority / category:** Medium/High, contract (a refusal the player
   cannot read passes the gate).
 - **Where:** `tools/client_contract.py` `server_reasons()` (line 84) and
@@ -112,6 +114,8 @@ requests are at the end, grouped by area, and in
 
 ### FX1-T-21: the contract check never reads the client's call sites outside client/data
 
+- **State:** fixed (FX1-10-tools-contract). The proof is now a plain test in
+  `server/test/fix_fx1_tools_contract.test.mjs`.
 - **Priority / category:** Medium/High, contract (a call to a route that
   does not exist passes the gate).
 - **Where:** `tools/client_contract.py` `client_calls()` (line 54-56):
@@ -276,6 +280,8 @@ requests are at the end, grouped by area, and in
 
 ### FX1-T-01: server/status.py lets a passing test hide a failing one of the same name
 
+- **State:** fixed (FX1-10-tools-contract). The proof is now a plain test in
+  `server/test/fix_fx1_tools_contract.test.mjs`.
 - **Priority / category:** Medium, gate (a failure reads as passed).
 - **Where:** `server/status.py:28-29`. Results go into a dict keyed by the
   test's name, so a later `ok` with the same name overwrites an earlier
@@ -295,6 +301,8 @@ requests are at the end, grouped by area, and in
 
 ### FX1-T-02: server/status.py records a skipped test as passed
 
+- **State:** fixed (FX1-10-tools-contract). The proof is now a plain test in
+  `server/test/fix_fx1_tools_contract.test.mjs`.
 - **Priority / category:** Medium, gate (a test never run reads as passed).
 - **Where:** `server/status.py:28-29`. TAP's `ok 1 - name # SKIP` matches
   `^(not ok|ok) \d+ - (.+)$` as `ok`, with "# SKIP" in the name.
@@ -525,10 +533,12 @@ test that replaces the proof's `stillOpen` entry.
   `tools/check_dependencies.py`, `tools/build_stamp.py`,
   `tools/check_ci.py`, `tools/coord/owners.py`, and the protocol's reuse
   rule for FX1-T-03.
-- **FX1-R21, the contract and status files:** FX1-T-20, FX1-T-21,
+- **FX1-R21, the contract and status files** (done: FX1-10-tools-contract
+  fixed all four): FX1-T-20, FX1-T-21,
   FX1-T-01, FX1-T-02. Files: `tools/client_contract.py`,
   `server/status.py`, `client/status.py`, and nine `ERR_` rows in
-  `client/ui/strings.csv`.
+  `client/i18n/strings.csv` (thirteen once the check read every code: era,
+  manifest, method_not_allowed and no_landing_realm too).
 - **FX1-R22, the document checks:** FX1-T-10, FX1-T-17, FX1-T-11,
   FX1-T-12. Files: `tools/check_findings_fresh.py`,
   `tools/check_docs_consistency.py`, `tools/check_audit_ui.py`,
