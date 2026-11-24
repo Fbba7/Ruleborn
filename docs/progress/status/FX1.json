@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-24T03:39:29Z",
   "lease_until": "2026-11-24T06:39:29Z",
-  "updated_at": "2026-11-24T03:56:30Z",
-  "expected_next_update_by": "2026-11-24T04:40:00Z",
+  "updated_at": "2026-11-24T04:02:30Z",
+  "expected_next_update_by": "2026-11-24T04:45:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "01cb97ac",
-    "next_step": "write proofs module; write tools.md"
+    "next_step": "proofs FX1-T-01..22 committed, npm test 653/653; write tools.md"
   },
   "precheck": null,
   "gate_request": null,
