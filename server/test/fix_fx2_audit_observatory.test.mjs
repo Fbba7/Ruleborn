@@ -3,7 +3,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { stillOpen } from "./fix_fx2_open.mjs";
 import { twoPlayers } from "./setup.mjs";
 
 function keeper6(t) {
@@ -50,17 +49,15 @@ test("AUD-B-07: an echo's card describes the one island the echo lease is", () =
   assert.equal(card.across, false);
 });
 
-// AUD-B-06: open. §7.6, matchmaking shows only universes running laws from
-// open chapters; matchmaking.mjs's current() swaps in a republished bundle
-// and keeps the old bundle's chapter.
+// AUD-B-06 (fixed in FX2-9-audit-b-match, with FX1-A-07). §7.6, matchmaking
+// shows only universes running laws from open chapters; matchmaking.mjs's
+// current() swapped in a republished bundle and kept the old bundle's chapter.
 test("AUD-B-06: an island republished with a closed chapter's law within the hour is not shown", async () => {
-  await stillOpen("AUD-B-06", () => {
-    const t = twoPlayers(true); // Brittle stone: chapter 1
-    assert.equal(t.service.matchmaking.raider(t.raider.account).chapter, 1);
-    assert.deepEqual(t.service.observatory.view(t.raider.account).targets.map((c) => c.bundle), [t.bundle]);
-    t.clock.now += 60 * 1000;
-    const two = t.service.publish(t.defender.account, t.build.exampleIsland(false)).bundle; // Haste: chapter 2
-    const v = t.service.observatory.view(t.raider.account);
-    assert.ok(!v.targets.some((c) => c.bundle === two), "a chapter-2 island is shown to a chapter-1 raider");
-  });
+  const t = twoPlayers(true); // Brittle stone: chapter 1
+  assert.equal(t.service.matchmaking.raider(t.raider.account).chapter, 1);
+  assert.deepEqual(t.service.observatory.view(t.raider.account).targets.map((c) => c.bundle), [t.bundle]);
+  t.clock.now += 60 * 1000;
+  const two = t.service.publish(t.defender.account, t.build.exampleIsland(false)).bundle; // Haste: chapter 2
+  const v = t.service.observatory.view(t.raider.account);
+  assert.ok(!v.targets.some((c) => c.bundle === two), "a chapter-2 island is shown to a chapter-1 raider");
 });

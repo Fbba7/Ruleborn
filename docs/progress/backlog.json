@@ -2,8 +2,8 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026. Phase 2 started on 12 November 2026 (lead cycle 70): P1-AD-board-1d let board 1 stand and phase 1's other exit criteria hold (report.md section 3.2); its first tasks are the flow findings (S1, S2) and board 1's note G (AIA-2), within the same cap of three. Since 12 November 2026, about 20:00Z, the cap is four UI builders by the owner's order (CLAUDE.md order 3; three while the seven-day bar reads allowed_warning). Phase 3 (polish and harden, report.md step 12) started on 17 November 2026 (lead cycle 118) under M49: every phase 2 task was merged by 06:55Z, the exit review ran in cycle 118 (boards 3, 4 and 5 stand, board 2 waits on the deferred icon batch 4 by D13 (c), the exceptions queue is empty, every screen passes the gate but result at 200% pt_BR, Hierarchy, which P3-S1-result-7 takes), and the first blind audit (O6) is carried into phase 3 as P3-AD-audit-1. Phase 3 draws from the 20-hour reserve; it exits when no board has an open objection, the second blind audit is done and the wave board (O7) stands. The bug-fix wave started on 21 November 2026 by the owner's order (CLAUDE.md order 1, entry of 21 November): the UI is paused (P3-S3-settings-4, P4-S1-heist-vault and P4-S2-home-purse parked with their work on their branches; the BT track stays parked) while up to four fix builders, FX1 to FX4 within the cap of four, fix the 60 confirmed defects of docs/security/bug-report-2026-11.md, highs first, each with a test that fails before the fix, then recheck the four unproven candidates (7, 21, 23, 34) and audit the code the report did not read (findings in docs/security/audit-2026-11/, from which the lead files fix tasks). The FX tasks' phase is 'fix'; the UI resumes at phase 3 when every FX task is merged.",
   "wave": "Bug-fix wave",
   "phase": 3,
-  "updated_at": "2026-11-24T03:38:00Z",
-  "updated_by": "lead (cycle 169)",
+  "updated_at": "2026-11-24T04:25:00Z",
+  "updated_by": "lead (cycle 171)",
   "stop_at": "2026-11-24T21:00:00Z",
   "lease_hours": 3,
   "status_every_minutes": 45,
@@ -308,20 +308,20 @@
       "estimate_h": 0.75,
       "tier": 2,
       "critical": false,
-      "state": "working",
+      "state": "merged",
       "claim": {
         "agent": "FX4",
         "branch": "claude/fix-client",
         "claimed_at": "2026-11-24T03:01:00Z",
-        "seen_at": "2026-11-24T03:45:00Z",
+        "seen_at": "2026-11-24T04:15:00Z",
         "lease_until": "2026-11-24T06:01:00Z"
       },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null,
-      "updated_at": "2026-11-24T03:45:00Z",
-      "updated_by": "lead (cycle 170)"
+      "ready_sha": "3231f78b",
+      "merged_sha": "d3183782",
+      "updated_at": "2026-11-24T04:56:00Z",
+      "updated_by": "lead (cycle 171)"
     },
     {
       "id": "FX4-6-device-replay-cap",
@@ -540,18 +540,24 @@
       "estimate_h": 1.25,
       "tier": 2,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "ready",
+      "claim": {
+        "agent": "FX2",
+        "branch": "claude/fix-server-b",
+        "claimed_at": "2026-11-24T03:40:00Z",
+        "seen_at": "2026-11-24T04:55:00Z",
+        "lease_until": "2026-11-24T06:40:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
+      "ready_sha": "f2181cf5",
       "merged_sha": null,
-      "updated_at": "2026-11-24T02:40:00Z",
-      "updated_by": "lead (cycle 169)"
+      "updated_at": "2026-11-24T04:55:00Z",
+      "updated_by": "lead (cycle 171)"
     },
     {
       "id": "FX2-10-curated-woven-law",
-      "title": "Medium, server (FX3-R2, SIM-12's residual): the server refuses a curated layout that lacks a law the realm has woven. universe.mjs problems() checks only that every law on the island is woven, not that every woven law is on it, so Island::curated can still lose a law unseen (more laws than pylon spots, an unknown law id, or 64 failed draws)",
+      "title": "Medium, server (FX3-R2, SIM-12's residual): the server refuses a curated layout that lacks a law the realm has woven. universe.mjs problems() checks only that every law on the island is woven, not that every woven law is on it, so Island::curated can still lose a law unseen (more laws than pylon spots, an unknown law id, or 64 failed draws); and FX2-9's follow-up: observatory.mjs:140 says echoes from offer()'s list before current() filters it, so a view whose echo was dropped (owner banned or deleted within the hour) can still say echoes: true",
       "phase": "fix",
       "role": "FX2",
       "model": "Opus 5.5",
@@ -560,7 +566,9 @@
         "server/src/universe.mjs",
         "server/src/curation.mjs",
         "server/test/fix_fx2_curated*",
-        "docs/security/audit-2026-11/sim.md"
+        "docs/security/audit-2026-11/sim.md",
+        "server/src/observatory.mjs",
+        "server/test/fix_fx2_observatory_echoes*"
       ],
       "deps": [
         "FX3-6-audit-universe"
@@ -569,6 +577,7 @@
         "first a server test that fails on current main: a curated layout for a realm that wove a law, returned without that law (each of the three cases in sim.md's SIM-12 'Left for the lead' where the server can be fed it), is published; committed on its own before the fix, its failure output quoted in the handoff",
         "then the smallest fix: problems() (or curation's layout step) names a new problem, woven_law_missing, for every woven law the island lacks, and publish refuses it by name like law_not_woven",
         "hand-built islands: the same check applies wherever problems() runs, unless the builder finds a hand-built island may lawfully leave a woven law off; then the check is scoped to curated layouts and the handoff says why",
+        "FX2-9's follow-up (FX2.md, FX2-9 handoff): first a test under server/test/fix_fx2_observatory_echoes* that fails on current main (an echo whose owner is banned within the hour is dropped from the view's targets, yet the view says echoes: true), committed on its own; then the one-line fix at observatory.mjs:140, echoes: targets.some((c) => c.echo)",
         "a client words row for the new problem is not in this task's files: if one is needed, a request to the lead names it",
         "SIM-12's 'Left for the lead' item in docs/security/audit-2026-11/sim.md reads 'fixed (FX2-10-curated-woven-law)'",
         "no existing test is skipped, disabled or loosened; a test whose expectation encoded the defect is corrected and named in the handoff",
@@ -579,7 +588,7 @@
       ],
       "gate_items": [],
       "attempts": 0,
-      "estimate_h": 1.0,
+      "estimate_h": 1.25,
       "tier": 2,
       "critical": false,
       "state": "open",
@@ -588,8 +597,8 @@
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-24T02:40:00Z",
-      "updated_by": "lead (cycle 169)"
+      "updated_at": "2026-11-24T04:30:00Z",
+      "updated_by": "lead (cycle 171)"
     },
     {
       "id": "FX3-6-audit-universe",
@@ -703,20 +712,20 @@
       "estimate_h": 4.0,
       "tier": 2,
       "critical": false,
-      "state": "claimed",
+      "state": "ready",
       "claim": {
         "agent": "FX1",
         "branch": "claude/fix-server-a",
         "claimed_at": "2026-11-24T03:39:29Z",
-        "seen_at": "2026-11-24T03:45:00Z",
+        "seen_at": "2026-11-24T04:55:00Z",
         "lease_until": "2026-11-24T06:39:29Z"
       },
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
+      "ready_sha": "b30765cd",
       "merged_sha": null,
-      "updated_at": "2026-11-24T03:45:00Z",
-      "updated_by": "lead (cycle 170)"
+      "updated_at": "2026-11-24T04:55:00Z",
+      "updated_by": "lead (cycle 171)"
     },
     {
       "id": "FX1-8-server-a-lows",

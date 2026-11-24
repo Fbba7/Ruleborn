@@ -1,6 +1,6 @@
 # FX4 client fixer: progress
 
-- Status: FX4-4-audit-client ready. The client audit is written, 12 findings
+- Status: FX4-4-audit-client ready at `7a657582`; agent waiting. The client audit is written, 12 findings
   are fixed, each after a test that failed on main, and 2 are proven and
   still open.
 - Progress: 3 of 5 tasks merged (FX4-1, FX4-2, FX4-3); FX4-4 ready for the
@@ -20,7 +20,7 @@
 
 ## Handoff
 
-- Last verified commit: the ready_sha in `status/FX4.json`.
+- Last verified commit: `7a657582`, the ready_sha in `status/FX4.json`.
 - The report: [`docs/security/audit-2026-11/client.md`](../security/audit-2026-11/client.md).
   It lists each finding with Where, Input, Should happen, Happens, the
   proof and the fix, then the report's five client suspicions, Unproven,
@@ -70,8 +70,17 @@ proofs ran on.
 - The scratch runner, `FixAuditClientTests` alone: 14 checks, all `ok`.
 - `bash client/build.sh`: passes.
 - The program's main merged at `0fbb5dbb` (35 commits, none under `client/`).
-- The pre-check and the owners diff are recorded in `status/FX4.json`
-  (`precheck`, `ready_sha`).
+- `result_screen.gd` went to 1002 lines with CLI-15's guard; the first
+  pre-check (`18887386`) failed on gdlint's 1000-line limit. `7a657582`
+  rewraps two comments (999 lines, no code change).
+- The pre-check of `7a657582` (`tools/check_all.sh`): All checks passed,
+  02:08Z, recorded in `status/FX4.json`.
+- `python3 tools/coord/owners.py diff FX4-4-audit-client
+  origin/claude/videogame-project-analysis-ewkkk2 7a657582`: every changed
+  path is inside its files.
+- Main moved two lead-cycle commits since the merge (docs only, none under
+  `client/`). FX2-10-curated-woven-law, seeded there, looks like CLI-1's
+  server follow-up.
 
 ## Tried and failed
 

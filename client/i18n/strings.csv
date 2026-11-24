@@ -173,6 +173,8 @@ PROBLEM_POSTBLOCKED,a guard where it cannot stand,a guard where it cannot stand,
 PROBLEM_LANDINGBLOCKED,the landing is blocked,the landing is blocked,o desembarque está bloqueado,o desembarque está bloqueado,die Landestelle ist blockiert,le débarquement est bloqué
 PROBLEM_SEALED,no path reaches the Vault,no path reaches the Vault,nenhum caminho chega ao Cofre,nenhum caminho chega ao Cofre,kein Weg führt zum Tresor,aucun chemin ne mène au Coffre
 PROBLEM_EDGECLOSED,a side has fewer than half its edge open to land on,a side has fewer than half its edge open to land on,um lado tem menos da metade da borda aberta para desembarque,um lado tem menos de metade da borda aberta para desembarcar,eine Seite hat weniger als die Hälfte ihres Rands zum Landen frei,un côté a moins de la moitié de son bord ouvert au débarquement
+PROBLEM_ENTRANCEBLOCKED,the entrance is on the Vault or blocked,the entrance is on the Vault or blocked,a entrada está no Cofre ou bloqueada,a entrada está no Cofre ou bloqueada,der Eingang liegt auf dem Tresor oder ist blockiert,l'entrée est sur le Coffre ou bloquée
+PROBLEM_DUPLICATELAW,a law is woven on two pylons,a law is woven on two pylons,uma lei está tecida em dois pilares,uma lei está tecida em dois pilares,ein Gesetz ist auf zwei Pylonen gewebt,une loi est tissée sur deux pylônes
 RESULT_BUILDER,Back to the builder,Back to the builder,Voltar ao construtor,Voltar ao construtor,Zurück zum Editor,Retour au constructeur
 RESULT_CONFIRMING,"Checked on this phone; the server confirms it when you are back online.
 %d-byte replay","Checked on this phone; the server confirms it when you are back online.

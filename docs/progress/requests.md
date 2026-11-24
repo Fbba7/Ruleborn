@@ -1563,6 +1563,45 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   the default. FX2-9-audit-b-match takes it and now owns
   `server/test/fix_fx1_audit_server_a.test.mjs`; FX1-8-server-a-lows waits
   for it.
+- **FX1-R20** (from FX1, 24 November 2026 04:10Z; due 25 November 04:10Z;
+  not blocking): FX1-7's tools audit (`tools.md`), gate and coordination
+  tools: FX1-T-03 first (High: `run_checks.sh record` writes exit 0 for a
+  FAIL run, and the lead's reuse rule then skips its own `check_all.sh`;
+  the rule should also check that the run's state is PASS), then
+  FX1-T-04, FX1-T-09, FX1-T-22, FX1-T-08 and FX1-T-05. Files:
+  run_checks.sh, check_all.sh, check_dependencies.py, build_stamp.py,
+  audit_register.py, check_ci.py, owners.py, agent-protocol.md. Default:
+  one fix task for the group, after the open FX tasks, High first; it
+  turns each proof's `stillOpen` entry in
+  `server/test/fix_fx1_audit_tools_proofs.mjs` into a plain test. Copied
+  in cycle 171. Until it is fixed, the lead reuses a pre-check only when
+  the builder's `precheck.summary` reads "All checks passed.", as well as
+  `exit` 0. Answered, and the task filed, once FX1-7 and `tools.md` are
+  merged.
+- **FX1-R21** (from FX1, 24 November 2026 04:10Z; due 25 November 04:10Z;
+  not blocking): contract and status files (`tools.md`): FX1-T-20 (nine
+  server failure codes `client_contract.py` never reads, none with an
+  ERR_ row), FX1-T-21 (client calls outside `client/data` never checked),
+  FX1-T-01 and FX1-T-02 (`server/status.py` counts a shadowed or skipped
+  test as passed; `client/status.py` parses the same way). Files:
+  client_contract.py, server/status.py, client/status.py,
+  client/ui/strings.csv. Default as FX1-R20. Copied in cycle 171;
+  answered once FX1-7 is merged.
+- **FX1-R22** (from FX1, 24 November 2026 04:10Z; due 25 November 04:10Z;
+  not blocking): document checks (`tools.md`): FX1-T-10 (three-digit
+  register ids such as D100 unseen), FX1-T-17 (two self-tests plant into
+  committed files and leave the plant if killed), FX1-T-11
+  (`check_document` treats an unknown tracked id as open), FX1-T-12
+  (annotated restatements missed). Files: check_findings_fresh.py,
+  check_docs_consistency.py, check_audit_ui.py, validate_content.py,
+  check_document.py. Default as FX1-R20. Copied in cycle 171; answered
+  once FX1-7 is merged.
+- **FX1-R23** (from FX1, 24 November 2026 04:10Z; due 25 November 04:10Z;
+  not blocking): UI tools (`tools.md`), after the UI resumes or with it:
+  FX1-T-07, 06, 13, 14, 15, 16, 18 and 19. Files: ui_bake/check_screens.py,
+  ui_bake/bake.js, ui_bake/budget_shots.py, ui_gate/golden.py,
+  ui_gate/sheet.py, art/ui/board/build_tokens.mjs. Default as FX1-R20.
+  Copied in cycle 171; answered once FX1-7 is merged.
 
 - **AD-R46** (from AD, 17 November 2026 02:58Z; due 19 November 02:58Z;
   not blocking): AD's preview of P2-S1-result-6 (S1-R35) at 16515088.

@@ -33,7 +33,7 @@ top-level `not ok` as a failure, `todo` included.
 |---|---|---|---|
 | AUD-B-14 | High | `main.mjs:149`, `:225` | fixed (FX2-7-audit-b-config) |
 | AUD-B-15 | High | `main.mjs:73`, `:83`, `:91` | fixed (FX2-7-audit-b-config) |
-| AUD-B-01 | Medium | `matchmaking.mjs:275`, `:348` | open |
+| AUD-B-01 | Medium | `matchmaking.mjs:275`, `:348` | fixed (FX2-9-audit-b-match) |
 | AUD-B-02 | Medium | `observatory.mjs` card | fixed here |
 | AUD-B-03 | Medium | `telemetry.mjs` report | fixed here |
 | AUD-B-04 | Medium | `telemetry.mjs` batch | fixed here |
@@ -42,7 +42,7 @@ top-level `not ok` as a failure, `todo` included.
 | AUD-B-16 | Medium | `main.mjs:379` | fixed (FX2-7-audit-b-config) |
 | AUD-B-17 | Medium | `main.mjs:338` | fixed (FX2-7-audit-b-config) |
 | AUD-B-18 | Medium | `main.mjs:219` | fixed (FX2-7-audit-b-config) |
-| AUD-B-06 | Low | `matchmaking.mjs:308-323` | open |
+| AUD-B-06 | Low | `matchmaking.mjs:308-323` | fixed (FX2-9-audit-b-match) |
 | AUD-B-07 | Low | `observatory.mjs` card | fixed here |
 | AUD-B-09 | Low | `auth.mjs` spend | fixed here |
 | AUD-B-10 | Low | `tokens.mjs:55` | fixed (FX2-8-audit-b-lows) |
@@ -52,7 +52,7 @@ top-level `not ok` as a failure, `todo` included.
 | AUD-B-19 | Low | `main.mjs:224` | fixed (FX2-7-audit-b-config) |
 | AUD-B-20 | Low | `load.mjs:453` | fixed (FX2-8-audit-b-lows) |
 
-Eight are fixed here, six in FX2-7-audit-b-config, four in FX2-8-audit-b-lows, and two are open. Two suspicions stay unproven; a third was settled in FX2-8-audit-b-lows.
+Eight are fixed here, six in FX2-7-audit-b-config, four in FX2-8-audit-b-lows, and two in FX2-9-audit-b-match. Two suspicions stay unproven; a third was settled in FX2-8-audit-b-lows.
 Seven were checked and rejected, and the rest of the configuration,
 `refused.mjs` and `store.mjs` showed no defect (see the last two sections).
 
@@ -132,6 +132,10 @@ Seven were checked and rejected, and the rest of the configuration,
   expected 4.
 - **Fix:** read Renown without opening a standing, the way `leagueSeen`
   does for `profile.mjs`.
+- **Fixed (FX2-9-audit-b-match):** `renownSeen` in `matchmaking.mjs` reads
+  the owner's standing if there is one, else where it would start, and
+  `live` and `fresh` use it. Both proofs are plain, and fail on main
+  `ad0191ea` (`tierStars` 10, expected 4).
 
 ### AUD-B-02: A target card across a block names the blocked Keeper
 
@@ -293,6 +297,11 @@ Seven were checked and rejected, and the rest of the configuration,
 - **Proof:** `fix_fx2_audit_observatory.test.mjs`, "AUD-B-06".
 - **Fix:** in `current`, recompute the chapter of the swapped bundle, and
   drop the card when the raider cannot see that chapter.
+- **Fixed (FX2-9-audit-b-match):** `current` cannot read the raider, so it
+  drops a swap whose chapter is above the card it replaces, or whose bytes
+  are gone; the island returns in the next hourly list. The same defect is
+  FX1-A-07 (`server-a.md`). Both proofs are plain, and fail on main
+  `ad0191ea`.
 
 ### AUD-B-07: An echo's card describes the owner's other realms
 
