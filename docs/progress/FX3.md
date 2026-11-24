@@ -1,8 +1,8 @@
 # FX3 simulation fixes: progress
 
-- Status: Waiting. FX1-10-tools-contract is ready at cceacc6d (pre-check PASS at 09:58Z, recorded). FX1-9-tools-gate is merged (lead cycle 174, e830e15b); FX3-7-audit-client-2 is merged (lead cycle 172).
-- Progress: FX1-10-tools-contract fixed the contract and status findings of FX1-7's tools audit (FX1-T-20, FX1-T-21, FX1-T-01, FX1-T-02). Each has a plain test in `server/test/fix_fx1_tools_contract.test.mjs`, committed alone before its fix and failing on main. The 13 ERR_ rows the broadened check asks for are in `client/i18n/strings.csv` (request FX3-R1: four more than the nine granted).
-- Next: the lead's merge of FX1-10-tools-contract, and its answer to FX3-R1. Then FX1-11-tools-docs, as the backlog orders.
+- Status: Working. FX1-11-tools-docs: all five fixes are committed; the pre-check runs at a9263449. FX1-10-tools-contract is merged (lead cycle 176, bdb052a8); FX3-R1 was answered with its default.
+- Progress: FX1-11-tools-docs fixed the document-check findings of FX1-7's tools audit (FX1-T-10, FX1-T-17, FX1-T-11, FX1-T-12) and FX1-R26's SyntaxWarning in `tools/check_document.py`. Each has a plain test in `server/test/fix_fx1_tools_docs.test.mjs`, committed alone before its fix and failing on main.
+- Next: the pre-check's result, then `record` and ready. FX1-12-tools-ui (the eight UI-tool proofs left still open) follows in a later session.
 - Blocked by: none.
 - Owner decision needed: none.
 
@@ -16,10 +16,30 @@
 | FX3-6-audit-universe: SIM-10 to SIM-13, `universe.rs`, `island.rs`, `grid.rs`, `sim/examples/` | 4.0 | merged | `docs/security/audit-2026-11/sim.md`; `sim/src/tests.rs` `sim_10_a_command_for_actor_16_still_records_a_universe_replay_that_round_trips`, `sim_11_a_lantern_wisps_reveal_goes_with_it_across_to_the_next_realm`, `sim_12_a_curated_layout_never_drops_a_woven_law_unseen`, `sim_13_moving_the_vault_onto_a_guard_hidden_in_tall_grass_takes_the_grass_too`; `sim/src/universe.rs`, `sim/src/island.rs`, `sim/systems.json` |
 | FX3-7-audit-client-2: CLI-3, 8, 9, 16, 17, 19, 20, 21 settled; CLI-25 to CLI-34 | 3.0 | merged | `docs/security/audit-2026-11/client.md`; `client/tests/audit_client2_tests.gd` (18 checks, registered in `client/tests/run.gd`) |
 | FX1-9-tools-gate: FX1-T-03, 04, 05, 08, 09, 22 and FX2-R4 | 4.0 | merged | `server/test/fix_fx1_tools_gate.test.mjs` (11 tests); `server/test/fix_fx1_audit_tools_proofs.mjs`; `tools/run_checks.sh`, `tools/check_all.sh`, `tools/check_dependencies.py`, `tools/audit_register.py`, `tools/check_ci.py`, `tools/coord/owners.py`, `docs/guides/agent-protocol.md`, `docs/security/audit-2026-11/tools.md` |
-| FX1-10-tools-contract: FX1-T-20, 21, 01, 02 | 2.5 | ready | `server/test/fix_fx1_tools_contract.test.mjs` (10 tests); `server/test/fix_fx1_audit_tools_proofs.mjs`; `tools/client_contract.py`, `server/status.py`, `client/status.py`, `client/i18n/strings.csv`, `docs/security/audit-2026-11/tools.md` |
+| FX1-10-tools-contract: FX1-T-20, 21, 01, 02 | 2.5 | merged | `server/test/fix_fx1_tools_contract.test.mjs` (10 tests); `server/test/fix_fx1_audit_tools_proofs.mjs`; `tools/client_contract.py`, `server/status.py`, `client/status.py`, `client/i18n/strings.csv`, `docs/security/audit-2026-11/tools.md` |
+| FX1-11-tools-docs: FX1-T-10, 17, 11, 12 and FX1-R26 | 2.0 | working | `server/test/fix_fx1_tools_docs.test.mjs` (5 tests); `server/test/fix_fx1_audit_tools_proofs.mjs`; `tools/check_findings_fresh.py`, `tools/check_docs_consistency.py`, `tools/check_audit_ui.py`, `tools/validate_content.py`, `tools/check_document.py`, `docs/security/audit-2026-11/tools.md` |
 
 ## Handoff
-- FX1-10-tools-contract, ready (2026-11-24). Branch `claude/fix-sim`. Pre-check at cceacc6d: PASS ("All checks passed.", exit 0, 09:58Z, sandbox bwrap, recorded). `ready_sha` cceacc6d; the pre-check, run as `run_checks.sh start`, `wait` in the background, `record cceacc6d FX3`, is in `docs/progress/status/FX3.json`. The branch merges main at `1b1fb00f` (main had nothing newer at 09:30Z). Locally: `cargo test` in sim passes 362; `cd server && npm test` passes 674 of 674, with 0 skipped and 0 todo; `python3 client/status.py` passes 492 of 492 under the new TAP reader, with no repeated or skipped name. `client/status.json`, which that run rewrites, was restored.
+- FX1-11-tools-docs, working (2026-11-24). Branch `claude/fix-sim`. Pre-check running at a9263449 (started 11:11Z, sandbox bwrap). The branch merges main at `a0639d8e`. Locally: `cargo test` in sim passes 362; `cd server && npm test` passes 676 of 676, with 0 skipped and 0 todo. `python3 tools/coord/owners.py diff FX1-11-tools-docs origin/claude/videogame-project-analysis-ewkkk2 a9263449` passes. The tools' own self-tests pass: `check_docs_consistency.py --self-test`, `check_findings_fresh.py --self-test`, `check_document.py --self-test`, `check_audit_ui.py --self-test` and `validate_content.py --self-test`. Every `.py` under `tools/` now compiles under `-W error::SyntaxWarning`.
+  - **Commits.**
+    - Claim: 8e7916c8.
+    - The fail-first tests, all in one commit before any fix: ce242d05. The four proofs left `PROOFS` in `fix_fx1_audit_tools_proofs.mjs`; 8 remain still open, all FX1-12's.
+    - The fixes: FX1-T-10: 44b9d7be. FX1-T-17: 3e1de736. FX1-T-11: 3b1b917a. FX1-T-12: 8a8b65e6. FX1-R26: 1e2c000e.
+    - tools.md States: 51357f2b. Merge of main: 1b18c245. Status: a9263449.
+  - **How each test failed on main** (at ce242d05, whose tools are main's):
+    - FX1-T-10: `[pinned_by_a_check, spec_open_claims] missed D100: [false, false]`.
+    - FX1-T-17: `a killed self-test left its plant in sim/status.json, content/ruleborn.json` (both copies changed after `os._exit(9)` inside the plant window).
+    - FX1-T-11: `a check tracking an unknown id passed [failing, passing]: [0, 0]`.
+    - FX1-T-12: `an annotated restatement passed: false`.
+    - FX1-R26: `check_document.py does not compile cleanly:` ... `SyntaxError: invalid escape sequence '\d'` at line 505 (`fixed (\d+) steps a second`).
+  - **What changed.**
+    - **FX1-T-10.** `check_findings_fresh.py`'s three id patterns and `check_docs_consistency.py`'s `spec_open_claims` take `\d+` in place of `\d{1,2}`. Each tool's self-test gains a three-digit row (`"D100. pins a three-digit id"`, and `spec_open_claims("- **D100** cap\n- **D9** x\n") == ["D100", "D9"]`). Both tools' full runs print the same as before.
+    - **FX1-T-17.** `check_audit_ui.py`'s `_self_test_built` copies `status.json` and `systems.json` into a temporary folder, points `build_audit.SIM` at it, runs the plants (now `_plant_built`), and restores `SIM` and removes the folder in `finally`. `validate_content.py`'s `self_test` copies `content/` the same way and points `CONTENT` at the copy for D42's plant. A kill now leaves at most a stray temporary folder.
+    - **FX1-T-11.** `check_document.py` gains `_is_known(id)`. `Ledger.check` records BREAK, with the detail "tracks <id>, which the register does not hold.", for a tracked id the register lacks, passing or failing; `_is_open` no longer guesses open. The ledger self-test gains both cases (C999). The full run is unchanged: 149 passing, 0 broken.
+    - **FX1-T-12.** `check_one_fact_home` reads an `ast.AnnAssign` with a value as well as an `ast.Assign`. No tool restates a fact that way today; the full run is unchanged.
+    - **FX1-R26.** `check_constant_restatements`' docstring is a raw string; its text (`__doc__`) is the same.
+  - **Seen, not in scope.** `check_docs_consistency.py`'s `_self_test` also plants into a committed file (README.md) and restores it only in `finally`: the same class as FX1-T-17. Its file is in this task, but no finding names it; a later audit or task can move it to a copy too.
+- FX1-10-tools-contract, merged (lead cycle 176, bdb052a8). Ready (2026-11-24). Branch `claude/fix-sim`. Pre-check at cceacc6d: PASS ("All checks passed.", exit 0, 09:58Z, sandbox bwrap, recorded). `ready_sha` cceacc6d; the pre-check, run as `run_checks.sh start`, `wait` in the background, `record cceacc6d FX3`, is in `docs/progress/status/FX3.json`. The branch merges main at `1b1fb00f` (main had nothing newer at 09:30Z). Locally: `cargo test` in sim passes 362; `cd server && npm test` passes 674 of 674, with 0 skipped and 0 todo; `python3 client/status.py` passes 492 of 492 under the new TAP reader, with no repeated or skipped name. `client/status.json`, which that run rewrites, was restored.
   - **Commits.**
     - Claim and merge of main: 536a3cf6.
     - The fail-first tests, all in one commit before any fix: d968b3fd. The four proofs left `PROOFS` in `fix_fx1_audit_tools_proofs.mjs`; 12 remain still open.
