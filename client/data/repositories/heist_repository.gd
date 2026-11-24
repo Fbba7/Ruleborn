@@ -4,6 +4,9 @@ extends RefCounted
 ## from §24.8's lists, a lease on one, and the replay sent through the outbox
 ## so a submission survives no network.
 
+## The account the game's own generated islands stand under (server/src/generator.mjs).
+const GENERATOR := "the-game-generator"
+
 var api: Api
 var outbox: Outbox
 ## Leases kept for a heist with no network (G41).
@@ -45,7 +48,10 @@ func first_target(account: String, skip: Array[String] = []) -> Result:
 			for candidate: Dictionary in list.get("candidates", []):
 				if candidate.get("owner") == account or str(candidate.get("bundle")) in skip:
 					continue
-				if candidate.get("origin") != "generated":
+				# The game's own islands are the generator's (server's GENERATOR):
+				# a player's curated island is generated too, and still a
+				# player's (CLI-11, §13.3).
+				if candidate.get("origin") != "generated" or candidate.get("owner") != GENERATOR:
 					return Result.success(candidate)
 				if generated.is_empty():
 					generated = candidate

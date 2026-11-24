@@ -106,6 +106,7 @@ var _clock := 0.0
 ## (`ResultFit.bake_totals`).
 var _totals: Dictionary = {}
 var _verdict := {}
+var _studying := false
 ## F6: the page that scrolls, and the actions with the corner's clearance
 ## that end it, or the bar at the phone's foot they move to (_fit_actions).
 var _scroll: ScrollContainer
@@ -727,8 +728,10 @@ func _study_card() -> PanelContainer:
 ## given, on its tile; the others closed, as one heist allows one study.
 func _study(law: String) -> void:
 	var token := str(_verdict.get("token", ""))
-	if token == "":
+	if token == "" or _studying:
 		return
+	# One study a heist: a second tap before the answer sends nothing (CLI-15).
+	_studying = true
 	var answer: Result = await App.services.codex.study(token, law)
 	if not is_inside_tree():
 		return
