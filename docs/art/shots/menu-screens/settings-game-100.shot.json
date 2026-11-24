@@ -1,0 +1,130 @@
+{
+ "controls": [
+  {
+   "interactive": false,
+   "name": "set-head 1: Settings",
+   "rect": [
+    17.33,
+    47.67,
+    355.33,
+    52.0
+   ]
+  },
+  {
+   "name": "row 2: Game Access Account",
+   "rect": [
+    17.33,
+    108.33,
+    355.33,
+    56.33
+   ]
+  },
+  {
+   "name": "button 3: English (UK)",
+   "rect": [
+    235.81,
+    182.0,
+    126.03,
+    52.0
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "words 4: Sound",
+   "rect": [
+    30.33,
+    251.33,
+    66.81,
+    32.86
+   ]
+  },
+  {
+   "name": "button 5: Music 7: quieter",
+   "rect": [
+    247.0,
+    303.69,
+    52.0,
+    52.0
+   ]
+  },
+  {
+   "name": "button 6: Music 7: louder",
+   "rect": [
+    307.67,
+    303.69,
+    52.0,
+    52.0
+   ]
+  },
+  {
+   "name": "button 7: Effects 8: quieter",
+   "rect": [
+    247.0,
+    368.69,
+    52.0,
+    52.0
+   ]
+  },
+  {
+   "name": "button 8: Effects 8: louder",
+   "rect": [
+    307.67,
+    368.69,
+    52.0,
+    52.0
+   ]
+  },
+  {
+   "name": "button 9: Alerts 10: quieter",
+   "rect": [
+    247.0,
+    433.69,
+    52.0,
+    52.0
+   ]
+  },
+  {
+   "name": "button 10: Alerts 10: louder",
+   "rect": [
+    307.67,
+    433.69,
+    52.0,
+    52.0
+   ]
+  },
+  {
+   "interactive": false,
+   "name": "words 11: Play",
+   "rect": [
+    30.33,
+    505.19,
+    42.25,
+    32.86
+   ]
+  },
+  {
+   "name": "switch-row 12: Rehearsals at 75%: off",
+   "rect": [
+    17.33,
+    546.72,
+    355.33,
+    52.0
+   ]
+  },
+  {
+   "name": "back 13: Back",
+   "rect": [
+    28.17,
+    723.67,
+    130.0,
+    52.0
+   ]
+  }
+ ],
+ "frame_pt": [
+  390.0,
+  845.0
+ ],
+ "image": "settings-game-100.png",
+ "text_scale": 1.0
+}

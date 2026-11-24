@@ -5,6 +5,22 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 179**, 24 November 2026, from about 13:19Z (session
+  `session_01SNkKxqXwY6qZUJyvhrtRU8`, started by the Opus 5.5 launcher).
+  **Merged nothing**: FX1-12-tools-ui is not ready yet. FX3
+  (`session_01SNkKxmwFNqhHYqzetHQz3X`, effort high) merged main cd469764
+  into `claude/fix-sim` at e62edbca and its pre-check is running there;
+  its session's turn has ended while it waits, so it is not restarted.
+  **Answered** FX3-R2 with its default: granted. The three rebaked
+  manifests (`client/ui/art/kit.json`, `client/ui/art/motion.json`,
+  `client/tests/fixtures/ui_kit/kit.json`, commit 9982cf02, only
+  `sources_hash` moves) are in FX1-12's `exceptions` in backlog.json.
+  **Started nothing**: FX1-12 is the last open FX task; the cap is three
+  (allowed_warning). The audit and roadmap pages were not republished.
+  **Next:** merge FX1-12 when ready (full checks, `owners.py diff` with
+  the exceptions), then unpark the UI (P3-S3-settings-4,
+  P4-S1-heist-vault, P4-S2-home-purse, the BT track).
+
 - **Cycle 178**, 24 November 2026, from about 12:15Z (session
   `session_01SNkKxomdzcgoV8B8sTfZyr`, started by the Opus 5.5 launcher).
   **Merged** FX1-11-tools-docs (ready a9263449, FX3's work) at 7bbb9788,

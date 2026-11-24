@@ -1,0 +1,19 @@
+[
+  {
+    "task_id": "P3-S3-settings-4",
+    "sha": "e3190f782c2594a200431da07d3746e0726eaf15",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-24T16:30:00Z",
+    "item": "settings at 100% text",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Unanimous: on this screen with no primary, the large outlined 'Settings' title is the first thing the eye lands on in the 960 px grayscale. The light tab strip, the gold A / A buttons and the cream Back button are each a step down and fall in behind it, and the serif group headers outrank the switch rows. The weakest point is that the light rows sit close to the headers in value, so the headers lead by size more than by weight. The still at e3190f78 (FIT=1, 'fit ok', 70 draw calls) is byte-identical to S3's committed settings-100.png."
+  }
+]

@@ -1,0 +1,19 @@
+[
+  {
+    "task_id": "P4-S1-heist-vault",
+    "sha": "97ecb94ff8d935837168bc37c13357a2d07817c7",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-24T16:45:00Z",
+    "item": "heist at 200% text, pt_BR",
+    "quality": "Hierarchy",
+    "samples": [
+      "fail",
+      "fail",
+      "fail"
+    ],
+    "result": "fail",
+    "critique": "Unanimous: in the 960 px grayscale the primary, Lançar (Cast), is a dark plum plate of the same value as Fugir (Get out) beside it and nearly the same size, so the two split the primary (calibration v2: two controls of equal size side by side). The eye lands first on the tall Espaço / Cofre loot panel, with its heavy 508 and 0% numerals, and on the light 2:25 timer and LEIS AQUI plates. Those are panels both larger and heavier than the primary, so they act as second primaries (v3). The pass anchor's full-width light Level up clearly leads, so the candidate falls below the bar, near the fail anchor. Rendered at 97ecb94f with FIT=1 TEXT=200 LOCALE=pt_BR via screen_heist.gd ('fit ok', 121 draw calls). The fix is for Cast to lead at 200%: lighter, gold or larger than Get out, while the loot panel, now taller with the Vault row, gives up weight (a darker or lower-value plate, numerals not heavier than Cast's label)."
+  }
+]
