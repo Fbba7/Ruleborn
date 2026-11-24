@@ -305,8 +305,12 @@ export class Seasons {
       .get(season, account) ?? null;
   }
 
-  /** The constellation league for a closed season, best first. */
+  /** The constellation league for a closed season, best first; refused
+   *  while it is open, or for no season, as `result` is (FX1-A-15). */
   constellationTable(season) {
+    const s = this.db.prepare("SELECT closed_at FROM seasons WHERE id = ?").get(season);
+    if (!s) throw new Refused(404, "no_such_season");
+    if (!s.closed_at) throw new Refused(409, "season_still_open");
     return this.db.prepare(
       "SELECT constellation, renown, place FROM constellation_results WHERE season = ? ORDER BY place")
       .all(season);
