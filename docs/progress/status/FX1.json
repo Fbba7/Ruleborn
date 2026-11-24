@@ -5,15 +5,18 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "FX1-13-codex-woven-at",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-24T08:33:00Z",
   "lease_until": "2026-11-24T11:33:00Z",
-  "updated_at": "2026-11-24T08:33:00Z",
-  "expected_next_update_by": "2026-11-24T09:18:00Z",
-  "long_run": null,
+  "updated_at": "2026-11-24T08:58:00Z",
+  "expected_next_update_by": null,
+  "long_run": {
+    "log": "/tmp/check-a1eb8cfbf89eb99e476fe3ea6b93c4e4ac4e50c7.log",
+    "expected_end": "2026-11-24T09:30:00Z"
+  },
   "progress_marker": {
-    "last_green_sha": "864c9597",
-    "next_step": "FX1-13: fail-first test under server/test/fix_fx1_codex_woven*, then mastery() and the profile compare woven_at with the time"
+    "last_green_sha": "e6f582a5",
+    "next_step": "pre-check of a1eb8cfb (main 632ab460 merged); then record and ready"
   },
   "precheck": null,
   "gate_request": null,
