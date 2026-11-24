@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-24T06:32:00Z",
   "lease_until": "2026-11-24T09:32:00Z",
-  "updated_at": "2026-11-24T06:32:00Z",
-  "expected_next_update_by": "2026-11-24T07:45:00Z",
+  "updated_at": "2026-11-24T06:50:00Z",
+  "expected_next_update_by": "2026-11-24T07:35:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "67318228",
-    "next_step": "FX1-9: failing tests committed; fixing FX1-T-03 in run_checks.sh record"
+    "last_green_sha": "ad5e56bf",
+    "next_step": "record the pre-check, run the owners diff, write the handoff"
   },
   "precheck": null,
   "gate_request": null,
@@ -22,5 +22,5 @@
   "acks": [],
   "requests": [],
   "answers": [],
-  "next_step": "FX1-9: tests for FX1-T-03 first, then the fix"
+  "next_step": "FX1-9: all six findings and FX2-R4 fixed, main merged, npm test 666/666; pre-check of ad5e56bf running"
 }
