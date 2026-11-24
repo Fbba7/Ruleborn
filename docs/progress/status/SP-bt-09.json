@@ -5,21 +5,40 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "BT-09",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-24T22:18:00Z",
   "lease_until": "2026-11-25T01:18:00Z",
-  "updated_at": "2026-11-24T22:18:00Z",
-  "expected_next_update_by": "2026-11-24T23:03:00Z",
-  "long_run": null,
+  "updated_at": "2026-11-24T22:45:00Z",
+  "expected_next_update_by": "2026-11-24T23:30:00Z",
+  "long_run": {
+    "log": "/tmp/check-1a8a6ea78d54a3f34f9948c09083e1a11c1a3986.log",
+    "expected_end": "2026-11-24T23:15:00Z"
+  },
   "progress_marker": {
     "last_green_sha": null,
-    "next_step": "survey what the fresh container lacks, then write tools/setup_env.sh"
+    "next_step": "full pre-check of 1a8a6ea7 running; record it, then mark BT-09 ready"
   },
   "precheck": null,
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-25T21:00:00Z",
   "acks": [],
-  "requests": [],
+  "requests": [
+    {
+      "id": "SP-bt-09-R1",
+      "from": "SP-bt-09",
+      "to": "lead",
+      "ask": "Once BT-09 merges, point the fresh-container setup at the script: in docs/guides/agent-brief.md, 'Starting a session' step 2, replace the rustup/pip line and the 'Planned: backlog task BT-09' sentence with: 'Set up the environment: bash tools/setup_env.sh (idempotent; bash tools/setup_env.sh --check reports what is missing and changes nothing).'; in docs/guides/checks.md, 'What it needs', add above the code block: 'bash tools/setup_env.sh installs all of this, pinned (tools/setup_env.sh names the versions).'; and in the brief's 'Before you mark ready' and 'If you are the lead', read 'the fresh-container setup line' as bash tools/setup_env.sh (which already runs client/build.sh).",
+      "files": [
+        "docs/guides/agent-brief.md",
+        "docs/guides/checks.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-24T22:45:00Z",
+      "due": "2026-11-26T21:00:00Z",
+      "default": "the docs keep the manual lines, which still work; agents may run bash tools/setup_env.sh instead",
+      "escalate_to": "lead"
+    }
+  ],
   "answers": []
 }
