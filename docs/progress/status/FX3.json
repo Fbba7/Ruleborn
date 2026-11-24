@@ -5,22 +5,30 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "FX1-12-tools-ui",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-24T12:55:00Z",
   "lease_until": "2026-11-24T15:55:00Z",
-  "updated_at": "2026-11-24T12:55:00Z",
-  "expected_next_update_by": "2026-11-24T13:40:00Z",
+  "updated_at": "2026-11-24T13:20:00Z",
+  "expected_next_update_by": "2026-11-24T14:05:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "7bbb9788",
-    "next_step": "FX1-12: fail-first tests for FX1-T-06, 07, 13, 14, 15, 16, 18, 19"
+    "next_step": "all eight fixed; full tests, merge main, pre-check"
   },
   "precheck": null,
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-24T21:00:00Z",
   "acks": [],
-  "requests": [],
+  "requests": [
+    {
+      "id": "FX3-R2",
+      "to": "lead",
+      "at": "2026-11-24T13:20:00Z",
+      "ask": "An exception on FX1-12-tools-ui for client/ui/art/kit.json, client/ui/art/motion.json and client/tests/fixtures/ui_kit/kit.json. bake.js is one of the bake's sources (sourcesHash feeds SCRIPTS), so the FX1-T-13 fix makes the three manifests stale and tools/check_all.sh's bake check (and bake.test.js's fixture test) fail until they are rebaked. Commit 9982cf02 rebakes them: only the sources_hash line of each moves; the atlases are byte for byte as before.",
+      "default": "granted: the lead adds the three paths to the task's exceptions before running owners.py diff; owners.py diff otherwise lists exactly these three paths and nothing else"
+    }
+  ],
   "answers": [
     {
       "id": "FX3-R1",
@@ -29,5 +37,5 @@
       "answer": "default: the four extra ERR_ rows stay in client/i18n/strings.csv (merged with FX1-10)"
     }
   ],
-  "next_step": "FX1-12: fail-first tests, then the fixes"
+  "next_step": "sim and server tests, merge main, pre-check, owners diff"
 }
