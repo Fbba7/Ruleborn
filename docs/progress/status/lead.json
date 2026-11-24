@@ -4,7 +4,7 @@
   "expected_next_update_by": "2026-11-24T23:25:00Z",
   "cycle": 188,
   "merging": {
-    "candidate_sha": "pending",
+    "candidate_sha": "a122e81c",
     "task_ids": [
       "P4-S1-heist-vault"
     ],
