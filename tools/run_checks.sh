@@ -253,7 +253,11 @@ record() {
 import json, pathlib, sys
 path, run = pathlib.Path(sys.argv[1]), json.loads(sys.argv[2])
 status = json.loads(path.read_text()) if path.exists() else {"agent": path.stem}
-status["precheck"] = {k: run[k] for k in ("sha", "exit", "finished_at", "summary")}
+status["precheck"] = {k: run[k] for k in ("sha", "state", "exit", "finished_at", "summary")}
+# A FAIL is never recorded as exit 0 (FX1-T-03): a run that exits 0 without
+# "All checks passed." is a failure, and the reuse rule reads exit as well as state.
+if run["state"] != "PASS" and run["exit"] == 0:
+    status["precheck"]["exit"] = 1
 path.parent.mkdir(parents=True, exist_ok=True)
 path.write_text(json.dumps(status, indent=2) + "\n")
 print(f"precheck recorded in {path}")
@@ -280,7 +284,7 @@ self_test() {
   [[ "$out" == *'"state": "PASS"'* && "$out" == *'"exit": 0'* ]] || { echo "not a pass: $out"; return 1; }
   [ ! -d "$CHECK_DIR/check-$sha" ] || { echo "worktree left behind"; return 1; }
   bash "$me" record "$sha" AD > /dev/null
-  python3 -c "import json,sys; p=json.load(open(sys.argv[1]))['precheck']; assert p['exit']==0 and p['sha']==sys.argv[2], p" \
+  python3 -c "import json,sys; p=json.load(open(sys.argv[1]))['precheck']; assert p['state']=='PASS' and p['exit']==0 and p['sha']==sys.argv[2], p" \
     "$tmp/repo/docs/progress/status/AD.json" "$sha"
 
   # A failure: the summary names the last heading.
@@ -293,6 +297,10 @@ self_test() {
   rm -f "$CHECK_DIR/check-$sha.log"
   CHECK_CMD="echo '== three =='" bash "$me" start > /dev/null 2>&1
   if out="$(bash "$me" wait "$sha" 1)"; then echo "no closing line passed: $out"; return 1; fi
+  # ... and record writes it as a failure, never as exit 0 (FX1-T-03).
+  bash "$me" record "$sha" AD > /dev/null
+  python3 -c "import json,sys; p=json.load(open(sys.argv[1]))['precheck']; assert p['state']=='FAIL' and p['exit']!=0, p" \
+    "$tmp/repo/docs/progress/status/AD.json" || { echo "record wrote a failure as passed"; return 1; }
 
   # A killed run (no DONE line, no process) is LOST, not RUNNING.
   rm -f "$CHECK_DIR/check-$sha.log"
