@@ -1,6 +1,6 @@
 # FX1 server fixes (A): progress
 
-- Status: Working. FX1-7-audit-tools: report and proofs pushed; main 613f71c9 merged at b30765cd; pre-check running.
+- Status: Ready. FX1-7-audit-tools ready at b30765cd: pre-check PASS (04:46 UTC), owners.py pass; waiting for the merge.
 - Progress: 5 of 7 tasks merged (FX1-1, FX1-2, FX1-3, FX1-4; FX1-6-audit-server-a at ddf4213d); no gate items (fix tasks have none).
 - Done: FX1-7: 22 findings (FX1-T-01 to T-22) in `docs/security/audit-2026-11/tools.md`, one High (T-03, `run_checks.sh record` hands the lead exit 0 for a failed run); each proven by a test in `server/test/fix_fx1_audit_tools_proofs.mjs` that fails on main and runs under `stillOpen`; nothing fixed (every tool is the lead's); requests FX1-R20 to R23; `cd server && npm test` 653 of 653.
 - Next: FX1-8-server-a-lows, in a fresh session.
@@ -14,10 +14,10 @@
 | FX1-3-workshop: RB-35, RB-37, RB-38, RB-39 | 3.5 | merged (e413e4a9) | `server/test/fix_fx1_workshop.test.mjs`; test commit bf0ff93e; fixes c717a9b1, 1faccdd2, 2ac59da1, a4817445 |
 | FX1-4-holds-codex: RB-15, RB-18, RB-36, RB-53, RB-56 | 4.0 | merged (e2e8f5a1) | `server/test/fix_fx1_holds_codex.test.mjs`; test commit 924726b8; fixes 103d4176, 1de6f966, 63f031ad, 07047356, b45dafe6 |
 | FX1-6-audit-server-a: FX1-A-01 to A-17 | 4.0 | merged (ddf4213d) | `docs/security/audit-2026-11/server-a.md`; `server/test/fix_fx1_audit_server_a.test.mjs`; test commits 6b3556f9, 5d5d2e82, b0e4cd1c, f33ccc18; fixes f1888bba, dfc5bf86, 244b9480, 533b793d, ccda8b22; A-07 reverted 01cb97ac (R11) |
-| FX1-7-audit-tools: FX1-T-01 to T-22 | 4.0 | working | `docs/security/audit-2026-11/tools.md`; `server/test/fix_fx1_audit_tools.test.mjs`, `server/test/fix_fx1_audit_tools_proofs.mjs`; proof commits 3c7ad511, 4ef72ffd; report b5283fa8 |
+| FX1-7-audit-tools: FX1-T-01 to T-22 | 4.0 | ready (b30765cd) | `docs/security/audit-2026-11/tools.md`; `server/test/fix_fx1_audit_tools.test.mjs`, `server/test/fix_fx1_audit_tools_proofs.mjs`; proof commits 3c7ad511, 4ef72ffd; report b5283fa8 |
 
 ## Handoff
-- Last verified commit: b30765cd (`cd server && npm test` 653 of 653); pre-check running.
+- Last verified commit: b30765cd (pre-check PASS 2026-11-24T04:46:34Z, sandbox bwrap). Main 613f71c9 merged; main has since moved only under `docs/progress/` (to db0614f0).
 - **FX1-7-audit-tools (2026-11-24).** Branch `claude/fix-server-a`, with main 613f71c9 merged at b30765cd. A read-only audit of `tools/` (outside `tools/vendor/`), the art scripts in `art/design/` and `art/ui/`, the client prototypes and the docs scripts, asking whether a check can pass when it should fail, or a tool corrupt a committed file. The findings, the latent ones, the unproven ones and the tools found sound are in `docs/security/audit-2026-11/tools.md`.
   - **Proofs.** Each confirmed finding has a proof in `server/test/fix_fx1_audit_tools_proofs.mjs`, run by `server/test/fix_fx1_audit_tools.test.mjs` under `stillOpen` with its id. A proof runs the tool on disk against a planted input in a temporary folder; a tool that writes is pointed at a copy, so nothing inside the repository is written. Each fails on main 613f71c9.
   - **Highest:** FX1-T-03 (High). `run_checks.sh record` copies `exit` 0 from a run `result` calls FAIL, and the protocol's reuse rule then skips the lead's own `check_all.sh`. Then T-20 and T-21 (Medium/High: the client contract misses nine server failure codes, none with an `ERR_` row, and every client call outside `client/data/`).
@@ -25,6 +25,8 @@
   - **T-22's note.** `python3 tools/build_stamp.py` (its `main()`) exits 1 on main today: a double-escaped `<code>` at `docs/audit/index.html:1583`, from `tools/audit_register.py:13556`. Fix the source before adding `main()` to the gate.
   - **Unproven:** the ink alpha in `measure.gd` and `colour_check` (needs Godot in the test run), `export_icons --groups` (needs playwright and the design sources), `sheet.py` `_hex`, and `owners.py changed()` with quoted paths (fails safe).
   - **Existing tests.** No existing test was changed, skipped or loosened.
+  - **Checks.** `cd server && npm test` passes 653 of 653. The pre-check at b30765cd passed ("All checks passed.", `DONE exit=0`) and is recorded. `owners.py diff FX1-7-audit-tools origin/claude/videogame-project-analysis-ewkkk2 b30765cd` reports every changed path inside the task's files.
+  - **Next.** FX1-8-server-a-lows, in a fresh session.
 - **FX1-6-audit-server-a (2026-11-23).** Branch `claude/fix-server-a`, from main e2e8f5a1, with main ee42bb70 merged. The audit read the files the report did not (`service.mjs`, `matchmaking.mjs`, `holds.mjs`, `crossings.mjs`, `codex.mjs`, `workshop.mjs`, `fund.mjs`) and followed their calls into the modules they use. The findings, the unproven claims and the rejected ones are in `docs/security/audit-2026-11/server-a.md`.
   - **Tests first.** Every finding's test, in `server/test/fix_fx1_audit_server_a.test.mjs`, was committed before its fix (6b3556f9, 5d5d2e82, b0e4cd1c, f33ccc18), and each fails on main for its defect.
   - **Fixed in owned files:** A-01 (an echo with erased bytes broke every target list), A-03, A-04, A-05, A-06, A-08, A-11, A-12 and A-14. A-13 is fixed in part: the full fix needs a `leases.realm` column in `db.mjs` (FX1-R5).

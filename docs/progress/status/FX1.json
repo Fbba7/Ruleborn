@@ -3,21 +3,26 @@
   "role": "FX1",
   "branch": "claude/fix-server-a",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "FX1-7-audit-tools",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-24T03:39:29Z",
   "lease_until": "2026-11-24T06:39:29Z",
-  "updated_at": "2026-11-24T04:09:25Z",
-  "expected_next_update_by": "2026-11-24T04:53:25Z",
+  "updated_at": "2026-11-24T04:47:12Z",
+  "expected_next_update_by": "2026-11-24T05:32:12Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "b30765cd",
-    "next_step": "pre-check at b30765cd running; then record, owners.py diff, ready"
+    "next_step": "ready at b30765cd (pre-check PASS, owners.py pass); waiting for the merge"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "b30765cdf2273675053a4ba22d1e4b2d7c8a2241",
+    "exit": 0,
+    "finished_at": "2026-11-24T04:46:34Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "b30765cdf2273675053a4ba22d1e4b2d7c8a2241",
   "stop_at": "2026-11-24T21:00:00Z",
   "acks": [],
   "requests": [
