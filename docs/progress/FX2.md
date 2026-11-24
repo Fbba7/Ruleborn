@@ -53,7 +53,8 @@ Each `stillOpen` wrapper of `fix_fx2_audit_config.test.mjs` became the plain pro
 ### Merge and evidence
 - **`cd server && npm test`** on 4372844d and on 0006a4d9: 614 tests, 614 pass, 0 fail, 0 skipped.
 - **`python3 tools/coord/owners.py diff FX2-7-audit-b-config origin/claude/videogame-project-analysis-ewkkk2 0006a4d9`:** "FX2-7-audit-b-config: every changed path is inside its files".
-- **check_all:** `bash tools/run_checks.sh start 0006a4d9`, in bwrap, after the fresh-container setup (it exited 0). The result is in the status file's `precheck`, recorded with `record 0006a4d9… FX2`.
+- **check_all:** `bash tools/run_checks.sh start 0006a4d9`, in bwrap, after the fresh-container setup (it exited 0): PASS, finished 2026-11-23T23:49:43Z. The log ends `DONE exit=0` and contains "All checks passed." Recorded in the status file with `record 0006a4d9… FX2`.
+- **Main moved after the pre-check** (ddca0340, lead cycle 168: `docs/progress/` only). It merges with no conflict. It is not merged here, so the ready sha stays the pre-checked one.
 
 ## Tried and failed
 - 2026-11-21 The first RB-32 drain test passed on main, for the wrong reason (`401 session_refused`). Its session was made before the clock moved 12 h, and a session lasts an hour. It now signs in after the clock moves.
