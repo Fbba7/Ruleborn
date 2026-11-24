@@ -306,14 +306,20 @@
       "estimate_h": 2.0,
       "tier": 1,
       "critical": false,
-      "state": "open",
-      "claim": null,
+      "state": "working",
+      "claim": {
+        "agent": "FX4",
+        "branch": "claude/fix-client",
+        "claimed_at": "2026-11-24T07:25:00Z",
+        "seen_at": "2026-11-24T08:30:00Z",
+        "lease_until": "2026-11-24T10:25:00Z"
+      },
       "prior_branch": null,
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-24T02:30:00Z",
-      "updated_by": "lead (cycle 169)"
+      "updated_at": "2026-11-24T08:30:00Z",
+      "updated_by": "lead (cycle 174)"
     },
     {
       "id": "FX4-8-rehearsal-rerun",
@@ -451,20 +457,14 @@
       "estimate_h": 3.0,
       "tier": 1,
       "critical": false,
-      "state": "blocked",
-      "claim": {
-        "agent": "FX1",
-        "branch": "claude/fix-server-a",
-        "claimed_at": "2026-11-24T05:35:00Z",
-        "seen_at": "2026-11-24T06:39:00Z",
-        "lease_until": "2026-11-24T08:35:00Z"
-      },
+      "state": "merged",
+      "claim": null,
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null,
-      "updated_at": "2026-11-24T06:55:00Z",
-      "updated_by": "lead (cycle 173)",
+      "ready_sha": "dbf44adf6f5a2083e2a3e45f14638d7f6b6c2cb2",
+      "merged_sha": "e830e15bb6b3dbffcbe0d4cd288237a564c21ad8",
+      "updated_at": "2026-11-24T08:30:00Z",
+      "updated_by": "lead (cycle 174)",
       "exceptions": [
         "server/privacy.json",
         "server/declarations.md"
@@ -509,20 +509,14 @@
       "estimate_h": 3.0,
       "tier": 1,
       "critical": false,
-      "state": "working",
-      "claim": {
-        "agent": "FX3",
-        "branch": "claude/fix-sim",
-        "claimed_at": "2026-11-24T06:32:00Z",
-        "seen_at": "2026-11-24T06:32:00Z",
-        "lease_until": "2026-11-24T09:32:00Z"
-      },
+      "state": "merged",
+      "claim": null,
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null,
-      "updated_at": "2026-11-24T06:55:00Z",
-      "updated_by": "lead (cycle 173)"
+      "ready_sha": "ad5e56bfc0ba38c2c68a9b3ff43a63fe701d15c3",
+      "merged_sha": "e830e15bb6b3dbffcbe0d4cd288237a564c21ad8",
+      "updated_at": "2026-11-24T08:30:00Z",
+      "updated_by": "lead (cycle 174)"
     },
     {
       "id": "FX1-10-tools-contract",
@@ -590,6 +584,7 @@
       ],
       "done_when": [
         "each finding named in the title: its proof's stillOpen entry in server/test/fix_fx1_audit_tools_proofs.mjs (wrapped by fix_fx1_audit_tools.test.mjs) moved into a plain test under server/test/fix_fx1_tools_docs*, committed on its own before its fix and failing on current main, its failure output quoted in the handoff; then the smallest fix, following the entry's Fix line in tools.md unless the handoff says why not; the commit names the finding id",
+        "FX1-R26's second half (the lead's answer, cycle 174): the docstring of check_constant_restatements in tools/check_document.py (line 505, `fixed (\\d+) steps a second`) becomes a raw string, so compiling the file with no cached .pyc prints no SyntaxWarning; a test under server/test/fix_fx1_tools_docs* compiles it with warnings as errors (python3 -W error -B) and fails on current main",
         "each fixed entry's State in docs/security/audit-2026-11/tools.md reads 'fixed (<task_id>)'",
         "no existing test is skipped, disabled or loosened; a test whose expectation encoded the defect is corrected and named in the handoff",
         "cd server && npm test passes",
@@ -608,8 +603,8 @@
       "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-24T05:35:00Z",
-      "updated_by": "lead (cycle 171)"
+      "updated_at": "2026-11-24T08:30:00Z",
+      "updated_by": "lead (cycle 174)"
     },
     {
       "id": "FX1-12-tools-ui",
@@ -654,6 +649,45 @@
       "merged_sha": null,
       "updated_at": "2026-11-24T05:35:00Z",
       "updated_by": "lead (cycle 171)"
+    },
+    {
+      "id": "FX1-13-codex-woven-at",
+      "title": "Low, server codex (FX1-R25, FX1-A-17's residual, docs/security/audit-2026-11/server-a.md): weaving.mjs records codex.woven_at at the weave's finish time, but mastery() (codex.mjs) and the profile (profile.mjs) count woven_at != null, so a law's woven step shows while its weave is still unfinished",
+      "phase": "fix",
+      "role": "FX1",
+      "model": "Opus 5.5",
+      "assigned_to": "FX1",
+      "files": [
+        "server/src/codex.mjs",
+        "server/src/profile.mjs",
+        "server/test/fix_fx1_codex_woven*"
+      ],
+      "deps": [
+        "FX1-8-server-a-lows"
+      ],
+      "done_when": [
+        "first a test under server/test/fix_fx1_codex_woven* that starts a weave and reads mastery() and the profile before the weave's finish time, expecting the woven step not to count yet, and after it, expecting it to count; failing on current main, committed on its own before the fix, its failure output quoted in the handoff",
+        "then the smallest fix: mastery() and the profile count the woven step only when woven_at is at or before the current time (the service's clock, as weaving.mjs uses), never from the weave's start; the commit names FX1-A-17 and FX1-R25",
+        "if docs/security/audit-2026-11/server-a.md needs its FX1-A-17 entry to say the residual is fixed, the handoff writes that as a request to the lead (server-a.md is not in this task's files)",
+        "no existing test is skipped, disabled or loosened; a test whose expectation encoded the defect is corrected and named in the handoff",
+        "cd server && npm test passes",
+        "current main merged into the branch, then the fresh-container setup line and bash tools/check_all.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed outside the task's files (M48)",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 1.0,
+      "tier": 1,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-24T08:30:00Z",
+      "updated_by": "lead (cycle 174)"
     },
     {
       "id": "P3-S3-offline-1",

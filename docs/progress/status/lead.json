@@ -3,18 +3,10 @@
   "updated_at": "2026-11-24T07:25:00Z",
   "expected_next_update_by": "2026-11-24T10:25:00Z",
   "cycle": 173,
-  "merging": {
-    "candidate_sha": "80ffe664fc74caf5fb8daa3bd0d6d06d55e677e0",
-    "task_ids": [
-      "FX1-8-server-a-lows",
-      "FX1-9-tools-gate"
-    ],
-    "started_at": "2026-11-24T07:43:34Z",
-    "expires_at": "2026-11-24T08:43:34Z"
-  },
+  "merging": null,
   "last_merged": {
-    "task_id": "FX4-6-device-replay-cap",
-    "sha": "ee4d64aa"
+    "task_id": "FX1-8-server-a-lows, FX1-9-tools-gate",
+    "sha": "e830e15b"
   },
   "acks": [
     "M15",
