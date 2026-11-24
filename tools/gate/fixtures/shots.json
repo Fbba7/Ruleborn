@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "note": "The shot list's format, by example (the docstring of tools/gate/render.py). This copy lists the screens the UI wave's gate items name today, as the lead renders them; AD's list, once it exists, replaces it as the default.",
+  "screens": {
+    "heist": {
+      "script": "client/tests/shots/screen_heist.gd",
+      "contrast": "CONTRAST"
+    },
+    "result": {
+      "script": "client/tests/shots/screen_result.gd",
+      "contrast": "CONTRAST",
+      "states": [
+        {"name": "off", "env": {}},
+        {"name": "srv", "env": {"SERVER": "1"}}
+      ]
+    },
+    "home": {
+      "script": "client/tests/shots/universe_home.gd",
+      "contrast": "CONTRAST"
+    },
+    "character": {
+      "script": "client/tests/shots/screen_character.gd",
+      "contrast": "HC"
+    },
+    "roster": {
+      "script": "client/tests/shots/screen_roster.gd",
+      "contrast": "HC"
+    },
+    "settings": {
+      "script": "client/tests/shots/screen_settings.gd",
+      "contrast": "HC"
+    }
+  },
+  "items": []
+}

@@ -1,0 +1,60 @@
+{
+  "agent": "SP-bt-04",
+  "role": "specialist: the gate shot renderer (tools/gate/)",
+  "branch": "claude/ui-spec-gate-render",
+  "model": "Opus 5.5",
+  "agent_state": "active",
+  "task_id": "BT-04a",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-24T19:40:00Z",
+  "lease_until": "2026-11-24T22:40:00Z",
+  "updated_at": "2026-11-24T19:40:00Z",
+  "expected_next_update_by": "2026-11-24T20:25:00Z",
+  "long_run": null,
+  "progress_marker": {
+    "last_green_sha": "f1df3f1e",
+    "next_step": "BT-04a resync (cycle 186): reproduce render.py's read-only-HOME failure under run_checks.sh's bwrap sandbox, then fix it"
+  },
+  "precheck": {
+    "sha": "f1df3f1e38597bd00aff05103a618ad431071578",
+    "state": "PASS",
+    "exit": 0,
+    "finished_at": "2026-11-24T17:54:36Z",
+    "summary": "All checks passed."
+  },
+  "gate_request": null,
+  "ready_sha": null,
+  "stop_at": "2026-11-25T21:00:00Z",
+  "acks": [],
+  "requests": [
+    {
+      "id": "SP-bt-04-R1",
+      "from": "SP-bt-04",
+      "to": "lead",
+      "ask": "BT-04a's done_when wires its test into tools/check_all.sh, which is not in the task's files. Add, in the candidate that merges BT-04a, after the line 'python3 tools/ui_gate/sheet.py --self-test' in the section '== the UI wave gate's sheets and image checks, with their planted fails (AD-R3) ==', the line: python3 tools/gate/render.py --self-test . It runs the shot list's parser tests, then renders the fixture item 'settings at 200% text, pt_BR' (tools/gate/fixtures/test_shots.json) at the candidate's HEAD in a temporary worktree: about 15 s with a warm cache, about 3 min the first time in a container (one cargo build of the GDExtension into ~/.cache/ruleborn/gate/target); where Godot, xvfb-run or cargo is absent it prints 'render.py: SKIPPED the fixture render: <why>' and still runs the parser tests. Measured at 548732a3: parser ok, fixture item ok, 14 s warm.",
+      "files": [
+        "tools/check_all.sh"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-24T17:50:00Z",
+      "due": "2026-11-25T21:00:00Z",
+      "default": "the lead adds that one line, as above, in the candidate that merges BT-04a (as it did for AD-R3 and K1-R1)",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "SP-bt-04-R2",
+      "from": "SP-bt-04",
+      "to": "AD",
+      "ask": "BT-04a's renderer reads AD's shot list from docs/art/ui-quality/gate/shots.json once it exists, and until then the example tools/gate/fixtures/shots.json (format in the docstring of tools/gate/render.py; version 1: screens with script, contrast variable CONTRAST or HC, and states; items for anything that is not '<screen> at <n>% text[, <locale>]' or '<screen> in high contrast'). Please adopt it: copy the example to docs/art/ui-quality/gate/shots.json, correct any screen whose script or contrast variable is wrong, and add the explicit items the gate names that the example lacks, for example 'heist at 200% text, pt_BR, no crew plan' (its setting is not in gate/shots.md, so the renderer refuses that item today), and the character's OFFLINE=1 stills.",
+      "files": [
+        "docs/art/ui-quality/gate/shots.json"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-24T17:50:00Z",
+      "due": "2026-11-26T21:00:00Z",
+      "default": "the renderer keeps reading the example in tools/gate/fixtures/shots.json; an item it cannot read is refused with a message naming the readable forms, and the lead renders that item by hand as today",
+      "escalate_to": "lead"
+    }
+  ],
+  "answers": []
+}
