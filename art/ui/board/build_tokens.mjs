@@ -15,7 +15,7 @@
 //              carry; each names its section, and check_board.mjs confirms
 //              the hex is written there.
 import { readFileSync, writeFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -90,7 +90,9 @@ export function build() {
   return lines.join('\n');
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+// Run as a script: compare paths, not a file:// URL, which percent-encodes
+// a space that argv keeps (FX1-T-06).
+if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) {
   const out = join(here, 'tokens.css');
   const css = build();
   if (process.argv.includes('--check')) {
