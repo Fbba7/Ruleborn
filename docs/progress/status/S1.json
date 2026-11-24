@@ -3,17 +3,17 @@
   "role": "S1",
   "branch": "claude/ui-screens-heist",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "P4-S1-heist-vault",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-24T17:20:00Z",
   "lease_until": "2026-11-24T20:20:00Z",
-  "updated_at": "2026-11-24T18:00:00Z",
-  "expected_next_update_by": "2026-11-24T18:45:00Z",
+  "updated_at": "2026-11-24T18:45:00Z",
+  "expected_next_update_by": "2026-11-24T21:00:00Z",
   "progress_marker": {
-    "last_green_sha": "97ecb94ff8d935837168bc37c13357a2d07817c7",
-    "next_step": "re-work committed as 85be2fa8 (Cast leads at 200%: 36 pt cream word, larger plate; loot, clock, alarm and laws a step quieter; heist-pilot.md Part 11). Pre-check running; guard.sh next; then ready with the gate request.",
-    "at": "2026-11-24T18:00:00Z"
+    "last_green_sha": "85be2fa80a1ea97d2f62effe14eb7ac249fe32bc",
+    "next_step": "ready at 85be2fa8 (main 43deab02 merged, pre-check PASS 18:36Z); gate request 'heist at 200% text, pt_BR' (Hierarchy). guard.sh fails only on heist/200 121 of 118 (S1-R45's default: the lead writes the record in the merge). S1-R46 (AD-R60's spent-Cast plate) and S1-R47 (AD preview) are open with defaults.",
+    "at": "2026-11-24T18:45:00Z"
   },
   "precheck": {
     "sha": "85be2fa80a1ea97d2f62effe14eb7ac249fe32bc",
@@ -22,8 +22,18 @@
     "finished_at": "2026-11-24T18:36:11Z",
     "summary": "All checks passed."
   },
-  "gate_request": null,
-  "ready_sha": null,
+  "gate_request": {
+    "sha": "85be2fa80a1ea97d2f62effe14eb7ac249fe32bc",
+    "items": [
+      {
+        "item": "heist at 200% text, pt_BR",
+        "qualities": [
+          "Hierarchy"
+        ]
+      }
+    ]
+  },
+  "ready_sha": "85be2fa80a1ea97d2f62effe14eb7ac249fe32bc",
   "stop_at": "2026-11-24T21:00:00Z",
   "acks": [
     "M6",
@@ -59,7 +69,7 @@
       "id": "S1-R2",
       "from": "S1",
       "to": "K1",
-      "ask": "KitHud.loot that stays narrow in every language and cheap to draw: a caption that wraps between words (\"Carregar at\u00e9 100%\" asks 383 px on one line, 443 px with the panel, which puts the top row at 1,200 px of 1,080 in Portuguese); rows that put a long number under its word (\"Restam ~2.600\") rather than widen the panel; an aim tick that can be left out (a replay has no load target); the Vault's cracking, as a row or a thinner bar; and words, numbers and bars drawn in few calls (a label a row costs a draw call a row, which takes the heist past its record).",
+      "ask": "KitHud.loot that stays narrow in every language and cheap to draw: a caption that wraps between words (\"Carregar até 100%\" asks 383 px on one line, 443 px with the panel, which puts the top row at 1,200 px of 1,080 in Portuguese); rows that put a long number under its word (\"Restam ~2.600\") rather than widen the panel; an aim tick that can be left out (a replay has no load target); the Vault's cracking, as a row or a thinner bar; and words, numbers and bars drawn in few calls (a label a row costs a draw call a row, which takes the heist past its record).",
       "files": [
         "client/ui/kit_hud.gd"
       ],
@@ -473,7 +483,7 @@
       "id": "S1-R30",
       "from": "S1",
       "to": "AD",
-      "ask": "Re-check of objection F from S1-R29 (P2-S1-result-3) at 904a3567 (the fix is a5db9545, with main merged as a686d4a7). The first screen now ends on a whole line whenever the bar sits under the page that scrolls. ResultFit.fold grows the corner's clearance under the bar by the line or card the scroll's edge would cut, which lifts the bar and the edge. It is a cut, not a fade, so it adds no draw call. Where the first screen now ends: en 200% on 'Entry fee 2,840 returned', de 200% on 'Eintrittsgeb\u00fchr 2.840 erstattet', pt_BR 200% on 'Taxa de entrada de' (the rest of that label starts below the edge). The FIT check now fails when the edge cuts a line or card. Stills: SERVER=1 FIT=1 TEXT=200 bash tools/render/shoot.sh client/tests/shots/screen_result.gd out.png, plus CONTRAST=1, LOCALE=pt_BR and LOCALE=de. Draw calls are unchanged (en200 113, hc200 55, pt200 115, de200 114). Details are in docs/art/tracks/result-screen.md, 'Objection F, the fold'. F only; any objection, in one list.",
+      "ask": "Re-check of objection F from S1-R29 (P2-S1-result-3) at 904a3567 (the fix is a5db9545, with main merged as a686d4a7). The first screen now ends on a whole line whenever the bar sits under the page that scrolls. ResultFit.fold grows the corner's clearance under the bar by the line or card the scroll's edge would cut, which lifts the bar and the edge. It is a cut, not a fade, so it adds no draw call. Where the first screen now ends: en 200% on 'Entry fee 2,840 returned', de 200% on 'Eintrittsgebühr 2.840 erstattet', pt_BR 200% on 'Taxa de entrada de' (the rest of that label starts below the edge). The FIT check now fails when the edge cuts a line or card. Stills: SERVER=1 FIT=1 TEXT=200 bash tools/render/shoot.sh client/tests/shots/screen_result.gd out.png, plus CONTRAST=1, LOCALE=pt_BR and LOCALE=de. Draw calls are unchanged (en200 113, hc200 55, pt200 115, de200 114). Details are in docs/art/tracks/result-screen.md, 'Objection F, the fold'. F only; any objection, in one list.",
       "files": [
         "client/scripts/result_fit.gd",
         "client/scripts/result_screen.gd",
@@ -489,7 +499,7 @@
       "id": "S1-R31",
       "from": "S1",
       "to": "AD",
-      "ask": "Preview before the gate (P2-S1-result-4, M10, M12) at 6fb2e3da. New since 06635883: M30's close point, the words over the sunburst (kicker 'ASSALTO CONCLU\u00cdDO', title, condition, time and alarm line, the lines under the tiles) now carry an ink outline set from the size each is drawn at, so it grows with the text size (1.5 points scaled with the text, 3 in high contrast, or 12% of the face): at pt_BR 200% the 'N' of 'Nenhum' has a 10 px edge, the kicker 9 px; no draw call more. Still in from before: (1) Home and the law pills on the kit's tertiary face (ghost: violet), darker than Raid again in grayscale; (2) your board 4b note (S1-R30): the fold keeps a label of up to three lines whole, so pt_BR 200% ends on the Renome tile; (3) the shot's other states (STATE=confirming, refused with REFUSED=<code>, testing, play), all FIT ok at 200% in en, pt_BR and de (M26). Fit sweep at 3d357ac6: 51 stills fit ok, draw calls unchanged. Stills: SERVER=1 FIT=1 TEXT=200 LOCALE=pt_BR bash tools/render/shoot.sh client/tests/shots/screen_result.gd out.png, plus LOCALE=de, CONTRAST=1, and the states, e.g. SERVER=1 FIT=1 STATE=refused TEXT=200 LOCALE=de, or STATE=testing (without SERVER). The reward tiles keep their currency icons with no character frame: the crew card carries the characters, and character art in the tiles would be a new placement for you and the kit to decide. Any objection, in one list.",
+      "ask": "Preview before the gate (P2-S1-result-4, M10, M12) at 6fb2e3da. New since 06635883: M30's close point, the words over the sunburst (kicker 'ASSALTO CONCLUÍDO', title, condition, time and alarm line, the lines under the tiles) now carry an ink outline set from the size each is drawn at, so it grows with the text size (1.5 points scaled with the text, 3 in high contrast, or 12% of the face): at pt_BR 200% the 'N' of 'Nenhum' has a 10 px edge, the kicker 9 px; no draw call more. Still in from before: (1) Home and the law pills on the kit's tertiary face (ghost: violet), darker than Raid again in grayscale; (2) your board 4b note (S1-R30): the fold keeps a label of up to three lines whole, so pt_BR 200% ends on the Renome tile; (3) the shot's other states (STATE=confirming, refused with REFUSED=<code>, testing, play), all FIT ok at 200% in en, pt_BR and de (M26). Fit sweep at 3d357ac6: 51 stills fit ok, draw calls unchanged. Stills: SERVER=1 FIT=1 TEXT=200 LOCALE=pt_BR bash tools/render/shoot.sh client/tests/shots/screen_result.gd out.png, plus LOCALE=de, CONTRAST=1, and the states, e.g. SERVER=1 FIT=1 STATE=refused TEXT=200 LOCALE=de, or STATE=testing (without SERVER). The reward tiles keep their currency icons with no character frame: the crew card carries the characters, and character art in the tiles would be a new placement for you and the kit to decide. Any objection, in one list.",
       "files": [
         "client/scripts/result_screen.gd",
         "client/scripts/result_fit.gd",
@@ -652,7 +662,7 @@
       "id": "S1-R42",
       "from": "S1",
       "to": "AD",
-      "ask": "Through the lead: a preview of P3-S1-marker-1's stills before ready (the task's done_when), for AD-R55 (flow board 2's F9). Committed on claude/ui-screens-heist: docs/art/shots/heist-pilot/part9-before-flow-200-pt.png and part9-after-flow-200-pt.png (the gate's flow walk, FLOW=result TEXT=200 LOCALE=pt_BR, step 03: the hourglass over 'Espa\u00e7o' before, 'Espa\u00e7o' whole after) and part9-heist-200-pt.png. Render the rest from the branch: env FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_heist.gd heist_100.png; the same with TEXT=200 LOCALE=pt_BR, TEXT=200 LOCALE=de and CONTRAST=1. The HUD's columns now stand one overlay above the world's marker layer; the guards' words (Speech) stay above the HUD, as before. docs/art/tracks/heist-pilot.md part 9 has the detail.",
+      "ask": "Through the lead: a preview of P3-S1-marker-1's stills before ready (the task's done_when), for AD-R55 (flow board 2's F9). Committed on claude/ui-screens-heist: docs/art/shots/heist-pilot/part9-before-flow-200-pt.png and part9-after-flow-200-pt.png (the gate's flow walk, FLOW=result TEXT=200 LOCALE=pt_BR, step 03: the hourglass over 'Espaço' before, 'Espaço' whole after) and part9-heist-200-pt.png. Render the rest from the branch: env FIT=1 bash tools/render/shoot.sh client/tests/shots/screen_heist.gd heist_100.png; the same with TEXT=200 LOCALE=pt_BR, TEXT=200 LOCALE=de and CONTRAST=1. The HUD's columns now stand one overlay above the world's marker layer; the guards' words (Speech) stay above the HUD, as before. docs/art/tracks/heist-pilot.md part 9 has the detail.",
       "files": [
         "docs/art/shots/heist-pilot/"
       ],
@@ -692,14 +702,38 @@
       "id": "S1-R45",
       "from": "S1",
       "to": "K1",
-      "ask": "With the lead's approval under M33: raise tools/ui_bake/budgets.json's recorded draw calls for heist/200 from 118 to 119. guard.sh on claude/ui-screens-heist (main 4e0294ff merged) measures heist/200 at 119; heist/100 (120) and heist/hc (121, record 123) keep their records, and every shot stays under the cap of 150. The one call is the Vault's word at 200% text ('Vault' / 'Cofre' / 'Tresor'), which the wave board's phase 4 item (M57, M61) asks for: the count joins the loot's baked figures, but the word is a Label of its own.",
+      "ask": "With the lead's approval under M33: raise tools/ui_bake/budgets.json's recorded draw calls for heist/200 from 118 to 121. guard.sh on claude/ui-screens-heist at 85be2fa8 (main 43deab02 merged) measures heist/200 at 121; heist/100 (120 of 120) and heist/hc (121 of 123) keep their records, no word is below 4.5:1, and every shot stays under the cap of 150. One call is the Vault's word at 200% text (M57, M61; 119 at 97ecb94f); the other two come with the gate fail's re-work, where Cast leads at 200% (heist-pilot.md Part 11: Cast's word in cream with the ink line at 36 pt, the quieter tint on the loot's, clock's and alarm's figures).",
       "files": [
         "tools/ui_bake/budgets.json"
       ],
       "blocking": false,
       "created_at": "2026-11-18T08:25:00Z",
       "due": "2026-11-18T14:00:00Z",
-      "default": "As for S1-R39: the lead writes heist/200 119 with a raises entry in the merge of P4-S1-heist-vault, and S1 marks ready with guard.sh failing only on this line, named in the handoff.",
+      "default": "As for S1-R39: the lead writes heist/200 121 with a raises entry in the merge of P4-S1-heist-vault, and S1 marks ready with guard.sh failing only on this line, named in the handoff.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R46",
+      "from": "S1",
+      "to": "AD",
+      "ask": "Sent through the lead. The gate's re-work of 'heist at 200% text, pt_BR' (Hierarchy) makes Cast (Lançar) lead by size and word: a plate about 2.5 times Fugir's, with its word in cream at 36 pt. A pre-judge (advisory) split 2 pass, 1 fail; the fail is that Cast's plate has no value step over Fugir and the tray, since with no casts left AD-R60 dresses Cast in the leather secondary plate. May a spent Cast take a lighter plate (leather_light, or the gold plate with the wand dimmed) while it leads at 200% text (HeistHud.cast_leads: text over 175%, not high contrast)? That would be a change to AD-R60 for this one case, in heist_hand.gd's _dress_cast or in S1's heist_screen.gd.",
+      "files": [],
+      "blocking": false,
+      "created_at": "2026-11-24T18:45:00Z",
+      "due": "2026-11-25T12:00:00Z",
+      "default": "AD-R60 stands: a spent Cast stays on the leather plate at every text size, and at 200% it leads by size, place and word only (85be2fa8). If the gate fails again on the plate's value, S1 asks again here.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "S1-R47",
+      "from": "S1",
+      "to": "AD",
+      "ask": "AD preview for P4-S1-heist-vault's re-work (M10, M12, M23), sent through the lead. At 200% text Cast leads the heist (bigger plate, cream word at 36 pt), the loot panel sits on a darker plate, and the loot's, clock's (2:25), alarm's and laws' (LEIS AQUI) figures and plates are a step quieter. 100%, 150% and high contrast are unchanged. The stills are docs/art/shots/heist-pilot/part11-*.png on claude/ui-screens-heist, with each change in docs/art/tracks/heist-pilot.md Part 11.",
+      "files": [],
+      "blocking": false,
+      "created_at": "2026-11-24T18:45:00Z",
+      "due": "2026-11-25T12:00:00Z",
+      "default": "As for S1-R44: AD has no seat, the stills stand as the preview, and the preview goes into AD's next task.",
       "escalate_to": "lead"
     }
   ],
@@ -746,5 +780,5 @@
       "where": "docs/progress/lead.md, Now, cycle 143 (M60)"
     }
   ],
-  "next_step": "re-work committed as 85be2fa8 (Cast leads at 200%: 36 pt cream word, larger plate; loot, clock, alarm and laws a step quieter; heist-pilot.md Part 11). Pre-check running; guard.sh next; then ready with the gate request."
+  "next_step": "ready at 85be2fa8 (main 43deab02 merged, pre-check PASS 18:36Z); gate request 'heist at 200% text, pt_BR' (Hierarchy). guard.sh fails only on heist/200 121 of 118 (S1-R45's default: the lead writes the record in the merge). S1-R46 (AD-R60's spent-Cast plate) and S1-R47 (AD preview) are open with defaults."
 }
