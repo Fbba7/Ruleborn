@@ -364,9 +364,9 @@ on main (`9fe151ad`).
   finishes takes its unearned step with it, or moves it to the soonest
   finish still in a slot. `server/test/codex.test.mjs:211` expected the
   step at the start; it is corrected.
-  - Left as is: while a weave is unfinished, `codex.mjs`'s `mastery()` and
-    the profile still show its step, because they do not compare
-    `woven_at` with the time (request FX1-R25).
+  - FX1-R25's residual: fixed (FX1-13-codex-woven-at). `mastery()` and the
+    profile count the woven step only once `woven_at` is at or before the
+    service's clock (recorded by the lead in cycle 175, FX1-R27).
 
 ## Unproven
 
