@@ -66,6 +66,10 @@
     "SP-bt-04": {
       "branch": "claude/ui-spec-gate-render",
       "model": "Opus 5.5"
+    },
+    "SP-bt-07": {
+      "branch": "claude/ui-spec-metrics",
+      "model": "Opus 5.5"
     }
   },
   "strings_owner": "lead",
