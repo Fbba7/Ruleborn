@@ -336,6 +336,9 @@ export class Matchmaking {
    * dropped (DB-1). An echo is no one's current island, so only its owner is
    * checked. The generator's cards are its current islands, swapped to the
    * day's as any republished island is: yesterday's are no echoes (RB-12).
+   * A swapped card carries its new bundle's chapter (§7.6): one above the
+   * card it replaces, which the list was filtered by, or whose bytes are
+   * gone, is dropped until the next hourly list (AUD-B-06, FX1-A-07).
    */
   current(targets) {
     const out = [];
@@ -349,7 +352,10 @@ export class Matchmaking {
       const snap = this.db.prepare("SELECT realm_level, vault_level, exposed FROM snapshots WHERE bundle = ?")
         .get(island.bundle);
       if (!snap) continue;
-      out.push({ ...c, bundle: island.bundle, realmLevel: snap.realm_level, vaultLevel: snap.vault_level, exposed: snap.exposed });
+      const chapter = this.bundleChapter(island.bundle);
+      if (chapter === null || chapter > (c.chapter ?? 1)) continue;
+      out.push({ ...c, bundle: island.bundle, realmLevel: snap.realm_level, vaultLevel: snap.vault_level,
+                 exposed: snap.exposed, chapter });
     }
     return out;
   }
