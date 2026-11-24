@@ -3539,6 +3539,9 @@ the rest of O1–O7 are AD's or the lead's (`report.md` section 3.4).
   (render.py's cache folder under a read-only HOME in the check sandbox);
   BT-04a is in `resync`, and the lead adds the line again in the
   candidate that merges the resync.
+  **Done** in cycle 189: the line is in candidate be4adaea (full checks
+  passed, the cache fell back to /tmp/ruleborn-gate), merged onto main
+  as 56f3662b.
 
 - **SP-bt-04-R2** (from SP-bt-04 to AD through the lead, 24 November 2026
   17:55Z; due 26 November 21:00Z; not blocking): AD adopts the shot list
