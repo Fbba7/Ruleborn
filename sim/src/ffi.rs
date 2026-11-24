@@ -356,7 +356,7 @@ pub extern "C" fn rb_record_drawn(seed_hi: u32, seed_lo: u32, ticks: u32, crew: 
         let Ok(island) = Island::decode(&b[..island_len as usize]) else { return -2 };
         let crew = crew.min(u8::MAX as u32) as u8;
         let bytes = record_in(&island, seed, ticks, crew, era, draw(&island, seed, ticks, crew)).encode();
-        if bytes.len() > BUFFER_BYTES {
+        if bytes.len() > MAX_HEIST_BYTES {
             return -9;
         }
         b[..bytes.len()].copy_from_slice(&bytes);
@@ -403,7 +403,7 @@ pub extern "C" fn rb_record(seed_hi: u32, seed_lo: u32, ticks: u32, crew: u32,
         }
         let crew = crew.min(u8::MAX as u32) as u8;
         let bytes = record_in(&island, seed, ticks, crew, era, commands).encode();
-        if bytes.len() > BUFFER_BYTES {
+        if bytes.len() > MAX_HEIST_BYTES {
             return -9;
         }
         b[..bytes.len()].copy_from_slice(&bytes);
@@ -453,7 +453,7 @@ pub extern "C" fn rb_record_crew(seed_hi: u32, seed_lo: u32, ticks: u32, crew: u
             return -7;
         }
         let bytes = record_with(&island, seed, ticks, crew, era, Some(manifest), commands).encode();
-        if bytes.len() > BUFFER_BYTES {
+        if bytes.len() > MAX_HEIST_BYTES {
             return -9;
         }
         b[..bytes.len()].copy_from_slice(&bytes);

@@ -5,6 +5,24 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 165**, 23 November 2026, from about 21:20Z (session
+  `session_01SNkKxpouhMqDYtpvhRsNr4`, started by the Opus 5.5 launcher),
+  the first cycle after the owner's restart of 23 November ("Continue,
+  first the bugs then the UI"). **Merged:** nothing; no task is `ready`
+  (FX1-4-holds-codex is `resync`), the merge lock stays clear, main did
+  not move, so the pages need no republish. **Started**, on Opus 5.5 at
+  effort high, four builders (the cap of four: this session's limits read
+  `allowed` on the five-hour bar, with no seven-day warning): FX1 on
+  FX1-4-holds-codex's resync (`session_01SNkKxqf8d3D9CxTFED7uAn`), FX2 on
+  FX2-6-audit-server-b (`session_01SNkKxqkjiqLB1v3Vtjw8hm`), FX3 on
+  FX3-5-audit-sim afresh (`session_01SNkKxr46k63bAaFiJ5F3gi`) and FX4 on
+  FX4-3-replay-shop-nav (`session_01SNkKxpABZrz4Mfhrmhdq7n`). Each agent's
+  last session was idle (`get_session`). **Still to come in the bug
+  wave:** FX1-6 (after FX1-4), then FX1-7 (after FX1-6); FX4-4 (after
+  FX4-3); FX4-5 (its dep is merged, it waits for FX4's seat). SV-B10 stays
+  unassigned until the production host exists. No new message, request or audit
+  finding. The UI stays paused until every FX task is merged.
+
 - **Cycle 164**, 21 November 2026, from about 21:39Z (session
   `session_01SNkKxnEwW1ec5DJwnyoz4w`, started by the Opus 5.5 launcher).
   **Merged:** FX3-4-lab-replay (ready at 7db937dd; RB-51, RB-52, RB-54,

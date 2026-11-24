@@ -15,6 +15,8 @@ func add(kind: String, what: String, fields := {}) -> void:
 	var safe := {}
 	for key: String in fields:
 		var v: Variant = fields[key]
+		if v is StringName:
+			v = String(v)  # a route's name (RB-59)
 		if v is int or v is float or v is bool or (v is String and (v as String).length() <= 64):
 			safe[key] = v
 	_entries.append({"ms": Time.get_ticks_msec(), "kind": kind, "what": what, "fields": safe})
