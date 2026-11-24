@@ -61,6 +61,16 @@ func run() -> void:
 	await _replay_of_another_crew_keeps_the_old_one()
 	await _planner_drops_the_cards_owner()
 	await _defences_trace_drops_across_and_owner()
+	await _heist_not_playing_takes_orders()
+	await _held_vault_offers_gaits_and_cracks()
+	await _held_menu_is_not_modal()
+	_short_words_bold_at_any_size()
+	_heart_draws_the_spire_twice()
+	_full_realm_loses_a_building()
+	await _notice_pulse_overshoots()
+	await _locked_control_still_acts()
+	_curtains_hang_from_part_of_the_rim()
+	_heart_pool_on_the_grid()
 
 
 ## Audit finding <id>: proven, not fixed here. `holds` is whether the defect
@@ -385,3 +395,326 @@ func _defences_trace_drops_across_and_owner() -> void:
 			+ "it crosses a universe, or names its raider, is leased as the Heart alone (§5.4, §12.3)",
 		target == {"bundle": "r1", "trace": true}, "%s" % target)
 	s.close()
+
+
+## A heist screen in the tree with no network, after `heist_started` with
+## `payload`, its frames not run; with it, the services it was given and the
+## ones it replaced. `_close_heist` puts them back.
+func _offline_heist(name: String, payload: Dictionary) -> Array:
+	var t := SlowServer.new()
+	var s := _plain(name, t)
+	t.offline = true
+	var was: Services = App.services
+	App.services = s
+	s.store.dispatch(&"heist_started", payload)
+	var screen: HeistScreen = await mount.call("heist_screen")
+	screen.set_process(false)
+	for i in 10:
+		await tree.process_frame
+	return [screen, s, was]
+
+
+func _close_heist(shown: Array) -> void:
+	(shown[0] as HeistScreen).queue_free()
+	App.services = shown[2]
+	(shown[1] as Services).close()
+	await tree.process_frame
+
+
+## The kinds of `world`'s commands after the first `from`.
+static func _kinds_after(world: RulebornReplay, from: int) -> Array:
+	return world.commands().slice(from).map(func(c: Dictionary) -> int: return int(c["kind"]))
+
+
+# Audit finding CLI-25.
+## CLI-25: a Workshop island this build cannot load is said, never swapped
+## for the fixture realm (heist_screen.gd lines 106-111): `playing` goes
+## false and the hint says why. But `_ready` has already started the fixture
+## realm (line 99), and no order checks `playing`: the gait pill
+## (`controller.next_gait`), a tap on the world (`_tap_world`), a portrait
+## and Get out all still give commands, and each one's `changed` runs
+## `_refresh`, which writes the plain heist hint over the reason (lines
+## 349-351) and shows the fixture realm (line 339). One tap on the gait pill
+## and the island that does not load is gone from the screen, replaced by a
+## realm that is not the player's.
+func _heist_not_playing_takes_orders() -> void:
+	var shown := await _offline_heist("noload", {"island": PackedByteArray([1, 2, 3]),
+		"workshop": {"seed": "7", "ticks": 4500, "token": "w"}})
+	var screen: HeistScreen = shown[0]
+	var reason := Errors.message("HEIST_NONE", "island_does_not_load")
+	var said := screen._hint_source
+	var stopped := not screen.playing
+	var before := screen.controller.world.commands().size()
+	screen.controller.next_gait()
+	await tree.process_frame
+	var given := _kinds_after(screen.controller.world, before)
+	_still_open("CLI-25", "a Workshop island that does not load says so and stops the heist, but the gait pill "
+			+ "still gives the fixture realm's crew a command and the hint's reason is written over (§18.6)",
+		stopped and said == reason and not screen.playing and given == [HeistController.Kind.GAIT]
+			and screen._hint_source != reason,
+		"stopped %s, said %s, given %s, now says %s" % [stopped, said == reason, given, screen._hint_source])
+	await _close_heist(shown)
+
+
+# Audit finding CLI-26.
+## CLI-26: §12.7 and §12.5: a held tap on the Vault offers the load target
+## (how full the crew loads before leaving, 50 to 100% in tens). The screen
+## has no such menu: `open_gait_menu` (heist_screen.gd lines 462-498) offers
+## Crouch, Walk and Run on every tile but an Active crew member's, the Vault
+## too, and `_go_at` gives the gait and then `tap_tile` of the held tile,
+## which on a shut Vault is a crack. So the player who holds the Vault to
+## change the load and chooses Walk sets the gait and orders the crack, and
+## the load target cannot be changed during a heist at all.
+func _held_vault_offers_gaits_and_cracks() -> void:
+	var shown := await _offline_heist("vault", {})
+	var screen: HeistScreen = shown[0]
+	var vault: Dictionary = screen.controller.world.vault()
+	var before := screen.controller.world.commands().size()
+	var load_was := screen.controller.load_target
+	screen._go_at(0, Vector2i(vault["at"]))
+	await tree.process_frame
+	var given := _kinds_after(screen.controller.world, before)
+	_still_open("CLI-26", "Walk, chosen from the held-tap menu on the Vault, sets the gait and cracks the Vault; "
+			+ "the Vault's held tap offers gaits, not the load target (§12.5, §12.7)",
+		not screen.controller.choosing and not bool(vault["open"])
+			and given == [HeistController.Kind.GAIT, HeistController.Kind.CRACK]
+			and screen.controller.load_target == load_was,
+		"choosing %s, vault %s, given %s" % [screen.controller.choosing, vault, given])
+	await _close_heist(shown)
+
+
+# Audit finding CLI-27.
+## CLI-27: §12.7: "Wheels and held-tap menus are modal: while one is open
+## nothing else can be tapped." The gait menu is a panel that lets every tap
+## through (`MOUSE_FILTER_IGNORE`, heist_screen.gd line 468) with nothing
+## behind it to catch one, and the hand's Get out (`_get_out`, line 843)
+## does not close it. Get out tapped while it is open arms the skiff call,
+## so Walk then chosen on open ground gives the gait and calls the skiff to
+## that tile, where the player asked for a walk.
+func _held_menu_is_not_modal() -> void:
+	var shown := await _offline_heist("modal", {})
+	var screen: HeistScreen = shown[0]
+	if screen.controller.choosing:
+		screen.controller.land_here()
+	screen.view.show_replay(screen.controller.world)
+	var at := Vector2(-1, -1)
+	var tile := Vector2i(-1, -1)
+	var grid := screen.controller.world.size()
+	for y in grid.y:
+		for x in grid.x:
+			var t := Vector2i(x, y)
+			if tile.x < 0 and _open_ground(screen.controller, t) and screen.view.tile_at(screen.view.screen_at(t)) == t:
+				at = screen.view.screen_at(t)
+				tile = t
+	screen.open_gait_menu(at)
+	var menu := screen.gait_menu
+	var lets_through := menu != null and menu.mouse_filter == Control.MOUSE_FILTER_IGNORE
+	screen._get_out()
+	var still_open := screen.gait_menu != null and is_instance_valid(screen.gait_menu)
+	var before := screen.controller.world.commands().size()
+	screen._go_at(0, tile)
+	await tree.process_frame
+	var given := _kinds_after(screen.controller.world, before)
+	_still_open("CLI-27", "the held-tap menu lets taps through and stays open over Get out, so Walk then calls "
+			+ "the skiff to the held tile (§12.7)",
+		tile.x >= 0 and lets_through and still_open
+			and given == [HeistController.Kind.GAIT, HeistController.Kind.SKIFF],
+		"tile %s, lets through %s, open after Get out %s, given %s" % [tile, lets_through, still_open, given])
+	await _close_heist(shown)
+
+
+## Whether tile `t` holds nothing a tap acts on: no crew member, guard,
+## Vault, pylon or ward (HeistController.tap_tile's walk).
+static func _open_ground(c: HeistController, t: Vector2i) -> bool:
+	for m: Dictionary in c.world.crew():
+		if Vector2i(m["at"]) == t:
+			return false
+	for g: Dictionary in c.world.guards():
+		if Vector2i(g["at"]) == t:
+			return false
+	for w: Dictionary in c.world.wards():
+		if Vector2i(w["at"]) == t:
+			return false
+	if Vector2i(c.world.vault()["at"]) == t:
+		return false
+	return c.world.features()[t.y * c.world.size().x + t.x] == 0
+
+
+# Audit finding CLI-28.
+## CLI-28: colour_check.gd's contract (its lines 10-12) holds short words at
+## 16 points bold, or 24 points regular, to Lc 60, and body text to Lc 75.
+## `lc_needed` (lines 77-82) gives Lc 60 to any bold text, whatever its
+## size: 13-point bold words pass the gate's check at Lc 60, where the
+## contract asks Lc 75 below 16 points.
+func _short_words_bold_at_any_size() -> void:
+	var asked := ColourCheck.lc_needed(13.0, true)
+	_still_open("CLI-28", "13-point bold words are held to the short words' Lc 60, where the check's own contract "
+			+ "keeps that for 16 points bold or more (§21.8)",
+		asked == ColourCheck.MIN_LC_SHORT and ColourCheck.MIN_LC_SHORT < ColourCheck.MIN_LC_BODY,
+		"asked Lc %s at 13 points bold, short %s, body %s" % [asked, ColourCheck.MIN_LC_SHORT,
+			ColourCheck.MIN_LC_BODY])
+
+
+## The universe island of `realm`, built with `buildings`, each
+## {kind, n, level}, as server/src/universe.mjs `buildings()` sends them.
+static func _island_with(realm: Dictionary, buildings: Array) -> UniverseIsland:
+	var island := UniverseIsland.new(realm, Vector3.ZERO)
+	island.build(Geo.new(), Geo.new(), UniversePaint.new(), UniversePaint.new(), UniversePaint.new(), buildings)
+	return island
+
+
+# Audit finding CLI-29.
+## CLI-29: the Heart's middle is its Spire, drawn as the citadel, and its pin
+## (`places["keeper_s_spire:1"]`) is set above it (universe_island.gd lines
+## 380-383). The server lists the Spire among the Heart's buildings
+## (universe.mjs `buildings()`, and facts.json's STARTING_HEART first of all), and
+## the loop after (lines 385-406) skips nothing: it draws the Spire again at
+## the first ring spot and moves its pin there, off the citadel.
+func _heart_draws_the_spire_twice() -> void:
+	var start: Array = []
+	for kind: String in ["keeper_s_spire", "vault", "star_well", "aether_spring", "garden", "hearth"]:
+		start.append({"kind": kind, "n": 1, "level": 1})
+	var heart := _island_with({"realm": "heart", "type": "Heart", "level": 3}, start)
+	var pin: Vector3 = heart.places.get("keeper_s_spire:1", Vector3.ZERO)
+	var drawn := heart._near_jobs.filter(func(j: Array) -> bool: return j[0] == "keeper_s_spire").size()
+	_still_open("CLI-29", "the Heart's starting buildings draw the Spire a second time at a ring spot and move its "
+			+ "pin off the citadel (§21.4)",
+		pin != heart.at + Vector3(0, 11.0, 0) and Vector2(pin.x, pin.z).length() > 1.0 and drawn == 1,
+		"pin %s, citadel at %s, spire drawn near %d" % [pin, heart.at, drawn])
+
+
+# Audit finding CLI-30.
+## CLI-30: an island has 16 building spots (universe_island.gd `RINGS`:
+## 1 + 6 + 9), and `_buildings` stops at the last (line 386). A realm full
+## at level 1 holds 17 (universe.mjs `allowed()`: one each of the nine outer
+## kinds, but eight wards, WARD_LIMITS[0]), so the last the server sends,
+## sorted by kind and n, is not drawn and has no pin: ward 8. The Heart,
+## whose middle spot is the citadel, has 15 for up to 22.
+func _full_realm_loses_a_building() -> void:
+	var full: Array = []
+	for kind: String in ["aether_spring", "anchor_stone", "garden", "guardian_post", "hearth", "law_pylon",
+			"nursery", "star_well", "storehouse"]:
+		full.append({"kind": kind, "n": 1, "level": 1})
+	for n in range(1, 9):
+		full.append({"kind": "ward", "n": n, "level": 1})
+	var realm := _island_with({"realm": "outer-1", "type": "Verdant", "level": 1}, full)
+	_still_open("CLI-30", "a realm full at level 1 has 17 buildings and 16 spots: its eighth ward is not drawn and "
+			+ "has no pin (§10.3, §21.4)",
+		full.size() == 17 and realm.places.size() == 16 and realm.places.has("ward:7")
+			and not realm.places.has("ward:8"),
+		"%d buildings, %d places, ward:8 %s" % [full.size(), realm.places.size(), realm.places.has("ward:8")])
+
+
+# Audit finding CLI-31.
+## CLI-31: §21.8: every interface movement takes 150 to 250 ms, easing out,
+## without overshoot. `KitStatus.notice`'s pulse (kit_status.gd lines
+## 543-547) grows the mark to 1.15 and back over `pop_ms` each way, 500 ms
+## in all, on TRANS_SINE's default ease in and out, and reads the raw token
+## rather than `Motion._ms`'s clamp. No screen calls `notice` yet.
+func _notice_pulse_overshoots() -> void:
+	var was := Settings.reduced_motion
+	Settings.reduced_motion = false
+	var host := Button.new()
+	host.size = Vector2(80, 40)
+	tree.root.add_child(host)
+	var mark := KitStatus.notice(host, "3")
+	var top := 1.0
+	var began := Time.get_ticks_msec()
+	var back := -1
+	for i in 600:
+		await tree.process_frame
+		top = maxf(top, mark.scale.x)
+		if top > 1.01 and is_equal_approx(mark.scale.x, 1.0):
+			back = Time.get_ticks_msec() - began
+			break
+	_still_open("CLI-31", "a notice mark pulses to 1.15 times its size and back over about 500 ms, eased in and out, "
+			+ "where interface movement takes 150 to 250 ms, eased out, without overshoot (§21.8)",
+		top > 1.1 and back > 400,
+		"largest %.3f, back to size after %d ms" % [top, back])
+	host.queue_free()
+	Settings.reduced_motion = was
+	await tree.process_frame
+
+
+# Audit finding CLI-32.
+## CLI-32: kit_status.gd `locked` lays a clear key over the control so "the
+## control's own action never runs" (line 491). That holds for a tap; the
+## control itself keeps its focus and is not disabled, so a keyboard or
+## controller press on it (ui_accept) still runs its
+## action. No screen locks a control with it yet.
+func _locked_control_still_acts() -> void:
+	var ran := [0]
+	var b := UI.action("Go", func() -> void: ran[0] += 1)
+	b.size = Vector2(120, 60)
+	tree.root.add_child(b)
+	await tree.process_frame
+	KitStatus.locked(b, "Opens at level 3")
+	b.grab_focus()
+	for down: bool in [true, false]:
+		var press := InputEventAction.new()
+		press.action = &"ui_accept"
+		press.pressed = down
+		tree.root.push_input(press)
+		await tree.process_frame
+	_still_open("CLI-32", "a control under the lock still takes focus and runs its own action on ui_accept",
+		b.focus_mode != Control.FOCUS_NONE and not b.disabled and ran[0] == 1,
+		"focus mode %d, disabled %s, ran %d" % [b.focus_mode, b.disabled, ran[0]])
+	b.queue_free()
+	await tree.process_frame
+
+
+# Audit finding CLI-33.
+## CLI-33: the island's curtains (island_builder.gd `roots`, lines 361-373),
+## the long roots under its rim, stand at `TAU * (i + ...) / 16` for i up to
+## their count. With 16 that is the whole rim. Emberreach has 6, and the
+## light detail level (`_few`) halves them, but the divisor stays 16: 6
+## curtains hang from the first three-eighths of the rim and the rest has
+## none, and at the light level a Verdant island's 8 hang from one half.
+## The curtains reach below 4.8 m under the meadow, the other roots never.
+func _curtains_hang_from_part_of_the_rim() -> void:
+	var bare := {}
+	for kind: String in ["verdant", "emberreach"]:
+		for light: bool in [false, true]:
+			var b := IslandBuilder.new(Vector2i(12, 12), 77, RealmPalette.of(kind), kind)
+			b.light = light
+			var roots: ArrayMesh = b.roots()[0]
+			var hung := PackedInt32Array()
+			hung.resize(16)
+			for si in roots.get_surface_count():
+				var points: PackedVector3Array = roots.surface_get_arrays(si)[Mesh.ARRAY_VERTEX]
+				for p in points:
+					if p.y < -4.8:
+						hung[int(fposmod(atan2(p.z, p.x), TAU) / TAU * 16.0) % 16] += 1
+			bare["%s%s" % [kind, " light" if light else ""]] = Array(hung).count(0)
+	_still_open("CLI-33", "Emberreach's curtains, and every island's at the light detail level, hang from part of "
+			+ "the rim, the rest bare (§21.4)",
+		bare["verdant"] == 0 and bare["verdant light"] >= 6 and bare["emberreach"] >= 8,
+		"sixteenths of the rim with no curtain: %s" % bare)
+
+
+# Audit finding CLI-34.
+## CLI-34: a waterfall's pool lies on the meadow between the grid and the
+## rim, 1.2 m in from the edge, 0.8 m across its radius (island_builder.gd
+## `waterfalls`, lines 841-848). The Heart's third fall is at PI * 1.25
+## (`fall_angles`, line 824), the grid's corner, where the rim is barely
+## further out than the corner itself: on a square grid, of any size, its
+## pool's middle is about 0.2 m off the grid, so most of the pool lies over
+## the corner tiles, where the crew stands and buildings are. Every other
+## fall's pool is 2 m or more clear of the grid.
+func _heart_pool_on_the_grid() -> void:
+	var near := {}
+	var clear := INF
+	for side: int in [12, 16]:
+		for kind: String in ["heart", "verdant", "tidehold"]:
+			var b := IslandBuilder.new(Vector2i(side, side), 77, RealmPalette.of(kind), kind)
+			for a in b.fall_angles():
+				var r := b.edge(a) - 1.2
+				var off := b.off_grid(cos(a) * r, sin(a) * r)
+				if kind == "heart" and is_equal_approx(a, PI * 1.25):
+					near[side] = off
+				else:
+					clear = minf(clear, off)
+	_still_open("CLI-34", "the Heart's corner waterfall has its pool over the grid's corner tiles, on any square "
+			+ "grid; every other fall's pool is clear of the grid (§21.4)",
+		near.size() == 2 and near.values().all(func(o: float) -> bool: return o < 0.8) and clear >= 2.0,
+		"corner pool's middle off the grid by %s, the others by at least %.2f, pool radius 0.8" % [near, clear])
