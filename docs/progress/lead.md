@@ -213,8 +213,10 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxpBYuqfDPQtPhugfWH` (cycle 167,
-23 November 2026 from about 22:05Z, started by the Opus 5.5 launcher).
+Latest lead cycle session: `session_01SNkKxn1dZLeKHPjZ3mFguK` (cycle 168,
+23 November 2026 from about 23:13Z, started by the Opus 5.5 launcher).
+Cycle 167's was `session_01SNkKxpBYuqfDPQtPhugfWH` (23 November, from
+about 22:05Z).
 Cycle 166's was `session_01SNkKxr1ZSqi1YJiktk15QA` (23 November, from
 about 21:39Z).
 Cycle 165's was `session_01SNkKxpouhMqDYtpvhRsNr4` (23 November, from
@@ -783,6 +785,27 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 168**, 23 November 2026, from about 23:13Z (session
+  `session_01SNkKxn1dZLeKHPjZ3mFguK`, started by the Opus 5.5 launcher).
+  Bookkeeping only. **Merged:** nothing; no task is `ready`, no gate
+  request, the merge lock stays clear, main did not move, so the pages
+  need no republish. **Seen:** the four builders started in cycle 167 are
+  active, within their deadlines (next updates due 23:40Z to 23:55Z):
+  FX1 is `working` on FX1-6-audit-server-a (proofs and owned fixes pushed,
+  603 of 603 green, `server-a.md` drafted, `check_all` running; head
+  520cae94); FX2 claimed FX2-7-audit-b-config, FX3 claimed
+  FX3-6-audit-universe and FX4 claimed FX4-4-audit-client, each after
+  merging main. Their claims and leases are copied into the backlog.
+  **Requests:** FX1-R3 to FX1-R10 (not blocking, due 24 November
+  22:36Z) carry FX1-6's audit findings that fall outside its files
+  (accounts.mjs, limits.mjs, seasons.mjs, links.mjs, weaving.mjs,
+  matchmaking.mjs, db.mjs); they are answered, and fix tasks filed, once
+  FX1-6 and its `server-a.md` are merged. **Started:** nothing; the four
+  seats are full (FX4-5-problem-strings is open, waiting for FX4's
+  seat). **Next:** merge FX1-6, FX2-7, FX3-6 and FX4-4 as they turn
+  ready; then file the FX1-6 fix task(s) from FX1-R3 to FX1-R10, and
+  start FX1-7, FX2-8, FX2-9 (after FX1-6) and FX4-5 as seats free; then
+  the UI.
 - **Cycle 167**, 23 November 2026, from about 22:05Z (session
   `session_01SNkKxpBYuqfDPQtPhugfWH`, started by the Opus 5.5 launcher).
   **Merged:** FX1-4-holds-codex (RB-15, RB-18, RB-36, RB-53, RB-56) at
@@ -838,23 +861,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   restart is due. **Next:** merge FX1-4-holds-codex when it turns ready
   (full checks, `owners.py diff`), then FX1-6 in FX1's seat; FX4-5 and
   FX4-4 wait for FX4's seat; FX1-7 after FX1-6.
-- **Cycle 165**, 23 November 2026, from about 21:20Z (session
-  `session_01SNkKxpouhMqDYtpvhRsNr4`, started by the Opus 5.5 launcher),
-  the first cycle after the owner's restart of 23 November ("Continue,
-  first the bugs then the UI"). **Merged:** nothing; no task is `ready`
-  (FX1-4-holds-codex is `resync`), the merge lock stays clear, main did
-  not move, so the pages need no republish. **Started**, on Opus 5.5 at
-  effort high, four builders (the cap of four: this session's limits read
-  `allowed` on the five-hour bar, with no seven-day warning): FX1 on
-  FX1-4-holds-codex's resync (`session_01SNkKxqf8d3D9CxTFED7uAn`), FX2 on
-  FX2-6-audit-server-b (`session_01SNkKxqkjiqLB1v3Vtjw8hm`), FX3 on
-  FX3-5-audit-sim afresh (`session_01SNkKxr46k63bAaFiJ5F3gi`) and FX4 on
-  FX4-3-replay-shop-nav (`session_01SNkKxpABZrz4Mfhrmhdq7n`). Each agent's
-  last session was idle (`get_session`). **Still to come in the bug
-  wave:** FX1-6 (after FX1-4), then FX1-7 (after FX1-6); FX4-4 (after
-  FX4-3); FX4-5 (its dep is merged, it waits for FX4's seat). SV-B10 stays
-  unassigned until the production host exists. No new message, request or audit
-  finding. The UI stays paused until every FX task is merged.
 - **Restart, 23 November 2026** (the overseer, about 21:20Z). The owner
   restarted the program, in the chat of the overseer session: "Continue,
   first the bugs then the UI" (CLAUDE.md order 1). It runs on Opus 5.5 at
