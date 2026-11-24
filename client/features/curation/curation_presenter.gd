@@ -92,7 +92,8 @@ static func said(what: String) -> String:
 	return Strings.t("CUR_SAID_" + what.to_upper()) if what != "" else ""
 
 
-static func screen(slice: Dictionary) -> Dictionary:
+## `now_ms` is the time the weaving slots are read against, -1 the clock's.
+static func screen(slice: Dictionary, now_ms := -1) -> Dictionary:
 	var v: Dictionary = slice.get("view", {})
 	var busy := str(slice.get("busy", ""))
 	var out := {"ready": not v.is_empty() and busy not in ["view", "island"],
@@ -113,7 +114,8 @@ static func screen(slice: Dictionary) -> Dictionary:
 	out["dial"] = [] as Array[Dictionary]
 	if island != null:
 		_posts(out, island, slice["post"], busy)
-	out["laws"] = laws(v, slice.get("swap", {}), busy)
+	out["laws"] = laws(v, slice.get("swap", {}), busy, slice.get("weaving", {}),
+		now_ms if now_ms >= 0 else int(Time.get_unix_time_from_system() * 1000))
 	out["changes"] = changes(slice, island, busy)
 	out["naming"] = naming(slice, v, busy)
 	return out
@@ -191,8 +193,10 @@ static func _posts(out: Dictionary, island: RulebornIsland, picked: Vector2i, bu
 
 
 ## Each woven law with a preview of each swap, free, and the previewed one
-## with its price and time on the button that weaves it (G54, §5.6).
-static func laws(v: Dictionary, swap: Dictionary, busy: String) -> Array[Dictionary]:
+## with its price and time on the button that weaves it (G54, §5.6). A slot
+## in `weaving` (slot to its ready time) is shown weaving with the time left,
+## its pylon off the island until then, and offers no swap (CLI-1).
+static func laws(v: Dictionary, swap: Dictionary, busy: String, weaving := {}, now_ms := 0) -> Array[Dictionary]:
 	var out: Array[Dictionary] = []
 	var aether := int(v.get("aether", 0))
 	for s: Dictionary in v.get("swaps", []):
@@ -200,10 +204,17 @@ static func laws(v: Dictionary, swap: Dictionary, busy: String) -> Array[Diction
 		var law := Strings.term("LAW", str(s["law"]))
 		var offers: Array[Dictionary] = []
 		var row := {"slot": slot, "text": Strings.t("CUR_SLOT", [slot, law]), "offers": offers, "apply": {}}
+		var weaves := weaving.has(slot) and int(weaving[slot]) > now_ms
+		if weaves:
+			var left := WeavingPresenter.duration(WeavingPresenter.minutes_until(int(weaving[slot]), now_ms))
+			row["text"] = Strings.t("CUR_SLOT_WEAVING", [slot, law, left])
+			row["weaving"] = row["text"]
 		for o: Dictionary in s.get("offers", []):
 			var other := Strings.term("LAW", str(o["law"]))
 			var previewed: bool = int(swap.get("slot", 0)) == slot and str(swap.get("law", "")) == str(o["law"])
 			var why := Errors.message("CUR_REFUSED", str(o["refused"])) if o.get("refused") is String else ""
+			if weaves:
+				why = Strings.t("CUR_WEAVING_WHY")
 			offers.append({"key": "swap:%d:%s" % [slot, o["law"]],
 				"item": "swap:%d:%s" % [slot, o["law"]], "law": str(o["law"]),
 				"action": Strings.t("CUR_PREVIEW", other), "spoken": Strings.t("CUR_PREVIEW_SPOKEN", [other, law]),
