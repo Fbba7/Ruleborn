@@ -3,26 +3,21 @@
   "role": "FX1",
   "branch": "claude/fix-server-a",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "FX1-7-audit-tools",
-  "task_state": "ready",
-  "claimed_at": "2026-11-24T03:39:29Z",
-  "lease_until": "2026-11-24T06:39:29Z",
-  "updated_at": "2026-11-24T04:47:12Z",
-  "expected_next_update_by": "2026-11-24T05:32:12Z",
+  "agent_state": "active",
+  "task_id": "FX1-8-server-a-lows",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-24T05:35:00Z",
+  "lease_until": "2026-11-24T08:35:00Z",
+  "updated_at": "2026-11-24T05:35:00Z",
+  "expected_next_update_by": "2026-11-24T06:20:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "b30765cd",
-    "next_step": "ready at b30765cd (pre-check PASS, owners.py pass); waiting for the merge"
+    "next_step": "fail-first proofs for FX1-A-02, A-10, A-13, A-15, A-16, A-17, R10, AUD-B-18 residual"
   },
-  "precheck": {
-    "sha": "b30765cdf2273675053a4ba22d1e4b2d7c8a2241",
-    "exit": 0,
-    "finished_at": "2026-11-24T04:46:34Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
-  "ready_sha": "b30765cdf2273675053a4ba22d1e4b2d7c8a2241",
+  "ready_sha": null,
   "stop_at": "2026-11-24T21:00:00Z",
   "acks": [],
   "requests": [
