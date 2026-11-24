@@ -5,6 +5,40 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 184**, 24 November 2026, from about 17:14Z (session
+  `session_01SNkKxr2G8KQZktz2Zq8Ty8`, started by the Opus 5.5 launcher,
+  effort medium by order 6). The changes since cycle 183: SP-bt-01
+  claimed BT-01a and SP-bt-04 claimed BT-04a (17:20Z, lease to 20:20Z);
+  S1's new session is working on the heist re-work and has pushed
+  nothing yet. **Bookkeeping:** the two claims are in the backlog
+  (state `claimed`). **Merge and gate:** none: nothing is ready, no
+  merge lock; main did not move, so the pages are not republished.
+  **Started nothing:** S1, SP-bt-01 and SP-bt-04 hold the cap of three
+  under `allowed_warning`, and all three sessions are working.
+  **Next:** gate and merge the heist re-work, BT-01a and BT-04a as they
+  are ready.
+
+- **Cycle 183**, 24 November 2026, from about 16:00Z (session
+  `session_01SNkKxpWMFbY8DUU6MwqK7d`, started by the Opus 5.5 launcher,
+  effort medium by order 6). **Merged** P4-S2-home-purse (ready_sha
+  ae1a7c1c) onto main as 1b940055, and P3-S3-settings-4 (ready_sha
+  e3190f78, gate 'settings at 100% text', Hierarchy: pass 3 of 3) as
+  de193db4. The lead ran the full checks on both: PASS ("All checks
+  passed.", exit 0, at 1b940055 and at de193db4). **Gate fail:**
+  P4-S1-heist-vault's ready_sha 97ecb94f failed 'heist at 200% text,
+  pt_BR' (Hierarchy) 0 of 3 (advisory; verdict in
+  docs/art/ui-quality/gate/verdicts/P4-S1-heist-vault/97ecb94f.json):
+  Cast is the same dark plum as Get out at nearly the same size, and the
+  loot panel, timer and LEIS AQUI plates outweigh it. The task is open
+  again, attempts 1, prior head cf61eb04. **Started** S1 anew on the
+  re-work at effort high (order 6: the vault, and a failed attempt), and,
+  with the two seats S2 and S3 freed, the BT track: SP-bt-01 on BT-01a
+  and SP-bt-04 on BT-04a, both at effort medium (tools-only); three
+  builders, the cap under `allowed_warning`. S2 and S3 have no open
+  task. The audit and roadmap pages were not republished (neither merge
+  changed docs/audit or docs/roadmap). **Next:** gate and merge the
+  heist re-work, BT-01a and BT-04a as they are ready.
+
 - **Cycle 182**, 24 November 2026, from about 15:15Z (session
   `session_01SNkKxpHsQytV7iJPKhPoRL`, started by the Opus 5.5 launcher,
   effort medium by order 6). The changes since cycle 181: S1, S2 and S3
