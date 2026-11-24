@@ -878,6 +878,13 @@
       "text": "From the overseer, 24 November 2026, by the owner's order in the overseer's chat (\"Yes, ask the lead to close phase 3\"): close phase 3 formally. Its exit work is done (second audit 07e2c13d, no open objection, P3-S3-settings-4 passed the gate 3/3 and merged as de193db4), but O7 was never signed: AD's re-check on the merge (S3-R46's default, AD-R67/AD-R68) never ran. Seed one short AD task (say P3-AD-wave-close) and start AD at effort medium (order 6) on the next free seat, ahead of BT-08: AD previews the settings stills on main and, if they hold, writes 'The wave stands at O7' at the top of docs/art/ui-quality/gate/boards/wave.md; if not, AD names the one re-work. When it is on main, record phase 3 as closed in backlog.json and lead.md, set 'wave' to name what runs now (not 'Bug-fix wave'), and say plainly whether a phase 4 is opened, with its exit, or whether the BT track and the follow-up list run outside the phases. Add M63 to your acks.",
       "sent_at": "2026-11-24T23:40:00Z",
       "ack_by": "2026-11-25T01:40:00Z"
+    },
+    {
+      "id": "M64",
+      "to": "lead",
+      "text": "From the overseer, 24 November 2026, about 23:25Z, by the owner's order (CLAUDE.md order 1, entry of 24 November): 'UI done' is report.md's plan, phases 0 to 3, and when it is done every agent stops. Open no phase 4. Until phase 3 closes, start no new task but AD's O7 re-check of M63 (not BT-08 or any other); the running BT builders keep working. When AD's 'The wave stands at O7' is on main, merge it, record phase 3 as closed, set every builder's status to stop cleanly as CLAUDE.md order 1 says, merge nothing more, write 'Stopped here' in lead.md's Now, and end your cycle; the overseer disables the scheduled tasks. Add M64 to your acks.",
+      "sent_at": "2026-11-24T23:30:00Z",
+      "ack_by": "2026-11-25T01:30:00Z"
     }
   ]
 }

@@ -108,6 +108,23 @@ the status files, requests and scheduled-task prompts.
   - **Where the work stood at the restart** is in the same file, "Now",
     entry "Stopped here, 21 November 2026".
 
+- **24 November 2026, about 23:25 UTC:** the owner ordered, in the chat
+  of the overseer session: "By UI done I mean this plan that we have done
+  and when it is done all agents should stop", after asking the lead to
+  close phase 3 (M63).
+  - **"UI done" is the plan of `docs/art/ui-quality/report.md`, phases 0
+    to 3.** The BT track, icon batches 3 and 4 and the wave board's
+    follow-up list ("phase 4") are not part of it. No phase 4 is opened.
+  - **Until phase 3 closes**, the lead starts no new task but AD's O7
+    re-check (M63). The running builders keep working on their current tasks,
+    committing as they go.
+  - **When phase 3 closes** (AD writes "The wave stands at O7" in
+    `wave.md` and the lead records phase 3 as closed on main), **the
+    program stops**, as a stop under this section: every builder stops
+    cleanly, the lead merges nothing more, and the overseer disables
+    every enabled scheduled task. It stays stopped until the owner, in
+    their own words, says what comes next.
+
 A session that is in the middle of a turn when the program is stopped
 finishes cleanly, so no work is lost: commit and push what it has to its
 own branch (never to main), set `agent_state: stopped` in its status file,
