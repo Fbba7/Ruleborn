@@ -490,8 +490,8 @@ func _study_is_sent_once() -> void:
 
 
 ## CLI-18: the Rehearse tab, a cautious crew playing, then the greedy card
-## tapped. The card's tap asks to run, and a run while one plays finishes the
-## one playing: the greedy card shows the cautious crew's result.
+## tapped (13). The greedy crew runs, and the card shows its own result: the
+## replay on the stage is the greedy crew's, not the cautious one finished.
 func _rehearsal_card_runs_its_own_crew() -> void:
 	var island := RulebornIsland.new()
 	island.reset(3)
@@ -508,13 +508,20 @@ func _rehearsal_card_runs_its_own_crew() -> void:
 		greedy.pressed.emit()
 	var runs := stage.runs
 	var style := stage.style
+	if stage.replay != null and stage.playing:
+		stage._finish()
+	var own := false
+	if stage.replay != null:
+		var bytes := RulebornReplay.rehearse(island.bytes(), StageRehearsal.STYLES.find("greedy") + 1, str(runs),
+			HeistController.TICKS, HeistController.CREW)
+		var mine := RulebornReplay.new()
+		own = mine.load(bytes, island.bytes()) and mine.commands() == stage.replay.commands() \
+			and mine.report() == stage.replay.report()
 	stage.queue_free()
 	await tree.process_frame
-	# Audit finding CLI-18
-	_still_open("CLI-18", "a style card tapped while another crew plays shows that crew's result under its own name "
-			+ "(13)",
-		playing and found and style == "greedy" and runs == 1,
-		"playing %s, card found %s, style %s, runs %d" % [playing, found, style, runs])
+	check.call("CLI-18: a style card tapped while another crew plays runs its own crew and shows its result (13)",
+		playing and found and style == "greedy" and runs == 2 and own,
+		"playing %s, card found %s, style %s, runs %d, greedy's own replay %s" % [playing, found, style, runs, own])
 
 
 ## CLI-22: §20.5, the defect report's action log carries no player's
