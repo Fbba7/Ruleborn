@@ -32,7 +32,7 @@ skipped or loosened. Anything not proven that way is listed under
 
 Twelve findings are fixed on `claude/fix-client` (commits `4d5a17d3`,
 `684353ef` and `8f91599d`). Two are proven and still open: CLI-1, whose cause
-is on the server, and CLI-18, whose code is read-only for this task. The full
+is on the server (fixed later on the client, by FX4-7-curation-swap-weave), and CLI-18, whose code is read-only for this task. The full
 client suite's result after the fixes (`python3 client/status.py`) is in
 `docs/progress/FX4.md`, Evidence.
 
@@ -40,7 +40,7 @@ client suite's result after the fixes (`python3 client/status.py`) is in
 
 | ID | Priority | Category | Location | Title | State |
 |---|---|---|---|---|---|
-| CLI-1 | High | frontend-backend contract | `client/features/curation/curation_controller.gd apply_swap` | A curation swap is woven and paid, then its publish is refused while it weaves | proven, open |
+| CLI-1 | High | frontend-backend contract | `client/features/curation/curation_controller.gd apply_swap` | A curation swap is woven and paid, then its publish is refused while it weaves | fixed |
 | CLI-2 | High | security | `client/features/auth/auth_session.gd sign_out` | A sign-out during a token renewal leaves a live session, and the phone keeps its token | fixed |
 | CLI-3 | High | frontend-backend contract | `client/scripts/heist_screen.gd play_stocked` | An offline heist plays three default crew and submits the planner's crew | proven, open |
 | CLI-4 | High | frontend/UI | `client/data/draft.gd start_remix` | A second remix overwrites the player's own kept island | fixed |
@@ -105,10 +105,17 @@ in kit pieces no screen uses yet: they are latent until one does.
   The fake answers the publish as the server does. It passes on main and
   on this branch: woven, published with the new pylon, and the error is
   `island_not_publishable`.
-- **Fix (not applied):** on the server, SR-16 accepts the slot's weaving law
+- **Fix (proposed):** on the server, SR-16 accepts the slot's weaving law
   for its owner's publish. Or, on the client, the publish waits until the
   law is woven, and the screen says so. The server's rule decides which, so
   it is left to the lead.
+- **Fixed** in FX4-7-curation-swap-weave, on the client; SR-16 stays.
+  `apply_swap` weaves first and publishes nothing if the weave is refused.
+  While the swapped slot weaves, the island is published without the old
+  or the new law's pylon on that tile, and the screen shows the slot
+  weaving with its ready time. Once woven, the next curation places the
+  new law's pylon and publishes it. `_swap_publish_is_refused_while_weaving`
+  is now a plain check (recorded by the lead in cycle 175, FX4-R3).
 
 ### CLI-2: A sign-out during a token renewal leaves a live session, and the phone keeps its token
 - **Priority / category:** High / security.

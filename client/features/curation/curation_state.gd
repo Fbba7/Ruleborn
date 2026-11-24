@@ -3,7 +3,8 @@ extends RefCounted
 ## Curation as the store holds it (§13.3, §23.2): which realm and page, the
 ## server's curation view, the published island's bytes and the draft that
 ## curation's verbs change, the post picked, the swap previewed, the name
-## being picked, what is on its way, what was said and the last failure.
+## being picked, the slots still weaving a swap with when each is ready,
+## what is on its way, what was said and the last failure.
 
 const CURATION := &"curation"
 const NO_POST := Vector2i(-1, -1)
@@ -20,13 +21,14 @@ static func register(store: Store) -> void:
 		&"curation_words": words,
 		&"curation_naming": naming,
 		&"curation_failed": failed,
+		&"curation_weaving": weaving,
 	})
 
 
 static func fresh(realm: String) -> Dictionary:
 	return {"realm": realm, "page": 0, "view": {}, "base": PackedByteArray(), "draft": PackedByteArray(),
 		"post": NO_POST, "swap": {}, "words": {}, "pick": {"adjective": 0, "noun": 0}, "busy": "", "said": "",
-		"error": ""}
+		"error": "", "weaving": {}}
 
 
 static func opened(_s: Dictionary, p: Dictionary) -> Dictionary:
@@ -98,4 +100,11 @@ static func failed(s: Dictionary, p: Dictionary) -> Dictionary:
 	next["busy"] = ""
 	next["said"] = ""
 	next["error"] = str(p["code"])
+	return next
+
+
+## The slots weaving a swap, by slot, with when each is ready (CLI-1).
+static func weaving(s: Dictionary, p: Dictionary) -> Dictionary:
+	var next := s.duplicate()
+	next["weaving"] = p["weaving"]
 	return next
