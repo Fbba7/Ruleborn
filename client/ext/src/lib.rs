@@ -74,6 +74,12 @@ fn playable(heist: &Heist) -> bool {
         && (sim::MIN_TICKS..=sim::MAX_TICKS + sim::era::extra_ticks(heist.era)).contains(&heist.ticks)
 }
 
+/// A recorded replay, or none past the limit the server reads (SIM-2): the
+/// server refuses a replay over `MAX_HEIST_BYTES` unread.
+fn under_limit(bytes: Vec<u8>) -> Vec<u8> {
+    if bytes.len() > sim::replay::MAX_HEIST_BYTES { Vec::new() } else { bytes }
+}
+
 fn hex(bytes: &[u8]) -> GString {
     let s: String = bytes.iter().map(|b| format!("{b:02x}")).collect();
     GString::from(&s)
@@ -122,15 +128,26 @@ impl RulebornReplay {
             else {
                 return Vec::new();
             };
-            return h.encode();
+            return under_limit(h.encode());
         }
         let (Some(world), Some(heist), Some(realm)) =
             (self.w(), self.heist.as_ref(), self.realm())
         else {
             return Vec::new();
         };
-        sim::record_with(realm, heist.seed, heist.ticks, heist.crew, heist.era,
-                         heist.manifest.clone(), world.commands().to_vec()).encode()
+        under_limit(sim::record_with(realm, heist.seed, heist.ticks, heist.crew, heist.era,
+                                     heist.manifest.clone(), world.commands().to_vec()).encode())
+    }
+
+    /// Whether one more command, given now, leaves the replay inside the
+    /// limit the server reads (`MAX_HEIST_BYTES`): the log so far and this
+    /// command as the recorder keeps them, with a checksum a second.
+    fn room_for(&self, command: sim::replay::Command) -> bool {
+        let (Some(heist), Some(world)) = (self.heist.as_ref(), self.w()) else { return false };
+        let log = self.crossing.as_ref().map_or(world.commands(), |c| c.commands());
+        let commands = log.iter().copied().chain([command]).filter(|c| c.actor < 16).collect();
+        let checksums = vec![0; (heist.ticks / sim::TICKS_PER_SECOND) as usize];
+        Heist { commands, checksums, ..heist.clone() }.encode().len() <= sim::replay::MAX_HEIST_BYTES
     }
 }
 
@@ -321,8 +338,9 @@ impl RulebornReplay {
             return false;
         }
         let shown = islands[if fault { 0 } else { place }].clone();
+        let Ok(ticks) = u32::try_from(ticks) else { return false };
         let Some(heist) = self.heist.as_mut() else { return false };
-        heist.ticks = ticks as u32;
+        heist.ticks = ticks;
         self.world = Some(World::from_island(&shown, heist));
         self.island = Some(shown);
         self.entry = (place, fault);
@@ -358,10 +376,14 @@ impl RulebornReplay {
     /// 3 Crack, 4 Load, 5 Skiff, 6 Attack, 7 Break, 8 Drop, 9 Disarm, 10
     /// Drag, 11 Land), `x` and `y` a tile position at 1/256 of a tile or the
     /// kind's own argument. False if there is no such kind or the clock has
-    /// run out. A landing counts only at tick 0 (§5.4).
+    /// run out. A landing counts only at tick 0 (§5.4). False too for an
+    /// actor the replay cannot carry, a position that is no i16 (CLI-23),
+    /// and a command the replay has no room left for (SIM-2): the device
+    /// stops taking commands before the replay would pass the limit.
     #[func]
     fn give(&mut self, actor: i64, kind: i64, x: i64, y: i64) -> bool {
-        let Some(kind) = sim::replay::Kind::from_u8(kind as u8) else { return false };
+        let Some(kind) = u8::try_from(kind).ok().and_then(sim::replay::Kind::from_u8) else { return false };
+        let (Ok(x), Ok(y)) = (i16::try_from(x), i16::try_from(y)) else { return false };
         // Across a universe, the landing makes the crossing: in the realm
         // previewed, or at its fault, the Land command's nibble naming it.
         if let (Some((u, islands)), None) = (self.universe.as_ref(), self.crossing.as_ref()) {
@@ -371,7 +393,7 @@ impl RulebornReplay {
             }
             let (place, fault) = self.entry;
             let actor = place as u8 | if fault { FAULT_ENTRY } else { 0 };
-            let land = sim::replay::Command { tick: 0, actor, kind, x: x as i16, y: y as i16 };
+            let land = sim::replay::Command { tick: 0, actor, kind, x, y };
             let header = Heist { commands: vec![land], ..heist.clone() };
             return match Crossing::new(u, islands, &header) {
                 Ok(c) => {
@@ -381,11 +403,17 @@ impl RulebornReplay {
                 Err(_) => false,
             };
         }
+        // The replay packs the actor in four bits (RB-55).
+        let Some(actor) = u8::try_from(actor).ok().filter(|&a| a < 16) else { return false };
+        let Some(tick) = self.w().map(|w| w.tick) else { return false };
+        if !self.room_for(sim::replay::Command { tick, actor, kind, x, y }) {
+            return false;
+        }
         if let Some(c) = self.crossing.as_mut() {
-            return c.give(actor as u8, kind, x as i16, y as i16);
+            return c.give(actor, kind, x, y);
         }
         let Some(world) = self.w_mut() else { return false };
-        world.give(actor as u8, kind, x as i16, y as i16)
+        world.give(actor, kind, x, y)
     }
 
     /// A rehearsal (§13): the crew of `style` (1 cautious, 2 greedy, 3
