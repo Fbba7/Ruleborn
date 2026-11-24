@@ -414,6 +414,7 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 | SP-bt-01 | `session_01SNkKxnk1jnaFLfc14YYCAq` (Opus 5.5, effort high) | BT-01b (start, cycle 186: BT-01a merged as 99c9aa89; effort high by order 6, the merge queue and its lock, concurrency; SP-bt-01's last session, `session_01SNkKxnoYoXvgs2BTqD6NXy`, is idle, its task merged) | `claude/ui-spec-coord` | 2026-11-24 19:35Z |
 | SP-bt-04 | `session_01SNkKxnP8NpPyS23jXd4Upa` (Opus 5.5, effort medium) | BT-04a (start, cycle 183: effort medium by order 6, a tools-only task in tools/gate/) | `claude/ui-spec-gate-render` | 2026-11-24 17:12Z |
 | SP-bt-01 | `session_01SNkKxnoYoXvgs2BTqD6NXy` (Opus 5.5, effort medium) | BT-01a (start, cycle 183: effort medium by order 6, a dry-run tools-only task in tools/coord/) | `claude/ui-spec-coord` | 2026-11-24 17:12Z |
+| S1 | `session_01SNkKxnAiVmwbdBsQYix7Y8` (Opus 5.5, effort high) | P4-S1-heist-vault (restart, cycle 187: second gate fail at 85be2fa8, attempts 2; effort high by order 6, the vault and a failed attempt; S1's last session, `session_01SNkKxrBVFU2PuzXccugcq8`, is idle) | `claude/ui-screens-heist` | 2026-11-24 19:52Z |
 | S1 | `session_01SNkKxrBVFU2PuzXccugcq8` (Opus 5.5, effort high) | P4-S1-heist-vault (re-work, cycle 183: gate fail at 97ecb94f, attempts 1; effort high by order 6, the vault and a failed attempt; S1's last session, `session_01SNkKxp6Vp6uPSGzzYn1CNV`, is idle) | `claude/ui-screens-heist` | 2026-11-24 17:12Z |
 | S1 | `session_01SNkKxp6Vp6uPSGzzYn1CNV` (Opus 5.5, effort high) | P4-S1-heist-vault (restart, cycle 181: reopened after the bug-fix wave; effort high by order 6, the task touches the vault; S1's last session, `session_01SNkKxrGVdaVPxzuPW8vwRg`, is idle) | `claude/ui-screens-heist` | 2026-11-24 14:59Z |
 | S2 | `session_01SNkKxpVmnabuJ8D34eVaFy` (Opus 5.5, effort high) | P4-S2-home-purse (restart, cycle 181: reopened after the bug-fix wave; effort high by order 6, the task touches the purse; S2's last session, `session_01SNkKxneZ4WEHJSJUnhLjUj`, is idle) | `claude/ui-screens-home` | 2026-11-24 14:59Z |
@@ -883,7 +884,7 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   **Escalation:** attempts 2, so P4-S1-heist-vault is open again from
   claude/ui-screens-heist (8922c136), and a fresh S1 session takes it
   from the handoff, at effort high (order 6: the vault, and a failed
-  attempt). **Requests:** S1-R45 to S1-R47 copied. S1-R46 granted: at
+  attempt): `session_01SNkKxnAiVmwbdBsQYix7Y8`, started 19:52Z. **Requests:** S1-R45 to S1-R47 copied. S1-R46 granted: at
   200% text a spent Cast takes the gold primary plate with the wand
   dimmed; AD-R60 stands elsewhere. S1-R45 waits for the re-work's figure;
   S1-R47 routed to its default (no seat for AD). With SP-bt-01 and
