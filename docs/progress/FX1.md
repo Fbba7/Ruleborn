@@ -2,7 +2,7 @@
 
 - Status: Ready. FX1-6-audit-server-a ready at 01cb97ac: pre-check PASS (02:19 UTC), owners.py pass; waiting for the merge.
 - Progress: 4 of 6 tasks merged (FX1-1, FX1-2, FX1-3; FX1-4-holds-codex at e2e8f5a1); no gate items (fix tasks have none).
-- Done: FX1-6: 17 findings (FX1-A-01 to A-17) in `docs/security/audit-2026-11/server-a.md`, each with a test in `server/test/fix_fx1_audit_server_a.test.mjs` that fails on main; 11 fixed in owned files, 1 partly, 5 marked and requested (FX1-R3 to R8); `cd server && npm test` 603 of 603.
+- Done: FX1-6: 17 findings (FX1-A-01 to A-17) in `docs/security/audit-2026-11/server-a.md`, each with a test in `server/test/fix_fx1_audit_server_a.test.mjs` that fails on main; 10 fixed in owned files, 1 partly, 5 marked and requested (FX1-R3 to R8), A-07 open as AUD-B-06 (FX1-R11), A-09 contested (FX1-R9); `cd server && npm test` 631 of 631.
 - Next: FX1-7-audit-tools, in a fresh session.
 - Blocked by: none.
 - Owner decision needed: none (FX1-R9 and FX1-R10 are the lead's, each with a default).
