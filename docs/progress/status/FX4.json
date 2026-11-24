@@ -3,23 +3,26 @@
   "role": "FX4",
   "branch": "claude/fix-client",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "FX4-8-rehearsal-rerun",
   "task_state": "blocked",
   "claimed_at": "2026-11-24T10:20:00Z",
   "lease_until": "2026-11-24T13:20:00Z",
-  "updated_at": "2026-11-24T10:58:00Z",
-  "expected_next_update_by": "2026-11-24T11:43:00Z",
-  "long_run": {
-    "log": "/tmp/check-57732c8f93629e30658e21e3a84e54921f083300.log",
-    "expected_end": "2026-11-24T11:00:00Z"
-  },
+  "updated_at": "2026-11-24T11:33:00Z",
+  "expected_next_update_by": "2026-11-24T12:18:00Z",
+  "long_run": null,
   "progress_marker": {
     "last_green_sha": "57732c8f",
-    "next_step": "record the pre-check; ready once FX4-R4 corrects the task's files",
+    "next_step": "ready at 57732c8f once FX4-R4 corrects the task's files (pre-check PASS 11:32Z)",
     "at": "2026-11-24T10:58:00Z"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "57732c8f93629e30658e21e3a84e54921f083300",
+    "state": "PASS",
+    "exit": 0,
+    "finished_at": "2026-11-24T11:32:03Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-24T21:00:00Z",

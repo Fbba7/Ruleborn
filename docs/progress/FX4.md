@@ -1,6 +1,6 @@
 # FX4 client fixer: progress
 
-- Status: Green on the client run; FX4-8-rehearsal-rerun: the fail-first check and the fix for CLI-18 pushed at 57732c8f, pre-check running.
+- Status: Green. FX4-8-rehearsal-rerun: the fail-first check and the fix for CLI-18 at 57732c8f, pre-check passed (11:32Z).
 - Progress: 7 of 8 tasks merged (FX4-1 to FX4-7); FX4-8 in this session; no gate items (fix wave).
 - Done: a style card tapped while another crew plays stops that run and starts its own crew's; the card shows its own result.
 - Next: the lead corrects FX4-8's `files` (request FX4-R4), then FX4-8 is ready at 57732c8f.
@@ -20,7 +20,7 @@
 
 ## Handoff
 
-- Last verified commit: 57732c8f (client run 492 of 492; pre-check started 10:30Z, result in `status/FX4.json` `precheck`).
+- Last verified commit: 57732c8f (pre-check green, 2026-11-24T11:32:03Z, "All checks passed."; client run 492 of 492).
 - Commits, in order (on main merged at `b1913643`, lead cycle 176):
   - `c5eacd74`: the check, on its own (`client/tests/fix_audit_client_tests.gd`).
   - `5720ba99`: the same check compares the greedy crew's report at the
@@ -62,7 +62,7 @@ And `5720ba99` with main's `stage_rehearsal.gd` (run.gd directly):
   `not owned by FX4-8-rehearsal-rerun: client/world/stage_rehearsal.gd`.
   The task's `files` names `client/scripts/stage_rehearsal.gd` (as does
   `client.md` line 390), a path that does not exist. Request FX4-R4.
-- The pre-check on `57732c8f`: see `precheck` in `status/FX4.json`.
+- The pre-check (`bash tools/run_checks.sh`, the full checks) on `57732c8f` (main merged at `b1913643`, after the fresh-container setup line): PASS, 11:32:03Z, "All checks passed.", recorded in `status/FX4.json`.
 - `client/status.json` rewritten by the run was put back, not committed.
 
 ### Next step
