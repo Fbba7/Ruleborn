@@ -273,12 +273,14 @@
       "estimate_h": 2,
       "tier": 1,
       "critical": false,
-      "state": "open",
+      "state": "merged",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null
+      "ready_sha": "9213e507",
+      "merged_sha": "add036e9",
+      "updated_at": "2026-11-24T23:20:00Z",
+      "updated_by": "lead (cycle 191)"
     },
     {
       "id": "BT-05",
@@ -446,12 +448,14 @@
       "estimate_h": 3,
       "tier": 2,
       "critical": false,
-      "state": "open",
+      "state": "merged",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null
+      "ready_sha": "efea6a02",
+      "merged_sha": "add036e9",
+      "updated_at": "2026-11-24T23:20:00Z",
+      "updated_by": "lead (cycle 191)"
     },
     {
       "id": "BT-08",

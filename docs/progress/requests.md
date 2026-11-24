@@ -3603,3 +3603,5 @@ the rest of O1–O7 are AD's or the lead's (`report.md` section 3.4).
   cycle 190.
   **Answered** by the lead in cycle 190: granted; the lead adds both lines
   in the candidate that merges BT-07.
+  **Done** in cycle 191: both lines added in candidate 8f1f0cbe (full
+  checks passed), merged onto main as add036e9.
