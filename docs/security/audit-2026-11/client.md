@@ -9,6 +9,15 @@ the paths these lead into; they are read-only for this task, apart from
 `client/scripts/result_screen.gd`. It also settles the report's five client
 suspicions.
 
+A second pass, task FX3-7-audit-client-2, proved or rejected the findings
+FX4-4 left unproven (CLI-3, CLI-8, CLI-9, CLI-16, CLI-17, CLI-19, CLI-20 and
+CLI-21), and read the client code FX4-4 did not: `client/world/island_builder.gd`,
+`client/world/universe_island.gd`, `client/ui` and `heist_screen.gd` lines
+520-999. Its proofs are still-open checks in
+`client/tests/audit_client2_tests.gd`, written on `claude/fix-sim`; it fixes
+nothing. For CLI-8 and CLI-9 it read `server/src` to settle which side is
+wrong against the design.
+
 **The proof rule.** A finding is **confirmed** only when a test fails on
 main (`1c4fd104`, the branch point; the client code there is the code the
 proofs first ran on). Each such test stays in the suite, in
@@ -32,22 +41,29 @@ client suite's result after the fixes (`python3 client/status.py`) is in
 |---|---|---|---|---|---|
 | CLI-1 | High | frontend-backend contract | `client/features/curation/curation_controller.gd apply_swap` | A curation swap is woven and paid, then its publish is refused while it weaves | proven, open |
 | CLI-2 | High | security | `client/features/auth/auth_session.gd sign_out` | A sign-out during a token renewal leaves a live session, and the phone keeps its token | fixed |
+| CLI-3 | High | frontend-backend contract | `client/scripts/heist_screen.gd play_stocked` | An offline heist plays three default crew and submits the planner's crew | proven, open |
 | CLI-4 | High | frontend/UI | `client/data/draft.gd start_remix` | A second remix overwrites the player's own kept island | fixed |
 | CLI-5 | Medium | security | `client/features/auth/auth_session.gd sign_out` | A sign-out whose access token the server refuses never falls back to the refresh token | fixed |
 | CLI-6 | Medium | frontend/UI | `client/features/curation/curation_controller.gd preview_swap` | A second swap previewed keeps the first swap's law on the draft | fixed |
 | CLI-7 | Medium | frontend/UI | `client/features/curation/curation_controller.gd preview_swap` | A swap that changes nothing on the island is still woven and paid | fixed |
+| CLI-8 | Medium | frontend-backend contract | `client/features/planner/planner_controller.gd start`, `server/src/service.mjs lease` | A Trace or target leased with no owner raids the bundle's first holder, not the one shown | proven, open |
+| CLI-9 | Medium | frontend-backend contract | `client/features/defences/defences_controller.gd trace`, `server/src/defences.mjs` | A Defences Trace is leased as the Heart alone, though the raider has a universe | proven, open |
 | CLI-10 | Medium | frontend/UI | `client/features/realm/realm_controller.gd load_realm` | A late realm load shows one realm's island under another | fixed |
 | CLI-11 | Medium | frontend/UI | `client/data/repositories/heist_repository.gd first_target` | The target fallback treats a player's curated island as the game's own | fixed |
 | CLI-13 | Medium | integration | `client/data/outbox.gd _read` | One malformed outbox item stops every flush, so nothing behind it is ever sent | fixed |
 | CLI-14 | Medium | integration | `client/app/app_lifetime.gd` | `notices.seen()` is never called, so a crashed session reports 0 seconds | fixed |
 | CLI-15 | Medium | frontend/UI | `client/scripts/result_screen.gd _study` | A study tile tapped twice sends two studies | fixed |
+| CLI-16 | Medium | frontend/UI | `client/world/world_view.gd _sync_skiff` | A replay shows its last skiff and goal ring from tick 0 | proven, open |
+| CLI-17 | Medium | frontend/UI | `client/world/world_view.gd show_replay` | A replay of a larger crew, shown after a smaller one, keeps the old figures | proven, open |
 | CLI-18 | Medium | frontend/UI | `client/scripts/stage_rehearsal.gd` | A style card tapped while another crew plays shows that crew's result under the new card | proven, open |
+| CLI-19 | Medium | integration | `client/features/weaving/weaving_presenter.gd` | Two offline weaves aim at the same free slot, so the second is refused | proven, open |
+| CLI-21 | Medium | frontend/UI | `client/features/roster/roster_controller.gd collect_all` | The roster's collect has no busy guard, and clears another change's | proven, open |
 | CLI-22 | Low | security | `client/core/action_log.gd add` | The action log keeps account ids | fixed |
 | CLI-24 | Low | frontend/UI | `client/features/social/social_controller.gd load_friends` | A failed blocks call empties the blocked list on screen | fixed |
 
-CLI-3, CLI-8, CLI-9, CLI-16, CLI-17, CLI-19, CLI-20, CLI-21 and CLI-23 were
-found but not proven: see "Unproven". CLI-12 is covered by RB-32, already on
-main.
+FX3-7's second pass proved CLI-3, CLI-8, CLI-9, CLI-16, CLI-17, CLI-19 and
+CLI-21, and rejected CLI-20 (see "Rejected"). CLI-23 is still not proven:
+see "Unproven". CLI-12 is covered by RB-32, already on main.
 
 ## High
 
@@ -91,6 +107,26 @@ main.
   one, and no `/v1/session/end` follows the renewal.
 - **Fix (applied):** `sign_out` waits for a renewal on its way (`if _busy:
   await renewed`), so the session it ends is the newest.
+
+### CLI-3: An offline heist plays three default crew and submits the planner's crew
+- **Priority / category:** High / frontend-backend contract.
+- **Where:** `client/scripts/heist_screen.gd` `play_stocked`, lines
+  161-170, against the online start (lines 242-253) and `finish` (line
+  291), with `client/data/repositories/heist_repository.gd`'s submission.
+- **Input:** the player plans a heist of four characters, taps Start, and
+  the device has no network, so a stocked lease is played (§24.12).
+- **Should happen:** §12.5: the plan is the heist's crew, offline as online.
+  The heist plays the four, with their manifest, and the submission names
+  them.
+- **Happens:** `play_stocked` begins with `HeistController.CREW` (three)
+  and no manifest. `finish` still submits the plan's ids as
+  `?crew=12,15,19,21`. On reconnection `server/src/home.mjs` line 665
+  refuses it `crew_mismatch`, and the haul is lost. With a three-character
+  plan the server takes it, and rests characters that played as nobody.
+- **Proof:** `_offline_heist_plays_another_crew`, a still-open check in
+  `client/tests/audit_client2_tests.gd`. Played offline: crew 3, submitted `?crew=12,15,19,21`.
+- **Fix (not applied):** `play_stocked` takes the crew size and manifest
+  from the plan, as the online start does.
 
 ### CLI-4: A second remix overwrites the player's own kept island
 - **Priority / category:** High / frontend/UI.
@@ -152,6 +188,59 @@ main.
   /v1/weaving` is sent.
 - **Fix (applied):** `preview_swap` fails with `swap_not_on_island` and
   clears the swap, so `apply_swap` has nothing to weave.
+
+### CLI-8: A Trace or target leased with no owner raids the bundle's first holder, not the one shown
+- **Priority / category:** Medium / frontend-backend contract (cause mostly
+  on the server).
+- **Where:** `client/features/planner/planner_controller.gd` `start`,
+  lines 87-95, which dispatches the target as `{bundle, trace, across}`.
+  On the server, `server/src/observatory.mjs` `card` gives no owner, and
+  `server/src/service.mjs` `lease`, line 458, picks `holders[0]` (the
+  lowest account id) when none is named. The Defences Trace
+  (`client/features/defences/defences_controller.gd` line 70) is the same.
+- **Input:** two accounts hold one bundle (identical bytes, such as an
+  unchanged remix). The Observatory shows the second holder's island, and
+  the player raids it.
+- **Should happen:** §12.4 and §12.5: the heist is played against the
+  island and player the card showed. A Defences Trace (§12.3) leads to the
+  raider.
+- **Happens:** the lease goes to the first holder by account id. The raider
+  plays someone else, and their universe: `crossings.of` reads that
+  holder's links, so it may be the Heart alone. A Defences Trace of a
+  raider who shares their island with a lower id holder is refused `403
+  nothing_to_trace`, because `matchmaking.traceable` is checked against the
+  first holder. A server scratch test (not committed) showed all three.
+- **Proof:** `_planner_drops_the_cards_owner`, a still-open check in `client/tests/audit_client2_tests.gd`:
+  a card that names its owner is started with no owner. The server's half
+  has no client test; see "Notes for other tasks".
+- **Fix (not applied):** on the server, the card carries its owner and
+  `lease` uses it (or picks the holder the attacker's list offered), and
+  the Defences view's trace names the raider. On the client, the planner
+  and the Defences controller pass the owner on to the lease.
+
+### CLI-9: A Defences Trace is leased as the Heart alone, though the raider has a universe
+- **Priority / category:** Medium / frontend-backend contract (cause on
+  both sides).
+- **Where:** `server/src/defences.mjs` line 74 sends `trace: {bundle}`,
+  with no `across`. `client/features/defences/defences_controller.gd`
+  `trace`, line 70, starts the target `{bundle, trace: true}`, and
+  `heist_screen.gd` line 237 leases with `universe` false.
+- **Input:** a raider's realms make a universe. The defender taps Trace on
+  the raid in Defences.
+- **Should happen:** §12.3 and §5.4: the Trace leads to the raider's
+  universe, and the crew lands on an outer realm's edge (skiffs cannot land
+  on the Heart). The Observatory's trace card of the same raider says
+  `across: true`.
+- **Happens:** the lease asks no universe, so the server issues the Heart
+  alone. The scratch test showed `universe: null` as sent, and a universe of
+  two realms when `universe: true` is asked.
+- **Proof:** `_defences_trace_drops_across_and_owner`, a still-open check
+  in `client/tests/audit_client2_tests.gd`: the target started is `{bundle, trace: true}`, whatever the trace
+  says.
+- **Fix (not applied):** `defences.mjs` adds `across` (and the owner, CLI-8)
+  to the trace, and the controller passes them on. Or the client asks a
+  universe for every Trace: the server answers the Heart alone when there is
+  none.
 
 ### CLI-10: A late realm load shows one realm's island under another
 - **Priority / category:** Medium / frontend/UI.
@@ -234,6 +323,42 @@ main.
   were already all disabled once an answer comes, so a study that failed
   was never retried here before either.
 
+### CLI-16: A replay shows its last skiff and goal ring from tick 0
+- **Priority / category:** Medium / frontend/UI.
+- **Where:** `client/world/world_view.gd` `_sync_skiff`, lines 732-747, and
+  `client/world/fx_ground.gd` `order_goal`, line 171.
+- **Input:** a replay in which crew member 1 calls the skiff, and member 0
+  is sent to a goal, at tick 100. The player watches it from the start.
+- **Should happen:** §5.4 and §21.8: the skiff shows once the Get out calls
+  it, and the goal ring once the crew member is sent.
+- **Happens:** both read the replay's commands from the end of its log, with
+  no look at the tick. While a heist is played the log ends now, so that is
+  right. A replay holds every command from the start, so at tick 0 the
+  skiff already hovers where it is called at tick 100, and the ring marks a
+  goal not yet given.
+- **Proof:** `_replay_shows_orders_from_its_end`, a still-open check in
+  `client/tests/audit_client2_tests.gd`. At tick 0 the skiff is shown and
+  the ring is at (8, 8).
+- **Fix (not applied):** both take the last command at or before the
+  current tick.
+
+### CLI-17: A replay of a larger crew, shown after a smaller one, keeps the old figures
+- **Priority / category:** Medium / frontend/UI.
+- **Where:** `client/world/world_view.gd` `show_replay`, lines 271-283.
+- **Input:** a three-crew replay, then a five-crew replay of the same
+  island, shown in one `WorldView`.
+- **Should happen:** §21.8: every crew member is drawn.
+- **Happens:** the view rebuilds its statics, and with them the figures
+  (`_build_statics` calls `_build_actors`, line 341), only when its key
+  changes. The key is the island's size, features, heights, surfaces and
+  realm, not the crew. Three figures stay, and two of the crew are never
+  drawn.
+- **Proof:** `_replay_of_another_crew_keeps_the_old_one`, a still-open
+  check in `client/tests/audit_client2_tests.gd`: three figures after the five-crew replay, where a
+  view that shows it first has five.
+- **Fix (not applied):** the crew size (and roles) join the key, or the
+  figures are rebuilt on their own when the crew changes.
+
 ### CLI-18: A style card tapped while another crew plays shows that crew's result under the new card
 - **Priority / category:** Medium / frontend/UI.
 - **Where:** `client/scripts/stage_rehearsal.gd`, lines 184-186 and 214-217
@@ -250,6 +375,44 @@ main.
 - **Fix (not applied):** a run asked for while one plays stops it and
   starts the new style's run. Needs a task that owns
   `client/scripts/stage_rehearsal.gd`.
+
+### CLI-19: Two offline weaves aim at the same free slot, so the second is refused
+- **Priority / category:** Medium / integration.
+- **Where:** `client/features/weaving/weaving_presenter.gd` lines 110-113
+  and 166, with `client/features/weaving/weaving_state.gd`'s `queued`.
+- **Input:** the Heart has two free slots. With no network, the player
+  weaves Stillness and then Bloom.
+- **Should happen:** §24.12 and §5.6: both are queued and confirmed on
+  reconnection, one in each slot.
+- **Happens:** a queued weave leaves the view as it was, and the presenter
+  aims every offer at the first free slot of the view. Both weaves name
+  slot 1. On reconnection the server weaves the first and refuses the second
+  `slot_taken`, though slot 2 was free.
+- **Proof:** `_offline_weaves_aim_at_one_slot`, a still-open check in `client/tests/audit_client2_tests.gd`.
+  The fake keeps slot state as the server does: slots sent `[1, 1]`, the
+  second refused `slot_taken`.
+- **Fix (not applied):** a queued weave marks its slot as taken in the
+  view, so the next offer aims at the next free slot.
+
+### CLI-21: The roster's collect has no busy guard, and clears another change's
+- **Priority / category:** Medium / frontend/UI.
+- **Where:** `client/features/roster/roster_controller.gd` `collect_all`,
+  lines 91-106, against the guard of the other changes (line 109), and
+  `client/features/roster/roster_state.gd`'s `change_made`.
+- **Input:** a level is on its way (slow network) when the player collects;
+  or the Home screen is left and opened again while a collect is on its way
+  (its new button is enabled, `client/scripts/home.gd` line 718), and
+  collected again.
+- **Should happen:** §9.3 and §11.4: one change at a time. A level is sent
+  once, and each producer is collected once.
+- **Happens:** the collect dispatches `roster_changed`, which clears the
+  level's busy flag, so a second tap sends the level again while the first
+  is still on its way. Two collects at once both go out.
+- **Proof:** `_collect_all_clears_another_changes_busy`, a still-open check
+  in `client/tests/audit_client2_tests.gd`, with a fake that answers late: busy cleared, the level sent twice,
+  two collects sent.
+- **Fix (not applied):** `collect_all` takes the busy guard like the other
+  changes, and leaves another change's flag alone.
 
 ## Low
 
@@ -311,48 +474,6 @@ Each item below was suspected while reading. It was not proven with a
 failing test, so it is listed rather than fixed.
 
 ### Found, not proven
-- **CLI-3 (High): an offline heist is submitted with the planner's crew.**
-  `client/scripts/heist_screen.gd` lines 161-170 and 291-292. A heist
-  played offline from stock sends the planner's `?crew=` ids, not the three
-  that played, so the server refuses `crew_mismatch` or rests the wrong
-  characters. The proof needs the heist scene with its world and
-  simulation. That was too heavy for a unit check, and the file is
-  read-only here.
-- **CLI-8 (Medium): the owner scouted is dropped on the way to the lease.**
-  `client/features/planner/planner_controller.gd` lines 83-91 and
-  `client/features/defences/defences_controller.gd` line 70 send no owner.
-  On the server, `observatory.mjs`'s `card()` gives none, and
-  `service.mjs` line 458 falls back to `holders[0]`. So the server never
-  sends the owner, and the client has none to carry. This is a contract
-  note for the server's tasks.
-- **CLI-9 (Medium): a Defences trace is leased without `across`.**
-  `defences_controller.gd` line 70 sends `{bundle, trace: true}`, and
-  `server/src/defences.mjs` line 74 sends `trace: {bundle}` only. So the
-  trace lands on the Heart (§5.4). The client cannot add what the server
-  never says. A contract note, like CLI-8.
-- **CLI-16 (Medium): `world_view.gd`'s `_sync_skiff` shows the replay's
-  last skiff from tick 0.** `client/world/world_view.gd` lines 730-747. The
-  same pattern is in `fx_ground.gd` line 170. Read-only; a `WorldView` check
-  needs a recorded replay, which was not built.
-- **CLI-17 (Medium): `show_replay`'s rebuild key has no crew, roles or
-  seed.** `world_view.gd` lines 271-283. So a 5-crew replay shown after a
-  3-crew one on the same island keeps the old crew. Read-only, and not
-  built for the same reason as CLI-16.
-- **CLI-19 (Medium): every offline weave aims at the same free slot.**
-  `client/features/weaving/weaving_presenter.gd` lines 110-113 and 166 take
-  the first empty slot from the last view. A second weave queued offline
-  names the same slot, and the server refuses it `slot_taken`. The proof
-  needs two weaves queued in the outbox and then flushed against a fake
-  that holds slot state. Not built.
-- **CLI-20 (Medium): offline builds of the same building collapse into one
-  outbox key.** `client/features/universe/universe_controller.gd` lines
-  51-70: the key is the building and level, so a second build queued
-  offline replaces the first. Not built, for the same reason as CLI-19.
-- **CLI-21 (Medium): the roster's `collect_all` has no busy guard.**
-  `client/features/roster/roster_controller.gd` lines 91-106. A second
-  tap sends again, and its end clears another change's busy flag.
-  `FakeTransport` answers at once, so the race could not be staged without
-  a slow fake.
 - **CLI-23 (Low): the ext's `as` casts** (above). A proof needs the ext
   rebuilt with a test entry point, outside this task's checks.
 
@@ -380,6 +501,16 @@ failing test, so it is listed rather than fixed.
   line 200).
 - The failure log keeps the query string, but only `list`, `limit` and
   `season` are ever in it.
+- **CLI-20: offline builds of one building collapse into one outbox key.**
+  Rejected by FX3-7. The key names every field of the action
+  (`client/features/universe/universe_controller.gd` line 52: realm, kind,
+  n and level), and the outbox keeps the first of two items with one key
+  (`client/data/outbox.gd` line 35). A queued build leaves the view as it
+  was, so a second tap on the same button is the same action, which the
+  server would refuse `not_the_next_level` (`server/src/universe.mjs` line
+  267). A build of another building, or to another level, has its own key
+  and is kept. The plain check `_offline_builds_of_one_building`, in
+  `client/tests/audit_client2_tests.gd`, holds it.
 
 ### Checked and consistent
 Route contracts with the server; the sage byte order; the fields of the
@@ -412,3 +543,16 @@ guard; the weaving busy guard; the outbox prefixes; the codex shapes;
   comes first. But after RB-06 and CLI-11 those islands count as a player's
   curated ones, ahead of the generator's. A test that wants a generated
   fallback target should publish under the generator's account.
+- CLI-8, on the server: `server/src/observatory.mjs` `card` gives no owner,
+  and `server/src/service.mjs` `lease` (line 458) leases `holders[0]` when
+  the lease names none. When two accounts hold one bundle, the raid goes to
+  the lower account id, its universe comes from that holder's links, and a
+  Defences Trace of the other holder is refused `403 nothing_to_trace`. The
+  card, the Defences view's trace and the lease should name the holder
+  shown.
+- CLI-9, on the server: `server/src/defences.mjs` line 74 gives the trace
+  as `{bundle}`, with no `across`, where `observatory.mjs` `trace` has it.
+- `observatory.mjs` `card`'s `across` reads false on its first call for a
+  universe whose links are not yet ensured, and true after: it depends on
+  what was asked before. Seen in FX3-7's server scratch test; not proven
+  with a committed test, as `server/` is not this task's.
