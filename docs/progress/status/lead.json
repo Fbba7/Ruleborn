@@ -4,12 +4,13 @@
   "expected_next_update_by": "2026-11-24T06:48:00Z",
   "cycle": 170,
   "merging": {
-    "candidate_sha": "0bee873d",
+    "candidate_sha": "31df4286",
     "task_ids": [
-      "FX2-9-audit-b-match"
+      "FX2-9-audit-b-match",
+      "FX1-7-audit-tools"
     ],
-    "started_at": "2026-11-24T04:57:00Z",
-    "expires_at": "2026-11-24T05:57:00Z"
+    "started_at": "2026-11-24T05:00:00Z",
+    "expires_at": "2026-11-24T06:00:00Z"
   },
   "last_merged": {
     "task_id": "FX4-5-problem-strings",
