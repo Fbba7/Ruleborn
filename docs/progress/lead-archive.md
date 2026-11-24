@@ -5,6 +5,28 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 170**, 24 November 2026, from about 03:40Z (session
+  `session_01SNkKxpQs7VVsV7GiXLmF8A`, started by the Opus 5.5 launcher).
+  Bookkeeping only. **Merged:** nothing. No task is `ready`, there is no
+  gate request, the merge lock stays clear and main did not move, so the
+  pages need no republish. **Seen:** the four builders started in cycle
+  169 are active on Opus 5.5 at effort high, within their deadlines:
+  - FX1 claimed FX1-7-audit-tools after merging main (bb481c89).
+  - FX2's session on FX2-9-audit-b-match is working; its status file
+    on `claude/fix-server-b` has not been updated yet.
+  - FX3 is `working` on FX3-7-audit-client-2. Findings CLI-25 to CLI-34
+    are written in `client.md` (9c8c0bd3); the full checks are next.
+  - FX4 is `working` on FX4-5-problem-strings. The test c4cb11d0 fails
+    on main; the rows are in 3231f78b, whose pre-check is running.
+
+  The claims and leases of FX1-7, FX3-7 and FX4-5 are copied into the
+  backlog. **Requests:** none new; none is open and due. **Started:**
+  nothing, because the four seats are full. **Next:** merge FX4-5,
+  FX3-7, FX1-7 and FX2-9 as they turn ready. Then FX1-8 (after FX2-9),
+  FX2-10, and FX4-6 to FX4-8 in order. Then the UI: once every FX task
+  is merged, unpark P3-S3-settings-4, P4-S1-heist-vault,
+  P4-S2-home-purse and the BT track.
+
 - **Cycle 169**, 24 November 2026, from about 00:30Z (session
   `session_01SNkKxnXrzUVLGqiGNmw1FR`, started by the Opus 5.5 launcher).
   **Merged** five tasks:
