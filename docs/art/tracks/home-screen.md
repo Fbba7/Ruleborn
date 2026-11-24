@@ -543,7 +543,7 @@ Measured with a print in `_fit_tab_words` on dff000c9 (not committed), at 1080 w
 
 At 200% the run's first layout passes, before the bar settles at its width, also print smaller sizes for the chosen word (en down to 51 px, de 66 px); the stills show the settled size.
 
-**Not this task's: the purse at 125% in German.** At 125% text in German the purse's three pills take two rows ("the purse in 2 rows at 100% text: { 419: "aether", 545: "essence" }"), and with the raid notice the fit check also finds "no realm marked over the whole universe". Both fail the same way on main's code (53e18516's tree, before this task), so this task did not cause them: M26's cases never ran at 125%, which this task adds to the fit runs for the tab names. The purse (`_fit_amounts`, a row of three below 150% text) is outside this task's done_when; S2 names it for the lead (S2-R44) rather than change it here.
+**Not this task's: the purse at 125% in German.** At 125% text in German the purse's three pills take two rows ("the purse in 2 rows at 100% text: { 419: "aether", 545: "essence" }"), and with the raid notice the fit check also finds "no realm marked over the whole universe". Both fail the same way on main's code (53e18516's tree, before this task), so this task did not cause them: M26's cases never ran at 125%, which this task adds to the fit runs for the tab names. The purse (`_fit_amounts`, a row of three below 150% text) is outside this task's done_when; S2 names it for the lead (S2-R44) rather than change it here. Both are fixed in Part 10 (P4-S2-home-purse).
 
 **AD's preview** (S2-R43): pending.
 
@@ -587,6 +587,39 @@ At 200% the run's first layout passes, before the bar settles at its width, also
 Each still is `FIT=1 <flags> bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`.
 
 **AD's preview** (S2-R46): pending.
+
+## Part 10: the purse at 125% text (P4-S2-home-purse)
+
+Part 8 found two failures at 125% text in German (S2-R44): the purse's three pills took two rows, which the fit check did not allow below 150%, and with the raid notice no realm was marked over the whole universe. Both now pass.
+
+**What changed.**
+
+- **The purse in two rows from 125%, where three do not fit.** `_fit_amounts` in `client/scripts/home.gd` first asks whether the row of three fits at all, as it would set the amounts: baked or live, at full size or shrunk no further than `BAKED_LEAST` (baked) or `AMOUNT_LEAST` (live). The question is `HomeParts.amounts_fit_at_all` in `client/scripts/home_parts.gd`.
+  - At 100% the purse always stays one row, as before.
+  - From 125% (below 150%), where the row of three does not fit (German's "142,0 Tsd."), the purse takes two rows, Starlight and Aether over Essence, sized as at large text.
+  - Where the row of three fits (en, pt_BR, pt_PT, fr at 125%), nothing changes.
+  - `HomeParts.purse_pills` and `HomeParts.row_room` hold what `_fit_amounts` used to work out inline: the row's pills and the room across them.
+- **The fit check allows the two rows.** `kept()` in `client/tests/shots/universe_home.gd` allows two rows from 125% where the row of three does not fit at its least (`three_fit`, the same question). At 100% one row is still the limit.
+- **The notice's second line gives way where it cannot break between words.** `Raids.balance` in `client/scripts/home_parts.gd` sets "Sieh, wie deine Verteidigung hielt" in two lines broken between words. At 125% in German, "Verteidigung" alone is wider than the room beside See and the cross, so the label broke inside the word ("Verteidigun / g hielt"). The notice then stood 432 pixels tall, and the realms' band left no room for a pin.
+  - Now, where no break between words fits two lines, the line is hidden, as it is at large text. The notice keeps its disc, its headline (the count where the words do not fit, as before), See and the cross, on one row of 192 pixels. The panel still says the line aloud (`accessibility_name`).
+  - At 100%, and wherever the line fits two lines, it shows as before.
+  - With the band that frees, every realm is marked at 125% in German with the notice, and the four side buttons stay up, in columns (board 3b's H).
+- **The fit cases at 125%.** `docs/art/shots/home-screen/fit_home.sh` runs M26's fit cases: 100%, 125%, 150% and 200% text in en, pt_BR and de, each with and without the notice; 125% in pt_PT and fr with and without it; the widest amounts, an empty home and 99 raids at 125% and 200% in en, pt_BR and de; and high contrast at 100%, 125% and 200% in en and at 125% in de. Signed in and signed out draw the same home ("Signed in and signed out", above), so each case stands for both.
+
+**Evidence.**
+
+- `OUT=<dir> JOBS=3 bash docs/art/shots/home-screen/fit_home.sh` prints "fit ok" for all 50 of its cases and exits 0. One case alone: `FIT=1 TEXT=125 LOCALE=de [NOTICE=1] bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`.
+- The stills, in `docs/art/shots/home-screen/`, each `FIT=1 <flags>` and each "fit ok":
+
+| Still | Flags | What it shows |
+|---|---|---|
+| `home-125-de.png` | `TEXT=125 LOCALE=de` | Starlight and Aether over Essence; the realms named; the four side buttons |
+| `home-125-de-notice.png` | `TEXT=125 LOCALE=de NOTICE=1` | the notice on one row ("!2", Ansehen, the cross); every realm marked by its sign and level; the four side buttons in columns |
+| `home-125-de-contrast.png` | `TEXT=125 LOCALE=de CONTRAST=1` | the same two rows in high contrast |
+
+- 'home at 100% text' is unchanged: re-shot, `home-100.png` has the same layout as Part 8's; only the sky's moving lights differ between frames, so the still is kept. 'home at 200% text, pt_BR' and 'home in high contrast' take the same path as before (two rows from 150%; one row at 100%), and both print "fit ok" in the sweep above.
+
+**AD's preview** (S2-R47): pending.
 
 ## Left for other tasks
 

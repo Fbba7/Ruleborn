@@ -4,25 +4,25 @@
   "branch": "claude/ui-screens-home",
   "model": "Opus 5.5",
   "agent_state": "active",
-  "task_id": "P3-S2-back-1",
-  "task_state": "working",
-  "claimed_at": "2026-11-17T21:25:00Z",
-  "lease_until": "2026-11-18T02:00:00Z",
-  "updated_at": "2026-11-17T23:00:00Z",
-  "expected_next_update_by": "2026-11-17T23:45:00Z",
+  "task_id": "P4-S2-home-purse",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-24T15:05:00Z",
+  "lease_until": "2026-11-24T18:05:00Z",
+  "updated_at": "2026-11-24T15:05:00Z",
+  "expected_next_update_by": "2026-11-24T15:50:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "0bfa1d6a",
-    "next_step": "main 443a5cf5 merged (b8cc234); fresh-container setup, build.sh, pre-check and guard on the merge, then ready."
+    "last_green_sha": "4e9114ac",
+    "next_step": "P4-S2-home-purse, reopened in lead cycle 181: merge main into 27846b7c, rerun the setup line, build.sh, fit_home.sh, check_screens and guard.sh on the merge, pre-check, then ready (gate at acb2239b: 'home at 100% text' Hierarchy 3/3, S2-R47 answered in cycle 151)."
   },
   "precheck": {
-    "sha": "0bfa1d6a3e794bdae4d65b68e9fdb0a2da4331dd",
+    "sha": "4e9114ac84279c77ca1735d1181ccfb280a52bcb",
     "exit": 0,
-    "finished_at": "2026-11-17T22:18:03Z",
+    "finished_at": "2026-11-17T23:31:49Z",
     "summary": "All checks passed."
   },
   "gate_request": {
-    "sha": "0bfa1d6a",
+    "sha": "acb2239b",
     "items": [
       {
         "item": "home at 100% text",
@@ -33,7 +33,7 @@
     ]
   },
   "ready_sha": null,
-  "stop_at": "2026-11-18T21:00:00Z",
+  "stop_at": "2026-11-24T21:00:00Z",
   "acks": [
     "M13",
     "M28",
@@ -678,7 +678,9 @@
       "created_at": "2026-11-17T16:22:30Z",
       "due": "2026-11-18T16:22:30Z",
       "default": "S2 leaves both as they are, named in Part 8, and marks P3-S2-home-7 ready on its own checks; a later home task (or this one's follow-up) lets the purse take two rows from 125% in long locales and adds 125% to M26's cases.",
-      "escalate_to": "lead"
+      "escalate_to": "lead",
+      "state": "done",
+      "answer": "Seeded as P4-S2-home-purse (cycle 149) and fixed there: docs/art/tracks/home-screen.md Part 10."
     },
     {
       "id": "S2-R45",
@@ -694,7 +696,9 @@
       "created_at": "2026-11-17T19:05:00Z",
       "due": "2026-11-18T19:05:00Z",
       "default": "P3-S2-home-7 stays ready at 9ef7b295; the lead's own guard run on the candidate decides the merge, and the rebake stays as it is",
-      "escalate_to": "lead"
+      "escalate_to": "lead",
+      "state": "pending",
+      "note": "Not reproduced on 4e9114ac (23:10Z): guard.sh's full rebake is byte for byte in this container."
     },
     {
       "id": "S2-R46",
@@ -710,9 +714,28 @@
       "created_at": "2026-11-17T22:05:00Z",
       "due": "2026-11-18T01:05:00Z",
       "default": "If AD has no seat or has not answered by the due time, the lead's gate run judges the stills, and S2 marks ready on its own checks and the gate.",
-      "escalate_to": "lead"
+      "escalate_to": "lead",
+      "state": "done"
+    },
+    {
+      "id": "S2-R47",
+      "from": "S2",
+      "to": "AD",
+      "ask": "For AD, through the lead (P4-S2-home-purse's done_when: AD previews the stills before ready). Preview acb2239b on claude/ui-screens-home, docs/art/shots/home-screen/: home at 125% text in German. The purse's three pills no longer fit one row there ('142,0 Tsd.'), so it takes two rows, Starlight and Aether over Essence, as at large text; en, pt_BR, pt_PT and fr keep one row at 125%. With the raid notice, the notice's second line now gives way where no break between words fits ('Verteidigung'), so the notice is one row and every realm keeps its pin (sign and level). Stills: home-125-de.png, home-125-de-notice.png, home-125-de-contrast.png, and home-100.png ('home at 100% text', unchanged). Check that the purse's two rows read as one group above the map and do not compete with Collect, that the notice still reads as a notice without its second line, and that high contrast holds. Reproduce with `FIT=1 TEXT=125 LOCALE=de [NOTICE=1] [CONTRAST=1] bash tools/render/shoot.sh client/tests/shots/universe_home.gd out.png`. Objections in one round, please. Detail: docs/art/tracks/home-screen.md Part 10.",
+      "files": [
+        "client/scripts/home.gd",
+        "client/scripts/home_parts.gd",
+        "client/tests/shots/universe_home.gd",
+        "docs/art/tracks/home-screen.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-18T07:45:52Z",
+      "due": "2026-11-18T10:45:52Z",
+      "default": "If AD has no seat or has not answered by the due time, the lead's gate run judges the stills, and S2 marks ready on its own checks and the gate.",
+      "escalate_to": "lead",
+      "state": "done"
     }
   ],
   "answers": [],
-  "next_step": "Gate passed at 0bfa1d6a (Hierarchy 3 of 3); S2-R46 answered with the default. Merged main 443a5cf5; rerunning the setup line, build.sh, check_all and guard on the merge, then ready."
+  "next_step": "P4-S2-home-purse, reopened in lead cycle 181: merge main into 27846b7c, rerun the setup line, build.sh, fit_home.sh, check_screens and guard.sh on the merge, pre-check, then ready (gate at acb2239b: 'home at 100% text' Hierarchy 3/3, S2-R47 answered in cycle 151)."
 }
