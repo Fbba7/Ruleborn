@@ -240,6 +240,15 @@ owner wove, and the server accepts it.
   woven law too is the lead's call. This is in FX3's status file as a
   request, with a default.
 
+  **Left for the lead: fixed (FX2-10-curated-woven-law).** `problems()`
+  names `woven_law_missing`, a law the realm wove and finished weaving that
+  the island does not carry, and publish refuses it by name, as
+  `law_not_woven`. It covers all three cases above. Hand-built islands are
+  held to it too: §13.3 gives one pylon per woven slot, and no island was
+  found that may lawfully leave a woven law off. Proof:
+  `server/test/fix_fx2_curated_woven_law.test.mjs`, fail-first commit
+  `5d4e59c`, fix `ac08a0c`.
+
 ## Low
 
 ### SIM-5: The Hourkeeper's rewind loses a hit taken in a tick the ally was healed
