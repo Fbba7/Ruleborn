@@ -270,6 +270,9 @@ rule stands (Opus 5.5 only), and so does order 2 (never Fable 5.1).
   the next session on each seat follows this order. Nothing is
   interrupted for this order.
 - **The launcher and the watchdog** create the lead's cycles at effort
-  medium. Their prompts were updated to say so on 24 November 2026.
+  medium. Their stored prompts still say "effort high" (they can be
+  changed only from the launcher's and the watchdog's own sessions);
+  where they do, this order wins: read effort medium for the lead's
+  cycles and order 6's rule for the sessions the lead creates.
 - If `create_session` refuses the effort setting, create the session on
   Opus 5.5 without it and say so in your status file.
