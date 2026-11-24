@@ -5,15 +5,15 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "BT-04b",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-24T21:36:00Z",
   "lease_until": "2026-11-25T00:36:00Z",
-  "updated_at": "2026-11-24T21:36:00Z",
-  "expected_next_update_by": "2026-11-24T22:20:00Z",
+  "updated_at": "2026-11-24T21:45:00Z",
+  "expected_next_update_by": "2026-11-24T22:30:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "56f3662b",
-    "next_step": "BT-04b: frame strips, 200% text and high-contrast variants, named crops in tools/gate/render.py"
+    "next_step": "BT-04b: the self-test renders the fixture still with its named crops and the press strip; then the sandboxed proof and the pre-check"
   },
   "precheck": {
     "sha": "0fa163259b80a8daa7fcec4fe8b42976c1d6a37d",
@@ -39,7 +39,8 @@
       "created_at": "2026-11-24T17:50:00Z",
       "due": "2026-11-25T21:00:00Z",
       "default": "the lead adds that one line, as above, in the candidate that merges BT-04a (as it did for AD-R3 and K1-R1)",
-      "escalate_to": "lead"
+      "escalate_to": "lead",
+      "state": "done"
     },
     {
       "id": "SP-bt-04-R2",
