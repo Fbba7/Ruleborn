@@ -1,11 +1,11 @@
 # FX1 server fixes (A): progress
 
-- Status: Green. FX1-8-server-a-lows ready at dbf44adf (pre-check PASS); the last push adds only FX1's status and handoff.
-- Progress: 6 of 8 tasks merged (FX1-1, FX1-2, FX1-3, FX1-4, FX1-6, FX1-7); no gate items (fix tasks have none).
-- Done: FX1-8: FX1-A-02, A-10, A-13, A-15, A-16, A-17, FX1-R10 and AUD-B-18's residual fixed, each after its fail-first test.
-- Next: the lead merges FX1-8; then FX1-9 onward as the backlog assigns them.
+- Status: Green. FX1-13-codex-woven-at: fail-first test c9693432, fix e6f582a5, main 632ab460 merged at a1eb8cfb; pre-check of a1eb8cfb running.
+- Progress: 8 of 12 tasks merged (FX1-1, FX1-2, FX1-3, FX1-4, FX1-6, FX1-7, FX1-8, FX1-9); no gate items (fix tasks have none).
+- Done: FX1-13: FX1-A-17's residual (FX1-R25) fixed after its fail-first test: mastery() counts the woven step only once woven_at is at or before now, in the Codex and the profile.
+- Next: record the pre-check and mark FX1-13 ready; then FX1-10-tools-contract once FX4-7-curation-swap-weave merges.
 - Blocked by: none.
-- Owner decision needed: none (FX1-R24 to R26 are the lead's, each with a default).
+- Owner decision needed: none (FX1-R27 is the lead's, with a default).
 
 | Deliverable | Weight (h) | Status | Evidence |
 |---|---:|---|---|
@@ -16,8 +16,23 @@
 | FX1-6-audit-server-a: FX1-A-01 to A-17 | 4.0 | merged (ddf4213d) | `docs/security/audit-2026-11/server-a.md`; `server/test/fix_fx1_audit_server_a.test.mjs`; test commits 6b3556f9, 5d5d2e82, b0e4cd1c, f33ccc18; fixes f1888bba, dfc5bf86, 244b9480, 533b793d, ccda8b22; A-07 reverted 01cb97ac (R11) |
 | FX1-7-audit-tools: FX1-T-01 to T-22 | 4.0 | merged | `docs/security/audit-2026-11/tools.md`; `server/test/fix_fx1_audit_tools.test.mjs`, `server/test/fix_fx1_audit_tools_proofs.mjs`; proof commits 3c7ad511, 4ef72ffd; report b5283fa8 |
 | FX1-8-server-a-lows: A-02, A-10, A-13, A-15, A-16, A-17, R10, AUD-B-18 | 3.0 | ready (dbf44adf) | `server/test/fix_fx1_audit_server_a.test.mjs`, `server/test/fix_fx1_server_a_lows.test.mjs`, `server/test/fix_fx2_audit_config.test.mjs`; test commit e0ea0eab; fixes 3e2e872f, 9c25c35f, 8180b333, 2419848b, ad2bc945, 991324a6, 14807c73, bad2df32; privacy e46fd2a5 (FX1-R24) |
+| FX1-9-tools-gate | 3.0 | merged (e830e15b) | `server/test/fix_fx1_tools_gate.test.mjs`; merge a8b4c0a8 (ad5e56bf) |
+| FX1-13-codex-woven-at: FX1-A-17's residual (FX1-R25) | 1.0 | pre-check running | `server/test/fix_fx1_codex_woven.test.mjs`; test commit c9693432; fix e6f582a5 |
 
 ## Handoff
+- **FX1-13-codex-woven-at (2026-11-24).** Branch `claude/fix-server-a`, with main 1f0475a4 merged (864c9597) before the claim and main 632ab460 merged at a1eb8cfb. FX1-A-17's residual, from request FX1-R25: `weaving.mjs` records `codex.woven_at` at the weave's finish time (FX1-8), but `mastery()` and the profile counted `woven_at != null`, so a law's woven step showed while its weave was unfinished.
+  - **Test first.** c9693432, alone: `server/test/fix_fx1_codex_woven.test.mjs`. Three of Motion's twelve steps are set in the Codex (half_gravity crossed, bounce at tier III and crossed), so the woven step is the fourth, the school's first title. It weaves half_gravity at tier I (10 minutes, §5.6) and reads `codex.show().mastery` and `profile.view().titles` at the start, at 9 minutes (3 steps, no title expected) and at 10 minutes (4 steps, one title expected). On main, with the wasm simulation built:
+    ```
+    not ok 1 - FX1-A-17, FX1-R25: a weave still unfinished is no mastery step in the Codex or the profile (18.5, 5.6)
+      error: the Codex: the weave has just started   4 !== 3   (expected: 3, actual: 4)
+    ```
+    With the Codex's asserts taken out (a throwaway copy, not committed), the profile's half fails on main too: "the profile: the weave has just started", actual `{ school: 'Motion', steps: 4, titles: 1, total: 12 }`, expected none.
+  - **Fix.** e6f582a5, naming FX1-A-17 and FX1-R25: `mastery(by, now)` counts the woven step only when `woven_at <= now`. `Codex.view()` passes `this.service.now()`; `Profile.view()` passes the `now` it already reads from the service's clock, the clock `weaving.mjs` uses. Crossed and tier-III steps are unchanged.
+  - **Existing tests.** None changed, skipped or loosened. `cd server && npm test` at e6f582a5: 669 of 669, 0 skipped. `owners.py diff FX1-13-codex-woven-at origin/claude/videogame-project-analysis-ewkkk2 HEAD`: "every changed path is inside its files".
+  - **Request FX1-R27 (to the lead):** `docs/security/audit-2026-11/server-a.md`'s FX1-A-17 entry still says "Left as is: while a weave is unfinished, `codex.mjs`'s `mastery()` and the profile still show its step ... (request FX1-R25)". It should say the residual is fixed (FX1-13-codex-woven-at, e6f582a5). Not in this task's files.
+  - **Checks on the merge.** The fresh-container setup line and `bash client/build.sh` ran, then `cargo build --release --target wasm32-unknown-unknown` in `sim/` built the simulation the server tests need. Pre-check of a1eb8cfb: PRECHECK_RESULT.
+  - **Next.** The lead merges FX1-13; then FX1-10-tools-contract once FX4-7-curation-swap-weave merges, in a fresh session.
+- Last verified commit: e6f582a5 (npm test 669/669); pre-check of a1eb8cfb pending. Before it, dbf44adf (FX1-8, PASS 07:29:36Z).
 - **FX1-8-server-a-lows (2026-11-24).** Branch `claude/fix-server-a`, with main 3b162939 merged (f96e2632) before the claim. The medium and low findings of FX1-6's audit that were outside FX1-6's files, the Renown pull-back over skipped seasons, and AUD-B-18's residual.
   - **Tests first.** e0ea0eab, alone: it turns the "today's behaviour" assertions of `fix_fx1_audit_server_a.test.mjs` (A-02, A-10, A-15, A-16, A-17) into the behaviour that should happen, adds `fix_fx1_server_a_lows.test.mjs` (A-13's republished defender, FX1-R10), and takes AUD-B-18's service proof in `fix_fx2_audit_config.test.mjs` out of `stillOpen` as a plain `assert.throws(..., RangeError)` over NaN, Infinity and a string. On main, with the wasm simulation built, each fails for its defect:
     ```

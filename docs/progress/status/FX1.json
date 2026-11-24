@@ -145,6 +145,20 @@
       "due": "2026-11-24T21:00:00Z",
       "default": "Filed as a small fix task after the open FX tasks; FX1-8's checks run with the cache present, as check_all's earlier steps leave it.",
       "escalate_to": "lead"
+    },
+    {
+      "id": "FX1-R27",
+      "from": "FX1",
+      "to": "lead",
+      "ask": "docs/security/audit-2026-11/server-a.md, FX1-A-17's entry: its 'Left as is' sub-bullet (mastery() and the profile still show an unfinished weave's step, request FX1-R25) is now fixed by FX1-13-codex-woven-at (fix e6f582a5, test server/test/fix_fx1_codex_woven.test.mjs). Replace it with: 'FX1-R25's residual: fixed (FX1-13-codex-woven-at). mastery() and the profile count the woven step only once woven_at is at or before the service's clock.' server-a.md is not in FX1-13's files.",
+      "files": [
+        "docs/security/audit-2026-11/server-a.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-24T09:00:00Z",
+      "due": "2026-11-25T09:00:00Z",
+      "default": "The lead makes the edit in its bookkeeping when it merges FX1-13, or adds server-a.md to a later FX1 task's files.",
+      "escalate_to": "lead"
     }
   ],
   "answers": []
