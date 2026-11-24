@@ -490,7 +490,10 @@
       "ready_sha": null,
       "merged_sha": null,
       "updated_at": "2026-11-24T04:30:00Z",
-      "updated_by": "lead (cycle 171)"
+      "updated_by": "lead (cycle 171)",
+      "exceptions": [
+        "server/test/setup.mjs"
+      ]
     },
     {
       "id": "FX3-6-audit-universe",
