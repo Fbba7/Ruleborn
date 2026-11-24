@@ -412,6 +412,8 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| SP-bt-07 | `session_01SNkKxntUxvJrAmwfuUT8wo` (Opus 5.5, effort medium) | BT-07 (start, cycle 189: a new agent; effort medium by order 6, a read-only tools-only task in tools/coord/metrics.*) | `claude/ui-spec-metrics` | 2026-11-24 21:34Z |
+| SP-bt-04 | `session_01SNkKxooiW2REvhyUn5DXCa` (Opus 5.5, effort medium) | BT-04b (start, cycle 189: BT-04a merged as 56f3662b; effort medium by order 6, a tools-only task in tools/gate/; SP-bt-04's last session, `session_01SNkKxob5FVPEP75EW56UMP`, is idle, its task merged) | `claude/ui-spec-gate-render` | 2026-11-24 21:34Z |
 | SP-bt-04 | `session_01SNkKxob5FVPEP75EW56UMP` (Opus 5.5, effort high) | BT-04a (resync, cycle 186: candidate 84be5f38 failed on render.py's self-test under the check sandbox's read-only HOME; effort high by order 6, a resync; SP-bt-04's last session, `session_01SNkKxnP8NpPyS23jXd4Upa`, is idle, its task ready at f1df3f1e) | `claude/ui-spec-gate-render` | 2026-11-24 19:35Z |
 | SP-bt-01 | `session_01SNkKxnk1jnaFLfc14YYCAq` (Opus 5.5, effort high) | BT-01b (start, cycle 186: BT-01a merged as 99c9aa89; effort high by order 6, the merge queue and its lock, concurrency; SP-bt-01's last session, `session_01SNkKxnoYoXvgs2BTqD6NXy`, is idle, its task merged) | `claude/ui-spec-coord` | 2026-11-24 19:35Z |
 | SP-bt-04 | `session_01SNkKxnP8NpPyS23jXd4Upa` (Opus 5.5, effort medium) | BT-04a (start, cycle 183: effort medium by order 6, a tools-only task in tools/gate/) | `claude/ui-spec-gate-render` | 2026-11-24 17:12Z |
