@@ -8,12 +8,12 @@
   "task_state": "in_progress",
   "claimed_at": "2026-11-24T05:35:00Z",
   "lease_until": "2026-11-24T08:35:00Z",
-  "updated_at": "2026-11-24T05:49:00Z",
-  "expected_next_update_by": "2026-11-24T06:34:00Z",
+  "updated_at": "2026-11-24T05:58:00Z",
+  "expected_next_update_by": "2026-11-24T06:43:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "bad2df32",
-    "next_step": "every fix committed (A-02, A-10, A-13, A-15, A-16, A-17, R10, AUD-B-18) and the audit docs updated; waiting on FX1-R24 (privacy.json declarations), then full npm test, merge main, check_all, owners diff, ready"
+    "next_step": "full npm test 655 of 657 at b91ed734: privacy.test waits on FX1-R24, FX1-T-11 is FX1-R26 (environment-dependent); waiting on FX1-R24 (default at 09:05Z), then merge main, check_all, owners diff, ready"
   },
   "precheck": null,
   "gate_request": null,
@@ -124,6 +124,21 @@
       "created_at": "2026-11-24T05:49:00Z",
       "due": "2026-11-24T21:00:00Z",
       "default": "Left as is: a step shows from the weave's start and goes if the weave is taken out before it finishes. A later task may compare woven_at with the time.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "FX1-R26",
+      "from": "FX1",
+      "to": "lead",
+      "ask": "FX1-T-11's proof (server/test/fix_fx1_audit_tools_proofs.mjs, FX1-7's) is environment-dependent: py() parses the last line of stdout+stderr, and tools/check_document.py:505 prints a SyntaxWarning (invalid escape sequence '\\d') to stderr whenever it is compiled with no cached .pyc (py() runs python3 -B). The last line is then the warning, value is undefined, notEqual(undefined, 0) passes, and stillOpen reports 'FX1-T-11 no longer fails'. In this container npm test failed it until tools/__pycache__/check_document*.pyc existed; with it, it passes. Fix: py() parses the last line of stdout only, and check_document.py:505's docstring becomes a raw string. Neither file is FX1-8's.",
+      "files": [
+        "server/test/fix_fx1_audit_tools_proofs.mjs",
+        "tools/check_document.py"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-24T05:58:00Z",
+      "due": "2026-11-24T21:00:00Z",
+      "default": "Filed as a small fix task after the open FX tasks; FX1-8's checks run with the cache present, as check_all's earlier steps leave it.",
       "escalate_to": "lead"
     }
   ],
