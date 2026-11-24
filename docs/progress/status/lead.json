@@ -3,7 +3,12 @@
   "updated_at": "2026-11-24T23:25:00Z",
   "expected_next_update_by": "2026-11-25T02:25:00Z",
   "cycle": 191,
-  "merging": null,
+  "merging": {
+    "task_id": "P3-AD-wave-close",
+    "by": "overseer",
+    "at": "2026-11-24T23:40:00Z",
+    "note": "owner's order (fast close, M65): the overseer merges AD's line and closes phase 3"
+  },
   "last_merged": {
     "task_id": "BT-04b, BT-07",
     "sha": "add036e9"

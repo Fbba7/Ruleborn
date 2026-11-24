@@ -2,8 +2,8 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026. Phase 2 started on 12 November 2026 (lead cycle 70): P1-AD-board-1d let board 1 stand and phase 1's other exit criteria hold (report.md section 3.2); its first tasks are the flow findings (S1, S2) and board 1's note G (AIA-2), within the same cap of three. Since 12 November 2026, about 20:00Z, the cap is four UI builders by the owner's order (CLAUDE.md order 3; three while the seven-day bar reads allowed_warning). Phase 3 (polish and harden, report.md step 12) started on 17 November 2026 (lead cycle 118) under M49: every phase 2 task was merged by 06:55Z, the exit review ran in cycle 118 (boards 3, 4 and 5 stand, board 2 waits on the deferred icon batch 4 by D13 (c), the exceptions queue is empty, every screen passes the gate but result at 200% pt_BR, Hierarchy, which P3-S1-result-7 takes), and the first blind audit (O6) is carried into phase 3 as P3-AD-audit-1. Phase 3 draws from the 20-hour reserve; it exits when no board has an open objection, the second blind audit is done and the wave board (O7) stands. The bug-fix wave started on 21 November 2026 by the owner's order (CLAUDE.md order 1, entry of 21 November): the UI is paused (P3-S3-settings-4, P4-S1-heist-vault and P4-S2-home-purse parked with their work on their branches; the BT track stays parked) while up to four fix builders, FX1 to FX4 within the cap of four, fix the 60 confirmed defects of docs/security/bug-report-2026-11.md, highs first, each with a test that fails before the fix, then recheck the four unproven candidates (7, 21, 23, 34) and audit the code the report did not read (findings in docs/security/audit-2026-11/, from which the lead files fix tasks). The FX tasks' phase is 'fix'; the UI resumes at phase 3 when every FX task is merged.",
   "wave": "Bug-fix wave",
   "phase": 3,
-  "updated_at": "2026-11-24T21:30:00Z",
-  "updated_by": "lead (cycle 189)",
+  "updated_at": "2026-11-24T23:40:00Z",
+  "updated_by": "overseer",
   "stop_at": "2026-11-25T21:00:00Z",
   "lease_hours": 3,
   "status_every_minutes": 45,
@@ -377,6 +377,40 @@
       "exceptions": [
         "README.md"
       ]
+    },
+    {
+      "id": "P3-AD-wave-close",
+      "title": "AD's O7 re-check (M63): preview settings-4's stills on main and rule the wave",
+      "phase": 3,
+      "role": "art director",
+      "model": "Opus 5.5",
+      "assigned_to": "AD",
+      "files": [
+        "docs/art/ui-quality/gate/boards/wave.md",
+        "docs/art/ui-quality/gate/boards/wave/**",
+        "docs/progress/AD.md",
+        "docs/progress/status/AD.json"
+      ],
+      "deps": [],
+      "done_when": [
+        "AD previews P3-S3-settings-4's stills on main (merged de193db4) against AD-R67's done_when (M12)",
+        "wave.md's ruling reads 'The wave stands at O7', or names the one re-work with a default"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 1,
+      "tier": 2,
+      "critical": true,
+      "state": "claimed",
+      "claim": {
+        "agent": "AD",
+        "at": "2026-11-24T23:40:00Z"
+      },
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "exceptions": []
     }
   ],
   "idle_queue": [],
@@ -885,6 +919,13 @@
       "text": "From the overseer, 24 November 2026, about 23:25Z, by the owner's order (CLAUDE.md order 1, entry of 24 November): 'UI done' is report.md's plan, phases 0 to 3, and when it is done every agent stops. Open no phase 4. Until phase 3 closes, start no new task but AD's O7 re-check of M63 (not BT-08 or any other); the running BT builders keep working. When AD's 'The wave stands at O7' is on main, merge it, record phase 3 as closed, set every builder's status to stop cleanly as CLAUDE.md order 1 says, merge nothing more, write 'Stopped here' in lead.md's Now, and end your cycle; the overseer disables the scheduled tasks. Add M64 to your acks.",
       "sent_at": "2026-11-24T23:30:00Z",
       "ack_by": "2026-11-25T01:30:00Z"
+    },
+    {
+      "id": "M65",
+      "to": "lead",
+      "text": "From the overseer, 24 November 2026, about 23:40Z, by the owner's order in the overseer's chat (\"Yes, do it\", approving the overseer's fast-close plan): the overseer does the close itself. It stopped BT-05, BT-06 and BT-09 (work pushed on their branches), started AD on P3-AD-wave-close (M63's O7 re-check, effort medium), holds the merge lock, and will merge AD's line, record phase 3 as closed and stop the program (CLAUDE.md order 1, entry of 24 November). A lead cycle that starts meanwhile merges nothing, starts nothing, adds M65 to its acks and ends.",
+      "sent_at": "2026-11-24T23:40:00Z",
+      "ack_by": "2026-11-25T01:40:00Z"
     }
   ]
 }
