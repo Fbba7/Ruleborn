@@ -11,8 +11,11 @@
 #
 # The run is detached (nohup setsid), so it outlives the tool call that
 # started it; a container restart still kills it, and `result` then says
-# LOST. A run passed only if its log ends `DONE exit=0` and contains
-# "All checks passed." The worktree is seeded with the checkout's build
+# LOST. A run passed only if the runner's own DONE line, in the .done file
+# beside the log, says exit=0 and the log held "All checks passed." when that
+# line was written (FX1-T-04: what a leftover child writes later does not
+# count). The DONE line is copied to the log's end for whoever reads it. The
+# worktree is seeded with the checkout's build
 # caches (the Rust targets and Godot's import cache) so a run does not start
 # from a cold build, and is removed once the run has ended.
 #
@@ -53,7 +56,7 @@ check_user="${CHECK_USER:-}"
 
 paths() {
   wt="$dir/check-$1"; log="$dir/check-$1.log"; pidf="$dir/check-$1.pid"; gitf="$dir/check-$1.git"
-  tmpd="$dir/check-$1.tmp"; modef="$dir/check-$1.sandbox"
+  tmpd="$dir/check-$1.tmp"; modef="$dir/check-$1.sandbox"; donef="$dir/check-$1.done"
 }
 
 # The flags every bwrap run takes, the probe included.
@@ -189,12 +192,17 @@ start() {
   esac
   echo "$mode" > "$modef"
   : > "$log"
-  rm -f "$pidf"
+  rm -f "$pidf" "$donef"
   rm -f "$gitf.end"; fingerprint > "$gitf"
   # The log and the DONE line are written out here, outside the containment.
+  # The DONE line goes to its own file, with the log's length at that moment,
+  # and only then to the log: a child the run left behind can still write to
+  # the log, never to the .done file (FX1-T-04).
   local run; run="$(printf '%q ' "${prefix[@]}" bash -c "$(printf 'cd %q && %s' "$wt" "$cmd")")"
   # setsid may fork, so the run writes its own pid (also its process group).
-  nohup setsid bash -c "echo \$\$ > '$pidf'; $run > '$log' 2>&1 < /dev/null; echo \"DONE exit=\$? sha=$sha\" >> '$log'" \
+  nohup setsid bash -c "echo \$\$ > '$pidf'; $run > '$log' 2>&1 < /dev/null; e=\$?; \
+    echo \"DONE exit=\$e sha=$sha bytes=\$(stat -c %s '$log')\" > '$donef.part' && mv '$donef.part' '$donef'; \
+    echo \"DONE exit=\$e sha=$sha\" >> '$log'" \
     > /dev/null 2>&1 < /dev/null &
   local i; for i in $(seq 50); do [ -s "$pidf" ] && break; sleep 0.1; done
   echo "started: sha=$sha log=$log sandbox=$mode"
@@ -207,20 +215,24 @@ result() {
   local state exit_code=null finished=null summary=""
   if [ ! -f "$log" ]; then
     state=NONE; summary="no run for this commit"
-  elif last="$(tail -n 1 "$log")" && [[ "$last" == "DONE exit="* ]]; then
+  elif [ -f "$donef" ] && last="$(cat "$donef")" && [[ "$last" == "DONE exit="* ]]; then
     exit_code="${last#DONE exit=}"; exit_code="${exit_code%% *}"
-    finished="\"$(date -u -r "$log" +%Y-%m-%dT%H:%M:%SZ)\""
+    # The log as it stood when the runner wrote its DONE line.
+    local bytes="${last##* bytes=}" upto
+    [[ "$bytes" =~ ^[0-9]+$ ]] || bytes=0
+    upto="$(head -c "$bytes" "$log" | tr -d '\0')"
+    finished="\"$(date -u -r "$donef" +%Y-%m-%dT%H:%M:%SZ)\""
     # Taken once, when the run is first seen ended, so a later `record` reads the same.
     [ -f "$gitf.end" ] || fingerprint > "$gitf.end"
     if [ ! -f "$gitf" ]; then
       state=FAIL; summary="no record of .git from the run's start (SEC-19): start the run again"
     elif [ "$(cat "$gitf")" != "$(cat "$gitf.end")" ]; then
       state=FAIL; summary="repository changed by the run: .git/config or .git/hooks differs from before it (SEC-19)"
-    elif [ "$exit_code" = 0 ] && grep -qx "All checks passed." "$log"; then
+    elif [ "$exit_code" = 0 ] && grep -qx "All checks passed." <<< "$upto"; then
       state=PASS; summary="All checks passed."
     else
       state=FAIL
-      summary="$(grep '^== ' "$log" | tail -n 1 || true): $(grep -v '^DONE exit=' "$log" | grep -v '^\s*$' | tail -n 1 || true)"
+      summary="$(grep '^== ' <<< "$upto" | tail -n 1 || true): $(grep -v '^DONE exit=' <<< "$upto" | grep -v '^\s*$' | tail -n 1 || true)"
     fi
     cleanup
   elif alive; then
@@ -301,6 +313,13 @@ self_test() {
   bash "$me" record "$sha" AD > /dev/null
   python3 -c "import json,sys; p=json.load(open(sys.argv[1]))['precheck']; assert p['state']=='FAIL' and p['exit']!=0, p" \
     "$tmp/repo/docs/progress/status/AD.json" || { echo "record wrote a failure as passed"; return 1; }
+
+  # A child the run leaves behind cannot turn its failure into a pass (FX1-T-04).
+  rm -f "$CHECK_DIR/check-$sha.log"
+  CHECK_CMD="(sleep 1; echo 'All checks passed.'; echo 'DONE exit=0') & echo '== four =='; exit 5" bash "$me" start > /dev/null 2>&1
+  out="$(bash "$me" wait "$sha" 1)" || true
+  sleep 2; out="$(bash "$me" result "$sha")"
+  [[ "$out" == *'"state": "FAIL"'* && "$out" == *'"exit": 5'* ]] || { echo "a leftover child passed the run: $out"; return 1; }
 
   # A killed run (no DONE line, no process) is LOST, not RUNNING.
   rm -f "$CHECK_DIR/check-$sha.log"
