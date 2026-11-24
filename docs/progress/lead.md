@@ -213,8 +213,10 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxpQs7VVsV7GiXLmF8A` (cycle 170,
-24 November 2026 from about 03:40Z, started by the Opus 5.5 launcher).
+Latest lead cycle session: `session_01SNkKxqyMFdbVCW6QjLfJjC` (cycle 171,
+24 November 2026 from about 04:14Z, started by the Opus 5.5 launcher).
+Cycle 170's was `session_01SNkKxpQs7VVsV7GiXLmF8A` (24 November, from
+about 03:40Z).
 Cycle 169's was `session_01SNkKxnXrzUVLGqiGNmw1FR` (24 November, from
 about 00:30Z).
 Cycle 168's was `session_01SNkKxn1dZLeKHPjZ3mFguK` (23 November, from
