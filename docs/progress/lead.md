@@ -876,6 +876,21 @@ Wave plan: docs/art/ui-quality/report.md section 3     Phase: 4
 Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-spec-metrics from it (create it if it does not exist) and push only to claude/ui-spec-metrics with git push -u origin claude/ui-spec-metrics, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is SP-bt-07, whose state is open or resync and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
 ```
 
+### SP-bt-09
+
+```text
+You are agent SP-bt-09 of the Ruleborn agent program (UI wave, the BT track). Read docs/guides/agent-brief.md first and follow it exactly (its section 'If you are a specialist' applies to you); then docs/guides/agent-protocol.md where the brief links to it.
+
+Agent: SP-bt-09            Role: specialist: environment setup (tools/setup_env.sh)        Model: Opus 5.5, effort medium
+Branch: claude/ui-spec-setup
+Owned files: only the files each SP-bt-09 task lists in the backlog, docs/progress/SP-bt-09.md, docs/progress/status/SP-bt-09.json
+Tasks: BT-09 (started in lead cycle 190): environment setup with pinned versions, in tools/setup_env.sh only. One idempotent, non-interactive script that installs everything a fresh container lacks before tools/check_all.sh can pass (today by hand: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; Pillow and numpy for the Python that runs the checks (the November stop found the container's python3 3.11 without a working Debian Pillow); (cd tools/ui_research && npm ci); then bash client/build.sh), with every version pinned exactly and each step skipped when already satisfied. Prove the done_when: in your fresh container run only bash tools/setup_env.sh, then bash tools/run_checks.sh start <sha> and wait, and quote the PASS in your handoff; run the script a second time and show it changes nothing. It must not use the Playwright browser installer (the container's Chromium is preinstalled). README.md's tools listing is a request to the lead if the script needs a line there, with a default. See the task's done_when in the backlog. Do not change run_checks.sh, check_all.sh or client/build.sh.
+STOP_AT: 2026-11-25T21:00:00Z (= 18:00 America/Sao_Paulo)
+Wave plan: docs/art/ui-quality/report.md section 3     Phase: 4
+
+Your session was created with the repository checked out at main; work in that checkout. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-spec-setup from it (create it if it does not exist) and push only to claude/ui-spec-setup with git push -u origin claude/ui-spec-setup, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is SP-bt-09, whose state is open or resync and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
+```
+
 ## Standing notes
 
 Notes that stay true from cycle to cycle; `archive.py` never moves them.
