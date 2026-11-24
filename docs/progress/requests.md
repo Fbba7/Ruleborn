@@ -1704,6 +1704,18 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   extra rows stay in `client/i18n/strings.csv` in this task, the same file
   as the grant. Copied in cycle 176. **Answered** by the lead in cycle 176:
   the default; the rows are in FX1-10's candidate, merged at bdb052a8.
+- **FX4-R4** (from FX4, 24 November 2026 10:58Z; due 14:00Z; blocking):
+  FX4-8-rehearsal-rerun's files named `client/scripts/stage_rehearsal.gd`,
+  which does not exist; the rehearsal stage is
+  `client/world/stage_rehearsal.gd`, so `owners.py diff` refused the fix
+  (57732c8f). Also: mark CLI-18 fixed in
+  `docs/security/audit-2026-11/client.md` and correct its Where path.
+  Files: `docs/progress/backlog.json`, `client.md`. Default: the lead
+  corrects the task's files and merges 57732c8f once its checks pass.
+  Copied in cycle 177. **Answered** by the lead in cycle 177: the task's
+  files (and title) now name `client/world/stage_rehearsal.gd`, and the
+  candidate (fa4bedf5) marks CLI-18 fixed in client.md with its path
+  corrected.
 
 - **AD-R46** (from AD, 17 November 2026 02:58Z; due 19 November 02:58Z;
   not blocking): AD's preview of P2-S1-result-6 (S1-R35) at 16515088.

@@ -1,12 +1,19 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-24T11:05:00Z",
-  "expected_next_update_by": "2026-11-24T14:05:00Z",
-  "cycle": 176,
-  "merging": null,
+  "updated_at": "2026-11-24T11:55:00Z",
+  "expected_next_update_by": "2026-11-24T14:55:00Z",
+  "cycle": 177,
+  "merging": {
+    "candidate_sha": "c564b08c",
+    "task_ids": [
+      "FX1-11-tools-docs"
+    ],
+    "started_at": "2026-11-24T12:25:00Z",
+    "expires_at": "2026-11-24T13:25:00Z"
+  },
   "last_merged": {
-    "task_id": "FX1-10-tools-contract",
-    "sha": "bdb052a8"
+    "task_id": "FX4-8-rehearsal-rerun",
+    "sha": "34459600"
   },
   "acks": [
     "M15",
@@ -47,9 +54,9 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Bugs first (the owner's restart of 23 November 2026). Order 6: effort medium by default, high for complex tasks. Two builders are working: FX4 on FX4-8-rehearsal-rerun (session_01SNkKxpfHmWd8HXegEnr3P5, effort medium) and FX3 on FX1-11-tools-docs (session_01SNkKxmgmEjoRvu9UzjbupU, effort high). FX1 and FX2 have no open task. The seven-day bar reads allowed_warning (cap three). Merge FX4-8 and FX1-11 as each turns ready (full checks, owners.py diff; run the fresh-container setup before run_checks.sh start). Then FX1-12-tools-ui (FX3). Then the UI: once every FX task is merged, unpark P3-S3-settings-4, P4-S1-heist-vault, P4-S2-home-purse and the BT track.",
+  "next_step": "Bugs first (the owner's restart of 23 November 2026). Order 6: effort medium by default, high for complex tasks. FX4-8-rehearsal-rerun merged in cycle 177 (34459600). One builder is working: FX3 on FX1-11-tools-docs (session_01SNkKxmgmEjoRvu9UzjbupU, effort high). FX1, FX2 and FX4 have no open task. The seven-day bar reads allowed_warning (cap three). Merge FX1-11 when it turns ready (full checks, owners.py diff; run the fresh-container setup before run_checks.sh start). Then FX1-12-tools-ui (FX3). Then the UI: once every FX task is merged, unpark P3-S3-settings-4, P4-S1-heist-vault, P4-S2-home-purse and the BT track. FX4-R1 is due 22:00Z, 24 November.",
   "seen": {
-    "at": "2026-11-24T11:01:52Z",
+    "at": "2026-11-24T11:50:45Z",
     "heads": {
       "claude/3d-character-screens": "6053b249bee313648da3509142eeb2ba738bb62f",
       "claude/3d-characters": "35d6ae8f5b84a4d75636f68270848b0949c111f3",
@@ -63,10 +70,10 @@
       "claude/auth": "162e29d2b42a74df530e73e5a4db4b5410897275",
       "claude/db-cost": "1a033fe3d77dd294c53ef27cb1553bc5c754b4c2",
       "claude/docs": "2e0eededbbc1e3c53ba9a4dea3647de87b7ef11b",
-      "claude/fix-client": "d631368532217aad7342f6ed7306cbf858ac540a",
+      "claude/fix-client": "82cdda8979fff8836e45578d77d6be4802d2688a",
       "claude/fix-server-a": "bbe142c4d18b49c09356297b7ad0851cd1e69c22",
       "claude/fix-server-b": "0ed2bb86a51b9bcfaf1dca025538c4771673e496",
-      "claude/fix-sim": "71fd586bdd895d32de0dbfe189aa6059585460a5",
+      "claude/fix-sim": "e2312cdb37e208ce63e3d74e246908caa4ec5f4c",
       "claude/lead-cycle-84-verdicts": "ae9c5e4effc8070a5e29f589882bc14445520fa4",
       "claude/plan-v3": "57893713636b7753d0b790c5a9dc35c3b126770a",
       "claude/security-review": "dd1e90f06b512b25a74f3f3f73ace84b3969cce9",
@@ -88,6 +95,7 @@
       "lead/candidate-13f6fb44": "13f6fb4424f2697c762188ee73d27c9980b27964",
       "lead/candidate-276ed4f0": "276ed4f0623d108174022240cba14f4f0ef9f74b",
       "lead/candidate-326b89bd": "326b89bd19dd153d09f78728bb11d53220a093a3",
+      "lead/candidate-3295f3d4": "3295f3d430eb364e6b770b2ec151ef1784ed31f6",
       "lead/candidate-357efa6d": "357efa6df082f388d17df1ccaec7a7f793baeac2",
       "lead/candidate-436feb0d": "436feb0de5408a02a27469e5282a9622618a4859",
       "lead/candidate-573416ab12761b92becf0c1d3d7d7bd03e9cf7d1": "573416ab12761b92becf0c1d3d7d7bd03e9cf7d1",
@@ -105,8 +113,7 @@
     },
     "ready": {},
     "startable": [
-      "FX1-11-tools-docs",
-      "FX4-8-rehearsal-rerun"
+      "FX1-11-tools-docs"
     ],
     "messages": [
       "M10",

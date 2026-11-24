@@ -5,6 +5,36 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 174**, 24 November 2026, from about 07:39Z (session
+  `session_01SNkKxnMNhTQKiDu6mShtEP`, started by the Opus 5.5 launcher).
+  **Merged** two tasks, batched in candidate 80ffe664, at e830e15b:
+  - FX1-8-server-a-lows (ready dbf44adf).
+  - FX1-9-tools-gate (ready ad5e56bf, FX3's work).
+  The candidate also regenerated the audit page. The full checks passed at
+  08:27Z ("All checks passed.", exit 0). The claims were disjoint, the lock
+  is cleared, and both pages are republished.
+
+  **Requests:**
+  - FX1-R25 is answered, not with the default: FX1-13-codex-woven-at is
+    seeded for FX1 (deps FX1-8). It is the rest of FX1-A-17: count a woven
+    step only once `woven_at <= now`.
+  - FX1-R26 is answered. Its `py()` half is fixed by FX1-9, merged this
+    cycle. Its docstring half is added to FX1-11-tools-docs's `done_when`.
+
+  **Started**, on Opus 5.5 at effort high: FX1 on FX1-13-codex-woven-at
+  (`session_01SNkKxn8R6Rr28GFWpvcWZh`, 08:29Z). FX1-10 still waits on
+  FX4-7.
+
+  **Seen:**
+  - FX4 is `working` on FX4-7-curation-swap-weave (lease 10:25Z).
+  - FX2 and FX3 have no open task.
+  - The seven-day bar reads `allowed_warning`, so the cap is three.
+
+  Two builders are working: FX1 and FX4. **Next:** merge FX4-7 and FX1-13
+  as each turns ready. Then FX4-8 and FX1-10 to FX1-12 in order. Then the
+  UI: once every FX task is merged, unpark P3-S3-settings-4,
+  P4-S1-heist-vault, P4-S2-home-purse and the BT track.
+
 - **Cycle 173**, 24 November 2026, from about 06:40Z (session
   `session_01SNkKxqkoC28gn9jAiBuxPc`, started by the Opus 5.5 launcher).
   **Merged** FX4-6-device-replay-cap (ready 484297b1) at ee4d64aa. The

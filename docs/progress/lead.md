@@ -214,8 +214,10 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxr4FBaDyTw226PfY2p` (cycle 176,
-24 November 2026 from about 10:14Z, started by the Opus 5.5 launcher).
+Latest lead cycle session: `session_01SNkKxn8DSWinMpBGFgKJ18` (cycle 177,
+24 November 2026 from about 11:14Z, started by the Opus 5.5 launcher).
+Cycle 176's was `session_01SNkKxr4FBaDyTw226PfY2p` (24 November, from
+about 10:14Z).
 Cycle 175's was `session_01SNkKxqAuzTc5eTrFD3gtqF` (24 November, from
 about 08:39Z).
 Cycle 174's was `session_01SNkKxnMNhTQKiDu6mShtEP` (24 November, from
@@ -815,6 +817,21 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 177**, 24 November 2026, from about 11:14Z (session
+  `session_01SNkKxn8DSWinMpBGFgKJ18`, started by the Opus 5.5 launcher).
+  **Merged** FX4-8-rehearsal-rerun (ready 57732c8f, FX4's work, CLI-18)
+  at 34459600, from candidate fa4bedf5. The full checks passed at 11:49Z:
+  sim 362 of 362, server 675 of 675, client 492 of 492, "All checks
+  passed."; `owners.py diff` passed. **Answered** FX4-R4: the task's
+  files and title now name `client/world/stage_rehearsal.gd`, and the
+  candidate marks CLI-18 fixed in `docs/security/audit-2026-11/client.md`.
+  **Started nothing**: FX3 is working on FX1-11-tools-docs (effort high);
+  FX1, FX2 and FX4 have no open task; the cap is three (allowed_warning).
+  The audit and roadmap pages were not republished: `docs/audit` and
+  `docs/roadmap` are unchanged. FX4-R1 stays open, due 22:00Z today.
+  **Next:** merge FX1-11 when ready, then FX3 takes FX1-12-tools-ui, then,
+  once every FX task is merged, unpark the UI.
+
 - **Cycle 176**, 24 November 2026, from about 10:14Z (session
   `session_01SNkKxr4FBaDyTw226PfY2p`, started by the Opus 5.5 launcher).
   **Merged** FX1-10-tools-contract (ready cceacc6d, FX3's work) at
@@ -895,35 +912,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   medium), then merge FX1-10 and FX4-8 as each turns ready. FX3 then takes
   FX1-11 and FX1-12. Then the UI: once every FX task is merged, unpark
   P3-S3-settings-4, P4-S1-heist-vault, P4-S2-home-purse and the BT track.
-- **Cycle 174**, 24 November 2026, from about 07:39Z (session
-  `session_01SNkKxnMNhTQKiDu6mShtEP`, started by the Opus 5.5 launcher).
-  **Merged** two tasks, batched in candidate 80ffe664, at e830e15b:
-  - FX1-8-server-a-lows (ready dbf44adf).
-  - FX1-9-tools-gate (ready ad5e56bf, FX3's work).
-  The candidate also regenerated the audit page. The full checks passed at
-  08:27Z ("All checks passed.", exit 0). The claims were disjoint, the lock
-  is cleared, and both pages are republished.
-
-  **Requests:**
-  - FX1-R25 is answered, not with the default: FX1-13-codex-woven-at is
-    seeded for FX1 (deps FX1-8). It is the rest of FX1-A-17: count a woven
-    step only once `woven_at <= now`.
-  - FX1-R26 is answered. Its `py()` half is fixed by FX1-9, merged this
-    cycle. Its docstring half is added to FX1-11-tools-docs's `done_when`.
-
-  **Started**, on Opus 5.5 at effort high: FX1 on FX1-13-codex-woven-at
-  (`session_01SNkKxn8R6Rr28GFWpvcWZh`, 08:29Z). FX1-10 still waits on
-  FX4-7.
-
-  **Seen:**
-  - FX4 is `working` on FX4-7-curation-swap-weave (lease 10:25Z).
-  - FX2 and FX3 have no open task.
-  - The seven-day bar reads `allowed_warning`, so the cap is three.
-
-  Two builders are working: FX1 and FX4. **Next:** merge FX4-7 and FX1-13
-  as each turns ready. Then FX4-8 and FX1-10 to FX1-12 in order. Then the
-  UI: once every FX task is merged, unpark P3-S3-settings-4,
-  P4-S1-heist-vault, P4-S2-home-purse and the BT track.
 - **Restart, 23 November 2026** (the overseer, about 21:20Z). The owner
   restarted the program, in the chat of the overseer session: "Continue,
   first the bugs then the UI" (CLAUDE.md order 1). It runs on Opus 5.5 at
