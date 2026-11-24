@@ -7717,6 +7717,56 @@
       "merged_sha": "34459600",
       "updated_at": "2026-11-24T11:55:00Z",
       "updated_by": "lead (cycle 177)"
+    },
+    {
+      "id": "FX1-10-tools-contract",
+      "title": "Medium/high and medium, contract and status tools, from FX1-7's audit (FX1-R21; docs/security/audit-2026-11/tools.md): FX1-T-20 (nine server failure codes client_contract.py never reads, none with an ERR_ row), FX1-T-21 (client calls outside client/data never checked), FX1-T-01 (server/status.py lets a passing test hide a failing one of the same name) and FX1-T-02 (a skipped test recorded as passed; client/status.py parses the same way)",
+      "phase": "fix",
+      "role": "FX3",
+      "model": "Opus 5.5",
+      "assigned_to": "FX3",
+      "files": [
+        "tools/client_contract.py",
+        "server/status.py",
+        "client/status.py",
+        "client/i18n/strings.csv",
+        "server/test/fix_fx1_audit_tools*",
+        "server/test/fix_fx1_tools_contract*",
+        "docs/security/audit-2026-11/tools.md"
+      ],
+      "deps": [
+        "FX1-9-tools-gate",
+        "FX4-7-curation-swap-weave"
+      ],
+      "done_when": [
+        "each finding named in the title: its proof's stillOpen entry in server/test/fix_fx1_audit_tools_proofs.mjs (wrapped by fix_fx1_audit_tools.test.mjs) moved into a plain test under server/test/fix_fx1_tools_contract*, committed on its own before its fix and failing on current main, its failure output quoted in the handoff; then the smallest fix, following the entry's Fix line in tools.md unless the handoff says why not; the commit names the finding id",
+        "FX1-T-20: the nine ERR_ rows are added to client/i18n/strings.csv (tools.md names it client/ui/strings.csv; the file is client/i18n/strings.csv), in every language column, granted by the strings' owner (the lead, cycle 171)",
+        "each fixed entry's State in docs/security/audit-2026-11/tools.md reads 'fixed (<task_id>)'",
+        "no existing test is skipped, disabled or loosened; a test whose expectation encoded the defect is corrected and named in the handoff",
+        "cd server && npm test passes",
+        "current main merged into the branch, then the fresh-container setup line and bash tools/check_all.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed outside the task's files (M48)",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 2.5,
+      "tier": 1,
+      "critical": false,
+      "state": "merged",
+      "claim": {
+        "agent": "FX3",
+        "branch": "claude/fix-sim",
+        "claimed_at": "2026-11-24T09:20:00Z",
+        "seen_at": "2026-11-24T10:16:00Z",
+        "lease_until": "2026-11-24T12:20:00Z"
+      },
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "cceacc6d7589e75e2395add6a54622d8326b203c",
+      "merged_sha": "bdb052a839398090740f155e3d3d5323c661eb6d",
+      "updated_at": "2026-11-24T11:02:00Z",
+      "updated_by": "lead (cycle 176)"
     }
   ],
   "idle_queue": [
