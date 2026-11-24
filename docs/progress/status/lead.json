@@ -3,7 +3,15 @@
   "updated_at": "2026-11-24T22:20:00Z",
   "expected_next_update_by": "2026-11-25T01:20:00Z",
   "cycle": 190,
-  "merging": null,
+  "merging": {
+    "candidate_sha": "8f1f0cbe",
+    "task_ids": [
+      "BT-04b",
+      "BT-07"
+    ],
+    "started_at": "2026-11-24T23:00:00Z",
+    "expires_at": "2026-11-25T00:00:00Z"
+  },
   "last_merged": {
     "task_id": "P4-S1-heist-vault",
     "sha": "9be81331"
