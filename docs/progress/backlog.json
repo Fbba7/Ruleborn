@@ -2,7 +2,7 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026. Phase 2 started on 12 November 2026 (lead cycle 70): P1-AD-board-1d let board 1 stand and phase 1's other exit criteria hold (report.md section 3.2); its first tasks are the flow findings (S1, S2) and board 1's note G (AIA-2), within the same cap of three. Since 12 November 2026, about 20:00Z, the cap is four UI builders by the owner's order (CLAUDE.md order 3; three while the seven-day bar reads allowed_warning). Phase 3 (polish and harden, report.md step 12) started on 17 November 2026 (lead cycle 118) under M49: every phase 2 task was merged by 06:55Z, the exit review ran in cycle 118 (boards 3, 4 and 5 stand, board 2 waits on the deferred icon batch 4 by D13 (c), the exceptions queue is empty, every screen passes the gate but result at 200% pt_BR, Hierarchy, which P3-S1-result-7 takes), and the first blind audit (O6) is carried into phase 3 as P3-AD-audit-1. Phase 3 draws from the 20-hour reserve; it exits when no board has an open objection, the second blind audit is done and the wave board (O7) stands. The bug-fix wave started on 21 November 2026 by the owner's order (CLAUDE.md order 1, entry of 21 November): the UI is paused (P3-S3-settings-4, P4-S1-heist-vault and P4-S2-home-purse parked with their work on their branches; the BT track stays parked) while up to four fix builders, FX1 to FX4 within the cap of four, fix the 60 confirmed defects of docs/security/bug-report-2026-11.md, highs first, each with a test that fails before the fix, then recheck the four unproven candidates (7, 21, 23, 34) and audit the code the report did not read (findings in docs/security/audit-2026-11/, from which the lead files fix tasks). The FX tasks' phase is 'fix'; the UI resumes at phase 3 when every FX task is merged.",
   "wave": "Bug-fix wave",
   "phase": 3,
-  "updated_at": "2026-11-24T01:25:00Z",
+  "updated_at": "2026-11-24T02:05:00Z",
   "updated_by": "lead (cycle 169)",
   "stop_at": "2026-11-24T21:00:00Z",
   "lease_hours": 3,
@@ -558,6 +558,45 @@
       "updated_by": "lead"
     },
     {
+      "id": "FX4-6-device-replay-cap",
+      "title": "Low, client ext (FX3-R3 and SIM-2's residual): the device's recorders keep the 2 KB replay limit. client/ext/src/lib.rs record() and the universe recorder (line 391, record_universe) return or keep replays over MAX_HEIST_BYTES (2048), which the server refuses as too_large",
+      "phase": "fix",
+      "role": "FX4",
+      "model": "Opus 5.5",
+      "assigned_to": "FX4",
+      "files": [
+        "client/ext/src/**",
+        "client/tests/fix_*"
+      ],
+      "deps": [
+        "FX4-4-audit-client",
+        "FX3-6-audit-universe"
+      ],
+      "done_when": [
+        "first a test that fails on current main: the ext's single-island and universe recorders each return a replay over 2048 bytes for an honest long heist (as sim.md's SIM-2 Input), committed on its own before the fix, its failure output quoted in the handoff",
+        "then the smallest fix, following SIM-2's proposal: the ext refuses a recorded replay over the sim's MAX_HEIST_BYTES (the same constant, not a copy) as rb_record* now do, and the device stops accepting commands, or warns, before the encoded size reaches it; the handoff says which",
+        "if FX4-4-audit-client already fixed this, the task adds only the missing test and says so in the handoff",
+        "no existing test is skipped, disabled or loosened; a test whose expectation encoded the defect is corrected and named in the handoff",
+        "bash client/build.sh and the client test run (client/tests/run.gd) passes, with the ext's cargo tests",
+        "current main merged into the branch, then the fresh-container setup line and bash tools/check_all.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed outside the task's files (M48)",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 1.0,
+      "tier": 2,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-24T02:05:00Z",
+      "updated_by": "lead (cycle 169)"
+    },
+    {
       "id": "FX2-7-audit-b-config",
       "title": "High and medium, server configuration, from FX2-6's audit: AUD-B-14 (an empty RULEBORN_DELETIONS keeps the deletion journal in memory), AUD-B-15 (Game Center and StoreKit roots without RULEBORN_BUNDLE_ID switch both off silently), AUD-B-16 (an empty or unreadable RULEBORN_MAX_CONNECTIONS), AUD-B-17 (an empty RULEBORN_HEADERS_TIMEOUT_MS), AUD-B-18 (an unreadable RULEBORN_SEASON_START), AUD-B-19 (an empty RULEBORN_REPLAYS_MIN_FREE_MB), all in server/src/main.mjs",
       "phase": "fix",
@@ -703,6 +742,48 @@
       "merged_sha": null,
       "updated_at": "2026-11-23T22:40:00Z",
       "updated_by": "lead (cycle 167)"
+    },
+    {
+      "id": "FX2-10-curated-woven-law",
+      "title": "Medium, server (FX3-R2, SIM-12's residual): the server refuses a curated layout that lacks a law the realm has woven. universe.mjs problems() checks only that every law on the island is woven, not that every woven law is on it, so Island::curated can still lose a law unseen (more laws than pylon spots, an unknown law id, or 64 failed draws)",
+      "phase": "fix",
+      "role": "FX2",
+      "model": "Opus 5.5",
+      "assigned_to": "FX2",
+      "files": [
+        "server/src/universe.mjs",
+        "server/src/curation.mjs",
+        "server/test/fix_fx2_*",
+        "docs/security/audit-2026-11/sim.md"
+      ],
+      "deps": [
+        "FX3-6-audit-universe"
+      ],
+      "done_when": [
+        "first a server test that fails on current main: a curated layout for a realm that wove a law, returned without that law (each of the three cases in sim.md's SIM-12 'Left for the lead' where the server can be fed it), is published; committed on its own before the fix, its failure output quoted in the handoff",
+        "then the smallest fix: problems() (or curation's layout step) names a new problem, woven_law_missing, for every woven law the island lacks, and publish refuses it by name like law_not_woven",
+        "hand-built islands: the same check applies wherever problems() runs, unless the builder finds a hand-built island may lawfully leave a woven law off; then the check is scoped to curated layouts and the handoff says why",
+        "a client words row for the new problem is not in this task's files: if one is needed, a request to the lead names it",
+        "SIM-12's 'Left for the lead' item in docs/security/audit-2026-11/sim.md reads 'fixed (FX2-10-curated-woven-law)'",
+        "no existing test is skipped, disabled or loosened; a test whose expectation encoded the defect is corrected and named in the handoff",
+        "cd server && npm test passes",
+        "current main merged into the branch, then the fresh-container setup line and bash tools/check_all.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed outside the task's files (M48)",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 1.0,
+      "tier": 2,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "updated_at": "2026-11-24T02:05:00Z",
+      "updated_by": "lead (cycle 169)"
     },
     {
       "id": "FX3-6-audit-universe",

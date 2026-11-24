@@ -1491,6 +1491,31 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   It is in FX2-8-audit-b-lows's `exceptions` (`owners.py claims`:
   disjoint; `owners.py diff` passes), and the lead takes 4d3e779c as
   `ready_sha` without a new FX2 session.
+- **FX3-R2** (from FX3, 24 November 2026 01:05Z; due 25 November
+  01:05Z; not blocking): SIM-12 is fixed in the sim, but `Island::curated`
+  can still lose a woven law unseen in three cases (more laws than pylon
+  spots, an unknown law id, 64 failed draws). The server's `problems()`
+  (`server/src/universe.mjs`) checks only that each island law was woven,
+  not that each woven law is on the island; a check at curated publish
+  would catch all three (`universe.mjs`, `curation.mjs`). Default: the
+  lead seeds a server task that refuses a curated layout missing a woven
+  law (a new problem, e.g. `woven_law_missing`, with a fail-first test),
+  and decides whether a hand-built island needs the same check. Copied in
+  cycle 169. **Answered** by the lead in cycle 169: the default, as
+  FX2-10-curated-woven-law (after FX3-6-audit-universe). The check
+  applies wherever `problems()` runs, hand-built islands included, unless
+  the builder finds a hand-built island may lawfully leave a woven law
+  off; then it is scoped to curated layouts and the handoff says why.
+- **FX3-R3** (from FX3, 24 November 2026 01:05Z; due 25 November
+  01:05Z; not blocking): the device's universe recorder
+  (`client/ext/src/lib.rs` line 391, calling `record_universe`) does not
+  check the 2 KB replay limit, the same gap SIM-2 found in the device's
+  single-island recorder. Default: folded into the task that takes
+  SIM-2's device-recorder proposal; the ext refuses a recorded universe
+  over 2 KB, as `rb_record*` now does. Copied in cycle 169. **Answered**
+  by the lead in cycle 169: the default. No task held SIM-2's proposal,
+  so both recorders go into FX4-6-device-replay-cap, after
+  FX4-4-audit-client, which owns `client/ext/**` now.
 
 - **AD-R46** (from AD, 17 November 2026 02:58Z; due 19 November 02:58Z;
   not blocking): AD's preview of P2-S1-result-6 (S1-R35) at 16515088.
