@@ -278,8 +278,10 @@ Seven were checked and rejected, and the rest of the configuration,
 - **Fix:** refuse a `seasonStart` that is not finite, in `main.mjs` or in
   the seasons constructor.
 - **Fixed (FX2-7-audit-b-config):** in `main.mjs`. The seasons
-  constructor's own guard is outside FX2-7's files, so the service proof
-  (`seasonStart: NaN`) stays in `stillOpen`, for the owner of `seasons.mjs`.
+  constructor's own guard was outside FX2-7's files.
+- **Residual fixed (FX1-8-server-a-lows):** the seasons constructor refuses
+  a `seasonStart` that is not a finite time, with a `RangeError`; the
+  service proof (`seasonStart: NaN`, `Infinity`, a string) passes.
 
 ## Low
 
