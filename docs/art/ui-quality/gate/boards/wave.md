@@ -5,12 +5,37 @@ it reads the gate's verdicts in `gate/verdicts/` beside the stills.
 
 ## Ruling
 
-**The wave does not stand yet. One re-work is left, and it is an exit
-item.** Everything else stands.
+**The wave stands at O7.**
+
+AD-R67, the one exit item, is **closed** (P3-AD-wave-close, 24 November
+2026): P3-S3-settings-4 merged on main as `de193db4` (ready `e3190f78`).
+The gate passed "settings at 100% text" on Hierarchy 3 of 3
+(`gate/verdicts/P3-S3-settings-4/e3190f78.json`). AD previewed the stills
+S3 committed at that merge (M12), copied here as
+`wave/settings-r67-100.png`, `wave/settings-r67-200-pt_BR.png` and
+`wave/settings-r67-hc.png`:
+
+- **100%:** the Access tab has one lead in the squint, the outlined
+  title. The gold A / A buttons are the tab's primary. The "High
+  contrast" and "Motion" switch rows sit on a dark violet plate with
+  cream words, off the cream parchment. The tab strip and Back are
+  unchanged. This is AD-R67's default.
+- **200% (pt_BR):** it still fits. The tab strip falls back to icons
+  beside the selected "Acesso", the text wraps inside its card, and the
+  rest scrolls under the chevron. Nothing is clipped.
+- **High contrast:** it still passes. Plates get light outlines, the
+  switch rows are white with dark words and the "on" switch is green.
+  The hierarchy reads as it does at 100%.
+
+No request is open. The record of the ruling before AD-R67 closed
+follows.
+
+*Before, 18 November 2026:* The wave does not stand yet. One re-work is
+left, and it is an exit item. Everything else stands.
 
 | Rank | Request | Screen | File | Owner | Why it is needed for phase 3's exit (M57) | Default |
 |---:|---|---|---|---|---|---|
-| 1 | **AD-R67** | settings, Access tab, 100% text | `client/scripts/settings_screen.gd` | S3 (a follow-up task the lead assigns; no task in flight owns the file) | Section 3.6 accepts the wave only when "the second blind audit found no miss left unfixed". Audit 2's miss on P3-S3-settings-3 (settings at 100%, Hierarchy) is still open on main: `settings_screen.gd` has not changed since `7972485a`. | The Access tab at 100% gets one lead in the squint. The gold A / A buttons stay the tab's primary, as key frame 05 and board 5 (F) have them. The "High contrast" and "Motion" switch rows move off cream parchment onto the dark plate with cream words, as the law sample moved at `5fc97aac`. The title keeps its plate, and the tab strip and Back stay as they are. Done when the gate passes "settings at 100% text" on Hierarchy 3 of 3, the 200% and high-contrast forms still pass, and AD previews the stills (M12). |
+| 1 | **AD-R67** (closed at `de193db4`, previewed by AD on 24 November 2026) | settings, Access tab, 100% text | `client/scripts/settings_screen.gd` | S3 (a follow-up task the lead assigns; no task in flight owns the file) | Section 3.6 accepts the wave only when "the second blind audit found no miss left unfixed". Audit 2's miss on P3-S3-settings-3 (settings at 100%, Hierarchy) is still open on main: `settings_screen.gd` has not changed since `7972485a`. | The Access tab at 100% gets one lead in the squint. The gold A / A buttons stay the tab's primary, as key frame 05 and board 5 (F) have them. The "High contrast" and "Motion" switch rows move off cream parchment onto the dark plate with cream words, as the law sample moved at `5fc97aac`. The title keeps its plate, and the tab strip and Back stay as they are. Done when the gate passes "settings at 100% text" on Hierarchy 3 of 3, the 200% and high-contrast forms still pass, and AD previews the stills (M12). |
 
 No other request is an exit item. The notes at the end go to phase 4's
 list under M57 and hold nothing.
