@@ -7582,6 +7582,141 @@
       "merged_sha": "e830e15bb6b3dbffcbe0d4cd288237a564c21ad8",
       "updated_at": "2026-11-24T08:30:00Z",
       "updated_by": "lead (cycle 174)"
+    },
+    {
+      "id": "FX4-4-audit-client",
+      "title": "Audit: the Godot client the report did not read: client/features (beyond auth and network), client/core, client/app, client/data, client/ext and, read-only, client/scripts, client/world and client/ui; including the report's client suspicions (ext as-casts, action_log player ids, the store_purchases stub, notices.seen, sign_out's refresh fallback)",
+      "phase": "fix",
+      "role": "FX4",
+      "model": "Opus 5.5",
+      "assigned_to": "FX4",
+      "files": [
+        "client/app/**",
+        "client/data/**",
+        "client/core/**",
+        "client/features/**",
+        "client/ext/**",
+        "client/scripts/result_screen.gd",
+        "client/tests/run.gd",
+        "client/tests/fix_*",
+        "client/tests/auth_tests.gd",
+        "client/tests/shop_tests.gd",
+        "client/tests/observatory_tests.gd",
+        "client/tests/planner_tests.gd",
+        "client/tests/core_tests.gd",
+        "client/tests/security_tests.gd",
+        "docs/security/audit-2026-11/client.md"
+      ],
+      "deps": [
+        "FX4-3-replay-shop-nav"
+      ],
+      "done_when": [
+        "read the folders named in the title (client/scripts, client/world and client/ui are read-only here: the parked UI tasks own some of them, so a finding there is written up, not fixed) for defects of the report's kind (wrong results, contract mismatches between client and server, races, missing checks); each finding written to docs/security/audit-2026-11/client.md with Where, Input, Should happen, Happens, a proof (a test that fails on main, committed under the task's test files and kept failing-free by marking it with the finding id in a comment, not by skipping) and a proposed fix, in the report's format and priority levels",
+        "a finding is proven before it is listed as confirmed; one that could not be proven is listed as unproven with what was tried; the lead files fix tasks from the confirmed ones",
+        "the audit fixes nothing outside a proven finding; small proven fixes inside the task's files may ride this task, each with its fail-first test",
+        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready (M48)",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 4.0,
+      "tier": 1,
+      "critical": false,
+      "state": "merged",
+      "claim": {
+        "agent": "FX4",
+        "branch": "claude/fix-client",
+        "claimed_at": "2026-11-23T23:10:00Z",
+        "seen_at": "2026-11-23T23:10:00Z",
+        "lease_until": "2026-11-24T02:10:00Z"
+      },
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "7a6575827636b985d6f74b7b3708752342559174",
+      "merged_sha": "d5c16216",
+      "updated_at": "2026-11-24T02:58:00Z",
+      "updated_by": "lead (cycle 169)"
+    },
+    {
+      "id": "FX4-7-curation-swap-weave",
+      "title": "High, client curation (CLI-1, docs/security/audit-2026-11/client.md): a curation swap is woven and paid, then its publish is refused while it weaves. curation_controller.gd apply_swap posts the weave and at once publishes the draft with the new law's pylon, which universe.mjs's SR-16 check refuses (law_not_woven) until ready_at; the live island keeps the old law's pylon, now in no slot, so every publish of the realm is refused until then",
+      "phase": "fix",
+      "role": "FX4",
+      "model": "Opus 5.5",
+      "assigned_to": "FX4",
+      "files": [
+        "client/features/curation/**",
+        "client/i18n/strings.csv",
+        "art/ui/keyframes/words.js",
+        "client/tests/fix_*"
+      ],
+      "deps": [
+        "FX4-4-audit-client",
+        "FX4-5-problem-strings"
+      ],
+      "done_when": [
+        "first the still-open proof check _swap_publish_is_refused_while_weaving (FX4-4) turned into a check of the right behaviour, failing on current main, committed on its own before the fix, its failure output quoted in the handoff",
+        "the lead's decision (cycle 169): the fix is on the client and SR-16 stays as it is, because 5.6 says a slot being woven is empty and 13.3 says applying a swap weaves the new law at 5.6's price and time. So after the weave is accepted, the island is published without the swapped-out law's pylon (its slot is empty while it weaves), the screen shows the slot as weaving with its ready time, and the new law's pylon is published once the slot is woven (when the timer ends with the screen open, or when curation next opens after ready_at); the handoff says which",
+        "the player is never charged for a change that is then refused: a weave the server refuses publishes nothing, and a publish that fails after the weave is said on the screen and retried, never shown as done",
+        "any new words get rows in client/i18n/strings.csv in every locale column, worded like their neighbours, and node art/ui/keyframes/build_words.mjs is rerun (M34); words.js committed only if it changes",
+        "if the builder finds the server must change too (for example the live island is served with a law no longer in any slot), it writes a request to the lead in docs/progress/requests.md through its handoff and does not edit server files",
+        "no existing test is skipped, disabled or loosened; a test whose expectation encoded the defect (the still-open proof check) is turned into a plain check of the fixed behaviour and named in the handoff",
+        "bash client/build.sh and the client test run (client/tests/run.gd) passes",
+        "current main merged into the branch, then the fresh-container setup line and bash tools/check_all.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed outside the task's files (M48)",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 2.0,
+      "tier": 1,
+      "critical": false,
+      "state": "merged",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "62240757",
+      "merged_sha": "dc17aa87",
+      "updated_at": "2026-11-24T09:20:00Z",
+      "updated_by": "lead (cycle 175)"
+    },
+    {
+      "id": "FX4-8-rehearsal-rerun",
+      "title": "Medium, client rehearsal stage (CLI-18, docs/security/audit-2026-11/client.md): a style card tapped while another crew plays shows that crew's result under the new card. client/world/stage_rehearsal.gd lines 184-186 and 214-217: a run asked for while one plays finishes the one playing, the style changes, no new run starts",
+      "phase": "fix",
+      "role": "FX4",
+      "model": "Opus 5.5",
+      "assigned_to": "FX4",
+      "files": [
+        "client/world/stage_rehearsal.gd",
+        "client/tests/fix_*"
+      ],
+      "deps": [
+        "FX4-4-audit-client",
+        "FX4-7-curation-swap-weave"
+      ],
+      "done_when": [
+        "first the still-open proof check _rehearsal_card_runs_its_own_crew (FX4-4) turned into a check of the right behaviour (tap greedy while the cautious crew plays: the greedy crew runs and its card shows its own result), failing on current main, committed on its own before the fix, its failure output quoted in the handoff",
+        "then the smallest fix, as client.md proposes: a run asked for while one plays stops it and starts the new style's run",
+        "no existing test is skipped, disabled or loosened; a test whose expectation encoded the defect (the still-open proof check) is turned into a plain check of the fixed behaviour and named in the handoff",
+        "bash client/build.sh and the client test run (client/tests/run.gd) passes",
+        "current main merged into the branch, then the fresh-container setup line and bash tools/check_all.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed outside the task's files (M48)",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 0.75,
+      "tier": 2,
+      "critical": false,
+      "state": "merged",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "57732c8f",
+      "merged_sha": "34459600",
+      "updated_at": "2026-11-24T11:55:00Z",
+      "updated_by": "lead (cycle 177)"
     }
   ],
   "idle_queue": [
