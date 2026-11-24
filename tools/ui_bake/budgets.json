@@ -122,6 +122,16 @@
       },
       "reason": "S1-R39: P3-S1-hc-offline-1. heist/hc: the high-contrast plates re-dressed on the near-black card, Get out on the red danger plate and Pause on the light plate (AD-R56). result/100: the offline result's crew card (a glass panel and three KitRing faces of different creatures, which do not batch) and the lead's ring on the Loot tile (AD-R57). result/hc: the same, plus the Loot tile a bug hid in high contrast (fixed). The server state measures 117 and 59, so the offline state stays under it; all stay under the cap of 150. guard.sh at a4dcb52e failed only these three lines. Textures and words below 4.5:1 unchanged. Written by the lead at the merge, in cycle 128.",
       "request": "S1-R39"
+    },
+    {
+      "approved_by": "lead, cycle 189 (S1-R45)",
+      "date": "2026-11-24",
+      "field": "shots.recorded draw_calls",
+      "figures": {
+        "heist/200": "118 -> 120"
+      },
+      "reason": "S1-R45: P4-S1-heist-vault. At 200% text the loot panel says the Vault's progress in words (the kit's Vault icon, the name and the number on one row) and Cast takes the gold primary plate with its cream word (S1-R46, for the gate's Hierarchy fail at 85be2fa8). guard.sh on claude/ui-screens-heist measured heist/200 at 120; heist/100 (120) and heist/hc (121 of 123) keep their records. Textures and words below 4.5:1 unchanged; the heist stays 30 under the cap of 150. Written by the lead at the merge, in cycle 189.",
+      "request": "S1-R45"
     }
   ],
   "screens": {
@@ -390,7 +400,7 @@
         "words_below": 0
       },
       "heist/200": {
-        "draw_calls": 118,
+        "draw_calls": 120,
         "texture_bytes": 2333376,
         "words_below": 0
       },
