@@ -3,7 +3,7 @@
   "role": "FX1",
   "branch": "claude/fix-server-a",
   "model": "Opus 5.5",
-  "agent_state": "done",
+  "agent_state": "waiting",
   "task_id": "FX1-8-server-a-lows",
   "task_state": "ready",
   "claimed_at": "2026-11-24T05:35:00Z",
