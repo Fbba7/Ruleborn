@@ -5,18 +5,113 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "BT-06",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-24T22:55:00Z",
   "lease_until": "2026-11-25T01:55:00Z",
-  "updated_at": "2026-11-24T22:55:00Z",
-  "expected_next_update_by": "2026-11-24T23:40:00Z",
+  "updated_at": "2026-11-24T23:00:00Z",
+  "expected_next_update_by": "2026-11-24T23:45:00Z",
   "long_run": null,
-  "progress_marker": {"last_green_sha": null, "next_step": "Write the three schemas, then tools/docs/protocol_check.py and its --self-test"},
+  "progress_marker": {
+    "last_green_sha": null,
+    "next_step": "Write the progress file, merge main, run the pre-check, mark ready"
+  },
   "precheck": null,
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-11-25T21:00:00Z",
   "acks": [],
-  "requests": [],
+  "requests": [
+    {
+      "id": "SP-bt-06-R1",
+      "from": "SP-bt-06",
+      "to": "lead",
+      "ask": "The protocol does not name the backlog's top-level fields agents, building_cap, lease_hours, status_every_minutes, strings_owner, updated_by, verdicts_dir and wave, and its task format table lacks the task fields exceptions, updated_at and updated_by, which live tasks carry (protocol_check: agent-protocol.md:152).",
+      "files": [
+        "docs/guides/agent-protocol.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-24T23:00:00Z",
+      "due": "2026-11-25T05:00:00Z",
+      "default": "The lead adds three rows to 'The task format' (exceptions: files outside `files` the task may edit; updated_at, updated_by: the last write) and, after the table, one sentence naming the top-level fields with a word each, as docs/progress/schema/backlog.json has them.",
+      "escalate_to": "lead",
+      "state": "open"
+    },
+    {
+      "id": "SP-bt-06-R2",
+      "from": "SP-bt-06",
+      "to": "lead",
+      "ask": "The protocol defines no request states; live requests use prose (answered, default applied, pending, done, open) and sometimes the key `status` (protocol_check: agent-protocol.md:291, and the status files).",
+      "files": [
+        "docs/guides/agent-protocol.md",
+        "docs/progress/requests.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-24T23:00:00Z",
+      "due": "2026-11-25T05:00:00Z",
+      "default": "The lead adds to 'Messages and requests': '**Request states.** A request's optional `state` is `open`, `answered`, `defaulted` or `done`.' (docs/progress/schema/status.json's request_state). requests.md's headings already fit (Open, Answered, Done, plus Expected and Owner steps).",
+      "escalate_to": "lead",
+      "state": "open"
+    },
+    {
+      "id": "SP-bt-06-R3",
+      "from": "SP-bt-06",
+      "to": "lead",
+      "ask": "The protocol's status/lead.json paragraph does not name `acks`, which lead.json carries (protocol_check: agent-protocol.md:638).",
+      "files": [
+        "docs/guides/agent-protocol.md"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-24T23:00:00Z",
+      "due": "2026-11-25T05:00:00Z",
+      "default": "The lead adds `acks` (message ids the lead has acknowledged) to that paragraph.",
+      "escalate_to": "lead",
+      "state": "open"
+    },
+    {
+      "id": "SP-bt-06-R4",
+      "from": "SP-bt-06",
+      "to": "lead",
+      "ask": "Five backlog messages (M lines 761, 768, 799, 806, 813 of docs/progress/backlog.json, messages[34], [35], [39], [40], [41]) lack `acked_at`, which the protocol's message example and the schema require.",
+      "files": [
+        "docs/progress/backlog.json"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-24T23:00:00Z",
+      "due": "2026-11-25T05:00:00Z",
+      "default": "The lead adds \"acked_at\": null to each at its next backlog write.",
+      "escalate_to": "lead",
+      "state": "open"
+    },
+    {
+      "id": "SP-bt-06-R5",
+      "from": "SP-bt-06",
+      "to": "lead",
+      "ask": "127 drifts in the live status files (AD, AIA, AIA-2, FX1-FX4, K1, S1-S3, SV, T17): stray top-level next_step/last_update/note, missing long_run (S1, SV) and precheck.state (S2, SV, and others), request extras (status, answer, answered, answered_at, note, addition, default_applied_at, cc), requests missing created_at or escalate_to, answers in other shapes, prose acks (T17). Run python3 tools/docs/protocol_check.py for file:line.",
+      "files": [
+        "docs/progress/status/"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-24T23:00:00Z",
+      "due": "2026-11-25T05:00:00Z",
+      "default": "The lead normalises the copies on main in one bookkeeping commit (request answers move to the agent's answers list as {request_id, answer, at}; state takes the request_state values; stray next_step moves into progress_marker; missing long_run is null) for the stopped and finished agents, and messages each running agent to fix its own file at its next write.",
+      "escalate_to": "lead",
+      "state": "open"
+    },
+    {
+      "id": "SP-bt-06-R6",
+      "from": "SP-bt-06",
+      "to": "lead",
+      "ask": "Wire the check into tools/check_all.sh in the merge candidate, once requests R1-R5 are done so it passes.",
+      "files": [
+        "tools/check_all.sh"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-24T23:00:00Z",
+      "due": "2026-11-25T05:00:00Z",
+      "default": "The lead adds `python3 tools/docs/protocol_check.py --self-test` and `python3 tools/docs/protocol_check.py` right after the two check_docs_consistency.py lines in the section '== this repository's own documents agree with each other =='. The self-test passes today; the plain check fails until R1-R5 are done.",
+      "escalate_to": "lead",
+      "state": "open"
+    }
+  ],
   "answers": []
 }

@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "docs/progress/schema/lead.json",
+  "title": "The lead's status: docs/progress/status/lead.json",
+  "description": "From docs/guides/agent-protocol.md ('The coordinator and the lead: who does what': the merge lock, the lead's own status and failover) and the live file. Checked by tools/docs/protocol_check.py.",
+  "type": "object",
+  "required": ["agent", "updated_at", "expected_next_update_by", "cycle", "seen", "merging", "last_merged", "alerts", "next_step"],
+  "additionalProperties": false,
+  "properties": {
+    "agent": {"const": "lead"},
+    "updated_at": {"$ref": "#/$defs/utc"},
+    "expected_next_update_by": {"$ref": "#/$defs/utc"},
+    "cycle": {"type": "integer", "minimum": 0},
+    "seen": {"type": ["object", "null"]},
+    "merging": {
+      "anyOf": [
+        {"type": "null"},
+        {"type": "object", "required": ["candidate_sha", "task_ids", "started_at", "expires_at"], "additionalProperties": false,
+         "properties": {
+           "candidate_sha": {"type": "string"},
+           "task_ids": {"type": "array", "items": {"type": "string"}},
+           "started_at": {"$ref": "#/$defs/utc"},
+           "expires_at": {"$ref": "#/$defs/utc"}
+         }}
+      ]
+    },
+    "last_merged": {
+      "anyOf": [
+        {"type": "null"},
+        {"type": "object", "required": ["task_id", "sha"], "additionalProperties": false,
+         "properties": {"task_id": {"type": "string"}, "sha": {"type": "string"}}}
+      ]
+    },
+    "alerts": {"type": "array", "items": {"type": "string"}},
+    "acks": {"type": "array", "items": {"type": "string", "pattern": "^M[0-9]+$"}},
+    "next_step": {"type": "string"}
+  },
+  "$defs": {
+    "utc": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}(:[0-9]{2})?Z$"}
+  }
+}

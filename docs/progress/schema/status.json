@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "docs/progress/schema/status.json",
+  "title": "An agent's status file: docs/progress/status/<agent>.json (every agent but the lead)",
+  "description": "From docs/guides/agent-protocol.md ('Tasks and their states', 'The status file', 'Messages and requests') and docs/guides/agent-brief.md ('Your status file', 'Requests and messages'). Checked by tools/docs/protocol_check.py.",
+  "type": "object",
+  "required": ["agent", "role", "branch", "model", "agent_state", "task_id", "task_state", "claimed_at",
+               "lease_until", "updated_at", "expected_next_update_by", "long_run", "progress_marker",
+               "precheck", "gate_request", "ready_sha", "stop_at", "acks", "requests", "answers"],
+  "additionalProperties": false,
+  "properties": {
+    "agent": {"type": "string"},
+    "role": {"type": "string"},
+    "branch": {"type": "string"},
+    "model": {"type": "string"},
+    "agent_state": {"enum": ["active", "waiting", "stopped", "done"]},
+    "task_id": {"type": ["string", "null"]},
+    "task_state": {"anyOf": [{"$ref": "#/$defs/task_state"}, {"type": "null"}]},
+    "claimed_at": {"anyOf": [{"$ref": "#/$defs/utc"}, {"type": "null"}]},
+    "lease_until": {"anyOf": [{"$ref": "#/$defs/utc"}, {"type": "null"}]},
+    "updated_at": {"$ref": "#/$defs/utc"},
+    "expected_next_update_by": {"anyOf": [{"$ref": "#/$defs/utc"}, {"type": "null"}]},
+    "long_run": {
+      "anyOf": [
+        {"type": "null"},
+        {"type": "object", "required": ["log", "expected_end"], "additionalProperties": false,
+         "properties": {"log": {"type": "string"}, "expected_end": {"$ref": "#/$defs/utc"}}}
+      ]
+    },
+    "progress_marker": {
+      "type": "object",
+      "required": ["last_green_sha", "next_step"],
+      "additionalProperties": false,
+      "properties": {"last_green_sha": {"type": ["string", "null"]}, "next_step": {"type": "string"}}
+    },
+    "precheck": {
+      "anyOf": [
+        {"type": "null"},
+        {"type": "object", "required": ["sha", "state", "exit", "finished_at", "summary"], "additionalProperties": false,
+         "properties": {
+           "sha": {"type": "string"},
+           "state": {"enum": ["PASS", "FAIL"]},
+           "exit": {"type": ["integer", "null"]},
+           "finished_at": {"anyOf": [{"$ref": "#/$defs/utc"}, {"type": "null"}]},
+           "summary": {"type": "string"}
+         }}
+      ]
+    },
+    "gate_request": {
+      "anyOf": [
+        {"type": "null"},
+        {"type": "object", "required": ["sha", "items"], "additionalProperties": false,
+         "properties": {"sha": {"type": "string"}, "items": {"type": "array", "items": {"$ref": "#/$defs/gate_item"}}}}
+      ]
+    },
+    "ready_sha": {"type": ["string", "null"]},
+    "stop_at": {"$ref": "#/$defs/utc"},
+    "acks": {"type": "array", "items": {"type": "string", "pattern": "^M[0-9]+$"}},
+    "requests": {"type": "array", "items": {"$ref": "#/$defs/request"}},
+    "answers": {"type": "array", "items": {"$ref": "#/$defs/answer"}}
+  },
+  "$defs": {
+    "gate_item": {
+      "type": "object",
+      "required": ["item", "qualities"],
+      "additionalProperties": false,
+      "properties": {
+        "item": {"type": "string"},
+        "qualities": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "utc": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}(:[0-9]{2})?Z$"},
+    "task_state": {
+      "enum": ["open", "claimed", "working", "ready", "resync", "blocked", "merged", "parked"]
+    },
+    "request_state": {
+      "enum": ["open", "answered", "defaulted", "done"]
+    },
+    "request": {
+      "type": "object",
+      "required": ["id", "from", "to", "ask", "files", "blocking", "created_at", "due", "default", "escalate_to"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {"type": "string"},
+        "from": {"type": "string"},
+        "to": {"type": "string"},
+        "ask": {"type": "string"},
+        "files": {"type": "array", "items": {"type": "string"}},
+        "blocking": {"type": "boolean"},
+        "created_at": {"$ref": "#/$defs/utc"},
+        "due": {"$ref": "#/$defs/utc"},
+        "default": {"type": "string"},
+        "escalate_to": {"type": "string"},
+        "state": {"$ref": "#/$defs/request_state"}
+      }
+    },
+    "answer": {
+      "type": "object",
+      "required": ["request_id", "answer", "at"],
+      "additionalProperties": false,
+      "properties": {
+        "request_id": {"type": "string"},
+        "answer": {"type": "string"},
+        "at": {"$ref": "#/$defs/utc"}
+      }
+    }
+  }
+}
