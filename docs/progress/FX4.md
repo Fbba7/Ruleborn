@@ -1,13 +1,12 @@
 # FX4 client fixer: progress
 
-- Status: FX4-4-audit-client ready at `7a657582`; agent waiting. The client audit is written, 12 findings
-  are fixed, each after a test that failed on main, and 2 are proven and
-  still open.
-- Progress: 3 of 5 tasks merged (FX4-1, FX4-2, FX4-3); FX4-4 ready for the
-  lead; no gate items (fix wave).
-- Done: `docs/security/audit-2026-11/client.md`, CLI-1 to CLI-24.
-- Next: the lead merges FX4-4; follow-ups for CLI-1 (server), CLI-18
-  (`stage_rehearsal.gd`) and the unproven items, if wanted.
+- Status: Green. FX4-5-problem-strings: the fail-first test and the two
+  PROBLEM_ rows are pushed; the pre-check of 3231f78b is in the status file.
+- Progress: 4 of 8 tasks merged (FX4-1 to FX4-4); FX4-5 in this session; no
+  gate items (fix wave).
+- Done: PROBLEM_ENTRANCEBLOCKED and PROBLEM_DUPLICATELAW in
+  `client/i18n/strings.csv`, every locale column.
+- Next: the lead merges FX4-5; then FX4-6-device-replay-cap.
 - Blocked by: none.
 - Owner decision needed: none.
 
@@ -16,71 +15,79 @@
 | FX4-1-transport: RB-27, RB-03, RB-04 | 3.5 | merged | lead cycle 155, `c28600bb` |
 | FX4-2-trace-events: RB-31, RB-32, RB-41, RB-42 | 3.5 | merged | `8ed7538f` |
 | FX4-3-replay-shop-nav: RB-43, RB-20, RB-58, RB-59 | 3.5 | merged | `8be82e6f` on main |
-| FX4-4-audit-client: the client audit | 4 | ready | see Handoff |
+| FX4-4-audit-client: the client audit | 4 | merged | `d5c16216` on main |
+| FX4-5-problem-strings: FX3-R1's two problem rows | 0.75 | see status | see Handoff |
 
 ## Handoff
 
-- Last verified commit: `7a657582`, the ready_sha in `status/FX4.json`.
-- The report: [`docs/security/audit-2026-11/client.md`](../security/audit-2026-11/client.md).
-  It lists each finding with Where, Input, Should happen, Happens, the
-  proof and the fix, then the report's five client suspicions, Unproven,
-  What was read and Still not read.
+- Last verified commit: the ready_sha in `status/FX4.json` (3231f78b once
+  its pre-check is recorded).
 - Commits, in order:
-  - `c4a5eb7c`: the proofs, committed before any fix:
-    `client/tests/fix_audit_client_tests.gd` (FixAuditClientTests) and its
-    `.uid`, run from the aggregator `client/tests/fix_tests.gd`.
-  - `4d5a17d3`: the fixes for CLI-2, 4, 5, 6, 7, 10, 11, 13, 15, 22 and 24.
-  - `684353ef`: CLI-11's order (an authored island, then a curated one,
-    then the generator's), after the full suite caught the first version.
-  - `8f91599d`: CLI-14's proof and fix (`client/app/app_lifetime.gd`).
+  - `6293dc4c`: main merged (`7e95009c`, with FX3-2-island's
+    `island::Problem` and FX4-4).
+  - `c4cb11d0`: the test, on its own:
+    `client/tests/fix_problem_strings_tests.gd` (FixProblemStringsTests)
+    and its `.uid`, one line in `client/tests/fix_tests.gd`.
+  - `3231f78b`: the two rows in `client/i18n/strings.csv`, after
+    PROBLEM_EDGECLOSED.
+- The names, checked against `sim/src/island.rs` on main: `Problem::ALL`
+  ends with `EntranceBlocked` and `DuplicateLaw`; `RulebornIsland.problems()`
+  gives each by its `{:?}` name, and the builder (`builder_screen.gd:515`) and
+  curation (`curation_presenter.gd:235`) look up `"PROBLEM_" + name.to_upper()`.
+- The words, worded like PROBLEM_LANDINGBLOCKED and PROBLEM_TOOMANYLAWS and
+  using the terms of the neighbouring rows (Vault/Cofre/Tresor/Coffre;
+  pylon/pilar/Pylon/pylône; woven/tecida/gewebt/tissée, as ERR_SLOT_TAKEN):
+  - PROBLEM_ENTRANCEBLOCKED: "the entrance is on the Vault or blocked";
+  - PROBLEM_DUPLICATELAW: "a law is woven on two pylons".
+- `node art/ui/keyframes/build_words.mjs` rerun after the rows (M34): it
+  wrote `words.js` with no change, so `words.js` is not committed.
 
-### The proofs, failing on main
+### The test, failing on main
 
-Main is `1c4fd104`, the branch point; its client code is the code the
-proofs ran on.
+Run on `c4cb11d0` (main's strings), the scratch runner
+`FixProblemStringsTests` alone:
 
-- The plain checks failed on main, each before its fix:
-  - CLI-2, 4, 5, 6, 7, 10, 11, 13, 15, 22 and 24 (run on `c4a5eb7c`, the
-    scratch runner `FixAuditClientTests` alone: 11 `not ok`);
-  - CLI-14 (run before `8f91599d`'s fix: `not ok 14 - CLI-14: a session
-    the app never closed is ended at the last time it was seen open, not
-    at its start (24)`).
-- After the fixes, all 14 checks pass.
-- The two still-open checks, CLI-1 and CLI-18, pass while their defect
-  holds. They fail once it is fixed, and then they say to make them plain
-  checks.
+```text
+not ok 1 - FX4-5: the publish problem EntranceBlocked is shown in words, not as its key
+  # Strings.t("PROBLEM_ENTRANCEBLOCKED") gave "PROBLEM_ENTRANCEBLOCKED"
+not ok 2 - FX4-5: the publish problem DuplicateLaw is shown in words, not as its key
+  # Strings.t("PROBLEM_DUPLICATELAW") gave "PROBLEM_DUPLICATELAW"
+not ok 3 - FX4-5: an island with its entrance under a pillar names EntranceBlocked, in words
+  # problems ["EntranceBlocked"], shown as their key ["EntranceBlocked"]
+3 checks, 3 failed
+```
 
-### Follow-ups for the lead (not in this task's files)
-
-- **CLI-1 (High):** a curation swap's publish is refused while its law
-  weaves. The fix is on the server (SR-16 takes the slot's weaving law), or
-  the client waits to publish until the law is woven.
-- **CLI-18 (Medium):** `client/scripts/stage_rehearsal.gd`. A run asked for
-  while one plays should start the new style's run.
-- **CLI-3 (High, unproven):** `client/scripts/heist_screen.gd`. An offline
-  heist sends the planner's crew.
-- **CLI-8 and CLI-9:** contract notes for the server. The Observatory card
-  has no owner, and the Defences trace has no `across`.
-- **FX4-R1** (from FX4-3) still stands.
+The third check builds a real island (a blank realm 1 with a rock pillar
+on its entrance, the south-east corner) and shows every problem the
+extension names has its words. DuplicateLaw cannot be made through the
+extension's verbs (`weave` lifts a law from its old pylon, RB-50), only by
+decoded bytes, so checks 1 and 2 test both keys directly. After `3231f78b`:
+3 checks, all `ok`.
 
 ### Evidence
 
-- `python3 client/status.py` after the fixes: 468 of 468 passed (its run
-  before `3c29854a` gave 464 of 466; see Tried and failed).
-- The scratch runner, `FixAuditClientTests` alone: 14 checks, all `ok`.
+- `python3 client/status.py` on `3231f78b`: 471 of 471 passed.
 - `bash client/build.sh`: passes.
-- The program's main merged at `0fbb5dbb` (35 commits, none under `client/`).
-- `result_screen.gd` went to 1002 lines with CLI-15's guard; the first
-  pre-check (`18887386`) failed on gdlint's 1000-line limit. `7a657582`
-  rewraps two comments (999 lines, no code change).
-- The pre-check of `7a657582` (`tools/check_all.sh`): All checks passed,
-  02:08Z, recorded in `status/FX4.json`.
-- `python3 tools/coord/owners.py diff FX4-4-audit-client
-  origin/claude/videogame-project-analysis-ewkkk2 7a657582`: every changed
+- `gdlint` on the two test files: no problems.
+- `python3 tools/check_docs_consistency.py`: passes.
+- `python3 tools/coord/owners.py diff FX4-5-problem-strings
+  origin/claude/videogame-project-analysis-ewkkk2 3231f78b`: every changed
   path is inside its files.
-- Main moved two lead-cycle commits since the merge (docs only, none under
-  `client/`). FX2-10-curated-woven-law, seeded there, looks like CLI-1's
-  server follow-up.
+- The pre-check (`bash tools/run_checks.sh`, the full checks on the merge of
+  current main) is recorded in `status/FX4.json` (`precheck`).
+- Fresh container: the setup line, then `npm ci` in `tools/ui_research`, then
+  `bash client/build.sh`. `client/status.py` also needed the simulation's
+  WebAssembly build (`cargo build --release --target
+  wasm32-unknown-unknown` in `sim/`) before the server would start; see
+  Tried and failed.
+
+### Follow-ups still standing (from FX4-4, in the backlog)
+
+- CLI-1 is FX4-7-curation-swap-weave; CLI-18 is FX4-8-rehearsal-rerun;
+  CLI-23 rides FX4-6-device-replay-cap.
+- CLI-3 (High, unproven), CLI-8 and CLI-9 (server contract notes) and
+  FX4-R1 stand as written in
+  [`client.md`](../security/audit-2026-11/client.md) and the status file.
 
 ## Tried and failed
 
