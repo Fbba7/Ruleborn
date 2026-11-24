@@ -3,24 +3,27 @@
   "role": "specialist: environment setup (tools/setup_env.sh)",
   "branch": "claude/ui-spec-setup",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "BT-09",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-24T22:18:00Z",
   "lease_until": "2026-11-25T01:18:00Z",
-  "updated_at": "2026-11-24T22:45:00Z",
-  "expected_next_update_by": "2026-11-24T23:30:00Z",
-  "long_run": {
-    "log": "/tmp/check-1a8a6ea78d54a3f34f9948c09083e1a11c1a3986.log",
-    "expected_end": "2026-11-24T23:15:00Z"
-  },
+  "updated_at": "2026-11-24T23:06:00Z",
+  "expected_next_update_by": null,
+  "long_run": null,
   "progress_marker": {
-    "last_green_sha": null,
-    "next_step": "full pre-check of 1a8a6ea7 running; record it, then mark BT-09 ready"
+    "last_green_sha": "1a8a6ea78d54a3f34f9948c09083e1a11c1a3986",
+    "next_step": "none: BT-09 ready, waiting for the lead's merge"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "1a8a6ea78d54a3f34f9948c09083e1a11c1a3986",
+    "state": "PASS",
+    "exit": 0,
+    "finished_at": "2026-11-24T23:04:41Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "1a8a6ea78d54a3f34f9948c09083e1a11c1a3986",
   "stop_at": "2026-11-25T21:00:00Z",
   "acks": [],
   "requests": [
