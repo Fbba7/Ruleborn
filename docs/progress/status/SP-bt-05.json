@@ -1,0 +1,25 @@
+{
+  "agent": "SP-bt-05",
+  "role": "specialist: the gate launcher and verdict writer (tools/gate/run.*)",
+  "branch": "claude/ui-spec-gate-run",
+  "model": "Opus 5.5",
+  "agent_state": "active",
+  "task_id": "BT-05",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-24T23:30:00Z",
+  "lease_until": "2026-11-25T02:30:00Z",
+  "updated_at": "2026-11-24T23:30:00Z",
+  "expected_next_update_by": "2026-11-25T00:15:00Z",
+  "long_run": null,
+  "progress_marker": {
+    "last_green_sha": null,
+    "next_step": "Write tools/gate/run.py (prepare, extra, write, validate, --self-test) and docs/progress/schema/verdict.json"
+  },
+  "precheck": null,
+  "gate_request": null,
+  "ready_sha": null,
+  "stop_at": "2026-11-25T21:00:00Z",
+  "acks": [],
+  "requests": [],
+  "answers": []
+}
