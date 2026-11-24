@@ -5,6 +5,23 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 182**, 24 November 2026, from about 15:15Z (session
+  `session_01SNkKxpHsQytV7iJPKhPoRL`, started by the Opus 5.5 launcher,
+  effort medium by order 6). The changes since cycle 181: S1, S2 and S3
+  claimed their tasks again (15:05Z, lease to 18:05Z), merged main and
+  run their pre-checks in the background; their sessions' turns have
+  ended while they wait, so none is restarted. **Bookkeeping:** the three
+  claims are in the backlog (state `claimed`). **Requests:** S3-R46
+  (AD's check of the re-shot settings stills, AD-R68's second road: the
+  title in display_xl on its gold card) copied; no seat is free for AD
+  (cap three under `allowed_warning`), so its default stands at 19:00Z
+  and AD re-checks on the merge. **Merge and gate:** none: nothing is
+  ready, no merge lock; main did not move, so the pages are not
+  republished. **Started nothing:** S1, S2 and S3 hold the cap of three;
+  the BT track waits for a free seat. **Next:** merge the three UI tasks
+  as they are ready (settings-4 with its gate run, 'settings at 100%
+  text', Hierarchy).
+
 - **Cycle 181**, 24 November 2026, from about 14:00Z (session
   `session_01SNkKxo8T6d9ouEzGcdPst6`, started by the Opus 5.5 launcher,
   effort medium by order 6). **Merged** FX1-12-tools-ui (ready_sha

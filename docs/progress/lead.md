@@ -214,10 +214,10 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxr2G8KQZktz2Zq8Ty8` (cycle 184,
-24 November 2026 from about 17:14Z, started by the Opus 5.5 launcher).
-Cycle 183's was `session_01SNkKxpWMFbY8DUU6MwqK7d` (24 November, from
-about 16:00Z).
+Latest lead cycle session: `session_01SNkKxpANimBpEAcBiAnifC` (cycle 185,
+24 November 2026 from about 17:39Z, started by the Opus 5.5 launcher).
+Cycle 184's was `session_01SNkKxr2G8KQZktz2Zq8Ty8` (24 November, from
+about 17:14Z).
 Cycle 182's was `session_01SNkKxpHsQytV7iJPKhPoRL` (24 November, from
 about 15:15Z).
 Cycle 180's was `session_01SNkKxoEVVxDru4qsQF6zoa` (24 November, from
@@ -864,6 +864,25 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 185**, 24 November 2026, from about 17:39Z (session
+  `session_01SNkKxpANimBpEAcBiAnifC`, started by the Opus 5.5 launcher,
+  effort medium by order 6). The changes since cycle 184: S1 claimed the
+  heist re-work again (17:20Z, lease to 20:20Z) and pushed a WIP commit
+  a72050a0 (Cast leads at 200% text); SP-bt-01 pushed BT-01a's dry-run
+  cycle (`tools/coord/cycle.py`, a572ad30) and merged main; SP-bt-04
+  pushed BT-04a's renderer (`tools/gate/render.py`, f1df3f1e) and runs
+  its pre-check (expected end 18:30Z; its status's `updated_at` of
+  18:02Z is ahead of the clock). **Bookkeeping:** S1's claim is in the
+  backlog (state `claimed`). **Requests:** SPbt01-R1 and SP-bt-04-R1
+  (the self-test lines in `check_all.sh` and checks.md, for the merge
+  candidates) answered with their defaults; SP-bt-04-R2 (AD adopts the
+  shot list) routed to AD, no seat free, default at its due. **Merge and
+  gate:** none: nothing is ready, no merge lock; main did not move, so
+  the pages are not republished. **Started nothing:** S1, SP-bt-01 and
+  SP-bt-04 hold the cap of three under `allowed_warning`. **Next:** gate
+  and merge the heist re-work, BT-01a and BT-04a as they are ready,
+  adding the self-test lines of SPbt01-R1 and SP-bt-04-R1.
+
 - **Cycle 184**, 24 November 2026, from about 17:14Z (session
   `session_01SNkKxr2G8KQZktz2Zq8Ty8`, started by the Opus 5.5 launcher,
   effort medium by order 6). The changes since cycle 183: SP-bt-01
@@ -897,23 +916,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   task. The audit and roadmap pages were not republished (neither merge
   changed docs/audit or docs/roadmap). **Next:** gate and merge the
   heist re-work, BT-01a and BT-04a as they are ready.
-
-- **Cycle 182**, 24 November 2026, from about 15:15Z (session
-  `session_01SNkKxpHsQytV7iJPKhPoRL`, started by the Opus 5.5 launcher,
-  effort medium by order 6). The changes since cycle 181: S1, S2 and S3
-  claimed their tasks again (15:05Z, lease to 18:05Z), merged main and
-  run their pre-checks in the background; their sessions' turns have
-  ended while they wait, so none is restarted. **Bookkeeping:** the three
-  claims are in the backlog (state `claimed`). **Requests:** S3-R46
-  (AD's check of the re-shot settings stills, AD-R68's second road: the
-  title in display_xl on its gold card) copied; no seat is free for AD
-  (cap three under `allowed_warning`), so its default stands at 19:00Z
-  and AD re-checks on the merge. **Merge and gate:** none: nothing is
-  ready, no merge lock; main did not move, so the pages are not
-  republished. **Started nothing:** S1, S2 and S3 hold the cap of three;
-  the BT track waits for a free seat. **Next:** merge the three UI tasks
-  as they are ready (settings-4 with its gate run, 'settings at 100%
-  text', Hierarchy).
 
 - **Restart, 23 November 2026** (the overseer, about 21:20Z). The owner
   restarted the program, in the chat of the overseer session: "Continue,
