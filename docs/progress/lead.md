@@ -217,8 +217,10 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxnHHPKMvqUk6akhCWX` (cycle 204,
-25 November 2026 from about 23:15Z, started by the Opus 5.5 launcher).
+Latest lead cycle session: `session_01SNkKxpVk3qU9Sg2wwL1V6J` (cycle 205,
+25 November 2026 from about 23:38Z, started by the Opus 5.5 launcher).
+Cycle 204's was `session_01SNkKxnHHPKMvqUk6akhCWX` (25 November, from
+about 23:15Z).
 Cycle 203's was `session_01SNkKxq8jXHuXvuJg4yvtE3` (25 November, from
 about 22:15Z).
 Cycle 202's was `session_01SNkKxqroqqoKeHuicPgcmk` (25 November, from
@@ -1038,6 +1040,22 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 205**, 25 November 2026, from about 23:38Z (session
+  `session_01SNkKxpVk3qU9Sg2wwL1V6J`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 204:
+  M1's pre-check of 7f6f90c failed only on the coordinator's
+  `merge_queue` self-test ("lock cleared": `last_merged` read as None,
+  1 in 3 runs on the same code), and M1 asked for a fix (M1-R3); its
+  second pre-check (of dee58fa) runs. **Verify / merge:** nothing is
+  ready. **Started:** none. M1's session is idle between turns with the
+  pre-check running, inside its update window (00:10Z). M2's, DT1's and
+  CF1's seats are free with no 3D task open for them. **Requests:**
+  M1-R3 stays at its default (M1 re-runs the pre-check once; a PASS
+  stands); the flaky self-test is noted for a coordinator task if it
+  fails a candidate's full checks. M1-R2, M2-R1 and M2-R2 stay at their
+  defaults; M1-R2's task is seeded once the baseline merges. **Owner:**
+  the phone trial and the style-frame pick are still open (owner inbox).
+
 - **Cycle 204**, 25 November 2026, from about 23:15Z (session
   `session_01SNkKxnHHPKMvqUk6akhCWX`, started by the Opus 5.5 launcher,
   Opus 5.5 at effort medium by order 7). The changes since cycle 203:
@@ -1056,25 +1074,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   now on, every builder prompt points at its README (cycle step 6).
   M2-find-it's current session was started without them; its next
   session gets them.
-
-- **Cycle 203**, 25 November 2026, from about 22:15Z (session
-  `session_01SNkKxq8jXHuXvuJg4yvtE3`, started by the Opus 5.5 launcher,
-  Opus 5.5 at effort medium by order 7). The changes since cycle 202:
-  M1 marked 3D0-M1-baseline ready at 4636c383 and M2 marked
-  3D0-M2-find-it ready at ce4d2dac; the Superpowers skills reached main.
-  **Verify:** two Opus 5.5 high verifiers. M2's passed (7 of 50 rerun,
-  the shown guard's sight check confirmed). M1's failed: `run.py
-  --no-render` overwrites the committed `baseline/data/*.json` with
-  nulls, and five minor findings. All of them are in the task's
-  `resync_reason`. **Merged:** 3D0-M2-find-it, on main at 8aabe5ef
-  (candidate f884be61, M2 only, full checks PASS at 23:09Z). The batch
-  candidate e346a3fa (M1 + M2) was dropped. **Started:** M1 restarted
-  on its resync at Opus 5.5 high (`session_01SNkKxpnpiNRd38EhMM9ukJ`,
-  order 8's skills in its prompt). M2's and DT1's seats are free, and
-  no 3D task is open for them. **Requests:** DT1-R1 answered (the .uid
-  landed at DT1's merge). M1-R2, M2-R1 and M2-R2 stay at their
-  defaults. M1-R2's task is seeded once the baseline merges. **Owner:**
-  the phone trial and the style-frame pick are still open (owner inbox).
 
 - **Restart, 25 November 2026** (the overseer). The owner restarted the
   program on the 3D quality plan ("Based on the plan made by Fable, let's

@@ -5,6 +5,25 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 203**, 25 November 2026, from about 22:15Z (session
+  `session_01SNkKxq8jXHuXvuJg4yvtE3`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 202:
+  M1 marked 3D0-M1-baseline ready at 4636c383 and M2 marked
+  3D0-M2-find-it ready at ce4d2dac; the Superpowers skills reached main.
+  **Verify:** two Opus 5.5 high verifiers. M2's passed (7 of 50 rerun,
+  the shown guard's sight check confirmed). M1's failed: `run.py
+  --no-render` overwrites the committed `baseline/data/*.json` with
+  nulls, and five minor findings. All of them are in the task's
+  `resync_reason`. **Merged:** 3D0-M2-find-it, on main at 8aabe5ef
+  (candidate f884be61, M2 only, full checks PASS at 23:09Z). The batch
+  candidate e346a3fa (M1 + M2) was dropped. **Started:** M1 restarted
+  on its resync at Opus 5.5 high (`session_01SNkKxpnpiNRd38EhMM9ukJ`,
+  order 8's skills in its prompt). M2's and DT1's seats are free, and
+  no 3D task is open for them. **Requests:** DT1-R1 answered (the .uid
+  landed at DT1's merge). M1-R2, M2-R1 and M2-R2 stay at their
+  defaults. M1-R2's task is seeded once the baseline merges. **Owner:**
+  the phone trial and the style-frame pick are still open (owner inbox).
+
 - **Cycle 202**, 25 November 2026, from about 20:50Z (session
   `session_01SNkKxqroqqoKeHuicPgcmk`, started by the Opus 5.5 launcher,
   Opus 5.5 at effort medium by order 7). The changes since cycle 201:
