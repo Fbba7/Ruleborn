@@ -4,6 +4,17 @@ Alerts and questions for the owner, newest first. The lead also sends each one
 as a direct message (work-order decision D-03). An entry is closed by
 recording the answer under it.
 
+## 2026-11-25 16:32Z: the three style frames are merged; your pick is open (cycle 194)
+
+- **What:** CF1's style frames merged onto main at f07f36c1, after their
+  full checks and the Opus 5.5 high verifier passed.
+  `docs/art/3d-quality/style-frames.md` shows the three frames and asks one
+  question: which frame the 3D wave follows. M1's budget split failed its
+  review and is being redone, so the phone trial waits for it.
+- **Needs the owner:** your pick of a style frame, in
+  `docs/art/3d-quality/style-frames.md`. Until then the wave builds the
+  parts that do not depend on it.
+
 ## 2026-11-25 14:50Z: the 3D quality wave started with three builders, not four (cycle 192)
 
 - **What:** M1 (budget split), M2 (mask tool) and CF1 (style frames) are
