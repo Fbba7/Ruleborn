@@ -98,45 +98,95 @@ computed: every value is a field the simulation already holds.
 
 The screen draws all six states (plan, direction E). It needs no new field
 for them, but it does need the rules below, so that the meter and the icons
-agree with what the guard does. Every value is a constant in
-`sim/src/lib.rs` or `sim/src/guard.rs`. The screen reads them from this
-table and does not compute them: they change only with a rules version, and
-then this table changes with them.
+agree with what the guard does. The rules are `World::phase_states`,
+`World::enter`, `World::lure` and `World::land` in `sim/src/lib.rs`, and
+the constants in `sim/src/lib.rs`, `sim/src/guard.rs` and
+`sim/src/heist.rs`. The screen reads them from this section and does not
+compute them: they change only with a rules version, and then this section
+changes with them. A tick is 1/30 s (`TICKS_PER_SECOND`).
+
+**Rank.** Each state has a rank (`guard::State::rank`): Unaware and
+Returning 0, Suspicious 1, Investigating and Searching 2, Alerted 3. A rise
+to a higher rank happens at once; a fall waits (below). A guard that is not
+awake (`Guard::awake`: knocked out or stunned) changes no state.
 
 **The states:**
 
-| `state` | Enters when | Meter |
+| `state` | Enters when | Leaves when |
 |---|---|---|
-| `Unaware` | The start, or after `Returning` | Under 200 |
-| `Suspicious` | The meter reaches 200 (`SUSPICIOUS_AT`) | 200 to 599 |
-| `Investigating` | The meter reaches 600 (`INVESTIGATING_AT`), **or the guard hears a sound**, or the crew lands within earshot | Any; hearing sets no minimum |
-| `Alerted` | The meter reaches 1000 (`ALERTED_AT`, also `SUSPICION_MAX`), or the alarm spreads to it | 1000 |
-| `Searching` | It loses an Alerted target; lasts 600 ticks (`SEARCHING_TICKS`) | Falling |
-| `Returning` | The search ends; it walks back to its post | Falling |
+| `Unaware` | The start; a Suspicious guard whose meter is under 200; a Returning guard at the end of its walk home | It rises, as below |
+| `Suspicious` | An Unaware or Returning guard's meter reaches 200 (`SUSPICIOUS_AT`) | Its meter is under 200 and it has been Suspicious 15 ticks: Unaware. Or it rises |
+| `Investigating` | Any of: its meter reaches 600 (`INVESTIGATING_AT`) while below rank 2; it hears a sound while below rank 2; it is lured (an illusion or a sound on a tile, `lure`) while not Alerted, a Searching guard included; the alarm spreads to it while below rank 2 (below) | It has reached the spot, searched it for 300 ticks (`SEARCH_SPOT_TICKS`; 600 from alarm level 3), and its meter is under 200: Returning. It never falls to Suspicious. Or its meter reaches 1000: Alerted |
+| `Alerted` | Its meter reaches 1000 (`ALERTED_AT`, also `SUSPICION_MAX`), from any state | It has been Alerted 15 ticks and did not see the crew this tick: Searching |
+| `Searching` | An Alerted guard that lost the crew (above); or, once, when the alarm reaches level 6 (`ALL_SEARCH_AT`), every awake guard that is not Alerted or Searching | It has been Searching 600 ticks (`SEARCHING_TICKS`): Returning. Or its meter reaches 1000: Alerted. Or it is lured: Investigating |
+| `Returning` | An Investigating guard done with its spot, or a Searching guard done searching (above). It walks back to its post | It reaches its post: Unaware. It rises as an Unaware guard does |
 
-**The meter's rates:**
+**Three ways in that are not the meter.** Each puts a guard in
+Investigating whatever its meter reads:
 
-- **How it fills.** Per tick, by zone: 67 near, 33 mid and 12 far
-  (`FILL_NEAR`, `FILL_MID`, `FILL_FAR`). Then:
-  - a crouched crew member fills it at ×1/2, a running one at ×7/4;
-  - an unlit tile, ×1/2;
-  - the corner of the eye, ×1/2;
-  - Scree within 4 tiles, faster;
-  - laws (`SuspicionFill`) scale it.
-- **How it falls.** By 20 a tick (`DECAY_PER_TICK`), halved from alarm
-  level 1.
-- **Holds.** A state that falls waits 15 ticks first (`guard::HOLD_TICKS`);
-  a rising one changes at once.
+- **Hearing.** A guard on a tile a crew member's sound reached this tick
+  (`Guard.heard`, set by `phase_noise`), while Unaware, Suspicious or
+  Returning.
+- **A lure.** `lure`: an illusion or a sound placed on a tile. An
+  Investigating guard turns to the new tile instead; an Alerted guard is
+  not fooled.
+- **The alarm's spread.** When a guard enters Alerted, every other guard
+  not knocked out within the spread reach of it (4 m, `SPREAD_METRES`;
+  twice that from alarm level 4; laws scale it through `AlarmRange`) is
+  queued. 15 ticks later (`SPREAD_DELAY_TICKS`) each one still awake and
+  below rank 2 enters Investigating, toward that tile. A spread never
+  makes a guard Alerted.
 
-**Two consequences for the screen:**
+**Under Delay** (the law behind `EffectDelaySeconds`), every rise, on the
+meter, by hearing, by a lure or by a spread, is queued and lands that many
+ticks later, unless the guard has risen as far by then. Falls are not
+delayed, and neither is the alarm's level 6.
 
-- **A meter can skip Suspicious.** Hearing, a landing within earshot and a
-  near-zone rush all reach Investigating without passing through it. The
-  screen must not animate the meter "through" Suspicious to get there.
-  This is why the shot walks the crew into the far zone.
-- **The state is not a function of the meter.** A Searching or Returning
-  guard can read any value. The icon follows `state`; the meter follows
-  `suspicion`.
+**The meter** (`suspicion`, 0 to 1000):
+
+- **How it fills.** Each tick, in `phase_perception`, a guard adds up what
+  it notices of each crew member it sees (`World::noticed`). For each one,
+  by zone: 67 near, 33 mid, 12 far (`FILL_NEAR`, `FILL_MID`, `FILL_FAR`),
+  multiplied by:
+  - ×1/2 crouched, ×7/4 running (`CROUCHED`, `RUNNING`);
+  - ×1/2 on an unlit tile (`UNLIT`);
+  - ×1/2 in the corner of the eye (`PERIPHERAL`);
+  - ×5/4 for a crew member on Scree within 4 tiles (`grid::SCREE_FILL`);
+  - the laws' `SuspicionFill` factor at the crew member's tile.
+
+  A Lantern Glare counts as at least a near sighting (67) for every guard
+  within 4 m of its tile. The sum is capped at 1000.
+- **How it falls.** Only on a tick with nothing noticed: by 20
+  (`DECAY_PER_TICK`), times the laws' `SuspicionDecay` factor, halved from
+  alarm level 1 (`DECAY_HALVED_AT`). It stops at 0.
+- **The landing.** At tick 0, a landing that is not hidden (not on a fog
+  bank or tall grass, not unlit) lifts the meter of every awake guard within
+  the landing's reach (`noise::field` from the landing tile) to at least
+  250 (`heist::LANDING_SUSPICION`). That guard is Suspicious, not
+  Investigating, and its meter falls from there like any other.
+- **Hearing, lures and spreads set no meter value.**
+
+**What follows for the screen:**
+
+- **The meter alone never skips Suspicious at the base rates.** The most a
+  tick adds is three crew members running in the near zone: 3 × 117 = 351,
+  less than the 401 from 199 to 600. One running crew member in the near
+  zone takes a meter from 0 to Suspicious on its second tick and to
+  Investigating on its sixth, so Suspicious shows for four ticks. Scree and
+  laws that raise `SuspicionFill` can make a single tick cross both
+  thresholds; the screen draws the state it is given and never animates
+  the icon through Suspicious to catch up.
+- **Investigating can start with any meter.** Hearing, a lure or a spread
+  puts a guard in Investigating with its meter where it was, often 0.
+- **The state is not a function of the meter.** An Investigating guard
+  whose meter has emptied stays Investigating until its search is done. An
+  Alerted guard stays Alerted while it sees the crew, and for at least 15
+  ticks, whatever the meter reads. A Searching
+  or Returning guard can read any value. The icon follows `state`; the
+  meter follows `suspicion`.
+- **The landing shows.** Guards within earshot of the landing open the
+  heist Suspicious at 250 and fall to Unaware once the meter is under 200
+  and 15 ticks have passed.
 
 ## 4. What the screen already has
 
@@ -256,7 +306,9 @@ walked tiles for each crew member that makes a sound this tick.
 5. **Chords.**
    - Deep sleep takes steps off a footstep.
    - Iron bell adds 2 tiles.
-   - Wild hunt silences running.
+   - Wild hunt silences running: not a reach, but a skip. `phase_noise`
+     leaves a running footstep out with `continue` before it computes any
+     reach, so no tile hears it, not even the crew member's own.
 6. **Spreading.** `noise::field` spreads that reach over walkable tiles,
    breadth first, the way the crew walks.
 7. **Hearing.** A guard standing on a reached tile hears it and turns along
@@ -276,7 +328,9 @@ walked tiles for each crew member that makes a sound this tick.
 - It holds steps 2 to 5 above, moved out of `phase_noise` unchanged.
 - `phase_noise` then calls it, so a preview and the real sound cannot
   disagree.
-- Wild hunt's silence is a reach of 0.
+- Wild hunt's skip stays in `phase_noise`, before `sound_reach` is called.
+  A reach of 0 is not silence: `noise::field` with reach 0 still reaches
+  the source tile, so a guard on it would hear.
 - The golden replay tests (`cargo test` in `sim/`) must pass unchanged.
   That is the test that the move changed no rule.
 
@@ -291,7 +345,8 @@ walked tiles for each crew member that makes a sound this tick.
 
 - **Arguments.** `gait` is 0 walk, 1 crouch, 2 run, as `give`'s gait
   command takes it. A tile off the grid or not standable gives `reach` 0
-  and empty arrays.
+  and empty arrays, and so does a run under Wild hunt: `noise()` makes
+  `phase_noise`'s skip check first.
 - **Cost.** One `sound_reach` (O(1)) and one `noise::field`
   (O(reached tiles)): 1.0 µs on the example island (section 8). Cheap
   enough to call on every change of the order's target tile.
@@ -317,17 +372,24 @@ it the crew will be seen.
 ### `route(actor, x, y) -> Array[Vector2i]`
 
 The tiles crew member `actor` would walk if ordered to `(x, y)` now, in
-order, its own tile first. It is empty when there is no way there.
+order, from the first tile after its own to `(x, y)`: its own tile is left
+out, as in `path::Route`. It is empty when it is already there or when
+there is no way there (`MoveTo` then leaves it standing).
 
-- **Sim source.** A new pub `World::route_for(ri, to) -> Vec<TileIndex>`.
-  It holds the route choice that the `MoveTo` command makes today, moved
-  out unchanged:
+- **Sim source.** A new pub
+  `World::route_for(&self, ri, to) -> (Vec<TileIndex>, bool)`: the route,
+  and whether it crosses a wall. It holds the route choice that the
+  `MoveTo` command makes today, moved out unchanged:
   - from the far mouth when the crew member is inside a tunnel;
   - `path::find_over_wall` while it holds a wall pass;
   - `path::find_through` otherwise;
   - no re-aiming of a target inside a wall.
 
-  `MoveTo` then calls it, so the drawn path is the walked one. The golden
+  It takes `&self` and changes nothing. Today `MoveTo` spends the wall
+  pass inside the route choice (`raider.wall_pass &= !used` after
+  `find_over_wall`); after the move, `MoveTo` calls `route_for` and spends
+  the pass itself from the returned `bool`, so a preview never uses it up.
+  The drawn path is the walked one. The golden
   replay tests must pass unchanged.
 - **Cost.** One path search: O(tiles) at most.
 

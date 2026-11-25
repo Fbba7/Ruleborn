@@ -10,9 +10,10 @@ extends SceneTree
 
 const Heist := preload("res://tests/shots/screen_heist.gd")
 ## Where each crew member walks: Pip north to (6, 8), into the far zone of
-## the guard posted at (6, 4) and facing south, so its meter climbs slowly
-## (a near sighting jumps past Suspicious in a tick); the others stay back
-## by the landing.
+## the guard posted at (6, 4) and facing south, so its meter climbs slowly,
+## 12 a tick (a near sighting also passes through Suspicious, but at 67 a
+## tick it is there for a few ticks only); the others stay back by the
+## landing.
 const TO := [[6, 8], [1, 10], [2, 10]]
 const LIMIT := 900
 

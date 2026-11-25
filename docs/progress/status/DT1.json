@@ -3,27 +3,21 @@
   "role": "data track",
   "branch": "claude/3d-data",
   "model": "Opus 5.5, effort high",
-  "agent_state": "waiting",
+  "agent_state": "active",
   "task_id": "3D0-DT1-data-spec",
-  "task_state": "ready",
+  "task_state": "working",
   "claimed_at": "2026-11-25T15:45:00Z",
-  "lease_until": "2026-11-25T19:10:00Z",
-  "updated_at": "2026-11-25T17:38:00Z",
-  "expected_next_update_by": null,
+  "lease_until": "2026-11-25T21:45:00Z",
+  "updated_at": "2026-11-25T18:45:00Z",
+  "expected_next_update_by": "2026-11-25T19:30:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "0b77e80522bc9421f258e665d45d676cbee07ae6",
-    "next_step": "ready at 0b77e805 (full checks PASS; owners diff clean). Main since moved by the lead progress files only, which merge cleanly. Session ended; the verifier and the lead take it from here"
+    "next_step": "resync (cycle 197): section 3 rewritten from phase_states/enter/lure/land; minor fixes to sections 6 and 7 and the shot's comment; full checks next"
   },
-  "precheck": {
-    "sha": "0b77e80522bc9421f258e665d45d676cbee07ae6",
-    "state": "PASS",
-    "exit": 0,
-    "finished_at": "2026-11-25T17:35:57Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
-  "ready_sha": "0b77e80522bc9421f258e665d45d676cbee07ae6",
+  "ready_sha": null,
   "stop_at": "2026-12-02T21:00:00Z",
   "acks": [],
   "requests": [
