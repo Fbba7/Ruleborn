@@ -1,0 +1,40 @@
+{
+  "agent": "DT1",
+  "role": "data track",
+  "branch": "claude/3d-data",
+  "model": "Opus 5.5, effort high",
+  "agent_state": "active",
+  "task_id": "3D0-DT1-data-spec",
+  "task_state": "working",
+  "claimed_at": "2026-11-25T15:45:00Z",
+  "lease_until": "2026-11-25T21:45:00Z",
+  "updated_at": "2026-11-25T18:22:00Z",
+  "expected_next_update_by": "2026-11-25T19:07:00Z",
+  "long_run": null,
+  "progress_marker": {
+    "last_green_sha": "0b77e80522bc9421f258e665d45d676cbee07ae6",
+    "next_step": "resync (cycle 197): section 3 rewritten from phase_states/enter/lure/land; minor fixes to sections 6 and 7 and the shot's comment; full checks next"
+  },
+  "precheck": null,
+  "gate_request": null,
+  "ready_sha": null,
+  "stop_at": "2026-12-02T21:00:00Z",
+  "acks": [],
+  "requests": [
+    {
+      "id": "DT1-R1",
+      "from": "DT1",
+      "to": "lead",
+      "ask": "Commit client/tests/shots/heist_suspicious.gd.uid (Godot writes it on first run; it is outside DT1's files, and every other shot .gd has its .uid tracked)",
+      "files": [
+        "client/tests/shots/heist_suspicious.gd.uid"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-25T16:10:00Z",
+      "due": "2026-11-25T22:10:00Z",
+      "default": "The lead adds the .uid at merge; DT1 leaves it untracked",
+      "escalate_to": "lead"
+    }
+  ],
+  "answers": []
+}
