@@ -1,14 +1,14 @@
 # DT1 data track: progress
 
-- Status: Green at the last pre-check; resync of 3D0-DT1-data-spec in
-  progress (section 3 rewritten, full checks running).
+- Status: Green: full checks pass on `6f1b5513`; 3D0-DT1-data-spec is
+  ready again after its resync.
 - Progress: 0 of 1 tasks merged; 3D0-DT1-data-spec in resync after the
   verifier of cycle 197.
 - Done: `guards()` adds `near`, `mid`, `peripheral` and `suspicion`, with a
   byte-for-byte replay test; a heist shot with a Suspicious guard; the data
   spec ([`docs/art/3d-quality/data-spec.md`](../art/3d-quality/data-spec.md)),
   section 3 now rebuilt from the sim source.
-- Next: the full checks, then ready again; the verifier reviews the diff.
+- Next: the verifier reviews the diff; then the lead merges.
 - Blocked by: none.
 - Owner decision needed: none.
 
@@ -22,7 +22,11 @@
 
 - **Resync, cycle 197.** The verifier passed the extension work and failed
   section 3 of the spec (the guard states). Main merged at `b4e0075`
-  (clean). The fixes, all from the source:
+  (clean), and again at `6f1b5513`: the pre-check on `d9022669` failed
+  `owners.py`'s self-test only because the branch's copy of the backlog
+  still had 3D0-M1-budget-split live (`client/tests/shots/**`); it is
+  merged on main. Full checks pass on `6f1b5513` (the ready_sha). The
+  fixes, all from the source:
   - Section 3 is rebuilt from `phase_states`, `enter`, `lure` and `land`:
     the rank rule; a table of how each state is entered and left (Searching
     at alarm level 6; Returning after Investigating's search and after
