@@ -46,18 +46,18 @@
     0.964
    ],
    "buildings_with_shadow": 0,
-   "cliff_luma": 110.3,
+   "cliff_luma": 110.9,
    "cliffs_darker": true,
    "figure_shadow_pixels": {
     "c0": 238,
     "c1": 8,
-    "c2": 3569,
+    "c2": 3571,
     "g0": 1945,
-    "g1": 1500
+    "g1": 1502
    },
    "figures": 5,
    "figures_with_shadow": 4,
-   "top_luma": 114.7
+   "top_luma": 114.6
   },
   "Q2": {
    "crew": [
@@ -109,32 +109,32 @@
    "figures": [
     {
      "name": "c0",
-     "pixels": 2665,
-     "share": 0.1295
+     "pixels": 2666,
+     "share": 0.1283
     },
     {
      "name": "c1",
-     "pixels": 621,
-     "share": 0.1804
+     "pixels": 622,
+     "share": 0.1817
     },
     {
      "name": "c2",
-     "pixels": 3490,
-     "share": 0.1384
+     "pixels": 3487,
+     "share": 0.1686
     },
     {
      "name": "g0",
      "pixels": 5381,
-     "share": 0.3209
+     "share": 0.3204
     },
     {
      "name": "g1",
-     "pixels": 4532,
-     "share": 0.1825
+     "pixels": 4530,
+     "share": 0.181
     }
    ],
-   "least": 0.1295,
-   "worst": 0.3209
+   "least": 0.1283,
+   "worst": 0.3204
   },
   "Q4": {
    "heads": [
