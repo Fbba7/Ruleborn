@@ -4,21 +4,27 @@
   "branch": "claude/3d-measure",
   "model": "Opus 5.5",
   "effort": "high",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "3D0-M1-baseline",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-25T22:33:00Z",
   "lease_until": "2026-11-26T01:37:00Z",
-  "updated_at": "2026-11-25T23:30:00Z",
-  "expected_next_update_by": "2026-11-26T00:10:00Z",
+  "updated_at": "2026-11-25T23:56:00Z",
+  "expected_next_update_by": "2026-11-26T00:40:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "4636c38384929b94eefcc5733f88985171c86a61",
-    "next_step": "resync: pre-check of 7f6f90c FAILed only on the coordinator's merge_queue self-test (flaky, request M1-R3); pre-check of dee58fa running; then record and ready"
+    "last_green_sha": "dee58faac35be63bd944ed89aa0490954a127e36",
+    "next_step": "3D0-M1-baseline ready at dee58fa (pre-check PASS, owners diff clean); waiting for the lead's verifier"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "dee58faac35be63bd944ed89aa0490954a127e36",
+    "state": "PASS",
+    "exit": 0,
+    "finished_at": "2026-11-25T23:54:55Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "dee58faac35be63bd944ed89aa0490954a127e36",
   "stop_at": "2026-12-02T21:00:00Z",
   "acks": [],
   "requests": [
