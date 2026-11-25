@@ -1,8 +1,8 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-25T18:32:00Z",
-  "expected_next_update_by": "2026-11-25T21:32:00Z",
-  "cycle": 197,
+  "updated_at": "2026-11-25T18:50:00Z",
+  "expected_next_update_by": "2026-11-25T21:50:00Z",
+  "cycle": 198,
   "merging": null,
   "last_merged": {
     "task_id": "3D0-M1-budget-split, 3D0-M2-mask-tool",
@@ -54,7 +54,7 @@
   ],
   "next_step": "Verify (Opus 5.5 high subagent) and merge 3D0-DT1-data-spec (resync), 3D0-M1-baseline and 3D0-M2-find-it as each marks ready; at DT1's merge add client/tests/shots/heist_suspicious.gd.uid (DT1-R1's default), and in the next candidate add client/tests/shots/style_frame_heist.gd.uid (uid://dm035cb54qlq), missing since CF1's merge. Restart any of the three that goes stale. The owner runs the phone trial and picks a style frame.",
   "seen": {
-    "at": "2026-11-25T18:28:54Z",
+    "at": "2026-11-25T18:41:47Z",
     "heads": {
       "claude/3d-camera": "18ae7ba4d527593a82b80c10b3c82e0f0d7e1610",
       "claude/3d-character-screens": "6053b249bee313648da3509142eeb2ba738bb62f",
@@ -64,7 +64,7 @@
       "claude/3d-kit": "ca2308becc903e76c6709028982e8ca7066e5a08",
       "claude/3d-law-fx": "358a1f08179d315ec69ff5dcb037e34e89ee7a2b",
       "claude/3d-look": "815e381279f5fdb9952b28866ed6dc4121f2b1d5",
-      "claude/3d-mask": "f6e9008b1850e188004123a1d133adac61c87a51",
+      "claude/3d-mask": "028837befecfb7763889dd8351807e0b6b3eefaf",
       "claude/3d-measure": "b1306900046339b23d9f879461e4edb65f55ee72",
       "claude/3d-screens": "11679b2bf4d2670e7067791d3bbf32cfd64edc2d",
       "claude/3d-screens-world": "ea319807b0a7c177e1b1413c76ae945d63f3f399",

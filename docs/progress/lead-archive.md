@@ -5,6 +5,26 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 195**, 25 November 2026, from about 16:39Z (session
+  `session_01SNkKxqxDHnxcUgHuGLSEXt`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 194:
+  `claude/3d-camera` gained CF1's ready-status commit (the task merged in
+  cycle 194); `claude/3d-data` gained DT1's guards() commit. **GitHub
+  503s:** at about 16:16Z M2's and DT1's sessions went idle with pushes
+  refused by GitHub (503). M2's container disconnected with its status
+  commit 108abe5e unpushed (the work itself is on b1113efc), and M2 was
+  stale since 16:15Z: **restarted** M2 on 3D0-M2-mask-tool
+  (`session_01SNkKxqUMV6Qs5KyydCjHjX`, Opus 5.5 medium, same tier) to
+  redo the progress-file updates and the ready steps. DT1's session is
+  idle but connected, with commits up to 60616371 unpushed and not stale
+  until 17:05Z; a message to it could not be delivered, so the next cycle
+  restarts DT1 if it is still stale then. Pushes work again at 16:42Z.
+  **Merge and gate:** none: nothing is ready (M1 working on its resync,
+  M2 restarted, DT1 working), no merge lock. **Requests:** M2-R1 copied
+  (not blocking, default due 27 November). Three builders (M1, M2, DT1),
+  the cap while the seven-day bar reads `allowed_warning`. **Owner:** the
+  style-frame pick is still open (owner inbox).
+
 - **Cycle 194**, 25 November 2026, from about 15:39Z (session
   `session_01SNkKxqhoNAcP68ggo8Rvvb`, started by the Opus 5.5 launcher,
   Opus 5.5 at effort medium by order 7). **Merged:** 3D0-CF1-style-frames

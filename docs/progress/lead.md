@@ -214,8 +214,10 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxoyugNa4BQjRBSzsYK` (cycle 197,
-25 November 2026 from about 17:40Z, started by the Opus 5.5 launcher).
+Latest lead cycle session: `session_01SNkKxpCLYdWeYiQwJhDr52` (cycle 198,
+25 November 2026 from about 18:39Z, started by the Opus 5.5 launcher).
+Cycle 197's was `session_01SNkKxoyugNa4BQjRBSzsYK` (25 November, from
+about 17:40Z).
 Cycle 196's was `session_01SNkKxoHmwS3dddh2WLvudH` (25 November, from
 about 17:14Z).
 Cycle 195's was `session_01SNkKxqxDHnxcUgHuGLSEXt` (25 November, from
@@ -1022,6 +1024,19 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 198**, 25 November 2026, from about 18:39Z (session
+  `session_01SNkKxpCLYdWeYiQwJhDr52`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The change since cycle 197:
+  `claude/3d-mask` (M2) merged main and committed its find-it scorer
+  (028837be); its status reads working, pre-check next. M1 renders the
+  baseline's 20 shots (no push yet); DT1's session is idle on its
+  running pre-check of the resync (d9022669, unpushed), not stale until
+  19:07Z. All three sessions connected, none stale, so **none
+  restarted**. **Merge and gate:** none: nothing is ready, no merge lock.
+  **Started:** none: M1, M2 and DT1 fill the cap of three while the
+  seven-day bar reads `allowed_warning`. **Owner:** the phone trial and
+  the style-frame pick are still open (owner inbox).
+
 - **Cycle 197**, 25 November 2026, from about 17:40Z (session
   `session_01SNkKxoyugNa4BQjRBSzsYK`, started by the Opus 5.5 launcher,
   Opus 5.5 at effort medium by order 7). The changes since cycle 196:
@@ -1069,26 +1084,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   (the builders' sessions report it), so the cap is three and M1, M2 and
   DT1 fill it; 3D0-M1-baseline and 3D0-M2-find-it wait on the mask tool.
   **Owner:** the style-frame pick is still open (owner inbox).
-
-- **Cycle 195**, 25 November 2026, from about 16:39Z (session
-  `session_01SNkKxqxDHnxcUgHuGLSEXt`, started by the Opus 5.5 launcher,
-  Opus 5.5 at effort medium by order 7). The changes since cycle 194:
-  `claude/3d-camera` gained CF1's ready-status commit (the task merged in
-  cycle 194); `claude/3d-data` gained DT1's guards() commit. **GitHub
-  503s:** at about 16:16Z M2's and DT1's sessions went idle with pushes
-  refused by GitHub (503). M2's container disconnected with its status
-  commit 108abe5e unpushed (the work itself is on b1113efc), and M2 was
-  stale since 16:15Z: **restarted** M2 on 3D0-M2-mask-tool
-  (`session_01SNkKxqUMV6Qs5KyydCjHjX`, Opus 5.5 medium, same tier) to
-  redo the progress-file updates and the ready steps. DT1's session is
-  idle but connected, with commits up to 60616371 unpushed and not stale
-  until 17:05Z; a message to it could not be delivered, so the next cycle
-  restarts DT1 if it is still stale then. Pushes work again at 16:42Z.
-  **Merge and gate:** none: nothing is ready (M1 working on its resync,
-  M2 restarted, DT1 working), no merge lock. **Requests:** M2-R1 copied
-  (not blocking, default due 27 November). Three builders (M1, M2, DT1),
-  the cap while the seven-day bar reads `allowed_warning`. **Owner:** the
-  style-frame pick is still open (owner inbox).
 
 - **Restart, 25 November 2026** (the overseer). The owner restarted the
   program on the 3D quality plan ("Based on the plan made by Fable, let's
