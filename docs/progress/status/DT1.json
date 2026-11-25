@@ -3,17 +3,17 @@
   "role": "data track",
   "branch": "claude/3d-data",
   "model": "Opus 5.5, effort high",
-  "agent_state": "waiting",
+  "agent_state": "active",
   "task_id": "3D0-DT1-data-spec",
-  "task_state": "ready",
+  "task_state": "working",
   "claimed_at": "2026-11-25T15:45:00Z",
-  "lease_until": "2026-11-25T21:45:00Z",
-  "updated_at": "2026-11-25T19:30:00Z",
-  "expected_next_update_by": null,
+  "lease_until": "2026-11-25T23:00:00Z",
+  "updated_at": "2026-11-25T20:00:00Z",
+  "expected_next_update_by": "2026-11-25T20:45:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "6f1b551346809e61d7ea070d8ba28ba6354a1ac2",
-    "next_step": "ready (resync of cycle 197): full checks green on 6f1b5513; the verifier reviews section 3 against the sim source"
+    "next_step": "resync of cycle 200: realm watch fixes in data-spec.md pushed; full checks next"
   },
   "precheck": {
     "sha": "6f1b551346809e61d7ea070d8ba28ba6354a1ac2",
@@ -23,7 +23,7 @@
     "summary": "All checks passed."
   },
   "gate_request": null,
-  "ready_sha": "6f1b551346809e61d7ea070d8ba28ba6354a1ac2",
+  "ready_sha": null,
   "stop_at": "2026-12-02T21:00:00Z",
   "acks": [],
   "requests": [

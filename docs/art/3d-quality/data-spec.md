@@ -67,7 +67,8 @@ the guard's index for `seen(index)` and for every per-guard function below.
 | `state` | String | One of the six states, by name | `Guard.state` (`sim::guard::State`) | |
 | `down` | bool | Knocked out | `Guard.knocked_out` | |
 
-The three ranges are the guard's **base** reach, before laws, light and
+The three ranges are the guard's **base** reach, before laws, the realm's
+watch (×3/4 at realm level 2, ×7/10 at level 3: `REALM_WATCH`), light and
 height scale them. A screen that draws zones on the ground uses the
 per-tile zones of section 5, not these radii. The radii are for a cheap
 outline: the thin cone for the guards that are not chosen (plan, direction
@@ -152,10 +153,15 @@ delayed, and neither is the alarm's level 6.
   - ×1/2 on an unlit tile (`UNLIT`);
   - ×1/2 in the corner of the eye (`PERIPHERAL`);
   - ×5/4 for a crew member on Scree within 4 tiles (`grid::SCREE_FILL`);
-  - the laws' `SuspicionFill` factor at the crew member's tile.
+  - the laws' `SuspicionFill` factor at the crew member's tile;
+  - ×3/5 at realm level 1, the realm's watch (`REALM_WATCH`, §12.17); ×1
+    from realm level 2 up.
 
-  A Lantern Glare counts as at least a near sighting (67) for every guard
-  within 4 m of its tile. The sum is capped at 1000.
+  The product is rounded down once, at the end (`zone × num / den`).
+  A Lantern Glare counts as at least a near sighting (67, which the realm's
+  watch does not scale) for every guard within 4 m of its tile, 8 m from
+  alarm level 4 (`glare_reach`, `SPREAD_DOUBLED_AT`); the laws that widen
+  the alarm leave that reach alone. The sum is capped at 1000.
 - **How it falls.** Only on a tick with nothing noticed: by 20
   (`DECAY_PER_TICK`), times the laws' `SuspicionDecay` factor, halved from
   alarm level 1 (`DECAY_HALVED_AT`). It stops at 0.
@@ -169,10 +175,14 @@ delayed, and neither is the alarm's level 6.
 **What follows for the screen:**
 
 - **The meter alone never skips Suspicious at the base rates.** The most a
-  tick adds is three crew members running in the near zone: 3 × 117 = 351,
-  less than the 401 from 199 to 600. One running crew member in the near
-  zone takes a meter from 0 to Suspicious on its second tick and to
-  Investigating on its sixth, so Suspicious shows for four ticks. Scree and
+  tick adds is three crew members running in the near zone: 3 × 117 = 351
+  from realm level 2 up (3 × 70 = 210 at level 1), less than the 401 from
+  199 to 600. From realm level 2 up, one running crew member in the near
+  zone (117 a tick) takes a meter from 0 to Suspicious on its second tick
+  and to Investigating on its sixth, so Suspicious shows for four ticks. At
+  realm level 1 the same crew member adds 70 a tick (67 × 7/4 × 3/5,
+  rounded down): Suspicious on its third tick, Investigating on its ninth,
+  so Suspicious shows for six ticks. Scree and
   laws that raise `SuspicionFill` can make a single tick cross both
   thresholds; the screen draws the state it is given and never animates
   the icon through Suspicious to catch up.
@@ -230,8 +240,9 @@ noted):
 Direction E draws three zones for the chosen or nearest guard, and shows
 hiding places and unlit tiles. `seen(index)` gives one set of tiles, with no
 zones. The base radii of section 2 are not what decides: laws scale the
-zones, light bands double or halve them, higher ground stretches the far
-zone and lower ground removes it. These rules are private to the simulation
+zones, the realm's watch shortens them (×3/4 at realm level 2, ×7/10 at
+level 3, in `sight_at`), light bands double or halve them, higher ground
+stretches the far zone and lower ground removes it. These rules are private to the simulation
 today. So the screen needs them per tile, from the simulation, the way
 `seen()` does.
 
