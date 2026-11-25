@@ -1,14 +1,14 @@
 # DT1 data track: progress
 
-- Status: Green / Red pending: the cycle 200 fixes are pushed; full checks
-  are running.
+- Status: Green: full checks pass on `1657b290`; 3D0-DT1-data-spec is
+  ready again after its second resync.
 - Progress: 0 of 1 tasks merged; 3D0-DT1-data-spec in its second resync
   (cycle 200).
 - Done: `guards()` adds `near`, `mid`, `peripheral` and `suspicion`, with a
   byte-for-byte replay test; a heist shot with a Suspicious guard; the data
   spec ([`docs/art/3d-quality/data-spec.md`](../art/3d-quality/data-spec.md)),
   section 3 rebuilt from the sim source and now with the realm's watch.
-- Next: the full checks; then ready again, and the verifier.
+- Next: the verifier reviews the diff; then the lead merges.
 - Blocked by: none.
 - Owner decision needed: none.
 
@@ -20,6 +20,9 @@
 
 ## Handoff
 
+- Last verified commit: `1657b290` (pre-check green, 2026-11-25T20:30Z;
+  the ready_sha). Main's cycle 201 bookkeeping (only `docs/progress/`) is
+  merged after it; the branch head differs from the ready_sha only there.
 - **Resync, cycle 200.** Main merged at `76995042` (clean). The verifier's
   three findings, each read off `sim/src/lib.rs`:
   - Section 3's fill now lists ×3/5 at realm level 1 (`REALM_WATCH`,
