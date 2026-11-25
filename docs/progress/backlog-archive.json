@@ -8297,6 +8297,44 @@
       "ready_sha": "4e6c51ee",
       "merged_sha": "f07f36c1",
       "exceptions": []
+    },
+    {
+      "id": "3D0-DT1-data-spec",
+      "title": "The data spec: what guards() adds (near, mid, suspicion), what noise and order previews need; and a shot moment with a suspicious guard",
+      "phase": 0,
+      "role": "data track",
+      "model": "Opus 5.5",
+      "effort": "high",
+      "assigned_to": "DT1",
+      "files": [
+        "client/ext/src/lib.rs",
+        "docs/art/3d-quality/data-spec.md",
+        "client/tests/shots/heist_suspicious.gd",
+        "docs/progress/DT1.md",
+        "docs/progress/status/DT1.json"
+      ],
+      "deps": [],
+      "done_when": [
+        "data-spec.md lists every field the 3D plan needs from the extension, with type, source in sim and cost",
+        "guards() returns near, mid and suspicion; the recorded replay stays byte-for-byte the same (a test shows it)",
+        "A shot moment with a suspicious guard renders",
+        "bash tools/run_checks.sh passes"
+      ],
+      "gate_items": [],
+      "attempts": 2,
+      "estimate_h": 10,
+      "tier": 1,
+      "critical": true,
+      "state": "merged",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "1657b290",
+      "merged_sha": "808fc8f8",
+      "exceptions": [
+        "client/tests/shots/heist_suspicious.gd.uid"
+      ],
+      "resync_reason": null
     }
   ],
   "idle_queue": [

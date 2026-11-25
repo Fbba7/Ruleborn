@@ -1401,6 +1401,8 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
   other shot .gd has its .uid tracked). Files:
   client/tests/shots/heist_suspicious.gd.uid. Default: the lead adds the
   .uid at merge; DT1 leaves it untracked. Copied in cycle 196.
+  **Answered** by the lead in cycle 202: the default. The .uid was added
+  at DT1's merge (808fc8f8).
 
 - **M2-R1** (from M2, 25 November 2026 15:30Z; due 27 November 15:30Z;
   not blocking): `tools/render/measure.py --self-test` (synthetic stills,

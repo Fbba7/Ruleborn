@@ -5,6 +5,43 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 199**, 25 November 2026, from about 19:14Z (session
+  `session_01SNkKxoVLxAN6iY9xYpGFMe`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 198:
+  M2 marked 3D0-M2-find-it ready at 028837be (pre-check PASS; today's
+  build scores 5 of 50); M1 committed the baseline (69a5f12b, merged with
+  main at 9686d848) and runs its pre-check; DT1 merged main again
+  (6f1b5513) and runs its full checks. **Verify:** an Opus 5.5 high
+  verifier failed find-it: the route question reads sight markers only
+  from id.png, where mask_pass.gd never puts the real 3D markers (they go
+  to marks3d.png), so it can never pass on a real render; and off-frame
+  guards (and crew) count as misses. Self-tests, the docs check and a
+  full scoring run (5 of 50) reproduced. **Merge:** none; the candidate
+  (M2 alone, checks to be reused from the pre-check) was dropped.
+  **Resync:** 3D0-M2-find-it, findings in its resync_reason; M2
+  restarted on it at Opus 5.5 high (order 7, a resync). M2 included
+  client/tests/shots/style_frame_heist.gd.uid (uid://dm035cb54qlq, the
+  lead's own pending addition), granted as an exception. **Requests:**
+  M2-R2 (no clip hook in screen_heist.gd) and M1-R2 (the mask tool fails
+  on the realm and character screens) stay at their defaults for now; a
+  task for M1-R2 is seeded once M2's seat frees. **Started:** M2 (resync).
+  M1, M2 and DT1 fill the cap of three while the seven-day bar reads
+  `allowed_warning`. **Owner:** the phone trial and the style-frame pick
+  are still open (owner inbox).
+
+- **Cycle 198**, 25 November 2026, from about 18:39Z (session
+  `session_01SNkKxpCLYdWeYiQwJhDr52`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The change since cycle 197:
+  `claude/3d-mask` (M2) merged main and committed its find-it scorer
+  (028837be); its status reads working, pre-check next. M1 renders the
+  baseline's 20 shots (no push yet); DT1's session is idle on its
+  running pre-check of the resync (d9022669, unpushed), not stale until
+  19:07Z. All three sessions connected, none stale, so **none
+  restarted**. **Merge and gate:** none: nothing is ready, no merge lock.
+  **Started:** none: M1, M2 and DT1 fill the cap of three while the
+  seven-day bar reads `allowed_warning`. **Owner:** the phone trial and
+  the style-frame pick are still open (owner inbox).
+
 - **Cycle 197**, 25 November 2026, from about 17:40Z (session
   `session_01SNkKxoyugNa4BQjRBSzsYK`, started by the Opus 5.5 launcher,
   Opus 5.5 at effort medium by order 7). The changes since cycle 196:

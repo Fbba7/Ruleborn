@@ -1,0 +1,46 @@
+{
+  "agent": "DT1",
+  "role": "data track",
+  "branch": "claude/3d-data",
+  "model": "Opus 5.5, effort high",
+  "agent_state": "waiting",
+  "task_id": "3D0-DT1-data-spec",
+  "task_state": "ready",
+  "claimed_at": "2026-11-25T15:45:00Z",
+  "lease_until": "2026-11-25T23:00:00Z",
+  "updated_at": "2026-11-25T20:35:00Z",
+  "expected_next_update_by": null,
+  "long_run": null,
+  "progress_marker": {
+    "last_green_sha": "1657b2903bd2cd39d37382629d0ce5eac9938c57",
+    "next_step": "ready (resync of cycle 200): full checks green on 1657b290; the verifier reviews the realm-watch fixes in data-spec.md"
+  },
+  "precheck": {
+    "sha": "1657b2903bd2cd39d37382629d0ce5eac9938c57",
+    "state": "PASS",
+    "exit": 0,
+    "finished_at": "2026-11-25T20:30:01Z",
+    "summary": "All checks passed."
+  },
+  "gate_request": null,
+  "ready_sha": "1657b2903bd2cd39d37382629d0ce5eac9938c57",
+  "stop_at": "2026-12-02T21:00:00Z",
+  "acks": [],
+  "requests": [
+    {
+      "id": "DT1-R1",
+      "from": "DT1",
+      "to": "lead",
+      "ask": "Commit client/tests/shots/heist_suspicious.gd.uid (Godot writes it on first run; it is outside DT1's files, and every other shot .gd has its .uid tracked)",
+      "files": [
+        "client/tests/shots/heist_suspicious.gd.uid"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-25T16:10:00Z",
+      "due": "2026-11-25T22:10:00Z",
+      "default": "The lead adds the .uid at merge; DT1 leaves it untracked",
+      "escalate_to": "lead"
+    }
+  ],
+  "answers": []
+}
