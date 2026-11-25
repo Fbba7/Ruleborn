@@ -4,13 +4,12 @@
   "expected_next_update_by": "2026-11-25T23:20:00Z",
   "cycle": 201,
   "merging": {
-    "candidate_sha": "13d3c31c61de2a6110ecaa4a7045baba2104fce7",
+    "candidate_sha": "3970bbbd957306e2725d45b1badc4b8bfcd97d80",
     "task_ids": [
-      "3D0-DT1-data-spec",
-      "3D0-M2-find-it"
+      "3D0-DT1-data-spec"
     ],
-    "started_at": "2026-11-25T20:50:00Z",
-    "expires_at": "2026-11-25T22:20:00Z"
+    "started_at": "2026-11-25T21:12:00Z",
+    "expires_at": "2026-11-25T22:45:00Z"
   },
   "last_merged": {
     "task_id": "3D0-M1-budget-split, 3D0-M2-mask-tool",
