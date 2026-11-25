@@ -56,18 +56,31 @@ what the still shows. One partly on the frame is asked, and is not found
 
 A guard's **sight is drawn** when its own sight shows on the ground round
 its feet. The 3D markers are not in the id mask; they are in `marks3d.png`
-(mask.md), drawn in their own colours: the shown guard's cone, its edge and
-its ring in the alarm's red, and every other guard's facing as a pale
-dashed fan reaching 1.6 m (`client/world/fx_ground.gd`, §21.12). The scorer
-maps each pixel back to the ground with a homography fitted to every
-figure's feet (world x and z in `mask.json` to the frame), and counts, for
-each guard, the sight pixels from 0.7 to 2 m from its feet: past its own
-rings (0.62 m), with 0.65 m round every other figure left out (their
-rings). The shown guard (the most aware, then the one nearest the chosen
-crew member, as `WorldView.shown_guard` picks it) needs 40 red or pale
-pixels there; any other guard needs 40 pale ones, so the shown guard's red
-cone is not read as a neighbour's sight. A sight under a panel does not
-count. `findit.json` keeps each guard's counts (`route.sight`).
+(mask.md), drawn in their own colours (`client/world/fx_ground.gd`,
+§21.12). The shown guard gets its cone, its edge and its ring in the
+alarm's red, and no fan. Every other guard on its feet gets its facing as a
+pale dashed fan reaching 1.6 m, and no cone. The scorer maps each pixel
+back to the ground with a homography fitted to every figure's feet (world x
+and z in `mask.json` to the frame), and counts, for each guard, the sight
+pixels from 0.7 to 2 m from its feet. It leaves out:
+
+- the guard's own rings (0.62 m);
+- 0.65 m round every other figure (their rings);
+- any point nearer another guard on its feet than this one, so a
+  neighbour's fan is the neighbour's.
+
+The shown guard is picked as `WorldView.shown_guard` picks it: the selected
+guard when `mask.json` names one (`selected_guard`), else the most aware,
+then the one nearest the chosen crew member. It needs 40 red pixels there,
+and pale ones do not count for it, since the client draws it no fan. Any
+other guard needs 40 pale pixels, and red ones do not count for it, so the
+shown guard's cone is not read as a neighbour's sight. A sight under a
+panel does not count. `findit.json` keeps each guard's counts
+(`route.sight`).
+
+The route is asked from the chosen crew member (`chosen` in `mask.json`).
+When that crew member is not in view, the route is not found ("the chosen
+crew member is not in view"); the scorer does not fall back to another.
 
 A question with nothing to find (no guard in view, no exit in the still) is
 answered "not found": a player cannot find what the picture does not show.

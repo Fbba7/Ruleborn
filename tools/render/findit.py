@@ -33,12 +33,15 @@ MIN_POINTS = 32.0   # Q2: a figure at least this tall (points)
 MAX_BLEND = 0.05    # Q3: at most this share of a figure within 18 grays of the ground
 MIN_SEEN = 0.80     # Q4: at least this share of a figure's head seen
 MAX_COVER = 0.20    # a vault or exit under markers by at most this share
-# A guard's sight is read from marks3d.png (the 3D markers alone, mask.md):
-# the shown guard's red cone and edge, every other guard's pale fan
-# (client/world/fx_ground.gd). Both start at the guard's feet, so a guard's
-# sight is the sight pixels on the ground between SIGHT_INNER and
-# SIGHT_OUTER metres from its feet, past its own rings (0.62 m) and short of
-# the next tiles' cones; the fan reaches 1.6 m (FAN_REACH).
+# A guard's sight is read from marks3d.png (the 3D markers alone, mask.md),
+# as client/world/fx_ground.gd draws it: the shown guard gets its red cone
+# and edge and no fan; every other guard on its feet gets a pale fan and no
+# cone. So the shown guard's sight is red pixels and nothing else, and every
+# other guard's is pale pixels and nothing else. Both start at the guard's
+# feet: a guard's sight is the pixels of its colour on the ground between
+# SIGHT_INNER and SIGHT_OUTER metres from its feet, past its own rings
+# (0.62 m), short of the next tiles' cones, and nearer to it than to any
+# other guard on its feet; the fan reaches 1.6 m (FAN_REACH).
 SIGHT_INNER = 0.7   # metres from the feet
 SIGHT_OUTER = 2.0
 SIGHT_PIXELS = 40   # fewest sight pixels in that ring that show the sight
@@ -205,16 +208,23 @@ def sight_pixels(s):
     # Crimson (the cone, about 120, 20, 40), not the crew rings' orange,
     # whose green is well over its blue.
     red = (r > 60) & (g * 10 < r * 4) & (b + 8 >= g) & (b * 10 < r * 7)
-    # The fans' lavender white (#F3EEFF at 0.55, about 100, 90, 110 to 190,
-    # 170, 190 as rendered): blue at least its red, not the effects' bright
-    # pink sparks.
-    pale = (lo > 60) & (hi - lo < 40) & (b + 8 >= r) & (b >= g) & (hi < 215)
+    # The fans' lavender white (#F3EEFF at 0.55 on black): blue is the
+    # greatest channel. Not the route preview's paper dots (about 194, 171,
+    # 190) nor the effects' falling petals (about 114, 77, 111), whose red is
+    # over their blue, nor the bright pink sparks.
+    pale = (lo > 60) & (hi - lo < 40) & (b >= r) & (b >= g) & (hi < 215)
     return red & ~s.covered, pale & ~s.covered
 
 
 def shown_guard(s) -> int:
-    """WorldView.shown_guard: the most aware guard on its feet, then the one
-    nearest the chosen crew member's tile."""
+    """WorldView.shown_guard: the selected guard when one is selected and on
+    its feet (mask.json "selected_guard", when the shot writes it), else the
+    most aware guard on its feet, then the one nearest the chosen crew
+    member's tile."""
+    sel = s.info.get("selected_guard", -1)
+    if sel is not None and sel >= 0 and any(
+            f["kind"] == "guard" and f["index"] == sel and not f.get("down") for f in s.figures):
+        return sel
     chosen = s.info.get("chosen", -1)
     near = next((f.get("world") for f in s.figures if f["kind"] == "crew" and f["index"] == chosen), None)
     best, key_best = -1, -float("inf")
@@ -233,8 +243,9 @@ def shown_guard(s) -> int:
 
 
 def sight_of(s, guards: list) -> dict:
-    """For each guard, whether its own sight is drawn: the shown guard's red
-    cone, or another guard's pale fan, on the ground round its feet."""
+    """For each guard, whether its own sight is drawn on the ground round its
+    feet: the shown guard's red cone (red only: the client draws it no fan),
+    or another guard's pale fan (pale only: it has no cone)."""
     out = {}
     if not guards:
         return out
@@ -251,10 +262,13 @@ def sight_of(s, guards: list) -> dict:
         ring = (d > SIGHT_INNER) & (d <= SIGHT_OUTER)
         for f in s.figures:
             if f is not g and "world" in f:
-                ring &= np.hypot(gx - f["world"][0], gz - f["world"][2]) > RING_CLEAR
+                df = np.hypot(gx - f["world"][0], gz - f["world"][2])
+                ring &= df > RING_CLEAR
+                if f["kind"] == "guard" and not f.get("down"):
+                    ring &= d < df      # a neighbour's fan is the neighbour's
         n_red, n_pale = int((red & ring).sum()), int((pale & ring).sum())
         is_shown = g["index"] == shown
-        drawn = n_pale >= SIGHT_PIXELS or (is_shown and n_red >= SIGHT_PIXELS)
+        drawn = (n_red if is_shown else n_pale) >= SIGHT_PIXELS
         out[g["name"]] = {"drawn": drawn, "shown": is_shown, "red": n_red, "pale": n_pale}
     return out
 
@@ -264,10 +278,12 @@ def route(s, guards: list) -> dict:
     member to the exit in view, and each guard's sight is drawn."""
     crew = _crew_named(s)
     chosen = s.info.get("chosen", -1)
-    pick = next((f for f in crew if f["index"] == chosen), crew[0] if crew else None)
+    pick = next((f for f in crew if f["index"] == chosen), None)
     why = []
-    if pick is None or not (s.cls == M.EXIT).any():
-        return {"found": False, "why": ["no chosen crew member or no exit in view"]}
+    if pick is None:
+        return {"found": False, "why": ["the chosen crew member is not in view"]}
+    if not (s.cls == M.EXIT).any():
+        return {"found": False, "why": ["no exit in view"]}
     passable = np.isin(s.cls, (M.WALKABLE, M.PATH, M.DECORATION, M.CREW, M.GUARD, M.EXIT, M.VAULT,
                                M.MARKER, M.SHADOW, M.GUARD_SHADOW)) & ~s.covered
     fx, fy = (int(round(v)) for v in pick["feet"])
@@ -453,7 +469,7 @@ def self_test() -> None:
             if colour is not None:
                 m[wedge] = (*colour, 255)
             Image.fromarray(m).save(d / "marks3d.png")
-        marks((150, 140, 165))                          # a guard's pale fan, as rendered
+        marks((120, 22, 42))                            # the shown guard's crimson cone
         info = {"frame": [w, h], "view_rect": [0, 0, w, h], "chosen": 0, "zoom": 1,
                 "vault": {"rect": [40, 90, 10, 20], "centre": [45, 100]},
                 "exit": {"rect": [70, 120, 15, 10], "centre": [77, 125]},
@@ -478,26 +494,59 @@ def self_test() -> None:
         assert list(a["route"]["sight"]) == ["g0"], a["route"]
         assert a["route"]["found"], a["route"]
         assert r["right"] == 5, r
+        assert a["route"]["sight"]["g0"]["shown"], a["route"]
+
+        def sight():
+            r = score(d)
+            return r, r["answers"]["route"]["sight"]["g0"]
         # No sight round the guard: the route is not found.
         marks(None)
-        r = score(d)
+        r, g0 = sight()
         assert r["answers"]["route"]["guards_without_sight"] == ["g0"] and r["right"] == 4, r
+        # The shown guard has no fan: pale only near it is not its sight.
+        marks((150, 140, 165))
+        r, g0 = sight()
+        assert g0["shown"] and g0["pale"] >= SIGHT_PIXELS and not g0["drawn"] and r["right"] == 4, r
         # The crew rings' orange is not a sight.
         marks((180, 100, 20))
-        r = score(d)
-        assert r["answers"]["route"]["guards_without_sight"] == ["g0"], r["answers"]["route"]
-        # Nor are the effects' pink sparks.
-        marks((240, 205, 225))
-        r = score(d)
-        assert r["answers"]["route"]["guards_without_sight"] == ["g0"], r["answers"]["route"]
-        # The crimson cone counts for the shown guard alone.
-        marks((120, 22, 42))
-        r = score(d)
-        assert r["answers"]["route"]["sight"]["g0"]["shown"] and r["right"] == 5, r
-        info["figures"][3]["state"] = "Alerted"     # now g1 is the shown guard
+        r, g0 = sight()
+        assert not g0["drawn"], g0
+        # Now g1 is the shown guard, so g0 is an unshown guard: red is not its
+        # sight, its pale fan is.
+        info["figures"][3]["state"] = "Alerted"
         (d / "mask.json").write_text(json.dumps(info))
-        r = score(d)
-        assert not r["answers"]["route"]["sight"]["g0"]["shown"] and r["right"] == 4, r
+        marks((120, 22, 42))
+        r, g0 = sight()
+        assert not g0["shown"] and not g0["drawn"] and r["right"] == 4, r
+        marks((150, 140, 165))                          # a guard's pale fan, as rendered
+        r, g0 = sight()
+        assert not g0["shown"] and g0["drawn"] and r["right"] == 5, r
+        # Not the route preview's paper dots, the effects' petals or their
+        # pink sparks.
+        for colour in ((194, 171, 190), (114, 77, 111), (240, 205, 225)):
+            marks(colour)
+            r, g0 = sight()
+            assert g0["pale"] == 0 and not g0["drawn"], (colour, g0)
+        # A selected guard is the shown guard (WorldView.shown_guard).
+        info["figures"][3]["state"] = "Unaware"
+        info["selected_guard"] = 1
+        (d / "mask.json").write_text(json.dumps(info))
+        marks((150, 140, 165))
+        r, g0 = sight()
+        assert not g0["shown"] and g0["drawn"], g0
+        del info["selected_guard"]
+        # A neighbour's fan is the neighbour's: with g1 standing just past
+        # the wedge, the wedge is nearer g1 and is not g0's sight.
+        g1 = info["figures"][3]
+        g1.update(feet=feet(5.4, 4.0), world=[5.4, 0, 4.0], rect=[196, 260, 8, 40], state="Alerted")
+        (d / "mask.json").write_text(json.dumps(info))
+        r, g0 = sight()
+        assert not g0["drawn"], g0
+        g1.update(feet=feet(19.0, 26.0), world=[19.0, 0, 26.0], state="Unaware")
+        (d / "mask.json").write_text(json.dumps(info))
+        marks((120, 22, 42))
+        r, g0 = sight()
+        assert g0["shown"] and g0["drawn"] and r["right"] == 5, r
         # Under a panel, the sight does not count.
         info["figures"][3]["state"] = "Unaware"
         (d / "mask.json").write_text(json.dumps(info))
