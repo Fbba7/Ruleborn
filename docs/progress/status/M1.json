@@ -2,19 +2,19 @@
   "agent": "M1",
   "role": "measure track",
   "branch": "claude/3d-measure",
-  "model": "Opus 5.5",
-  "effort": "high",
-  "agent_state": "working",
-  "task_id": "3D0-M1-budget-split",
+  "model": "Sonnet 5.5",
+  "effort": "medium",
+  "agent_state": "active",
+  "task_id": "3D0-M1-baseline",
   "task_state": "working",
   "claimed_at": "2026-11-25T12:23:29Z",
   "lease_until": "2026-11-25T17:53:29Z",
-  "updated_at": "2026-11-25T16:50:00Z",
-  "expected_next_update_by": "2026-11-25T17:30:00Z",
+  "updated_at": "2026-11-25T19:00:00Z",
+  "expected_next_update_by": "2026-11-25T19:40:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": null,
-    "next_step": "commit the resync, full pre-check, owners diff, mark ready"
+    "next_step": "full pre-check, then mark ready"
   },
   "precheck": null,
   "gate_request": null,
@@ -23,17 +23,18 @@
   "acks": [],
   "requests": [
     {
-      "id": "M1-R1",
+      "id": "M1-R2",
       "from": "M1",
       "to": "lead",
-      "ask": "BudgetSplit's test is rendered (headless counts read 0), so it runs as `bash tools/render/shoot.sh client/tests/shots/budget_split_tests.gd out.png 256 256` (exits 1 on a failure), outside tools/run_checks.sh. Wire it into a rendered check run if one exists or is planned.",
+      "ask": "The mask tool (tools/render/mask_pass.gd) runs only on screens with the heist's WorldView and figures; it fails on screen_defences and the realm screens (line 194, frame is not a SubViewport) and finds no WorldView on the character screens. Give M2 a task to make it measure Q11/Q12 on realm screens, then rerun the baseline.",
       "files": [
-        "tools/check_all.sh"
+        "tools/render/mask_pass.gd",
+        "tools/render/measure.py"
       ],
       "blocking": false,
-      "created_at": "2026-11-25T16:50:00Z",
-      "due": "2026-11-27T16:50:00Z",
-      "default": "it stays a standalone command named in docs/progress/M1.md's handoff; the verifier runs it before merging",
+      "created_at": "2026-11-25T19:00:00Z",
+      "due": "2026-11-27T19:00:00Z",
+      "default": "baseline.md keeps `-` for Q1 to Q6, Q11 and Q12 on those shots",
       "escalate_to": "lead"
     }
   ],
