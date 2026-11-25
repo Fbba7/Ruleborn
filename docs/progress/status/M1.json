@@ -2,31 +2,40 @@
   "agent": "M1",
   "role": "measure track",
   "branch": "claude/3d-measure",
-  "model": "Sonnet 5.5",
-  "effort": "medium",
-  "agent_state": "waiting",
+  "model": "Opus 5.5",
+  "effort": "high",
+  "agent_state": "working",
   "task_id": "3D0-M1-budget-split",
-  "task_state": "ready",
+  "task_state": "working",
   "claimed_at": "2026-11-25T12:23:29Z",
   "lease_until": "2026-11-25T17:53:29Z",
-  "updated_at": "2026-11-25T15:35:00Z",
-  "expected_next_update_by": "2026-11-25T15:38:29Z",
+  "updated_at": "2026-11-25T16:50:00Z",
+  "expected_next_update_by": "2026-11-25T17:30:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "e2927534aeef9d8c91571bd505562f17635e38f5",
-    "next_step": "lead merges after verifier review; then 3D0-M1-baseline after 3D0-M2-mask-tool"
+    "last_green_sha": null,
+    "next_step": "commit the resync, full pre-check, owners diff, mark ready"
   },
-  "precheck": {
-    "sha": "e2927534aeef9d8c91571bd505562f17635e38f5",
-    "state": "PASS",
-    "exit": 0,
-    "finished_at": "2026-11-25T15:30:49Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
-  "ready_sha": "6057c3ca3537b12667020fc5071dbcf072e194b5",
+  "ready_sha": null,
   "stop_at": "2026-12-02T21:00:00Z",
   "acks": [],
-  "requests": [],
+  "requests": [
+    {
+      "id": "M1-R1",
+      "from": "M1",
+      "to": "lead",
+      "ask": "BudgetSplit's test is rendered (headless counts read 0), so it runs as `bash tools/render/shoot.sh client/tests/shots/budget_split_tests.gd out.png 256 256` (exits 1 on a failure), outside tools/run_checks.sh. Wire it into a rendered check run if one exists or is planned.",
+      "files": [
+        "tools/check_all.sh"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-25T16:50:00Z",
+      "due": "2026-11-27T16:50:00Z",
+      "default": "it stays a standalone command named in docs/progress/M1.md's handoff; the verifier runs it before merging",
+      "escalate_to": "lead"
+    }
+  ],
   "answers": []
 }
