@@ -18,6 +18,7 @@ sys.path.insert(0, str(HERE))
 import run  # noqa: E402
 import table  # noqa: E402
 
+HEIST_MEASURE = json.loads((HERE / "data/screen_heist.json").read_text())["measure"]
 HEIST_BUDGET = ("budget: heist: 85446 triangles (56480 mesh + 28966 outline passes); 0 triangles in shadows; "
                 "70 draw calls, shadow passes included; 7287 triangles and 50 draw calls in other views; "
                 "frame 92733 triangles, 120 draw calls")
@@ -72,6 +73,12 @@ class NoRender(Sandbox):
         text = self.out.read_text()
         self.assertIn("| `screen_heist` | 56,480 |", text)
 
+    def test_no_render_with_no_data_fails_and_writes_nothing(self):
+        """An empty baseline/data/ would give an empty table: it is a failure, and baseline.md stays."""
+        self.out.write_text("old table")
+        self.assertEqual(run.main(["--no-render"]), 1)
+        self.assertEqual(self.out.read_text(), "old table")
+
     def test_no_render_writes_the_table_the_data_gives(self):
         for f in (HERE / "data").glob("*.json"):
             shutil.copy(f, self.data / f.name)
@@ -124,9 +131,82 @@ class MustMeasure(Sandbox):
             self.assertEqual(state, "failed", name)
             self.assertIn("must be measured", why)
 
+    def test_an_error_after_the_measure_still_fails_a_heist_shot(self):
+        """mask_pass.gd saves id.png (so measure.json gets written) before its marks and solo passes."""
+        measure = json.loads((HERE / "data/screen_heist.json").read_text())["measure"]
+        old = {"name": "screen_heist", "budget": HEIST_BUDGET, "measure": None, "verdict": "ok", "why": "kept"}
+        (self.data / "screen_heist.json").write_text(json.dumps(old))
+        fake_shot(self.work, "screen_heist", measure=measure, mask_error=True)
+        state, why = run.verdict("screen_heist")
+        self.assertEqual(state, "failed")
+        self.assertIn("must be measured", why)
+        run.run_one = lambda name: {"name": name, "returncode": 0, "stdout": ""}
+        self.assertEqual(run.main(["--only", "screen_heist"]), 1)
+        self.assertEqual(json.loads((self.data / "screen_heist.json").read_text()), old)
+
+    def test_an_error_after_the_measure_is_the_known_limit_elsewhere(self):
+        fake_shot(self.work, "screen_realm", measure={"Q1": {}}, mask_error=True)
+        self.assertEqual(run.verdict("screen_realm")[0], "mask limit")
+
+    def test_a_render_clears_the_last_run_s_masks(self):
+        out = self.work / "screen_heist"
+        (out / "src").mkdir(parents=True)
+        for f in ("solo_c0.png", "marks3d.png", "mask.json", "world.png", "id.png", "measure.json"):
+            (out / f).write_text("old")
+        (out / "src" / "keep.gd").write_text("script")
+        seen = []
+        real = run.subprocess.run
+        run.subprocess.run = lambda *a, **k: (seen.append(sorted(p.name for p in out.iterdir())),
+                                              run.subprocess.CompletedProcess(a, 0, "", ""))[1]
+        try:
+            run.run_one("screen_heist")
+        finally:
+            run.subprocess.run = real
+        self.assertEqual(seen, [["src"]])
+        self.assertTrue((out / "src" / "keep.gd").exists())
+
     def test_an_error_in_the_mask_tool_is_the_known_limit_elsewhere(self):
         fake_shot(self.work, "screen_realm", mask_error=True)
         self.assertEqual(run.verdict("screen_realm")[0], "mask limit")
+
+    def test_a_renderer_shader_error_fails_the_shot(self):
+        """The full run's dark replay: three shaders failed to start (shader cache race), the ground drew black."""
+        for name in ("screen_replay", "screen_realm", "universe_home"):
+            out = fake_shot(self.work, name, measure=HEIST_MEASURE)
+            log = out / "godot.log"
+            log.write_text('ERROR: Condition "err != OK" is true.\n'
+                           "   at: initialize (drivers/gles3/shader_gles3.cpp:792)\n" + log.read_text())
+            state, why = run.verdict(name)
+            self.assertEqual(state, "failed", name)
+            self.assertIn("shader", why)
+
+    def test_a_shot_failed_by_the_shader_race_is_rendered_again_alone(self):
+        calls = []
+
+        def render(name):
+            calls.append(name)
+            shutil.rmtree(self.work / name, ignore_errors=True)
+            out = fake_shot(self.work, name, measure=HEIST_MEASURE)
+            if calls.count(name) == 1:
+                log = out / "godot.log"
+                log.write_text('ERROR: Condition "err != OK" is true.\n'
+                               "   at: initialize (drivers/gles3/shader_gles3.cpp:792)\n" + log.read_text())
+            return {"name": name, "returncode": 0, "stdout": ""}
+        run.run_one = render
+        self.assertEqual(run.main(["--only", "screen_heist,screen_replay"]), 0)
+        self.assertEqual(sorted(calls), ["screen_heist", "screen_heist", "screen_replay", "screen_replay"])
+        self.assertEqual(json.loads((self.data / "screen_replay.json").read_text())["verdict"], "ok")
+
+    def test_a_second_shader_race_fails_the_run(self):
+        def render(name):
+            shutil.rmtree(self.work / name, ignore_errors=True)
+            log = fake_shot(self.work, name, measure=HEIST_MEASURE) / "godot.log"
+            log.write_text('ERROR: Condition "err != OK" is true.\n'
+                           "   at: initialize (drivers/gles3/shader_gles3.cpp:792)\n" + log.read_text())
+            return {"name": name, "returncode": 0, "stdout": ""}
+        run.run_one = render
+        self.assertEqual(run.main(["--only", "screen_replay"]), 1)
+        self.assertFalse((self.data / "screen_replay.json").exists())
 
     def test_must_measure_names_real_shots(self):
         self.assertTrue(run.MUST_MEASURE <= set(run.SHOTS))
@@ -145,6 +225,21 @@ class Table(unittest.TestCase):
         row = table.budget(rec)
         self.assertEqual(row[table.HEAD.index("View draw calls") - 1], "-")
         self.assertEqual(row[table.HEAD.index("Frame draw calls") - 1], "93*")
+
+    def test_the_universe_lines_fill_view_and_frame_columns(self):
+        h = table.HEAD
+        row = table.budget({"budget": "triangles 33085 draw calls 33 frame 68770 prims 148 calls"})
+        self.assertEqual([row[h.index(c) - 1] for c in ("Mesh tri", "View draw calls", "Frame tri", "Frame draw calls")],
+                         ["33,085*", "33*", "68,770*", "148*"])
+        row = table.budget({"budget": "triangles 34065 drawn now 34647 draw calls 33 rendered 55273 prims 58 calls"})
+        self.assertEqual([row[h.index(c) - 1] for c in ("Mesh tri", "View draw calls", "Frame tri", "Frame draw calls")],
+                         ["34,065*", "33*", "55,273*", "58*"])
+
+    def test_every_published_budget_line_parses(self):
+        for f in sorted((HERE / "data").glob("*.json")):
+            rec = json.loads(f.read_text())
+            if rec.get("budget"):
+                self.assertNotEqual(table.budget(rec), ["-"] * 7, f.name)
 
     def test_the_observatory_row_has_its_note(self):
         self.assertIn("screen_observatory", table.NOTES)
