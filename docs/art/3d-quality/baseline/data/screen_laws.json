@@ -30,7 +30,7 @@
     "right": true,
     "top": false
    },
-   "largest_figure_share": 0.067,
+   "largest_figure_share": 0.068,
    "nearest_guard": {
     "name": "g1",
     "rating": "clear"
@@ -43,17 +43,17 @@
   },
   "Q12": {
    "building_foot_luma_ratio": [
-    0.968
+    0.969
    ],
    "buildings_with_shadow": 0,
-   "cliff_luma": 114.9,
+   "cliff_luma": 115.1,
    "cliffs_darker": false,
    "figure_shadow_pixels": {
-    "c0": 241,
+    "c0": 243,
     "c1": 0,
-    "c2": 3265,
-    "g0": 1948,
-    "g1": 618
+    "c2": 3268,
+    "g0": 1949,
+    "g1": 592
    },
    "figures": 5,
    "figures_with_shadow": 4,
@@ -94,47 +94,47 @@
      "silhouette_points": 31.7
     },
     {
-     "bounds_points": 52.6,
+     "bounds_points": 52.7,
      "name": "g1",
-     "points": 39.1,
+     "points": 39.3,
      "role": "guard",
-     "silhouette_points": 38.3
+     "silhouette_points": 38.0
     }
    ],
    "guards_least": 38.8,
-   "guards_most": 39.1,
+   "guards_most": 39.3,
    "least": 24.2
   },
   "Q3": {
    "figures": [
     {
      "name": "c0",
-     "pixels": 2626,
-     "share": 0.1302
+     "pixels": 2624,
+     "share": 0.1345
     },
     {
      "name": "c1",
-     "pixels": 562,
-     "share": 0.2189
+     "pixels": 569,
+     "share": 0.2267
     },
     {
      "name": "c2",
-     "pixels": 3817,
-     "share": 0.2871
+     "pixels": 3810,
+     "share": 0.2924
     },
     {
      "name": "g0",
      "pixels": 5331,
-     "share": 0.2583
+     "share": 0.2579
     },
     {
      "name": "g1",
-     "pixels": 3842,
-     "share": 0.1861
+     "pixels": 3909,
+     "share": 0.1814
     }
    ],
-   "least": 0.1302,
-   "worst": 0.2871
+   "least": 0.1345,
+   "worst": 0.2924
   },
   "Q4": {
    "heads": [
@@ -144,7 +144,7 @@
     },
     {
      "name": "c1",
-     "seen": 0.099
+     "seen": 0.096
     },
     {
      "name": "c2",
@@ -156,7 +156,7 @@
     },
     {
      "name": "g1",
-     "seen": 0.993
+     "seen": 0.995
     }
    ],
    "markers": [
@@ -542,23 +542,23 @@
      "seen": 0.0
     }
    ],
-   "worst": 0.099
+   "worst": 0.096
   },
   "Q5": {
    "buildings": 1,
    "buildings_on_one_path": 1,
    "decoration_on_walkable": 0.0401,
-   "decoration_pixels": 11944,
+   "decoration_pixels": 11942,
    "path_links_every_building": true,
    "paths": 1
   },
   "Q6": {
    "covering": {
     "c0": 0.295,
-    "c1": 0.756,
+    "c1": 0.758,
     "c2": 0.222,
     "g0": 0.195,
-    "g1": 0.541,
+    "g1": 0.545,
     "vault": 0.224
    },
    "most": 17,
@@ -570,7 +570,7 @@
     "g1": 2,
     "vault": 10
    },
-   "worst_covering": 0.756
+   "worst_covering": 0.758
   },
   "env": {
    "FRAME_H": "",
@@ -588,5 +588,7 @@
   "still": "/tmp/ruleborn_baseline/screen_laws",
   "zoom": 1
  },
- "name": "screen_laws"
+ "name": "screen_laws",
+ "verdict": "ok",
+ "why": ""
 }

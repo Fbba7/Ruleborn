@@ -252,5 +252,7 @@
   "still": "/tmp/ruleborn_baseline/screen_result",
   "zoom": 1
  },
- "name": "screen_result"
+ "name": "screen_result",
+ "verdict": "ok",
+ "why": ""
 }

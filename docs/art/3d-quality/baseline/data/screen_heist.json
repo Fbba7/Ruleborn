@@ -43,11 +43,11 @@
   },
   "Q12": {
    "building_foot_luma_ratio": [
-    0.961
+    0.965
    ],
    "buildings_with_shadow": 0,
-   "cliff_luma": 110.0,
-   "cliffs_darker": true,
+   "cliff_luma": 114.8,
+   "cliffs_darker": false,
    "figure_shadow_pixels": {
     "c0": 238,
     "c1": 8,
@@ -110,12 +110,12 @@
     {
      "name": "c0",
      "pixels": 2666,
-     "share": 0.1283
+     "share": 0.1264
     },
     {
      "name": "c1",
-     "pixels": 621,
-     "share": 0.1836
+     "pixels": 625,
+     "share": 0.184
     },
     {
      "name": "c2",
@@ -125,16 +125,16 @@
     {
      "name": "g0",
      "pixels": 5381,
-     "share": 0.3202
+     "share": 0.3209
     },
     {
      "name": "g1",
-     "pixels": 4533,
-     "share": 0.1818
+     "pixels": 4529,
+     "share": 0.1826
     }
    ],
-   "least": 0.1283,
-   "worst": 0.3202
+   "least": 0.1264,
+   "worst": 0.3209
   },
   "Q4": {
    "heads": [
@@ -270,7 +270,7 @@
     },
     {
      "box": [
-      336,
+      332,
       1152,
       348,
       1172
@@ -516,5 +516,7 @@
   "still": "/tmp/ruleborn_baseline/screen_heist",
   "zoom": 1
  },
- "name": "screen_heist"
+ "name": "screen_heist",
+ "verdict": "ok",
+ "why": ""
 }

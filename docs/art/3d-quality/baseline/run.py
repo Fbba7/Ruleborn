@@ -91,8 +91,9 @@ BUDGET = re.compile(r"^budget: (\S+): (.*)$")
 # Godot's ShaderGLES3::initialize gives up on a shader when it cannot make that shader's folder in the
 # shared shader cache: two shots starting together on a fresh cache race to make it. The shader then draws
 # nothing right (the full run's replay drew its island ground black). Such a shot is rendered again alone.
-SHADER_RACE = "drivers/gles3/shader_gles3.cpp"
-SHADER_WHY = "a renderer shader failed to start (" + SHADER_RACE + ", the shader cache race)"
+# Only initialize's frame counts: "shaders ... were never freed" (~ShaderGLES3, at exit) is not the race.
+SHADER_RACE = "at: initialize (drivers/gles3/shader_gles3.cpp:"
+SHADER_WHY = "a renderer shader failed to start (drivers/gles3/shader_gles3.cpp, the shader cache race)"
 
 
 def script_for(name: str, out: Path) -> Path:

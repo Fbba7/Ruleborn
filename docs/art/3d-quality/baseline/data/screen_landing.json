@@ -1,5 +1,7 @@
 {
  "budget": "budget: HeistScreen: 22724 triangles (21562 mesh + 1162 outline passes); 0 triangles in shadows; 29 draw calls, shadow passes included; 1244 triangles and 62 draw calls in other views; frame 23968 triangles, 91 draw calls",
  "measure": null,
- "name": "screen_landing"
+ "name": "screen_landing",
+ "verdict": "mask limit",
+ "why": "error inside mask_pass.gd: SCRIPT ERROR: Invalid assignment of property or key 'transparent_bg' with value of type 'bool' on a base object of type 'Nil'."
 }

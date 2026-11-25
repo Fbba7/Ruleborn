@@ -1,5 +1,7 @@
 {
  "budget": "draw calls 93, primitives 13752",
  "measure": null,
- "name": "screen_character"
+ "name": "screen_character",
+ "verdict": "mask limit",
+ "why": "no WorldView in the shot"
 }

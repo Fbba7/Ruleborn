@@ -180,6 +180,14 @@ class MustMeasure(Sandbox):
             self.assertEqual(state, "failed", name)
             self.assertIn("shader", why)
 
+    def test_shaders_left_at_exit_are_not_the_race(self):
+        """screen_observatory's log, after mask_pass.gd stops: Godot's exit notice, not a shader that failed."""
+        fake_shot(self.work, "screen_observatory", mask_error=True)
+        log = self.work / "screen_observatory" / "godot.log"
+        log.write_text(log.read_text() + "ERROR: 2 shaders of type SceneShaderGLES3 were never freed\n"
+                       "   at: ~ShaderGLES3 (drivers/gles3/shader_gles3.cpp:838)\n")
+        self.assertEqual(run.verdict("screen_observatory")[0], "mask limit")
+
     def test_a_shot_failed_by_the_shader_race_is_rendered_again_alone(self):
         calls = []
 

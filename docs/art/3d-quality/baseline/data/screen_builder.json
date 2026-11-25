@@ -1,5 +1,7 @@
 {
  "budget": "budget: BuilderScreen: 35761 triangles (27770 mesh + 7991 outline passes); 4230 triangles in shadows; 74 draw calls, shadow passes included; 1846 triangles and 77 draw calls in other views; frame 41837 triangles, 151 draw calls",
  "measure": null,
- "name": "screen_builder"
+ "name": "screen_builder",
+ "verdict": "mask limit",
+ "why": "error inside mask_pass.gd: SCRIPT ERROR: Invalid assignment of property or key 'transparent_bg' with value of type 'bool' on a base object of type 'Nil'."
 }
