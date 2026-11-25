@@ -8,7 +8,8 @@
     "by": "lead cycle 197",
     "candidate": "8ca70679",
     "started_at": "2026-11-25T17:44:00Z",
-    "expires_at": "2026-11-25T18:44:00Z"
+    "expires_at": "2026-11-25T19:44:00Z",
+    "note": "renewed at 18:25Z by its holder: the full checks on 8ca70679 run past the first hour"
   },
   "last_merged": {
     "task_id": "3D0-CF1-style-frames",
