@@ -153,26 +153,36 @@ the build, and the reasons say how:
   the other eight it is not drawn, so the player cannot find it.
 - **Route: 2 of 10.** Found in both escape stills: the ground joins the
   chosen crew member to the exit, and every guard in view has its sight
-  drawn (the shown guard's red cone, 5,574 pixels at 15 tiles and 10,372 at
-  11; the other guard's pale fan, 750 at 15 tiles). In the other eight the
-  exit is not in view, so there is no route to read. In the nine stills
+  drawn (the shown guard g1's red cone, 5,574 pixels at 15 tiles and 10,372
+  at 11; the other guard g0's pale fan, 750 at 15 tiles). In the other eight
+  the exit is not in view, so there is no route to read. In the nine stills
   whose ground is fixed (all but entry-15, below), every guard in view has
-  its sight drawn, the shown one by 3,257 red pixels or more and each other
-  one by 410 pale pixels or more, against 40.
+  its sight drawn, the shown one by 3,258 red pixels or more and each other
+  one by 410 pale pixels or more, against 40; no shown guard has a pale
+  pixel in its ring and no other guard a red one. With the red pixels of
+  `marks3d.png` blacked out in the two escape stills, the shown guard has 0
+  red and the route is not found ("no sight drawn for g1"), so the route
+  rests on the cone the client draws.
 
 The 11-tile stills score the same as the 15-tile ones: the closer camera
 fixes the size of the figures (Q2) but not their blending or the panels.
 
-The sight's colour tests were set from this render: the cone renders
-crimson (about 120, 20, 40), the fans lavender white (about 100, 90, 110 to
-190, 170, 190), the crew rings orange (about 180, 60 to 100, 20) and the
-effects' sparks bright pink (about 240, 200, 220); the tests take the first
-two and leave out the others. Rings of the same size round random ground
-points at least 3.7 m from every guard hold no sight pixels in most stills
-(at most 3 of the 57 to 80 rings in a still pass 40), so the 40 a guard
-needs is seldom met by chance. The stray hit checked, in sneak-11, is a
-falling petal of the effects, shaded mauve (about 115, 78, 112), which the
-fan test takes; a red hit can only credit the shown guard.
+The sight's colour tests were set from this render (`sight_pixels`). The
+cone renders crimson (about 120, 20, 40): red is a red channel over 60,
+green under 0.4 of it, and blue under 0.7 of it but not under green by more
+than 8. The fans render lavender white (about 100, 90,
+110 to 190, 170, 190): pale is every channel over 60 and under 215, the
+channels within 40 of each other, and blue at least red and green, as the
+fan's tint (#F3EEFF) has. The other things drawn in the same pass fail one
+of these: the crew rings are orange (about 180, 60 to 100, 20); the route
+preview's paper dots (about 194, 171, 190) and the effects' falling petals
+(about 114, 77, 111) have more red than blue; the effects' sparks are bright
+pink (about 240, 205, 225). The self-test holds a case for each. Rings of
+the same size round random ground points at least 3.7 m from every guard
+do not reach the 40: in each of the nine stills with a fixed ground, 0 of
+60 such rings hold 40 pale pixels. A red pixel can only credit the shown guard, and a
+pale one only another guard, and only nearer that guard than any other
+guard on its feet.
 
 ## Limits
 
