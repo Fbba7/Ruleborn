@@ -1,0 +1,26 @@
+{
+  "agent": "M1",
+  "role": "measure track",
+  "branch": "claude/3d-measure",
+  "model": "Sonnet 5.5",
+  "effort": "medium",
+  "agent_state": "active",
+  "task_id": "3D0-M1-budget-split",
+  "task_state": "working",
+  "claimed_at": "2026-11-25T12:23:29Z",
+  "lease_until": "2026-11-25T17:53:29Z",
+  "updated_at": "2026-11-25T14:53:29Z",
+  "expected_next_update_by": "2026-11-25T15:38:29Z",
+  "long_run": null,
+  "progress_marker": {
+    "last_green_sha": null,
+    "next_step": "pre-check, then mark ready"
+  },
+  "precheck": null,
+  "gate_request": null,
+  "ready_sha": null,
+  "stop_at": "2026-12-02T21:00:00Z",
+  "acks": [],
+  "requests": [],
+  "answers": []
+}

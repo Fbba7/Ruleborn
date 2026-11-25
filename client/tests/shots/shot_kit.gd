@@ -3,7 +3,7 @@ extends RefCounted
 ## What every screen shot does once its screen is up: the sky's hour from
 ## HOUR, the words folded away with FOLD, a few frames for the world to
 ## settle, the frame saved to SHOT, and each world's triangles and draw
-## calls printed (§21.3's budgets). `prepare` takes the text size from TEXT
+## calls printed, split into mesh triangles, outline passes and other views (§21.3's budgets; BudgetSplit). `prepare` takes the text size from TEXT
 ## (in percent), high contrast from HC and the language from LANG_SHOT, before a
 ## screen is made; WIDE prints every control asking for more than the phone,
 ## and PARTS where each world's triangles go, largest first.
@@ -39,17 +39,16 @@ static func settle(tree: SceneTree, screen: Control) -> void:
 			var w := (c as Control).get_combined_minimum_size().x
 			if w > frame.x - UI.px(32):
 				print("wide %d %s %s" % [w, screen.get_path_to(c), str(c.get("text")).left(40)])
+	var worlds := false
 	for v: Node in screen.find_children("*", "SubViewportContainer", true, false):
 		if v.get_parent() is WorldView:
-			var rid := (v.get_parent() as WorldView).viewport.get_viewport_rid()
-			var visible := RenderingServer.VIEWPORT_RENDER_INFO_TYPE_VISIBLE
-			var shadow := RenderingServer.VIEWPORT_RENDER_INFO_TYPE_SHADOW
-			print("budget %s: %d triangles, %d draw calls (+%d in shadows)" % [screen.name,
-				RenderingServer.viewport_get_render_info(rid, visible, RenderingServer.VIEWPORT_RENDER_INFO_PRIMITIVES_IN_FRAME),
-				RenderingServer.viewport_get_render_info(rid, visible, RenderingServer.VIEWPORT_RENDER_INFO_DRAW_CALLS_IN_FRAME),
-				RenderingServer.viewport_get_render_info(rid, shadow, RenderingServer.VIEWPORT_RENDER_INFO_DRAW_CALLS_IN_FRAME)])
-			if OS.get_environment("PARTS") != "":
-				await _parts(tree, v.get_parent() as WorldView)
+			worlds = true
+	if worlds:
+		await BudgetSplit.line(tree, str(screen.name))
+		if OS.get_environment("PARTS") != "":
+			for v: Node in screen.find_children("*", "SubViewportContainer", true, false):
+				if v.get_parent() is WorldView:
+					await _parts(tree, v.get_parent() as WorldView)
 	print("wrote")
 
 
