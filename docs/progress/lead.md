@@ -426,7 +426,8 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
-| DT1 | `session_01SNkKxpL9MBiEawLL7runx2` (Opus 5.5, effort high) | 3D0-DT1-data-spec (start, cycle 194: a new agent once M1's seat freed; Opus 5.5 high by order 7, it touches the extension and the replay's bytes) | `claude/3d-data` | 2026-11-25 15:42Z |
+| DT1 | `session_01SNkKxodKBY94BomQhXexAr` (Opus 5.5, effort high) | 3D0-DT1-data-spec (restart, cycle 197: resync after the verifier failed section 3's guard states; already the top tier by order 7) | `claude/3d-data` | 2026-11-25 18:15Z |
+| DT1 | `session_01SNkKxpL9MBiEawLL7runx2` (Opus 5.5, effort high; idle, task sent to resync in cycle 197) | 3D0-DT1-data-spec (start, cycle 194: a new agent once M1's seat freed; Opus 5.5 high by order 7, it touches the extension and the replay's bytes) | `claude/3d-data` | 2026-11-25 15:42Z |
 | M1 | `session_01SNkKxnNfLkQ2DLurDzjM8E` (Opus 5.5, effort high) | 3D0-M1-budget-split (restart, cycle 194: resync after the verifier failed the split; one tier up by order 7) | `claude/3d-measure` | 2026-11-25 16:31Z |
 | M1 | `session_01SNkKxn3VgF7utqQN2JkCuy` (Sonnet 5.5, effort medium; idle, task sent to resync in cycle 194) | 3D0-M1-budget-split (start, cycle 192: a new agent; Sonnet 5.5 medium by order 7, a simple task in the shots and tools/render) | `claude/3d-measure` | 2026-11-25 14:42Z |
 | M2 | `session_01SNkKxqUMV6Qs5KyydCjHjX` (Opus 5.5, effort medium) | 3D0-M2-mask-tool (restart, cycle 195: stale since 16:15Z; the last session went idle and disconnected after GitHub 503s, its status commit 108abe5e unpushed; same tier, the stop was the network) | `claude/3d-mask` | 2026-11-25 16:41Z |
