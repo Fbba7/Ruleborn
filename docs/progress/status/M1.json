@@ -9,12 +9,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-25T22:33:00Z",
   "lease_until": "2026-11-26T01:37:00Z",
-  "updated_at": "2026-11-25T23:05:00Z",
-  "expected_next_update_by": "2026-11-25T23:45:00Z",
+  "updated_at": "2026-11-25T23:30:00Z",
+  "expected_next_update_by": "2026-11-26T00:10:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "4636c38384929b94eefcc5733f88985171c86a61",
-    "next_step": "resync: second review fixed at 7f6f90c (25 tests OK, owners diff clean); pre-check of 7f6f90c running; then record and ready"
+    "next_step": "resync: pre-check of 7f6f90c FAILed only on the coordinator's merge_queue self-test (flaky, request M1-R3); pre-check of dee58fa running; then record and ready"
   },
   "precheck": null,
   "gate_request": null,
@@ -35,6 +35,20 @@
       "created_at": "2026-11-25T19:00:00Z",
       "due": "2026-11-27T19:00:00Z",
       "default": "baseline.md keeps `n/m` (not measured) for Q1 to Q6, Q11 and Q12 on those shots",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "M1-R3",
+      "from": "M1",
+      "to": "lead",
+      "ask": "tools/coord/merge_queue.py's self-test fails now and then: check \"lock cleared\" reads lead[\"last_merged\"][\"task_id\"] while last_merged is None (TypeError, line 1028). It failed the pre-check of 7f6f90c and 1 of 3 standalone runs of `python3 tools/coord/cycle.py --self-test` on the same code; M1's branch changes nothing under tools/. Give the coordinator's owner a task to make it deterministic.",
+      "files": [
+        "tools/coord/merge_queue.py"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-25T23:30:00Z",
+      "due": "2026-11-27T23:30:00Z",
+      "default": "M1 re-runs the pre-check once; a PASS stands",
       "escalate_to": "lead"
     }
   ],
