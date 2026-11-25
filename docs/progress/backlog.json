@@ -2,8 +2,8 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Since 25 November 2026 the product tasks are the 3D quality wave (docs/art/3d-quality/plan.md, section 6 'Phases' and section 7 'Tracks'), started by the owner (CLAUDE.md order 1). Models and efforts follow CLAUDE.md order 7: each task names its model and effort; every task is reviewed by a verifier on Opus 5.5 at effort high before it merges. Tasks of the UI wave are kept below as history. Owner tasks (assigned_to 'owner') are never claimed by an agent.",
   "wave": "3D quality wave",
   "phase": 0,
-  "updated_at": "2026-11-25T12:00:00Z",
-  "updated_by": "overseer",
+  "updated_at": "2026-11-25T19:45:00Z",
+  "updated_by": "lead cycle 199",
   "stop_at": "2026-12-02T21:00:00Z",
   "lease_hours": 3,
   "status_every_minutes": 45,
@@ -540,8 +540,8 @@
       "title": "The find-it test: a fixed set of stills and clips with five questions each, scored against the mask",
       "phase": 0,
       "role": "measure track",
-      "model": "Sonnet 5.5",
-      "effort": "medium",
+      "model": "Opus 5.5",
+      "effort": "high",
       "assigned_to": "M2",
       "files": [
         "tools/render/findit*",
@@ -557,17 +557,20 @@
         "The scorer answers from the mask with no judge, and scores today's build"
       ],
       "gate_items": [],
-      "attempts": 0,
+      "attempts": 1,
       "estimate_h": 6,
       "tier": 1,
       "critical": false,
-      "state": "open",
+      "state": "resync",
       "claim": null,
-      "prior_branch": null,
-      "prior_sha": null,
+      "prior_branch": "claude/3d-mask",
+      "prior_sha": "028837befecfb7763889dd8351807e0b6b3eefaf",
       "ready_sha": null,
       "merged_sha": null,
-      "exceptions": []
+      "exceptions": [
+        "client/tests/shots/style_frame_heist.gd.uid"
+      ],
+      "resync_reason": "Verifier (cycle 199, Opus 5.5 high) failed 028837be. Must fix: (1) the route/sight question can never pass on a real render: findit.py:182 counts only s.cls == M.MARKER in id.png, but mask_pass.gd:362-373 puts the real 3D markers (sight edge, rings, overlay, effects) in marks3d.png, not id.png; escape-15 has 0 id-MARKER pixels near g0/g1 but 32,620 and 41,488 marks3d pixels in reach, so find-it.md:112-113's claim that the escape stills draw no sight comes from this bug. Swapping in s.markers is not enough (45k-240k pixels would pass every guard): read the sight edge or cone near each guard. (2) Off-frame guards count as misses: findit.py:202's guard filter lacks the px > 0 / in_frame check (escape-11's g0 reported 'off'), against find-it.md:35 'every guard in view'; the crew filter at findit.py:77 has the same gap. Notes: findit.py:73's comment says GAIT_EDGES were set from the clips' first render, but no clip was rendered; score_clip raises IndexError on a frame with no crew (findit.py:226); dead code at findit.py:258 and :383; render_one sets MASK_NO_IMPORT=1 (findit.py:238), so say in find-it.md that a fresh checkout needs client/build.sh first. Re-score today's build after the fixes."
     },
     {
       "id": "3D0-OW-phone-trial",
