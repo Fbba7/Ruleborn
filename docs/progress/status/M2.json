@@ -3,32 +3,30 @@
   "role": "measure track",
   "branch": "claude/3d-mask",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
+  "agent_state": "active",
   "task_id": "3D0-M2-find-it",
-  "task_state": "ready",
-  "claimed_at": "2026-11-25T18:37:17Z",
-  "lease_until": "2026-11-25T19:45:00Z",
-  "updated_at": "2026-11-25T19:08:17Z",
-  "expected_next_update_by": null,
+  "task_state": "claimed",
+  "claimed_at": "2026-11-25T19:40:00Z",
+  "lease_until": "2026-11-25T22:40:00Z",
+  "updated_at": "2026-11-25T19:40:00Z",
+  "expected_next_update_by": "2026-11-25T20:25:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "028837befecfb7763889dd8351807e0b6b3eefaf",
-    "next_step": "ready; waiting for the verifier and the merge"
+    "next_step": "resync (cycle 199): read sight from marks3d per guard, off-frame filter, verifier's notes, re-score"
   },
-  "precheck": {
-    "sha": "028837befecfb7763889dd8351807e0b6b3eefaf",
-    "state": "PASS",
-    "exit": 0,
-    "finished_at": "2026-11-25T19:08:03Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
-  "ready_sha": "028837befecfb7763889dd8351807e0b6b3eefaf",
+  "ready_sha": null,
   "stop_at": "2026-12-02T21:00:00Z",
   "acks": [
     {
       "id": "cycle-197-start",
       "note": "mask-tool merged on main (a34f20ac); main merged in. M2-R1 stays at its default. Verifier's Q11 vault note kept: plan.md 2.6's vault column, not the tool."
+    },
+    {
+      "id": "cycle-199-resync",
+      "note": "resync_reason read; main (7b071138) merged in; fixing (1) sight per guard from marks3d, (2) off-frame filter, and the notes"
     }
   ],
   "requests": [
