@@ -33,8 +33,19 @@ MIN_POINTS = 32.0   # Q2: a figure at least this tall (points)
 MAX_BLEND = 0.05    # Q3: at most this share of a figure within 18 grays of the ground
 MIN_SEEN = 0.80     # Q4: at least this share of a figure's head seen
 MAX_COVER = 0.20    # a vault or exit under markers by at most this share
-SIGHT_PIXELS = 150  # marker pixels near a guard that show its sight
-SIGHT_REACH = 6.0   # ... within this many guard heights of its feet
+# A guard's sight is read from marks3d.png (the 3D markers alone, mask.md):
+# the shown guard's red cone and edge, every other guard's pale fan
+# (client/world/fx_ground.gd). Both start at the guard's feet, so a guard's
+# sight is the sight pixels on the ground between SIGHT_INNER and
+# SIGHT_OUTER metres from its feet, past its own rings (0.62 m) and short of
+# the next tiles' cones; the fan reaches 1.6 m (FAN_REACH).
+SIGHT_INNER = 0.7   # metres from the feet
+SIGHT_OUTER = 2.0
+SIGHT_PIXELS = 40   # fewest sight pixels in that ring that show the sight
+RING_CLEAR = 0.65   # metres round every other figure left out (its rings)
+# world_view.gd's AWARE: the shown guard is the most aware, then the one
+# nearest the chosen crew member (WorldView.shown_guard).
+AWARE = {"Unaware": 0, "Returning": 0, "Suspicious": 1, "Investigating": 2, "Searching": 3, "Alerted": 4}
 MIN_OBJECT = 300    # fewest id-mask pixels that show a vault or an exit
 CELL = 6            # the route's grid, pixels
 
@@ -69,12 +80,20 @@ CLIPS = {
     "run": {"gait": "run"},
 }
 # Screen speed of the moving crew member's feet, points per second, below
-# which a clip reads as each gait. Set from the three clips' first render.
+# which a clip reads as each gait. Provisional: no clip has been rendered
+# (find-it.md, "The clips"); set them from the three clips' first render.
 GAIT_EDGES = (4.0, 9.0)
 
 
 def _crew_named(s: "M.Still"):
-    return [f for f in s.figures if f["kind"] == "crew" and f.get("visible", True)]
+    """The crew members in view: shown and with pixels in the frame."""
+    return [f for f in s.figures if f["kind"] == "crew" and f.get("visible", True) and f["px"] > 0]
+
+
+def _guards_in_view(s: "M.Still"):
+    """The guards in view: shown, on their feet and with pixels in the frame
+    (find-it.md: "every guard in view"); one off the frame is not asked."""
+    return [f for f in s.figures if f["kind"] == "guard" and s.in_frame(f)]
 
 
 def _height(s, f) -> float:
@@ -148,6 +167,98 @@ def object_found(s, key: str) -> dict:
             "covered_by_markers": round(cover, 3)}
 
 
+def ground_map(s):
+    """The ground plane's map from the frame back to the world: a homography
+    fitted to every figure's feet (world x, z to frame x, y; mask.json),
+    inverted, so each pixel has a ground position in metres. None when fewer
+    than four figures fix it."""
+    pts = [(f["world"][0], f["world"][2], f["feet"][0], f["feet"][1]) for f in s.figures
+           if "world" in f and "feet" in f]
+    if len(pts) < 4:
+        return None
+    a = []
+    for x, z, u, v in pts:
+        a.append([x, z, 1, 0, 0, 0, -u * x, -u * z, -u])
+        a.append([0, 0, 0, x, z, 1, -v * x, -v * z, -v])
+    _u, sv, vt = np.linalg.svd(np.asarray(a, float))
+    if sv[-2] < 1e-9 * sv[0]:
+        return None
+    hm = vt[-1].reshape(3, 3)
+    inv = np.linalg.inv(hm)
+    yy, xx = np.mgrid[0:s.h, 0:s.w]
+    q = np.einsum("ij,jhw->ihw", inv, np.stack([xx + 0.5, yy + 0.5, np.ones_like(xx, float)]))
+    with np.errstate(divide="ignore", invalid="ignore"):
+        gx, gz = q[0] / q[2], q[1] / q[2]
+    return gx, gz
+
+
+def sight_pixels(s):
+    """marks3d.png's sight colours: red (the shown guard's cone, its edge and
+    ring) and pale (the other guards' fans), each a boolean frame."""
+    p = s.dir / "marks3d.png"
+    if not p.exists():
+        z = np.zeros((s.h, s.w), bool)
+        return z, z
+    rgb = M.load(p)[..., :3].astype(int)
+    r, g, b = rgb[..., 0], rgb[..., 1], rgb[..., 2]
+    lo, hi = rgb.min(axis=2), rgb.max(axis=2)
+    # Crimson (the cone, about 120, 20, 40), not the crew rings' orange,
+    # whose green is well over its blue.
+    red = (r > 60) & (g * 10 < r * 4) & (b + 8 >= g) & (b * 10 < r * 7)
+    # The fans' lavender white (#F3EEFF at 0.55, about 100, 90, 110 to 190,
+    # 170, 190 as rendered): blue at least its red, not the effects' bright
+    # pink sparks.
+    pale = (lo > 60) & (hi - lo < 40) & (b + 8 >= r) & (b >= g) & (hi < 215)
+    return red & ~s.covered, pale & ~s.covered
+
+
+def shown_guard(s) -> int:
+    """WorldView.shown_guard: the most aware guard on its feet, then the one
+    nearest the chosen crew member's tile."""
+    chosen = s.info.get("chosen", -1)
+    near = next((f.get("world") for f in s.figures if f["kind"] == "crew" and f["index"] == chosen), None)
+    best, key_best = -1, -float("inf")
+    for f in s.figures:
+        if f["kind"] != "guard" or f.get("down"):
+            continue
+        key = AWARE.get(str(f.get("state", "Unaware")), 0) * 1000.0
+        if near is not None and f.get("world") is not None:
+            # World x, z is the tile ("at", written as a string) less a fixed offset.
+            key -= float(np.hypot(f["world"][0] - near[0], f["world"][2] - near[2]))
+        else:
+            key -= f["index"]
+        if key > key_best:
+            best, key_best = f["index"], key
+    return best
+
+
+def sight_of(s, guards: list) -> dict:
+    """For each guard, whether its own sight is drawn: the shown guard's red
+    cone, or another guard's pale fan, on the ground round its feet."""
+    out = {}
+    if not guards:
+        return out
+    ground = ground_map(s)
+    red, pale = sight_pixels(s)
+    shown = shown_guard(s)
+    for g in guards:
+        if ground is None:
+            out[g["name"]] = {"drawn": False, "why": "ground not fixed", "red": 0, "pale": 0}
+            continue
+        gx, gz = ground
+        wx, wz = g["world"][0], g["world"][2]
+        d = np.hypot(gx - wx, gz - wz)
+        ring = (d > SIGHT_INNER) & (d <= SIGHT_OUTER)
+        for f in s.figures:
+            if f is not g and "world" in f:
+                ring &= np.hypot(gx - f["world"][0], gz - f["world"][2]) > RING_CLEAR
+        n_red, n_pale = int((red & ring).sum()), int((pale & ring).sum())
+        is_shown = g["index"] == shown
+        drawn = n_pale >= SIGHT_PIXELS or (is_shown and n_red >= SIGHT_PIXELS)
+        out[g["name"]] = {"drawn": drawn, "shown": is_shown, "red": n_red, "pale": n_pale}
+    return out
+
+
 def route(s, guards: list) -> dict:
     """The safest route can be read when the ground joins the chosen crew
     member to the exit in view, and each guard's sight is drawn."""
@@ -179,27 +290,19 @@ def route(s, guards: list) -> dict:
                 break
     if not joined:
         why.append("ground does not join the chosen crew member to the exit")
-    marks = (s.cls == M.MARKER) & ~s.covered
-    yy, xx = np.mgrid[0:s.h, 0:s.w]
-    unseen = []
-    for g in guards:
-        if g.get("down") or not g.get("visible", True) or g["px"] == 0:
-            continue
-        gx_, gy_ = g["feet"]
-        reach = SIGHT_REACH * max(40.0, g["head"][1] and abs(g["feet"][1] - g["head"][1]))
-        near = marks & ((xx - gx_) ** 2 + (yy - gy_) ** 2 <= reach ** 2)
-        if int(near.sum()) < SIGHT_PIXELS:
-            unseen.append(g["name"])
+    sight = sight_of(s, guards)
+    unseen = [name for name, r in sight.items() if not r["drawn"]]
     if unseen:
         why.append("no sight drawn for " + ", ".join(unseen))
-    return {"found": not why, "why": why, "joined": joined, "guards_without_sight": unseen}
+    return {"found": not why, "why": why, "joined": joined, "guards_without_sight": unseen,
+            "sight": sight}
 
 
 def score(folder: Path) -> dict:
     """Answer the five questions for one masked still."""
     s = M.Still(Path(folder))
     crew = [figure_found(s, f) for f in _crew_named(s)]
-    guards_f = [f for f in s.figures if f["kind"] == "guard" and f.get("visible", True) and not f.get("down")]
+    guards_f = _guards_in_view(s)
     guards = [figure_found(s, f) for f in guards_f]
     answers = {
         "crew": {"found": bool(crew) and all(r["found"] for r in crew), "figures": crew},
@@ -222,10 +325,12 @@ def score_clip(folders: list, seconds: float = FRAME_SECONDS) -> dict:
         pt = 360.0 / info["frame"][0]
         chosen = info.get("chosen", -1)
         crew = [f for f in info["figures"] if f["kind"] == "crew"]
-        pick = next((f for f in crew if f["index"] == chosen), crew[0])
+        pick = next((f for f in crew if f["index"] == chosen), crew[0] if crew else None)
+        if pick is None:
+            return {"gait": None, "speed": None, "why": f"no crew member in {Path(d).name}"}
         pts.append(pick["feet"])
     if pt is None or len(pts) < 2:
-        return {"gait": None, "speed": None}
+        return {"gait": None, "speed": None, "why": "fewer than two frames"}
     path = sum(np.hypot(b[0] - a[0], b[1] - a[1]) for a, b in zip(pts, pts[1:])) * pt
     speed = path / (seconds * (len(pts) - 1))
     gait = "sneak" if speed < GAIT_EDGES[0] else "walk" if speed < GAIT_EDGES[1] else "run"
@@ -255,7 +360,6 @@ def table(results: dict) -> str:
         for k, _q in QUESTIONS:
             a = r["answers"][k]
             totals[k] += int(a["found"])
-            why = a.get("why") or [w for fig in a.get("figures", []) for w in fig["why"][:1]]
             cells.append("yes" if a["found"] else "no")
         out.append(f"| {name} | " + " | ".join(cells) + f" | {r['right']} of {r['of']} |")
     if n:
@@ -298,10 +402,14 @@ def run(out: Path, jobs: int, render: bool, only: list) -> dict:
 
 
 def self_test() -> None:
-    """A drawn still whose five answers are known, and a drawn clip."""
+    """A drawn still whose five answers are known, its guard's sight drawn,
+    missing and under another guard's rule, and a drawn clip."""
     import tempfile
     from PIL import Image
     w, h = 90, 195
+    # The ground of the drawn still: 10 pixels a metre, x right, z down.
+    def feet(x, z):
+        return [10 + 10 * x, 40 + 10 * z]
     with tempfile.TemporaryDirectory() as tmp:
         d = Path(tmp)
         ua = np.zeros((h, w, 4), np.uint8)
@@ -317,16 +425,11 @@ def self_test() -> None:
         idp = np.zeros((h, w, 4), np.uint8)
         idp[..., 3] = 255
         idp[..., :3] = M.code(M.WALKABLE, M.T_OPEN)
+        idp[50:150, 18:70, :3] = M.code(M.PATH, 0)        # a path joins them all
         idp[60:100, 10:18, :3] = M.code(M.CREW, 0)       # crew: 40 px = 160 pt, tall
         idp[60:100, 60:68, :3] = M.code(M.GUARD, 0)      # guard
         idp[90:110, 38:58, :3] = M.code(M.VAULT, 0)
         idp[120:136, 65:85, :3] = M.code(M.EXIT, 0)
-        idp[50:150, 18:70, :3][:, :] = M.code(M.PATH, 0)  # a path joins them all
-        idp[60:100, 10:18, :3] = M.code(M.CREW, 0)
-        idp[60:100, 60:68, :3] = M.code(M.GUARD, 0)
-        idp[90:110, 38:58, :3] = M.code(M.VAULT, 0)
-        idp[120:136, 65:85, :3] = M.code(M.EXIT, 0)
-        idp[60:100, 70:78, :3] = M.code(M.MARKER, 0)     # the guard's sight
         Image.fromarray(idp).save(d / "id.png")
         world = np.full((h, w, 4), 40, np.uint8)
         world[60:100, 10:18, :3] = 230
@@ -338,25 +441,82 @@ def self_test() -> None:
             solo = np.zeros((h, w, 4), np.uint8)
             solo[box[0]:box[1], box[2]:box[3]] = (40, 8, 8, 255)
             Image.fromarray(solo).save(d / f"solo_{name}.png")
+        # g0's sight: a wedge ahead of it, 1 to 1.8 m from its feet.
+        yy, xx = np.mgrid[0:h, 0:w]
+        fx, fy = feet(5.4, 6.0)
+        dist = np.hypot(xx + 0.5 - fx, yy + 0.5 - fy)
+        wedge = (dist > 10) & (dist < 18) & (yy < fy - 6) & (np.abs(xx + 0.5 - fx) < 8)
+
+        def marks(colour):
+            m = np.zeros((h, w, 4), np.uint8)
+            m[..., 3] = 255
+            if colour is not None:
+                m[wedge] = (*colour, 255)
+            Image.fromarray(m).save(d / "marks3d.png")
+        marks((150, 140, 165))                          # a guard's pale fan, as rendered
         info = {"frame": [w, h], "view_rect": [0, 0, w, h], "chosen": 0, "zoom": 1,
                 "vault": {"rect": [40, 90, 10, 20], "centre": [45, 100]},
                 "exit": {"rect": [70, 120, 15, 10], "centre": [77, 125]},
                 "figures": [
                     {"kind": "crew", "index": 0, "role": "rogue", "visible": True, "rect": [10, 60, 8, 40],
-                     "head": [14, 60], "feet": [14, 100], "span": 40, "world": [0, 0, 0]},
+                     "head": [14, 60], "feet": feet(0.4, 6.0), "span": 40, "world": [0.4, 0, 6.0]},
                     {"kind": "guard", "index": 0, "role": "guard", "visible": True, "rect": [60, 60, 8, 40],
-                     "head": [64, 60], "feet": [64, 100], "span": 40, "world": [3, 0, 3]}]}
+                     "head": [64, 60], "feet": feet(5.4, 6.0), "span": 40, "world": [5.4, 0, 6.0],
+                     "state": "Unaware"},
+                    # Wholly off the frame: shown, but no pixel of either is drawn.
+                    {"kind": "crew", "index": 1, "role": "brute", "visible": True, "rect": [-60, -20, 8, 40],
+                     "head": [-56, -20], "feet": feet(-6.6, -2.0), "span": 40, "world": [-6.6, 0, -2.0]},
+                    {"kind": "guard", "index": 1, "role": "guard", "visible": True, "rect": [196, 260, 8, 40],
+                     "head": [200, 260], "feet": feet(19.0, 26.0), "span": 40, "world": [19.0, 0, 26.0],
+                     "state": "Unaware"}]}
         (d / "mask.json").write_text(json.dumps(info))
         r = score(d)
         a = r["answers"]
+        assert len(a["crew"]["figures"]) == 1 and len(a["guards"]["figures"]) == 1, a
         assert a["crew"]["found"] and a["guards"]["found"], a
         assert a["vault"]["found"] and a["exit"]["found"], a
-        assert a["route"]["found"], a
+        assert list(a["route"]["sight"]) == ["g0"], a["route"]
+        assert a["route"]["found"], a["route"]
         assert r["right"] == 5, r
+        # No sight round the guard: the route is not found.
+        marks(None)
+        r = score(d)
+        assert r["answers"]["route"]["guards_without_sight"] == ["g0"] and r["right"] == 4, r
+        # The crew rings' orange is not a sight.
+        marks((180, 100, 20))
+        r = score(d)
+        assert r["answers"]["route"]["guards_without_sight"] == ["g0"], r["answers"]["route"]
+        # Nor are the effects' pink sparks.
+        marks((240, 205, 225))
+        r = score(d)
+        assert r["answers"]["route"]["guards_without_sight"] == ["g0"], r["answers"]["route"]
+        # The crimson cone counts for the shown guard alone.
+        marks((120, 22, 42))
+        r = score(d)
+        assert r["answers"]["route"]["sight"]["g0"]["shown"] and r["right"] == 5, r
+        info["figures"][3]["state"] = "Alerted"     # now g1 is the shown guard
+        (d / "mask.json").write_text(json.dumps(info))
+        r = score(d)
+        assert not r["answers"]["route"]["sight"]["g0"]["shown"] and r["right"] == 4, r
+        # Under a panel, the sight does not count.
+        info["figures"][3]["state"] = "Unaware"
+        (d / "mask.json").write_text(json.dumps(info))
+        for p in ("ui_a.png", "ui_b.png"):
+            im = np.array(Image.open(d / p))
+            im[wedge] = (90, 90, 90, 255)
+            Image.fromarray(im).save(d / p)
+        r = score(d)
+        assert not r["answers"]["route"]["found"], r["answers"]["route"]
+        # Fewer than four figures do not fix the ground.
+        few = dict(info, figures=info["figures"][:2])
+        (d / "mask.json").write_text(json.dumps(few))
+        r = score(d)
+        assert r["answers"]["route"]["sight"]["g0"]["why"] == "ground not fixed", r["answers"]["route"]
+        (d / "mask.json").write_text(json.dumps(info))
         # A crew member the same gray as the ground is not found.
         Image.fromarray(np.full((h, w, 4), 40, np.uint8)).save(d / "world.png")
         r = score(d)
-        assert not r["answers"]["crew"]["found"] and r["right"] == 3, r
+        assert not r["answers"]["crew"]["found"], r
         # A clip: feet at 2 points per second read as a sneak, 60 as a run.
         folders = []
         for i in range(3):
@@ -372,6 +532,12 @@ def self_test() -> None:
             inf["figures"][0]["feet"] = [14 + 3.0 * i, 100]
             (c / "mask.json").write_text(json.dumps(inf))
         assert score_clip(folders)["gait"] == "run", score_clip(folders)
+        # A frame with no crew member gives no gait, and no error.
+        inf = json.loads((folders[1] / "mask.json").read_text())
+        inf["figures"] = [f for f in inf["figures"] if f["kind"] != "crew"]
+        (folders[1] / "mask.json").write_text(json.dumps(inf))
+        assert score_clip(folders)["gait"] is None, score_clip(folders)
+        assert score_clip(folders[:1])["gait"] is None
     print("findit self-test: ok")
 
 
@@ -379,10 +545,6 @@ def main() -> int:
     if sys.argv[1:] == ["--self-test"]:
         self_test()
         return 0
-    args = [a for a in sys.argv[1:] if not a.startswith("--") and not a.isdigit()]
-    if len(args) < 1 or not args[0] or args[0].count(",") and False:
-        print(__doc__)
-        return 2
     jobs = 3
     only = []
     pos = []

@@ -8,7 +8,10 @@ object whether it can be found, in the plan's own terms. The command is
 `python3 tools/render/findit.py OUTDIR` (`--jobs N`, `--only a,b`,
 `--no-render`, `--self-test`). It renders each still through
 `tools/render/mask.py`, so it needs the same Godot and Xvfb as the mask tool,
-and takes about three minutes for the ten stills with three jobs.
+and takes about three minutes for the ten stills with three jobs. It renders
+with `MASK_NO_IMPORT=1` (no asset import per still), so a fresh checkout
+runs `bash client/build.sh` once first; without it the shot has no imported
+assets to load.
 
 ## The stills
 
@@ -35,7 +38,7 @@ Five per still, so ten stills give 50 answers. Q9's target is 90% right,
 | Where is every guard? | every guard in view is found |
 | Where is the vault? | its pixels in the id mask are at least 300, not cut by the frame's edge, less than half under a panel, and under 20% markers |
 | Where is the exit? | the same, for the exit |
-| Which route from the chosen crew member to the exit is safest? | the walkable ground joins the chosen crew member's feet to the exit in view without crossing a panel, and each visible guard has its sight drawn (at least 150 marker pixels within six guard-heights of its feet) |
+| Which route from the chosen crew member to the exit is safest? | the walkable ground joins the chosen crew member's feet to the exit in view without crossing a panel, and every guard in view has its own sight drawn (below) |
 
 A figure is **found** when all four hold. They are the plan's own targets
 for Q2, Q3 and Q4, so a figure the plan calls readable is one the test finds:
@@ -44,6 +47,27 @@ for Q2, Q3 and Q4, so a figure the plan calls readable is one the test finds:
 - its head (the top 30%) is at least 80% seen;
 - it stands at least 32 points tall (Q2);
 - at most 5% of its pixels are within 18 gray levels of the ground behind it (Q3).
+
+A figure is **in view** when it is shown and has pixels in the frame
+(`px > 0`); a guard is asked only if it is also on its feet. A crew member
+or a guard wholly off the frame is not asked about: the questions are about
+what the still shows. One partly on the frame is asked, and is not found
+(it is cut).
+
+A guard's **sight is drawn** when its own sight shows on the ground round
+its feet. The 3D markers are not in the id mask; they are in `marks3d.png`
+(mask.md), drawn in their own colours: the shown guard's cone, its edge and
+its ring in the alarm's red, and every other guard's facing as a pale
+dashed fan reaching 1.6 m (`client/world/fx_ground.gd`, §21.12). The scorer
+maps each pixel back to the ground with a homography fitted to every
+figure's feet (world x and z in `mask.json` to the frame), and counts, for
+each guard, the sight pixels from 0.7 to 2 m from its feet: past its own
+rings (0.62 m), with 0.65 m round every other figure left out (their
+rings). The shown guard (the most aware, then the one nearest the chosen
+crew member, as `WorldView.shown_guard` picks it) needs 40 red or pale
+pixels there; any other guard needs 40 pale ones, so the shown guard's red
+cone is not read as a neighbour's sight. A sight under a panel does not
+count. `findit.json` keeps each guard's counts (`route.sight`).
 
 A question with nothing to find (no guard in view, no exit in the still) is
 answered "not found": a player cannot find what the picture does not show.
@@ -75,7 +99,10 @@ Three clips, three answers.
 a moment is a still, and the crew's pace is not set from the shot's
 environment. The clip scorer is built and tested on drawn frames
 (`--self-test`: feet moving at 2 and at 60 points per second read as sneak
-and run), and the run reports no clip answers until frames exist. When the
+and run), and the run reports no clip answers until frames exist.
+`GAIT_EDGES` are provisional for the same reason: no clip has been
+rendered to set them from, so they are set from the three clips' first
+render. When the
 shot can render a gait over a series of frames, the clips join the run with
 no change to the scorer; this is request M2-R2 in M2's status file. The
 timing half of Q13 (an order answered within 0.1 seconds) is a timing check,
@@ -84,7 +111,7 @@ not a find-it question, and is not part of this task.
 ## Today's build
 
 Ten stills, 50 answers, run on this branch (the scorer reads
-`mask.json` and the passes; the render is `findit.py /tmp/fi`):
+`mask.json` and the passes; the render is `findit.py <scratch>/fi`):
 
 | Question | Found |
 |---|---:|
@@ -92,28 +119,47 @@ Ten stills, 50 answers, run on this branch (the scorer reads
 | guards | 0 of 10 |
 | vault | 3 of 10 |
 | exit | 2 of 10 |
-| route | 0 of 10 |
-| **all** | **5 of 50 (10%)** |
+| route | 2 of 10 |
+| **all** | **7 of 50 (14%)** |
 
-Q9 is 10% against a target of 90%. Nothing here is a fault of the tool; it is
+Q9 is 14% against a target of 90%. Nothing here is a fault of the tool; it is
 the build, and the reasons say how:
 
 - **Crew and guards: 0 of 10.** At 15 tiles the crew stand 24 to 29 points
-  tall, under the 32 of Q2 (a guard in a still can be 40). At 11 tiles they
-  pass Q2 (33 to 39 for crew, 53 for guards). In all ten stills a crew member
-  or a guard blends with the ground by 13 to 40% of its pixels, against Q3's
-  5%, and that alone fails every still. Where a panel or another figure hides
-  a head (entry-15, hold-15, sneak-11), the head seen falls to 0 to 38%.
+  tall (14 for one half hidden in alarm-15), under the 32 of Q2. At 11 tiles
+  they pass Q2. In all ten stills a crew member or a guard blends with the
+  ground by 13 to 40% of its pixels, against Q3's 5%, and that alone fails
+  every still. Where a panel or another figure hides a head (entry-15,
+  hold-15, sneak-15, sneak-11), the head seen falls to 0 to 38%. A guard
+  partly off the frame is cut (escape-15, entry-15, start-11); one wholly
+  off it is not asked (g0 in escape-11).
 - **Vault: 3 of 10.** Found in sneak, hold and the 11-tile sneak. In the
   others it is under a panel (the order bar over it, as plan.md 2.6 draws
   it) or covered by its own markers (vault-15: 24%).
 - **Exit: 2 of 10.** The exit is in the frame only in the escape stills. In
   the other eight it is not drawn, so the player cannot find it.
-- **Route: 0 of 10.** Where the exit is not in view there is no route to
-  read; in the escape stills the guards' sight is not drawn.
+- **Route: 2 of 10.** Found in both escape stills: the ground joins the
+  chosen crew member to the exit, and every guard in view has its sight
+  drawn (the shown guard's red cone, 5,574 pixels at 15 tiles and 10,372 at
+  11; the other guard's pale fan, 750 at 15 tiles). In the other eight the
+  exit is not in view, so there is no route to read. In the nine stills
+  whose ground is fixed (all but entry-15, below), every guard in view has
+  its sight drawn, the shown one by 3,257 red pixels or more and each other
+  one by 410 pale pixels or more, against 40.
 
 The 11-tile stills score the same as the 15-tile ones: the closer camera
 fixes the size of the figures (Q2) but not their blending or the panels.
+
+The sight's colour tests were set from this render: the cone renders
+crimson (about 120, 20, 40), the fans lavender white (about 100, 90, 110 to
+190, 170, 190), the crew rings orange (about 180, 60 to 100, 20) and the
+effects' sparks bright pink (about 240, 200, 220); the tests take the first
+two and leave out the others. Rings of the same size round random ground
+points at least 3.7 m from every guard hold no sight pixels in most stills
+(at most 3 of the 57 to 80 rings in a still pass 40), so the 40 a guard
+needs is seldom met by chance. The stray hit checked, in sneak-11, is a
+falling petal of the effects, shaded mauve (about 115, 78, 112), which the
+fan test takes; a red hit can only credit the shown guard.
 
 ## Limits
 
@@ -123,9 +169,17 @@ fixes the size of the figures (Q2) but not their blending or the panels.
   mask" until a person plays the pilot (the phase 1 exit).
 - The route question asks only that the ground joins and the sight shows. It
   does not rank routes; "safest" is the player's choice once both are drawn.
+- The ground is fitted to the figures' feet, so it needs four figures at
+  four distinct places. In entry-15 the three crew stand on one tile, so the
+  ground is not fixed and no guard's sight is read there ("ground not
+  fixed" in `route.sight`); that still has no exit in view, so its route
+  is not found either way.
 - The thresholds are constants at the top of `findit.py`
   (`MIN_POINTS`, `MAX_BLEND`, `MIN_SEEN`, `MAX_COVER`, `MIN_OBJECT`). They are
-  the plan's; change them only when the plan does.
+  the plan's; change them only when the plan does. The sight's (`SIGHT_INNER`,
+  `SIGHT_OUTER`, `SIGHT_PIXELS`, `RING_CLEAR` and the colour tests in
+  `sight_pixels`) are the scorer's own, set from today's render (above);
+  check them again when the sight's look changes.
 - The stills are Godot renders on the Compatibility renderer under Xvfb, as
   in mask.md; a run on another machine can differ in shading but not in the
   masks' classes.
