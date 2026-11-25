@@ -5,6 +5,28 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 192**, 25 November 2026, from about 14:39Z (session
+  `session_01SNkKxnzfoApztAshnsqsfp`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The first cycle of the 3D
+  quality wave. The changes since cycle 191: the restart (1eddd78a); the
+  UI branches `claude/ui-ad`, `claude/ui-spec-docs-check` and
+  `claude/ui-spec-gate-run` moved with the stopped builders' last pushes
+  (the UI wave is closed: nothing to merge). M63, M64 and M65 are done
+  (phase 3 closed at e33be6f9) and acknowledged. SP-bt-06's late status
+  is a stopped builder's; no restart. **Merge and gate:** none: nothing
+  is ready, no merge lock. **Started**, as new agents by order 7: M1 on
+  3D0-M1-budget-split (`session_01SNkKxn3VgF7utqQN2JkCuy`, Sonnet 5.5
+  medium, `claude/3d-measure`), M2 on 3D0-M2-mask-tool
+  (`session_01SNkKxpG1o34prYosYVfYED`, Opus 5.5 medium, `claude/3d-mask`)
+  and CF1 on 3D0-CF1-style-frames (`session_01SNkKxp5DfWujKR3BZxFjQg`,
+  Opus 5.5 medium, `claude/3d-camera`): plan.md's first tasks 1 to 3.
+  **DT1 is not started:** the seven-day bar reads `allowed_warning`, so
+  order 3's cap is three; 3D0-DT1-data-spec (Opus 5.5 high) takes the
+  first free seat, or the fourth seat once the bar clears. **Next:** start
+  DT1 when a seat frees or the bar clears; verify (Opus 5.5 high
+  subagent) and merge each phase 0 task as it is ready; name the owner's
+  phone-trial build once the budget split merges.
+
 - **Cycle 191**, 24 November 2026, from about 22:39Z (session
   `session_01SNkKxpEYznsGFjJLSHAYZS`, started by the Opus 5.5 launcher,
   effort medium by order 6). The changes since cycle 190: SP-bt-04 marked

@@ -1386,6 +1386,13 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
 
 ### Lead
 
+- **M2-R1** (from M2, 25 November 2026 15:30Z; due 27 November 15:30Z;
+  not blocking): `tools/render/measure.py --self-test` (synthetic stills,
+  about a second) is not run by `tools/check_all.sh`; add it there if
+  wanted. Files: tools/check_all.sh, tools/render/measure.py. Default:
+  leave check_all.sh unchanged; the self-test stays a manual command
+  named in mask.md. Copied in cycle 195.
+
 - **FX1-R1** (from FX1, 21 November 2026 16:20Z; due 22 November 16:20Z;
   not blocking): RB-30's Fix line names `409 taken_down`, but that reason
   has no row in `client/i18n/strings.csv` (outside FX1-1's files) and

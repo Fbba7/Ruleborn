@@ -8262,6 +8262,41 @@
       "ready_sha": "3bfb8325",
       "merged_sha": "e33be6f9",
       "exceptions": []
+    },
+    {
+      "id": "3D0-CF1-style-frames",
+      "title": "Three heist style frames, as real renders, for the owner to pick: (a) camera at 11 tiles; (b) figures about 1.4x via readable_scale; (c) both, with the quiet ground",
+      "phase": 0,
+      "role": "camera and framing track",
+      "model": "Opus 5.5",
+      "effort": "medium",
+      "assigned_to": "CF1",
+      "files": [
+        "client/tests/shots/style_frame_*.gd",
+        "docs/art/3d-quality/style-frames/**",
+        "docs/art/3d-quality/style-frames.md",
+        "docs/progress/CF1.md",
+        "docs/progress/status/CF1.json"
+      ],
+      "deps": [],
+      "done_when": [
+        "The same heist moment rendered three ways, at phone size and 2x, in docs/art/3d-quality/style-frames/",
+        "style-frames.md shows them side by side with what each costs (plan section 6, phase 0) and asks the owner one question: which frame",
+        "No change to the game's default camera or scale: the frames are shot-only",
+        "bash tools/run_checks.sh passes"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 8,
+      "tier": 1,
+      "critical": true,
+      "state": "merged",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "4e6c51ee",
+      "merged_sha": "f07f36c1",
+      "exceptions": []
     }
   ],
   "idle_queue": [

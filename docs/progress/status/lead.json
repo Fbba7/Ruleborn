@@ -1,18 +1,12 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-25T15:25:00Z",
-  "expected_next_update_by": "2026-11-25T18:25:00Z",
-  "cycle": 193,
-  "merging": {
-    "task_id": "3D0-CF1-style-frames",
-    "by": "lead cycle 194",
-    "candidate": "07b5bc51",
-    "started_at": "2026-11-25T16:10:00Z",
-    "expires_at": "2026-11-25T17:10:00Z"
-  },
+  "updated_at": "2026-11-25T16:44:00Z",
+  "expected_next_update_by": "2026-11-25T19:44:00Z",
+  "cycle": 195,
+  "merging": null,
   "last_merged": {
-    "task_id": "P3-AD-wave-close",
-    "sha": "e33be6f9"
+    "task_id": "3D0-CF1-style-frames",
+    "sha": "f07f36c1"
   },
   "acks": [
     "M15",
@@ -57,19 +51,20 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Verify (Opus 5.5 high) and merge 3D0-M1-budget-split and 3D0-CF1-style-frames once their builders mark them ready; M2 builds the mask tool; start DT1 on 3D0-DT1-data-spec (Opus 5.5 high) when a seat frees or the seven-day bar leaves allowed_warning.",
+  "next_step": "Restart DT1 if it is still stale after 17:05Z (its pushes hit GitHub 503s, commits up to 60616371 unpushed). Verify (Opus 5.5 high) and merge 3D0-M2-mask-tool when M2 (restarted in cycle 195) marks it ready, and 3D0-M1-budget-split when M1 marks its resync ready. The owner picks a style frame; the phone trial follows the budget split.",
   "seen": {
-    "at": "2026-11-25T15:17:44Z",
+    "at": "2026-11-25T16:42:10Z",
     "heads": {
-      "claude/3d-camera": "4e6c51eee733c208af685fcd0902c97591cc94a7",
+      "claude/3d-camera": "18ae7ba4d527593a82b80c10b3c82e0f0d7e1610",
       "claude/3d-character-screens": "6053b249bee313648da3509142eeb2ba738bb62f",
       "claude/3d-characters": "35d6ae8f5b84a4d75636f68270848b0949c111f3",
       "claude/3d-characters-2": "933123b54b85f8cddc66b1131f65cb357c63f4ab",
+      "claude/3d-data": "8170699931e26eb14bb98006665f6bdfbca45b7a",
       "claude/3d-kit": "ca2308becc903e76c6709028982e8ca7066e5a08",
       "claude/3d-law-fx": "358a1f08179d315ec69ff5dcb037e34e89ee7a2b",
       "claude/3d-look": "815e381279f5fdb9952b28866ed6dc4121f2b1d5",
-      "claude/3d-mask": "b0e9adb6d7fc7b998aded83751ed4d14a95b7206",
-      "claude/3d-measure": "e2927534aeef9d8c91571bd505562f17635e38f5",
+      "claude/3d-mask": "b1113efcae9ffb4eb62b010274ab1f417d8f30aa",
+      "claude/3d-measure": "5a5d5f41f3b40b2ef5b84f140dfaf9db0ef4f292",
       "claude/3d-screens": "11679b2bf4d2670e7067791d3bbf32cfd64edc2d",
       "claude/3d-screens-world": "ea319807b0a7c177e1b1413c76ae945d63f3f399",
       "claude/3d-universe": "8d38c65e16196661441a4471fc406d82ce181edc",
@@ -129,10 +124,11 @@
     },
     "ready": {},
     "startable": [
-      "3D0-CF1-style-frames",
-      "3D0-M1-budget-split",
+      "3D0-DT1-data-spec",
       "3D0-M2-mask-tool",
-      "BT-06"
+      "BT-05",
+      "BT-06",
+      "BT-09"
     ],
     "messages": [
       "M10",
@@ -181,6 +177,7 @@
     ],
     "leases": [],
     "stale": [
+      "M2@2026-11-25T16:15:00Z",
       "SP-bt-06@2026-11-25T00:10:00Z",
       "SP-bt-06@2026-11-25T00:10:00Z+late"
     ]
