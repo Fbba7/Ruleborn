@@ -399,8 +399,8 @@
       "title": "The shots' budget: line prints the split (mesh triangles, outline passes, other views); screen_defences shoots its rehearsal tab (TAB=0)",
       "phase": 0,
       "role": "measure track",
-      "model": "Sonnet 5.5",
-      "effort": "medium",
+      "model": "Opus 5.5",
+      "effort": "high",
       "assigned_to": "M1",
       "files": [
         "client/tests/shots/**",
@@ -415,17 +415,18 @@
         "bash tools/run_checks.sh passes"
       ],
       "gate_items": [],
-      "attempts": 0,
+      "attempts": 1,
       "estimate_h": 4,
       "tier": 1,
       "critical": true,
-      "state": "open",
+      "state": "resync",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
+      "ready_sha": "5a5d5f41",
       "merged_sha": null,
-      "exceptions": []
+      "exceptions": [],
+      "resync_reason": "Cycle 194, candidate 5a5d5f41: the verifier (Opus 5.5 high) failed the review. The numbers reproduce (defences 36011 = 27461 + 8550, 86 draw calls; heist 85446 = 57712 + 27734), but the split is miscounted. (1) budget_split.gd:95-97: _is_outline matches only paths ending in outline.gdshader and misses law_fx_ink.gdshader, the law FX ink hull (cull_front next_pass, law_fx.gd:383-386), so its passes count as mesh; with it, heist reads 56480 mesh + 28966 outline (plan.md's hand figure), defences mesh is 416 too high. (2) budget_split.gd:31-32: outline = total - without, from frame totals, which include each viewport's shadow-pass primitives (opaque next_pass hulls get FLAG_PASS_SHADOW); 926 shadow-pass outline triangles land in outline on defences (true visible split 27971 mesh + 8040 outline). Take outline as the sum of _view(v) with outlines minus the sum without. (3) budget_split.gd:40-41: 'other views' holds the world views' own shadow-pass triangles (4892 on defences) while the line prints '+0 in shadows'; label shadows as shadows. The full checks on 5a5d5f41 failed on the lead's container (client/build.sh had no Godot cache), not on the code; re-run them after the fix. Restarted one tier up, Opus 5.5 high, by order 7 (failed review)."
     },
     {
       "id": "3D0-M2-mask-tool",
