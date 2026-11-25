@@ -3,21 +3,27 @@
   "role": "measure track",
   "branch": "claude/3d-mask",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "3D0-M2-find-it",
-  "task_state": "claimed",
+  "task_state": "ready",
   "claimed_at": "2026-11-25T19:40:00Z",
   "lease_until": "2026-11-25T22:40:00Z",
-  "updated_at": "2026-11-25T19:48:00Z",
-  "expected_next_update_by": "2026-11-25T20:33:00Z",
+  "updated_at": "2026-11-25T20:27:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "028837befecfb7763889dd8351807e0b6b3eefaf",
-    "next_step": "resync fixes committed and today's build re-scored (7 of 50); merge main, pre-check, owners diff, mark ready"
+    "last_green_sha": "ea4bf7245bb95dc8fa07b817f8983060027edbfb",
+    "next_step": "verifier review and merge of 3D0-M2-find-it"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "ea4bf7245bb95dc8fa07b817f8983060027edbfb",
+    "state": "PASS",
+    "exit": 0,
+    "finished_at": "2026-11-25T20:25:29Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "ea4bf7245bb95dc8fa07b817f8983060027edbfb",
   "stop_at": "2026-12-02T21:00:00Z",
   "acks": [
     {
@@ -27,6 +33,10 @@
     {
       "id": "cycle-199-resync",
       "note": "resync_reason read; main (7b071138) merged in; fixing (1) sight per guard from marks3d, (2) off-frame filter, and the notes"
+    },
+    {
+      "id": "cycle-199-ready",
+      "note": "resync done: sight per guard from marks3d, off-frame filter, verifier notes, re-scored 7 of 50; pre-check PASS at ea4bf72; owners diff passes"
     }
   ],
   "requests": [
