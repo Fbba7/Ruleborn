@@ -4,21 +4,27 @@
   "branch": "claude/3d-measure",
   "model": "Opus 5.5",
   "effort": "high",
-  "agent_state": "working",
+  "agent_state": "waiting",
   "task_id": "3D0-M1-budget-split",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-25T12:23:29Z",
   "lease_until": "2026-11-25T17:53:29Z",
-  "updated_at": "2026-11-25T16:50:00Z",
-  "expected_next_update_by": "2026-11-25T17:30:00Z",
+  "updated_at": "2026-11-25T17:20:00Z",
+  "expected_next_update_by": "2026-11-26T17:20:00Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": null,
-    "next_step": "commit the resync, full pre-check, owners diff, mark ready"
+    "last_green_sha": "99184a98799021c0e730a57af05a3e17171d94fc",
+    "next_step": "lead's verifier reviews; then 3D0-M1-baseline after 3D0-M2-mask-tool merges"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "99184a98799021c0e730a57af05a3e17171d94fc",
+    "state": "PASS",
+    "exit": 0,
+    "finished_at": "2026-11-25T17:18:14Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "99184a98799021c0e730a57af05a3e17171d94fc",
   "stop_at": "2026-12-02T21:00:00Z",
   "acks": [],
   "requests": [
