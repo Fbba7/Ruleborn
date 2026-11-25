@@ -3,21 +3,27 @@
   "role": "measure track",
   "branch": "claude/3d-mask",
   "model": "Opus 5.5",
-  "agent_state": "working",
+  "agent_state": "waiting",
   "task_id": "3D0-M2-find-it",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-25T18:37:17Z",
   "lease_until": "2026-11-25T19:45:00Z",
-  "updated_at": "2026-11-25T18:37:17Z",
+  "updated_at": "2026-11-25T19:08:17Z",
   "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "deafdd0ab7a4ff1a6a9862c66729dff65ade8fbf",
-    "next_step": "pre-check, then ready"
+    "last_green_sha": "028837befecfb7763889dd8351807e0b6b3eefaf",
+    "next_step": "ready; waiting for the verifier and the merge"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "028837befecfb7763889dd8351807e0b6b3eefaf",
+    "state": "PASS",
+    "exit": 0,
+    "finished_at": "2026-11-25T19:08:03Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "028837befecfb7763889dd8351807e0b6b3eefaf",
   "stop_at": "2026-12-02T21:00:00Z",
   "acks": [
     {
