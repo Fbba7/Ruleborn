@@ -5,6 +5,21 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 193**, 25 November 2026, from about 15:15Z (session
+  `session_01SNkKxqKcNj6xVjwrFQ9Xt4`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 192:
+  M1, M2 and CF1 pushed to their branches. **M1** (`claude/3d-measure`,
+  e2927534): budget split built, its full checks running in its session,
+  not ready. **M2** (`claude/3d-mask`, b0e9adb6): mask tool's draft, still
+  working. **CF1** (`claude/3d-camera`, 4e6c51ee): the three style frames
+  and style-frames.md, main merged in, its full checks running, not
+  ready. **Merge and gate:** none: nothing is ready, no merge lock.
+  **Started:** none. The seven-day bar still reads `allowed_warning`, so
+  order 3's cap is three and the three seats are taken; DT1 waits.
+  **Next:** verify (Opus 5.5 high subagent) and merge M1's and CF1's
+  tasks once they mark ready; start DT1 when a seat frees or the bar
+  clears.
+
 - **Cycle 192**, 25 November 2026, from about 14:39Z (session
   `session_01SNkKxnzfoApztAshnsqsfp`, started by the Opus 5.5 launcher,
   Opus 5.5 at effort medium by order 7). The first cycle of the 3D

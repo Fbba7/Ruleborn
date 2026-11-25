@@ -1386,6 +1386,22 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
 
 ### Lead
 
+- **M1-R1** (from M1, 25 November 2026 16:50Z; due 27 November 16:50Z;
+  not blocking): BudgetSplit's test is rendered (headless counts read 0),
+  so it runs as `bash tools/render/shoot.sh
+  client/tests/shots/budget_split_tests.gd out.png 256 256` (exits 1 on a
+  failure), outside `tools/run_checks.sh`. Wire it into a rendered check
+  run if one exists or is planned. Files: tools/check_all.sh. Default: it
+  stays a standalone command named in M1's handoff; the verifier runs it
+  before merging. Copied in cycle 196.
+
+- **DT1-R1** (from DT1, 25 November 2026 16:10Z; due 25 November 22:10Z;
+  not blocking): commit `client/tests/shots/heist_suspicious.gd.uid`
+  (Godot writes it on first run; it is outside DT1's files, and every
+  other shot .gd has its .uid tracked). Files:
+  client/tests/shots/heist_suspicious.gd.uid. Default: the lead adds the
+  .uid at merge; DT1 leaves it untracked. Copied in cycle 196.
+
 - **M2-R1** (from M2, 25 November 2026 15:30Z; due 27 November 15:30Z;
   not blocking): `tools/render/measure.py --self-test` (synthetic stills,
   about a second) is not run by `tools/check_all.sh`; add it there if
