@@ -3,7 +3,13 @@
   "updated_at": "2026-11-25T15:25:00Z",
   "expected_next_update_by": "2026-11-25T18:25:00Z",
   "cycle": 193,
-  "merging": null,
+  "merging": {
+    "task_id": "3D0-M1-budget-split",
+    "by": "lead cycle 194",
+    "candidate": "5a5d5f41",
+    "started_at": "2026-11-25T15:45:00Z",
+    "expires_at": "2026-11-25T16:45:00Z"
+  },
   "last_merged": {
     "task_id": "P3-AD-wave-close",
     "sha": "e33be6f9"
