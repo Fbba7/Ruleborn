@@ -9,12 +9,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-25T19:55:00Z",
   "lease_until": "2026-11-25T22:55:00Z",
-  "updated_at": "2026-11-25T19:58:00Z",
-  "expected_next_update_by": "2026-11-25T20:43:00Z",
+  "updated_at": "2026-11-25T20:02:00Z",
+  "expected_next_update_by": "2026-11-25T20:47:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "9686d848f720585fa40b31388f34e8d8746c9ccd",
-    "next_step": "rows for screen_laws, universe_map, universe_screen rendering; then full rerun, M1.md, pre-check"
+    "next_step": "full rerun finishing (18 of 22); then rerun screen_result (wrote-line fix), commit, pre-check"
   },
   "precheck": null,
   "gate_request": null,
@@ -34,7 +34,7 @@
       "blocking": false,
       "created_at": "2026-11-25T19:00:00Z",
       "due": "2026-11-27T19:00:00Z",
-      "default": "baseline.md keeps `-` for Q1 to Q6, Q11 and Q12 on those shots",
+      "default": "baseline.md keeps `n/m` (not measured) for Q1 to Q6, Q11 and Q12 on those shots",
       "escalate_to": "lead"
     }
   ],

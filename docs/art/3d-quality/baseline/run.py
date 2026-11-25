@@ -14,7 +14,7 @@ changed.
 
 It exits 1 when a shot fails for any reason but the mask tool's known limit
 (request M1-R2: no WorldView in the shot, or an error inside mask_pass.gd):
-no still, no "wrote", no budget line, a script error in the shot, or a
+no still, no "wrote" or "saved" line, no budget line, a script error in the shot, or a
 timeout. Each shot's verdict is printed, and kept in its data file.
 """
 import json
@@ -108,8 +108,10 @@ def verdict(name: str) -> tuple:
     if not log.exists():
         return "failed", "no godot.log (the shot did not run)"
     lines = log.read_text(errors="replace").splitlines()
-    if not (out / "shot.png").exists() or not any(ln.strip() == "wrote" for ln in lines):
-        return "failed", "no still written (no shot.png or no \"wrote\")"
+    # The shots end on "wrote", "wrote <state>" (screen_result) or "saved <size>" (universe_zoom).
+    if not (out / "shot.png").exists() or not any(ln.strip() == "wrote" or ln.startswith(("wrote ", "saved ("))
+                                                  for ln in lines):
+        return "failed", "no still written (no shot.png or no \"wrote\" / \"saved\")"
     if not any(ln.startswith(("budget:", "draw calls ", "triangles ")) for ln in lines):
         return "failed", "no budget line"
     errors = []

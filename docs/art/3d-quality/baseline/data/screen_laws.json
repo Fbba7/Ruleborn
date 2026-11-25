@@ -1,5 +1,5 @@
 {
- "budget": "budget: laws: 84212 triangles (55854 mesh + 28358 outline passes); 0 triangles in shadows; 68 draw calls, shadow passes included; 6714 triangles and 49 draw calls in other views; frame 90926 triangles, 117 draw calls",
+ "budget": "budget: laws: 84260 triangles (55854 mesh + 28406 outline passes); 0 triangles in shadows; 68 draw calls, shadow passes included; 6714 triangles and 49 draw calls in other views; frame 90974 triangles, 117 draw calls",
  "measure": {
   "Q1": {
    "band": 0.391,
@@ -43,13 +43,13 @@
   },
   "Q12": {
    "building_foot_luma_ratio": [
-    0.999
+    0.968
    ],
    "buildings_with_shadow": 0,
-   "cliff_luma": 110.2,
-   "cliffs_darker": true,
+   "cliff_luma": 114.9,
+   "cliffs_darker": false,
    "figure_shadow_pixels": {
-    "c0": 242,
+    "c0": 241,
     "c1": 0,
     "c2": 3265,
     "g0": 1948,
@@ -109,8 +109,8 @@
    "figures": [
     {
      "name": "c0",
-     "pixels": 2625,
-     "share": 0.1299
+     "pixels": 2626,
+     "share": 0.1302
     },
     {
      "name": "c1",
@@ -120,12 +120,12 @@
     {
      "name": "c2",
      "pixels": 3817,
-     "share": 0.2717
+     "share": 0.2871
     },
     {
      "name": "g0",
      "pixels": 5331,
-     "share": 0.2585
+     "share": 0.2583
     },
     {
      "name": "g1",
@@ -133,8 +133,8 @@
      "share": 0.1861
     }
    ],
-   "least": 0.1299,
-   "worst": 0.2717
+   "least": 0.1302,
+   "worst": 0.2871
   },
   "Q4": {
    "heads": [

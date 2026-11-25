@@ -1,5 +1,5 @@
 {
- "budget": "budget: replay: 119368 triangles (75726 mesh + 43642 outline passes); 0 triangles in shadows; 77 draw calls, shadow passes included; 4186 triangles and 34 draw calls in other views; frame 123554 triangles, 111 draw calls",
+ "budget": "budget: replay: 119336 triangles (75726 mesh + 43610 outline passes); 0 triangles in shadows; 77 draw calls, shadow passes included; 4186 triangles and 34 draw calls in other views; frame 123522 triangles, 111 draw calls",
  "measure": {
   "Q1": {
    "band": 0.0,
@@ -47,11 +47,11 @@
   "Q12": {
    "building_foot_luma_ratio": [],
    "buildings_with_shadow": 0,
-   "cliff_luma": 71.6,
+   "cliff_luma": 71.9,
    "cliffs_darker": false,
    "figure_shadow_pixels": {
-    "c0": 198,
-    "c1": 751,
+    "c0": 196,
+    "c1": 741,
     "c2": 1968,
     "g2": 1837,
     "g3": 2208,
@@ -59,7 +59,7 @@
    },
    "figures": 6,
    "figures_with_shadow": 6,
-   "top_luma": 39.5
+   "top_luma": 39.6
   },
   "Q2": {
    "crew": [
@@ -118,32 +118,32 @@
    "figures": [
     {
      "name": "c0",
-     "pixels": 2651,
-     "share": 0.0992
+     "pixels": 2654,
+     "share": 0.0972
     },
     {
      "name": "c2",
-     "pixels": 3684,
-     "share": 0.2242
+     "pixels": 3692,
+     "share": 0.2251
     },
     {
      "name": "g2",
      "pixels": 6251,
-     "share": 0.3913
+     "share": 0.3916
     },
     {
      "name": "g3",
      "pixels": 1041,
-     "share": 0.2478
+     "share": 0.2488
     },
     {
      "name": "g4",
      "pixels": 6262,
-     "share": 0.4
+     "share": 0.3999
     }
    ],
-   "least": 0.0992,
-   "worst": 0.4
+   "least": 0.0972,
+   "worst": 0.3999
   },
   "Q4": {
    "heads": [
@@ -256,7 +256,7 @@
     },
     {
      "box": [
-      568,
+      572,
       964,
       596,
       984
@@ -274,18 +274,18 @@
     },
     {
      "box": [
-      444,
-      1036,
-      460,
-      1052
+      492,
+      1024,
+      504,
+      1032
      ],
      "seen": 1.0
     },
     {
      "box": [
-      464,
-      1044,
-      472,
+      444,
+      1036,
+      460,
       1052
      ],
      "seen": 1.0
@@ -391,9 +391,9 @@
     },
     {
      "box": [
-      348,
+      352,
       1264,
-      360,
+      364,
       1276
      ],
      "seen": 1.0
@@ -421,7 +421,7 @@
       324,
       1272,
       340,
-      1288
+      1292
      ],
      "seen": 1.0
     },
@@ -459,16 +459,7 @@
       116,
       1320
      ],
-     "seen": 0.636
-    },
-    {
-     "box": [
-      344,
-      1308,
-      352,
-      1316
-     ],
-     "seen": 1.0
+     "seen": 0.63
     },
     {
      "box": [
@@ -490,19 +481,19 @@
     },
     {
      "box": [
-      392,
-      1336,
-      404,
-      1348
+      368,
+      1340,
+      376,
+      1352
      ],
      "seen": 1.0
     },
     {
      "box": [
-      368,
+      392,
       1340,
-      376,
-      1352
+      404,
+      1348
      ],
      "seen": 1.0
     },
@@ -666,13 +657,13 @@
   },
   "Q6": {
    "covering": {
-    "c0": 0.285,
-    "c1": 0.505,
-    "c2": 0.336,
+    "c0": 0.286,
+    "c1": 0.503,
+    "c2": 0.335,
     "exit": 0.05,
-    "g2": 0.178,
+    "g2": 0.179,
     "g3": 0.773,
-    "g4": 0.214,
+    "g4": 0.213,
     "vault": 0.202
    },
    "most": 15,
@@ -682,9 +673,9 @@
     "c2": 10,
     "exit": 1,
     "g2": 11,
-    "g3": 14,
+    "g3": 12,
     "g4": 1,
-    "vault": 3
+    "vault": 4
    },
    "worst_covering": 0.773
   },

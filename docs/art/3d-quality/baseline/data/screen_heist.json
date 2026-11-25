@@ -43,21 +43,21 @@
   },
   "Q12": {
    "building_foot_luma_ratio": [
-    0.964
+    0.961
    ],
    "buildings_with_shadow": 0,
-   "cliff_luma": 110.9,
+   "cliff_luma": 110.0,
    "cliffs_darker": true,
    "figure_shadow_pixels": {
     "c0": 238,
     "c1": 8,
-    "c2": 3571,
+    "c2": 3570,
     "g0": 1945,
-    "g1": 1502
+    "g1": 1499
    },
    "figures": 5,
    "figures_with_shadow": 4,
-   "top_luma": 114.6
+   "top_luma": 114.7
   },
   "Q2": {
    "crew": [
@@ -114,27 +114,27 @@
     },
     {
      "name": "c1",
-     "pixels": 622,
-     "share": 0.1817
+     "pixels": 621,
+     "share": 0.1836
     },
     {
      "name": "c2",
-     "pixels": 3487,
-     "share": 0.1686
+     "pixels": 3489,
+     "share": 0.1622
     },
     {
      "name": "g0",
      "pixels": 5381,
-     "share": 0.3204
+     "share": 0.3202
     },
     {
      "name": "g1",
-     "pixels": 4530,
-     "share": 0.181
+     "pixels": 4533,
+     "share": 0.1818
     }
    ],
    "least": 0.1283,
-   "worst": 0.3204
+   "worst": 0.3202
   },
   "Q4": {
    "heads": [
@@ -270,7 +270,7 @@
     },
     {
      "box": [
-      332,
+      336,
       1152,
       348,
       1172
@@ -476,13 +476,13 @@
    "buildings": 1,
    "buildings_on_one_path": 1,
    "decoration_on_walkable": 0.041,
-   "decoration_pixels": 11985,
+   "decoration_pixels": 11984,
    "path_links_every_building": true,
    "paths": 1
   },
   "Q6": {
    "covering": {
-    "c0": 0.24,
+    "c0": 0.239,
     "c1": 0.697,
     "c2": 0.52,
     "g0": 0.388,

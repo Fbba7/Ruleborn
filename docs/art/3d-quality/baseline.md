@@ -1,8 +1,10 @@
 # The 3D baseline
 
-Every 3D screen shot in `client/tests/shots/` (the list below), rendered at 1080 × 2340 on the
-Compatibility renderer (llvmpipe) and measured with the mask tool ([`mask.md`](mask.md)). Written by
-3D0-M1-baseline.
+Every 3D screen shot in `client/tests/shots/` (the list below), rendered on the Compatibility
+renderer (llvmpipe) and measured with the mask tool ([`mask.md`](mask.md)). Written by
+3D0-M1-baseline. The project's frame is 1080 × 2340; `screen_heist`, `screen_replay`,
+`screen_result` and `screen_laws` save their stills at that size, the others at the project
+window's half size, 540 × 1170. Triangle and draw-call counts do not depend on the size.
 
 ## Reproduce
 
@@ -19,6 +21,11 @@ shots. `screen_defences` is shot with `TAB=0`; `universe_map` and `universe_scre
 (`BudgetSplit.line` for the laws heist, the universe view's count for the other two), and leaves
 the script in `client/` as it is. It exits 1 if a shot fails (no still, no budget line, a script
 error in the shot, a timeout); the mask tool's known limit (below) is reported, not a failure.
+
+Two full runs in the same container agree on every figure but a few: `screen_laws` and
+`screen_replay` moved by a few dozen outline-pass triangles (48 and 32, under 0.1% of the frame),
+`screen_laws`' Q3 by 2 points (27% and 29%), and `screen_heist`'s shadow pixels by a few (Q12 the
+same). Compare a rerun against this table at that tolerance.
 
 ## Which shots count as 3D
 
@@ -68,11 +75,11 @@ shot has nothing to measure for that quality (Q3 with no figure in the clear).
 | `screen_hatch` | - | - | - | - | 56* | 16,418* | n/m | n/m | n/m | n/m | n/m | n/m | n/m | n/m |
 | `screen_heist` | 56,480 | 28,966 | 0 | 7,287 | 70 | 92,733 | 39% | 24.2 / 38.9 | 32% | 8% | 4.1% | 13 | clear; clear; 6% | 4/5 |
 | `screen_landing` | 21,562 | 1,162 | 0 | 1,244 | 29 | 23,968 | n/m | n/m | n/m | n/m | n/m | n/m | n/m | n/m |
-| `screen_laws` | 55,854 | 28,358 | 0 | 6,714 | 68 | 90,926 | 39% | 24.2 / 38.8 | 27% | 10% | 4.0% | 17 | clear; clear; 7% | 4/5 |
+| `screen_laws` | 55,854 | 28,406 | 0 | 6,714 | 68 | 90,974 | 39% | 24.2 / 38.8 | 29% | 10% | 4.0% | 17 | clear; clear; 7% | 4/5 |
 | `screen_observatory` | 0 | 0 | 0 | 1,478 | 0 | 1,478 | n/m | n/m | n/m | n/m | n/m | n/m | n/m | n/m |
 | `screen_planner` | 37,732 | 216 | 7,306 | 1,304 | 90 | 46,558 | n/m | n/m | n/m | n/m | n/m | n/m | n/m | n/m |
 | `screen_realm` | 25,015 | 4,775 | 3,459 | 1,578 | 76 | 34,827 | n/m | n/m | n/m | n/m | n/m | n/m | n/m | n/m |
-| `screen_replay` (a) | 75,726 | 43,642 | 0 | 4,186 | 77 | 123,554 | 0% | 25.0 / 22.7 | 40% | 0% | 3.8% | 15 | clear; clear; 7% | 6/6 |
+| `screen_replay` (a) | 75,726 | 43,610 | 0 | 4,186 | 77 | 123,522 | 0% | 25.0 / 22.7 | 40% | 0% | 3.8% | 15 | clear; clear; 7% | 6/6 |
 | `screen_result` (b) | 61,010 | 33,094 | 0 | 4,394 | 56 | 98,498 | 0% | 14.5 / 21.9 | - | 0% | 0.0% | 1 | under panel; under panel; 8% | 0/9 |
 | `screen_roster` | - | - | - | - | 133* | 19,602* | n/m | n/m | n/m | n/m | n/m | n/m | n/m | n/m |
 | `screen_sage_hall` | - | - | - | - | 99* | 16,646* | n/m | n/m | n/m | n/m | n/m | n/m | n/m | n/m |
@@ -82,13 +89,15 @@ shot has nothing to measure for that quality (Q3 with no figure in the clear).
 | `universe_screen` | 34,065* | - | - | - | 77* | 67,265* | n/m | n/m | n/m | n/m | n/m | n/m | n/m | n/m |
 | `universe_zoom` | 34,065* | - | - | - | 33* | 55,273* | n/m | n/m | n/m | n/m | n/m | n/m | n/m | n/m |
 
-(a) `screen_replay`: the replay's edge vignette is counted as cover. It covers more than a fifth of
-every row (62% of the pixels in all), so Q1's band reads 0%; crew member `c1`'s head lies under it,
-so Q4's least seen reads 0%. Neither is the replay's world.
+(a) `screen_replay`: the replay's edge vignette is counted as cover. Its dark left and right edges
+(110 to 144 px each, of 1080) cover a fifth or more of every row, so Q1's band reads 0% (62% of the
+pixels read as cover, panels and vignette together); Q1 measures the vignette, not the world. Q4's
+0% is real: crew member `c1`'s head (rows 1463 to 1484) lies under the "Golden replay" panel.
 
 (b) `screen_result`: the result screen draws a full-screen backdrop over the world, so the mask tool
-reads every pixel as cover (`panels_share` 1.0). Q1 0%, Q4 0%, Q11's "under panel", Q3's `-`
-and Q12's 0/9 all come from that backdrop.
+reads every pixel as cover (`panels_share` 1.0). Q1 0%, Q3's `-`, Q4 0%, Q5 0.0%, Q11's
+"under panel" and Q12's 0/9 all come from that backdrop (the still shows the world only faintly
+through it).
 
 Q1 band is the clear band of the screen; Q2 is the least crew member / guard in points;
 Q3 the worst share of a figure's pixels within 18 gray levels of the ground; Q4 the least visible
