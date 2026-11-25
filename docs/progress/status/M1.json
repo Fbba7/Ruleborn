@@ -9,12 +9,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-25T22:33:00Z",
   "lease_until": "2026-11-26T01:37:00Z",
-  "updated_at": "2026-11-25T23:00:00Z",
-  "expected_next_update_by": "2026-11-25T23:40:00Z",
+  "updated_at": "2026-11-25T23:05:00Z",
+  "expected_next_update_by": "2026-11-25T23:45:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "4636c38384929b94eefcc5733f88985171c86a61",
-    "next_step": "resync: rerun done (figures as 4636c383); pre-check of abeafec running; code review of the shader race check; then ready"
+    "next_step": "resync: second review fixed at 7f6f90c (25 tests OK, owners diff clean); pre-check of 7f6f90c running; then record and ready"
   },
   "precheck": null,
   "gate_request": null,
