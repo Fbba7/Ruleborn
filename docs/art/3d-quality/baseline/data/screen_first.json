@@ -1,0 +1,5 @@
+{
+ "budget": "draw calls 50, primitives 72080",
+ "measure": null,
+ "name": "screen_first"
+}

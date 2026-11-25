@@ -1,0 +1,5 @@
+{
+ "budget": "budget: ScoutScreen: 19370 triangles (17677 mesh + 1693 outline passes); 5278 triangles in shadows; 63 draw calls, shadow passes included; 970 triangles and 53 draw calls in other views; frame 25618 triangles, 116 draw calls",
+ "measure": null,
+ "name": "screen_scout"
+}

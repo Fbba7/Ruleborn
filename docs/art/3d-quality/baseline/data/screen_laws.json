@@ -1,0 +1,592 @@
+{
+ "budget": "budget: laws: 84260 triangles (55854 mesh + 28406 outline passes); 0 triangles in shadows; 68 draw calls, shadow passes included; 6714 triangles and 49 draw calls in other views; frame 90974 triangles, 117 draw calls",
+ "measure": {
+  "Q1": {
+   "band": 0.391,
+   "band_rows": [
+    572,
+    1486
+   ],
+   "panels_share": 0.3797,
+   "strict_band": 0.2329,
+   "strict_rows": [
+    730,
+    1274
+   ],
+   "uncovered_share": 0.6203
+  },
+  "Q11": {
+   "chosen": {
+    "name": "c0",
+    "rating": "clear"
+   },
+   "guards": {
+    "g0": "clear",
+    "g1": "clear"
+   },
+   "island_at_edges": {
+    "bottom": false,
+    "left": true,
+    "right": true,
+    "top": false
+   },
+   "largest_figure_share": 0.067,
+   "nearest_guard": {
+    "name": "g1",
+    "rating": "clear"
+   },
+   "target": {
+    "name": "vault",
+    "rating": "clear",
+    "under_share": 0.0
+   }
+  },
+  "Q12": {
+   "building_foot_luma_ratio": [
+    0.968
+   ],
+   "buildings_with_shadow": 0,
+   "cliff_luma": 114.9,
+   "cliffs_darker": false,
+   "figure_shadow_pixels": {
+    "c0": 241,
+    "c1": 0,
+    "c2": 3265,
+    "g0": 1948,
+    "g1": 618
+   },
+   "figures": 5,
+   "figures_with_shadow": 4,
+   "top_luma": 113.9
+  },
+  "Q2": {
+   "crew": [
+    {
+     "bounds_points": 34.5,
+     "name": "c0",
+     "points": 24.2,
+     "role": "Scout",
+     "silhouette_points": 27.0
+    },
+    {
+     "bounds_points": 40.8,
+     "name": "c1",
+     "points": 28.4,
+     "role": "Breaker",
+     "silhouette_points": 24.3
+    },
+    {
+     "bounds_points": 51.5,
+     "name": "c2",
+     "points": 25.8,
+     "role": "Carrier",
+     "silhouette_points": 27.7
+    }
+   ],
+   "crew_least": 24.2,
+   "crew_most": 28.4,
+   "guards": [
+    {
+     "bounds_points": 47.3,
+     "name": "g0",
+     "points": 38.8,
+     "role": "guard",
+     "silhouette_points": 31.7
+    },
+    {
+     "bounds_points": 52.6,
+     "name": "g1",
+     "points": 39.1,
+     "role": "guard",
+     "silhouette_points": 38.3
+    }
+   ],
+   "guards_least": 38.8,
+   "guards_most": 39.1,
+   "least": 24.2
+  },
+  "Q3": {
+   "figures": [
+    {
+     "name": "c0",
+     "pixels": 2626,
+     "share": 0.1302
+    },
+    {
+     "name": "c1",
+     "pixels": 562,
+     "share": 0.2189
+    },
+    {
+     "name": "c2",
+     "pixels": 3817,
+     "share": 0.2871
+    },
+    {
+     "name": "g0",
+     "pixels": 5331,
+     "share": 0.2583
+    },
+    {
+     "name": "g1",
+     "pixels": 3842,
+     "share": 0.1861
+    }
+   ],
+   "least": 0.1302,
+   "worst": 0.2871
+  },
+  "Q4": {
+   "heads": [
+    {
+     "name": "c0",
+     "seen": 1.0
+    },
+    {
+     "name": "c1",
+     "seen": 0.099
+    },
+    {
+     "name": "c2",
+     "seen": 0.99
+    },
+    {
+     "name": "g0",
+     "seen": 1.0
+    },
+    {
+     "name": "g1",
+     "seen": 0.993
+    }
+   ],
+   "markers": [
+    {
+     "box": [
+      772,
+      820,
+      788,
+      832
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      904,
+      828,
+      920,
+      848
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      676,
+      836,
+      692,
+      852
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      736,
+      856,
+      752,
+      876
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      960,
+      960,
+      980,
+      980
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      620,
+      1048,
+      640,
+      1068
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      712,
+      1064,
+      728,
+      1080
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      388,
+      1092,
+      404,
+      1104
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      424,
+      1124,
+      444,
+      1140
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      808,
+      1132,
+      824,
+      1148
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      884,
+      1148,
+      908,
+      1172
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      516,
+      1152,
+      536,
+      1172
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      960,
+      1160,
+      972,
+      1176
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      472,
+      1168,
+      488,
+      1180
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      1048,
+      1168,
+      1060,
+      1184
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      848,
+      1172,
+      860,
+      1188
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      924,
+      1176,
+      936,
+      1192
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      1004,
+      1180,
+      1016,
+      1196
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      628,
+      1184,
+      640,
+      1196
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      848,
+      1200,
+      1080,
+      1496
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      228,
+      1204,
+      244,
+      1220
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      276,
+      1208,
+      292,
+      1224
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      804,
+      1212,
+      828,
+      1244
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      712,
+      1220,
+      724,
+      1232
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      196,
+      1236,
+      280,
+      1300
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      784,
+      1240,
+      864,
+      1312
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      476,
+      1260,
+      700,
+      1428
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      360,
+      1272,
+      372,
+      1288
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      308,
+      1280,
+      320,
+      1292
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      424,
+      1280,
+      436,
+      1292
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      480,
+      1296,
+      500,
+      1316
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      752,
+      1300,
+      764,
+      1312
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      524,
+      1336,
+      540,
+      1356
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      388,
+      1344,
+      404,
+      1360
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      408,
+      1368,
+      428,
+      1388
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      776,
+      1416,
+      792,
+      1428
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      816,
+      1428,
+      828,
+      1440
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      620,
+      1468,
+      636,
+      1484
+     ],
+     "seen": 1.0
+    }
+   ],
+   "pass": false,
+   "under_panel": [
+    {
+     "box": [
+      892,
+      1540,
+      912,
+      1556
+     ],
+     "seen": 0.0
+    },
+    {
+     "box": [
+      664,
+      1568,
+      700,
+      1592
+     ],
+     "seen": 0.0
+    },
+    {
+     "box": [
+      708,
+      1568,
+      720,
+      1584
+     ],
+     "seen": 0.0
+    },
+    {
+     "box": [
+      844,
+      1612,
+      864,
+      1628
+     ],
+     "seen": 0.0
+    }
+   ],
+   "worst": 0.099
+  },
+  "Q5": {
+   "buildings": 1,
+   "buildings_on_one_path": 1,
+   "decoration_on_walkable": 0.0401,
+   "decoration_pixels": 11944,
+   "path_links_every_building": true,
+   "paths": 1
+  },
+  "Q6": {
+   "covering": {
+    "c0": 0.295,
+    "c1": 0.756,
+    "c2": 0.222,
+    "g0": 0.195,
+    "g1": 0.541,
+    "vault": 0.224
+   },
+   "most": 17,
+   "per_object": {
+    "c0": 9,
+    "c1": 1,
+    "c2": 6,
+    "g0": 17,
+    "g1": 2,
+    "vault": 10
+   },
+   "worst_covering": 0.756
+  },
+  "env": {
+   "FRAME_H": "",
+   "HIDE": "",
+   "HOUR": "",
+   "MOMENT": "",
+   "ORTHO": "",
+   "SHOT": "/tmp/ruleborn_baseline/screen_laws/shot.png",
+   "ZOOM": ""
+  },
+  "frame": [
+   1080,
+   2340
+  ],
+  "still": "/tmp/ruleborn_baseline/screen_laws",
+  "zoom": 1
+ },
+ "name": "screen_laws"
+}
