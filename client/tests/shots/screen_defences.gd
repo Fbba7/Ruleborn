@@ -1,6 +1,7 @@
 extends SceneTree
-## Rehearsal and defence log: TAB=0 the rehearsal, played to its end; TAB=1
-## (the default) the defence log (tools/render/shoot.sh).
+## Rehearsal and defence log: TAB=0 (the default) the rehearsal, played to its
+## end, which has a 3D view; TAB=1 the defence log, which has none
+## (tools/render/shoot.sh).
 func _initialize() -> void:
 	_go()
 
@@ -11,7 +12,7 @@ func _go() -> void:
 	App.services = Fixtures.answered(Services.build(root, "", null, "user://outbox-shot.json"))
 	StageFixtures.realm(App.services)
 	App.services.store.dispatch(&"defences_loaded", {"view": DefencesTests.sample()})
-	DefencesScreen.tab = int(OS.get_environment("TAB")) if OS.get_environment("TAB") != "" else 1
+	DefencesScreen.tab = int(OS.get_environment("TAB")) if OS.get_environment("TAB") != "" else 0
 	var screen: Control = load("res://scenes/defences.tscn").instantiate()
 	root.add_child(screen)
 	await process_frame
