@@ -1,0 +1,41 @@
+{
+  "agent": "M2",
+  "role": "measure track",
+  "branch": "claude/3d-mask",
+  "model": "Opus 5.5",
+  "agent_state": "active",
+  "task_id": "3D0-M2-mask-tool",
+  "task_state": "working",
+  "claimed_at": "2026-11-25T14:47:26Z",
+  "lease_until": "2026-11-25T19:45:00Z",
+  "updated_at": "2026-11-25T16:45:00Z",
+  "expected_next_update_by": "2026-11-25T17:30:00Z",
+  "long_run": null,
+  "progress_marker": {
+    "last_green_sha": null,
+    "next_step": "main merged (aa31578); full pre-check running, then the ready steps"
+  },
+  "precheck": null,
+  "gate_request": null,
+  "ready_sha": null,
+  "stop_at": "2026-12-02T21:00:00Z",
+  "acks": [],
+  "requests": [
+    {
+      "id": "M2-R1",
+      "from": "M2",
+      "to": "lead",
+      "ask": "tools/render/measure.py --self-test (synthetic stills, about a second) is not run by tools/check_all.sh; add it there if wanted.",
+      "files": [
+        "tools/check_all.sh",
+        "tools/render/measure.py"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-25T15:30:00Z",
+      "due": "2026-11-27T15:30:00Z",
+      "default": "leave check_all.sh unchanged; the self-test stays a manual command named in mask.md",
+      "escalate_to": "lead"
+    }
+  ],
+  "answers": []
+}
