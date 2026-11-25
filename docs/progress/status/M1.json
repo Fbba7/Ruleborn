@@ -9,12 +9,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-25T19:55:00Z",
   "lease_until": "2026-11-25T22:55:00Z",
-  "updated_at": "2026-11-25T20:02:00Z",
-  "expected_next_update_by": "2026-11-25T20:47:00Z",
+  "updated_at": "2026-11-25T20:35:00Z",
+  "expected_next_update_by": "2026-11-25T21:20:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "9686d848f720585fa40b31388f34e8d8746c9ccd",
-    "next_step": "full rerun finishing (18 of 22); then rerun screen_result (wrote-line fix), commit, pre-check"
+    "next_step": "pre-check of 4636c383 running; then record and mark ready"
   },
   "precheck": null,
   "gate_request": null,
