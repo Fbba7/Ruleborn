@@ -357,3 +357,31 @@ Fable 5.1 is never used, and neither is any model this order does not name.
 - If `create_session` refuses the model or effort, the lead says so with
   the exact reason in its status file and uses the next tier up, never a
   lower one and never another model.
+
+## 8. Builders use the Superpowers skills
+
+On 25 November 2026 the owner ordered, in the chat of the overseer
+session: "Use the superpowers skill for the development", then "Use the
+superpowers then". Order 7's models and efforts, and its verifier rule,
+stand.
+
+- **Every builder** working on a task uses these Superpowers skills:
+  - `test-driven-development`: it writes the failing test before the fix
+    or feature;
+  - `systematic-debugging`: for each defect, failed check or send-back;
+  - `verification-before-completion`: it re-runs the task's checks and
+    reads their output before writing that the task is done;
+  - `requesting-code-review`: before it hands the task to the lead.
+- **The lead's verifier** (order 7) also uses
+  `receiving-code-review`'s rules when it sends a task back, and the
+  builder that gets the send-back uses `receiving-code-review`.
+- **The repository's rules win** where a skill differs: the branch rules,
+  the protocol, the frozen contracts and the never-edit paths stay as
+  they are. A skill never lets a session push to main, merge, open a pull
+  request, or start a session or scheduled task.
+- **Where the skills come from:** the Superpowers plugin on the owner's
+  claude.ai account. If a session finds the skills missing, it follows
+  the same practice from this order's list without them, says so in its
+  status file, and goes on working.
+- **Sessions already running** finish their current task; the next
+  session on each seat follows this order.
