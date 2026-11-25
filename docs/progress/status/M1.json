@@ -4,9 +4,9 @@
   "branch": "claude/3d-measure",
   "model": "Sonnet 5.5",
   "effort": "medium",
-  "agent_state": "active",
+  "agent_state": "done",
   "task_id": "3D0-M1-baseline",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-25T12:23:29Z",
   "lease_until": "2026-11-25T17:53:29Z",
   "updated_at": "2026-11-25T19:00:00Z",
@@ -16,9 +16,15 @@
     "last_green_sha": null,
     "next_step": "full pre-check, then mark ready"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "9686d848f720585fa40b31388f34e8d8746c9ccd",
+    "state": "PASS",
+    "exit": 0,
+    "finished_at": "2026-11-25T19:22:59Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "9686d848f720585fa40b31388f34e8d8746c9ccd",
   "stop_at": "2026-12-02T21:00:00Z",
   "acks": [],
   "requests": [
