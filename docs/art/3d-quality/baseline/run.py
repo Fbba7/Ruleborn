@@ -115,8 +115,9 @@ def verdict(name: str) -> tuple:
     errors = []
     for i, ln in enumerate(lines):
         if ln.startswith(("SCRIPT ERROR", "ERROR: Parse")):
-            where = " ".join(lines[i:i + 3])
-            errors.append((ln.strip(), "mask_pass.gd" in where))
+            # The error's own frame is its "at:" line, the next line of the log.
+            at = lines[i + 1].strip() if i + 1 < len(lines) else ""
+            errors.append((ln.strip(), at.startswith("at:") and "/tools/render/mask_pass.gd:" in at))
     shot_errors = [e for e, in_mask in errors if not in_mask]
     if shot_errors:
         return "failed", "script error in the shot: " + shot_errors[0]
