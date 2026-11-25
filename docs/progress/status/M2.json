@@ -7,13 +7,13 @@
   "task_id": "3D0-M2-mask-tool",
   "task_state": "working",
   "claimed_at": "2026-11-25T14:47:26Z",
-  "lease_until": "2026-11-25T18:04:00Z",
-  "updated_at": "2026-11-25T15:30:00Z",
-  "expected_next_update_by": "2026-11-25T16:15:00Z",
+  "lease_until": "2026-11-25T19:45:00Z",
+  "updated_at": "2026-11-25T16:45:00Z",
+  "expected_next_update_by": "2026-11-25T17:30:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": null,
-    "next_step": "matrix done (heights 21/21, guard 0 18/21, vault 10/21, disagreements in mask.md); full checks, then the ready steps"
+    "next_step": "main merged (aa31578); full pre-check running, then the ready steps"
   },
   "precheck": null,
   "gate_request": null,
