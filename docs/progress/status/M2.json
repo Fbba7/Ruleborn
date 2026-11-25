@@ -1,0 +1,25 @@
+{
+  "agent": "M2",
+  "role": "measure track",
+  "branch": "claude/3d-mask",
+  "model": "Opus 5.5",
+  "agent_state": "active",
+  "task_id": "3D0-M2-mask-tool",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-25T14:47:26Z",
+  "lease_until": "2026-11-25T17:47:26Z",
+  "updated_at": "2026-11-25T14:47:26Z",
+  "expected_next_update_by": "2026-11-25T15:32:26Z",
+  "long_run": null,
+  "progress_marker": {
+    "last_green_sha": null,
+    "next_step": "read the render code; build the mask shot (client/tests/shots/mask_heist.gd) and the measure script"
+  },
+  "precheck": null,
+  "gate_request": null,
+  "ready_sha": null,
+  "stop_at": "2026-12-02T21:00:00Z",
+  "acks": [],
+  "requests": [],
+  "answers": []
+}
