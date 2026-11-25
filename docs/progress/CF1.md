@@ -1,7 +1,7 @@
 # CF1 Camera and framing: progress
 
-- Status: Green. 3D0-CF1-style-frames: the three heist style frames rendered, `style-frames.md` written. Pre-check: see the status file.
-- Progress: 0 of 1 tasks merged; 3D0-CF1-style-frames ready once its pre-check passes.
+- Status: Green. 3D0-CF1-style-frames ready at 4e6c51ee: pre-check PASS 2026-11-25T15:45:02Z, All checks passed (bwrap).
+- Progress: 0 of 1 tasks merged; 3D0-CF1-style-frames ready (4e6c51ee).
 - Done: the shot `client/tests/shots/style_frame_heist.gd`; four stills (today, a, b, c) at phone size and 2x, and two side-by-side sheets; `docs/art/3d-quality/style-frames.md`.
 - Next: the verifier's review, then the owner's pick (a, b or c).
 - Blocked by: none.
@@ -9,7 +9,7 @@
 
 | Deliverable | Weight (h) | Status | Evidence |
 |---|---:|---|---|
-| 3D0-CF1-style-frames: the same heist moment ("vault") three ways, at phone size and 2x; `style-frames.md` side by side, with costs and the owner's question; shot-only | 8 | Ready | `STYLE=a\|b\|c CAST=1 MOMENT=vault bash tools/render/shoot.sh client/tests/shots/style_frame_heist.gd <out>.png`: each `budget:` line 119 draw calls (91,818 primitives at 15 tiles, 91,634 at 11); `HEIGHTS=1` crew 15.0–17.5 (today), 20.5–23.9 (a), 21.1–24.5 (b), 28.8–33.6 (c) points feet to head; quiet ground: 71 pieces gone, 1,099 kept, 2 meadows plain; gdlint and gdformat clean; no file outside the task's own changed (`owners.py diff`) |
+| 3D0-CF1-style-frames: the same heist moment ("vault") three ways, at phone size and 2x; `style-frames.md` side by side, with costs and the owner's question; shot-only | 8 | Ready (4e6c51ee) | pre-check PASS 2026-11-25T15:45:02Z at 4e6c51ee, All checks passed (bwrap); `owners.py diff` passes; `STYLE=a\|b\|c CAST=1 MOMENT=vault bash tools/render/shoot.sh client/tests/shots/style_frame_heist.gd <out>.png`: each `budget:` line 119 draw calls (91,818 primitives at 15 tiles, 91,634 at 11); `HEIGHTS=1` crew 15.0–17.5 (today), 20.5–23.9 (a), 21.1–24.5 (b), 28.8–33.6 (c) points feet to head; quiet ground: 71 pieces gone, 1,099 kept, 2 meadows plain; gdlint and gdformat clean; no file outside the task's own changed (`owners.py diff`) |
 
 ## Handoff
 
