@@ -2,7 +2,7 @@
   "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Since 25 November 2026 the product tasks are the 3D quality wave (docs/art/3d-quality/plan.md, section 6 'Phases' and section 7 'Tracks'), started by the owner (CLAUDE.md order 1). Models and efforts follow CLAUDE.md order 7: each task names its model and effort; every task is reviewed by a verifier on Opus 5.5 at effort high before it merges. Tasks of the UI wave are kept below as history. Owner tasks (assigned_to 'owner') are never claimed by an agent.",
   "wave": "3D quality wave",
   "phase": 0,
-  "updated_at": "2026-11-25T21:15:00Z",
+  "updated_at": "2026-11-25T21:45:00Z",
   "updated_by": "lead cycle 202",
   "stop_at": "2026-12-02T21:00:00Z",
   "lease_hours": 3,
@@ -463,42 +463,6 @@
       "ready_sha": "deafdd0a",
       "merged_sha": "a34f20ac",
       "exceptions": []
-    },
-    {
-      "id": "3D0-DT1-data-spec",
-      "title": "The data spec: what guards() adds (near, mid, suspicion), what noise and order previews need; and a shot moment with a suspicious guard",
-      "phase": 0,
-      "role": "data track",
-      "model": "Opus 5.5",
-      "effort": "high",
-      "assigned_to": "DT1",
-      "files": [
-        "client/ext/src/lib.rs",
-        "docs/art/3d-quality/data-spec.md",
-        "client/tests/shots/heist_suspicious.gd",
-        "docs/progress/DT1.md",
-        "docs/progress/status/DT1.json"
-      ],
-      "deps": [],
-      "done_when": [
-        "data-spec.md lists every field the 3D plan needs from the extension, with type, source in sim and cost",
-        "guards() returns near, mid and suspicion; the recorded replay stays byte-for-byte the same (a test shows it)",
-        "A shot moment with a suspicious guard renders",
-        "bash tools/run_checks.sh passes"
-      ],
-      "gate_items": [],
-      "attempts": 2,
-      "estimate_h": 10,
-      "tier": 1,
-      "critical": true,
-      "state": "resync",
-      "claim": null,
-      "prior_branch": null,
-      "prior_sha": null,
-      "ready_sha": "6f1b5513",
-      "merged_sha": null,
-      "exceptions": [],
-      "resync_reason": "Cycle 200, ready 6f1b5513: the verifier (Opus 5.5 high) failed the review on one new error; the four findings of cycle 197 and the minor points are all fixed (cargo test 7/7 with the byte-for-byte replay test; heist_suspicious renders guard 0 Suspicious at 204, tick 69). (1) data-spec.md:147-158 ('How it fills') leaves out the realm's watch: lib.rs:2326-2327 multiplies the fill by self.watch.0, which REALM_WATCH (lib.rs:260-266) sets to 3/5 at realm level 1, so '67 near, 33 mid, 12 far' holds only from realm level 2 up, and the worked example at data-spec.md:171-176 (117 a tick, Suspicious for four ticks) is wrong at level 1 (70 a tick, Suspicious on tick 3, Investigating on tick 9). Add 'x3/5 at realm level 1 (REALM_WATCH)' to the list and say the example is for realm level 2 and up. Minor, fix in the same pass: (2) data-spec.md:70 and 232-234: what scales the zones leaves out the realm watch's sight factor (3/4 at realm level 2, 7/10 at level 3; lib.rs:2487, REALM_WATCH lib.rs:261-263); (3) data-spec.md:157-158: the Lantern Glare's 'within 4 m' leaves out that the reach doubles from alarm level 4 (glare_reach, lib.rs:2531-2536). Re-run the checks and mark ready again; DT1-R1's default (the lead adds the .uid at merge) stands."
     },
     {
       "id": "3D0-M1-baseline",

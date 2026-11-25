@@ -214,10 +214,10 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxqSFEXjTCRxvhrgqb1` (cycle 201,
-25 November 2026 from about 20:14Z, started by the Opus 5.5 launcher).
-Cycle 200's was `session_01SNkKxpLVRksrXzSDLxfwHH` (25 November, from
-about 19:35Z).
+Latest lead cycle session: `session_01SNkKxqroqqoKeHuicPgcmk` (cycle 202,
+25 November 2026 from about 20:50Z, started by the Opus 5.5 launcher).
+Cycle 201's was `session_01SNkKxqSFEXjTCRxvhrgqb1` (25 November, from
+about 20:14Z).
 Cycle 197's was `session_01SNkKxoyugNa4BQjRBSzsYK` (25 November, from
 about 17:40Z).
 Cycle 196's was `session_01SNkKxoHmwS3dddh2WLvudH` (25 November, from
@@ -1030,6 +1030,26 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 202**, 25 November 2026, from about 20:50Z (session
+  `session_01SNkKxqroqqoKeHuicPgcmk`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 201:
+  DT1 marked 3D0-DT1-data-spec ready at 1657b290 and M2 marked
+  3D0-M2-find-it ready at ea4bf724. **Verify:** two Opus 5.5 high
+  verifiers. DT1's passed. M2's failed; its findings are in the task's
+  `resync_reason`. **Merged:** 3D0-DT1-data-spec, on main at 808fc8f8
+  (candidate 3970bbbd, DT1 only, full checks PASS at 21:41Z), with
+  `client/tests/shots/heist_suspicious.gd.uid` added at merge by
+  DT1-R1's default. The batch candidate 13d3c31c (DT1 + M2) was dropped.
+  **Started:** M2 restarted on its resync at Opus 5.5 high
+  (`session_01SNkKxpBiaVYnEU6QASbpEV`). It was created before order 8
+  reached main, so its prompt does not name the Superpowers skills.
+  Every session created from now on follows order 8. M1 still works on
+  3D0-M1-baseline (resync). M1 and M2 run while the cap is three and
+  the seven-day bar reads `allowed_warning`. DT1's seat is free, and no
+  3D task is open for it. **Requests:** M1-R2 and M2-R1 stay at their
+  defaults. M1-R2's task is seeded once the baseline merges. **Owner:**
+  the phone trial and the style-frame pick are still open (owner inbox).
+
 - **Cycle 201**, 25 November 2026, from about 20:14Z (session
   `session_01SNkKxqSFEXjTCRxvhrgqb1`, started by the Opus 5.5 launcher,
   Opus 5.5 at effort medium by order 7). The changes since cycle 200:
@@ -1069,30 +1089,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   reads `allowed_warning`. **Requests:** M1-R2's task waits for the
   baseline to merge; M2-R1 and M2-R2 stay at their defaults. **Owner:**
   the phone trial and the style-frame pick are still open (owner inbox).
-
-- **Cycle 199**, 25 November 2026, from about 19:14Z (session
-  `session_01SNkKxoVLxAN6iY9xYpGFMe`, started by the Opus 5.5 launcher,
-  Opus 5.5 at effort medium by order 7). The changes since cycle 198:
-  M2 marked 3D0-M2-find-it ready at 028837be (pre-check PASS; today's
-  build scores 5 of 50); M1 committed the baseline (69a5f12b, merged with
-  main at 9686d848) and runs its pre-check; DT1 merged main again
-  (6f1b5513) and runs its full checks. **Verify:** an Opus 5.5 high
-  verifier failed find-it: the route question reads sight markers only
-  from id.png, where mask_pass.gd never puts the real 3D markers (they go
-  to marks3d.png), so it can never pass on a real render; and off-frame
-  guards (and crew) count as misses. Self-tests, the docs check and a
-  full scoring run (5 of 50) reproduced. **Merge:** none; the candidate
-  (M2 alone, checks to be reused from the pre-check) was dropped.
-  **Resync:** 3D0-M2-find-it, findings in its resync_reason; M2
-  restarted on it at Opus 5.5 high (order 7, a resync). M2 included
-  client/tests/shots/style_frame_heist.gd.uid (uid://dm035cb54qlq, the
-  lead's own pending addition), granted as an exception. **Requests:**
-  M2-R2 (no clip hook in screen_heist.gd) and M1-R2 (the mask tool fails
-  on the realm and character screens) stay at their defaults for now; a
-  task for M1-R2 is seeded once M2's seat frees. **Started:** M2 (resync).
-  M1, M2 and DT1 fill the cap of three while the seven-day bar reads
-  `allowed_warning`. **Owner:** the phone trial and the style-frame pick
-  are still open (owner inbox).
 
 - **Restart, 25 November 2026** (the overseer). The owner restarted the
   program on the 3D quality plan ("Based on the plan made by Fable, let's
