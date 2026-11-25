@@ -5,6 +5,19 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 198**, 25 November 2026, from about 18:39Z (session
+  `session_01SNkKxpCLYdWeYiQwJhDr52`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The change since cycle 197:
+  `claude/3d-mask` (M2) merged main and committed its find-it scorer
+  (028837be); its status reads working, pre-check next. M1 renders the
+  baseline's 20 shots (no push yet); DT1's session is idle on its
+  running pre-check of the resync (d9022669, unpushed), not stale until
+  19:07Z. All three sessions connected, none stale, so **none
+  restarted**. **Merge and gate:** none: nothing is ready, no merge lock.
+  **Started:** none: M1, M2 and DT1 fill the cap of three while the
+  seven-day bar reads `allowed_warning`. **Owner:** the phone trial and
+  the style-frame pick are still open (owner inbox).
+
 - **Cycle 197**, 25 November 2026, from about 17:40Z (session
   `session_01SNkKxoyugNa4BQjRBSzsYK`, started by the Opus 5.5 launcher,
   Opus 5.5 at effort medium by order 7). The changes since cycle 196:

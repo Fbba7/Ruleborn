@@ -214,10 +214,10 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxpLVRksrXzSDLxfwHH` (cycle 200,
-25 November 2026 from about 19:35Z, started by the Opus 5.5 launcher).
-Cycle 199's was `session_01SNkKxoVLxAN6iY9xYpGFMe` (25 November, from
-about 19:14Z).
+Latest lead cycle session: `session_01SNkKxqSFEXjTCRxvhrgqb1` (cycle 201,
+25 November 2026 from about 20:14Z, started by the Opus 5.5 launcher).
+Cycle 200's was `session_01SNkKxpLVRksrXzSDLxfwHH` (25 November, from
+about 19:35Z).
 Cycle 197's was `session_01SNkKxoyugNa4BQjRBSzsYK` (25 November, from
 about 17:40Z).
 Cycle 196's was `session_01SNkKxoHmwS3dddh2WLvudH` (25 November, from
@@ -1029,6 +1029,23 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 201**, 25 November 2026, from about 20:14Z (session
+  `session_01SNkKxqSFEXjTCRxvhrgqb1`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 200:
+  DT1 committed its data-spec resync (1657b290: the realm's watch in the
+  fill rates, the zones, the Glare's reach) and runs its full checks,
+  ending about 20:40Z; M2 committed its find-it fixes (63dc9a2f: sight
+  per guard from marks3d, off-frame figures dropped; 7 of 50), merged
+  main (ea4bf724) and runs its pre-check; M1 committed the baseline's
+  missing rows and a full rerun of 22 shots (4636c383) and has its
+  pre-check next. The dropped candidate branch e9e02abc moved. **Merge
+  and verify:** none: nothing is ready, no merge lock. **Started:** none:
+  all three sessions are within their deadlines, and M1, M2 and DT1 fill
+  the cap of three while the seven-day bar reads `allowed_warning`.
+  **Requests:** DT1-R1 (the .uid at merge), M1-R2, M2-R1 and M2-R2 stay
+  at their defaults. **Owner:** the phone trial and the style-frame pick
+  are still open (owner inbox).
+
 - **Cycle 200**, 25 November 2026, from about 19:35Z (session
   `session_01SNkKxpLVRksrXzSDLxfwHH`, started by the Opus 5.5 launcher,
   Opus 5.5 at effort medium by order 7). The changes since cycle 199:
@@ -1075,19 +1092,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   M1, M2 and DT1 fill the cap of three while the seven-day bar reads
   `allowed_warning`. **Owner:** the phone trial and the style-frame pick
   are still open (owner inbox).
-
-- **Cycle 198**, 25 November 2026, from about 18:39Z (session
-  `session_01SNkKxpCLYdWeYiQwJhDr52`, started by the Opus 5.5 launcher,
-  Opus 5.5 at effort medium by order 7). The change since cycle 197:
-  `claude/3d-mask` (M2) merged main and committed its find-it scorer
-  (028837be); its status reads working, pre-check next. M1 renders the
-  baseline's 20 shots (no push yet); DT1's session is idle on its
-  running pre-check of the resync (d9022669, unpushed), not stale until
-  19:07Z. All three sessions connected, none stale, so **none
-  restarted**. **Merge and gate:** none: nothing is ready, no merge lock.
-  **Started:** none: M1, M2 and DT1 fill the cap of three while the
-  seven-day bar reads `allowed_warning`. **Owner:** the phone trial and
-  the style-frame pick are still open (owner inbox).
 
 - **Restart, 25 November 2026** (the overseer). The owner restarted the
   program on the 3D quality plan ("Based on the plan made by Fable, let's
