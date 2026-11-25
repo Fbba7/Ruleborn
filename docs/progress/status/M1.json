@@ -9,12 +9,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-25T19:55:00Z",
   "lease_until": "2026-11-25T22:55:00Z",
-  "updated_at": "2026-11-25T19:55:00Z",
-  "expected_next_update_by": "2026-11-25T20:40:00Z",
+  "updated_at": "2026-11-25T19:58:00Z",
+  "expected_next_update_by": "2026-11-25T20:43:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "9686d848f720585fa40b31388f34e8d8746c9ccd",
-    "next_step": "resync: rows for screen_laws and universe_screens, the '-' marks, footnotes, run.py exit code"
+    "next_step": "rows for screen_laws, universe_map, universe_screen rendering; then full rerun, M1.md, pre-check"
   },
   "precheck": null,
   "gate_request": null,
