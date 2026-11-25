@@ -20,6 +20,7 @@ from PIL import Image
 # The classes of id.png (tools/render/mask_pass.gd).
 BACKGROUND, CREW, GUARD, VAULT, EXIT, MARKER, SHADOW = 0, 1, 2, 3, 4, 5, 6
 WALKABLE, PATH, GROUND_OTHER, CLIFF, WATER, DECORATION, BUILDING, PIECE = 7, 8, 9, 10, 11, 12, 13, 14
+GUARD_SHADOW = 15
 # The tile kinds in id.png's green channel on the statics.
 T_OPEN, T_COVER = 1, 5
 GROUND = (WALKABLE, PATH, GROUND_OTHER, CLIFF, WATER)
@@ -27,11 +28,13 @@ TOPS = (WALKABLE, PATH, GROUND_OTHER)
 
 # Thresholds, as mask.md states them.
 COVERED = 0.5  # a pixel is under the interface when under half the world shows through it
-BAND_ROW = 0.5  # Q1: a row is in the clear band when under half of it is covered
-STRICT_ROW = 0.10  # Q1, the strict reading: under a tenth of the row covered
+BAND_ROW = 0.20  # Q1: a row is in the clear band when under a fifth of it is covered
+STRICT_ROW = 0.10  # Q1, the strict reading: under a tenth of the row covered,
+# counting the 2D markers (bubbles, labels, icons) as interface items too
 GRAY = 18  # Q3: within 18 gray levels of the ground behind
 HEAD = 0.30  # Q4: a head is the top 30% of a figure's outline
 SEEN = 0.80  # Q4: at least 80% visible
+SOLO = 24  # a solo pixel belongs to the figure when a channel is above this (the backdrop stays under it)
 MARK_ALPHA = 0.3  # a 2D marker pixel is one at least this opaque
 CLEAR, CUT, UNDER, OFF = "clear", "cut", "under panel", "off"
 
@@ -46,8 +49,21 @@ def luma(rgb: np.ndarray) -> np.ndarray:
 
 
 def decode(idp: np.ndarray):
-    """The id pass's class, index and side per pixel."""
-    return idp[..., 0] // 16, idp[..., 1] // 16, idp[..., 2] // 16
+    """The id pass's class and index per pixel: red and green carry the
+    class (class // 4, class % 4) in steps of 64 from 32, blue the index in
+    steps of 28 from 14 (tools/render/mask_pass.gd)."""
+    hi = np.clip(idp[..., 0] // 64, 0, 3)
+    lo = np.clip(idp[..., 1] // 64, 0, 3)
+    idx = np.clip(idp[..., 2] // 28, 0, 9)
+    cls = hi * 4 + lo
+    # Black is the background, not class 0 at index 0's code (32, 32, 14).
+    cls = np.where(idp[..., :3].max(axis=2) < 16, BACKGROUND, cls)
+    return cls, idx
+
+
+def code(cls: int, idx: int = 0):
+    """The colour mask_pass.gd draws class `cls` at index `idx` in."""
+    return (cls // 4 * 64 + 32, cls % 4 * 64 + 32, idx * 28 + 14)
 
 
 def runs(flags: np.ndarray):
@@ -104,7 +120,7 @@ class Still:
     def __init__(self, folder: Path):
         self.dir = folder
         self.info = json.loads((folder / "mask.json").read_text())
-        self.w, self.h = self.info["frame"]
+        self.w, self.h = (int(round(v)) for v in self.info["frame"])
         self.pt = 360.0 / self.w
         ua, ub = load(folder / "ui_a.png"), load(folder / "ui_b.png")
         # How much of the world shows through each pixel: 1 where nothing is over it.
@@ -113,13 +129,16 @@ class Still:
         self.world = load(folder / "world.png")
         self.behind = load(folder / "behind.png")
         self.markers = load(folder / "markers.png")[..., 3] / 255.0 >= MARK_ALPHA
-        self.cls, self.idx, self.side = decode(load(folder / "id.png"))
+        self.markers2d = self.markers.copy()
+        if (folder / "marks3d.png").exists():
+            self.markers |= load(folder / "marks3d.png")[..., :3].max(axis=2) > 24
+        self.cls, self.idx = decode(load(folder / "id.png"))
         self.figures = self.info["figures"]
         for f in self.figures:
             name = ("c" if f["kind"] == "crew" else "g") + str(f["index"])
             p = folder / f"solo_{name}.png"
             f["name"] = name
-            f["solo"] = (load(p)[..., :3].sum(axis=2) > 24) if p.exists() else np.zeros((self.h, self.w), bool)
+            f["solo"] = (load(p)[..., :3].max(axis=2) > SOLO) if p.exists() else np.zeros((self.h, self.w), bool)
             kind = CREW if f["kind"] == "crew" else GUARD
             f["seen"] = (self.cls == kind) & (self.idx == f["index"]) & ~self.covered
             f["px"] = int(f["solo"].sum())
@@ -131,7 +150,7 @@ class Still:
     def q1(self):
         rows = self.covered.mean(axis=1)
         start, length = runs(rows < BAND_ROW)
-        s_start, s_len = runs(rows < STRICT_ROW)
+        s_start, s_len = runs((self.covered | self.markers2d).mean(axis=1) < STRICT_ROW)
         return {
             "band": round(length / self.h, 4),
             "band_rows": [int(start), int(start + length - 1)],
@@ -148,8 +167,17 @@ class Still:
             if not self.in_frame(f) or "rect" not in f:
                 continue
             ys = np.nonzero(f["solo"].any(axis=1))[0]
-            row = {"name": f["name"], "role": f["role"], "points": round(f["rect"][3] * self.pt, 1),
-                   "outline_points": round((ys[-1] - ys[0] + 1) * self.pt, 1) if ys.size else 0.0}
+            silhouette = round((ys[-1] - ys[0] + 1) * self.pt, 1) if ys.size else 0.0
+            # The measure is the plan's: the figure's bounds, feet to top,
+            # stood up at its spot and projected (mask.md, "Q2"). The drawn
+            # silhouette (ink line included) and the projected box, which
+            # runs taller because its depth adds to its height in perspective,
+            # are kept beside it.
+            span = f.get("span")
+            row = {"name": f["name"], "role": f["role"],
+                   "points": round(span * self.pt, 1) if span is not None else silhouette,
+                   "silhouette_points": silhouette,
+                   "bounds_points": round(f["rect"][3] * self.pt, 1)}
             out["crew" if f["kind"] == "crew" else "guards"].append(row)
         for k in ("crew", "guards"):
             pts = [r["points"] for r in out[k]]
@@ -302,8 +330,8 @@ class Still:
         for f in self.figures:
             if not self.in_frame(f):
                 continue
-            kind = 0 if f["kind"] == "crew" else 1
-            n = int(((self.cls == SHADOW) & (self.idx == f["index"]) & (self.side == kind)).sum())
+            kind = SHADOW if f["kind"] == "crew" else GUARD_SHADOW
+            n = int(((self.cls == kind) & (self.idx == f["index"])).sum())
             shadows[f["name"]] = n
         gray = luma(self.world[..., :3])
         tops = np.isin(self.cls, TOPS) & ~self.covered
@@ -333,7 +361,12 @@ def measure(folder: Path) -> dict:
 
 
 def write(folder: Path, result: dict) -> None:
-    (Path(folder) / "measure.json").write_text(json.dumps(result, indent=2) + "\n")
+    def plain(o):
+        if isinstance(o, np.generic):
+            return o.item()
+        raise TypeError(type(o).__name__)
+
+    (Path(folder) / "measure.json").write_text(json.dumps(result, indent=2, default=plain) + "\n")
 
 
 def summary(r: dict) -> str:
@@ -375,8 +408,8 @@ def self_test() -> None:
         Image.fromarray(ub).save(d / "ui_b.png")
         idp = np.zeros((h, w, 4), np.uint8)
         idp[..., 3] = 255
-        idp[..., :3] = (WALKABLE * 16 + 8, T_OPEN * 16 + 8, 8)
-        idp[60:80, 40:46, :3] = (CREW * 16 + 8, 8, 8)
+        idp[..., :3] = code(WALKABLE, T_OPEN)
+        idp[60:80, 40:46, :3] = code(CREW, 0)
         Image.fromarray(idp).save(d / "id.png")
         world = np.full((h, w, 4), 120, np.uint8)
         world[60:80, 40:46, :3] = 124  # the figure within 18 grays of the ground
@@ -385,7 +418,7 @@ def self_test() -> None:
         Image.fromarray(np.full((h, w, 4), 120, np.uint8)).save(d / "behind.png")
         Image.fromarray(np.zeros((h, w, 4), np.uint8)).save(d / "markers.png")
         solo = np.zeros((h, w, 4), np.uint8)
-        solo[60:80, 40:46] = (24, 8, 8, 255)
+        solo[60:80, 40:46] = (40, 8, 8, 255)
         Image.fromarray(solo).save(d / "solo_c0.png")
         info = {"frame": [w, h], "view_rect": [0, 0, w, h], "chosen": 0, "zoom": 1,
                 "figures": [{"kind": "crew", "index": 0, "role": "rogue", "visible": True, "rect": [40, 60, 6, 20],

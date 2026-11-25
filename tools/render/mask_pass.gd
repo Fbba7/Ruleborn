@@ -9,9 +9,12 @@ extends RefCounted
 ## - `world.png`: the 3D world alone, no interface and no 2D markers.
 ## - `behind.png`: the same without the figures: the ground behind them.
 ## - `markers.png`: the 2D markers alone (FxAnchors), on a clear background.
-## - `id.png`: every 3D thing a flat colour that codes what it is: red is
-##   the class, green the index (a figure's number, or the tile's kind),
-##   blue the side (crew or guard); each channel is n * 16 + 8.
+## - `id.png`: every 3D thing a flat colour that codes what it is: red and
+##   green the class (class // 4 and class % 4, each n * 64 + 32), blue the
+##   index (a figure's number, or the tile's kind; n * 28 + 14). Codes this
+##   far apart survive the renderer's colour conversion.
+## - `marks3d.png`: the 3D markers alone (rings, sight edge, overlay,
+##   effects) in their own look, on black.
 ## - `solo_c<i>.png`, `solo_g<i>.png`: each figure alone, flat, for its
 ##   whole outline even where something hides it.
 ## - `mask.json`: the frame's size, each figure's projected bounds, head,
@@ -36,6 +39,7 @@ const WATER := 11
 const DECORATION := 12
 const BUILDING := 13
 const PIECE := 14
+const GUARD_SHADOW := 15
 
 ## The tile kinds the green channel carries on the statics.
 const T_OUTSIDE := 0
@@ -72,9 +76,11 @@ uniform int lane_count = 0;
 varying vec3 wpos;
 varying vec3 wnorm;
 
-vec3 lin(vec3 n) {
-	vec3 c = (n * 16.0 + 8.0) / 255.0;
-	return mix(c / 12.92, pow((c + 0.055) / 1.055, vec3(2.4)), step(vec3(0.04045), c));
+// Class c and index i as a colour far from every other code: red and green
+// carry c in steps of 64, blue i in steps of 28 (see measure.py's decode).
+vec3 id_colour(float c, float i) {
+	// The id viewport writes ALBEDO as it is, with no sRGB step on output.
+	return vec3(floor(c / 4.0) * 64.0 + 32.0, mod(c, 4.0) * 64.0 + 32.0, i * 28.0 + 14.0) / 255.0;
 }
 
 void vertex() {
@@ -84,7 +90,7 @@ void vertex() {
 
 void fragment() {
 	if (mode == 0) {
-		ALBEDO = lin(code);
+		ALBEDO = id_colour(code.x, code.y);
 	} else {
 		vec2 t = floor(wpos.xz + grid * 0.5);
 		float kind = 0.0;
@@ -121,7 +127,7 @@ void fragment() {
 			// The kit's pieces: a building on a building's tiles, else decoration.
 			cls = kind == 3.0 ? 13.0 : 12.0;
 		}
-		ALBEDO = lin(vec3(cls, kind, 0.0));
+		ALBEDO = id_colour(cls, kind);
 	}
 }
 """
@@ -135,6 +141,8 @@ var _tiles: ImageTexture
 var _lanes := PackedVector4Array()
 var _lane_count := 0
 var _ui: Array = []
+var _marks3d: Array = []
+var _ink_shaders := {}
 
 
 func run(on: SceneTree) -> void:
@@ -184,7 +192,24 @@ func run(on: SceneTree) -> void:
 	_write_json()
 	_flatten()
 	await _save("id")
+	await _marks_alone()
 	await _solos()
+
+
+## The 3D markers alone, in their own look.
+func _marks_alone() -> void:
+	var shown: Array = []
+	for n in view.world.find_children("*", "GeometryInstance3D", true, false):
+		if n.visible and not (n in _marks3d):
+			shown.append(n)
+			n.visible = false
+	for g: GeometryInstance3D in _marks3d:
+		g.visible = true
+	await _save("marks3d")
+	for g: GeometryInstance3D in _marks3d:
+		g.visible = false
+	for n: GeometryInstance3D in shown:
+		n.visible = true
 
 
 ## Draw the frame and save it as `name`.png.
@@ -193,6 +218,7 @@ func _save(name: String) -> void:
 		await tree.process_frame
 	await RenderingServer.frame_post_draw
 	frame.get_texture().get_image().save_png(out.path_join(name + ".png"))
+	print("mask: saved ", name)
 
 
 ## The frame's 2D items that are not the world view: the interface.
@@ -313,7 +339,7 @@ func _classify(g: GeometryInstance3D) -> void:
 			cls = Vector3(SHADOW if _is_shadow(view._crew[k], g) else CREW, k, 0)
 	for k in view._guards.size():
 		if view._guards[k] == g or view._guards[k].is_ancestor_of(g):
-			cls = Vector3(SHADOW if _is_shadow(view._guards[k], g) else GUARD, k, 1)
+			cls = Vector3(GUARD_SHADOW if _is_shadow(view._guards[k], g) else GUARD, k, 1)
 	if cls.x < 0:
 		var path := str(view.world.get_path_to(g))
 		var shader_path := ""
@@ -334,8 +360,14 @@ func _classify(g: GeometryInstance3D) -> void:
 			or view.effects.is_ancestor_of(g)
 			or view.actors.is_ancestor_of(g)
 		):
-			cls = Vector3(MARKER, 0, 0)
-		elif m != null and m == view.look.sky_material:
+			# 3D markers keep their own look for marks3d.png; not in id.png.
+			_marks3d.append(g)
+			g.visible = false
+			return
+		elif (
+			(m != null and m == view.look.sky_material)
+			or shader_path.ends_with("look_cloud.gdshader")
+		):
 			g.visible = false
 			return
 		elif shader_path.ends_with("water.gdshader"):
@@ -357,11 +389,56 @@ func _classify(g: GeometryInstance3D) -> void:
 		# Words and sprites in the world take no flat colour; left out.
 		g.visible = false
 		return
+	var ink := _outline_of(g) if cls.x == CREW or cls.x == GUARD else null
 	g.material_override = _material(mode, cls)
+	if ink != null:
+		# The figure's ink line is part of what the player sees of it: drawn
+		# in the figure's own id colour, so heights and covering include it.
+		ink.set_shader_parameter("ink", _id_colour(int(cls.x), int(cls.y)))
+		(g.material_override as ShaderMaterial).next_pass = ink
+	g.material_overlay = null
 	if g is MeshInstance3D:
 		var mi := g as MeshInstance3D
 		for s in mi.get_surface_override_material_count():
 			mi.set_surface_override_material(s, null)
+
+
+## A copy of the ink-outline pass on `g`'s own materials, its colour taken
+## as written (no sRGB step), or null when it has none.
+func _outline_of(g: GeometryInstance3D) -> ShaderMaterial:
+	var mats: Array = [g.material_override]
+	if g is MeshInstance3D:
+		var mi := g as MeshInstance3D
+		for s in mi.get_surface_override_material_count():
+			mats.append(mi.get_surface_override_material(s))
+		if mi.mesh != null:
+			for s in mi.mesh.get_surface_count():
+				mats.append(mi.mesh.surface_get_material(s))
+	for m0: Variant in mats:
+		var m := m0 as Material
+		while m != null:
+			var sm := m as ShaderMaterial
+			if sm != null and sm.shader != null and sm.shader.resource_path.contains("outline"):
+				var src := sm.shader.resource_path
+				if not _ink_shaders.has(src):
+					var sh := Shader.new()
+					sh.code = sm.shader.code.replace("uniform vec4 ink : source_color", "uniform vec4 ink")
+					_ink_shaders[src] = sh
+				var o := sm.duplicate() as ShaderMaterial
+				o.shader = _ink_shaders[src]
+				for u: String in ["width_px", "far_ppm", "far_width", "depth_push", "smooth_push"]:
+					var v: Variant = sm.get_shader_parameter(u)
+					if v != null:
+						o.set_shader_parameter(u, v)
+				o.next_pass = null
+				return o
+			m = m.next_pass
+	return null
+
+
+## The id colour of class `c`, index `i`, as the shader writes it.
+func _id_colour(c: int, i: int) -> Color:
+	return Color(((c / 4) * 64 + 32) / 255.0, ((c % 4) * 64 + 32) / 255.0, (i * 28 + 14) / 255.0)
 
 
 func _is_shadow(actor: Node3D, g: Node) -> bool:
@@ -440,6 +517,12 @@ func _figure(a: Node3D, kind: String, k: int, data: Dictionary) -> Dictionary:
 	d["feet"] = _v(_on_frame(a.global_position))
 	d["head"] = _v(_on_frame(a.global_position + Vector3(0, float(a.get_meta("head", 1.0)), 0)))
 	d["world"] = [a.global_position.x, a.global_position.y, a.global_position.z]
+	if d.has("world_high"):
+		# The bounds' height stood up at the figure's spot: the plan's
+		# "projected bounds" height, without the box's depth in perspective.
+		var foot := Vector3(a.global_position.x, d["world_low"], a.global_position.z)
+		var top := Vector3(a.global_position.x, d["world_high"], a.global_position.z)
+		d["span"] = _on_frame(foot).y - _on_frame(top).y
 	for key: String in ["at", "down", "state", "hp"]:
 		if data.has(key):
 			d[key] = data[key] if not (data[key] is Vector2i) else [data[key].x, data[key].y]
