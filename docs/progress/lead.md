@@ -422,7 +422,8 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
-| M1 | `session_01SNkKxn3VgF7utqQN2JkCuy` (Sonnet 5.5, effort medium) | 3D0-M1-budget-split (start, cycle 192: a new agent; Sonnet 5.5 medium by order 7, a simple task in the shots and tools/render) | `claude/3d-measure` | 2026-11-25 14:42Z |
+| DT1 | `session_01SNkKxpL9MBiEawLL7runx2` (Opus 5.5, effort high) | 3D0-DT1-data-spec (start, cycle 194: a new agent once M1's seat freed; Opus 5.5 high by order 7, it touches the extension and the replay's bytes) | `claude/3d-data` | 2026-11-25 15:42Z |
+| M1 | `session_01SNkKxn3VgF7utqQN2JkCuy` (Sonnet 5.5, effort medium; idle, task ready) | 3D0-M1-budget-split (start, cycle 192: a new agent; Sonnet 5.5 medium by order 7, a simple task in the shots and tools/render) | `claude/3d-measure` | 2026-11-25 14:42Z |
 | M2 | `session_01SNkKxpG1o34prYosYVfYED` (Opus 5.5, effort medium) | 3D0-M2-mask-tool (start, cycle 192: a new agent; Opus 5.5 medium by order 7, a complex task) | `claude/3d-mask` | 2026-11-25 14:42Z |
 | CF1 | `session_01SNkKxp5DfWujKR3BZxFjQg` (Opus 5.5, effort medium) | 3D0-CF1-style-frames (start, cycle 192: a new agent; Opus 5.5 medium by order 7, judgement on looks) | `claude/3d-camera` | 2026-11-25 14:42Z |
 | AD | `session_01SNkKxqM8eV1Bdh5Hj1kPrX` (Opus 5.5, effort medium; idle, done) | P3-AD-wave-close (start by the overseer, by the owner's order: M63's O7 re-check; effort medium by order 6) | `claude/ui-ad` | 2026-11-24 23:30Z |
