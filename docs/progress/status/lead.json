@@ -3,7 +3,13 @@
   "updated_at": "2026-11-25T19:45:00Z",
   "expected_next_update_by": "2026-11-25T22:45:00Z",
   "cycle": 199,
-  "merging": null,
+  "merging": {
+    "task_id": "3D0-DT1-data-spec, 3D0-M1-baseline",
+    "by": "lead cycle 200",
+    "candidate": "e9e02abc",
+    "started_at": "2026-11-25T19:41:33Z",
+    "expires_at": "2026-11-25T20:41:33Z"
+  },
   "last_merged": {
     "task_id": "3D0-M1-budget-split, 3D0-M2-mask-tool",
     "merged_sha": "a34f20ac",
