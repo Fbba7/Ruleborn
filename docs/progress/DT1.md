@@ -3,7 +3,8 @@
 - Status: Green. 3D0-DT1-data-spec: `guards()` adds the four fields, the
   suspicious shot renders, and the data spec is written.
 - Progress: 1 task, this session's: 3D0-DT1-data-spec. Its ready_sha and
-  pre-check are in `status/DT1.json`.
+  pre-check are in `status/DT1.json`: ready at `0b77e805`, the full
+  checks passed and the owners diff is clean.
 - Done: the data spec ([`docs/art/3d-quality/data-spec.md`](../art/3d-quality/data-spec.md)).
   `guards()` returns `near`, `mid`, `peripheral` and `suspicion`, with a
   byte-for-byte replay test. A heist shot with a Suspicious guard.
@@ -20,6 +21,13 @@
 
 ## Handoff
 
+- **Ready at `0b77e805`** (main merged at `1dd4958f`). The full checks
+  passed on it at 17:35Z, and `owners.py diff` reports every changed path
+  inside the task's files. Main has since moved only by the lead's
+  progress files, which merge cleanly.
+- **Pushes:** from 16:10Z to about 16:55Z the credential service refused
+  every push with a 503. Nothing was lost; all commits are on
+  `claude/3d-data`.
 - **Commits, in order:**
   - `81706999`: `guards()` in `client/ext/src/lib.rs` gains the keys
     `near`, `mid`, `peripheral` and `suspicion`, through a `GuardView`
