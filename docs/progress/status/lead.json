@@ -1,8 +1,8 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-25T16:32:00Z",
-  "expected_next_update_by": "2026-11-25T19:32:00Z",
-  "cycle": 194,
+  "updated_at": "2026-11-25T16:44:00Z",
+  "expected_next_update_by": "2026-11-25T19:44:00Z",
+  "cycle": 195,
   "merging": null,
   "last_merged": {
     "task_id": "3D0-CF1-style-frames",
@@ -51,14 +51,15 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Verify (Opus 5.5 high) and merge 3D0-M2-mask-tool when M2 marks it ready, and 3D0-M1-budget-split when M1 (restarted at Opus 5.5 high, resync) marks it ready again; DT1 builds 3D0-DT1-data-spec. The owner picks a style frame (docs/art/3d-quality/style-frames.md); the phone trial follows the budget split.",
+  "next_step": "Restart DT1 if it is still stale after 17:05Z (its pushes hit GitHub 503s, commits up to 60616371 unpushed). Verify (Opus 5.5 high) and merge 3D0-M2-mask-tool when M2 (restarted in cycle 195) marks it ready, and 3D0-M1-budget-split when M1 marks its resync ready. The owner picks a style frame; the phone trial follows the budget split.",
   "seen": {
-    "at": "2026-11-25T16:32:23Z",
+    "at": "2026-11-25T16:42:10Z",
     "heads": {
-      "claude/3d-camera": "4e6c51eee733c208af685fcd0902c97591cc94a7",
+      "claude/3d-camera": "18ae7ba4d527593a82b80c10b3c82e0f0d7e1610",
       "claude/3d-character-screens": "6053b249bee313648da3509142eeb2ba738bb62f",
       "claude/3d-characters": "35d6ae8f5b84a4d75636f68270848b0949c111f3",
       "claude/3d-characters-2": "933123b54b85f8cddc66b1131f65cb357c63f4ab",
+      "claude/3d-data": "8170699931e26eb14bb98006665f6bdfbca45b7a",
       "claude/3d-kit": "ca2308becc903e76c6709028982e8ca7066e5a08",
       "claude/3d-law-fx": "358a1f08179d315ec69ff5dcb037e34e89ee7a2b",
       "claude/3d-look": "815e381279f5fdb9952b28866ed6dc4121f2b1d5",
