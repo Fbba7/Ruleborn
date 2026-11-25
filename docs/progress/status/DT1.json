@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-25T15:45:00Z",
   "lease_until": "2026-11-25T19:10:00Z",
-  "updated_at": "2026-11-25T16:10:00Z",
-  "expected_next_update_by": "2026-11-25T16:55:00Z",
+  "updated_at": "2026-11-25T16:16:00Z",
+  "expected_next_update_by": "2026-11-25T17:00:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": null,
-    "next_step": "guards() and the suspicious shot done (fdf380a0); next docs/art/3d-quality/data-spec.md"
+    "next_step": "data spec and progress file done (60616371); full checks running on 60616371; then ready. Pushes since fdf380a0 refused by a 503 from the credential service; retrying"
   },
   "precheck": null,
   "gate_request": null,
