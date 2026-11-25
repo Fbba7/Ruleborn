@@ -214,8 +214,10 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxnzfoApztAshnsqsfp` (cycle 192,
-25 November 2026 from about 14:39Z, started by the Opus 5.5 launcher).
+Latest lead cycle session: `session_01SNkKxqKcNj6xVjwrFQ9Xt4` (cycle 193,
+25 November 2026 from about 15:15Z, started by the Opus 5.5 launcher).
+Cycle 192's was `session_01SNkKxnzfoApztAshnsqsfp` (25 November, from
+about 14:39Z).
 Cycle 191's was `session_01SNkKxpEYznsGFjJLSHAYZS` (24 November, from
 about 22:39Z).
 Cycle 190's was `session_01SNkKxpurNviahy9ajdou9c` (24 November, from
@@ -1007,6 +1009,21 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   there first); about 12 minutes beside check_all.
 
 ## Now
+
+- **Cycle 193**, 25 November 2026, from about 15:15Z (session
+  `session_01SNkKxqKcNj6xVjwrFQ9Xt4`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 192:
+  M1, M2 and CF1 pushed to their branches. **M1** (`claude/3d-measure`,
+  e2927534): budget split built, its full checks running in its session,
+  not ready. **M2** (`claude/3d-mask`, b0e9adb6): mask tool's draft, still
+  working. **CF1** (`claude/3d-camera`, 4e6c51ee): the three style frames
+  and style-frames.md, main merged in, its full checks running, not
+  ready. **Merge and gate:** none: nothing is ready, no merge lock.
+  **Started:** none. The seven-day bar still reads `allowed_warning`, so
+  order 3's cap is three and the three seats are taken; DT1 waits.
+  **Next:** verify (Opus 5.5 high subagent) and merge M1's and CF1's
+  tasks once they mark ready; start DT1 when a seat frees or the bar
+  clears.
 
 - **Cycle 192**, 25 November 2026, from about 14:39Z (session
   `session_01SNkKxnzfoApztAshnsqsfp`, started by the Opus 5.5 launcher,
