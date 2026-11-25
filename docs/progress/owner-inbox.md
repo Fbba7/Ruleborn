@@ -4,6 +4,16 @@ Alerts and questions for the owner, newest first. The lead also sends each one
 as a direct message (work-order decision D-03). An entry is closed by
 recording the answer under it.
 
+## 2026-11-25 14:50Z: the 3D quality wave started with three builders, not four (cycle 192)
+
+- **What:** M1 (budget split), M2 (mask tool) and CF1 (style frames) are
+  started. The seven-day bar reads `allowed_warning`, so order 3's cap
+  drops to three on its own; DT1 (the data spec, plan.md's fifth first
+  task) waits for the first free seat or for the bar to clear.
+- **Needs the owner:** nothing now. Your two phase 0 tasks follow: the
+  phone trial once the budget split merges, and the pick of a style frame
+  once CF1's frames merge.
+
 ## 2026-11-21 21:18Z: the audit page's republish was refused by the session's permission check, for the second cycle running (cycle 163)
 
 - **What:** after FX1-3, FX2-4 and FX3-3 merged at e413e4a9 (cycle
