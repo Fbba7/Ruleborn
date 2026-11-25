@@ -214,8 +214,10 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxqhoNAcP68ggo8Rvvb` (cycle 194,
-25 November 2026 from about 15:39Z, started by the Opus 5.5 launcher).
+Latest lead cycle session: `session_01SNkKxoHmwS3dddh2WLvudH` (cycle 196,
+25 November 2026 from about 17:14Z, started by the Opus 5.5 launcher).
+Cycle 195's was `session_01SNkKxqxDHnxcUgHuGLSEXt` (25 November, from
+about 16:39Z).
 Cycle 193's was `session_01SNkKxqKcNj6xVjwrFQ9Xt4` (25 November, from
 about 15:15Z).
 Cycle 192's was `session_01SNkKxnzfoApztAshnsqsfp` (25 November, from
@@ -424,10 +426,12 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
-| DT1 | `session_01SNkKxpL9MBiEawLL7runx2` (Opus 5.5, effort high) | 3D0-DT1-data-spec (start, cycle 194: a new agent once M1's seat freed; Opus 5.5 high by order 7, it touches the extension and the replay's bytes) | `claude/3d-data` | 2026-11-25 15:42Z |
+| DT1 | `session_01SNkKxodKBY94BomQhXexAr` (Opus 5.5, effort high) | 3D0-DT1-data-spec (restart, cycle 197: resync after the verifier failed section 3's guard states; already the top tier by order 7) | `claude/3d-data` | 2026-11-25 18:15Z |
+| DT1 | `session_01SNkKxpL9MBiEawLL7runx2` (Opus 5.5, effort high; idle, task sent to resync in cycle 197) | 3D0-DT1-data-spec (start, cycle 194: a new agent once M1's seat freed; Opus 5.5 high by order 7, it touches the extension and the replay's bytes) | `claude/3d-data` | 2026-11-25 15:42Z |
 | M1 | `session_01SNkKxnNfLkQ2DLurDzjM8E` (Opus 5.5, effort high) | 3D0-M1-budget-split (restart, cycle 194: resync after the verifier failed the split; one tier up by order 7) | `claude/3d-measure` | 2026-11-25 16:31Z |
 | M1 | `session_01SNkKxn3VgF7utqQN2JkCuy` (Sonnet 5.5, effort medium; idle, task sent to resync in cycle 194) | 3D0-M1-budget-split (start, cycle 192: a new agent; Sonnet 5.5 medium by order 7, a simple task in the shots and tools/render) | `claude/3d-measure` | 2026-11-25 14:42Z |
-| M2 | `session_01SNkKxpG1o34prYosYVfYED` (Opus 5.5, effort medium) | 3D0-M2-mask-tool (start, cycle 192: a new agent; Opus 5.5 medium by order 7, a complex task) | `claude/3d-mask` | 2026-11-25 14:42Z |
+| M2 | `session_01SNkKxqUMV6Qs5KyydCjHjX` (Opus 5.5, effort medium) | 3D0-M2-mask-tool (restart, cycle 195: stale since 16:15Z; the last session went idle and disconnected after GitHub 503s, its status commit 108abe5e unpushed; same tier, the stop was the network) | `claude/3d-mask` | 2026-11-25 16:41Z |
+| M2 | `session_01SNkKxpG1o34prYosYVfYED` (Opus 5.5, effort medium; idle and disconnected, replaced in cycle 195) | 3D0-M2-mask-tool (start, cycle 192: a new agent; Opus 5.5 medium by order 7, a complex task) | `claude/3d-mask` | 2026-11-25 14:42Z |
 | CF1 | `session_01SNkKxp5DfWujKR3BZxFjQg` (Opus 5.5, effort medium; idle, task merged in cycle 194) | 3D0-CF1-style-frames (start, cycle 192: a new agent; Opus 5.5 medium by order 7, judgement on looks) | `claude/3d-camera` | 2026-11-25 14:42Z |
 | AD | `session_01SNkKxqM8eV1Bdh5Hj1kPrX` (Opus 5.5, effort medium; idle, done) | P3-AD-wave-close (start by the overseer, by the owner's order: M63's O7 re-check; effort medium by order 6) | `claude/ui-ad` | 2026-11-24 23:30Z |
 | SP-bt-05 | `session_01SNkKxpZxYqKXESzt9K8ZVK` (Opus 5.5, effort medium; stopped) | BT-05 (start, cycle 191: a new agent, once BT-04b merged; effort medium by order 6, a tools-only launcher that adds a new schema and changes no stored one) | `claude/ui-spec-gate-run` | 2026-11-24 23:17Z |
@@ -1014,6 +1018,43 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 196**, 25 November 2026, from about 17:14Z (session
+  `session_01SNkKxoHmwS3dddh2WLvudH`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 195:
+  `claude/3d-data` (DT1) pushed again after the 503s, merged main
+  (0b77e805) and runs its full checks there (status 8473411a);
+  `claude/3d-mask` (M2, restarted in cycle 195) merged main and runs its
+  pre-check on deafdd0a; `claude/3d-measure` (M1) committed its resync
+  (1be990e8), merged main (99184a98) and runs its pre-check. All three
+  sessions are connected and idle on their running checks, none stale,
+  so **DT1 is not restarted**. **Merge and gate:** none: nothing is
+  ready, no merge lock. **Requests:** M1-R1 and DT1-R1 copied (neither
+  blocking; DT1-R1's default: the lead adds the .uid at DT1's merge).
+  **Started:** none. The seven-day bar still reads `allowed_warning`
+  (the builders' sessions report it), so the cap is three and M1, M2 and
+  DT1 fill it; 3D0-M1-baseline and 3D0-M2-find-it wait on the mask tool.
+  **Owner:** the style-frame pick is still open (owner inbox).
+
+- **Cycle 195**, 25 November 2026, from about 16:39Z (session
+  `session_01SNkKxqxDHnxcUgHuGLSEXt`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 194:
+  `claude/3d-camera` gained CF1's ready-status commit (the task merged in
+  cycle 194); `claude/3d-data` gained DT1's guards() commit. **GitHub
+  503s:** at about 16:16Z M2's and DT1's sessions went idle with pushes
+  refused by GitHub (503). M2's container disconnected with its status
+  commit 108abe5e unpushed (the work itself is on b1113efc), and M2 was
+  stale since 16:15Z: **restarted** M2 on 3D0-M2-mask-tool
+  (`session_01SNkKxqUMV6Qs5KyydCjHjX`, Opus 5.5 medium, same tier) to
+  redo the progress-file updates and the ready steps. DT1's session is
+  idle but connected, with commits up to 60616371 unpushed and not stale
+  until 17:05Z; a message to it could not be delivered, so the next cycle
+  restarts DT1 if it is still stale then. Pushes work again at 16:42Z.
+  **Merge and gate:** none: nothing is ready (M1 working on its resync,
+  M2 restarted, DT1 working), no merge lock. **Requests:** M2-R1 copied
+  (not blocking, default due 27 November). Three builders (M1, M2, DT1),
+  the cap while the seven-day bar reads `allowed_warning`. **Owner:** the
+  style-frame pick is still open (owner inbox).
+
 - **Cycle 194**, 25 November 2026, from about 15:39Z (session
   `session_01SNkKxqhoNAcP68ggo8Rvvb`, started by the Opus 5.5 launcher,
   Opus 5.5 at effort medium by order 7). **Merged:** 3D0-CF1-style-frames
@@ -1034,43 +1075,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   roadmap pages were regenerated, but only their date changed, so they
   were committed and not republished. **Owner:** the style-frame pick is
   open (owner inbox).
-
-- **Cycle 193**, 25 November 2026, from about 15:15Z (session
-  `session_01SNkKxqKcNj6xVjwrFQ9Xt4`, started by the Opus 5.5 launcher,
-  Opus 5.5 at effort medium by order 7). The changes since cycle 192:
-  M1, M2 and CF1 pushed to their branches. **M1** (`claude/3d-measure`,
-  e2927534): budget split built, its full checks running in its session,
-  not ready. **M2** (`claude/3d-mask`, b0e9adb6): mask tool's draft, still
-  working. **CF1** (`claude/3d-camera`, 4e6c51ee): the three style frames
-  and style-frames.md, main merged in, its full checks running, not
-  ready. **Merge and gate:** none: nothing is ready, no merge lock.
-  **Started:** none. The seven-day bar still reads `allowed_warning`, so
-  order 3's cap is three and the three seats are taken; DT1 waits.
-  **Next:** verify (Opus 5.5 high subagent) and merge M1's and CF1's
-  tasks once they mark ready; start DT1 when a seat frees or the bar
-  clears.
-
-- **Cycle 192**, 25 November 2026, from about 14:39Z (session
-  `session_01SNkKxnzfoApztAshnsqsfp`, started by the Opus 5.5 launcher,
-  Opus 5.5 at effort medium by order 7). The first cycle of the 3D
-  quality wave. The changes since cycle 191: the restart (1eddd78a); the
-  UI branches `claude/ui-ad`, `claude/ui-spec-docs-check` and
-  `claude/ui-spec-gate-run` moved with the stopped builders' last pushes
-  (the UI wave is closed: nothing to merge). M63, M64 and M65 are done
-  (phase 3 closed at e33be6f9) and acknowledged. SP-bt-06's late status
-  is a stopped builder's; no restart. **Merge and gate:** none: nothing
-  is ready, no merge lock. **Started**, as new agents by order 7: M1 on
-  3D0-M1-budget-split (`session_01SNkKxn3VgF7utqQN2JkCuy`, Sonnet 5.5
-  medium, `claude/3d-measure`), M2 on 3D0-M2-mask-tool
-  (`session_01SNkKxpG1o34prYosYVfYED`, Opus 5.5 medium, `claude/3d-mask`)
-  and CF1 on 3D0-CF1-style-frames (`session_01SNkKxp5DfWujKR3BZxFjQg`,
-  Opus 5.5 medium, `claude/3d-camera`): plan.md's first tasks 1 to 3.
-  **DT1 is not started:** the seven-day bar reads `allowed_warning`, so
-  order 3's cap is three; 3D0-DT1-data-spec (Opus 5.5 high) takes the
-  first free seat, or the fourth seat once the bar clears. **Next:** start
-  DT1 when a seat frees or the bar clears; verify (Opus 5.5 high
-  subagent) and merge each phase 0 task as it is ready; name the owner's
-  phone-trial build once the budget split merges.
 
 - **Restart, 25 November 2026** (the overseer). The owner restarted the
   program on the 3D quality plan ("Based on the plan made by Fable, let's

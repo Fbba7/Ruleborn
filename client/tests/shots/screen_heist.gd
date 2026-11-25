@@ -250,10 +250,8 @@ func _go() -> void:
 			quit(1)
 			return
 	# §21.3's budgets, as the renderer counted the frame.
-	print("budget: %d draw calls, %d primitives" % [
-		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME),
-		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME)])
 	frame.get_texture().get_image().save_png(OS.get_environment("SHOT"))
+	await BudgetSplit.line(self, "heist")
 	print("wrote")
 	quit()
 
