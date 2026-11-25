@@ -3,17 +3,11 @@
   "updated_at": "2026-11-25T17:20:00Z",
   "expected_next_update_by": "2026-11-25T20:20:00Z",
   "cycle": 196,
-  "merging": {
-    "task_id": "3D0-M1-budget-split, 3D0-M2-mask-tool",
-    "by": "lead cycle 197",
-    "candidate": "8ca70679",
-    "started_at": "2026-11-25T17:44:00Z",
-    "expires_at": "2026-11-25T19:44:00Z",
-    "note": "renewed at 18:25Z by its holder: the full checks on 8ca70679 run past the first hour"
-  },
+  "merging": null,
   "last_merged": {
-    "task_id": "3D0-CF1-style-frames",
-    "sha": "f07f36c1"
+    "task_id": "3D0-M1-budget-split, 3D0-M2-mask-tool",
+    "merged_sha": "a34f20ac",
+    "at": "2026-11-25T18:27:00Z"
   },
   "acks": [
     "M15",
