@@ -3,7 +3,7 @@ extends RefCounted
 ## What every screen shot does once its screen is up: the sky's hour from
 ## HOUR, the words folded away with FOLD, a few frames for the world to
 ## settle, the frame saved to SHOT, and each world's triangles and draw
-## calls printed, split into mesh triangles, outline passes and other views (§21.3's budgets; BudgetSplit). `prepare` takes the text size from TEXT
+## calls printed, split by BudgetSplit (§21.3's budgets). `prepare` takes the text size from TEXT
 ## (in percent), high contrast from HC and the language from LANG_SHOT, before a
 ## screen is made; WIDE prints every control asking for more than the phone,
 ## and PARTS where each world's triangles go, largest first.

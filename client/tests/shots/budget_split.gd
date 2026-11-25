@@ -42,9 +42,13 @@ static func line(tree: SceneTree, label: String) -> Dictionary:
 		calls += v.viewport.get_render_info(Viewport.RENDER_INFO_TYPE_VISIBLE, Viewport.RENDER_INFO_DRAW_CALLS_IN_FRAME)
 		shadow += v.viewport.get_render_info(Viewport.RENDER_INFO_TYPE_SHADOW, Viewport.RENDER_INFO_DRAW_CALLS_IN_FRAME)
 	var other := total - mesh - outline
-	print("budget: %s: %d triangles (%d mesh + %d outline passes), %d draw calls (+%d in shadows); %d triangles and %d draw calls in other views; frame %d triangles, %d draw calls" % [
-		label, mesh + outline, mesh, outline, calls, shadow, other, frame_calls - calls, total, frame_calls])
-	return {"total": total, "mesh": mesh, "outline": outline, "other": other, "draw_calls": calls, "frame_draw_calls": frame_calls}
+	var world := "%d triangles (%d mesh + %d outline passes), %d draw calls (+%d in shadows)" % [
+		mesh + outline, mesh, outline, calls, shadow]
+	var rest := "%d triangles and %d draw calls in other views" % [other, frame_calls - calls]
+	print("budget: %s: %s; %s; frame %d triangles, %d draw calls" % [
+		label, world, rest, total, frame_calls])
+	return {"total": total, "mesh": mesh, "outline": outline, "other": other,
+			"draw_calls": calls, "frame_draw_calls": frame_calls}
 
 
 static func _view(v: WorldView) -> int:
