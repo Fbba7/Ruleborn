@@ -8228,6 +8228,40 @@
       "merged_sha": "add036e9",
       "updated_at": "2026-11-24T23:20:00Z",
       "updated_by": "lead (cycle 191)"
+    },
+    {
+      "id": "P3-AD-wave-close",
+      "title": "AD's O7 re-check (M63): preview settings-4's stills on main and rule the wave",
+      "phase": 3,
+      "role": "art director",
+      "model": "Opus 5.5",
+      "assigned_to": "AD",
+      "files": [
+        "docs/art/ui-quality/gate/boards/wave.md",
+        "docs/art/ui-quality/gate/boards/wave/**",
+        "docs/progress/AD.md",
+        "docs/progress/status/AD.json"
+      ],
+      "deps": [],
+      "done_when": [
+        "AD previews P3-S3-settings-4's stills on main (merged de193db4) against AD-R67's done_when (M12)",
+        "wave.md's ruling reads 'The wave stands at O7', or names the one re-work with a default"
+      ],
+      "gate_items": [],
+      "attempts": 1,
+      "estimate_h": 1,
+      "tier": 2,
+      "critical": true,
+      "state": "merged",
+      "claim": {
+        "agent": "AD",
+        "at": "2026-11-24T23:40:00Z"
+      },
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "3bfb8325",
+      "merged_sha": "e33be6f9",
+      "exceptions": []
     }
   ],
   "idle_queue": [
