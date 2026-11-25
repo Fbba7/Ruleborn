@@ -5,6 +5,50 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 198**, 25 November 2026, from about 18:39Z (session
+  `session_01SNkKxpCLYdWeYiQwJhDr52`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The change since cycle 197:
+  `claude/3d-mask` (M2) merged main and committed its find-it scorer
+  (028837be); its status reads working, pre-check next. M1 renders the
+  baseline's 20 shots (no push yet); DT1's session is idle on its
+  running pre-check of the resync (d9022669, unpushed), not stale until
+  19:07Z. All three sessions connected, none stale, so **none
+  restarted**. **Merge and gate:** none: nothing is ready, no merge lock.
+  **Started:** none: M1, M2 and DT1 fill the cap of three while the
+  seven-day bar reads `allowed_warning`. **Owner:** the phone trial and
+  the style-frame pick are still open (owner inbox).
+
+- **Cycle 197**, 25 November 2026, from about 17:40Z (session
+  `session_01SNkKxoyugNa4BQjRBSzsYK`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 196:
+  all three builders marked ready with pre-check PASS: M1's budget-split
+  resync at 99184a98, M2's mask tool at deafdd0a and DT1's data spec at
+  0b77e805. **Verify:** three Opus 5.5 high verifiers. M1 passed (the
+  three earlier defects fixed; defences 36011 triangles in 86 draw calls,
+  heist 85446; the rendered BudgetSplit test passes and fails 7 times on
+  the old code). M2 passed (notes: the Q11 vault match fails in 10 of 21
+  stills because of plan.md 2.6's vault column, not the tool; weak range
+  matching in mask_matrix.py; two comments say green for the blue
+  channel). DT1 failed: section 3's guard states do not match the sim
+  (a landing does not put a guard in Investigating, a near rush does not
+  skip Suspicious, a spread raises only to Investigating, transitions
+  missing). **Merge:** the batch candidate ec4bdded (all three) was
+  dropped for DT1's fail; candidate 8ca70679 (M1 and M2) passed its full
+  checks at 18:26Z (the lock renewed once at 18:25Z, the checks running
+  past the hour) and merged onto main's docs/progress commits at
+  a34f20ac, docs check passing. **Resync:** 3D0-DT1-data-spec, with the
+  findings in its resync_reason. **Requests:** M1-R1 and M2-R1 closed by
+  their defaults (the rendered test stays standalone; check_all
+  unchanged); DT1-R1 waits for DT1's merge. **Started:** DT1 on its
+  resync (Opus 5.5 high, already the top tier), M1 on 3D0-M1-baseline
+  and M2 on 3D0-M2-find-it (both Sonnet 5.5 medium, simple). Three
+  builders, the cap while the seven-day bar reads `allowed_warning`.
+  **Found:** main lacks client/tests/shots/style_frame_heist.gd.uid
+  (CF1's merge left it out; every other shot's .uid is tracked); the
+  lead adds it in the next merge candidate. **Owner:** the phone trial
+  is unblocked and the style-frame pick is still open (owner inbox,
+  18:30Z).
+
 - **Cycle 196**, 25 November 2026, from about 17:14Z (session
   `session_01SNkKxoHmwS3dddh2WLvudH`, started by the Opus 5.5 launcher,
   Opus 5.5 at effort medium by order 7). The changes since cycle 195:

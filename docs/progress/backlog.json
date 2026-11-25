@@ -505,8 +505,8 @@
       "title": "The baseline: every 3D shot in client/tests/shots/ rendered and measured with the mask tool; the table published beside the plan",
       "phase": 0,
       "role": "measure track",
-      "model": "Sonnet 5.5",
-      "effort": "medium",
+      "model": "Opus 5.5",
+      "effort": "high",
       "assigned_to": "M1",
       "files": [
         "docs/art/3d-quality/baseline.md",
@@ -523,17 +523,18 @@
         "Its numbers are reproducible with the one command it names"
       ],
       "gate_items": [],
-      "attempts": 0,
+      "attempts": 1,
       "estimate_h": 6,
       "tier": 1,
       "critical": true,
-      "state": "open",
+      "state": "resync",
       "claim": null,
-      "prior_branch": null,
-      "prior_sha": null,
-      "ready_sha": null,
+      "prior_branch": "claude/3d-measure",
+      "prior_sha": "9686d848",
+      "ready_sha": "9686d848",
       "merged_sha": null,
-      "exceptions": []
+      "exceptions": [],
+      "resync_reason": "Lead cycle 200, verifier (Opus 5.5 high) failed it on done_when 1; done_when 2 passes (the rerun of baseline/run.py at 9686d848 matched every cell but render noise on screen_replay's outline, 43,610 vs 43,642). (1) Blocking: client/tests/shots/screen_laws.gd has no row; it is a 3D screen (the heist WorldView in a SubViewport) and plan.md:287 names laws among the screens measured in the phase 0 baseline. M1.md:40's reason ('no budget line, so not a row') does not hold: the character shots print no budget split and still have rows. (2) client/tests/shots/universe_screens.gd (map/universe screens over the 3D universe) has no row and no reason; add a row or say why it is left out, and state in baseline.md which shots count as 3D and which are left out (heist_shot, law_heist_screen, style_frame_heist, uiq_heist_hud, world_shot folded into screen_heist; the creature, kit and look sheets). (3) baseline.md:19-21: '-' is said to mean 'the quality does not apply', but Q11/Q12 apply on realm, builder, defences and character (plan.md:245-246); the tool cannot measure them there yet (M1-R2). Use a distinct mark such as 'not measured (M1-R2)', and fix 'every other shot' (replay and result are measured). (4) Footnote the zeros: screen_replay Q1 0% and Q4 0% come from the edge vignette counted as cover; screen_result panels_share 1.0 comes from a full-screen backdrop. (5) Minor: run.py:7-8 says baseline/work/<name>/ but the code uses /tmp/ruleborn_baseline (run.py:22); run.py exits 0 when shots fail, so a real render failure goes unnoticed: make it say so or exit non-zero on failures other than the known mask limitation. Opus 5.5 high by order 7 (a resync after a failed review)."
     },
     {
       "id": "3D0-M2-find-it",
