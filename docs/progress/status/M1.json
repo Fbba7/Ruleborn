@@ -24,7 +24,7 @@
     "summary": "All checks passed."
   },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "6057c3ca3537b12667020fc5071dbcf072e194b5",
   "stop_at": "2026-12-02T21:00:00Z",
   "acks": [],
   "requests": [],
