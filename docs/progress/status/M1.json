@@ -4,27 +4,21 @@
   "branch": "claude/3d-measure",
   "model": "Opus 5.5",
   "effort": "high",
-  "agent_state": "waiting",
+  "agent_state": "active",
   "task_id": "3D0-M1-baseline",
-  "task_state": "ready",
-  "claimed_at": "2026-11-25T19:55:00Z",
-  "lease_until": "2026-11-25T22:55:00Z",
-  "updated_at": "2026-11-25T20:45:00Z",
-  "expected_next_update_by": null,
+  "task_state": "working",
+  "claimed_at": "2026-11-25T21:35:00Z",
+  "lease_until": "2026-11-26T00:35:00Z",
+  "updated_at": "2026-11-25T21:35:00Z",
+  "expected_next_update_by": "2026-11-25T22:20:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "4636c38384929b94eefcc5733f88985171c86a61",
-    "next_step": "verifier review of 3D0-M1-baseline at 4636c383, then merge"
+    "next_step": "resync: fix run.py --no-render (verifier, cycle 203), then the five minor points, rerun, pre-check"
   },
-  "precheck": {
-    "sha": "4636c38384929b94eefcc5733f88985171c86a61",
-    "state": "PASS",
-    "exit": 0,
-    "finished_at": "2026-11-25T20:41:34Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
-  "ready_sha": "4636c38384929b94eefcc5733f88985171c86a61",
+  "ready_sha": null,
   "stop_at": "2026-12-02T21:00:00Z",
   "acks": [],
   "requests": [
