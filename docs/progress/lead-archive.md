@@ -5,6 +5,27 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 194**, 25 November 2026, from about 15:39Z (session
+  `session_01SNkKxqhoNAcP68ggo8Rvvb`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). **Merged:** 3D0-CF1-style-frames
+  at f07f36c1 (ready 4e6c51ee; full checks PASS on candidate 07b5bc51;
+  verifier on Opus 5.5 high PASS, with two minor notes: the 1.4x figures
+  sit on top of readable_scale rather than the hook, and the frames quote
+  a 150 draw-call limit where plan.md Q14 says 120; the frames' 119 meets
+  both). **To resync:** 3D0-M1-budget-split (ready 5a5d5f41): the
+  verifier failed it on three counts (law_fx_ink.gdshader missed as an
+  outline, shadow-pass prims counted in the outline figure, shadow
+  triangles mislabelled "+0 in shadows"); see its resync_reason.
+  **Started:** DT1 on 3D0-DT1-data-spec (Opus 5.5 high) in M1's seat
+  while M1 was idle; M1 restarted on its resync (Opus 5.5 high, one tier
+  up) in CF1's freed seat. Three builders run (M1, M2, DT1), the cap while
+  the seven-day bar reads `allowed_warning`. **Container:** the first
+  full checks failed only because the fresh lead container had no Godot
+  cache; after the agents' setup step they ran. **Pages:** the audit and
+  roadmap pages were regenerated, but only their date changed, so they
+  were committed and not republished. **Owner:** the style-frame pick is
+  open (owner inbox).
+
 - **Cycle 193**, 25 November 2026, from about 15:15Z (session
   `session_01SNkKxqKcNj6xVjwrFQ9Xt4`, started by the Opus 5.5 launcher,
   Opus 5.5 at effort medium by order 7). The changes since cycle 192:

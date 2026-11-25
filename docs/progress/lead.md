@@ -214,8 +214,10 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxoHmwS3dddh2WLvudH` (cycle 196,
-25 November 2026 from about 17:14Z, started by the Opus 5.5 launcher).
+Latest lead cycle session: `session_01SNkKxoyugNa4BQjRBSzsYK` (cycle 197,
+25 November 2026 from about 17:40Z, started by the Opus 5.5 launcher).
+Cycle 196's was `session_01SNkKxoHmwS3dddh2WLvudH` (25 November, from
+about 17:14Z).
 Cycle 195's was `session_01SNkKxqxDHnxcUgHuGLSEXt` (25 November, from
 about 16:39Z).
 Cycle 193's was `session_01SNkKxqKcNj6xVjwrFQ9Xt4` (25 November, from
@@ -426,6 +428,8 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| M1 | `session_01SNkKxqcAXy4JEwSxwK6PFL` (Sonnet 5.5, effort medium) | 3D0-M1-baseline (start, cycle 197: the budget split and the mask tool merged; Sonnet 5.5 medium by order 7, a simple docs-only task; M1's last session, `session_01SNkKxnNfLkQ2DLurDzjM8E`, is idle, its task merged) | `claude/3d-measure` | 2026-11-25 18:28Z |
+| M2 | `session_01SNkKxpp86K3DcyB4kRkPow` (Sonnet 5.5, effort medium) | 3D0-M2-find-it (start, cycle 197: the mask tool merged; Sonnet 5.5 medium by order 7, a simple task in tools/render; M2's last session, `session_01SNkKxqUMV6Qs5KyydCjHjX`, is idle, its task merged) | `claude/3d-mask` | 2026-11-25 18:28Z |
 | DT1 | `session_01SNkKxodKBY94BomQhXexAr` (Opus 5.5, effort high) | 3D0-DT1-data-spec (restart, cycle 197: resync after the verifier failed section 3's guard states; already the top tier by order 7) | `claude/3d-data` | 2026-11-25 18:15Z |
 | DT1 | `session_01SNkKxpL9MBiEawLL7runx2` (Opus 5.5, effort high; idle, task sent to resync in cycle 197) | 3D0-DT1-data-spec (start, cycle 194: a new agent once M1's seat freed; Opus 5.5 high by order 7, it touches the extension and the replay's bytes) | `claude/3d-data` | 2026-11-25 15:42Z |
 | M1 | `session_01SNkKxnNfLkQ2DLurDzjM8E` (Opus 5.5, effort high) | 3D0-M1-budget-split (restart, cycle 194: resync after the verifier failed the split; one tier up by order 7) | `claude/3d-measure` | 2026-11-25 16:31Z |
@@ -1018,6 +1022,37 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 197**, 25 November 2026, from about 17:40Z (session
+  `session_01SNkKxoyugNa4BQjRBSzsYK`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 196:
+  all three builders marked ready with pre-check PASS: M1's budget-split
+  resync at 99184a98, M2's mask tool at deafdd0a and DT1's data spec at
+  0b77e805. **Verify:** three Opus 5.5 high verifiers. M1 passed (the
+  three earlier defects fixed; defences 36011 triangles in 86 draw calls,
+  heist 85446; the rendered BudgetSplit test passes and fails 7 times on
+  the old code). M2 passed (notes: the Q11 vault match fails in 10 of 21
+  stills because of plan.md 2.6's vault column, not the tool; weak range
+  matching in mask_matrix.py; two comments say green for the blue
+  channel). DT1 failed: section 3's guard states do not match the sim
+  (a landing does not put a guard in Investigating, a near rush does not
+  skip Suspicious, a spread raises only to Investigating, transitions
+  missing). **Merge:** the batch candidate ec4bdded (all three) was
+  dropped for DT1's fail; candidate 8ca70679 (M1 and M2) passed its full
+  checks at 18:26Z (the lock renewed once at 18:25Z, the checks running
+  past the hour) and merged onto main's docs/progress commits at
+  a34f20ac, docs check passing. **Resync:** 3D0-DT1-data-spec, with the
+  findings in its resync_reason. **Requests:** M1-R1 and M2-R1 closed by
+  their defaults (the rendered test stays standalone; check_all
+  unchanged); DT1-R1 waits for DT1's merge. **Started:** DT1 on its
+  resync (Opus 5.5 high, already the top tier), M1 on 3D0-M1-baseline
+  and M2 on 3D0-M2-find-it (both Sonnet 5.5 medium, simple). Three
+  builders, the cap while the seven-day bar reads `allowed_warning`.
+  **Found:** main lacks client/tests/shots/style_frame_heist.gd.uid
+  (CF1's merge left it out; every other shot's .uid is tracked); the
+  lead adds it in the next merge candidate. **Owner:** the phone trial
+  is unblocked and the style-frame pick is still open (owner inbox,
+  18:30Z).
+
 - **Cycle 196**, 25 November 2026, from about 17:14Z (session
   `session_01SNkKxoHmwS3dddh2WLvudH`, started by the Opus 5.5 launcher,
   Opus 5.5 at effort medium by order 7). The changes since cycle 195:
@@ -1054,27 +1089,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   (not blocking, default due 27 November). Three builders (M1, M2, DT1),
   the cap while the seven-day bar reads `allowed_warning`. **Owner:** the
   style-frame pick is still open (owner inbox).
-
-- **Cycle 194**, 25 November 2026, from about 15:39Z (session
-  `session_01SNkKxqhoNAcP68ggo8Rvvb`, started by the Opus 5.5 launcher,
-  Opus 5.5 at effort medium by order 7). **Merged:** 3D0-CF1-style-frames
-  at f07f36c1 (ready 4e6c51ee; full checks PASS on candidate 07b5bc51;
-  verifier on Opus 5.5 high PASS, with two minor notes: the 1.4x figures
-  sit on top of readable_scale rather than the hook, and the frames quote
-  a 150 draw-call limit where plan.md Q14 says 120; the frames' 119 meets
-  both). **To resync:** 3D0-M1-budget-split (ready 5a5d5f41): the
-  verifier failed it on three counts (law_fx_ink.gdshader missed as an
-  outline, shadow-pass prims counted in the outline figure, shadow
-  triangles mislabelled "+0 in shadows"); see its resync_reason.
-  **Started:** DT1 on 3D0-DT1-data-spec (Opus 5.5 high) in M1's seat
-  while M1 was idle; M1 restarted on its resync (Opus 5.5 high, one tier
-  up) in CF1's freed seat. Three builders run (M1, M2, DT1), the cap while
-  the seven-day bar reads `allowed_warning`. **Container:** the first
-  full checks failed only because the fresh lead container had no Godot
-  cache; after the agents' setup step they ran. **Pages:** the audit and
-  roadmap pages were regenerated, but only their date changed, so they
-  were committed and not republished. **Owner:** the style-frame pick is
-  open (owner inbox).
 
 - **Restart, 25 November 2026** (the overseer). The owner restarted the
   program on the 3D quality plan ("Based on the plan made by Fable, let's
