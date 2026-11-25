@@ -14,8 +14,16 @@ changed.
 
 It exits 1 when a shot fails for any reason but the mask tool's known limit
 (request M1-R2: no WorldView in the shot, or an error inside mask_pass.gd):
-no still, no "wrote" or "saved" line, no budget line, a script error in the shot, or a
-timeout. Each shot's verdict is printed, and kept in its data file.
+no work folder, no still, no "wrote" or "saved" line, no budget line, a script
+error in the shot, or a timeout. The heist shots of MUST_MEASURE are measured
+by the mask tool today, so on them the known limit is a failure too. Each
+shot's verdict is printed and kept in its data file ("verdict", "why"). Only
+a shot that is "ok" or at the known limit gets its data file written: a failed
+shot, or one with no work folder, keeps its old data file, so a broken run
+never wipes the published figures.
+
+--no-render renders nothing and writes no data file: it rebuilds baseline.md
+from baseline/data/ as it is.
 """
 import json
 import os
@@ -29,6 +37,7 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[3]
 WORK = Path(os.environ.get("BASELINE_WORK", "/tmp/ruleborn_baseline"))
 DATA = HERE / "data"
+OUT = HERE.parent / "baseline.md"
 
 # name -> (shot script, environment, budget line to add before print("wrote") or None)
 LAWS_LINE = '\tawait BudgetSplit.line(self, "laws")\n'
@@ -44,6 +53,10 @@ INJECT = {
     "universe_map": UNIVERSE_LINE,
     "universe_screen": UNIVERSE_LINE,
 }
+
+# Shots the mask tool measures today: an error inside mask_pass.gd on one of
+# them is a regression, not the known limit of request M1-R2.
+MUST_MEASURE = {"screen_heist", "screen_replay", "screen_result", "screen_laws"}
 
 # name -> (shot script, environment)
 SHOTS = {
@@ -126,16 +139,24 @@ def verdict(name: str) -> tuple:
     if (out / "measure.json").exists():
         return "ok", ""
     if errors:
-        return "mask limit", "error inside mask_pass.gd: " + errors[0][0]
-    if any("mask: no WorldView" in ln for ln in lines):
-        return "mask limit", "no WorldView in the shot"
-    return "failed", "the mask tool measured nothing, for no known reason"
+        why = "error inside mask_pass.gd: " + errors[0][0]
+    elif any("mask: no WorldView" in ln for ln in lines):
+        why = "no WorldView in the shot"
+    else:
+        return "failed", "the mask tool measured nothing, for no known reason"
+    if name in MUST_MEASURE:
+        return "failed", f"{name} must be measured, but the mask tool stopped: {why}"
+    return "mask limit", why
 
 
-def collect(name: str) -> dict:
+def collect(name: str):
+    """The shot's data record from its work folder, or None with no work folder."""
     out = WORK / name
-    rec = {"name": name, "budget": None, "measure": None}
     log = out / "godot.log"
+    if not out.is_dir():
+        return None
+    state, why = verdict(name)
+    rec = {"name": name, "budget": None, "measure": None, "verdict": state, "why": why}
     if log.exists():
         for ln in log.read_text(errors="replace").splitlines():
             if ln.startswith(("budget:", "draw calls ", "triangles ")):
@@ -146,8 +167,8 @@ def collect(name: str) -> dict:
     return rec
 
 
-def main() -> int:
-    args = sys.argv[1:]
+def main(argv=None) -> int:
+    args = sys.argv[1:] if argv is None else argv
     jobs = int(args[args.index("--jobs") + 1]) if "--jobs" in args else 2
     names = list(SHOTS)
     if "--only" in args:
@@ -165,18 +186,25 @@ def main() -> int:
                 if state == "failed":
                     failed.append(res["name"])
                     print(res["stdout"], flush=True)
-    DATA.mkdir(exist_ok=True)
-    for n in names:
-        rec = collect(n)
-        (DATA / f"{n}.json").write_text(json.dumps(rec, indent=1, sort_keys=True) + "\n")
+        DATA.mkdir(exist_ok=True)
+        for n in names:
+            rec = collect(n)
+            if rec is None or rec["verdict"] == "failed":
+                why = f"no work folder in {WORK}" if rec is None else rec["why"]
+                print(f"{n}: data file kept as it was ({why})", file=sys.stderr)
+                if n not in failed:
+                    failed.append(n)
+                continue
+            (DATA / f"{n}.json").write_text(json.dumps(rec, indent=1, sort_keys=True) + "\n")
     import table
-    table.write(HERE.parent / "baseline.md")
+    table.write(OUT, DATA)
     if failed:
         print(f"{len(failed)} shot(s) failed: {', '.join(failed)}", file=sys.stderr)
         return 1
     return 0
 
 
+sys.path.insert(0, str(HERE))
+
 if __name__ == "__main__":
-    sys.path.insert(0, str(HERE))
     sys.exit(main())

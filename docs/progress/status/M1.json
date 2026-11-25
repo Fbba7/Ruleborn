@@ -7,14 +7,18 @@
   "agent_state": "active",
   "task_id": "3D0-M1-baseline",
   "task_state": "working",
-  "claimed_at": "2026-11-25T21:35:00Z",
-  "lease_until": "2026-11-26T00:35:00Z",
-  "updated_at": "2026-11-25T21:35:00Z",
-  "expected_next_update_by": "2026-11-25T22:20:00Z",
-  "long_run": null,
+  "claimed_at": "2026-11-25T22:33:00Z",
+  "lease_until": "2026-11-26T01:37:00Z",
+  "updated_at": "2026-11-25T22:37:00Z",
+  "expected_next_update_by": "2026-11-25T23:20:00Z",
+  "long_run": {
+    "what": "run.py --jobs 2, all 22 shots",
+    "started_at": "2026-11-25T22:36:00Z",
+    "expected_end": "2026-11-25T23:05:00Z"
+  },
   "progress_marker": {
     "last_green_sha": "4636c38384929b94eefcc5733f88985171c86a61",
-    "next_step": "resync: fix run.py --no-render (verifier, cycle 203), then the five minor points, rerun, pre-check"
+    "next_step": "resync: --no-render fixed (tests), frame draw-call column and notes in table.py; rerunning the 22 shots, then regenerate baseline.md and pre-check"
   },
   "precheck": null,
   "gate_request": null,

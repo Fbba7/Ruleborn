@@ -11,24 +11,33 @@ LINE = re.compile(
     r".*?; (\d+) triangles and (\d+) draw calls in other views; frame (\d+) triangles, (\d+) draw calls")
 
 
+# The table's columns. "View draw calls" is the world view's own figure (shadow
+# passes included); "Frame draw calls" is the whole frame's, plan Q14's figure.
+HEAD = ["Shot", "Mesh tri", "Outline tri", "Shadow tri", "Other-view tri", "View draw calls", "Frame tri",
+        "Frame draw calls", "Q1 band", "Q2 crew / guard pt", "Q3 worst", "Q4 least seen", "Q5 deco", "Q6 most",
+        "Q11 chosen; guard; tallest", "Q12 shadowed"]
+
+
 def budget(rec: dict) -> list:
+    """The budget columns of HEAD, from the shot's budget line."""
     text = rec.get("budget") or ""
     m = LINE.search(text)
     if not m:
         # The shots without BudgetSplit print the renderer's frame totals only.
         a = re.match(r"draw calls (\d+), primitives (\d+)", text)
         if a:
-            return ["-", "-", "-", "-", f"{int(a.group(1))}*", f"{int(a.group(2)):,}*"]
+            return ["-", "-", "-", "-", "-", f"{int(a.group(2)):,}*", f"{int(a.group(1))}*"]
         a = re.match(r"triangles (\d+) draw calls (\d+) frame (\d+) prims (\d+) calls", text)
         if a:
-            return [f"{int(a.group(1)):,}*", "-", "-", "-", f"{int(a.group(2))}*", f"{int(a.group(3)):,}*"]
-        a = re.match(r"triangles (\d+) drawn now (\d+) draw calls (\d+) rendered (\d+) prims", text)
+            return [f"{int(a.group(1)):,}*", "-", "-", "-", f"{int(a.group(2))}*", f"{int(a.group(3)):,}*",
+                    f"{int(a.group(4))}*"]
+        a = re.match(r"triangles (\d+) drawn now (\d+) draw calls (\d+) rendered (\d+) prims (\d+) calls", text)
         if a:
-            return [f"{int(a.group(1)):,}*", "-", "-", "-", f"{int(a.group(3))}*", f"{int(a.group(4)):,}*"]
-        return ["-"] * 6
-    t, mesh, outl, shad, dc, _o, _od, frame, _c = (int(x) for x in m.groups()[:9])
-    other = int(m.group(6))
-    return [f"{mesh:,}", f"{outl:,}", f"{shad:,}", f"{other:,}", f"{dc}", f"{frame:,}"]
+            return [f"{int(a.group(1)):,}*", "-", "-", "-", f"{int(a.group(3))}*", f"{int(a.group(4)):,}*",
+                    f"{int(a.group(5))}*"]
+        return ["-"] * 7
+    _t, mesh, outl, shad, dc, other, _od, frame, fdc = (int(x) for x in m.groups())
+    return [f"{mesh:,}", f"{outl:,}", f"{shad:,}", f"{other:,}", f"{dc}", f"{frame:,}", f"{fdc}"]
 
 
 def pct(x):
@@ -41,6 +50,7 @@ NOT_MEASURED = "n/m"
 NOTES = {
     "screen_replay": "a",
     "screen_result": "b",
+    "screen_observatory": "c",
 }
 
 
@@ -64,32 +74,37 @@ def q(rec: dict) -> list:
     ]
 
 
-def write(path: Path) -> None:
+def write(path: Path, data: Path = HERE / "data") -> None:
     rows = []
-    for f in sorted((HERE / "data").glob("*.json")):
+    for f in sorted(data.glob("*.json")):
         rec = json.loads(f.read_text())
         note = NOTES.get(rec["name"])
         name = f"`{rec['name']}`" + (f" ({note})" if note else "")
         rows.append([name] + budget(rec) + q(rec))
-    head = ["Shot", "Mesh tri", "Outline tri", "Shadow tri", "Other-view tri", "Draw calls", "Frame tri",
-            "Q1 band", "Q2 crew / guard pt", "Q3 worst", "Q4 least seen", "Q5 deco", "Q6 most", "Q11 chosen; guard; tallest",
-            "Q12 shadowed"]
+    head = HEAD
     out = ["# The 3D baseline", "",
            "Every 3D screen shot in `client/tests/shots/` (the list below), rendered on the Compatibility",
            "renderer (llvmpipe) and measured with the mask tool ([`mask.md`](mask.md)). Written by",
            "3D0-M1-baseline. The project's frame is 1080 × 2340; `screen_heist`, `screen_replay`,",
            "`screen_result` and `screen_laws` save their stills at that size, the others at the project",
            "window's half size, 540 × 1170. Triangle and draw-call counts do not depend on the size.", "",
-           "## Reproduce", "", "```", "python3 docs/art/3d-quality/baseline/run.py --jobs 2", "```", "",
+           "## Reproduce", "",
+           "In a fresh container, first set up the tools (`docs/guides/agent-brief.md`, \"Starting a session\") and",
+           "build the client with `bash client/build.sh`; then:", "",
+           "```", "python3 docs/art/3d-quality/baseline/run.py --jobs 2", "```", "",
            "It renders each shot (about two minutes each) into `/tmp/ruleborn_baseline/<shot>/` (or",
            "`$BASELINE_WORK/<shot>/`), keeps each shot's budget line and `measure.json` in `baseline/data/`, and",
-           "rewrites this file. `--no-render` rebuilds the table from `baseline/data/`; `--only a,b` runs some",
-           "shots. `screen_defences` is shot with `TAB=0`; `universe_map` and `universe_screen` are",
+           "rewrites this file. `--no-render` renders nothing and writes no data: it only rebuilds this file",
+           "from `baseline/data/`. `--only a,b` runs some shots. `screen_defences` is shot with `TAB=0`; `universe_map` and `universe_screen` are",
            "`universe_screens.gd` with `SCREEN=map` and `SCREEN=universe`. `screen_laws`, `universe_map` and",
            "`universe_screen` print no budget line of their own: `run.py` adds one to a copy of the script",
            "(`BudgetSplit.line` for the laws heist, the universe view's count for the other two), and leaves",
            "the script in `client/` as it is. It exits 1 if a shot fails (no still, no budget line, a script",
-           "error in the shot, a timeout); the mask tool's known limit (below) is reported, not a failure.", "",
+           "error in the shot, a timeout), and then keeps that shot's old data file. The mask tool's known limit",
+           "(below) is reported, not a failure, except on `screen_heist`, `screen_replay`, `screen_result` and",
+           "`screen_laws`, which it measures today. Each data file keeps its shot's verdict (`verdict`, `why`).",
+           "`run.py`'s own tests, with no render:", "",
+           "```", "python3 -m unittest discover -s docs/art/3d-quality/baseline -p 'test_*.py'", "```", "",
            "Two full runs in the same container agree on every figure but a few: `screen_laws` and",
            "`screen_replay` moved by a few dozen outline-pass triangles (48 and 32, under 0.1% of the frame),",
            "`screen_laws`' Q3 by 2 points (27% and 29%), and `screen_heist`'s shadow pixels by a few (Q12 the",
@@ -115,13 +130,14 @@ def write(path: Path) -> None:
            "  `motion_rig`, `screen_shots`, `shot_data`, `shot_kit`, `stage_fixtures`, `universe_sample`.", "",
            "## The table", "",
            "Budget columns are the shots' `budget:` line: mesh triangles, outline-pass triangles, shadow-map",
-           "triangles, other views' triangles and the world views' draw calls (shadow passes included); the frame",
-           "total is their sum. A `*` marks a shot that prints the renderer's frame totals only (no split;",
-           "`universe_*` print their universe view's triangles in the first column); a `-` in a budget column is a",
-           "figure that shot does not print.", "",
+           "triangles, other views' triangles and the world view's draw calls (shadow passes included); the frame",
+           "triangles are their sum, and the frame draw calls are the whole frame's, the panels' and other",
+           "views' included: plan Q14's figure (at most 120). A `*` marks a shot that prints the renderer's frame",
+           "totals only (no split; `universe_*` print their universe view's triangles and draw calls in the first",
+           "column and the view draw calls); a `-` in a budget column is a figure that shot does not print.", "",
            f"**`{NOT_MEASURED}` means not measured** (request M1-R2): the mask tool measures only the heist's",
            "`WorldView` with its crew and guards. It finds no `WorldView` on the character stages and the universe",
-           "view, and stops on `screen_defences` and the realm screens. Some of these qualities do not apply",
+           "view, and stops on `screen_defences`, the realm screens and `screen_observatory`. Some of these qualities do not apply",
            "there (Q2 to Q6 need crew and guards), but Q11 and Q12 do apply on realm, builder, defences and",
            "character (`plan.md`, section 4), and are not yet measured. A `-` in a measured row means the",
            "shot has nothing to measure for that quality (Q3 with no figure in the clear).", "",
@@ -138,6 +154,10 @@ def write(path: Path) -> None:
             "reads every pixel as cover (`panels_share` 1.0). Q1 0%, Q3's `-`, Q4 0%, Q5 0.0%, Q11's",
             "\"under panel\" and Q12's 0/9 all come from that backdrop (the still shows the world only faintly",
             "through it).",
+            "",
+            "(c) `screen_observatory`: its world view draws nothing (0 triangles, 0 draw calls). The cards'",
+            "universes are drawn offscreen by `StageThumbs`, so all of the frame's triangles and draw calls are",
+            "in the other views.",
             "",
             "Q1 band is the clear band of the screen; Q2 is the least crew member / guard in points;",
             "Q3 the worst share of a figure's pixels within 18 gray levels of the ground; Q4 the least visible",
