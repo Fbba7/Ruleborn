@@ -1,15 +1,14 @@
 # DT1 data track: progress
 
-- Status: Green. 3D0-DT1-data-spec: `guards()` adds the four fields, the
-  suspicious shot renders, and the data spec is written.
-- Progress: 1 task, this session's: 3D0-DT1-data-spec. Its ready_sha and
-  pre-check are in `status/DT1.json`: ready at `0b77e805`, the full
-  checks passed and the owners diff is clean.
-- Done: the data spec ([`docs/art/3d-quality/data-spec.md`](../art/3d-quality/data-spec.md)).
-  `guards()` returns `near`, `mid`, `peripheral` and `suspicion`, with a
-  byte-for-byte replay test. A heist shot with a Suspicious guard.
-- Next: the verifier reviews the diff; the lead merges. Phase 1's data
-  task builds the additions of the spec's sections 5 to 7.
+- Status: Green at the last pre-check; resync of 3D0-DT1-data-spec in
+  progress (section 3 rewritten, full checks running).
+- Progress: 0 of 1 tasks merged; 3D0-DT1-data-spec in resync after the
+  verifier of cycle 197.
+- Done: `guards()` adds `near`, `mid`, `peripheral` and `suspicion`, with a
+  byte-for-byte replay test; a heist shot with a Suspicious guard; the data
+  spec ([`docs/art/3d-quality/data-spec.md`](../art/3d-quality/data-spec.md)),
+  section 3 now rebuilt from the sim source.
+- Next: the full checks, then ready again; the verifier reviews the diff.
 - Blocked by: none.
 - Owner decision needed: none.
 
@@ -21,39 +20,36 @@
 
 ## Handoff
 
-- **Ready at `0b77e805`** (main merged at `1dd4958f`). The full checks
-  passed on it at 17:35Z, and `owners.py diff` reports every changed path
-  inside the task's files. Main has since moved only by the lead's
-  progress files, which merge cleanly.
-- **Pushes:** from 16:10Z to about 16:55Z the credential service refused
-  every push with a 503. Nothing was lost; all commits are on
-  `claude/3d-data`.
-- **Commits, in order:**
-  - `81706999`: `guards()` in `client/ext/src/lib.rs` gains the keys
-    `near`, `mid`, `peripheral` and `suspicion`, through a `GuardView`
-    struct.
-    - The test is `reading_the_guards_every_tick_leaves_the_replay_byte_for_byte`.
-      It records a heist while reading every guard every tick, and
-      compares the replay with a golden pinned from main's code before the
-      change (697 bytes, SHA-256 `afc82a08…d4e179a8`).
-    - All seven tests of the extension pass.
-  - `fdf380a0`: `client/tests/shots/heist_suspicious.gd`. Pip walks into
-    guard 0's far zone. Guard 0 turns Suspicious at tick 69 (meter 204),
-    and the shot renders that moment with each guard's state over its
-    head. It fails if no guard is Suspicious within 900 ticks.
-  - The data spec, then this file and the status file.
-- **What the spec decides:**
-  - Noise reaches the client from the simulation: a `sound_reach` moved
-    out of `phase_noise`, and an extension `noise(x, y, gait)`. The
-    client does not recompute it.
-  - Order previews: `route()` moves the route choice out of `MoveTo`, and
-    `foresee()` is a dry run on a clone of the world.
-  - Per-tile sight zones and cover flags come from the simulation.
-  - Every sim change is a move of existing code, with the golden replays
-    unchanged. That work is complex: it spans `sim/` and `client/`.
-- **Costs:** measured with a temporary release benchmark (not committed;
-  it was outside this task's files) on the example island. They are in
-  the spec's section 8.
+- **Resync, cycle 197.** The verifier passed the extension work and failed
+  section 3 of the spec (the guard states). Main merged at `b4e0075`
+  (clean). The fixes, all from the source:
+  - Section 3 is rebuilt from `phase_states`, `enter`, `lure` and `land`:
+    the rank rule; a table of how each state is entered and left (Searching
+    at alarm level 6; Returning after Investigating's search and after
+    Searching's 600 ticks; Investigating by a spread and a lure; Alerted
+    only by the meter); the three ways into Investigating that are not the
+    meter; Delay; the meter's fill (summed over the crew, Scree ×5/4,
+    Glare), fall, the 15-tick hold and the landing's 250 (Suspicious, not
+    Investigating).
+  - "A meter can skip Suspicious" is gone: at the base rates a tick adds
+    at most 351, so the meter alone never crosses 200 and 600 at once.
+  - Section 6: Wild hunt is a `continue` in `phase_noise`, not a reach of
+    0 (`noise::field` with reach 0 still reaches the source tile).
+  - Section 7: `route()` leaves out the start tile, as `path::Route` does;
+    `route_for` takes `&self` and returns whether it crossed a wall, and
+    `MoveTo` spends the wall pass itself.
+  - The comment in `client/tests/shots/heist_suspicious.gd`: a near
+    sighting passes through Suspicious, for a few ticks.
+- **The status file at the ready_sha.** The pre-check runs on a commit,
+  and its result is recorded in a later commit, so `DT1.json` at the
+  ready_sha reads `working`. The branch head after it differs only in
+  `docs/progress/` (protocol: the candidate may differ from the ready_sha
+  only there); the head is the one to merge.
+- **Earlier work, unchanged:** `81706999` (`guards()` and the replay test,
+  golden 697 bytes, SHA-256 `afc82a08…d4e179a8`), `fdf380a0` (the shot:
+  guard 0 Suspicious at tick 69, meter 204).
+- **DT1-R1** stands with its default: the lead adds the shot's `.uid` at
+  merge.
 
 ## Tried and failed
 
@@ -69,6 +65,14 @@
 - **Too short a heist is refused.** A recording shorter than
   `sim::MIN_TICKS` gives a `Length` refusal; the test records
   `MIN_TICKS`.
+
+- **2026-11-25, cycle 197: the first section 3 was written from the
+  states' names, not the code.** It had a landing put a guard in
+  Investigating, a near rush skip Suspicious and a spread make a guard
+  Alerted; the verifier found all three wrong. The entry above, "A meter
+  can skip Suspicious", is wrong in the same way for the landing and the
+  rush: the (2, 8) target's straight jump to Investigating was hearing.
+  Section 3 is now read off `phase_states`, `enter`, `lure` and `land`.
 
 ## Requests
 
