@@ -55,6 +55,48 @@ fn radians(a: Ang) -> f32 {
     (a.0 as f64 / ANG_TURN as f64 * std::f64::consts::TAU) as f32
 }
 
+/// One guard as `guards` hands it to the client, in plain types so a cargo
+/// test can read it. Only reads: building one changes nothing in the world,
+/// so drawing the guards cannot change the heist or its replay.
+#[derive(Clone, Debug, PartialEq)]
+struct GuardView {
+    /// Where it stands, in tiles.
+    at: (f32, f32),
+    /// The way it faces, in radians.
+    facing: f32,
+    /// The cone's whole arc, in radians.
+    cone: f32,
+    /// How far each of §12.17's three zones reaches, in tiles, before laws,
+    /// light and height scale them; `far` is 0 for a role with no far zone.
+    near: f32,
+    mid: f32,
+    far: f32,
+    /// The corner of the eye's whole arc, in radians: the same zones at half
+    /// the rate.
+    peripheral: f32,
+    /// The meter, 0 to `sim::ALERTED_AT` (1000).
+    suspicion: i32,
+    /// §12.17's six states.
+    state: sim::guard::State,
+    /// Knocked out.
+    down: bool,
+}
+
+fn guard_views(w: &World) -> Vec<GuardView> {
+    w.guards.iter().map(|g| GuardView {
+        at: (tiles(g.at.x), tiles(g.at.y)),
+        facing: radians(g.facing),
+        cone: radians(g.cone),
+        near: tiles(g.near),
+        mid: tiles(g.mid),
+        far: tiles(g.far),
+        peripheral: radians(g.peripheral),
+        suspicion: g.suspicion,
+        state: g.state,
+        down: g.knocked_out,
+    }).collect()
+}
+
 /// An island from its bundle bytes, or the fixture realm for none.
 fn realm_of(bytes: &PackedByteArray) -> Option<Island> {
     if bytes.is_empty() {
@@ -736,18 +778,24 @@ impl RulebornReplay {
         out
     }
 
+    /// Every guard as the client draws it; `GuardView` says what each
+    /// field is (docs/art/3d-quality/data-spec.md, "Guards").
     #[func]
     fn guards(&self) -> Array<VarDictionary> {
         let mut out = Array::new();
         let Some(w) = self.w() else { return out };
-        for g in &w.guards {
+        for g in guard_views(w) {
             let mut d = VarDictionary::new();
-            d.set("at", Vector2::new(tiles(g.at.x), tiles(g.at.y)));
-            d.set("facing", radians(g.facing));
-            d.set("cone", radians(g.cone));
-            d.set("far", tiles(g.far));
+            d.set("at", Vector2::new(g.at.0, g.at.1));
+            d.set("facing", g.facing);
+            d.set("cone", g.cone);
+            d.set("near", g.near);
+            d.set("mid", g.mid);
+            d.set("far", g.far);
+            d.set("peripheral", g.peripheral);
+            d.set("suspicion", g.suspicion as i64);
             d.set("state", &GString::from(&format!("{:?}", g.state)));
-            d.set("down", g.knocked_out);
+            d.set("down", g.down);
             out.push(&d);
         }
         out
@@ -989,4 +1037,85 @@ impl RulebornStability {
     fn law_ids() -> PackedStringArray {
         sim::laws_table::LAWS.iter().map(|l| GString::from(l.id)).collect()
     }
+}
+
+#[cfg(test)]
+mod guard_view_tests {
+    //! `guards`' fields (3D0-DT1-data-spec): reading them every tick leaves
+    //! the heist, and so the replay, byte for byte what it was.
+    use super::{guard_views, RulebornReplay};
+    use ruleborn_sim as sim;
+    use sim::guard::State;
+    use sim::island::Island;
+    use sim::replay::{Heist, Kind};
+    use sim::World;
+
+    fn played(island: &Island, seed: u64, ticks: u32, crew: u8) -> RulebornReplay {
+        let heist = Heist { seed, island: island.digest(), rules: sim::rules_version(), ticks, crew, era: None,
+                            manifest: None, commands: Vec::new(), checksums: Vec::new() };
+        RulebornReplay { world: Some(World::from_island(island, &heist)), heist: Some(heist),
+                         island: Some(island.clone()), mismatch: 0, agreed: 0, era: None, universe: None,
+                         entry: (0, false), crossing: None }
+    }
+
+    /// The heist both runs play: the crew lands at the north-west corner
+    /// of the example realm and, at one second, one of them walks down the
+    /// west side into the south guard's sight, which fills its meter
+    /// through Suspicious to Alerted.
+    fn heist(read: bool) -> (RulebornReplay, Vec<u64>, Vec<State>) {
+        let island = Island::example();
+        let mut r = played(&island, 7, sim::MIN_TICKS, 3);
+        let (lx, ly) = island.landings()[0];
+        assert!(r.give(0, Kind::Land as i64, lx as i64 * 256 + 128, ly as i64 * 256 + 128), "the landing");
+        let (mut sums, mut seen) = (Vec::new(), Vec::new());
+        loop {
+            if r.w().unwrap().tick == 30 {
+                assert!(r.give(0, Kind::MoveTo as i64, 2 * 256 + 128, 8 * 256 + 128), "the walk");
+            }
+            if read {
+                for g in guard_views(r.w().unwrap()) {
+                    assert!((0..=sim::ALERTED_AT).contains(&g.suspicion), "{g:?}");
+                    assert!(0.0 < g.near && g.near <= g.mid && (g.far == 0.0 || g.mid <= g.far), "{g:?}");
+                    assert!(g.cone > 0.0 && g.peripheral >= g.cone, "{g:?}");
+                    // Rising is at once and falling is held, so a
+                    // Suspicious guard's meter is below Investigating's mark.
+                    if g.state == State::Suspicious {
+                        assert!(g.suspicion < sim::INVESTIGATING_AT, "{g:?}");
+                    }
+                    if !seen.contains(&g.state) {
+                        seen.push(g.state);
+                    }
+                }
+            }
+            sums.push(r.w().unwrap().checksum());
+            if !r.step() {
+                break;
+            }
+        }
+        (r, sums, seen)
+    }
+
+    #[test]
+    fn reading_the_guards_every_tick_leaves_the_replay_byte_for_byte() {
+        let (read, read_sums, seen) = heist(true);
+        let (unread, unread_sums, _) = heist(false);
+        assert_eq!(read_sums, unread_sums, "the world drifted once its guards were read");
+        let (a, b) = (read.recorded(), unread.recorded());
+        assert!(!a.is_empty(), "a replay was recorded");
+        assert_eq!(a, b, "the replay changed once its guards were read");
+        // Pinned from main's code before `guards` grew its fields (the run
+        // that reads nothing gives the same there), so a change to the sim
+        // or the recorder shows here as well.
+        assert_eq!((a.len(), sim::sha256::hex(&sim::sha256::sha256(&a))), (GOLDEN_LEN, GOLDEN_SHA.to_string()),
+                   "the recorded replay");
+        let h = Heist::decode(&a).expect("the replay reads");
+        let verdict = sim::verify_on(&Island::example(), &h);
+        assert!(verdict.is_ok(), "the server accepts it: {:?}", verdict.err());
+        for s in [State::Unaware, State::Suspicious, State::Investigating, State::Alerted] {
+            assert!(seen.contains(&s), "the heist shows a guard {s:?} (saw {seen:?})");
+        }
+    }
+
+    const GOLDEN_LEN: usize = 697;
+    const GOLDEN_SHA: &str = "afc82a085e3a6ed935d8a8a1399b9c7b6361c6f2c274084be6d06ad9d4e179a8";
 }
