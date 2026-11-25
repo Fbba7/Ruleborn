@@ -168,8 +168,9 @@ class Still:
                 continue
             ys = np.nonzero(f["solo"].any(axis=1))[0]
             silhouette = round((ys[-1] - ys[0] + 1) * self.pt, 1) if ys.size else 0.0
-            # The measure is the plan's: the figure's bounds, feet to top,
-            # stood up at its spot and projected (mask.md, "Q2"). The drawn
+            # The measure is the plan's: the figure's bounds height, feet to
+            # top, stood along the camera's up at its feet and projected
+            # (mask_pass.gd "span"; mask.md, "Q2"). The drawn
             # silhouette (ink line included) and the projected box, which
             # runs taller because its depth adds to its height in perspective,
             # are kept beside it.
@@ -307,11 +308,19 @@ class Still:
             if guards:
                 g = min(guards, key=lambda f: (f["world"][0] - pick["world"][0]) ** 2 + (f["world"][2] - pick["world"][2]) ** 2)
                 out["nearest_guard"] = {"name": g["name"], "rating": self.rate(g["solo"], self._whole(g))}
+                out["guards"] = {f["name"]: self.rate(f["solo"], self._whole(f)) for f in guards}
         if "vault" in self.info:
+            # The vault's own pixels; its projected bounds only say how much
+            # of it the frame cuts off (the bounds box is far larger than
+            # the chest, and would call it under a panel it only grazes).
             x, y, w, h = self.info["vault"]["rect"]
-            m = np.zeros((self.h, self.w), bool)
-            m[max(0, int(y)):max(0, int(y + h)), max(0, int(x)):max(0, int(x + w))] = True
-            out["target"] = {"name": "vault", "rating": self.rate(m, max(1.0, w * h))}
+            m = self.cls == VAULT
+            inside_w = max(0.0, min(self.w, x + w) - max(0.0, x))
+            inside_h = max(0.0, min(self.h, y + h) - max(0.0, y))
+            part = (inside_w * inside_h) / max(1.0, w * h)
+            whole = float(m.sum()) / part if part > 0 else 0.0
+            out["target"] = {"name": "vault", "rating": self.rate(m, whole),
+                             "under_share": round(float((m & self.covered).sum() / max(1, m.sum())), 3)}
         island = (self.cls >= WALKABLE) & (self.cls <= BUILDING)
         x, y, w, h = [int(round(v)) for v in self.info["view_rect"]]
         x0, y0, x1, y1 = max(0, x), max(0, y), min(self.w, x + w) - 1, min(self.h, y + h) - 1

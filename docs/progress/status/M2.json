@@ -8,18 +8,34 @@
   "task_state": "working",
   "claimed_at": "2026-11-25T14:47:26Z",
   "lease_until": "2026-11-25T18:04:00Z",
-  "updated_at": "2026-11-25T15:20:00Z",
-  "expected_next_update_by": "2026-11-25T16:05:00Z",
+  "updated_at": "2026-11-25T15:30:00Z",
+  "expected_next_update_by": "2026-11-25T16:15:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": null,
-    "next_step": "eight-moment matrix rendering (camera-up span reads crew 24.2-28.6 pt, guard 39.7 pt at 15 tiles); then mask.md, the ten-still hand check and the ready steps"
+    "next_step": "matrix done (heights 21/21, guard 0 18/21, vault 10/21, disagreements in mask.md); full checks, then the ready steps"
   },
   "precheck": null,
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-12-02T21:00:00Z",
   "acks": [],
-  "requests": [],
+  "requests": [
+    {
+      "id": "M2-R1",
+      "from": "M2",
+      "to": "lead",
+      "ask": "tools/render/measure.py --self-test (synthetic stills, about a second) is not run by tools/check_all.sh; add it there if wanted.",
+      "files": [
+        "tools/check_all.sh",
+        "tools/render/measure.py"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-25T15:30:00Z",
+      "due": "2026-11-27T15:30:00Z",
+      "default": "leave check_all.sh unchanged; the self-test stays a manual command named in mask.md",
+      "escalate_to": "lead"
+    }
+  ],
   "answers": []
 }
