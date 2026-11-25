@@ -379,9 +379,13 @@ stand.
   the protocol, the frozen contracts and the never-edit paths stay as
   they are. A skill never lets a session push to main, merge, open a pull
   request, or start a session or scheduled task.
-- **Where the skills come from:** the Superpowers plugin on the owner's
-  claude.ai account. If a session finds the skills missing, it follows
-  the same practice from this order's list without them, says so in its
-  status file, and goes on working.
+- **Where the skills come from:** on 25 November 2026 the owner chose
+  ("Then option 2") to copy them into the repository, because the
+  claude.ai plugin does not reach the cloud sessions. They are in
+  [`docs/process/superpowers/`](docs/process/superpowers/README.md),
+  from obra/superpowers at commit 22f0b46 (MIT). Each builder reads
+  them there, starting with the README. If a session finds the skills
+  missing, it follows the same practice from this order's list without
+  them, says so in its status file, and goes on working.
 - **Sessions already running** finish their current task; the next
   session on each seat follows this order.

@@ -129,6 +129,9 @@ then rewrites the "Now" section below and `status/lead.json`, and pushes.
    agent's last one in the table below: while it is working, create none.
    One session per agent at a time; at most one restart per agent per
    cycle. Record every new session in the table.
+   Every new or restarted builder's prompt tells it to read
+   `docs/process/superpowers/README.md` first and follow CLAUDE.md
+   order 8 with the skills there.
 7. Write alerts to `docs/progress/owner-inbox.md`; ask the owner nothing,
    apply defaults. Keep the queue full (the protocol's "Keeping the queue
    full": a startable task or idle entry per free seat, phase 3 seeded once
@@ -1029,6 +1032,13 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   there first); about 12 minutes beside check_all.
 
 ## Now
+
+- **Superpowers copied into the repository**, 25 November 2026 (the
+  overseer). The owner chose to copy the skills of order 8 into
+  `docs/process/superpowers/` (obra/superpowers at 22f0b46, MIT). From
+  now on, every builder prompt points at its README (cycle step 6).
+  M2-find-it's current session was started without them; its next
+  session gets them.
 
 - **Cycle 202**, 25 November 2026, from about 20:50Z (session
   `session_01SNkKxqroqqoKeHuicPgcmk`, started by the Opus 5.5 launcher,
