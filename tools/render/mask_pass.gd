@@ -11,8 +11,9 @@ extends RefCounted
 ## - `markers.png`: the 2D markers alone (FxAnchors), on a clear background.
 ## - `id.png`: every 3D thing a flat colour that codes what it is: red and
 ##   green the class (class // 4 and class % 4, each n * 64 + 32), blue the
-##   index (a figure's number, or the tile's kind; n * 28 + 14). Codes this
-##   far apart survive the renderer's colour conversion.
+##   index (a figure's number, or the tile's kind; n * 28 + 14), written as
+##   they are (no sRGB step), so each arrives within a few levels. A figure
+##   keeps its ink outline, drawn in its own code.
 ## - `marks3d.png`: the 3D markers alone (rings, sight edge, overlay,
 ##   effects) in their own look, on black.
 ## - `solo_c<i>.png`, `solo_g<i>.png`: each figure alone, flat, for its
@@ -158,6 +159,12 @@ func run(on: SceneTree) -> void:
 	view.process_mode = Node.PROCESS_MODE_DISABLED
 	for t in tree.get_processed_tweens():
 		t.pause()
+	if OS.get_environment("TILES") != "":
+		# A camera between zoom levels (the plan's 11 tiles): zoom 1 frames
+		# FOLLOW_TILES across, zoom 2 CLOSE_TILES, and the view lerps between.
+		var tiles := clampf(float(OS.get_environment("TILES")), WorldView.CLOSE_TILES, WorldView.FOLLOW_TILES)
+		view._zoom_f = 1.0 + (WorldView.FOLLOW_TILES - tiles) / (WorldView.FOLLOW_TILES - WorldView.CLOSE_TILES)
+		view._frame_camera()
 	await _save("beauty")
 	_list_ui()
 	var env := view.environment
@@ -518,11 +525,13 @@ func _figure(a: Node3D, kind: String, k: int, data: Dictionary) -> Dictionary:
 	d["head"] = _v(_on_frame(a.global_position + Vector3(0, float(a.get_meta("head", 1.0)), 0)))
 	d["world"] = [a.global_position.x, a.global_position.y, a.global_position.z]
 	if d.has("world_high"):
-		# The bounds' height stood up at the figure's spot: the plan's
-		# "projected bounds" height, without the box's depth in perspective.
+		# The bounds' height stood up at the figure's spot, facing the camera:
+		# the plan's "projected bounds" height, with neither the box's depth
+		# nor the camera's pitch in it.
 		var foot := Vector3(a.global_position.x, d["world_low"], a.global_position.z)
-		var top := Vector3(a.global_position.x, d["world_high"], a.global_position.z)
-		d["span"] = _on_frame(foot).y - _on_frame(top).y
+		var up := view.camera.global_transform.basis.y.normalized()
+		var top := foot + up * (float(d["world_high"]) - float(d["world_low"]))
+		d["span"] = _on_frame(foot).distance_to(_on_frame(top))
 	for key: String in ["at", "down", "state", "hp"]:
 		if data.has(key):
 			d[key] = data[key] if not (data[key] is Vector2i) else [data[key].x, data[key].y]
@@ -558,6 +567,7 @@ func _write_json() -> void:
 		"figures": figures,
 		"chosen": view.chosen,
 		"zoom": view.zoom,
+		"zoom_f": view._zoom_f,
 		"size": [view._size.x, view._size.y],
 		"env": {},
 	}

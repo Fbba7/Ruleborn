@@ -217,15 +217,23 @@ class Still:
                 continue
             seen = (head & f["seen"]).sum() / n
             heads.append({"name": f["name"], "seen": round(float(seen), 3)})
-        marks = []
+        marks, under = [], []
         for count, box, cells in components(self.markers, least=3):
             x0, y0, x1, y1 = box
+            if x1 - x0 >= 0.9 * self.w and y1 - y0 <= 8:
+                # A hairline across the whole frame is a panel's edge, not a
+                # marker.
+                continue
             sub = self.markers[y0:y1, x0:x1]
             n = int(sub.sum())
             seen = float((sub & ~self.covered[y0:y1, x0:x1]).sum() / max(1, n))
-            marks.append({"box": list(box), "seen": round(seen, 3)})
+            row = {"box": list(box), "seen": round(seen, 3)}
+            # Wholly under a panel is a framing matter (Q1, Q11), not a
+            # pile-up: listed, not counted.
+            (under if seen == 0.0 else marks).append(row)
         worst = [r["seen"] for r in heads + marks]
-        return {"heads": heads, "markers": marks, "worst": min(worst) if worst else None,
+        return {"heads": heads, "markers": marks, "under_panel": under,
+                "worst": min(worst) if worst else None,
                 "pass": all(v >= SEEN for v in worst)}
 
     # Q5: quiet ground.

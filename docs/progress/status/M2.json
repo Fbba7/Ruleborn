@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-25T14:47:26Z",
   "lease_until": "2026-11-25T18:04:00Z",
-  "updated_at": "2026-11-25T15:30:00Z",
-  "expected_next_update_by": "2026-11-25T16:15:00Z",
+  "updated_at": "2026-11-25T15:20:00Z",
+  "expected_next_update_by": "2026-11-25T16:05:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": null,
-    "next_step": "render with the figures ink outline in the id pass and the bounds span (the plan method for Q2); then the eight-moment matrix and mask.md"
+    "next_step": "eight-moment matrix rendering (camera-up span reads crew 24.2-28.6 pt, guard 39.7 pt at 15 tiles); then mask.md, the ten-still hand check and the ready steps"
   },
   "precheck": null,
   "gate_request": null,

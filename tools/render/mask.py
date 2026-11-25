@@ -10,7 +10,9 @@ masks into OUTDIR. Then tools/render/measure.py reads them and writes
 OUTDIR/measure.json, Q1 to Q6, Q11 and Q12, and prints them.
 
 The shot's own settings go in the environment as for shoot.sh (MOMENT,
-ZOOM, HOUR, ...). --no-render measures masks already in OUTDIR.
+ZOOM, HOUR, ...), and TILES sets a camera between zoom levels (the
+plan's 11 tiles). --no-render measures masks already in OUTDIR.
+tools/render/mask_matrix.py runs the plan's eight-moment matrix.
 docs/art/3d-quality/mask.md is the method.
 """
 import os
@@ -49,8 +51,9 @@ def render(shot: Path, out: Path, w: int, h: int) -> int:
     out.mkdir(parents=True, exist_ok=True)
     if not os.access(GODOT, os.X_OK):
         subprocess.run(["bash", str(ROOT / "client/build.sh")], check=True, stdout=subprocess.DEVNULL)
-    subprocess.run([GODOT, "--headless", "--path", str(ROOT / "client"), "--import"],
-                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    if not os.environ.get("MASK_NO_IMPORT"):
+        subprocess.run([GODOT, "--headless", "--path", str(ROOT / "client"), "--import"],
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     with tempfile.TemporaryDirectory() as tmp:
         script = Path(tmp) / ("mask_" + shot.name)
         script.write_text(patched(shot.read_text(), ROOT / "tools/render/mask_pass.gd"))
