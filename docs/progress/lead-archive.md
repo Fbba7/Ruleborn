@@ -5,6 +5,23 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 196**, 25 November 2026, from about 17:14Z (session
+  `session_01SNkKxoHmwS3dddh2WLvudH`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 195:
+  `claude/3d-data` (DT1) pushed again after the 503s, merged main
+  (0b77e805) and runs its full checks there (status 8473411a);
+  `claude/3d-mask` (M2, restarted in cycle 195) merged main and runs its
+  pre-check on deafdd0a; `claude/3d-measure` (M1) committed its resync
+  (1be990e8), merged main (99184a98) and runs its pre-check. All three
+  sessions are connected and idle on their running checks, none stale,
+  so **DT1 is not restarted**. **Merge and gate:** none: nothing is
+  ready, no merge lock. **Requests:** M1-R1 and DT1-R1 copied (neither
+  blocking; DT1-R1's default: the lead adds the .uid at DT1's merge).
+  **Started:** none. The seven-day bar still reads `allowed_warning`
+  (the builders' sessions report it), so the cap is three and M1, M2 and
+  DT1 fill it; 3D0-M1-baseline and 3D0-M2-find-it wait on the mask tool.
+  **Owner:** the style-frame pick is still open (owner inbox).
+
 - **Cycle 195**, 25 November 2026, from about 16:39Z (session
   `session_01SNkKxqxDHnxcUgHuGLSEXt`, started by the Opus 5.5 launcher,
   Opus 5.5 at effort medium by order 7). The changes since cycle 194:

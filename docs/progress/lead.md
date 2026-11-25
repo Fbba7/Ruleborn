@@ -214,8 +214,10 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxpCLYdWeYiQwJhDr52` (cycle 198,
-25 November 2026 from about 18:39Z, started by the Opus 5.5 launcher).
+Latest lead cycle session: `session_01SNkKxoVLxAN6iY9xYpGFMe` (cycle 199,
+25 November 2026 from about 19:14Z, started by the Opus 5.5 launcher).
+Cycle 198's was `session_01SNkKxpCLYdWeYiQwJhDr52` (25 November, from
+about 18:39Z).
 Cycle 197's was `session_01SNkKxoyugNa4BQjRBSzsYK` (25 November, from
 about 17:40Z).
 Cycle 196's was `session_01SNkKxoHmwS3dddh2WLvudH` (25 November, from
@@ -430,8 +432,9 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| M2 | `session_01SNkKxoLp1JEhwF88WFhv8b` (Opus 5.5, effort high) | 3D0-M2-find-it (restart, cycle 199: resync after the verifier failed the route question and the off-frame guards; Opus 5.5 high by order 7, a resync; M2's last session, `session_01SNkKxpp86K3DcyB4kRkPow`, is idle) | `claude/3d-mask` | 2026-11-25 19:25Z |
 | M1 | `session_01SNkKxqcAXy4JEwSxwK6PFL` (Sonnet 5.5, effort medium) | 3D0-M1-baseline (start, cycle 197: the budget split and the mask tool merged; Sonnet 5.5 medium by order 7, a simple docs-only task; M1's last session, `session_01SNkKxnNfLkQ2DLurDzjM8E`, is idle, its task merged) | `claude/3d-measure` | 2026-11-25 18:28Z |
-| M2 | `session_01SNkKxpp86K3DcyB4kRkPow` (Sonnet 5.5, effort medium) | 3D0-M2-find-it (start, cycle 197: the mask tool merged; Sonnet 5.5 medium by order 7, a simple task in tools/render; M2's last session, `session_01SNkKxqUMV6Qs5KyydCjHjX`, is idle, its task merged) | `claude/3d-mask` | 2026-11-25 18:28Z |
+| M2 | `session_01SNkKxpp86K3DcyB4kRkPow` (Sonnet 5.5, effort medium; idle, task sent to resync in cycle 199) | 3D0-M2-find-it (start, cycle 197: the mask tool merged; Sonnet 5.5 medium by order 7, a simple task in tools/render; M2's last session, `session_01SNkKxqUMV6Qs5KyydCjHjX`, is idle, its task merged) | `claude/3d-mask` | 2026-11-25 18:28Z |
 | DT1 | `session_01SNkKxodKBY94BomQhXexAr` (Opus 5.5, effort high) | 3D0-DT1-data-spec (restart, cycle 197: resync after the verifier failed section 3's guard states; already the top tier by order 7) | `claude/3d-data` | 2026-11-25 18:15Z |
 | DT1 | `session_01SNkKxpL9MBiEawLL7runx2` (Opus 5.5, effort high; idle, task sent to resync in cycle 197) | 3D0-DT1-data-spec (start, cycle 194: a new agent once M1's seat freed; Opus 5.5 high by order 7, it touches the extension and the replay's bytes) | `claude/3d-data` | 2026-11-25 15:42Z |
 | M1 | `session_01SNkKxnNfLkQ2DLurDzjM8E` (Opus 5.5, effort high) | 3D0-M1-budget-split (restart, cycle 194: resync after the verifier failed the split; one tier up by order 7) | `claude/3d-measure` | 2026-11-25 16:31Z |
@@ -1024,6 +1027,30 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 199**, 25 November 2026, from about 19:14Z (session
+  `session_01SNkKxoVLxAN6iY9xYpGFMe`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 198:
+  M2 marked 3D0-M2-find-it ready at 028837be (pre-check PASS; today's
+  build scores 5 of 50); M1 committed the baseline (69a5f12b, merged with
+  main at 9686d848) and runs its pre-check; DT1 merged main again
+  (6f1b5513) and runs its full checks. **Verify:** an Opus 5.5 high
+  verifier failed find-it: the route question reads sight markers only
+  from id.png, where mask_pass.gd never puts the real 3D markers (they go
+  to marks3d.png), so it can never pass on a real render; and off-frame
+  guards (and crew) count as misses. Self-tests, the docs check and a
+  full scoring run (5 of 50) reproduced. **Merge:** none; the candidate
+  (M2 alone, checks to be reused from the pre-check) was dropped.
+  **Resync:** 3D0-M2-find-it, findings in its resync_reason; M2
+  restarted on it at Opus 5.5 high (order 7, a resync). M2 included
+  client/tests/shots/style_frame_heist.gd.uid (uid://dm035cb54qlq, the
+  lead's own pending addition), granted as an exception. **Requests:**
+  M2-R2 (no clip hook in screen_heist.gd) and M1-R2 (the mask tool fails
+  on the realm and character screens) stay at their defaults for now; a
+  task for M1-R2 is seeded once M2's seat frees. **Started:** M2 (resync).
+  M1, M2 and DT1 fill the cap of three while the seven-day bar reads
+  `allowed_warning`. **Owner:** the phone trial and the style-frame pick
+  are still open (owner inbox).
+
 - **Cycle 198**, 25 November 2026, from about 18:39Z (session
   `session_01SNkKxpCLYdWeYiQwJhDr52`, started by the Opus 5.5 launcher,
   Opus 5.5 at effort medium by order 7). The change since cycle 197:
@@ -1067,23 +1094,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   lead adds it in the next merge candidate. **Owner:** the phone trial
   is unblocked and the style-frame pick is still open (owner inbox,
   18:30Z).
-
-- **Cycle 196**, 25 November 2026, from about 17:14Z (session
-  `session_01SNkKxoHmwS3dddh2WLvudH`, started by the Opus 5.5 launcher,
-  Opus 5.5 at effort medium by order 7). The changes since cycle 195:
-  `claude/3d-data` (DT1) pushed again after the 503s, merged main
-  (0b77e805) and runs its full checks there (status 8473411a);
-  `claude/3d-mask` (M2, restarted in cycle 195) merged main and runs its
-  pre-check on deafdd0a; `claude/3d-measure` (M1) committed its resync
-  (1be990e8), merged main (99184a98) and runs its pre-check. All three
-  sessions are connected and idle on their running checks, none stale,
-  so **DT1 is not restarted**. **Merge and gate:** none: nothing is
-  ready, no merge lock. **Requests:** M1-R1 and DT1-R1 copied (neither
-  blocking; DT1-R1's default: the lead adds the .uid at DT1's merge).
-  **Started:** none. The seven-day bar still reads `allowed_warning`
-  (the builders' sessions report it), so the cap is three and M1, M2 and
-  DT1 fill it; 3D0-M1-baseline and 3D0-M2-find-it wait on the mask tool.
-  **Owner:** the style-frame pick is still open (owner inbox).
 
 - **Restart, 25 November 2026** (the overseer). The owner restarted the
   program on the 3D quality plan ("Based on the plan made by Fable, let's
