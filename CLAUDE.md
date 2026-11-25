@@ -138,6 +138,24 @@ the status files, requests and scheduled-task prompts.
   [`docs/progress/lead.md`](docs/progress/lead.md), "Now", entry
   "Stopped here, 24 November 2026".
 
+- **25 November 2026:** the owner restarted it ("Based on the plan made
+  by Fable, let's start the work. Opus 5.5 Medium for complex tasks.
+  Sonnet 5.5 Medium for simple tasks. Opus 5.5 High for complex tasks and
+  to verify the work of others"), in the chat of the overseer session.
+  The program runs, with the models and efforts of order 7 and the cap of
+  four builders (order 3). Order 3's "keep working" applies again.
+  - **The work is the 3D quality plan,**
+    [`docs/art/3d-quality/plan.md`](docs/art/3d-quality/plan.md),
+    starting with its phase 0 ("First tasks, in order"). The UI wave is
+    closed; its BT track, icon batches 3 and 4 and its phase 4 stay
+    unopened.
+  - **The launcher and the watchdog of 15 November** start the lead's
+    cycles again. Their IDs are in
+    [`docs/progress/lead.md`](docs/progress/lead.md), "The program's
+    scheduled tasks and sessions".
+  - **Where the work stands** is in the same file, "Now", entry
+    "Restart, 25 November 2026".
+
 A session that is in the middle of a turn when the program is stopped
 finishes cleanly, so no work is lost: commit and push what it has to its
 own branch (never to main), set `agent_state: stopped` in its status file,
@@ -306,3 +324,36 @@ rule stands (Opus 5.5 only), and so does order 2 (never Fable 5.1).
   cycles and order 6's rule for the sessions the lead creates.
 - If `create_session` refuses the effort setting, create the session on
   Opus 5.5 without it and say so in your status file.
+
+## 7. Sonnet 5.5 for simple tasks, Opus 5.5 for complex ones and for checking
+
+On 25 November 2026 the owner ordered, in the chat of the overseer
+session: "Opus 5.5 Medium for complex tasks. Sonnet 5.5 Medium for simple
+tasks. Opus 5.5 High for complex tasks and to verify the work of others."
+This order replaces order 5's "Opus 5.5 only" and order 6. Order 2 stands:
+Fable 5.1 is never used, and neither is any model this order does not name.
+
+- **Simple tasks: Sonnet 5.5 at effort medium.** A task is simple when
+  none of the complex rules below holds: one track's own files, no frozen
+  contract, no stored schema, no wire protocol, a clear `done_when`.
+- **Complex tasks: Opus 5.5 at effort medium.** A task is complex when
+  any of order 6's complex rules holds, or it needs judgement on how
+  things look (style frames, framing rules, looks).
+- **The hardest tasks: Opus 5.5 at effort high.** A task runs at high when
+  it changes `sim/`, a frozen contract or a stored schema, spans more than
+  one of `sim/`, `server/`, `client/` and `tools/`, is a `resync`, or an
+  earlier session on it failed the checks, review or stalled.
+- **Checking others' work: Opus 5.5 at effort high, always.** Before the
+  lead merges any task, a verifier on Opus 5.5 at effort high (a subagent
+  of the lead's cycle, or a session) reviews the task's diff against its
+  `done_when` and the plan, and re-runs its checks. A task that fails the
+  review goes back to its builder; it is not merged.
+- **A builder that finds its task harder than its tier** says so in its
+  status file and ends its turn; the lead restarts the task one tier up.
+- **The lead's cycles, the launcher and the watchdog** run on Opus 5.5 at
+  effort medium. Where their stored prompts say "effort high" or "Opus
+  5.5 only", this order wins. The lead records each builder's model and
+  effort in the sessions table of `docs/progress/lead.md`.
+- If `create_session` refuses the model or effort, the lead says so with
+  the exact reason in its status file and uses the next tier up, never a
+  lower one and never another model.

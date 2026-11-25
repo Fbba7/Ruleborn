@@ -1,15 +1,15 @@
 {
-  "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026. Phase 2 started on 12 November 2026 (lead cycle 70): P1-AD-board-1d let board 1 stand and phase 1's other exit criteria hold (report.md section 3.2); its first tasks are the flow findings (S1, S2) and board 1's note G (AIA-2), within the same cap of three. Since 12 November 2026, about 20:00Z, the cap is four UI builders by the owner's order (CLAUDE.md order 3; three while the seven-day bar reads allowed_warning). Phase 3 (polish and harden, report.md step 12) started on 17 November 2026 (lead cycle 118) under M49: every phase 2 task was merged by 06:55Z, the exit review ran in cycle 118 (boards 3, 4 and 5 stand, board 2 waits on the deferred icon batch 4 by D13 (c), the exceptions queue is empty, every screen passes the gate but result at 200% pt_BR, Hierarchy, which P3-S1-result-7 takes), and the first blind audit (O6) is carried into phase 3 as P3-AD-audit-1. Phase 3 draws from the 20-hour reserve; it exits when no board has an open objection, the second blind audit is done and the wave board (O7) stands. The bug-fix wave started on 21 November 2026 by the owner's order (CLAUDE.md order 1, entry of 21 November): the UI is paused (P3-S3-settings-4, P4-S1-heist-vault and P4-S2-home-purse parked with their work on their branches; the BT track stays parked) while up to four fix builders, FX1 to FX4 within the cap of four, fix the 60 confirmed defects of docs/security/bug-report-2026-11.md, highs first, each with a test that fails before the fix, then recheck the four unproven candidates (7, 21, 23, 34) and audit the code the report did not read (findings in docs/security/audit-2026-11/, from which the lead files fix tasks). The FX tasks' phase is 'fix'; the UI resumes at phase 3 when every FX task is merged.",
-  "wave": "Bug-fix wave",
-  "phase": 3,
-  "updated_at": "2026-11-24T23:35:00Z",
+  "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Since 25 November 2026 the product tasks are the 3D quality wave (docs/art/3d-quality/plan.md, section 6 'Phases' and section 7 'Tracks'), started by the owner (CLAUDE.md order 1). Models and efforts follow CLAUDE.md order 7: each task names its model and effort; every task is reviewed by a verifier on Opus 5.5 at effort high before it merges. Tasks of the UI wave are kept below as history. Owner tasks (assigned_to 'owner') are never claimed by an agent.",
+  "wave": "3D quality wave",
+  "phase": 0,
+  "updated_at": "2026-11-25T12:00:00Z",
   "updated_by": "overseer",
-  "stop_at": "2026-11-25T21:00:00Z",
+  "stop_at": "2026-12-02T21:00:00Z",
   "lease_hours": 3,
   "status_every_minutes": 45,
   "check_minutes": 25,
   "building_cap": 4,
-  "verdicts_dir": "docs/art/ui-quality/gate/verdicts/",
+  "verdicts_dir": "docs/art/3d-quality/verdicts/",
   "agents": {
     "AD": {
       "branch": "claude/ui-ad",
@@ -82,6 +82,22 @@
     "SP-bt-06": {
       "branch": "claude/ui-spec-docs-check",
       "model": "Opus 5.5"
+    },
+    "M1": {
+      "branch": "claude/3d-measure",
+      "model": "by task (order 7)"
+    },
+    "M2": {
+      "branch": "claude/3d-mask",
+      "model": "by task (order 7)"
+    },
+    "CF1": {
+      "branch": "claude/3d-camera",
+      "model": "by task (order 7)"
+    },
+    "DT1": {
+      "branch": "claude/3d-data",
+      "model": "by task (order 7)"
     }
   },
   "strings_owner": "lead",
@@ -410,6 +426,244 @@
       "prior_sha": null,
       "ready_sha": "3bfb8325",
       "merged_sha": "e33be6f9",
+      "exceptions": []
+    },
+    {
+      "id": "3D0-M1-budget-split",
+      "title": "The shots' budget: line prints the split (mesh triangles, outline passes, other views); screen_defences shoots its rehearsal tab (TAB=0)",
+      "phase": 0,
+      "role": "measure track",
+      "model": "Sonnet 5.5",
+      "effort": "medium",
+      "assigned_to": "M1",
+      "files": [
+        "client/tests/shots/**",
+        "tools/render/**",
+        "docs/progress/M1.md",
+        "docs/progress/status/M1.json"
+      ],
+      "deps": [],
+      "done_when": [
+        "Every 3D shot's budget: line prints mesh triangles, outline-pass triangles and other-view triangles, and their sum equals today's total",
+        "screen_defences is shot with TAB=0 and prints about 36,011 triangles and 86 draw calls",
+        "bash tools/run_checks.sh passes"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 4,
+      "tier": 1,
+      "critical": true,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "exceptions": []
+    },
+    {
+      "id": "3D0-M2-mask-tool",
+      "title": "The mask tool: a flat-colour render pass for actors, markers and ground types, and a script that computes Q1 to Q6, Q11 and Q12 for any still",
+      "phase": 0,
+      "role": "measure track",
+      "model": "Opus 5.5",
+      "effort": "medium",
+      "assigned_to": "M2",
+      "files": [
+        "tools/render/mask*",
+        "tools/render/measure*",
+        "client/tests/shots/mask_*.gd",
+        "docs/art/3d-quality/mask.md",
+        "docs/progress/M2.md",
+        "docs/progress/status/M2.json"
+      ],
+      "deps": [],
+      "done_when": [
+        "The mask pass and the measure script run from one command on any shot",
+        "Checked against the plan's hand measurements: crew 23 to 28 points at 15 tiles, 37.5%, 39%, and the eight-moment matrix, each within the tolerance mask.md states",
+        "Checked by hand on ten stills, recorded in mask.md",
+        "bash tools/run_checks.sh passes"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 12,
+      "tier": 1,
+      "critical": true,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "exceptions": []
+    },
+    {
+      "id": "3D0-CF1-style-frames",
+      "title": "Three heist style frames, as real renders, for the owner to pick: (a) camera at 11 tiles; (b) figures about 1.4x via readable_scale; (c) both, with the quiet ground",
+      "phase": 0,
+      "role": "camera and framing track",
+      "model": "Opus 5.5",
+      "effort": "medium",
+      "assigned_to": "CF1",
+      "files": [
+        "client/tests/shots/style_frame_*.gd",
+        "docs/art/3d-quality/style-frames/**",
+        "docs/art/3d-quality/style-frames.md",
+        "docs/progress/CF1.md",
+        "docs/progress/status/CF1.json"
+      ],
+      "deps": [],
+      "done_when": [
+        "The same heist moment rendered three ways, at phone size and 2x, in docs/art/3d-quality/style-frames/",
+        "style-frames.md shows them side by side with what each costs (plan section 6, phase 0) and asks the owner one question: which frame",
+        "No change to the game's default camera or scale: the frames are shot-only",
+        "bash tools/run_checks.sh passes"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 8,
+      "tier": 1,
+      "critical": true,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "exceptions": []
+    },
+    {
+      "id": "3D0-DT1-data-spec",
+      "title": "The data spec: what guards() adds (near, mid, suspicion), what noise and order previews need; and a shot moment with a suspicious guard",
+      "phase": 0,
+      "role": "data track",
+      "model": "Opus 5.5",
+      "effort": "high",
+      "assigned_to": "DT1",
+      "files": [
+        "client/ext/src/lib.rs",
+        "docs/art/3d-quality/data-spec.md",
+        "client/tests/shots/heist_suspicious.gd",
+        "docs/progress/DT1.md",
+        "docs/progress/status/DT1.json"
+      ],
+      "deps": [],
+      "done_when": [
+        "data-spec.md lists every field the 3D plan needs from the extension, with type, source in sim and cost",
+        "guards() returns near, mid and suspicion; the recorded replay stays byte-for-byte the same (a test shows it)",
+        "A shot moment with a suspicious guard renders",
+        "bash tools/run_checks.sh passes"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 10,
+      "tier": 1,
+      "critical": true,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "exceptions": []
+    },
+    {
+      "id": "3D0-M1-baseline",
+      "title": "The baseline: every 3D shot in client/tests/shots/ rendered and measured with the mask tool; the table published beside the plan",
+      "phase": 0,
+      "role": "measure track",
+      "model": "Sonnet 5.5",
+      "effort": "medium",
+      "assigned_to": "M1",
+      "files": [
+        "docs/art/3d-quality/baseline.md",
+        "docs/art/3d-quality/baseline/**",
+        "docs/progress/M1.md",
+        "docs/progress/status/M1.json"
+      ],
+      "deps": [
+        "3D0-M1-budget-split",
+        "3D0-M2-mask-tool"
+      ],
+      "done_when": [
+        "baseline.md has one row per 3D shot: budget split, draw calls, Q1 to Q6, Q11, Q12",
+        "Its numbers are reproducible with the one command it names"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 6,
+      "tier": 1,
+      "critical": true,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "exceptions": []
+    },
+    {
+      "id": "3D0-M2-find-it",
+      "title": "The find-it test: a fixed set of stills and clips with five questions each, scored against the mask",
+      "phase": 0,
+      "role": "measure track",
+      "model": "Sonnet 5.5",
+      "effort": "medium",
+      "assigned_to": "M2",
+      "files": [
+        "tools/render/findit*",
+        "docs/art/3d-quality/find-it.md",
+        "docs/progress/M2.md",
+        "docs/progress/status/M2.json"
+      ],
+      "deps": [
+        "3D0-M2-mask-tool"
+      ],
+      "done_when": [
+        "find-it.md names the stills, clips and questions",
+        "The scorer answers from the mask with no judge, and scores today's build"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 6,
+      "tier": 1,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "exceptions": []
+    },
+    {
+      "id": "3D0-OW-phone-trial",
+      "title": "Owner: the renderer trial (Compatibility against Mobile) and one frame-time run on a real phone (D4)",
+      "phase": 0,
+      "role": "owner",
+      "model": "none",
+      "effort": "none",
+      "assigned_to": "owner",
+      "files": [
+        "docs/art/3d-quality/phone-trial.md"
+      ],
+      "deps": [
+        "3D0-M1-budget-split"
+      ],
+      "done_when": [
+        "The owner runs the build the lead names on a phone and reports frame time, shadows and heat"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 1,
+      "tier": 1,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
       "exceptions": []
     }
   ],
