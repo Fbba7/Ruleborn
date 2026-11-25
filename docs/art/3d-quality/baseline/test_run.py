@@ -5,6 +5,8 @@
 Each test points run.py at a temporary work folder, data folder and output
 file, so the repository's baseline.md and baseline/data/ are never touched.
 """
+import io
+import contextlib
 import json
 import shutil
 import sys
@@ -212,9 +214,31 @@ class MustMeasure(Sandbox):
             log.write_text('ERROR: Condition "err != OK" is true.\n'
                            "   at: initialize (drivers/gles3/shader_gles3.cpp:792)\n" + log.read_text())
             return {"name": name, "returncode": 0, "stdout": ""}
-        run.run_one = render
-        self.assertEqual(run.main(["--only", "screen_replay"]), 1)
+        calls = []
+        run.run_one = lambda name: calls.append(name) or render(name)
+        err = io.StringIO()
+        with contextlib.redirect_stderr(err):
+            self.assertEqual(run.main(["--only", "screen_replay"]), 1)
+        self.assertEqual(calls, ["screen_replay"] * 2)
+        self.assertIn("1 shot(s) failed: screen_replay\n", err.getvalue())
         self.assertFalse((self.data / "screen_replay.json").exists())
+
+    def test_the_race_comes_first(self):
+        """A racing shot with no still, no budget line or a mask_pass.gd error is still rendered again."""
+        race = 'ERROR: Condition "err != OK" is true.\n   at: initialize (drivers/gles3/shader_gles3.cpp:792)\n'
+        for name, kw in (("screen_realm", {"mask_error": True}), ("screen_heist", {"mask_error": True}),
+                         ("screen_scout", {"still": False}), ("screen_planner", {"budget": "no budget"})):
+            log = fake_shot(self.work, name, **kw) / "godot.log"
+            log.write_text(race + log.read_text())
+            self.assertEqual(run.verdict(name), ("failed", run.SHADER_WHY), name)
+
+    def test_a_mask_limit_publishes_no_measure(self):
+        """mask.py measures whenever id.png exists: after a late mask_pass.gd error that measure has no solo masks."""
+        fake_shot(self.work, "screen_realm", measure=HEIST_MEASURE, mask_error=True)
+        rec = run.collect("screen_realm")
+        self.assertEqual(rec["verdict"], "mask limit")
+        self.assertIsNone(rec["measure"])
+        self.assertEqual(table.q(rec), [table.NOT_MEASURED] * 8)
 
     def test_must_measure_names_real_shots(self):
         self.assertTrue(run.MUST_MEASURE <= set(run.SHOTS))

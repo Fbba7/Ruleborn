@@ -16,7 +16,8 @@ It exits 1 when a shot fails for any reason but the mask tool's known limit
 (request M1-R2: no WorldView in the shot, or an error inside mask_pass.gd):
 no work folder, no still, no "wrote" or "saved" line, no budget line, a script
 error in the shot, a renderer shader that failed to start (SHADER_RACE below: such a
-shot is rendered again alone first), or a timeout. The heist shots of MUST_MEASURE are measured
+shot is rendered again alone first), a timeout, or the mask tool measured nothing
+for no known reason. A shot at the known limit keeps no measure (measure null). The heist shots of MUST_MEASURE are measured
 by the mask tool today, so on them the known limit is a failure too. Each
 shot's verdict is printed and kept in its data file ("verdict", "why"). Only
 a shot that is "ok" or at the known limit gets its data file written: a failed
@@ -133,14 +134,15 @@ def verdict(name: str) -> tuple:
     if not log.exists():
         return "failed", "no godot.log (the shot did not run)"
     lines = log.read_text(errors="replace").splitlines()
+    # The race comes first: a shot that lost it may also lack its still, its budget line or its masks.
+    if any(SHADER_RACE in ln for ln in lines):
+        return "failed", SHADER_WHY
     # The shots end on "wrote", "wrote <state>" (screen_result) or "saved <size>" (universe_zoom).
     if not (out / "shot.png").exists() or not any(ln.strip() == "wrote" or ln.startswith(("wrote ", "saved ("))
                                                   for ln in lines):
         return "failed", "no still written (no shot.png or no \"wrote\" / \"saved\")"
     if not any(ln.startswith(("budget:", "draw calls ", "triangles ")) for ln in lines):
         return "failed", "no budget line"
-    if any(SHADER_RACE in ln for ln in lines):
-        return "failed", SHADER_WHY
     errors = []
     for i, ln in enumerate(lines):
         if ln.startswith(("SCRIPT ERROR", "ERROR: Parse")):
@@ -177,8 +179,10 @@ def collect(name: str):
         for ln in log.read_text(errors="replace").splitlines():
             if ln.startswith(("budget:", "draw calls ", "triangles ")):
                 rec["budget"] = ln
+    # Only an "ok" shot's measure counts: mask.py measures whenever id.png exists, so a mask_pass.gd error
+    # after it leaves a measure.json made without the marks and solo masks.
     mj = out / "measure.json"
-    if mj.exists():
+    if mj.exists() and state == "ok":
         rec["measure"] = json.loads(mj.read_text())
     return rec
 
@@ -226,16 +230,15 @@ def main(argv=None) -> int:
                     failed.append(n)
                 continue
             (DATA / f"{n}.json").write_text(json.dumps(rec, indent=1, sort_keys=True) + "\n")
+    if failed:
+        print(f"{len(failed)} shot(s) failed: {', '.join(failed)}", file=sys.stderr)
     if not any(DATA.glob("*.json")):
         # No data at all would publish an empty table over the old one.
         print(f"no data files in {DATA}: {OUT.name} kept as it was", file=sys.stderr)
         return 1
     import table
     table.write(OUT, DATA)
-    if failed:
-        print(f"{len(failed)} shot(s) failed: {', '.join(failed)}", file=sys.stderr)
-        return 1
-    return 0
+    return 1 if failed else 0
 
 
 sys.path.insert(0, str(HERE))

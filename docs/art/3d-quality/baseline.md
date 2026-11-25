@@ -43,7 +43,8 @@ tolerance.
 
 **The shader cache race.** Shots rendered side by side on a fresh shader cache (the first run in
 a container) can race to make the cache's folders; Godot then leaves a shader unstarted
-(`drivers/gles3/shader_gles3.cpp` errors in the log) and the shot draws wrong, its ground black:
+(`ShaderGLES3::initialize` errors in the log; the "never freed" notice at exit is not one)
+and the shot draws wrong, its ground black:
 a `screen_replay` rendered so read Q3 87%, against 40% alone. Which shot loses the race changes
 from run to run. `run.py` fails such a shot and renders it again alone, once the cache is made; a
 second failure fails the run.
