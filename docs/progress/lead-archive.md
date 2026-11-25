@@ -5,6 +5,47 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 195**, 25 November 2026, from about 16:39Z (session
+  `session_01SNkKxqxDHnxcUgHuGLSEXt`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 194:
+  `claude/3d-camera` gained CF1's ready-status commit (the task merged in
+  cycle 194); `claude/3d-data` gained DT1's guards() commit. **GitHub
+  503s:** at about 16:16Z M2's and DT1's sessions went idle with pushes
+  refused by GitHub (503). M2's container disconnected with its status
+  commit 108abe5e unpushed (the work itself is on b1113efc), and M2 was
+  stale since 16:15Z: **restarted** M2 on 3D0-M2-mask-tool
+  (`session_01SNkKxqUMV6Qs5KyydCjHjX`, Opus 5.5 medium, same tier) to
+  redo the progress-file updates and the ready steps. DT1's session is
+  idle but connected, with commits up to 60616371 unpushed and not stale
+  until 17:05Z; a message to it could not be delivered, so the next cycle
+  restarts DT1 if it is still stale then. Pushes work again at 16:42Z.
+  **Merge and gate:** none: nothing is ready (M1 working on its resync,
+  M2 restarted, DT1 working), no merge lock. **Requests:** M2-R1 copied
+  (not blocking, default due 27 November). Three builders (M1, M2, DT1),
+  the cap while the seven-day bar reads `allowed_warning`. **Owner:** the
+  style-frame pick is still open (owner inbox).
+
+- **Cycle 194**, 25 November 2026, from about 15:39Z (session
+  `session_01SNkKxqhoNAcP68ggo8Rvvb`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). **Merged:** 3D0-CF1-style-frames
+  at f07f36c1 (ready 4e6c51ee; full checks PASS on candidate 07b5bc51;
+  verifier on Opus 5.5 high PASS, with two minor notes: the 1.4x figures
+  sit on top of readable_scale rather than the hook, and the frames quote
+  a 150 draw-call limit where plan.md Q14 says 120; the frames' 119 meets
+  both). **To resync:** 3D0-M1-budget-split (ready 5a5d5f41): the
+  verifier failed it on three counts (law_fx_ink.gdshader missed as an
+  outline, shadow-pass prims counted in the outline figure, shadow
+  triangles mislabelled "+0 in shadows"); see its resync_reason.
+  **Started:** DT1 on 3D0-DT1-data-spec (Opus 5.5 high) in M1's seat
+  while M1 was idle; M1 restarted on its resync (Opus 5.5 high, one tier
+  up) in CF1's freed seat. Three builders run (M1, M2, DT1), the cap while
+  the seven-day bar reads `allowed_warning`. **Container:** the first
+  full checks failed only because the fresh lead container had no Godot
+  cache; after the agents' setup step they ran. **Pages:** the audit and
+  roadmap pages were regenerated, but only their date changed, so they
+  were committed and not republished. **Owner:** the style-frame pick is
+  open (owner inbox).
+
 - **Cycle 193**, 25 November 2026, from about 15:15Z (session
   `session_01SNkKxqKcNj6xVjwrFQ9Xt4`, started by the Opus 5.5 launcher,
   Opus 5.5 at effort medium by order 7). The changes since cycle 192:

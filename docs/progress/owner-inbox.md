@@ -4,6 +4,19 @@ Alerts and questions for the owner, newest first. The lead also sends each one
 as a direct message (work-order decision D-03). An entry is closed by
 recording the answer under it.
 
+## 2026-11-25 18:30Z: the budget split and the mask tool are merged; the phone trial is yours now (cycle 197)
+
+- **What:** M1's budget split and M2's mask tool merged onto main at
+  a34f20ac, after their full checks and the Opus 5.5 high verifier
+  passed. M1 starts the baseline and M2 the find-it test. DT1's data
+  spec failed its review (its guard-state table did not match the sim)
+  and is being redone. One finding for the plan: the mask tool's Q11
+  vault match fails in 10 of 21 stills because of the vault column of
+  `docs/art/3d-quality/plan.md` 2.6, not because of the tool.
+- **Needs the owner:** the phone trial (3D0-OW-phone-trial), now that
+  the budget split is merged, and your pick of a style frame, still open
+  in `docs/art/3d-quality/style-frames.md`.
+
 ## 2026-11-25 16:32Z: the three style frames are merged; your pick is open (cycle 194)
 
 - **What:** CF1's style frames merged onto main at f07f36c1, after their

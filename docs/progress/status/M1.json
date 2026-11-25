@@ -1,0 +1,41 @@
+{
+  "agent": "M1",
+  "role": "measure track",
+  "branch": "claude/3d-measure",
+  "model": "Opus 5.5",
+  "effort": "high",
+  "agent_state": "working",
+  "task_id": "3D0-M1-budget-split",
+  "task_state": "working",
+  "claimed_at": "2026-11-25T12:23:29Z",
+  "lease_until": "2026-11-25T17:53:29Z",
+  "updated_at": "2026-11-25T16:50:00Z",
+  "expected_next_update_by": "2026-11-25T17:30:00Z",
+  "long_run": null,
+  "progress_marker": {
+    "last_green_sha": null,
+    "next_step": "commit the resync, full pre-check, owners diff, mark ready"
+  },
+  "precheck": null,
+  "gate_request": null,
+  "ready_sha": null,
+  "stop_at": "2026-12-02T21:00:00Z",
+  "acks": [],
+  "requests": [
+    {
+      "id": "M1-R1",
+      "from": "M1",
+      "to": "lead",
+      "ask": "BudgetSplit's test is rendered (headless counts read 0), so it runs as `bash tools/render/shoot.sh client/tests/shots/budget_split_tests.gd out.png 256 256` (exits 1 on a failure), outside tools/run_checks.sh. Wire it into a rendered check run if one exists or is planned.",
+      "files": [
+        "tools/check_all.sh"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-25T16:50:00Z",
+      "due": "2026-11-27T16:50:00Z",
+      "default": "it stays a standalone command named in docs/progress/M1.md's handoff; the verifier runs it before merging",
+      "escalate_to": "lead"
+    }
+  ],
+  "answers": []
+}
