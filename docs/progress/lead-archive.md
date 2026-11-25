@@ -5,6 +5,46 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 201**, 25 November 2026, from about 20:14Z (session
+  `session_01SNkKxqSFEXjTCRxvhrgqb1`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 200:
+  DT1 committed its data-spec resync (1657b290: the realm's watch in the
+  fill rates, the zones, the Glare's reach) and runs its full checks,
+  ending about 20:40Z; M2 committed its find-it fixes (63dc9a2f: sight
+  per guard from marks3d, off-frame figures dropped; 7 of 50), merged
+  main (ea4bf724) and runs its pre-check; M1 committed the baseline's
+  missing rows and a full rerun of 22 shots (4636c383) and has its
+  pre-check next. The dropped candidate branch e9e02abc moved. **Merge
+  and verify:** none: nothing is ready, no merge lock. **Started:** none:
+  all three sessions are within their deadlines, and M1, M2 and DT1 fill
+  the cap of three while the seven-day bar reads `allowed_warning`.
+  **Requests:** DT1-R1 (the .uid at merge), M1-R2, M2-R1 and M2-R2 stay
+  at their defaults. **Owner:** the phone trial and the style-frame pick
+  are still open (owner inbox).
+
+- **Cycle 200**, 25 November 2026, from about 19:35Z (session
+  `session_01SNkKxpLVRksrXzSDLxfwHH`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 199:
+  DT1 marked 3D0-DT1-data-spec ready at 6f1b5513 and M1 marked
+  3D0-M1-baseline ready at 9686d848 (both pre-checks PASS); M2 works on
+  its find-it resync. **Verify:** two Opus 5.5 high verifiers. DT1's
+  failed: the fill rates (data-spec.md:147-158) leave out the realm watch
+  (x3/5 at realm level 1, lib.rs:2326-2327), so the worked example holds
+  only from realm level 2; two minor points. M1's failed done_when 1
+  (done_when 2 passes; the rerun matched every cell but render noise):
+  screen_laws has no row, universe_screens is neither measured nor
+  explained, the '-' note reads "does not apply" where Q11/Q12 apply but
+  are not yet measured (M1-R2), and the replay and result zeros (vignette,
+  backdrop) need footnotes. **Merge:** none; the batch candidate e9e02abc
+  (with heist_suspicious.gd.uid, DT1-R1's default) was dropped. **Resync:**
+  both tasks, findings in their resync_reason. **Started:** DT1
+  (`session_01SNkKxnqKic2JjCv5tCXbXz`, Opus 5.5 high, a resync) and M1
+  (`session_01SNkKxn9dm8J8WUsKvxtyJ6`, Opus 5.5 high, one tier up by
+  order 7). M1, M2 and DT1 fill the cap of three while the seven-day bar
+  reads `allowed_warning`. **Requests:** M1-R2's task waits for the
+  baseline to merge; M2-R1 and M2-R2 stay at their defaults. **Owner:**
+  the phone trial and the style-frame pick are still open (owner inbox).
+
 - **Cycle 199**, 25 November 2026, from about 19:14Z (session
   `session_01SNkKxoVLxAN6iY9xYpGFMe`, started by the Opus 5.5 launcher,
   Opus 5.5 at effort medium by order 7). The changes since cycle 198:

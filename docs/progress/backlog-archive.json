@@ -8335,6 +8335,43 @@
         "client/tests/shots/heist_suspicious.gd.uid"
       ],
       "resync_reason": null
+    },
+    {
+      "id": "3D0-M2-find-it",
+      "title": "The find-it test: a fixed set of stills and clips with five questions each, scored against the mask",
+      "phase": 0,
+      "role": "measure track",
+      "model": "Opus 5.5",
+      "effort": "high",
+      "assigned_to": "M2",
+      "files": [
+        "tools/render/findit*",
+        "docs/art/3d-quality/find-it.md",
+        "docs/progress/M2.md",
+        "docs/progress/status/M2.json"
+      ],
+      "deps": [
+        "3D0-M2-mask-tool"
+      ],
+      "done_when": [
+        "find-it.md names the stills, clips and questions",
+        "The scorer answers from the mask with no judge, and scores today's build"
+      ],
+      "gate_items": [],
+      "attempts": 2,
+      "estimate_h": 6,
+      "tier": 1,
+      "critical": false,
+      "state": "merged",
+      "claim": null,
+      "prior_branch": "claude/3d-mask",
+      "prior_sha": "ce4d2dac",
+      "ready_sha": "ce4d2dac",
+      "merged_sha": "8aabe5ef",
+      "exceptions": [
+        "client/tests/shots/style_frame_heist.gd.uid"
+      ],
+      "resync_reason": "Verifier (cycle 202, Opus 5.5 high) failed ea4bf724; cycle 199's fixes are real (per-guard sight from marks3d, off-frame figures dropped, clip notes), done_when 1 met, full render reproduced 7 of 50. Must fix: (1) the shown guard passes on unrelated pale pixels with no cone drawn: findit.py:257 'drawn = n_pale >= SIGHT_PIXELS or (is_shown and n_red >= SIGHT_PIXELS)' credits pale to the shown guard, but the client never draws a fan for it (fx_ground.gd:45 skips i == shown); the pale test (findit.py:211) also takes the route preview's paper dots (~194,171,190; fx_ground.gd:161) and falling petals (~114,77,111): the shown guard's ring holds 129-561 such pixels (threshold 40), and with every red marks3d pixel blacked out escape-15 and escape-11 still pass the route. Use red only for the shown guard, pale only for the others; tighten the pale test to leave out the dots' paper (fans have blue >= red, dots and petals do not); fix the self-test base case (findit.py:456, :478) to give the shown guard red, add a case 'pale only near the shown guard -> not drawn', re-score. (2) find-it.md:65-69 ('40 red or pale') and :153-162 (pale takes only the fans; red only credits the shown guard) must match the fixed rule. Minor: M2.md and status/M2.json are stale (028837b, 5 of 50); a non-shown guard's ring could be credited by dots or a neighbour's fan within ~3.6 m (not in today's stills); shown_guard uses world distance and ignores selected_guard; route falls back to crew[0] when the chosen crew member is out of view."
     }
   ],
   "idle_queue": [

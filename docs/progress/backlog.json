@@ -501,43 +501,6 @@
       "resync_reason": "Verifier (cycle 203, Opus 5.5 high) failed 4636c383. All five cycle-200 findings are fixed, and a 6-shot rerun (laws, realm, heist, universe_screen, replay, observatory) matched within the stated tolerance; table.py rebuilds baseline.md byte for byte. Blocking: (1) run.py:159-171: under --no-render, main() still calls collect() for every shot, which reads the work dir, not baseline/data/; with no work dir (a fresh checkout) every baseline/data/*.json is overwritten with budget: null, measure: null, baseline.md is rewritten with every cell '-' or 'n/m', and it exits 0 (reproduced: 23 files changed, 2,095 lines deleted). This contradicts baseline.md:17. Fix: under --no-render skip collecting and writing data and only call table.write; refuse to write a record when the shot's work dir is missing; add a test or self-check that fails before the fix. Minor, fix while there: (2) baseline.md:79 screen_observatory reads 0 triangles and 0 draw calls with no note (cards' universes drawn offscreen by StageThumbs): footnote it; baseline.md:62 should say the mask tool also stops on the observatory. (3) The Draw calls column shows only the world view's calls (heist 70) while plan Q14 is the frame's figure (heist 120 in the data): add a frame draw-calls column or say which one is shown. (4) run.py:18 says the verdict is kept in the data file but collect() (run.py:135-146) does not store it. (5) run.py:126-129: an error inside mask_pass.gd is always 'mask limit', even on screen_heist, screen_replay, screen_result and screen_laws, which must be measured: keep a must-measure set that fails the run. (6) baseline.md:11-13: say to run bash client/build.sh first. Opus 5.5 high by order 7 (a resync after a failed review)."
     },
     {
-      "id": "3D0-M2-find-it",
-      "title": "The find-it test: a fixed set of stills and clips with five questions each, scored against the mask",
-      "phase": 0,
-      "role": "measure track",
-      "model": "Opus 5.5",
-      "effort": "high",
-      "assigned_to": "M2",
-      "files": [
-        "tools/render/findit*",
-        "docs/art/3d-quality/find-it.md",
-        "docs/progress/M2.md",
-        "docs/progress/status/M2.json"
-      ],
-      "deps": [
-        "3D0-M2-mask-tool"
-      ],
-      "done_when": [
-        "find-it.md names the stills, clips and questions",
-        "The scorer answers from the mask with no judge, and scores today's build"
-      ],
-      "gate_items": [],
-      "attempts": 2,
-      "estimate_h": 6,
-      "tier": 1,
-      "critical": false,
-      "state": "resync",
-      "claim": null,
-      "prior_branch": "claude/3d-mask",
-      "prior_sha": "ea4bf7245bb95dc8fa07b817f8983060027edbfb",
-      "ready_sha": null,
-      "merged_sha": null,
-      "exceptions": [
-        "client/tests/shots/style_frame_heist.gd.uid"
-      ],
-      "resync_reason": "Verifier (cycle 202, Opus 5.5 high) failed ea4bf724; cycle 199's fixes are real (per-guard sight from marks3d, off-frame figures dropped, clip notes), done_when 1 met, full render reproduced 7 of 50. Must fix: (1) the shown guard passes on unrelated pale pixels with no cone drawn: findit.py:257 'drawn = n_pale >= SIGHT_PIXELS or (is_shown and n_red >= SIGHT_PIXELS)' credits pale to the shown guard, but the client never draws a fan for it (fx_ground.gd:45 skips i == shown); the pale test (findit.py:211) also takes the route preview's paper dots (~194,171,190; fx_ground.gd:161) and falling petals (~114,77,111): the shown guard's ring holds 129-561 such pixels (threshold 40), and with every red marks3d pixel blacked out escape-15 and escape-11 still pass the route. Use red only for the shown guard, pale only for the others; tighten the pale test to leave out the dots' paper (fans have blue >= red, dots and petals do not); fix the self-test base case (findit.py:456, :478) to give the shown guard red, add a case 'pale only near the shown guard -> not drawn', re-score. (2) find-it.md:65-69 ('40 red or pale') and :153-162 (pale takes only the fans; red only credits the shown guard) must match the fixed rule. Minor: M2.md and status/M2.json are stale (028837b, 5 of 50); a non-shown guard's ring could be credited by dots or a neighbour's fan within ~3.6 m (not in today's stills); shown_guard uses world distance and ignores selected_guard; route falls back to crew[0] when the chosen crew member is out of view."
-    },
-    {
       "id": "3D0-OW-phone-trial",
       "title": "Owner: the renderer trial (Compatibility against Mobile) and one frame-time run on a real phone (D4)",
       "phase": 0,
