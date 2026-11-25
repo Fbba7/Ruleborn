@@ -1,0 +1,5 @@
+{
+ "budget": "budget: CurationScreen: 36481 triangles (28576 mesh + 7905 outline passes); 4056 triangles in shadows; 76 draw calls, shadow passes included; 1634 triangles and 53 draw calls in other views; frame 42171 triangles, 129 draw calls",
+ "measure": null,
+ "name": "screen_curation"
+}

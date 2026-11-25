@@ -1,0 +1,5 @@
+{
+ "budget": "budget: DefencesScreen: 36011 triangles (27971 mesh + 8040 outline passes); 4892 triangles in shadows; 86 draw calls, shadow passes included; 13144 triangles and 127 draw calls in other views; frame 54047 triangles, 213 draw calls",
+ "measure": null,
+ "name": "screen_defences"
+}
