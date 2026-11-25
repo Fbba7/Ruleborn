@@ -6,29 +6,42 @@ This document is that plan. It finds what stops the 3D from looking clean and pl
 
 **It is a plan only.** Nothing in it has started. The agent program is stopped by the owner's order and stays stopped until the owner says what comes next.
 
-Everything here was measured or rendered from the head of this branch (`0304219a`). The stills are in [`stills/`](stills/). Targets, hours and dates are proposals and estimates, and are marked as such.
+Everything here was measured or rendered from the head of this branch (`0304219a`). The stills are in [`stills/`](stills/). Targets, hours and dates are proposals and estimates, and are marked as such. Version 2's new stills were rendered from the same code.
 
 It builds on the 3D programme that already exists (`docs/art/3d-program.md`). The look rules, the budgets and the file ownership of that programme stay. What changes is the definition of done.
 
+## What changed in this version
+
+Version 2, 25 November 2026. The first version read several numbers by eye. This one measures them, and the measurements change the plan.
+
+- **The close camera already exists.** The heist was rendered at three camera distances, with and without its panels (section 2.1). A view 7 tiles across is already in the code as a zoom level; the heist opens on the 15-tile one.
+- **The panels are the obstacle, not the camera.** They cover 37.5% of the screen's pixels. At the close view they sit over the action.
+- **By-eye numbers are now measured.** Figures are about 24 points tall (±3), not about 20.
+- **The performance figures are corrected.** The measured still is 120 draw calls. The 3D alone counts 87,522 primitives as the renderer counts them, which is above the 60,000 target, so phase 0 must first split that count.
+- **Phase 1 opens with a short step, "Clear the screen"**, that gives a playable build early.
+- **Phase 0's style frames are real renders**, and the first of them already exists.
+- **Two additions:** a table of what changes on each screen (section 5), and the first tasks in order (phase 0).
+
 ## Plan at a glance
 
-**The finding.** The 3D was built to match the design's stills, and it mostly does. But matching the stills does not make a heist easy to play: in the design's own heist still the crew are about 25 pixels tall. The bar has to move from "looks like the still" to "a new player can read the screen and play it".
+**The finding.** The 3D was built to match the design's stills, and it mostly does. But matching the stills does not make a heist easy to play: in the design's own heist still the crew are about 25 pixels tall. The bar has to move from "looks like the still" to "a new player can read the screen and play it". The measurements of version 2 sharpen this: the camera is not the obstacle (a view 7 tiles across, with figures about 50 points tall, is already in the code as a zoom level). The panels are: they cover 37.5% of the screen, and at the close view they sit over the action.
 
 **The target (section 4).** Fourteen qualities, each with a number and a way to measure it. The four that matter most:
 
 | Quality | Today | Target (proposed) |
 |---|---|---|
-| Share of the heist screen that shows the world with nothing over it | about 39% | at least 60% |
-| Height of a crew member or guard on the heist screen | about 20 points (by eye) | at least 32 points |
+| Share of the heist screen that shows the world with nothing over it | 39% (measured) | at least 60% |
+| Height of a crew member or guard on the heist screen | about 24 points (measured, ±3) | at least 32 points |
+| The heist's default camera | 15 tiles across | about 11 tiles across (the owner picks on the style frames) |
 | What the screen shows of a guard's sight | one cone, one range, a state name | three range zones, a suspicion meter, six states |
-| Draw calls on the heist and result screens | 127 to 149, against a limit of 150 | at most 120 |
+| Draw calls on the heist and result screens | 120 in the still measured here; 127 to 149 at other moments (track notes); the limit is 150 | at most 120 at every moment |
 
 **The phases (section 6).** A phase starts only when the one before has met its exit.
 
 | Phase | What | Hours (estimate) | Exit |
 |---|---|---|---|
-| 0. Measure and choose | The measuring tool, the baseline, a renderer trial, three heist style frames, the data spec | 50 | The owner picks a style frame; the baseline is published; the data spec is frozen |
-| 1. The heist pilot | One realm's heist made clean and playable from end to end | 90 | The heist qualities pass on the pilot; the owner plays it on a phone and signs |
+| 0. Measure and choose | The measuring tool, the baseline, a renderer trial, three rendered heist style frames, the data spec | 50 | The owner picks a style frame; the baseline is published; the data spec is frozen |
+| 1. The heist pilot | First "Clear the screen" (1a, about 15 hours): a closer default camera and slimmer panels, playable early. Then the rest (1b): one realm's heist made clean and playable from end to end | 90 | The owner tries the 1a build on a phone; the heist qualities pass on the pilot; the owner plays it on a phone and signs |
 | 2. Ground, kit and light | The pilot's look across the six realms | 110 | The ground, building and depth qualities pass in all six realms |
 | 3. Realm screens and universe | Framing and clarity on every screen that shows an island | 90 | The framing quality passes on every screen |
 | 4. Characters and motion | Every creature reads; movement tells sneak from walk from run | 80 | The figure and motion qualities pass for every creature |
@@ -52,7 +65,7 @@ It builds on the 3D programme that already exists (`docs/art/3d-program.md`). Th
 | D7 | The builder cap | Before phase 0 | Four (order 3) |
 | D8 | The model and effort for the program's sessions | Before phase 0 | Orders 5 and 6 stand |
 | D9 | The parked work: the BT track (BT-09 is ready but not merged), icon batches 3 and 4 | Before phase 0 | Stays parked |
-| D10 | The owner's time: one choice among three style frames, and a short play session on a phone at the end of phases 1, 3 and 5 | At each gate | The phase's measured numbers stand in, and the play session is noted as not done |
+| D10 | The owner's time: one choice among three style frames, a short play check after step 1a, and a short play session on a phone at the end of phases 1, 3 and 5 | At each gate | The phase's measured numbers stand in, and the play session is noted as not done |
 | D11 | Let the heist's panels be moved and slimmed to give the world more room. This touches finished interface work | Phase 1 | Allowed: layout only, the kit's components unchanged |
 
 ## 1. Verdict
@@ -61,21 +74,21 @@ The 3D is consistent and well made. It has one look, it holds its budgets, and i
 
 Three things cause most of it:
 
-1. **The world gets too little of the screen.** On the heist, panels cover the top quarter and the bottom third. The clear band of world between them is about 39% of the screen.
-2. **What the player acts on is the smallest and faintest thing in the picture.** Crew and guards are about 20 points tall, they sit at nearly the same gray as the grass, and the strongest shapes on screen are a speech bubble, a label and fireflies.
+1. **The world gets too little of the screen.** On the heist, panels cover the top quarter and the bottom third. The clear band of world between them is 39% of the screen's height (measured), and smaller interface items still sit inside it.
+2. **What the player acts on is the smallest and faintest thing in the picture.** Crew and guards are about 24 points tall (measured), they sit at nearly the same gray as the grass, and the strongest shapes on screen are a speech bubble, a label and fireflies.
 3. **The screen is handed less than the game knows.** The simulation computes three sight zones, a suspicion value and six guard states. The screen receives one cone, one range and a state name, so it cannot show the player why they were seen or how close they are to being seen.
 
 The earlier 3D programme could not catch these, because its definition of done was "every still beats the matching design still". The design's stills have the same faults.
 
 ## 2. What the stills show
 
-Each still was rendered at the phone's size from the current head with `tools/render/shoot.sh`.
+Each still was rendered at the phone's size from the current head with `tools/render/shoot.sh`. The stills added in version 2 were rendered the same way, with the shot's `ZOOM` and `HIDE` settings.
 
 ### 2.1 The heist
 
 ![Our heist beside the design's](stills/heist-vs-design.jpg)
 
-- **Ours:** the panels end at about 24% of the height and the action bar starts at about 63%. The crew tray below it is opaque. The clear band is about 39% of the screen. There is empty sky under the tray, and the island is cut off on three sides.
+- **Ours:** the panels end at about 24% of the height and the action bar starts at about 63%. The crew tray below it is opaque. The clear band is 39% of the height (rows 572 to 1487 of 2340), and smaller interface items still sit inside it. By pixel count, the panels cover 37.5% of the screen. There is empty sky under the tray, and the island is cut off on three sides.
 - **The design:** the panels end at about 20%, and the island runs on behind the portraits and the buttons. The clear band is about 58%.
 - **Both:** the figures are tiny. In the design they are about 25 pixels tall. So matching the design is not enough.
 
@@ -83,11 +96,27 @@ Each still was rendered at the phone's size from the current head with `tools/re
 
 This is the play area at the phone's own pixels, and then with the colour removed.
 
-- **Figures.** A crew member is about 60 pixels tall, which is about 20 points on a phone (by eye). The look rules of §21.1 ask for a silhouette that reads at 32 points.
+- **Figures.** A crew member is 70 to 75 pixels tall, which is about 24 points on a phone (measured against a ruler, ±3 points). The look rules of §21.1 ask for a silhouette that reads at 32 points.
 - **Overlap.** Three figures stand by the Vault. Their rings, a red sight patch, an "Intruder!" bubble, an alert icon and an eye icon sit on top of each other.
 - **Grayscale.** The figures almost vanish into the grass. The bubble, the "VAULT" label and the firefly dots are the strongest shapes. The earlier character track measured this: for five creatures, 20% to 33% of the figure's pixels are within 18 gray levels of the grass; for three others, 8% to 13%.
 - **Ground.** Petals and fireflies cover every part of the grass, including where the crew walk. There is one short path. No tiles show, so distances cannot be judged. Nothing casts a shadow, so figures seem to float.
 - **Edges.** A ward pylon is cut off at the right edge.
+
+**The camera, three ways (added in version 2).** The same moment, rendered at three camera distances with the panels hidden:
+
+![The heist at 15, 11 and 7 tiles across, panels hidden](stills/heist-close-no-panels.jpg)
+
+- **The close view is not new work.** `world_view.gd` has three zoom levels: the whole realm, 15 tiles across and 7 tiles across. The heist opens on the middle one.
+- **At 11 tiles** the house, the path, the vault, both guards and the crew are all in frame. Figures are about 32 points tall (by proportion from the 15-tile measurement; not put against the ruler).
+- **At 7 tiles** figures are about 50 points tall (measured), but less of the route is in view.
+
+The same two cameras with the panels on:
+
+![Today's camera and the close camera, with panels](stills/heist-zoom-today-vs-close.jpg)
+
+- **With the panels on, the close camera is worse to play, not better.** The top block, the pause button, the order bar and the bottom panel cover the action, and the vault is half hidden. The panels are the blocker (D11), not the camera.
+
+![Figure height against a ruler](stills/heist-figure-size.jpg)
 
 ### 2.2 The realm at home
 
@@ -117,20 +146,39 @@ The same framing fault: large panels, a small island, unused sky.
 
 | Measure | Today | Limit or rule | Source |
 |---|---|---|---|
-| Clear world band on the heist | about 39% | the design has about 58% | measured on the stills |
-| Figure height on the heist | about 20 points | 32 points (§21.1) | by eye on the still |
+| Clear world band on the heist | 39% of the height | the design has about 58% | measured on the stills |
+| Figure height on the heist | about 24 points (±3) | 32 points (§21.1) | measured against a ruler on the still |
+| Figure height at the 7-tile zoom | about 50 points | 32 points (§21.1) | measured against a ruler on the still |
+| Panels' share of the heist screen's pixels | 37.5% | none set | the still with and without panels, compared pixel by pixel |
 | Figure pixels near the grass's gray | 8% to 33% | none set | the character track's measurements |
-| Draw calls, heist | 127 to 145 | 150 | `docs/art/tracks/t5.md` |
+| Draw calls, heist, the still measured here | 120 (81 for the 3D alone) | 150 | the shot's `budget:` line |
+| Draw calls, heist, other moments | 127 to 145 | 150 | `docs/art/tracks/t5.md` |
 | Draw calls, result | up to 148 to 149 | 150 | `docs/art/tracks/t5.md` |
+| Primitives the renderer counts, heist, 3D alone | 87,522 | 60,000 scene triangles (not the same measure) | the shot's `budget:` line |
 | Triangles, universe map | 39,695 | 40,000 | `docs/art/tracks/universe.md` |
 | Code in `client/world/` | 29,238 lines of GDScript | | counted |
 
-The heist still prints 92,724 "primitives". That is the renderer's count, which includes the ink and shadow passes, so it is not a breach of the 60,000-triangle budget. The honest performance point is draw calls: there is no margin left.
+The heist still prints 92,724 "primitives" with its panels and 87,522 without. That is the renderer's count, which includes the ink and shadow passes. How far it is from the meshes' own triangles is not measured, so this plan cannot yet say whether the 60,000-triangle budget is met; phase 0 splits the count. The panels cost about 39 of the still's 120 draw calls.
+
+**The camera trial (added in version 2).** The same moment at three camera distances, at 1080 × 2340:
+
+| Shot | Draw calls | Primitives |
+|---|---|---|
+| 15 tiles across (today's default), with panels | 120 | 92,724 |
+| 11 tiles across (trial), with panels | 119 | 92,570 |
+| 7 tiles across (the existing close zoom), with panels | 123 | 100,839 |
+| 15 tiles across, panels hidden | 81 | 87,522 |
+| 11 tiles across, panels hidden | 80 | 87,368 |
+| 7 tiles across, panels hidden | 84 | 95,637 |
+
+A closer camera costs nothing: 11 tiles draws the same as today's 15, and 7 tiles adds 3 draw calls.
+
+**Two ways to measure "clear world".** The band between the top block and the order bar is 39% of the height. But smaller interface items sit inside that band: the longest stretch where under 10% of each row is covered is 16.6% of the height. By pixel count, 62.5% of the screen is already uncovered. The 60% target is for the band between the panels; phase 0 fixes which measure the mask tool reports.
 
 ## 3. Root causes
 
 1. **The definition of done was the design's still.** A still cannot be played. It rewards detail and atmosphere, and it does not punish a figure that is too small to tap.
-2. **The camera was set to show the place, and the panels were laid over it afterwards.** `world_view.gd` frames about 15 tiles across a portrait phone. The panels then take more than half of that view.
+2. **The camera was set to show the place, and the panels were laid over it afterwards.** `world_view.gd` frames 15 tiles across a portrait phone by default (`FOLLOW_TILES`), though a 7-tile view exists one zoom level in. The panels then leave a clear band of 39% of the height.
 3. **Decoration and play share the same ground.** Petals, fireflies, flowers and paths were all drawn at the same strength, with nothing reserved for the tiles the crew walk on.
 4. **Each track added its own markers.** Rings, cones, bubbles, icons and labels came from different files with no shared rule for how many may show at once, or where.
 5. **The data path is narrow.** `client/ext/src/lib.rs` has one function, `guards()`, that decides what the screen knows about a guard. It passes on `at`, `facing`, `cone`, `far`, `state` and `down`. The simulation's `near`, `mid` and `suspicion` stop there.
@@ -143,8 +191,8 @@ Each quality has a number, and each number comes from a tool or a scored test. T
 
 | # | Quality | Today | Target (proposed) | How it is measured |
 |---|---|---|---|---|
-| Q1 | **World share.** The band of the heist screen that shows the world with nothing over it | about 39% | at least 60% | The mask tool |
-| Q2 | **Figure size.** Height of a crew member or guard at the heist's default zoom | about 20 points | at least 32 points | The mask tool |
+| Q1 | **World share.** The band of the heist screen that shows the world with nothing over it | 39% (measured) | at least 60% | The mask tool |
+| Q2 | **Figure size.** Height of a crew member or guard at the heist's default zoom | about 24 points (measured) | at least 32 points | The mask tool |
 | Q3 | **Figure separation.** Share of a figure's pixels within 18 gray levels of the ground behind it | 8% to 33% | at most 5% | The mask tool, in grayscale |
 | Q4 | **No pile-ups.** When figures share a tile or stand next to each other, each head and each marker stays visible | fails by the Vault | every head and marker at least 80% visible | The mask tool |
 | Q5 | **Quiet ground.** Decoration on walkable tiles during a heist; paths between buildings | petals and fireflies everywhere; one path | none on walkable tiles; a path links every building | The mask tool |
@@ -156,7 +204,7 @@ Each quality has a number, and each number comes from a tool or a scored test. T
 | Q11 | **Framing.** The chosen crew, their target and the nearest guard inside the safe area; the island not cut off on realm screens; the character at least a third of the screen's height | fails on heist, realm, builder, character | passes on every screen | The mask tool |
 | Q12 | **Depth.** A contact shadow under every figure and building; cliff faces darker than tops | no shadows | present on every screen | The mask tool and a scripted check |
 | Q13 | **Motion.** Sneak, walk and run told apart in a two-second clip; the picture answers an order within 0.1 seconds | not measured | at least 90% right; within 0.1 seconds | The find-it test on clips; a timing check |
-| Q14 | **Performance.** Draw calls on heist and result; scene triangles; frame time on a real phone | 127 to 149; within budget; not measured | at most 120; at most 60,000; set in phase 0 from the trial | The shots' `budget:` line; a phone run |
+| Q14 | **Performance.** Draw calls on heist and result; scene triangles; frame time on a real phone | 120 to 149; not known (the renderer counts 87,522 primitives for the 3D alone); not measured | at most 120 at every moment; at most 60,000 mesh triangles, checked once the count is split; set in phase 0 from the trial | The shots' `budget:` line; a phone run |
 
 Qualities the interface programme already holds stay in force and are re-checked: text at 100% and 200%, and high contrast.
 
@@ -164,11 +212,11 @@ Qualities the interface programme already holds stay in force and are re-checked
 
 Ten directions. Each names the files it touches.
 
-**A. Give the world the screen.** Bring the camera closer and frame the action, not the island. Slim the heist's top panels to one row and let the world run on behind the bottom controls, as the design does. Keep the chosen crew, their target and the nearest guard inside the safe area at all times. (`world_view.gd`, `overlay_hud.gd`, the heist's layout in `client/ui/`.)
+**A. Give the world the screen.** Bring the default camera from 15 tiles across to about 11 and frame the action, not the island. This is one constant (`FOLLOW_TILES`); it was trial-rendered for this plan and costs no draw calls. Slim the heist's top panels to one row and let the world run on behind the bottom controls, as the design does. Keep the chosen crew, their target and the nearest guard inside the safe area at all times. (`world_view.gd`, `overlay_hud.gd`, the heist's layout in `client/ui/`.)
 
 **B. A quiet ground.** Reserve walkable tiles for play: no petals, no fireflies, no flowers there during a heist. Show the tile grid faintly so distance can be judged. Link every building with a path. Keep decoration on the rim, the cliffs and the sky, where it frames the play without competing with it. (`island_builder.gd`, `kit_ground.gd`, `world_look.gd`, `look_*.gd`.)
 
-**C. Figures that read.** Raise figures to at least 32 points, with a closer camera and, if the owner chooses it on the style frames, a larger drawn size. Give crew and guards team colours that hold in grayscale. Put a contact shadow under each. Fan figures out when they share a tile. (`creature*.gd`, `actor_builder.gd`, `world_view.gd`.)
+**C. Figures that read.** Raise figures to at least 32 points, with a closer camera and, if the owner chooses it on the style frames, a larger drawn size. The hook for a larger drawn size already exists (`readable_scale`, read in `world_view.gd`). Give crew and guards team colours that hold in grayscale. Put a contact shadow under each. Fan figures out when they share a tile. (`creature*.gd`, `actor_builder.gd`, `world_view.gd`.)
 
 **D. One marker language.** One marker per actor and one per objective, from one file with one set of rules for size, place and priority. A marker never covers what it describes. When two would collide, the less urgent one shrinks to a dot. (`fx_*.gd`, `law_fx*.gd`, `overlay_hud.gd`.)
 
@@ -186,6 +234,20 @@ Ten directions. Each names the files it touches.
 
 **Build or buy.** Stay procedural. The 3D is generated in code, which keeps it deterministic and the download small, and 29,238 lines of it already exist. Bought models would need a second pipeline and would not match the look.
 
+### What changes on each screen
+
+| Screen | Fault today | What changes | Phase |
+|---|---|---|---|
+| Heist (the pilot realm) | Panels cover 37.5% of the screen; figures are about 24 points; one sight cone per guard | Closer default camera, slimmer panels, readable figures, markers, stealth and orders (directions A to G) | 1 |
+| Replay and result | They share the heist's view and its faults | They follow the pilot | 1 |
+| The other realms' heists | The same faults, on each realm's ground and kit | The pilot's ground, kit and light, realm by realm | 2 |
+| Realm at home | Large panels, empty sky around the island, a flagstone grid where the design has a meadow, weak clouds, waterfalls and ambient life | Framing, a quiet ground, light and depth (directions A, B, G and I) | 3 |
+| Builder, curation, defences, planner | Large panels, a small island, unused sky (seen on the builder; the others are measured in the baseline) | The same framing work | 3 |
+| Scout, observatory, landing, laws | Not rendered for this plan | Measured in the phase 0 baseline first, then the same framing rules | 3 |
+| Universe home and zoom | Small islands, a busy backdrop, plain blocks away from the focused realm; 39,695 of 40,000 triangles used | A quieter backdrop and islands that can be found, inside the same triangle limit (direction I) | 3 |
+| Character and roster | A small model, half hidden by its name plate; colours drift dark under the stage light; sheets cover the lower third | The character large and unhidden: at least a third of the screen | 4 |
+| Sage hall, forms, hatch, first-run | Not rendered for this plan | Measured in the phase 0 baseline first, then the same character rule | 4 |
+
 ## 6. The phases
 
 ### Phase 0. Measure and choose (about 50 hours)
@@ -193,17 +255,28 @@ Ten directions. Each names the files it touches.
 - **The mask tool.** A second render pass that paints every actor, marker and ground type a flat colour. From it a script computes Q1 to Q6, Q11 and Q12 for any still, with no judge. It is checked by hand against ten stills before it is trusted.
 - **The baseline.** Every 3D shot in `client/tests/shots/` rendered and measured, and the table published beside this plan. The `screen_defences` shot prints "0 triangles, 0 draw calls" today; that is fixed first.
 - **The renderer trial.** Compatibility against Mobile on a real phone: frame time, shadows, heat. It decides D4.
-- **Three heist style frames.** The same moment of the same heist, three ways: a closer camera only; larger figures only; both, with the quiet ground and the new markers. The owner picks one. It decides D3.
-- **The data spec.** What `guards()` adds, what noise and order previews need, and proof that the stored replay format does not change. Frozen before phase 1.
+- **Three heist style frames, as real renders.** The same moment of the same heist, three ways: (a) a closer camera only, 11 tiles across, with figures at their true size (about 32 points). This one is already trial-rendered (section 2.1). (b) Today's camera with figures drawn about 1.4 times larger, through the `readable_scale` hook. (c) Both, with the quiet ground and the new markers. The first two are cheap, because the zoom constants and the scale hook already exist. The owner picks one. It decides D3.
+- **The data spec.** What `guards()` adds, what noise and order previews need, and proof that the stored replay format does not change. Frozen before phase 1. `guards()` already returns a dictionary per guard (`at`, `facing`, `cone`, `far`, `state`, `down`), so adding `near`, `mid` and `suspicion` should not touch the replay format; that is to be proved, not assumed. For noise, the client receives one value today (`landing_reach()`).
 - **The find-it test.** A fixed set of stills and clips with five questions each. The answers are scored against the mask, so no opinion is involved.
 
 **Exit:** the owner has picked a style frame; the baseline is published; the mask tool agrees with the hand measurements; the data spec is frozen; the phone's frame time is known.
 
+**First tasks, in order:**
+
+1. Split the shots' `budget:` line into mesh triangles and renderer passes, and fix the `screen_defences` shot.
+2. Build the mask tool and check it against this plan's hand measurements (24 points, 37.5%, 39%).
+3. Render the three style frames for the owner.
+4. Render and measure the baseline for every 3D shot.
+5. Write the data spec, with the replay-format proof.
+6. Run the renderer trial and one frame-time run on a real phone.
+
 ### Phase 1. The heist pilot (about 90 hours)
 
-One realm's heist, made clean and playable from end to end: directions A to G, on that one realm. The replay and result screens follow, since they share the heist's view.
+**1a. Clear the screen (about 15 of the 90 hours; an estimate).** The default camera moves to the distance the owner chose (about 11 tiles). The panels are slimmed and moved (D11) so nothing sits over the crew, their target or the nearest guard. Nothing else changes. The owner gets this build on a phone as an early check, and what they say steers 1b.
 
-**Exit:** Q1 to Q9, Q11, Q12 and Q14 pass on the pilot. The owner plays one heist on a phone and signs, or says what is still hard.
+**1b. The rest of the pilot.** One realm's heist, made clean and playable from end to end: directions A to G, on that one realm. The replay and result screens follow, since they share the heist's view.
+
+**Exit:** Q1 and Q2 are measured on the 1a build, and the owner has tried it (or that is noted as not done). Q1 to Q9, Q11, Q12 and Q14 pass on the pilot. The owner plays one heist on a phone and signs, or says what is still hard.
 
 ### Phase 2. Ground, kit and light across the six realms (about 110 hours)
 
@@ -267,7 +340,7 @@ The simulation already computes what the player needs to see. The screen is not 
 | A suspicion value from 0 to 1000 per guard | nothing | `suspicion` |
 | Six states: Unaware, Suspicious, Investigating, Alerted, Searching, Returning (`sim/src/guard.rs`) | the state's name | nothing new; the screen starts drawing all six |
 | Weak vision at the corner of the eye | nothing | the corner angle |
-| Noise that carries along walkable paths | not checked | to be settled in phase 0 |
+| Noise that carries along walkable paths (`sim/src/noise.rs`) | one value (`landing_reach()`); the client draws no noise | to be settled in phase 0 |
 
 The extension reads the simulated world directly, so the new fields look like additions to one dictionary in `client/ext/src/lib.rs`, with no change to the stored replay. That is an inference from reading the code; phase 0 proves it or corrects it.
 
@@ -283,7 +356,7 @@ The extension reads the simulated world directly, so the new fields look like ad
 
 The interface programme ran from 4 to 24 November 2026, with five stops and a 108-hour bug-fix wave inside it. At that pace this plan takes about four to six weeks, stops included. That is an estimate from one programme, not a promise.
 
-It is larger than the interface programme in three ways: more hours, a harder target (playing, not looking), and a reach into the data the simulation hands the screen.
+It is larger than the interface programme in five ways: more hours; a harder target (playing, not looking); a reach into the data the simulation hands the screen; checks that are measured on the screen and played on a phone, where the interface programme compared stills; and it reopens finished interface work where that blocks play (D11).
 
 ## 11. Rules kept
 
@@ -299,7 +372,7 @@ The table is in "Plan at a glance". Three need a word more.
 
 - **D3, larger figures.** A figure drawn 1.5 times its true size reads far better, but it overlaps walls and other figures more. The style frames show both, so the choice is made on a picture and not on an argument.
 - **D5 and D6, the stealth data.** The detection spec is marked "proposed". If the owner wants a different stealth model, it is far cheaper to say so before the screen is built to show this one.
-- **D11, the heist's panels.** Reaching 60% clear world is not possible without moving them. The components stay as built; their size and place change.
+- **D11, the heist's panels.** Reaching 60% clear world is not possible without moving them. The components stay as built; their size and place change. The camera trial shows why (section 2.1): with today's panels, a closer camera hides more of the action.
 
 ## 13. Risks
 
@@ -315,8 +388,11 @@ The table is in "Plan at a glance". Three need a word more.
 
 ## 14. What was not checked
 
-- Whether noise events reach the client today.
+- How noise should reach the client. Today it receives one value (`landing_reach()`) and draws none.
 - Why the `screen_defences` shot prints zero triangles.
 - The frame time on a real phone. No figure for it exists yet.
-- The figure height was read by eye from one still. The mask tool replaces that reading in phase 0.
+- The figure height at 15 and 7 tiles was measured against a ruler (±3 points); at 11 tiles it is by proportion. The mask tool replaces these readings in phase 0.
 - The stills here are from one realm and one moment of one heist. The baseline in phase 0 covers all of them.
+- How many of the renderer's primitives are mesh triangles.
+- That adding fields to `guards()` leaves the replay format unchanged. It has not been tried.
+- The 11-tile camera was rendered at one moment only. It has not been played through a whole heist.
