@@ -217,8 +217,10 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxq8jXHuXvuJg4yvtE3` (cycle 203,
-25 November 2026 from about 22:15Z, started by the Opus 5.5 launcher).
+Latest lead cycle session: `session_01SNkKxnHHPKMvqUk6akhCWX` (cycle 204,
+25 November 2026 from about 23:15Z, started by the Opus 5.5 launcher).
+Cycle 203's was `session_01SNkKxq8jXHuXvuJg4yvtE3` (25 November, from
+about 22:15Z).
 Cycle 202's was `session_01SNkKxqroqqoKeHuicPgcmk` (25 November, from
 about 20:50Z).
 Cycle 201's was `session_01SNkKxqSFEXjTCRxvhrgqb1` (25 November, from
@@ -1036,6 +1038,18 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 204**, 25 November 2026, from about 23:15Z (session
+  `session_01SNkKxnHHPKMvqUk6akhCWX`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 203:
+  M1 pushed the second review of its resync (7f6f90c) and runs its
+  pre-check; the candidates of cycle 203 moved. **Verify / merge:**
+  nothing is ready. **Started:** none. M1's session is idle between
+  turns with its pre-check running, inside its update window (23:45Z).
+  M2's, DT1's and CF1's seats are free with no 3D task open for them.
+  **Requests:** M1-R2, M2-R1 and M2-R2 stay at their defaults; M1-R2's
+  task is seeded once the baseline merges. **Owner:** the phone trial
+  and the style-frame pick are still open (owner inbox).
+
 - **Superpowers copied into the repository**, 25 November 2026 (the
   overseer). The owner chose to copy the skills of order 8 into
   `docs/process/superpowers/` (obra/superpowers at 22f0b46, MIT). From
@@ -1059,26 +1073,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   order 8's skills in its prompt). M2's and DT1's seats are free, and
   no 3D task is open for them. **Requests:** DT1-R1 answered (the .uid
   landed at DT1's merge). M1-R2, M2-R1 and M2-R2 stay at their
-  defaults. M1-R2's task is seeded once the baseline merges. **Owner:**
-  the phone trial and the style-frame pick are still open (owner inbox).
-
-- **Cycle 202**, 25 November 2026, from about 20:50Z (session
-  `session_01SNkKxqroqqoKeHuicPgcmk`, started by the Opus 5.5 launcher,
-  Opus 5.5 at effort medium by order 7). The changes since cycle 201:
-  DT1 marked 3D0-DT1-data-spec ready at 1657b290 and M2 marked
-  3D0-M2-find-it ready at ea4bf724. **Verify:** two Opus 5.5 high
-  verifiers. DT1's passed. M2's failed; its findings are in the task's
-  `resync_reason`. **Merged:** 3D0-DT1-data-spec, on main at 808fc8f8
-  (candidate 3970bbbd, DT1 only, full checks PASS at 21:41Z), with
-  `client/tests/shots/heist_suspicious.gd.uid` added at merge by
-  DT1-R1's default. The batch candidate 13d3c31c (DT1 + M2) was dropped.
-  **Started:** M2 restarted on its resync at Opus 5.5 high
-  (`session_01SNkKxpBiaVYnEU6QASbpEV`). It was created before order 8
-  reached main, so its prompt does not name the Superpowers skills.
-  Every session created from now on follows order 8. M1 still works on
-  3D0-M1-baseline (resync). M1 and M2 run while the cap is three and
-  the seven-day bar reads `allowed_warning`. DT1's seat is free, and no
-  3D task is open for it. **Requests:** M1-R2 and M2-R1 stay at their
   defaults. M1-R2's task is seeded once the baseline merges. **Owner:**
   the phone trial and the style-frame pick are still open (owner inbox).
 

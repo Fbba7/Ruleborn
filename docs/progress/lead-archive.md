@@ -5,6 +5,26 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 202**, 25 November 2026, from about 20:50Z (session
+  `session_01SNkKxqroqqoKeHuicPgcmk`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 201:
+  DT1 marked 3D0-DT1-data-spec ready at 1657b290 and M2 marked
+  3D0-M2-find-it ready at ea4bf724. **Verify:** two Opus 5.5 high
+  verifiers. DT1's passed. M2's failed; its findings are in the task's
+  `resync_reason`. **Merged:** 3D0-DT1-data-spec, on main at 808fc8f8
+  (candidate 3970bbbd, DT1 only, full checks PASS at 21:41Z), with
+  `client/tests/shots/heist_suspicious.gd.uid` added at merge by
+  DT1-R1's default. The batch candidate 13d3c31c (DT1 + M2) was dropped.
+  **Started:** M2 restarted on its resync at Opus 5.5 high
+  (`session_01SNkKxpBiaVYnEU6QASbpEV`). It was created before order 8
+  reached main, so its prompt does not name the Superpowers skills.
+  Every session created from now on follows order 8. M1 still works on
+  3D0-M1-baseline (resync). M1 and M2 run while the cap is three and
+  the seven-day bar reads `allowed_warning`. DT1's seat is free, and no
+  3D task is open for it. **Requests:** M1-R2 and M2-R1 stay at their
+  defaults. M1-R2's task is seeded once the baseline merges. **Owner:**
+  the phone trial and the style-frame pick are still open (owner inbox).
+
 - **Cycle 201**, 25 November 2026, from about 20:14Z (session
   `session_01SNkKxqSFEXjTCRxvhrgqb1`, started by the Opus 5.5 launcher,
   Opus 5.5 at effort medium by order 7). The changes since cycle 200:
