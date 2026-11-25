@@ -9,12 +9,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-25T22:33:00Z",
   "lease_until": "2026-11-26T01:37:00Z",
-  "updated_at": "2026-11-25T22:37:00Z",
-  "expected_next_update_by": "2026-11-25T23:20:00Z",
+  "updated_at": "2026-11-25T22:55:00Z",
+  "expected_next_update_by": "2026-11-25T23:40:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "4636c38384929b94eefcc5733f88985171c86a61",
-    "next_step": "resync: --no-render fixed (tests), frame draw-call column and notes in table.py; rerunning the 22 shots, then regenerate baseline.md and pre-check"
+    "next_step": "resync: all 22 shots rerun (4 ok, 18 mask limit), stale masks cleared, mask_pass errors fail the heist shots; finishing table wording, replay recheck, then pre-check"
   },
   "precheck": null,
   "gate_request": null,
