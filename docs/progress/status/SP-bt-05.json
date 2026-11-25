@@ -3,21 +3,27 @@
   "role": "specialist: the gate launcher and verdict writer (tools/gate/run.*)",
   "branch": "claude/ui-spec-gate-run",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "BT-05",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-24T23:30:00Z",
   "lease_until": "2026-11-25T02:30:00Z",
-  "updated_at": "2026-11-24T23:35:00Z",
-  "expected_next_update_by": "2026-11-25T00:20:00Z",
+  "updated_at": "2026-11-25T00:06:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": null,
-    "next_step": "Merge main, pre-check with tools/run_checks.sh, owners diff, then ready"
+    "last_green_sha": "646975682627437dd6dbec435b2c2d466f2bf7a1",
+    "next_step": "The lead merges BT-05 and adds the self-test line to check_all.sh (SP-bt-05-R1); handoff in docs/progress/SP-bt-05.md"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "646975682627437dd6dbec435b2c2d466f2bf7a1",
+    "state": "PASS",
+    "exit": 0,
+    "finished_at": "2026-11-25T00:03:14Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "646975682627437dd6dbec435b2c2d466f2bf7a1",
   "stop_at": "2026-11-25T21:00:00Z",
   "acks": [],
   "requests": [
