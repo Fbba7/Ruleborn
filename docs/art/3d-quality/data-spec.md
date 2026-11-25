@@ -31,7 +31,7 @@ and nothing is written back into the world.
 - **The world read.** Every function reads `w()`: the world of the realm
   the crew is in during a crossing, or the heist's own world otherwise.
 - **Units.**
-  - Positions and distances are in tiles. One tile is one metre (§21.1).
+  - Positions and distances are in tiles. One tile is one metre.
     They are converted from the simulation's fixed point (`Fx`, 32
     fractional bits) by `tiles()`.
   - Angles are in radians, converted by `radians()`.
