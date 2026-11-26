@@ -5,15 +5,15 @@
   "model": "Opus 5.5",
   "agent_state": "active",
   "task_id": "3D0-CO-queue-flake",
-  "task_state": "claimed",
+  "task_state": "working",
   "claimed_at": "2026-11-26T01:30:00Z",
   "lease_until": "2026-11-26T04:30:00Z",
-  "updated_at": "2026-11-26T01:30:00Z",
-  "expected_next_update_by": "2026-11-26T02:15:00Z",
+  "updated_at": "2026-11-26T02:20:00Z",
+  "expected_next_update_by": "2026-11-26T03:05:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": null,
-    "next_step": "Reproduce the merge_queue self-test flake and the acks crash with failing tests"
+    "next_step": "Both fixes in with failing-first self-test cases; verify 20 self-test runs in a row, under load"
   },
   "precheck": null,
   "gate_request": null,

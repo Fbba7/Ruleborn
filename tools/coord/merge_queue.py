@@ -96,6 +96,8 @@ GUARD_CMD = f"bash {GUARD} && echo 'All checks passed.'"
 WHO = "coordinator (merge queue)"
 MAX_BATCH = 3
 FAIL_LINES = 12
+# How long the queue waits for a started run to write its pid file (seconds).
+START_GRACE = 120
 ACK_HOURS = 2
 
 
@@ -208,10 +210,11 @@ class Checks:
     candidate's copy), polled until the run ends."""
 
     def __init__(self, repo: Git, env=None, full_cmd=None, docs_cmd=DOCS_CMD,
-                 guard_cmd=GUARD_CMD, poll=15, timeout_min=120):
+                 guard_cmd=GUARD_CMD, poll=15, timeout_min=120, start_grace=START_GRACE):
         self.repo, self.env = repo, env
         self.cmds = {"full": full_cmd, "docs": docs_cmd, "guard": guard_cmd}
         self.poll, self.timeout = poll, timeout_min * 60
+        self.start_grace = start_grace
 
     def _env(self, kind):
         env = dict(self.env if self.env is not None else os.environ)
@@ -232,6 +235,28 @@ class Checks:
         return subprocess.run(["bash", str(script), *args], capture_output=True, text=True,
                               env=self._env(kind), check=False)
 
+    def _pid_file(self, kind, sha) -> pathlib.Path:
+        # run_checks.sh's own naming: <CHECK_DIR>/check-<full sha>.pid.
+        d = pathlib.Path(self._env(kind).get("CHECK_DIR") or "/tmp")
+        return d / f"check-{self.repo.sha(sha) or sha}.pid"
+
+    def _settle(self, kind, sha):
+        """Wait for the runner start launched to write its pid file.
+
+        start waits five seconds for it; a loaded machine can take longer.
+        A result read before the file is there says LOST and removes the
+        run's worktree, so the run that follows fails or is lost. Past the
+        grace period, the result that follows tells what happened."""
+        pidf, waited = self._pid_file(kind, sha), 0
+        while waited < self.start_grace:
+            try:
+                if pidf.read_text().strip():
+                    return
+            except OSError:
+                pass
+            time.sleep(self.poll)
+            waited += self.poll
+
     def result(self, kind, sha) -> dict:
         r = self._sh(kind, "result", sha)
         try:
@@ -249,6 +274,7 @@ class Checks:
                 lines = (r.stderr or r.stdout).strip().splitlines()
                 return {"sha": sha, "state": "ERROR",
                         "summary": lines[0] if lines else f"start exited {r.returncode}"}
+            self._settle(kind, sha)
         waited = 0
         while True:
             res = self.result(kind, sha)
@@ -1025,7 +1051,7 @@ def self_test() -> list:
             m["id"][1:].isdigit() and int(m["id"][1:]) > 7 and m["acked_at"] is None
             for m in msgs.values()) and "src/shared.txt" in msgs["D"]["text"])
         check("lock cleared", lead["merging"] is None
-              and lead["last_merged"]["task_id"] == "ta")
+              and (lead["last_merged"] or {}).get("task_id") == "ta")
         check("te untouched", tasks["te"]["state"] == "working")
         git(coord, "fetch", "-q", "origin")
         log = git(coord, "log", "--format=%s%n%b", "origin/main")
@@ -1107,7 +1133,50 @@ def self_test() -> list:
         check("revert after reuse", te["state"] == "resync" and te["merged_sha"] is None
               and "reverted" in te["resync_reason"] and "revert" in [a["kind"] for a in rep.actions]
               and "FAIL_e" not in git(coord, "ls-tree", "--name-only", "origin/main"))
+
+        # Under load, run_checks.sh's start can return before its detached
+        # runner has written the pid file. A result read then says LOST and
+        # removes the run's worktree, so the queue must not read one before
+        # the pid file is there.
+        late_dir = tmp / "late"
+        late_dir.mkdir()
+        late = _LateStart(repo, {**env, "CHECK_DIR": str(late_dir)}, poll=0.05)
+        res = late.run("full", "a" * 40)
+        late.timer.join()
+        check("late pid file: no early result", not late.lost)
+        check("late pid file: the run passes", res["state"] == "PASS")
     return fails
+
+
+class _LateStart(Checks):
+    """run_checks.sh as seen under load, for the self-test: start returns at
+    once, and the runner writes its pid file a second later."""
+
+    def __init__(self, repo, env, poll):
+        super().__init__(repo, env=env, full_cmd="true", poll=poll, timeout_min=1)
+        self.lost = False
+        self.polls = 0
+        self.timer = None
+
+    def _sh(self, kind, *args):
+        sha = args[1]
+        d = pathlib.Path(self._env(kind)["CHECK_DIR"])
+        pidf, logf = d / f"check-{sha}.pid", d / f"check-{sha}.log"
+        out = lambda state: subprocess.CompletedProcess(args, 0, json.dumps(
+            {"sha": sha, "state": state, "summary": "", "log": str(logf)}) + "\n", "")
+        if args[0] == "start":
+            logf.write_text("")
+            import threading
+            self.timer = threading.Timer(1.0, lambda: pidf.write_text("4242\n"))
+            self.timer.start()
+            return subprocess.CompletedProcess(args, 0, f"started: sha={sha}\n", "")
+        if not logf.exists():
+            return out("NONE")
+        if not (pidf.exists() and pidf.read_text().strip()):
+            self.lost = True
+            return out("LOST")
+        self.polls += 1
+        return out("PASS" if self.polls > 1 else "RUNNING")
 
 
 if __name__ == "__main__":
