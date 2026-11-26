@@ -56,6 +56,17 @@ written as they are, with no sRGB step, so each arrives within a few levels
 of its code; `measure.py` reads each channel in its band of 64 or 28. A
 pixel whose channels are all under 16 is the background.
 
+**Nothing but class colours.** `measure.py` refuses an `id.png` that
+holds any pixel more than 5 levels under or 2 over its code in some
+channel (`ID_BELOW`, `ID_ABOVE`, `STRAY_MAX = 0`), with "pixels match no
+class colour; something 2D was drawn over the id pass". The renderer
+writes the lowest codes a little dark (14 as 9, 32 as 30, 42 as 41; 70
+and up exact), hence the wider band below. Anything 2D left over the id
+pass (a label, a pin, a wash, a screen's background) mixes colours that
+fall outside the bands, so it stops the measure instead of decoding as
+wrong classes. The self-test checks the bands and a still with a
+universe pin drawn over its id pass.
+
 | Class | Red, green | | Class | Red, green |
 |---|---|---|---|---|
 | 0 background (black) | all under 16 | | 8 path | 160, 32 |
@@ -326,7 +337,11 @@ Why each "no" and "when":
   buildings to read; and they float over the sky with nothing to cast a
   shadow on. The universe's pins (`UniversePins`) are counted as
   interface: they are the screen's labels, drawn in 2D over the world, not
-  markers in the world. Q1 says how much of the universe the interface
+  markers in the world. They stay over the cover in `ui_a` and `ui_b`,
+  and are made see-through (alpha 0, not only hidden) for `world.png`
+  and `id.png`: the universe screen sets the pins' `visible` again every
+  frame (`home.gd`, `_fit_pins`), so hiding them by `visible` alone let
+  them back into those passes. Q1 says how much of the universe the interface
   leaves clear. Q11 rates one island: the focused one, or the Heart (the
   player's own) where the camera focuses none; `mask.json` names it in
   `"island"`. The pass draws that island's meshes (its rock, its near and
@@ -367,6 +382,19 @@ The town's houses read unshadowed (foot luma about 1.0 of the tops'):
 that is the look, not the pass. A law's screen tint (`law_fx_tint`, one
 quad before the camera on `screen_replay` and `screen_result`) is hidden
 with the sky: it is a wash over the frame, not a thing in the world.
+So is the look's vignette and haze (`world_look.gd`, a 2D layer over the
+3D world), which the id pass hides. The id pass also draws black behind
+the world view (the project's sky-blue clear colour showed round
+`screen_defences`' small view once its interface was see-through), and
+lifts the world view's own tint and fade (`screen_result` draws its
+island at 30% alpha, tinted violet), in `world.png` too. All three
+decoded as classes before the stray check above caught them.
+
+**`screen_realm`'s cut.** Its island touches the left and right edges
+with its own meadow rim (other ground of tile kind "outside", rows 828
+to 1405) and the cliff face at the rim's foot (rows 840 to 1407), not
+with the underside rock below it: the beauty shows the meadow running
+off both sides, so "cut" is what the eye sees.
 
 **Root-window shots.** A screen shot draws on the root window, which
 `project.godot` sizes at half the phone (540 × 1170, stretched). The pass
@@ -404,3 +432,6 @@ images, as on a heist shot's SubViewport.
   universe shots all rate the Heart.
 - **`measure.py --self-test`** is not run by `tools/check_all.sh` (not
   this task's file); the lead may add it.
+- **`mask_pass.gd` is at gdlint's 1000-line limit**
+  (`client/gdlintrc`). A further pass or class needs the file split (a
+  stage pass and a world pass, say) before it can grow.
