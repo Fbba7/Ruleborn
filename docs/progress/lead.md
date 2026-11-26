@@ -217,8 +217,10 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxr9K2YqiE7qf9taX7r` (cycle 207,
-26 November 2026 from about 01:15Z, started by the Opus 5.5 launcher).
+Latest lead cycle session: `session_01SNkKxp2mpvTYM3zZh3Gi1C` (cycle 208,
+26 November 2026 from about 01:38Z, started by the Opus 5.5 launcher).
+Cycle 207's was `session_01SNkKxr9K2YqiE7qf9taX7r` (26 November, from
+about 01:15Z).
 Cycle 206's was `session_01SNkKxnGQoazsb2Zn5jJzzd` (26 November, from
 about 00:14Z).
 Cycle 205's was `session_01SNkKxpVk3qU9Sg2wwL1V6J` (25 November, from
@@ -1046,6 +1048,21 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 208**, 26 November 2026, from about 01:38Z (session
+  `session_01SNkKxp2mpvTYM3zZh3Gi1C`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 207:
+  M2 pushed its mask pass on the realm, character, universe and plain
+  screens (efb722a, merged main at 15f1b79) and is idle between turns
+  with its check_all running, inside its update window (02:00Z);
+  SP-bt-01 pushed its fix (00d0814: a started check run is settled, acks
+  given as objects are read) and runs its load test. **Verify / merge:**
+  nothing is ready. **Started:** none; two builders work, under the cap
+  of three while the seven-day bar reads `allowed_warning`. M1's seat
+  waits for the mask task; DT1's and CF1's seats are free with no 3D
+  task open for them. **Requests:** M2-R1 and M2-R2 stay at their
+  defaults. **Owner:** the phone trial and the style-frame pick are
+  still open (owner inbox).
+
 - **Cycle 207**, 26 November 2026, from about 01:15Z (session
   `session_01SNkKxr9K2YqiE7qf9taX7r`, started by the Opus 5.5 launcher,
   Opus 5.5 at effort medium by order 7). The changes since cycle 206:
@@ -1086,22 +1103,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   `client/tests/shots/style_frame_heist.gd.uid` untracked (not M1's
   file). **Owner:** phase 0's work is merged but for the owner's two
   items, the phone trial and the style-frame pick (owner inbox).
-
-- **Cycle 205**, 25 November 2026, from about 23:38Z (session
-  `session_01SNkKxpVk3qU9Sg2wwL1V6J`, started by the Opus 5.5 launcher,
-  Opus 5.5 at effort medium by order 7). The changes since cycle 204:
-  M1's pre-check of 7f6f90c failed only on the coordinator's
-  `merge_queue` self-test ("lock cleared": `last_merged` read as None,
-  1 in 3 runs on the same code), and M1 asked for a fix (M1-R3); its
-  second pre-check (of dee58fa) runs. **Verify / merge:** nothing is
-  ready. **Started:** none. M1's session is idle between turns with the
-  pre-check running, inside its update window (00:10Z). M2's, DT1's and
-  CF1's seats are free with no 3D task open for them. **Requests:**
-  M1-R3 stays at its default (M1 re-runs the pre-check once; a PASS
-  stands); the flaky self-test is noted for a coordinator task if it
-  fails a candidate's full checks. M1-R2, M2-R1 and M2-R2 stay at their
-  defaults; M1-R2's task is seeded once the baseline merges. **Owner:**
-  the phone trial and the style-frame pick are still open (owner inbox).
 
 - **Restart, 25 November 2026** (the overseer). The owner restarted the
   program on the 3D quality plan ("Based on the plan made by Fable, let's

@@ -5,6 +5,22 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 205**, 25 November 2026, from about 23:38Z (session
+  `session_01SNkKxpVk3qU9Sg2wwL1V6J`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 204:
+  M1's pre-check of 7f6f90c failed only on the coordinator's
+  `merge_queue` self-test ("lock cleared": `last_merged` read as None,
+  1 in 3 runs on the same code), and M1 asked for a fix (M1-R3); its
+  second pre-check (of dee58fa) runs. **Verify / merge:** nothing is
+  ready. **Started:** none. M1's session is idle between turns with the
+  pre-check running, inside its update window (00:10Z). M2's, DT1's and
+  CF1's seats are free with no 3D task open for them. **Requests:**
+  M1-R3 stays at its default (M1 re-runs the pre-check once; a PASS
+  stands); the flaky self-test is noted for a coordinator task if it
+  fails a candidate's full checks. M1-R2, M2-R1 and M2-R2 stay at their
+  defaults; M1-R2's task is seeded once the baseline merges. **Owner:**
+  the phone trial and the style-frame pick are still open (owner inbox).
+
 - **Cycle 204**, 25 November 2026, from about 23:15Z (session
   `session_01SNkKxnHHPKMvqUk6akhCWX`, started by the Opus 5.5 launcher,
   Opus 5.5 at effort medium by order 7). The changes since cycle 203:
