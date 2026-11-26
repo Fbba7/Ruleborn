@@ -3,27 +3,21 @@
   "role": "measure track",
   "branch": "claude/3d-mask",
   "model": "Opus 5.5",
-  "agent_state": "idle",
+  "agent_state": "active",
   "task_id": "3D0-M2-mask-screens",
-  "task_state": "ready",
-  "claimed_at": "2026-11-26T00:53:00Z",
-  "lease_until": "2026-11-26T03:53:00Z",
-  "updated_at": "2026-11-26T02:20:00Z",
-  "expected_next_update_by": null,
+  "task_state": "claimed",
+  "claimed_at": "2026-11-26T02:35:00Z",
+  "lease_until": "2026-11-26T05:35:00Z",
+  "updated_at": "2026-11-26T02:35:00Z",
+  "expected_next_update_by": "2026-11-26T03:20:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "15f1b796cc962bc56a6c08cdd7c02e1804606a07",
-    "next_step": "verifier review of 3D0-M2-mask-screens, then merge"
+    "next_step": "resync: fix the verifier's points (universe Q11 backdrop, realm buildings, edges, tolerance, chosen)"
   },
-  "precheck": {
-    "sha": "15f1b796cc962bc56a6c08cdd7c02e1804606a07",
-    "state": "PASS",
-    "exit": 0,
-    "finished_at": "2026-11-26T02:15:30Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
-  "ready_sha": "15f1b796cc962bc56a6c08cdd7c02e1804606a07",
+  "ready_sha": null,
   "stop_at": "2026-12-02T21:00:00Z",
   "acks": [
     "cycle-206-start"
