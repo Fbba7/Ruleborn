@@ -36,6 +36,12 @@ HEAD = 0.30  # Q4: a head is the top 30% of a figure's outline
 SEEN = 0.80  # Q4: at least 80% visible
 SOLO = 24  # a solo pixel belongs to the figure when a channel is above this (the backdrop stays under it)
 MARK_ALPHA = 0.3  # a 2D marker pixel is one at least this opaque
+# An id pixel is a class colour when each channel is at most ID_BELOW under
+# its code and ID_ABOVE over it. The renderer writes the lowest codes a little
+# dark (14 as 9, 32 as 30, 42 as 41; 70 and up exact, measured on heist,
+# character and universe stills on 26 November 2026).
+ID_BELOW, ID_ABOVE = 5, 2
+STRAY_MAX = 0  # id pixels that may match no class colour before a still is refused
 CLEAR, CUT, UNDER, OFF = "clear", "cut", "under panel", "off"
 THIRD = 1 / 3  # Q11 on a character screen: the character at least a third of the screen's height
 
@@ -85,6 +91,17 @@ def decode(idp: np.ndarray):
     # Black is the background, not class 0 at index 0's code (32, 32, 14).
     cls = np.where(idp[..., :3].max(axis=2) < 16, BACKGROUND, cls)
     return cls, idx
+
+
+def stray(idp: np.ndarray) -> int:
+    """How many of the id pass's pixels are neither the black background
+    nor a class colour (`code`, within ID_BELOW and ID_ABOVE): something
+    drawn over the pass that is not the world, such as a screen's 2D pins."""
+    rgb = idp[..., :3].astype(int)
+    near = [((rgb[..., c] - start) % step <= ID_ABOVE) | ((rgb[..., c] - start) % step >= step - ID_BELOW)
+            for c, start, step in ((0, 32, 64), (1, 32, 64), (2, 14, 28))]
+    ok = (near[0] & near[1] & near[2]) | (rgb.max(axis=2) < 16)
+    return int((~ok).sum())
 
 
 def code(cls: int, idx: int = 0):
@@ -158,7 +175,11 @@ class Still:
         self.markers2d = self.markers.copy()
         if (folder / "marks3d.png").exists():
             self.markers |= load(folder / "marks3d.png")[..., :3].max(axis=2) > 24
-        self.cls, self.idx = decode(load(folder / "id.png"))
+        idp = load(folder / "id.png")
+        n = stray(idp)
+        if n > STRAY_MAX:
+            raise ValueError(f"id.png: {n} pixels match no class colour; something 2D was drawn over the id pass")
+        self.cls, self.idx = decode(idp)
         self.screen = self.info.get("screen", "heist")
         if self.screen not in SCREENS:
             raise ValueError(f"mask.json: unknown screen {self.screen!r}")
@@ -595,6 +616,11 @@ def self_test() -> None:
         r = measure(d)
         assert r["Q3"]["worst"] is None and r["Q3"]["figures_why"] == "no figure in frame", r["Q3"]
         assert "None" not in summary(r), summary(r)
+    # The renderer's own darkening of the lowest codes is a class colour;
+    # a channel 3 over its code, or 6 under, is not.
+    assert stray(np.array([[code(GROUND_OTHER), code(DECORATION), (30, 96, 41), (1, 1, 3)]], np.uint8)) == 0
+    assert stray(np.array([[(160, 96, 9), (224, 30, 9)]], np.uint8)) == 0
+    assert stray(np.array([[(163, 96, 14), (160, 90, 14), (160, 96, 8)]], np.uint8)) == 3
     _realm_test()
     _universe_test()
     _character_test()
@@ -704,6 +730,19 @@ def _universe_test() -> None:
         q11 = measure(d)["Q11"]
         assert q11["island"]["rating"] == CUT and q11["island_at_edges"]["right"], q11
         assert not q11["island_at_edges"]["left"], q11
+        # A pin drawn over the id pass (the home screen's UniversePins shown
+        # again by home.gd): a plate and its label in colours no class is
+        # drawn in. Its pixels decode as some class all the same, so the
+        # measure refuses the still rather than read them.
+        idp[140:160, 10:40, :3] = (205, 170, 96)
+        idp[146:150, 14:36, :3] = 250
+        _still(d, w, h, idp, world, info)
+        try:
+            measure(d)
+        except ValueError as e:
+            assert "id.png" in str(e) and "600 pixels" in str(e), e
+        else:
+            raise AssertionError("a pin in id.png was measured")
 
 
 def _character_test() -> None:

@@ -8,8 +8,8 @@
   "task_state": "claimed",
   "claimed_at": "2026-11-26T03:55:00Z",
   "lease_until": "2026-11-26T06:55:00Z",
-  "updated_at": "2026-11-26T03:55:00Z",
-  "expected_next_update_by": "2026-11-26T04:40:00Z",
+  "updated_at": "2026-11-26T04:05:00Z",
+  "expected_next_update_by": "2026-11-26T04:50:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "3ee3aa2735019c9c7198ce304c5eb0c173768c9b",
@@ -54,5 +54,5 @@
     }
   ],
   "answers": [],
-  "next_step": "resync attempt 2: hide the stage's own 2D so home.gd cannot show it again; check id.png for stray colours; re-render the universe shots"
+  "next_step": "resync attempt 2: pins hidden by alpha too (confirmed: 0 stray px vs 217,748 with them); the look vignette hidden in the id pass; re-running the 22 mask shots, then mask.md and the pre-check"
 }

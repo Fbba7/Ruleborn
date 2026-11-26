@@ -163,7 +163,7 @@ var _stage_figs: Array = []
 ## Whether the world view draws its crew and guards: a realm screen hides
 ## them (RealmScreen), and then the frame has no figures to measure.
 var _figs_drawn := true
-## A stage's own 2D children but its viewport: [item, visible].
+## A stage's own 2D children but its viewport: [item, visible, alpha].
 var _own2d: Array = []
 ## The nodes a universe screen's rated island is drawn under.
 var _home_roots: Array = []
@@ -375,11 +375,12 @@ func _tile_kind(t: Vector2i) -> int:
 	return kind
 
 
-## Every 3D thing a flat colour by what it is; no sky, fog, outlines or
-## edge smoothing.
+## Every 3D thing a flat colour by what it is; no sky, fog, haze (the
+## look's vignette, a 2D layer over the world), outlines or edge smoothing.
 func _flatten() -> void:
 	_tile_texture()
 	_flat_env(view.environment)
+	view.look.vignette.visible = false
 	for n in view.world.find_children("*", "GeometryInstance3D", true, false):
 		var g := n as GeometryInstance3D
 		var m := g.material_override as ShaderMaterial
@@ -721,7 +722,7 @@ func _run_stage(v: Control, kind: String) -> void:
 			_stage_figs.append(["h%d" % k, figs[k], tables[k] if k < tables.size() else figs[k]])
 	for c in v.get_children():
 		if c is CanvasItem and c != cont:
-			_own2d.append([c, (c as CanvasItem).visible])
+			_own2d.append([c, (c as CanvasItem).visible, (c as CanvasItem).modulate.a])
 	await _save("beauty")
 	_list_ui()
 	var env := _env_of()
@@ -803,9 +804,12 @@ func _env_of() -> Environment:
 
 
 ## The stage's own 2D children shown as they were (`shown`) or hidden.
+## Hidden by alpha too: the home screen shows its pins again every frame
+## (home.gd's _fit_pins), and nothing on a screen sets their alpha.
 func _own_2d(shown: bool) -> void:
 	for e: Array in _own2d:
 		(e[0] as CanvasItem).visible = e[1] if shown else false
+		(e[0] as CanvasItem).modulate.a = e[2] if shown else 0.0
 
 
 ## The id frame's settings: the flat shader, black behind, no tone curve
