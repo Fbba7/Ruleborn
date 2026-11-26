@@ -5,6 +5,18 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 204**, 25 November 2026, from about 23:15Z (session
+  `session_01SNkKxnHHPKMvqUk6akhCWX`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 203:
+  M1 pushed the second review of its resync (7f6f90c) and runs its
+  pre-check; the candidates of cycle 203 moved. **Verify / merge:**
+  nothing is ready. **Started:** none. M1's session is idle between
+  turns with its pre-check running, inside its update window (23:45Z).
+  M2's, DT1's and CF1's seats are free with no 3D task open for them.
+  **Requests:** M1-R2, M2-R1 and M2-R2 stay at their defaults; M1-R2's
+  task is seeded once the baseline merges. **Owner:** the phone trial
+  and the style-frame pick are still open (owner inbox).
+
 - **Superpowers copied into the repository**, 25 November 2026 (the
   overseer). The owner chose to copy the skills of order 8 into
   `docs/process/superpowers/` (obra/superpowers at 22f0b46, MIT). From
