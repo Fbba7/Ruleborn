@@ -3,7 +3,14 @@
   "updated_at": "2026-11-26T04:45:00Z",
   "expected_next_update_by": "2026-11-26T07:45:00Z",
   "cycle": 213,
-  "merging": null,
+  "merging": {
+    "candidate_sha": "723dd2def4a4fa5bd15073a3df474e97425fc17e",
+    "task_ids": [
+      "3D0-M2-mask-screens"
+    ],
+    "started_at": "2026-11-26T05:25:00Z",
+    "expires_at": "2026-11-26T06:25:00Z"
+  },
   "last_merged": {
     "task_id": "3D0-CO-queue-flake",
     "merged_sha": "443182df",
