@@ -1,0 +1,258 @@
+{
+ "budget": "budget: result: 94104 triangles (61010 mesh + 33094 outline passes); 0 triangles in shadows; 56 draw calls, shadow passes included; 4394 triangles and 47 draw calls in other views; frame 98498 triangles, 103 draw calls",
+ "measure": {
+  "Q1": {
+   "band": 0.0,
+   "band_rows": [
+    0,
+    -1
+   ],
+   "panels_share": 1.0,
+   "strict_band": 0.0,
+   "strict_rows": [
+    0,
+    -1
+   ],
+   "uncovered_share": 0.0
+  },
+  "Q11": {
+   "chosen": {
+    "name": "c0",
+    "rating": "under panel"
+   },
+   "guards": {
+    "g0": "under panel",
+    "g1": "off",
+    "g2": "under panel",
+    "g3": "under panel",
+    "g4": "under panel",
+    "g5": "under panel"
+   },
+   "island_at_edges": {
+    "bottom": false,
+    "left": true,
+    "right": true,
+    "top": false
+   },
+   "largest_figure_share": 0.078,
+   "nearest_guard": {
+    "name": "g4",
+    "rating": "under panel"
+   },
+   "target": {
+    "name": "vault",
+    "rating": "off",
+    "under_share": 0.0
+   }
+  },
+  "Q12": {
+   "building_foot_luma_ratio": [],
+   "buildings_with_shadow": 0,
+   "cliff_luma": null,
+   "cliffs_darker": false,
+   "figure_shadow_pixels": {
+    "c0": 0,
+    "c1": 0,
+    "c2": 0,
+    "g0": 0,
+    "g1": 0,
+    "g2": 0,
+    "g3": 0,
+    "g4": 0,
+    "g5": 0
+   },
+   "figures": 9,
+   "figures_with_shadow": 0,
+   "top_luma": null
+  },
+  "Q2": {
+   "crew": [
+    {
+     "bounds_points": 31.3,
+     "name": "c0",
+     "points": 14.5,
+     "role": "Scout",
+     "silhouette_points": 780.0
+    },
+    {
+     "bounds_points": 36.0,
+     "name": "c1",
+     "points": 22.0,
+     "role": "Breaker",
+     "silhouette_points": 780.0
+    },
+    {
+     "bounds_points": 45.0,
+     "name": "c2",
+     "points": 33.8,
+     "role": "Carrier",
+     "silhouette_points": 780.0
+    }
+   ],
+   "crew_least": 14.5,
+   "crew_most": 33.8,
+   "guards": [
+    {
+     "bounds_points": 41.3,
+     "name": "g0",
+     "points": 21.9,
+     "role": "guard",
+     "silhouette_points": 780.0
+    },
+    {
+     "bounds_points": 56.6,
+     "name": "g1",
+     "points": 38.7,
+     "role": "guard",
+     "silhouette_points": 780.0
+    },
+    {
+     "bounds_points": 43.8,
+     "name": "g2",
+     "points": 22.7,
+     "role": "guard",
+     "silhouette_points": 780.0
+    },
+    {
+     "bounds_points": 45.8,
+     "name": "g3",
+     "points": 23.4,
+     "role": "guard",
+     "silhouette_points": 780.0
+    },
+    {
+     "bounds_points": 45.0,
+     "name": "g4",
+     "points": 23.1,
+     "role": "guard",
+     "silhouette_points": 780.0
+    },
+    {
+     "bounds_points": 60.6,
+     "name": "g5",
+     "points": 41.2,
+     "role": "guard",
+     "silhouette_points": 780.0
+    }
+   ],
+   "guards_least": 21.9,
+   "guards_most": 41.2,
+   "least": 14.5
+  },
+  "Q3": {
+   "figures": [],
+   "least": null,
+   "worst": null
+  },
+  "Q4": {
+   "heads": [
+    {
+     "name": "c0",
+     "seen": 0.0
+    },
+    {
+     "name": "c1",
+     "seen": 0.0
+    },
+    {
+     "name": "c2",
+     "seen": 0.0
+    },
+    {
+     "name": "g0",
+     "seen": 0.0
+    },
+    {
+     "name": "g1",
+     "seen": 0.0
+    },
+    {
+     "name": "g2",
+     "seen": 0.0
+    },
+    {
+     "name": "g3",
+     "seen": 0.0
+    },
+    {
+     "name": "g4",
+     "seen": 0.0
+    },
+    {
+     "name": "g5",
+     "seen": 0.0
+    }
+   ],
+   "markers": [],
+   "pass": false,
+   "under_panel": [
+    {
+     "box": [
+      0,
+      0,
+      1080,
+      2340
+     ],
+     "seen": 0.0
+    }
+   ],
+   "worst": 0.0
+  },
+  "Q5": {
+   "buildings": 0,
+   "buildings_on_one_path": 0,
+   "decoration_on_walkable": 0.0,
+   "decoration_pixels": 0,
+   "path_links_every_building": false,
+   "paths": 0
+  },
+  "Q6": {
+   "covering": {
+    "c0": 1.0,
+    "c1": 1.0,
+    "c2": 1.0,
+    "exit": 1.0,
+    "g0": 1.0,
+    "g1": 1.0,
+    "g2": 1.0,
+    "g3": 1.0,
+    "g4": 1.0,
+    "g5": 1.0,
+    "vault": 1.0
+   },
+   "most": 1,
+   "per_object": {
+    "c0": 0,
+    "c1": 0,
+    "c2": 0,
+    "exit": 0,
+    "g0": 0,
+    "g1": 0,
+    "g2": 1,
+    "g3": 0,
+    "g4": 0,
+    "g5": 0,
+    "vault": 0
+   },
+   "worst_covering": 1.0
+  },
+  "env": {
+   "FRAME_H": "",
+   "HIDE": "",
+   "HOUR": "",
+   "MOMENT": "",
+   "ORTHO": "",
+   "SHOT": "/tmp/ruleborn_baseline/screen_result/shot.png",
+   "ZOOM": ""
+  },
+  "frame": [
+   1080,
+   2340
+  ],
+  "still": "/tmp/ruleborn_baseline/screen_result",
+  "zoom": 1
+ },
+ "name": "screen_result",
+ "verdict": "ok",
+ "why": ""
+}

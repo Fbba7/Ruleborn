@@ -1,0 +1,7 @@
+{
+ "budget": "triangles 34065 drawn now 34647 draw calls 33 rendered 55273 prims 58 calls",
+ "measure": null,
+ "name": "universe_zoom",
+ "verdict": "mask limit",
+ "why": "no WorldView in the shot"
+}
