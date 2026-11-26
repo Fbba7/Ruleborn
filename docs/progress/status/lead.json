@@ -1,8 +1,8 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-26T05:30:00Z",
-  "expected_next_update_by": "2026-11-26T08:30:00Z",
-  "cycle": 214,
+  "updated_at": "2026-11-26T05:45:00Z",
+  "expected_next_update_by": "2026-11-26T08:45:00Z",
+  "cycle": 215,
   "merging": null,
   "last_merged": {
     "task_id": "3D0-CO-queue-flake",
@@ -54,7 +54,7 @@
   ],
   "next_step": "Verify (Opus 5.5 high subagent) and merge 3D0-M2-mask-screens when M2's third resync (session_01SNkKxqcJThi4swGsdinWkY, Opus 5.5 high: the character screens' stage interface counted as world) marks it ready, then start M1 on 3D0-M1-baseline-2 (Sonnet 5.5 medium). SP-bt-01's, DT1's and CF1's seats are free with no 3D task open. Every session created follows CLAUDE.md order 8. Restart M2 if its status passes its expected update with no update. The owner runs the phone trial and picks a style frame to close phase 0.",
   "seen": {
-    "at": "2026-11-26T05:25:54Z",
+    "at": "2026-11-26T05:40:53Z",
     "heads": {
       "claude/3d-camera": "18ae7ba4d527593a82b80c10b3c82e0f0d7e1610",
       "claude/3d-character-screens": "6053b249bee313648da3509142eeb2ba738bb62f",
@@ -64,7 +64,7 @@
       "claude/3d-kit": "ca2308becc903e76c6709028982e8ca7066e5a08",
       "claude/3d-law-fx": "358a1f08179d315ec69ff5dcb037e34e89ee7a2b",
       "claude/3d-look": "815e381279f5fdb9952b28866ed6dc4121f2b1d5",
-      "claude/3d-mask": "069abf858475449a1ee7bfe81fa6d062f0b7f1c2",
+      "claude/3d-mask": "9cd17e74a3d0807203ca5dcf60c4d32aebc7e937",
       "claude/3d-measure": "5aad9e6a162a04b8b9e0fda9a804ade468094239",
       "claude/3d-screens": "11679b2bf4d2670e7067791d3bbf32cfd64edc2d",
       "claude/3d-screens-world": "ea319807b0a7c177e1b1413c76ae945d63f3f399",
@@ -112,6 +112,7 @@
       "lead/candidate-573416ab12761b92becf0c1d3d7d7bd03e9cf7d1": "573416ab12761b92becf0c1d3d7d7bd03e9cf7d1",
       "lead/candidate-590a74fb": "590a74fb365f2514091941117a2602ebb7620436",
       "lead/candidate-714b24ed52f56133bccc18c82cc879938b53f296": "714b24ed52f56133bccc18c82cc879938b53f296",
+      "lead/candidate-723dd2de": "723dd2def4a4fa5bd15073a3df474e97425fc17e",
       "lead/candidate-791aae3c187caf621ace022ed675004678dc0119": "791aae3c187caf621ace022ed675004678dc0119",
       "lead/candidate-7e80197fdda972e3e4d71458cb06790f856da509": "7e80197fdda972e3e4d71458cb06790f856da509",
       "lead/candidate-80ffe664": "80ffe664fc74caf5fb8daa3bd0d6d06d55e677e0",

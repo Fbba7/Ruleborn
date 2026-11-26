@@ -1059,6 +1059,22 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 215**, 26 November 2026, from about 05:38Z (session
+  `session_01SNkKxoEkNM6V8qJB1MhNqP`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 214:
+  M2 claimed the third resync of 3D0-M2-mask-screens and pushed its
+  first commits (8e5fb8ac: only the stage's backdrop and foot fade are
+  world; main merged; a40d234d, c69fa9d1, 9cd17e74); its pre-check is
+  running and its status (05:30Z, due 06:15Z) is not late. The lead's
+  candidate branch of cycle 214 moved too; nothing on it waits.
+  **Verify / merge:** nothing ready; no merge lock taken. **Started:**
+  none; one builder (M2) works, under the cap of three while the
+  seven-day bar reads `allowed_warning`. M1's seat waits for the mask
+  task; SP-bt-01's, DT1's and CF1's seats are free with no 3D task open
+  for them. **Requests:** M2-R1, M2-R2, SPbt01-R2 and SPbt01-R3 stay
+  open, none past `due`. **Owner:** the phone trial and the style-frame
+  pick are still open (owner inbox).
+
 - **Cycle 214**, 26 November 2026, from about 05:14Z (session
   `session_01SNkKxpn5ZJDS7qZnMd2BFF`, started by the Opus 5.5 launcher,
   Opus 5.5 at effort medium by order 7). The changes since cycle 213:
@@ -1100,22 +1116,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   **Requests:** M2-R1, M2-R2, SPbt01-R2 and SPbt01-R3 stay open, none
   past `due`. **Owner:** the phone trial and the style-frame pick are
   still open (owner inbox).
-
-- **Cycle 212**, 26 November 2026, from about 04:14Z (session
-  `session_01SNkKxpNTzU8p6veGpMZKBD`, started by the Opus 5.5 launcher,
-  Opus 5.5 at effort medium by order 7). The changes since cycle 211:
-  M2 claimed the 3D0-M2-mask-screens resync (attempt 2) and pushed two
-  fixes (bfa7ed0b: a stage's own 2D hidden by alpha too, the look's
-  vignette in the id pass, an id pass with stray colours refused;
-  d2bd54e9: the id pass black behind the world view). M2's session is
-  working (re-running the 22 mask shots) and its status is current.
-  **Verify / merge:** nothing ready; no merge lock taken. **Started:**
-  none; one builder (M2) works, under the cap of three while the
-  seven-day bar reads `allowed_warning`. M1's seat waits for the mask
-  task; SP-bt-01's, DT1's and CF1's seats are free with no 3D task open
-  for them. **Requests:** M2-R1, M2-R2, SPbt01-R2 and SPbt01-R3 stay
-  open, none past `due`. **Owner:** the phone trial and the style-frame
-  pick are still open (owner inbox).
 
 - **Restart, 25 November 2026** (the overseer). The owner restarted the
   program on the 3D quality plan ("Based on the plan made by Fable, let's
