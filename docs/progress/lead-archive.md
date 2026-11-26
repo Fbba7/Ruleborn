@@ -5,6 +5,21 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 208**, 26 November 2026, from about 01:38Z (session
+  `session_01SNkKxp2mpvTYM3zZh3Gi1C`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 207:
+  M2 pushed its mask pass on the realm, character, universe and plain
+  screens (efb722a, merged main at 15f1b79) and is idle between turns
+  with its check_all running, inside its update window (02:00Z);
+  SP-bt-01 pushed its fix (00d0814: a started check run is settled, acks
+  given as objects are read) and runs its load test. **Verify / merge:**
+  nothing is ready. **Started:** none; two builders work, under the cap
+  of three while the seven-day bar reads `allowed_warning`. M1's seat
+  waits for the mask task; DT1's and CF1's seats are free with no 3D
+  task open for them. **Requests:** M2-R1 and M2-R2 stay at their
+  defaults. **Owner:** the phone trial and the style-frame pick are
+  still open (owner inbox).
+
 - **Cycle 207**, 26 November 2026, from about 01:15Z (session
   `session_01SNkKxr9K2YqiE7qf9taX7r`, started by the Opus 5.5 launcher,
   Opus 5.5 at effort medium by order 7). The changes since cycle 206:

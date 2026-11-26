@@ -217,8 +217,10 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxpQsrHbWjUUKuWhdXk` (cycle 210,
-26 November 2026 from about 02:39Z, started by the Opus 5.5 launcher).
+Latest lead cycle session: `session_01SNkKxnwWHQpkgc5qyz6wAn` (cycle 211,
+26 November 2026 from about 03:39Z, started by the Opus 5.5 launcher).
+Cycle 210's was `session_01SNkKxpQsrHbWjUUKuWhdXk` (26 November, from
+about 02:39Z).
 Cycle 209's was `session_01SNkKxoG12caN7yyrvRzWSB` (26 November, from
 about 02:14Z).
 Cycle 208's was `session_01SNkKxp2mpvTYM3zZh3Gi1C` (26 November, from
@@ -451,7 +453,8 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
-| M2 | `session_01SNkKxrB9QRrPjRunKNvHgP` (Opus 5.5, effort high) | 3D0-M2-mask-screens (restart, cycle 209: resync after the verifier failed universe Q11 (the galaxy backdrop counted as island) and the realm's buildings classed as decoration; Opus 5.5 high by order 7, a resync; M2's last session, `session_01SNkKxmfUr1jfnjsq8DnggV`, is idle) | `claude/3d-mask` | 2026-11-26 02:31Z |
+| M2 | `session_01SNkKxoEguEtd88C3hWyuT5` (Opus 5.5, effort high) | 3D0-M2-mask-screens (restart, cycle 211: resync attempt 2 after the verifier found the universe map's 2D pins leak into world.png and id.png (home.gd re-shows them each frame), so universe Q11 under-reads; Opus 5.5 high by order 7, a resync; M2's last session, `session_01SNkKxrB9QRrPjRunKNvHgP`, is idle) | `claude/3d-mask` | 2026-11-26 03:51Z |
+| M2 | `session_01SNkKxrB9QRrPjRunKNvHgP` (Opus 5.5, effort high; idle, task sent to resync in cycle 211) | 3D0-M2-mask-screens (restart, cycle 209: resync after the verifier failed universe Q11 (the galaxy backdrop counted as island) and the realm's buildings classed as decoration; Opus 5.5 high by order 7, a resync; M2's last session, `session_01SNkKxmfUr1jfnjsq8DnggV`, is idle) | `claude/3d-mask` | 2026-11-26 02:31Z |
 | SP-bt-01 | `session_01SNkKxqcX7brniT4BXdBWu8` (Opus 5.5, effort high; idle, task merged in cycle 210) | 3D0-CO-queue-flake (start, cycle 207: the coordinator task of cycle 206, assigned to the coordinator specialist; Opus 5.5 high as the task names, the merge queue and its lock; SP-bt-01's last session, `session_01SNkKxnk1jnaFLfc14YYCAq`, is idle, its task merged) | `claude/ui-spec-coord` | 2026-11-26 01:19Z |
 | M2 | `session_01SNkKxmfUr1jfnjsq8DnggV` (Opus 5.5, effort medium; idle, task sent to resync in cycle 209) | 3D0-M2-mask-screens (start, cycle 206: M1-R2's mask task seeded after the baseline merged; Opus 5.5 medium by order 7, a complex task in tools/render; M2's last session, `session_01SNkKxpBiaVYnEU6QASbpEV`, is idle, its task merged) | `claude/3d-mask` | 2026-11-26 00:50Z |
 | M1 | `session_01SNkKxpnpiNRd38EhMM9ukJ` (Opus 5.5, effort high) | 3D0-M1-baseline (restart, cycle 203: resync after the verifier found that --no-render overwrites the committed baseline data with nulls; Opus 5.5 high by order 7, a resync; M1's last session, `session_01SNkKxn9dm8J8WUsKvxtyJ6`, is idle) | `claude/3d-measure` | 2026-11-25 22:31Z |
@@ -1053,6 +1056,31 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 211**, 26 November 2026, from about 03:39Z (session
+  `session_01SNkKxnwWHQpkgc5qyz6wAn`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 210:
+  M2 marked the 3D0-M2-mask-screens resync ready at 3ee3aa27 (pre-check
+  PASS). **Verify / merge:** the candidate passed the ownership and
+  claims checks and merges cleanly, but the Opus 5.5 high verifier
+  failed it. The first attempt's points are fixed (the galaxy no longer
+  counts as island; screen_realm's Q5 reads 2 of 6 buildings on one path
+  and Q12 0 of 4 shadowed; the 8% tolerance is in mask.md; `chosen` is
+  -1), and the self-test fails on main's measure.py. Blocking: the
+  universe map's 2D pins leak into world.png and id.png, because
+  `_own_2d(false)` sets `visible` and home.gd re-shows the pins every
+  frame; pin colours decode as wrong classes and universe Q11 under-reads
+  (universe_home under_share 0.007, 0.273 with the pins hidden). Minor:
+  mask.md does not say whether screen_realm's edge hits come from the
+  underside rock; M2.md's handoff is stale. Nothing merged; the task is
+  `resync` (attempt 2). **Started:** M2 on the resync
+  (`session_01SNkKxoEguEtd88C3hWyuT5`, Opus 5.5 high, a resync by order
+  7). One builder works, under the cap of three while the seven-day bar
+  reads `allowed_warning`. M1's seat waits for the mask task; SP-bt-01's,
+  DT1's and CF1's seats are free with no 3D task open for them.
+  **Requests:** M2-R1, M2-R2, SPbt01-R2 and SPbt01-R3 stay at their
+  defaults. **Owner:** the phone trial and the style-frame pick are
+  still open (owner inbox).
+
 - **Cycle 210**, 26 November 2026, from about 02:39Z (session
   `session_01SNkKxpQsrHbWjUUKuWhdXk`, started by the Opus 5.5 launcher,
   Opus 5.5 at effort medium by order 7). The changes since cycle 209:
@@ -1101,21 +1129,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   acks) and SPbt01-R3 (run_checks.sh's LOST races) stay at their
   defaults until their due time. **Owner:** the phone trial and the
   style-frame pick are still open (owner inbox).
-
-- **Cycle 208**, 26 November 2026, from about 01:38Z (session
-  `session_01SNkKxp2mpvTYM3zZh3Gi1C`, started by the Opus 5.5 launcher,
-  Opus 5.5 at effort medium by order 7). The changes since cycle 207:
-  M2 pushed its mask pass on the realm, character, universe and plain
-  screens (efb722a, merged main at 15f1b79) and is idle between turns
-  with its check_all running, inside its update window (02:00Z);
-  SP-bt-01 pushed its fix (00d0814: a started check run is settled, acks
-  given as objects are read) and runs its load test. **Verify / merge:**
-  nothing is ready. **Started:** none; two builders work, under the cap
-  of three while the seven-day bar reads `allowed_warning`. M1's seat
-  waits for the mask task; DT1's and CF1's seats are free with no 3D
-  task open for them. **Requests:** M2-R1 and M2-R2 stay at their
-  defaults. **Owner:** the phone trial and the style-frame pick are
-  still open (owner inbox).
 
 - **Restart, 25 November 2026** (the overseer). The owner restarted the
   program on the 3D quality plan ("Based on the plan made by Fable, let's
