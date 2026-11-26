@@ -8,19 +8,48 @@
   "task_state": "working",
   "claimed_at": "2026-11-26T01:30:00Z",
   "lease_until": "2026-11-26T04:30:00Z",
-  "updated_at": "2026-11-26T01:53:00Z",
-  "expected_next_update_by": "2026-11-26T02:38:00Z",
+  "updated_at": "2026-11-26T01:56:00Z",
+  "expected_next_update_by": "2026-11-26T02:41:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": null,
-    "next_step": "Second race fixed (LOST read between DONE check and runner check); 20/20 sequential and 64/64 loaded self-tests pass; review, merge main, pre-check"
+    "next_step": "Main merged (89270a01); code review running; then pre-check and ready"
   },
   "precheck": null,
   "gate_request": null,
   "ready_sha": null,
   "stop_at": "2026-12-02T21:00:00Z",
   "acks": [],
-  "requests": [],
+  "requests": [
+    {
+      "id": "SPbt01-R2",
+      "from": "SP-bt-01",
+      "to": "lead",
+      "ask": "tools/coord/cycle_needed.py line 163 reads `acks = set(lead.get(\"acks\", []))`, which crashes with \"unhashable type: 'dict'\" if lead.json ever holds an ack as an object (as M2.json once did). cycle.py now has `ack_ids()`, which reads both forms; cycle_needed.py could use the same reading. It is not in this task's files.",
+      "files": [
+        "tools/coord/cycle_needed.py"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-26T01:56:00Z",
+      "due": "2026-11-27T01:56:00Z",
+      "default": "Leave cycle_needed.py as it is: the lead writes its own acks as strings, so it does not crash today.",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "SPbt01-R3",
+      "from": "SP-bt-01",
+      "to": "lead",
+      "ask": "tools/run_checks.sh has two races that report LOST for a healthy run: `start` waits only 5 s for the runner's pid file, and `result` checks the .done file before checking that the runner is alive, so a run ending between the two reads as LOST (and `cleanup` then removes its worktree). merge_queue.py now works around both; other callers of `result` (agents' `wait`) do not. A fix belongs to run_checks.sh's owner: wait longer for the pid file, and re-check .done after finding no runner.",
+      "files": [
+        "tools/run_checks.sh"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-26T01:56:00Z",
+      "due": "2026-11-27T01:56:00Z",
+      "default": "Leave run_checks.sh as it is; merge_queue.py's workaround covers the merge queue, and an agent whose wait reads LOST re-runs start.",
+      "escalate_to": "lead"
+    }
+  ],
   "answers": [],
   "effort": "high"
 }
