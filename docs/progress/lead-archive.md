@@ -5,6 +5,32 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 209**, 26 November 2026, from about 02:14Z (session
+  `session_01SNkKxoG12caN7yyrvRzWSB`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 208:
+  M2 marked 3D0-M2-mask-screens ready at 15f1b79 (pre-check PASS);
+  SP-bt-01 pushed two fixes for LOST check results (523a48b, e0a0499)
+  and runs its pre-check. **Verify / merge:** candidate d2428087 passed
+  the ownership and claims checks and the documents check, but the
+  Opus 5.5 high verifier failed it: universe Q11 always reads "island
+  cut" because StarSky's galaxy backdrop falls through to GROUND_OTHER
+  and counts as island (and mask.md says Q11 rates the home island,
+  which the code does not); on screen_realm the town buildings come out
+  as decoration, yet Q5 and Q12 report "0 of 0" as a measurement, and
+  screen_realm is missing from mask.md's results. Minor: realm Q11
+  edges from the opaque underside rock, run-to-run drift with no
+  tolerance, `chosen` always 0. Nothing merged; the task is `resync`
+  (attempt 1). **Started:** M2 on the resync
+  (`session_01SNkKxrB9QRrPjRunKNvHgP`, Opus 5.5 high, a resync by
+  order 7). Two builders work, under the cap of three while the
+  seven-day bar reads `allowed_warning`. M1's seat waits for the mask
+  task (its prompt now names 3D0-M1-baseline-2 and order 8); DT1's and
+  CF1's seats are free with no 3D task open for them. **Requests:**
+  M2-R1 and M2-R2 stay at their defaults; SPbt01-R2 (cycle_needed.py's
+  acks) and SPbt01-R3 (run_checks.sh's LOST races) stay at their
+  defaults until their due time. **Owner:** the phone trial and the
+  style-frame pick are still open (owner inbox).
+
 - **Cycle 208**, 26 November 2026, from about 01:38Z (session
   `session_01SNkKxp2mpvTYM3zZh3Gi1C`, started by the Opus 5.5 launcher,
   Opus 5.5 at effort medium by order 7). The changes since cycle 207:

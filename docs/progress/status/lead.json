@@ -1,8 +1,8 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-26T03:55:00Z",
-  "expected_next_update_by": "2026-11-26T06:55:00Z",
-  "cycle": 211,
+  "updated_at": "2026-11-26T04:25:00Z",
+  "expected_next_update_by": "2026-11-26T07:25:00Z",
+  "cycle": 212,
   "merging": null,
   "last_merged": {
     "task_id": "3D0-CO-queue-flake",
@@ -54,7 +54,7 @@
   ],
   "next_step": "Verify (Opus 5.5 high subagent) and merge 3D0-M2-mask-screens when M2's second resync (session_01SNkKxoEguEtd88C3hWyuT5, Opus 5.5 high) marks it ready, then start M1 on 3D0-M1-baseline-2 (Sonnet 5.5 medium). SP-bt-01's, DT1's and CF1's seats are free with no 3D task open. Every session created follows CLAUDE.md order 8. Restart M2 if stale. The owner runs the phone trial and picks a style frame to close phase 0.",
   "seen": {
-    "at": "2026-11-26T03:51:59Z",
+    "at": "2026-11-26T04:17:08Z",
     "heads": {
       "claude/3d-camera": "18ae7ba4d527593a82b80c10b3c82e0f0d7e1610",
       "claude/3d-character-screens": "6053b249bee313648da3509142eeb2ba738bb62f",
@@ -64,7 +64,7 @@
       "claude/3d-kit": "ca2308becc903e76c6709028982e8ca7066e5a08",
       "claude/3d-law-fx": "358a1f08179d315ec69ff5dcb037e34e89ee7a2b",
       "claude/3d-look": "815e381279f5fdb9952b28866ed6dc4121f2b1d5",
-      "claude/3d-mask": "ea15bf8c7ea90c0c595d22cca2dd1e2c194c28cf",
+      "claude/3d-mask": "d2bd54e98c2fa7b60f1fcdd6d9e33a4593cd4e8b",
       "claude/3d-measure": "5aad9e6a162a04b8b9e0fda9a804ade468094239",
       "claude/3d-screens": "11679b2bf4d2670e7067791d3bbf32cfd64edc2d",
       "claude/3d-screens-world": "ea319807b0a7c177e1b1413c76ae945d63f3f399",

@@ -217,8 +217,8 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxnwWHQpkgc5qyz6wAn` (cycle 211,
-26 November 2026 from about 03:39Z, started by the Opus 5.5 launcher).
+Latest lead cycle session: `session_01SNkKxpNTzU8p6veGpMZKBD` (cycle 212,
+26 November 2026 from about 04:14Z, started by the Opus 5.5 launcher).
 Cycle 210's was `session_01SNkKxpQsrHbWjUUKuWhdXk` (26 November, from
 about 02:39Z).
 Cycle 209's was `session_01SNkKxoG12caN7yyrvRzWSB` (26 November, from
@@ -1056,6 +1056,22 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 212**, 26 November 2026, from about 04:14Z (session
+  `session_01SNkKxpNTzU8p6veGpMZKBD`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 211:
+  M2 claimed the 3D0-M2-mask-screens resync (attempt 2) and pushed two
+  fixes (bfa7ed0b: a stage's own 2D hidden by alpha too, the look's
+  vignette in the id pass, an id pass with stray colours refused;
+  d2bd54e9: the id pass black behind the world view). M2's session is
+  working (re-running the 22 mask shots) and its status is current.
+  **Verify / merge:** nothing ready; no merge lock taken. **Started:**
+  none; one builder (M2) works, under the cap of three while the
+  seven-day bar reads `allowed_warning`. M1's seat waits for the mask
+  task; SP-bt-01's, DT1's and CF1's seats are free with no 3D task open
+  for them. **Requests:** M2-R1, M2-R2, SPbt01-R2 and SPbt01-R3 stay
+  open, none past `due`. **Owner:** the phone trial and the style-frame
+  pick are still open (owner inbox).
+
 - **Cycle 211**, 26 November 2026, from about 03:39Z (session
   `session_01SNkKxnwWHQpkgc5qyz6wAn`, started by the Opus 5.5 launcher,
   Opus 5.5 at effort medium by order 7). The changes since cycle 210:
@@ -1103,32 +1119,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   **Requests:** M2-R1, M2-R2, SPbt01-R2 and SPbt01-R3 stay at their
   defaults. **Owner:** the phone trial and the style-frame pick are
   still open (owner inbox).
-
-- **Cycle 209**, 26 November 2026, from about 02:14Z (session
-  `session_01SNkKxoG12caN7yyrvRzWSB`, started by the Opus 5.5 launcher,
-  Opus 5.5 at effort medium by order 7). The changes since cycle 208:
-  M2 marked 3D0-M2-mask-screens ready at 15f1b79 (pre-check PASS);
-  SP-bt-01 pushed two fixes for LOST check results (523a48b, e0a0499)
-  and runs its pre-check. **Verify / merge:** candidate d2428087 passed
-  the ownership and claims checks and the documents check, but the
-  Opus 5.5 high verifier failed it: universe Q11 always reads "island
-  cut" because StarSky's galaxy backdrop falls through to GROUND_OTHER
-  and counts as island (and mask.md says Q11 rates the home island,
-  which the code does not); on screen_realm the town buildings come out
-  as decoration, yet Q5 and Q12 report "0 of 0" as a measurement, and
-  screen_realm is missing from mask.md's results. Minor: realm Q11
-  edges from the opaque underside rock, run-to-run drift with no
-  tolerance, `chosen` always 0. Nothing merged; the task is `resync`
-  (attempt 1). **Started:** M2 on the resync
-  (`session_01SNkKxrB9QRrPjRunKNvHgP`, Opus 5.5 high, a resync by
-  order 7). Two builders work, under the cap of three while the
-  seven-day bar reads `allowed_warning`. M1's seat waits for the mask
-  task (its prompt now names 3D0-M1-baseline-2 and order 8); DT1's and
-  CF1's seats are free with no 3D task open for them. **Requests:**
-  M2-R1 and M2-R2 stay at their defaults; SPbt01-R2 (cycle_needed.py's
-  acks) and SPbt01-R3 (run_checks.sh's LOST races) stay at their
-  defaults until their due time. **Owner:** the phone trial and the
-  style-frame pick are still open (owner inbox).
 
 - **Restart, 25 November 2026** (the overseer). The owner restarted the
   program on the 3D quality plan ("Based on the plan made by Fable, let's
