@@ -615,3 +615,115 @@ With the lift held at 0 it fails. Then the plate stands at 1321..1353 and the do
 
 - `part9-vault-200-en.png`, `part9-vault-200-pt.png` and `part9-vault-200-de.png`: the heist still at 200% text in each locale. 'VAULT', 'COFRE' and 'TRESOR' read whole, and each sits with the vault's dome between the loot panel's foot and the tray's top edge. `part9-heist-200-pt.png`, above, is the same still before the lift. There the vault and its label are under the tray.
 - The six FIT runs above were run again on the lift. Every run exited 0 and printed "fit ok". At 100% text and in high contrast at 100% the lift is 0, so those frames are as they were.
+
+## Part 10: the Vault's progress and the map band at 200% text (P4-S1-heist-vault)
+
+The wave board's phase 4 list (M57, M61) found two faults in the heist at 200% text. The loot panel drew the shut Vault as its icon and a thin crack bar only: its name and its progress ('Vault 0%', `REHEARSE_LEGEND_VAULT`) were gone, while at 150% and on the rehearsal's legend they are read. And the panel, under the whole top row, grew down over the map, so the band of map between the HUD and the hand's plates was narrower at 200% than at 150%.
+
+**The cause.** With large text (over 130%) `KitHud.loot_fit` builds the Vault's row as its icon beside the "Cracked" bar, and the loot panel takes the row's whole width under the law banner and the alarm. At 200% each of its rows is taller, and the alarm column is taller too, but the panel still started under both, so its foot came down by about 176 px against 150%. The rehearsal's pause had a row of its own under the portraits, which lifted the tray, and a two-line tip stood over what was left of the map.
+
+**What changed** (all in S1's files; no kit file changes):
+
+- **The Vault's words row** (`HeistHud._vault_words`, `client/scripts/heist_hud.gd`). With large text the kit's Vault icon moves into a row of its own named "VaultWords", with the Vault's name and its number in the loot's own words and figures ('Vault 0%', 'Cofre 0%', 'Tresor 0%'). The crack bar runs under them across the panel. The number is baked and tinted like the loot's other numbers (cream in high contrast), and `show_state` sets it in place as the crack fills (`_vault_count`). At 100% text nothing changes: the small panel already says 'Vault 0%'.
+- **The loot beside the alarm at 200%** (`HeistHud.beside_alarm()`, text over 175%). The loot panel joins the left column under the laws, in the room the taller alarm leaves there, instead of standing under the whole top row. `_build_loot` tells the kit the column's width, less the alarm's. At 150% the panel stays where it was.
+- **"Load to 100%" kept to one line at 200%** (`_one_line` on the panel's caption, as the laws' names are beside the alarm). In en and de it keeps one line; in pt_BR 'Carregar até 100%' still wraps at the font's 80% floor.
+- **The rehearsal's pause joins the actions row** with large text (`heist_screen.gd`, `_build`), beside the gait, before 'Cast' and 'Get out'. It no longer takes a row of its own under the portraits, so the tray is one row shorter.
+- **A two-line tip hides at 200%** (`heist_screen.gd`, `_fit_hint`, level 2). Its plate would stand over the map band. On main the tip already hid when it found no room over the tray, as at the still's moment; now a tip that takes two lines hides at 200% whatever the room. A tip that keeps one line stays.
+- **The still prints the tip's rect** (`client/tests/shots/screen_heist.gd`, the SIZES line), so the band can be read from each shot.
+
+**The band.** Measured from the loot panel's foot to the first plate under it (the tip's plate when it shows, else the tray's top), in the phone's 1080 by 2340 pixels, at the landing moment the test uses:
+
+| | 150% | 200%, main | 200%, this change |
+|---|---|---|---|
+| en | 1045..1385 (340) | 1147..1338 (191) | 1010..1491 (481) |
+| pt_BR | 1045..1289 (244) | 1147..1349 (202) | 1083..1502 (419) |
+| de | 1045..1289 (244) | 1147..1338 (191) | 1002..1491 (489) |
+
+At 150% the Vault's words row makes the panel 74 px taller than on main (its foot 1045 against 971), so main's 150% bands were 414, 165 and 318. The 200% bands are wider than both. Measured to the tray's top instead (AD-R65's band, ignoring the tip), 200% gives 481, 419 and 489 against 493, 493 and 493 at 150%: there the gain is the tip's plate, which hides at 200%. The vault's lift (Part 9) still keeps the vault and its label inside the band; `_vault_band` passes unchanged.
+
+**The test** (`client/tests/heist_fx_tests.gd`, `_vault_row`). It mounts the heist on the shot's island at the phone's size (the window at 540 by 1170, as `a11y_tests.gd`'s large-text test sets it), at 150% and 200% in en, pt_BR and de, and lands the crew. It passes when, at 200%, a visible label in the loot panel says the Vault's name, the HUD's Vault number is in the panel and says '0%', and the band is no narrower than at 150%. The numbers are baked into pictures, so the number is read from the HUD (`_vault_count`), not found as a label. On this change its detail line reads:
+
+    150% en [Room, Left, Vault, Load to 100%] count true, band 1045..1385 tip true
+    200% en [Room, Left, Vault, Load to 100%] count true, band 1010..1491 tip false
+    150% pt_BR [Espaço, Restam, Cofre, Carregar até 100%] count true, band 1045..1289 tip true
+    200% pt_BR [Espaço, Restam, Cofre, Carregar até 100%] count true, band 1083..1502 tip false
+    150% de [Platz, Übrig, Tresor, Laden bis 100 %] count true, band 1045..1289 tip true
+    200% de [Platz, Übrig, Tresor, Laden bis 100 %] count true, band 1002..1491 tip false
+
+On main it fails: no Vault word and no count in any locale, and the 200% bands (191, 202, 191) are narrower than the 150% ones (414, 165, 318).
+
+**The guard's draw calls.** guard.sh on this change, with main `4e0294ff` merged, measures heist/200 at 119 against its record of 118. heist/100 keeps its 120, and heist/hc is at 121 of 123. The one call is the Vault's word: the number joins the loot's baked figures, but the word is a label of its own. Every shot stays under the cap of 150 and no word is below 4.5:1. The raise, 118 -> 119, is requested of K1 with the lead's approval under M33 (S1-R45), as S1-R39 was.
+
+### Evidence
+
+- `part10-before-200-pt.png` and `part10-after-200-pt.png`: the heist still at 200% text in pt_BR, on main and with this change. Before, the Vault's row is an icon and an empty line, the loot panel stands under the whole top row and the pause has a row of its own. After, the panel stands under the laws beside the alarm, reads 'Cofre 0%' over its crack, and the map between it and the tray is wider.
+- `part10-200-en.png` and `part10-200-de.png`: the same at 200% in en ('Vault 0%') and de ('Tresor 0%').
+- `part10-150-pt.png`: 150% in pt_BR, the loot under the top row as before, with the Vault's words row and the pause in the actions row.
+- `part10-100-en.png`: 100% in en, unchanged.
+- `part10-hc-200-pt.png`: high contrast at 200% in pt_BR; the Vault's number is cream like the loot's other numbers.
+
+Each still was shot with `FIT=1` on this change. Every run exited 0 and printed "fit ok":
+
+    env FIT=1 TEXT=100 LOCALE=en bash tools/render/shoot.sh client/tests/shots/screen_heist.gd h100-en.png
+    env FIT=1 TEXT=100 LOCALE=pt_BR bash tools/render/shoot.sh client/tests/shots/screen_heist.gd h100-pt_BR.png
+    env FIT=1 TEXT=100 LOCALE=de bash tools/render/shoot.sh client/tests/shots/screen_heist.gd h100-de.png
+    env FIT=1 TEXT=150 LOCALE=en bash tools/render/shoot.sh client/tests/shots/screen_heist.gd h150-en.png
+    env FIT=1 TEXT=150 LOCALE=pt_BR bash tools/render/shoot.sh client/tests/shots/screen_heist.gd h150-pt_BR.png
+    env FIT=1 TEXT=150 LOCALE=de bash tools/render/shoot.sh client/tests/shots/screen_heist.gd h150-de.png
+    env FIT=1 TEXT=200 LOCALE=en bash tools/render/shoot.sh client/tests/shots/screen_heist.gd h200-en.png
+    env FIT=1 TEXT=200 LOCALE=pt_BR bash tools/render/shoot.sh client/tests/shots/screen_heist.gd h200-pt_BR.png
+    env FIT=1 TEXT=200 LOCALE=de bash tools/render/shoot.sh client/tests/shots/screen_heist.gd h200-de.png
+    env FIT=1 CONTRAST=1 TEXT=100 LOCALE=en bash tools/render/shoot.sh client/tests/shots/screen_heist.gd hc100-en.png
+    env FIT=1 CONTRAST=1 TEXT=150 LOCALE=en bash tools/render/shoot.sh client/tests/shots/screen_heist.gd hc150-en.png
+    env FIT=1 CONTRAST=1 TEXT=200 LOCALE=en bash tools/render/shoot.sh client/tests/shots/screen_heist.gd hc200-en.png
+    env FIT=1 CONTRAST=1 TEXT=200 LOCALE=pt_BR bash tools/render/shoot.sh client/tests/shots/screen_heist.gd hc200-pt_BR.png
+    env FIT=1 CONTRAST=1 TEXT=200 LOCALE=de bash tools/render/shoot.sh client/tests/shots/screen_heist.gd hc200-de.png
+
+These cover the gate's "heist at 100% text", "heist at 200% text, pt_BR" and "heist in high contrast".
+
+## Part 11: Cast leads the heist at 200% text (P4-S1-heist-vault, re-work)
+
+The gate failed `97ecb94f` on 'heist at 200% text, pt_BR', quality Hierarchy, 0 of 3 (lead cycle 183). In the 960 px grayscale, Lançar (Cast) was a dark plum plate of the same value as Fugir (Get out) and nearly its size, so the two split the primary. The eye went first to the tall loot panel with its heavy 508 and 0% figures, and to the light 2:25 timer and LEIS AQUI plates.
+
+**What changed** (all in S1's files; no kit file changes). Everything below holds only while `HeistHud.cast_leads()` is true: text over 175% (`beside_alarm()`) and not high contrast. At 100% and 150% text, and in high contrast at every size, the heist is drawn as before.
+
+- **Cast leads the hand** (`HeistScreen._dress_hand`). At 200% Cast is 120 by 96 points at least (it was 92 by 76), its wand is 40 points, and it fills the row beside Get out (`SIZE_EXPAND_FILL`). Its word is set at 36 points. `UI.text_px` shows any size from 16 to 32 points at 32 at 200%, so a word must be set above 32 to stand larger. Get out keeps its 66 by 54 points and its word at 32 px. At 40 points 'Wirken' pushed 'Fliehen' onto a row of its own in de; at 36 the two keep one row in en, pt_BR and de.
+- **Cast's word in cream with the figures' ink line** (`HeistHud.lead_word`, called after each `HeistHand.show_state`). At the still's moment no cast is left, so `HeistHand._dress_cast` dresses Cast in leather (AD-R60) with leather's text colour and no outline. While Cast leads, its word takes cream (#FFF3CC) with the ink line (#1A0C14, 6 points), so it is the lightest, largest word in the hand, spent or not. The plate stays leather, as AD-R60 asks.
+- **The loot panel gives up weight** (`HeistHud._build_loot`). The panel is the dark name plate (`plate_dark`, radius 16), and its figures bake white in the quiet tint (`HeistHud.quiet_tint()`, cream darkened by 0.38), not gold.
+- **The clock and the alarm quiet** (`_quiet_clock`, `_figures`, `_build_alarm`). The clock's light plate is the dark name plate, and its figures are the "number" role (16 points, not "display") in the quiet tint. The alarm count takes the same tint while under half the bells. Past half, the timer's and the alarm's red stay as they are.
+- **The laws' header quiet** (`KitStatus.tag(..., cast_leads())`): LEIS AQUI on the tag's quiet plate.
+
+**The self-check** (960 px grayscale, `part11-after-200-pt-gray960.png`, beside the pass anchor `kf-character-text200.png` and the fail anchor `today-heist.png`): Lançar is the largest, lightest word on its plate, and wider than Fugir by about 1.6. The 508, 0/6, 0% and 2:25 figures are a step darker than Cast's word and no larger.
+
+**A pre-judge** (the `ui-judge` agent, advisory, Hierarchy, rubric v3, the same anchors) split 2 pass, 1 fail, where `97ecb94f` had 0 of 3. The two passes found that Lançar leads by size and place (about 2.5 times Fugir's plate), with the 2:25 and LEIS AQUI plates now dark and the figures recessed. The fail found that Lançar's plate has no value step over Fugir and the tray: it is leather, as AD-R60 asks of a Cast with no cast left. The pass anchor's primary is a light card. Lightening a spent Cast's plate would undo AD-R60, so it is asked of AD as S1-R46 and not done here.
+
+### Evidence
+
+- `part11-before-200-pt.png`: the failed `97ecb94f` at 200% text in pt_BR.
+- `part11-after-200-pt.png` and `part11-after-200-pt-gray960.png`: this change at 200% in pt_BR, in colour and in the 960 px grayscale.
+- `part11-200-en.png` and `part11-200-de.png`: the same at 200% in en and de. Cast and Get out keep one row in each.
+
+The 14 FIT runs of Part 10 were run again on this change, one at a time. Every run exited 0 and printed "fit ok". The draw calls the shoot reports: 100% 120, 126 and 122 (en, pt_BR, de); 150% 121, 123 and 123; 200% 121, 123 and 123; high contrast 121 at 100% and 122 at 150% (en), and 120, 122 and 122 at 200% (en, pt_BR, de). At 100%, at 150% and in high contrast the counts are those of `97ecb94f`, since `cast_leads()` is false there. The full client suite passes `_vault_row` (the Vault's words at 200%, band no narrower than at 150%) and `_vault_band` (AD-R65) unchanged.
+
+## Part 12: Cast's gold plate while it leads (P4-S1-heist-vault, S1-R46)
+
+The gate failed `85be2fa8` on 'heist at 200% text, pt_BR', quality Hierarchy, 0 of 3 (lead cycle 187), on the plate's value: a spent Cast stood on AD-R60's leather plate, as dark as Fugir (Get out) and the tray, so in the 960 px grayscale only its word, not its plate, led. The lead granted S1-R46 in the same cycle: while Cast leads at 200% text, Cast takes the gold primary plate even when spent, with the wand dimmed. AD-R60's leather plate stands at every other size and in high contrast.
+
+**What changed** (all in S1's files; no kit file changes). It holds only while `HeistHud.cast_leads()` is true (text over 175%, not high contrast).
+
+- **Cast keeps its gold plate** (`HeistHud.lead_cast`, which replaces Part 11's `lead_word` and is called after each `HeistHand.show_state`). `HeistHand._dress_cast` (the lead's file) still dresses a spent Cast in leather. While Cast leads, `lead_cast` dresses it again in the look the hand stored for it (`meta "look"`, gold) at the same radius, and sets its word in the plate's own text colour and outline (`text_on_gold`, no outline), as a Cast with casts left. The wand stays dimmed to 0.4 by `show_state`, so a spent Cast still reads as spent. The rim shader is not put back: the dimmed wand and the empty pips carry "spent".
+- **Part 11's quieting stands:** the loot panel on the dark name plate with its figures in the quiet tint, the clock on the dark plate with "number" figures, the alarm count in the quiet tint, and LEIS AQUI on the tag's quiet plate. With Cast's plate now the lightest thing on the screen, the 508, 0%, 2:25 and 0/6 figures sit well below it in value and in size, and the selected crew's gold name (Batedor) is a word on the dark tray, smaller and darker than Cast's plate.
+
+**The self-check** (960 px grayscale, `part12-after-200-pt-gray960.png`, beside the pass anchor `kf-character-text200.png` and the fail anchor `today-heist.png`): Lançar is the lightest, largest and most saturated control, about 2.5 times Fugir's plate, at the foot of the screen. The loot panel is larger but dark and holds no action.
+
+**A pre-judge** (the `ui-judge` agent, advisory, Hierarchy, rubric v3, the same anchors, three calls in shuffled orders) gave 3 pass of 3, where `85be2fa8` had 0 of 3 at the gate. Each found that the eye lands first on the light Lançar block, that Fugir and pause are about half its size or less and dark, and that the loot panel and timer are dark boxes not heavier than Lançar.
+
+**Words on the plate:** guard.sh reads every heist word at 4.5:1 or better (worst 6.87 at 200%).
+
+**Draw calls:** heist/200 measures 120 (recorded 118; S1-R45 renewed at 120, one under the 121 of `85be2fa8`). heist/100 stays at 120 and heist/hc at 121 of 123.
+
+### Evidence
+
+- Before: `part11-after-200-pt.png` and `part11-after-200-pt-gray960.png` are the failed `85be2fa8` at 200% text in pt_BR.
+- `part12-after-200-pt.png` and `part12-after-200-pt-gray960.png`: this change at 200% in pt_BR, in colour and in the 960 px grayscale.
+- `part12-200-en.png` and `part12-200-de.png`: the same at 200% in en and de.

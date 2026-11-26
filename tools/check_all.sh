@@ -156,6 +156,7 @@ python3 tools/coord/owners.py --self-test
 python3 tools/coord/cycle_needed.py --self-test
 python3 tools/coord/archive.py --self-test
 python3 tools/coord/cycle.py --self-test
+python3 tools/coord/metrics.py --self-test
 if [ -f docs/progress/backlog.json ]; then python3 tools/coord/owners.py claims; fi
 
 echo
@@ -182,6 +183,7 @@ python3 tools/ui_bake/check_screens.py --self-test
 echo
 echo "== the UI wave gate's sheets and image checks, with their planted fails (AD-R3) =="
 python3 tools/ui_gate/sheet.py --self-test
+python3 tools/gate/render.py --self-test
 
 echo
 echo "== this repository's own documents agree with each other =="

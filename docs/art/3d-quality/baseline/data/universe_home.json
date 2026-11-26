@@ -1,0 +1,7 @@
+{
+ "budget": "triangles 33085 draw calls 33 frame 68770 prims 148 calls",
+ "measure": null,
+ "name": "universe_home",
+ "verdict": "mask limit",
+ "why": "no WorldView in the shot"
+}

@@ -1,15 +1,15 @@
 {
-  "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Product tasks are the UI wave's phases 0 and 1 (docs/art/ui-quality/report.md section 3.3: steps 1-4 in phase 0; steps 4-7, AD's board 1 and flow review in phase 1). Phase 1 started on 4 November 2026 by the owner's order 3 (CLAUDE.md), with D13's answer (c): at most three UI builders at once, icon batches 3 and 4 deferred (not filed). SV's are the owner's server decisions (docs/decisions/owner-decisions.md, 'Build tasks'); BT's are the protocol's build tasks. O2 and O3 were the owner's reviews; since 30 October 2026 AD does them as ordinary tasks (report.md section 3.4), so no task waits for the owner. The order of 'tasks' is priority. building_cap is three UI builders (D-05, D13 (c)) plus SV, approved by the owner on 30 October 2026. Phase 2 started on 12 November 2026 (lead cycle 70): P1-AD-board-1d let board 1 stand and phase 1's other exit criteria hold (report.md section 3.2); its first tasks are the flow findings (S1, S2) and board 1's note G (AIA-2), within the same cap of three. Since 12 November 2026, about 20:00Z, the cap is four UI builders by the owner's order (CLAUDE.md order 3; three while the seven-day bar reads allowed_warning). Phase 3 (polish and harden, report.md step 12) started on 17 November 2026 (lead cycle 118) under M49: every phase 2 task was merged by 06:55Z, the exit review ran in cycle 118 (boards 3, 4 and 5 stand, board 2 waits on the deferred icon batch 4 by D13 (c), the exceptions queue is empty, every screen passes the gate but result at 200% pt_BR, Hierarchy, which P3-S1-result-7 takes), and the first blind audit (O6) is carried into phase 3 as P3-AD-audit-1. Phase 3 draws from the 20-hour reserve; it exits when no board has an open objection, the second blind audit is done and the wave board (O7) stands. The bug-fix wave started on 21 November 2026 by the owner's order (CLAUDE.md order 1, entry of 21 November): the UI is paused (P3-S3-settings-4, P4-S1-heist-vault and P4-S2-home-purse parked with their work on their branches; the BT track stays parked) while up to four fix builders, FX1 to FX4 within the cap of four, fix the 60 confirmed defects of docs/security/bug-report-2026-11.md, highs first, each with a test that fails before the fix, then recheck the four unproven candidates (7, 21, 23, 34) and audit the code the report did not read (findings in docs/security/audit-2026-11/, from which the lead files fix tasks). The FX tasks' phase is 'fix'; the UI resumes at phase 3 when every FX task is merged.",
-  "wave": "Bug-fix wave",
-  "phase": 3,
-  "updated_at": "2026-11-24T20:15:00Z",
-  "updated_by": "lead (cycle 187)",
-  "stop_at": "2026-11-25T21:00:00Z",
+  "_comment": "The live backlog (docs/guides/agent-protocol.md, 'The task format'); the lead writes it on main. Since 25 November 2026 the product tasks are the 3D quality wave (docs/art/3d-quality/plan.md, section 6 'Phases' and section 7 'Tracks'), started by the owner (CLAUDE.md order 1). Models and efforts follow CLAUDE.md order 7: each task names its model and effort; every task is reviewed by a verifier on Opus 5.5 at effort high before it merges. Tasks of the UI wave are kept below as history. Owner tasks (assigned_to 'owner') are never claimed by an agent.",
+  "wave": "3D quality wave",
+  "phase": 0,
+  "updated_at": "2026-11-26T01:30:00Z",
+  "updated_by": "lead",
+  "stop_at": "2026-12-02T21:00:00Z",
   "lease_hours": 3,
   "status_every_minutes": 45,
   "check_minutes": 25,
   "building_cap": 4,
-  "verdicts_dir": "docs/art/ui-quality/gate/verdicts/",
+  "verdicts_dir": "docs/art/3d-quality/verdicts/",
   "agents": {
     "AD": {
       "branch": "claude/ui-ad",
@@ -66,6 +66,38 @@
     "SP-bt-04": {
       "branch": "claude/ui-spec-gate-render",
       "model": "Opus 5.5"
+    },
+    "SP-bt-07": {
+      "branch": "claude/ui-spec-metrics",
+      "model": "Opus 5.5"
+    },
+    "SP-bt-09": {
+      "branch": "claude/ui-spec-setup",
+      "model": "Opus 5.5"
+    },
+    "SP-bt-05": {
+      "branch": "claude/ui-spec-gate-run",
+      "model": "Opus 5.5"
+    },
+    "SP-bt-06": {
+      "branch": "claude/ui-spec-docs-check",
+      "model": "Opus 5.5"
+    },
+    "M1": {
+      "branch": "claude/3d-measure",
+      "model": "by task (order 7)"
+    },
+    "M2": {
+      "branch": "claude/3d-mask",
+      "model": "by task (order 7)"
+    },
+    "CF1": {
+      "branch": "claude/3d-camera",
+      "model": "by task (order 7)"
+    },
+    "DT1": {
+      "branch": "claude/3d-data",
+      "model": "by task (order 7)"
     }
   },
   "strings_owner": "lead",
@@ -157,121 +189,6 @@
       "updated_by": "overseer"
     },
     {
-      "id": "BT-01a",
-      "title": "Coordinator, part 1: a dry-run cycle that reads every status file from origin, expires leases, copies states into the backlog, flags missed acknowledgements, request deadlines and stalls, and prints the actions",
-      "phase": 0,
-      "role": "specialist",
-      "model": "Opus 5.5",
-      "assigned_to": "SP-bt-01",
-      "files": [
-        "tools/coord/**",
-        "!tools/coord/owners.*"
-      ],
-      "deps": [],
-      "done_when": [
-        "Unit tests on fixture branches pass",
-        "--dry-run prints actions without pushing",
-        "bash tools/check_all.sh"
-      ],
-      "gate_items": [],
-      "attempts": 0,
-      "estimate_h": 4,
-      "tier": 1,
-      "critical": false,
-      "state": "merged",
-      "claim": {
-        "agent": "SP-bt-01",
-        "branch": "claude/ui-spec-coord",
-        "claimed_at": "2026-11-24T17:20:00Z",
-        "seen_at": "2026-11-24T17:45:00Z",
-        "lease_until": "2026-11-24T20:20:00Z"
-      },
-      "prior_branch": null,
-      "prior_sha": null,
-      "ready_sha": "37c99eba",
-      "merged_sha": "99c9aa89",
-      "updated_at": "2026-11-24T19:36:00Z",
-      "updated_by": "lead (cycle 186)"
-    },
-    {
-      "id": "BT-01b",
-      "title": "Coordinator, part 2: the merge-then-test queue (owners.py diff, run_checks.sh on the candidate, the merge lock in status/lead.json, fast-forward) and the owner-inbox entries",
-      "phase": 0,
-      "role": "specialist",
-      "model": "Opus 5.5",
-      "assigned_to": "SP-bt-01",
-      "files": [
-        "tools/coord/**",
-        "!tools/coord/owners.*"
-      ],
-      "deps": [
-        "BT-01a"
-      ],
-      "done_when": [
-        "Unit tests on fixture branches pass",
-        "A dry-run mode prints actions without pushing",
-        "bash tools/check_all.sh"
-      ],
-      "gate_items": [],
-      "attempts": 0,
-      "estimate_h": 4,
-      "tier": 1,
-      "critical": false,
-      "state": "claimed",
-      "claim": {
-        "agent": "SP-bt-01",
-        "branch": "claude/ui-spec-coord",
-        "claimed_at": "2026-11-24T19:45:00Z",
-        "seen_at": "2026-11-24T19:55:00Z",
-        "lease_until": "2026-11-24T22:45:00Z"
-      },
-      "prior_branch": null,
-      "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null,
-      "updated_at": "2026-11-24T19:55:00Z",
-      "updated_by": "lead (cycle 187)"
-    },
-    {
-      "id": "BT-04a",
-      "title": "Gate shot renderer, part 1: the shot-list format and still rendering of a listed item at a given sha",
-      "phase": 0,
-      "role": "specialist",
-      "model": "Opus 5.5",
-      "assigned_to": "SP-bt-04",
-      "files": [
-        "tools/gate/render.*",
-        "tools/gate/fixtures/**"
-      ],
-      "deps": [],
-      "done_when": [
-        "Renders a fixture item at a given sha",
-        "bash tools/check_all.sh"
-      ],
-      "gate_items": [],
-      "attempts": 1,
-      "estimate_h": 3,
-      "tier": 1,
-      "critical": false,
-      "state": "claimed",
-      "claim": {
-        "agent": "SP-bt-04",
-        "branch": "claude/ui-spec-gate-render",
-        "claimed_at": "2026-11-24T19:40:00Z",
-        "seen_at": "2026-11-24T19:55:00Z",
-        "lease_until": "2026-11-24T22:40:00Z"
-      },
-      "prior_branch": null,
-      "prior_sha": null,
-      "ready_sha": "f1df3f1e",
-      "merged_sha": null,
-      "exceptions": [
-        "README.md"
-      ],
-      "updated_at": "2026-11-24T19:55:00Z",
-      "updated_by": "lead (cycle 187)"
-    },
-    {
       "id": "BT-04b",
       "title": "Gate shot renderer, part 2: frame strips, 200% text and high-contrast variants, named crops",
       "phase": 0,
@@ -294,12 +211,14 @@
       "estimate_h": 2,
       "tier": 1,
       "critical": false,
-      "state": "open",
+      "state": "merged",
       "claim": null,
       "prior_branch": null,
       "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null
+      "ready_sha": "9213e507",
+      "merged_sha": "add036e9",
+      "updated_at": "2026-11-24T23:20:00Z",
+      "updated_by": "lead (cycle 191)"
     },
     {
       "id": "BT-05",
@@ -446,35 +365,6 @@
       ]
     },
     {
-      "id": "BT-07",
-      "title": "Metrics report from coordination data",
-      "phase": 1,
-      "role": "specialist",
-      "model": "Opus 5.5",
-      "assigned_to": "SP-bt-07",
-      "files": [
-        "tools/coord/metrics.*"
-      ],
-      "deps": [
-        "BT-01b"
-      ],
-      "done_when": [
-        "Digest section generated",
-        "bash tools/check_all.sh"
-      ],
-      "gate_items": [],
-      "attempts": 0,
-      "estimate_h": 3,
-      "tier": 2,
-      "critical": false,
-      "state": "open",
-      "claim": null,
-      "prior_branch": null,
-      "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null
-    },
-    {
       "id": "BT-08",
       "title": "Per-screen string and route files merged by script",
       "phase": 1,
@@ -505,57 +395,216 @@
       ]
     },
     {
-      "id": "P4-S1-heist-vault",
-      "title": "Heist at 200% text shows the Vault's progress and a wider playfield band (the wave board's phase 4 list, M57, M61)",
-      "phase": 4,
-      "role": "S1",
+      "id": "3D0-M1-budget-split",
+      "title": "The shots' budget: line prints the split (mesh triangles, outline passes, other views); screen_defences shoots its rehearsal tab (TAB=0)",
+      "phase": 0,
+      "role": "measure track",
       "model": "Opus 5.5",
-      "assigned_to": "S1",
+      "effort": "high",
+      "assigned_to": "M1",
       "files": [
-        "client/scripts/heist_hud.gd",
-        "client/scripts/heist_screen.gd",
-        "client/tests/shots/screen_heist.gd",
-        "client/tests/heist_fx_tests.gd",
-        "docs/art/tracks/heist-pilot.md"
+        "client/tests/shots/**",
+        "tools/render/**",
+        "docs/progress/M1.md",
+        "docs/progress/status/M1.json"
+      ],
+      "deps": [],
+      "done_when": [
+        "Every 3D shot's budget: line prints mesh triangles, outline-pass triangles and other-view triangles, and their sum equals today's total",
+        "screen_defences is shot with TAB=0 and prints about 36,011 triangles and 86 draw calls",
+        "bash tools/run_checks.sh passes"
+      ],
+      "gate_items": [],
+      "attempts": 1,
+      "estimate_h": 4,
+      "tier": 1,
+      "critical": true,
+      "state": "merged",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "99184a98",
+      "merged_sha": "a34f20ac",
+      "exceptions": [],
+      "resync_reason": "Cycle 194, candidate 5a5d5f41: the verifier (Opus 5.5 high) failed the review. The numbers reproduce (defences 36011 = 27461 + 8550, 86 draw calls; heist 85446 = 57712 + 27734), but the split is miscounted. (1) budget_split.gd:95-97: _is_outline matches only paths ending in outline.gdshader and misses law_fx_ink.gdshader, the law FX ink hull (cull_front next_pass, law_fx.gd:383-386), so its passes count as mesh; with it, heist reads 56480 mesh + 28966 outline (plan.md's hand figure), defences mesh is 416 too high. (2) budget_split.gd:31-32: outline = total - without, from frame totals, which include each viewport's shadow-pass primitives (opaque next_pass hulls get FLAG_PASS_SHADOW); 926 shadow-pass outline triangles land in outline on defences (true visible split 27971 mesh + 8040 outline). Take outline as the sum of _view(v) with outlines minus the sum without. (3) budget_split.gd:40-41: 'other views' holds the world views' own shadow-pass triangles (4892 on defences) while the line prints '+0 in shadows'; label shadows as shadows. The full checks on 5a5d5f41 failed on the lead's container (client/build.sh had no Godot cache), not on the code; re-run them after the fix. Restarted one tier up, Opus 5.5 high, by order 7 (failed review)."
+    },
+    {
+      "id": "3D0-M1-baseline",
+      "title": "The baseline: every 3D shot in client/tests/shots/ rendered and measured with the mask tool; the table published beside the plan",
+      "phase": 0,
+      "role": "measure track",
+      "model": "Opus 5.5",
+      "effort": "high",
+      "assigned_to": "M1",
+      "files": [
+        "docs/art/3d-quality/baseline.md",
+        "docs/art/3d-quality/baseline/**",
+        "docs/progress/M1.md",
+        "docs/progress/status/M1.json"
       ],
       "deps": [
-        "P3-S1-marker-1"
+        "3D0-M1-budget-split",
+        "3D0-M2-mask-tool"
       ],
       "done_when": [
-        "The wave board's note (docs/art/ui-quality/gate/boards/wave.md on claude/ui-ad, 'Notes, which hold nothing', seeded in cycle 149 under M61 as phase 4's first heist task): at 200% text the loot panel shows the Vault's progress ('Vault 0%' and its crack, REHEARSE_LEGEND_VAULT) while the Vault is shut, in en, pt_BR and de, and the playfield band between the HUD and the hand is no narrower than at 150% text, by laying out the HUD in heist_hud.gd and heist_screen.gd; a change to KitHud.loot_fit or any kit file is a request to K1 through the lead, with a default",
-        "a test in client/tests/heist_fx_tests.gd mounts the heist at 200% text and finds the Vault's progress row in the loot panel while the Vault is shut, failing on main",
-        "M26: the heist's FIT=1 runs at 100%, 150% and 200% text in en, pt_BR and de and in high contrast all print 'fit ok', listed in the handoff; 'heist at 100% text', 'heist at 200% text, pt_BR' and 'heist in high contrast' still pass; the heist stills re-shot, each change named in docs/art/tracks/heist-pilot.md",
-        "AD previews the stills before ready (M10, M12, M23): the builder sends them to AD through the lead while the work can still change, and AD's objections are answered in this task",
-        "python3 tools/ui_bake/check_screens.py",
-        "bash tools/ui_bake/guard.sh",
-        "gate: Screen",
-        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
-        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed under docs/art/ui-quality/gate/verdicts/ or outside the task's files (M48)",
-        "bash tools/check_all.sh"
+        "baseline.md has one row per 3D shot: budget split, draw calls, Q1 to Q6, Q11, Q12",
+        "Its numbers are reproducible with the one command it names"
       ],
-      "gate_items": [
-        {
-          "item": "heist at 200% text, pt_BR",
-          "qualities": [
-            "Hierarchy"
-          ]
-        }
-      ],
+      "gate_items": [],
       "attempts": 2,
-      "estimate_h": 1.0,
-      "tier": 2,
+      "estimate_h": 6,
+      "tier": 1,
+      "critical": true,
+      "state": "merged",
+      "claim": null,
+      "prior_branch": "claude/3d-measure",
+      "prior_sha": "dee58faac35be63bd944ed89aa0490954a127e36",
+      "ready_sha": "dee58faac35be63bd944ed89aa0490954a127e36",
+      "merged_sha": "76fe289d",
+      "exceptions": [],
+      "resync_reason": "Verifier (cycle 203, Opus 5.5 high) failed 4636c383. All five cycle-200 findings are fixed, and a 6-shot rerun (laws, realm, heist, universe_screen, replay, observatory) matched within the stated tolerance; table.py rebuilds baseline.md byte for byte. Blocking: (1) run.py:159-171: under --no-render, main() still calls collect() for every shot, which reads the work dir, not baseline/data/; with no work dir (a fresh checkout) every baseline/data/*.json is overwritten with budget: null, measure: null, baseline.md is rewritten with every cell '-' or 'n/m', and it exits 0 (reproduced: 23 files changed, 2,095 lines deleted). This contradicts baseline.md:17. Fix: under --no-render skip collecting and writing data and only call table.write; refuse to write a record when the shot's work dir is missing; add a test or self-check that fails before the fix. Minor, fix while there: (2) baseline.md:79 screen_observatory reads 0 triangles and 0 draw calls with no note (cards' universes drawn offscreen by StageThumbs): footnote it; baseline.md:62 should say the mask tool also stops on the observatory. (3) The Draw calls column shows only the world view's calls (heist 70) while plan Q14 is the frame's figure (heist 120 in the data): add a frame draw-calls column or say which one is shown. (4) run.py:18 says the verdict is kept in the data file but collect() (run.py:135-146) does not store it. (5) run.py:126-129: an error inside mask_pass.gd is always 'mask limit', even on screen_heist, screen_replay, screen_result and screen_laws, which must be measured: keep a must-measure set that fails the run. (6) baseline.md:11-13: say to run bash client/build.sh first. Opus 5.5 high by order 7 (a resync after a failed review).",
+      "updated_at": "2026-11-26T00:55:00Z",
+      "updated_by": "lead"
+    },
+    {
+      "phase": 0,
+      "role": "measure track",
+      "gate_items": [],
+      "attempts": 0,
+      "tier": 1,
       "critical": false,
       "state": "open",
       "claim": null,
-      "prior_branch": "claude/ui-screens-heist",
-      "prior_sha": "85be2fa8",
+      "prior_branch": null,
+      "prior_sha": null,
       "ready_sha": null,
       "merged_sha": null,
-      "updated_at": "2026-11-24T20:15:00Z",
-      "updated_by": "lead (cycle 187)",
-      "exceptions": [
-        "docs/art/shots/heist-pilot/**"
-      ]
+      "exceptions": [],
+      "updated_at": "2026-11-26T00:55:00Z",
+      "updated_by": "lead",
+      "id": "3D0-M2-mask-screens",
+      "title": "The mask tool measures the realm, universe and character screens too (M1-R2): Q11 and Q12 where today it stops or finds no WorldView",
+      "model": "Opus 5.5",
+      "effort": "medium",
+      "assigned_to": "M2",
+      "files": [
+        "tools/render/mask_pass.gd",
+        "tools/render/mask.py",
+        "tools/render/measure.py",
+        "tools/render/mask_matrix.py",
+        "docs/art/3d-quality/mask.md",
+        "docs/progress/M2.md",
+        "docs/progress/status/M2.json"
+      ],
+      "deps": [
+        "3D0-M1-baseline"
+      ],
+      "done_when": [
+        "mask_pass.gd runs without error on every 3D shot baseline.md lists as 'mask limit' (the realm screens, screen_defences on TAB=0, screen_observatory, the universe and character screens), and mask.md says which of Q1 to Q6, Q11 and Q12 each kind of screen can be measured on and why",
+        "measure.py --self-test covers a realm still and a character still, and fails before the change",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 5
+    },
+    {
+      "phase": 0,
+      "role": "measure track",
+      "gate_items": [],
+      "attempts": 0,
+      "tier": 1,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "exceptions": [],
+      "updated_at": "2026-11-26T00:55:00Z",
+      "updated_by": "lead",
+      "id": "3D0-M1-baseline-2",
+      "title": "The baseline's rerun with the widened mask tool: the n/m cells filled, Q5 and Q12 shown whole",
+      "model": "Sonnet 5.5",
+      "effort": "medium",
+      "assigned_to": "M1",
+      "files": [
+        "docs/art/3d-quality/baseline.md",
+        "docs/art/3d-quality/baseline/**",
+        "docs/progress/M1.md",
+        "docs/progress/status/M1.json"
+      ],
+      "deps": [
+        "3D0-M2-mask-screens"
+      ],
+      "done_when": [
+        "baseline.md's n/m cells are measured wherever mask.md says the screen can be, and the rest keep n/m with the reason",
+        "the Q12 column shows buildings with a shadow and cliffs_darker beside the figures, and the Q5 column shows path_links_every_building (cycle 206's verifier); the two-run tolerance note reads 'about 110 to 115'",
+        "Its numbers are reproducible with the one command it names"
+      ],
+      "estimate_h": 3
+    },
+    {
+      "phase": 0,
+      "role": "coordinator",
+      "gate_items": [],
+      "attempts": 0,
+      "tier": 1,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "exceptions": [],
+      "updated_at": "2026-11-26T01:30:00Z",
+      "updated_by": "lead",
+      "id": "3D0-CO-queue-flake",
+      "title": "Coordinator: merge_queue.py's self-test is deterministic (M1-R3: 'lock cleared' reads last_merged as None, about 1 run in 3), and cycle.py reads a status file's acks when they are objects (M2.json on claude/3d-mask crashes it: unhashable dict)",
+      "model": "Opus 5.5",
+      "effort": "high",
+      "assigned_to": "SP-bt-01",
+      "files": [
+        "tools/coord/merge_queue.py",
+        "tools/coord/cycle.py"
+      ],
+      "deps": [],
+      "done_when": [
+        "python3 tools/coord/cycle.py --self-test passes 20 runs in a row",
+        "cycle.py's dry run reads acks given as strings or as objects with an id, with a self-test case that fails before the fix",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 2
+    },
+    {
+      "id": "3D0-OW-phone-trial",
+      "title": "Owner: the renderer trial (Compatibility against Mobile) and one frame-time run on a real phone (D4)",
+      "phase": 0,
+      "role": "owner",
+      "model": "none",
+      "effort": "none",
+      "assigned_to": "owner",
+      "files": [
+        "docs/art/3d-quality/phone-trial.md"
+      ],
+      "deps": [
+        "3D0-M1-budget-split"
+      ],
+      "done_when": [
+        "The owner runs the build the lead names on a phone and reports frame time, shadows and heat"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 1,
+      "tier": 1,
+      "critical": false,
+      "state": "open",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": null,
+      "exceptions": []
     }
   ],
   "idle_queue": [],
@@ -1050,6 +1099,33 @@
       "sent_at": "2026-11-21T14:20:00Z",
       "ack_by": "2026-11-21T16:20:00Z",
       "acked_at": "2026-11-21T14:12:00Z"
+    },
+    {
+      "id": "M63",
+      "to": "lead",
+      "text": "From the overseer, 24 November 2026, by the owner's order in the overseer's chat (\"Yes, ask the lead to close phase 3\"): close phase 3 formally. Its exit work is done (second audit 07e2c13d, no open objection, P3-S3-settings-4 passed the gate 3/3 and merged as de193db4), but O7 was never signed: AD's re-check on the merge (S3-R46's default, AD-R67/AD-R68) never ran. Seed one short AD task (say P3-AD-wave-close) and start AD at effort medium (order 6) on the next free seat, ahead of BT-08: AD previews the settings stills on main and, if they hold, writes 'The wave stands at O7' at the top of docs/art/ui-quality/gate/boards/wave.md; if not, AD names the one re-work. When it is on main, record phase 3 as closed in backlog.json and lead.md, set 'wave' to name what runs now (not 'Bug-fix wave'), and say plainly whether a phase 4 is opened, with its exit, or whether the BT track and the follow-up list run outside the phases. Add M63 to your acks.",
+      "sent_at": "2026-11-24T23:40:00Z",
+      "ack_by": "2026-11-25T01:40:00Z"
+    },
+    {
+      "id": "M64",
+      "to": "lead",
+      "text": "From the overseer, 24 November 2026, about 23:25Z, by the owner's order (CLAUDE.md order 1, entry of 24 November): 'UI done' is report.md's plan, phases 0 to 3, and when it is done every agent stops. Open no phase 4. Until phase 3 closes, start no new task but AD's O7 re-check of M63 (not BT-08 or any other); the running BT builders keep working. When AD's 'The wave stands at O7' is on main, merge it, record phase 3 as closed, set every builder's status to stop cleanly as CLAUDE.md order 1 says, merge nothing more, write 'Stopped here' in lead.md's Now, and end your cycle; the overseer disables the scheduled tasks. Add M64 to your acks.",
+      "sent_at": "2026-11-24T23:30:00Z",
+      "ack_by": "2026-11-25T01:30:00Z"
+    },
+    {
+      "id": "M65",
+      "to": "lead",
+      "text": "From the overseer, 24 November 2026, about 23:40Z, by the owner's order in the overseer's chat (\"Yes, do it\", approving the overseer's fast-close plan): the overseer does the close itself. It stopped BT-05, BT-06 and BT-09 (work pushed on their branches), started AD on P3-AD-wave-close (M63's O7 re-check, effort medium), holds the merge lock, and will merge AD's line, record phase 3 as closed and stop the program (CLAUDE.md order 1, entry of 24 November). A lead cycle that starts meanwhile merges nothing, starts nothing, adds M65 to its acks and ends.",
+      "sent_at": "2026-11-24T23:40:00Z",
+      "ack_by": "2026-11-25T01:40:00Z"
     }
-  ]
+  ],
+  "phase_3_closed": {
+    "at": "2026-11-24T23:35:00Z",
+    "merged_sha": "e33be6f9",
+    "by": "overseer",
+    "note": "Phase 3 closed: AD's wave stands at O7 (P3-AD-wave-close). The overseer did the lead's close steps by the owner's order ('Yes, do it', 24 November 2026). By the owner's order of 24 November, about 23:25Z (CLAUDE.md order 1), the program is stopped; no phase 4 is opened."
+  }
 }

@@ -1,0 +1,58 @@
+{
+  "version": 1,
+  "note": "The renderer's test list (tools/gate/render.py --self-test): one fast screen with named crops, one explicit item with a state of its own, and one short motion strip.",
+  "screens": {
+    "settings": {
+      "script": "client/tests/shots/screen_settings.gd",
+      "contrast": "HC",
+      "record": "RECORD",
+      "crops": [
+        "back",
+        "size-a"
+      ]
+    },
+    "result": {
+      "script": "client/tests/shots/screen_result.gd",
+      "contrast": "CONTRAST",
+      "states": [
+        {
+          "name": "off",
+          "env": {}
+        },
+        {
+          "name": "srv",
+          "env": {
+            "SERVER": "1"
+          }
+        }
+      ]
+    },
+    "press": {
+      "script": "client/tests/shots/motion_press.gd",
+      "contrast": "HC",
+      "states": [
+        {
+          "name": "full",
+          "env": {
+            "FORM": "full"
+          }
+        }
+      ],
+      "strip": {
+        "pick": "0:43:6",
+        "height": 120
+      }
+    }
+  },
+  "items": [
+    {
+      "item": "settings, signed in, at 200% text, pt_BR",
+      "screen": "settings",
+      "env": {
+        "SIGNED": "1",
+        "TEXT": "200",
+        "LOCALE": "pt_BR"
+      }
+    }
+  ]
+}

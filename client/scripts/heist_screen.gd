@@ -351,6 +351,7 @@ func _refresh() -> void:
 		(_aim_hint() if not aiming.is_empty() else Strings.t("HEIST_HINT_SHORT")))
 	hand.armed = int(aiming.get("kind", 0)) if not aiming.is_empty() and int(aiming["kind"]) != Kind.ABILITY else 0
 	hand.show_state(controller.world.sage(), controller.world.casts(), controller.world.tick())
+	HeistHud.lead_cast(hand.cast_button)
 	# Before the crew lands: where, and nothing else (§5.4).
 	var choosing := controller.choosing
 	picker.visible = choosing
@@ -699,6 +700,9 @@ func _build() -> void:
 		# controls take one row fewer and stay low in reach.
 		gait_button.reparent(actions_node)
 		actions_node.move_child(gait_button, 0)
+		if pause_button != null:  # A rehearsal's pause too: no row of its own under the crew.
+			pause_button.reparent(actions_node)
+			actions_node.move_child(pause_button, 0)
 	hint.custom_minimum_size.x = UI.px(150)
 	foot.add_child(hint)
 	column.add_child(foot)
@@ -758,13 +762,6 @@ func _build_crew() -> void:
 		var b := FxPortrait.new(str(crew[i]["role"]), _portrait_tapped.bind(i), kind, shown)
 		crew_buttons.append(b)
 		crew_node.add_child(b)
-	# With large text a rehearsal's pause stands at the end of the portraits,
-	# low in reach, rather than under the taller HUD.
-	if Settings.text_scale > 130 and pause_button != null:
-		if pause_button.get_parent() != crew_node:
-			pause_button.reparent(crew_node)
-		# After the portraits, as the crew may have been drawn afresh.
-		crew_node.move_child(pause_button, -1)
 	_crew_key = _crew_shape(crew)
 
 
@@ -848,20 +845,20 @@ func _get_out() -> void:
 ## The hand's two orders as the kit draws them (KitControls.big_action),
 ## in the hand's place and keeping its state: Cast, the main action, in gold
 ## and the largest thing to tap; Get out in leather, smaller, since red is
-## the alarm's alone (the gate's colour roles; §21.8 names no colour for
-## it). Each keeps its icon over its word at every text size.
+## the alarm's alone (the gate's colour roles; §21.8 names none). Icon over
+## word at every text size; at 200% Cast leads (HeistHud.cast_leads), 36 pt.
 func _dress_hand() -> void:
+	var lead := HeistHud.cast_leads()
 	var cast := _hand_order("heistcontrols/cast", Strings.t("HEIST_CAST"), hand._open_casts, "gold",
-		Vector2(92, 76), 34.0)
+		Vector2(120, 96) if lead else Vector2(92, 76), 40.0 if lead else 34.0, 36.0 if lead else 14.0)
+	cast.size_flags_horizontal = Control.SIZE_EXPAND_FILL if lead else Control.SIZE_SHRINK_END
 	var go := _hand_order("heistcontrols/getout", Strings.t("HEIST_GET_OUT"), _get_out, "leather",
 		Vector2(66, 54), 32.0)
 	for pair: Array in [[hand.cast_button, cast], [hand.go_button, go]]:
 		var old: Button = pair[0]
-		var at := old.get_index()
-		hand.remove_child(old)
-		old.free()
 		hand.add_child(pair[1])
-		hand.move_child(pair[1], at)
+		hand.move_child(pair[1], old.get_index())
+		old.free()
 	hand.cast_button = cast
 	hand.go_button = go
 
@@ -871,7 +868,7 @@ func _dress_hand() -> void:
 ## large text. Its icon is meta "icon" and its word meta "words", as the
 ## hand's squares (HeistHand.show_state greys the icon, never the word).
 func _hand_order(icon: String, words: String, call: Callable, look: String, least: Vector2,
-		icon_points: float) -> Button:
+		icon_points: float, points := 14.0) -> Button:
 	var b := KitControls.big_action(icon, words, call, look)
 	b.tooltip_text = words
 	b.size_flags_vertical = Control.SIZE_SHRINK_END
@@ -882,14 +879,13 @@ func _hand_order(icon: String, words: String, call: Callable, look: String, leas
 	pic.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	var l := column.get_child(column.get_child_count() - 1) as Label
 	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	l.add_theme_font_size_override("font_size", UI.text_px(points))
 	b.set_meta("icon", pic)
 	b.set_meta("words", l)
 	var fit := func() -> void:
-		# In the narrow text's single row a long phrase ("Sem lançamentos")
-		# stands on two lines, so the tray keeps inside the frame (§21.1).
-		# With §20.8's large text it does so too once it is too wide to
-		# keep its row beside Get out, so the hand's row never wraps and
-		# the tray stays under the loot (AD-R15).
+		# A long phrase ("Sem lançamentos") stands on two lines so the tray keeps inside the
+		# frame (§21.1), and with large text once too wide for its row beside Get out, so the
+		# hand's row never wraps and the tray stays under the loot (AD-R15).
 		var wide := UI.px(least.x) * (1.5 if Settings.text_scale <= 130 else 2.2)
 		if l.text.contains(" ") and l.get_minimum_size().x + UI.px(16) > wide:
 			l.text = HeistHand.two_lines(l.text)
@@ -932,6 +928,11 @@ func _fit_hint() -> void:
 	# on the world stay in sight.
 	if _hint_level == 0 and hint_label.get_line_count() > 1 and " · " in _hint_source:
 		_hint_level = 1
+		_set_hint(_hint_source)
+		return
+	# At 200% a two-line tip's plate stands over the HUD's map band (the wave board's note): it hides.
+	if HeistHud.beside_alarm() and hint_label.get_line_count() > 1:
+		_hint_level = 2
 		_set_hint(_hint_source)
 		return
 	var low := column_node.global_position.y

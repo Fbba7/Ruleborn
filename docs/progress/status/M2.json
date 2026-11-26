@@ -1,0 +1,82 @@
+{
+  "agent": "M2",
+  "role": "measure track",
+  "branch": "claude/3d-mask",
+  "model": "Opus 5.5",
+  "agent_state": "waiting",
+  "task_id": "3D0-M2-find-it",
+  "task_state": "ready",
+  "claimed_at": "2026-11-25T21:05:00Z",
+  "lease_until": "2026-11-26T00:05:00Z",
+  "updated_at": "2026-11-25T21:41:00Z",
+  "expected_next_update_by": null,
+  "long_run": null,
+  "progress_marker": {
+    "last_green_sha": "ce4d2dac7e5600a68796a70aecac815d3ed296d4",
+    "next_step": "waiting for the verifier's review and the merge"
+  },
+  "precheck": {
+    "sha": "ce4d2dac7e5600a68796a70aecac815d3ed296d4",
+    "state": "PASS",
+    "exit": 0,
+    "finished_at": "2026-11-25T21:40:51Z",
+    "summary": "All checks passed."
+  },
+  "gate_request": null,
+  "ready_sha": "ce4d2dac7e5600a68796a70aecac815d3ed296d4",
+  "stop_at": "2026-12-02T21:00:00Z",
+  "acks": [
+    {
+      "id": "cycle-197-start",
+      "note": "mask-tool merged on main (a34f20ac); main merged in. M2-R1 stays at its default. Verifier's Q11 vault note kept: plan.md 2.6's vault column, not the tool."
+    },
+    {
+      "id": "cycle-199-resync",
+      "note": "resync_reason read; main (7b071138) merged in; fixing (1) sight per guard from marks3d, (2) off-frame filter, and the notes"
+    },
+    {
+      "id": "cycle-199-ready",
+      "note": "resync done: sight per guard from marks3d, off-frame filter, verifier notes, re-scored 7 of 50; pre-check PASS at ea4bf72; owners diff passes"
+    },
+    {
+      "id": "cycle-202-resync",
+      "note": "resync_reason read; main (77061ba2) merged in; fixing red-only for the shown guard, pale test that leaves out dots and petals, self-test cases, find-it.md text"
+    },
+    {
+      "id": "cycle-202-ready",
+      "note": "resync done: red only for the shown guard, pale only for the others, pale test b>=r leaves out dots and petals, ring cut to points nearer this guard than any other, selected_guard honoured, no crew[0] fallback, self-test cases, find-it.md and M2.md matched; re-scored 7 of 50; pre-check PASS at ce4d2dac (main e0a111af merged); owners diff passes. Main's 7f5da135 (order 8, CLAUDE.md only) came after the pre-check and is not merged; order 8 lets a running session finish its task."
+    }
+  ],
+  "requests": [
+    {
+      "id": "M2-R1",
+      "from": "M2",
+      "to": "lead",
+      "ask": "tools/render/measure.py --self-test (synthetic stills, about a second) is not run by tools/check_all.sh; add it there if wanted.",
+      "files": [
+        "tools/check_all.sh",
+        "tools/render/measure.py"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-25T15:30:00Z",
+      "due": "2026-11-27T15:30:00Z",
+      "default": "leave check_all.sh unchanged; the self-test stays a manual command named in mask.md",
+      "escalate_to": "lead"
+    },
+    {
+      "id": "M2-R2",
+      "from": "M2",
+      "to": "lead",
+      "ask": "Q13's clips cannot be rendered today: client/tests/shots/screen_heist.gd has no gait or clip hook (a moment is a still). Add one that sets the chosen crew member's gait (sneak, walk, run) and renders a series of frames 0.2 s apart; findit.py's score_clip then reads them.",
+      "files": [
+        "client/tests/shots/screen_heist.gd"
+      ],
+      "blocking": false,
+      "created_at": "2026-11-25T18:37:17Z",
+      "due": "2026-11-30T00:00:00Z",
+      "default": "leave; Q13's clips stay defined in find-it.md and tested on drawn frames, and the scorer's walk/run edges stay unset until frames exist",
+      "escalate_to": "lead"
+    }
+  ],
+  "answers": []
+}

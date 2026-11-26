@@ -1,0 +1,19 @@
+[
+  {
+    "task_id": "P4-S1-heist-vault",
+    "sha": "3200ff408eedd092648cb63977f1d127144e9c6c",
+    "rubric_version": 3,
+    "judge": "Opus 5.5",
+    "advisory": true,
+    "at": "2026-11-24T21:35:00Z",
+    "item": "heist at 200% text, pt_BR",
+    "quality": "Hierarchy",
+    "samples": [
+      "pass",
+      "pass",
+      "pass"
+    ],
+    "result": "pass",
+    "critique": "Unanimous. Rendered at 3200ff40 with FIT=1 TEXT=200 LOCALE=pt_BR via screen_heist.gd, three calls in shuffled order against kf-character-text200 (pass anchor) and today-heist (fail anchor). Lançar (Cast) on the gold plate is now the largest, lightest and most saturated control at the foot of the screen, and the eye lands on it first in the 960 px grayscale; Fugir and Pause are smaller and dark and fall in behind; the top-left loot panel is larger but dark, holds no action and is not heavier than Cast (v3 ruling). Its lead is at least as clear as the pass anchor's Level up."
+  }
+]

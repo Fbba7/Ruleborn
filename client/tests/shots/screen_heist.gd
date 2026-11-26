@@ -225,7 +225,8 @@ func _go() -> void:
 			" wants ", screen.hint_label.get_theme_font("font").get_string_size(screen.hint_label.text,
 				HORIZONTAL_ALIGNMENT_LEFT, -1, screen.hint_label.get_theme_font_size("font_size")).x)
 		print("hud ", screen.hud.get_global_rect(), " loot ", screen.hud.loot_panel.get_global_rect(),
-			" tray ", screen.actions_band.get_global_rect())
+			" tray ", screen.actions_band.get_global_rect(), " tip ",
+			screen.hint_panel.get_global_rect() if screen.hint_panel.is_visible_in_tree() else Rect2())
 		# PORTRAITS=dir: each portrait as drawn and its figure, to look at.
 		var keep := OS.get_environment("PORTRAITS")
 		if keep != "":
@@ -249,10 +250,8 @@ func _go() -> void:
 			quit(1)
 			return
 	# §21.3's budgets, as the renderer counted the frame.
-	print("budget: %d draw calls, %d primitives" % [
-		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME),
-		RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME)])
 	frame.get_texture().get_image().save_png(OS.get_environment("SHOT"))
+	await BudgetSplit.line(self, "heist")
 	print("wrote")
 	quit()
 

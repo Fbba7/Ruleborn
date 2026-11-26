@@ -5,6 +5,391 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Superpowers copied into the repository**, 25 November 2026 (the
+  overseer). The owner chose to copy the skills of order 8 into
+  `docs/process/superpowers/` (obra/superpowers at 22f0b46, MIT). From
+  now on, every builder prompt points at its README (cycle step 6).
+  M2-find-it's current session was started without them; its next
+  session gets them.
+
+- **Cycle 203**, 25 November 2026, from about 22:15Z (session
+  `session_01SNkKxq8jXHuXvuJg4yvtE3`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 202:
+  M1 marked 3D0-M1-baseline ready at 4636c383 and M2 marked
+  3D0-M2-find-it ready at ce4d2dac; the Superpowers skills reached main.
+  **Verify:** two Opus 5.5 high verifiers. M2's passed (7 of 50 rerun,
+  the shown guard's sight check confirmed). M1's failed: `run.py
+  --no-render` overwrites the committed `baseline/data/*.json` with
+  nulls, and five minor findings. All of them are in the task's
+  `resync_reason`. **Merged:** 3D0-M2-find-it, on main at 8aabe5ef
+  (candidate f884be61, M2 only, full checks PASS at 23:09Z). The batch
+  candidate e346a3fa (M1 + M2) was dropped. **Started:** M1 restarted
+  on its resync at Opus 5.5 high (`session_01SNkKxpnpiNRd38EhMM9ukJ`,
+  order 8's skills in its prompt). M2's and DT1's seats are free, and
+  no 3D task is open for them. **Requests:** DT1-R1 answered (the .uid
+  landed at DT1's merge). M1-R2, M2-R1 and M2-R2 stay at their
+  defaults. M1-R2's task is seeded once the baseline merges. **Owner:**
+  the phone trial and the style-frame pick are still open (owner inbox).
+
+- **Cycle 202**, 25 November 2026, from about 20:50Z (session
+  `session_01SNkKxqroqqoKeHuicPgcmk`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 201:
+  DT1 marked 3D0-DT1-data-spec ready at 1657b290 and M2 marked
+  3D0-M2-find-it ready at ea4bf724. **Verify:** two Opus 5.5 high
+  verifiers. DT1's passed. M2's failed; its findings are in the task's
+  `resync_reason`. **Merged:** 3D0-DT1-data-spec, on main at 808fc8f8
+  (candidate 3970bbbd, DT1 only, full checks PASS at 21:41Z), with
+  `client/tests/shots/heist_suspicious.gd.uid` added at merge by
+  DT1-R1's default. The batch candidate 13d3c31c (DT1 + M2) was dropped.
+  **Started:** M2 restarted on its resync at Opus 5.5 high
+  (`session_01SNkKxpBiaVYnEU6QASbpEV`). It was created before order 8
+  reached main, so its prompt does not name the Superpowers skills.
+  Every session created from now on follows order 8. M1 still works on
+  3D0-M1-baseline (resync). M1 and M2 run while the cap is three and
+  the seven-day bar reads `allowed_warning`. DT1's seat is free, and no
+  3D task is open for it. **Requests:** M1-R2 and M2-R1 stay at their
+  defaults. M1-R2's task is seeded once the baseline merges. **Owner:**
+  the phone trial and the style-frame pick are still open (owner inbox).
+
+- **Cycle 201**, 25 November 2026, from about 20:14Z (session
+  `session_01SNkKxqSFEXjTCRxvhrgqb1`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 200:
+  DT1 committed its data-spec resync (1657b290: the realm's watch in the
+  fill rates, the zones, the Glare's reach) and runs its full checks,
+  ending about 20:40Z; M2 committed its find-it fixes (63dc9a2f: sight
+  per guard from marks3d, off-frame figures dropped; 7 of 50), merged
+  main (ea4bf724) and runs its pre-check; M1 committed the baseline's
+  missing rows and a full rerun of 22 shots (4636c383) and has its
+  pre-check next. The dropped candidate branch e9e02abc moved. **Merge
+  and verify:** none: nothing is ready, no merge lock. **Started:** none:
+  all three sessions are within their deadlines, and M1, M2 and DT1 fill
+  the cap of three while the seven-day bar reads `allowed_warning`.
+  **Requests:** DT1-R1 (the .uid at merge), M1-R2, M2-R1 and M2-R2 stay
+  at their defaults. **Owner:** the phone trial and the style-frame pick
+  are still open (owner inbox).
+
+- **Cycle 200**, 25 November 2026, from about 19:35Z (session
+  `session_01SNkKxpLVRksrXzSDLxfwHH`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 199:
+  DT1 marked 3D0-DT1-data-spec ready at 6f1b5513 and M1 marked
+  3D0-M1-baseline ready at 9686d848 (both pre-checks PASS); M2 works on
+  its find-it resync. **Verify:** two Opus 5.5 high verifiers. DT1's
+  failed: the fill rates (data-spec.md:147-158) leave out the realm watch
+  (x3/5 at realm level 1, lib.rs:2326-2327), so the worked example holds
+  only from realm level 2; two minor points. M1's failed done_when 1
+  (done_when 2 passes; the rerun matched every cell but render noise):
+  screen_laws has no row, universe_screens is neither measured nor
+  explained, the '-' note reads "does not apply" where Q11/Q12 apply but
+  are not yet measured (M1-R2), and the replay and result zeros (vignette,
+  backdrop) need footnotes. **Merge:** none; the batch candidate e9e02abc
+  (with heist_suspicious.gd.uid, DT1-R1's default) was dropped. **Resync:**
+  both tasks, findings in their resync_reason. **Started:** DT1
+  (`session_01SNkKxnqKic2JjCv5tCXbXz`, Opus 5.5 high, a resync) and M1
+  (`session_01SNkKxn9dm8J8WUsKvxtyJ6`, Opus 5.5 high, one tier up by
+  order 7). M1, M2 and DT1 fill the cap of three while the seven-day bar
+  reads `allowed_warning`. **Requests:** M1-R2's task waits for the
+  baseline to merge; M2-R1 and M2-R2 stay at their defaults. **Owner:**
+  the phone trial and the style-frame pick are still open (owner inbox).
+
+- **Cycle 199**, 25 November 2026, from about 19:14Z (session
+  `session_01SNkKxoVLxAN6iY9xYpGFMe`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 198:
+  M2 marked 3D0-M2-find-it ready at 028837be (pre-check PASS; today's
+  build scores 5 of 50); M1 committed the baseline (69a5f12b, merged with
+  main at 9686d848) and runs its pre-check; DT1 merged main again
+  (6f1b5513) and runs its full checks. **Verify:** an Opus 5.5 high
+  verifier failed find-it: the route question reads sight markers only
+  from id.png, where mask_pass.gd never puts the real 3D markers (they go
+  to marks3d.png), so it can never pass on a real render; and off-frame
+  guards (and crew) count as misses. Self-tests, the docs check and a
+  full scoring run (5 of 50) reproduced. **Merge:** none; the candidate
+  (M2 alone, checks to be reused from the pre-check) was dropped.
+  **Resync:** 3D0-M2-find-it, findings in its resync_reason; M2
+  restarted on it at Opus 5.5 high (order 7, a resync). M2 included
+  client/tests/shots/style_frame_heist.gd.uid (uid://dm035cb54qlq, the
+  lead's own pending addition), granted as an exception. **Requests:**
+  M2-R2 (no clip hook in screen_heist.gd) and M1-R2 (the mask tool fails
+  on the realm and character screens) stay at their defaults for now; a
+  task for M1-R2 is seeded once M2's seat frees. **Started:** M2 (resync).
+  M1, M2 and DT1 fill the cap of three while the seven-day bar reads
+  `allowed_warning`. **Owner:** the phone trial and the style-frame pick
+  are still open (owner inbox).
+
+- **Cycle 198**, 25 November 2026, from about 18:39Z (session
+  `session_01SNkKxpCLYdWeYiQwJhDr52`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The change since cycle 197:
+  `claude/3d-mask` (M2) merged main and committed its find-it scorer
+  (028837be); its status reads working, pre-check next. M1 renders the
+  baseline's 20 shots (no push yet); DT1's session is idle on its
+  running pre-check of the resync (d9022669, unpushed), not stale until
+  19:07Z. All three sessions connected, none stale, so **none
+  restarted**. **Merge and gate:** none: nothing is ready, no merge lock.
+  **Started:** none: M1, M2 and DT1 fill the cap of three while the
+  seven-day bar reads `allowed_warning`. **Owner:** the phone trial and
+  the style-frame pick are still open (owner inbox).
+
+- **Cycle 197**, 25 November 2026, from about 17:40Z (session
+  `session_01SNkKxoyugNa4BQjRBSzsYK`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 196:
+  all three builders marked ready with pre-check PASS: M1's budget-split
+  resync at 99184a98, M2's mask tool at deafdd0a and DT1's data spec at
+  0b77e805. **Verify:** three Opus 5.5 high verifiers. M1 passed (the
+  three earlier defects fixed; defences 36011 triangles in 86 draw calls,
+  heist 85446; the rendered BudgetSplit test passes and fails 7 times on
+  the old code). M2 passed (notes: the Q11 vault match fails in 10 of 21
+  stills because of plan.md 2.6's vault column, not the tool; weak range
+  matching in mask_matrix.py; two comments say green for the blue
+  channel). DT1 failed: section 3's guard states do not match the sim
+  (a landing does not put a guard in Investigating, a near rush does not
+  skip Suspicious, a spread raises only to Investigating, transitions
+  missing). **Merge:** the batch candidate ec4bdded (all three) was
+  dropped for DT1's fail; candidate 8ca70679 (M1 and M2) passed its full
+  checks at 18:26Z (the lock renewed once at 18:25Z, the checks running
+  past the hour) and merged onto main's docs/progress commits at
+  a34f20ac, docs check passing. **Resync:** 3D0-DT1-data-spec, with the
+  findings in its resync_reason. **Requests:** M1-R1 and M2-R1 closed by
+  their defaults (the rendered test stays standalone; check_all
+  unchanged); DT1-R1 waits for DT1's merge. **Started:** DT1 on its
+  resync (Opus 5.5 high, already the top tier), M1 on 3D0-M1-baseline
+  and M2 on 3D0-M2-find-it (both Sonnet 5.5 medium, simple). Three
+  builders, the cap while the seven-day bar reads `allowed_warning`.
+  **Found:** main lacks client/tests/shots/style_frame_heist.gd.uid
+  (CF1's merge left it out; every other shot's .uid is tracked); the
+  lead adds it in the next merge candidate. **Owner:** the phone trial
+  is unblocked and the style-frame pick is still open (owner inbox,
+  18:30Z).
+
+- **Cycle 196**, 25 November 2026, from about 17:14Z (session
+  `session_01SNkKxoHmwS3dddh2WLvudH`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 195:
+  `claude/3d-data` (DT1) pushed again after the 503s, merged main
+  (0b77e805) and runs its full checks there (status 8473411a);
+  `claude/3d-mask` (M2, restarted in cycle 195) merged main and runs its
+  pre-check on deafdd0a; `claude/3d-measure` (M1) committed its resync
+  (1be990e8), merged main (99184a98) and runs its pre-check. All three
+  sessions are connected and idle on their running checks, none stale,
+  so **DT1 is not restarted**. **Merge and gate:** none: nothing is
+  ready, no merge lock. **Requests:** M1-R1 and DT1-R1 copied (neither
+  blocking; DT1-R1's default: the lead adds the .uid at DT1's merge).
+  **Started:** none. The seven-day bar still reads `allowed_warning`
+  (the builders' sessions report it), so the cap is three and M1, M2 and
+  DT1 fill it; 3D0-M1-baseline and 3D0-M2-find-it wait on the mask tool.
+  **Owner:** the style-frame pick is still open (owner inbox).
+
+- **Cycle 195**, 25 November 2026, from about 16:39Z (session
+  `session_01SNkKxqxDHnxcUgHuGLSEXt`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 194:
+  `claude/3d-camera` gained CF1's ready-status commit (the task merged in
+  cycle 194); `claude/3d-data` gained DT1's guards() commit. **GitHub
+  503s:** at about 16:16Z M2's and DT1's sessions went idle with pushes
+  refused by GitHub (503). M2's container disconnected with its status
+  commit 108abe5e unpushed (the work itself is on b1113efc), and M2 was
+  stale since 16:15Z: **restarted** M2 on 3D0-M2-mask-tool
+  (`session_01SNkKxqUMV6Qs5KyydCjHjX`, Opus 5.5 medium, same tier) to
+  redo the progress-file updates and the ready steps. DT1's session is
+  idle but connected, with commits up to 60616371 unpushed and not stale
+  until 17:05Z; a message to it could not be delivered, so the next cycle
+  restarts DT1 if it is still stale then. Pushes work again at 16:42Z.
+  **Merge and gate:** none: nothing is ready (M1 working on its resync,
+  M2 restarted, DT1 working), no merge lock. **Requests:** M2-R1 copied
+  (not blocking, default due 27 November). Three builders (M1, M2, DT1),
+  the cap while the seven-day bar reads `allowed_warning`. **Owner:** the
+  style-frame pick is still open (owner inbox).
+
+- **Cycle 194**, 25 November 2026, from about 15:39Z (session
+  `session_01SNkKxqhoNAcP68ggo8Rvvb`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). **Merged:** 3D0-CF1-style-frames
+  at f07f36c1 (ready 4e6c51ee; full checks PASS on candidate 07b5bc51;
+  verifier on Opus 5.5 high PASS, with two minor notes: the 1.4x figures
+  sit on top of readable_scale rather than the hook, and the frames quote
+  a 150 draw-call limit where plan.md Q14 says 120; the frames' 119 meets
+  both). **To resync:** 3D0-M1-budget-split (ready 5a5d5f41): the
+  verifier failed it on three counts (law_fx_ink.gdshader missed as an
+  outline, shadow-pass prims counted in the outline figure, shadow
+  triangles mislabelled "+0 in shadows"); see its resync_reason.
+  **Started:** DT1 on 3D0-DT1-data-spec (Opus 5.5 high) in M1's seat
+  while M1 was idle; M1 restarted on its resync (Opus 5.5 high, one tier
+  up) in CF1's freed seat. Three builders run (M1, M2, DT1), the cap while
+  the seven-day bar reads `allowed_warning`. **Container:** the first
+  full checks failed only because the fresh lead container had no Godot
+  cache; after the agents' setup step they ran. **Pages:** the audit and
+  roadmap pages were regenerated, but only their date changed, so they
+  were committed and not republished. **Owner:** the style-frame pick is
+  open (owner inbox).
+
+- **Cycle 193**, 25 November 2026, from about 15:15Z (session
+  `session_01SNkKxqKcNj6xVjwrFQ9Xt4`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 192:
+  M1, M2 and CF1 pushed to their branches. **M1** (`claude/3d-measure`,
+  e2927534): budget split built, its full checks running in its session,
+  not ready. **M2** (`claude/3d-mask`, b0e9adb6): mask tool's draft, still
+  working. **CF1** (`claude/3d-camera`, 4e6c51ee): the three style frames
+  and style-frames.md, main merged in, its full checks running, not
+  ready. **Merge and gate:** none: nothing is ready, no merge lock.
+  **Started:** none. The seven-day bar still reads `allowed_warning`, so
+  order 3's cap is three and the three seats are taken; DT1 waits.
+  **Next:** verify (Opus 5.5 high subagent) and merge M1's and CF1's
+  tasks once they mark ready; start DT1 when a seat frees or the bar
+  clears.
+
+- **Cycle 192**, 25 November 2026, from about 14:39Z (session
+  `session_01SNkKxnzfoApztAshnsqsfp`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The first cycle of the 3D
+  quality wave. The changes since cycle 191: the restart (1eddd78a); the
+  UI branches `claude/ui-ad`, `claude/ui-spec-docs-check` and
+  `claude/ui-spec-gate-run` moved with the stopped builders' last pushes
+  (the UI wave is closed: nothing to merge). M63, M64 and M65 are done
+  (phase 3 closed at e33be6f9) and acknowledged. SP-bt-06's late status
+  is a stopped builder's; no restart. **Merge and gate:** none: nothing
+  is ready, no merge lock. **Started**, as new agents by order 7: M1 on
+  3D0-M1-budget-split (`session_01SNkKxn3VgF7utqQN2JkCuy`, Sonnet 5.5
+  medium, `claude/3d-measure`), M2 on 3D0-M2-mask-tool
+  (`session_01SNkKxpG1o34prYosYVfYED`, Opus 5.5 medium, `claude/3d-mask`)
+  and CF1 on 3D0-CF1-style-frames (`session_01SNkKxp5DfWujKR3BZxFjQg`,
+  Opus 5.5 medium, `claude/3d-camera`): plan.md's first tasks 1 to 3.
+  **DT1 is not started:** the seven-day bar reads `allowed_warning`, so
+  order 3's cap is three; 3D0-DT1-data-spec (Opus 5.5 high) takes the
+  first free seat, or the fourth seat once the bar clears. **Next:** start
+  DT1 when a seat frees or the bar clears; verify (Opus 5.5 high
+  subagent) and merge each phase 0 task as it is ready; name the owner's
+  phone-trial build once the budget split merges.
+
+- **Cycle 191**, 24 November 2026, from about 22:39Z (session
+  `session_01SNkKxpEYznsGFjJLSHAYZS`, started by the Opus 5.5 launcher,
+  effort medium by order 6). The changes since cycle 190: SP-bt-04 marked
+  BT-04b ready (9213e507) and SP-bt-07 marked BT-07 ready (efea6a02).
+  **Merges:** BT-04b and BT-07 together, candidate 8f1f0cbe with
+  SP-bt-07-R1's `python3 tools/coord/metrics.py --self-test` line in
+  check_all.sh and checks.md (full checks passed 23:16Z), as add036e9.
+  **Gate:** none. docs/audit and docs/roadmap did not change, so the pages
+  are not republished. **Requests:** SP-bt-07-R1 done. **Started:** two
+  new agents at effort medium by order 6, prompts and roster entries
+  added: SP-bt-06 on BT-06, the documentation consistency check
+  (`session_01SNkKxr7UeYQUNErvUP7sgQ`, `claude/ui-spec-docs-check`), in
+  the seat SP-bt-07 freed; SP-bt-05 on BT-05, the gate launcher and
+  verdict writer (`session_01SNkKxpZxYqKXESzt9K8ZVK`,
+  `claude/ui-spec-gate-run`), once BT-04b merged, in SP-bt-04's seat.
+  With SP-bt-09 they hold the cap of three under `allowed_warning`.
+  **Next:** merge BT-09, BT-06 and BT-05 as they are ready (wire their
+  self-test requests in the candidates; apply SP-bt-09-R1 after BT-09);
+  BT-08 waits for a seat; SP-bt-04-R2 waits on AD.
+
+- **Cycle 190**, 24 November 2026, from about 22:14Z (session
+  `session_01SNkKxpurNviahy9ajdou9c`, started by the Opus 5.5 launcher,
+  effort medium by order 6). The changes since cycle 189: SP-bt-04
+  pushed BT-04b (9213e507, frame strips, variants and named crops) and
+  runs its pre-check; SP-bt-07 pushed BT-07 (b6593beb, merged main as
+  efea6a02) and runs its pre-check; S1's status push (24bfbadb) only
+  records the heist ready, which merged in cycle 189. **Merge and gate:**
+  none: nothing is ready, no merge lock; main did not move, so the pages
+  are not republished. **Requests:** SP-bt-07-R1 (the metrics self-test
+  in check_all.sh and checks.md) copied, granted for BT-07's candidate.
+  **Started:** the new agent SP-bt-09 on BT-09, environment setup with
+  pinned versions (`session_01SNkKxnPBMN3yNvawTfEeo9`, effort medium by
+  order 6: one tools-only script), on `claude/ui-spec-setup`; with
+  SP-bt-04 and SP-bt-07 it holds the cap of three under
+  `allowed_warning`. **Next:** merge BT-04b and BT-07 as they are ready
+  (wire SP-bt-07-R1's line in BT-07's candidate), then BT-09; BT-05
+  (SP-bt-05) opens once BT-04b is merged; BT-06 and BT-08 wait for a
+  seat.
+
+- **Cycle 189**, 24 November 2026, from about 21:10Z (session
+  `session_01SNkKxo8JRgqBuCXFzt9dyF`, started by the Opus 5.5 launcher,
+  effort medium by order 6). The changes since cycle 188: SP-bt-01 marked
+  BT-01b ready, SP-bt-04 marked BT-04a's resync ready (0fa16325) and S1
+  marked the heist re-work ready at 3200ff40. **Merges:** BT-01b and
+  BT-04a together, candidate be4adaea with SP-bt-04-R1's
+  `python3 tools/gate/render.py --self-test` line in check_all.sh (full
+  checks passed), as 56f3662b. **Gate:** 'heist at 200% text, pt_BR'
+  (Hierarchy) at 3200ff40, three judge calls in shuffled order against
+  kf-character-text200 and today-heist: pass 3 of 3
+  (`verdicts/P4-S1-heist-vault/3200ff40.json`); Cast's gold plate now
+  leads at 200% text. P4-S1-heist-vault merged from candidate a122e81c
+  (with S1-R45's heist/200 record of 120 draw calls and its raises entry;
+  full checks passed 22:10Z) as 9be81331. docs/audit and docs/roadmap did
+  not change, so the pages are not republished. **Requests:** SP-bt-04-R1
+  and S1-R45 done; S1-R46 (granted) and S1-R47 (AD preview, default at
+  its due) stand. **Started:** SP-bt-04 on BT-04b
+  (`session_01SNkKxooiW2REvhyUn5DXCa`) and the new agent SP-bt-07 on
+  BT-07 (`session_01SNkKxntUxvJrAmwfuUT8wo`), both at effort medium (order
+  6: tools-only, one module). S1 has no open task after the heist. **Next:**
+  one seat of the cap of three is free under `allowed_warning`: write a
+  prompt for a third BT specialist (BT-09, BT-06 or BT-08) and start it;
+  gate and merge BT-04b and BT-07 as they are ready (wire
+  `python3 tools/coord/metrics.py --self-test` into check_all.sh in
+  BT-07's candidate).
+
+- **Cycle 188**, 24 November 2026, from about 20:14Z (session
+  `session_01SNkKxnyDUhJ1nCERqWyiAM`, started by the Opus 5.5 launcher,
+  effort medium by order 6). The changes since cycle 187: S1 claimed the
+  heist re-work again (attempts 2, lease to 23:00Z), pushed the S1-R46
+  change (6188a5d0, a spent Cast takes the gold plate while it leads at
+  200% text) and renewed S1-R45 at 120 draw calls for heist/200;
+  SP-bt-01 pushed BT-01b (f490ff43, `tools/coord/merge_queue.py` and
+  `cycle.py --merge`) and runs its pre-check; SP-bt-04 pushed BT-04a's
+  resync (0fa16325: render.py's cache falls back to the temporary
+  folder, the commit is exported with git archive) and runs its
+  pre-check (expected end 20:30Z). **Merge and gate:** none: nothing is
+  ready, no merge lock; main did not move, so the pages are not
+  republished. **Requests:** none new; S1-R45's figure (120) is written
+  in the heist's merge. **Started nothing:** S1 is working, SP-bt-01 and
+  SP-bt-04 wait on their background pre-checks; the three hold the cap
+  of three under `allowed_warning`. **Next:** gate and merge the heist
+  re-work, BT-04a's resync (with SP-bt-04-R1's line) and BT-01b as they
+  are ready.
+
+- **Cycle 187**, 24 November 2026, from about 19:45Z (session
+  `session_01SNkKxo4wWyrJULuKf9ezgK`, started by the Opus 5.5 launcher,
+  effort medium by order 6). The changes since cycle 186: S1 marked the
+  heist re-work ready at 85be2fa8 (pre-check passed 18:36Z; guard.sh fails
+  only on heist/200, 121 of 118, S1-R45); SP-bt-01 claimed BT-01b and
+  SP-bt-04 claimed BT-04a's resync. **Gate:** 'heist at 200% text, pt_BR'
+  (Hierarchy) at 85be2fa8, rendered here with FIT=1 ('fit ok'), three
+  judge calls in shuffled order against kf-character-text200 and
+  today-heist: fail 0 of 3 (`verdicts/P4-S1-heist-vault/85be2fa8.json`).
+  Cast is larger now, but its spent leather plate has the value of Fugir
+  and the tray, and the loot panel (508, 0%), the timer and the alarm box
+  still outweigh it. Nothing merged; the merge lock was not taken.
+  **Escalation:** attempts 2, so P4-S1-heist-vault is open again from
+  claude/ui-screens-heist (8922c136), and a fresh S1 session takes it
+  from the handoff, at effort high (order 6: the vault, and a failed
+  attempt): `session_01SNkKxnAiVmwbdBsQYix7Y8`, started 19:52Z. **Requests:** S1-R45 to S1-R47 copied. S1-R46 granted: at
+  200% text a spent Cast takes the gold primary plate with the wand
+  dimmed; AD-R60 stands elsewhere. S1-R45 waits for the re-work's figure;
+  S1-R47 routed to its default (no seat for AD). With SP-bt-01 and
+  SP-bt-04, S1 holds the cap of three under `allowed_warning`.
+  **Next:** gate and merge the heist re-work, BT-04a's resync and BT-01b
+  as they are ready.
+
+- **Cycle 186**, 24 November 2026, from about 18:14Z (session
+  `session_01SNkKxqiFeCtTZE4nW7CtE5`, started by the Opus 5.5 launcher,
+  effort medium by order 6). The changes since cycle 185: SP-bt-01
+  marked BT-01a ready at 37c99eba and SP-bt-04 marked BT-04a ready at
+  f1df3f1e, both pre-checks passed; S1 is still on the heist re-work.
+  **Merge:** a batch candidate of both, with SPbt01-R1's and
+  SP-bt-04-R1's self-test lines in `check_all.sh` and checks.md, under
+  the merge lock (4efc5f51). Its first run (e79c16e7) failed on this
+  container, not the candidate: the cycle changed `.git/config` during
+  the run (SEC-19's fingerprint) and the fresh-container setup had not
+  been run. Its second run (84be5f38, same tree, 18:58Z) failed on
+  BT-04a: `render.py --self-test` raised `OSError: [Errno 30] Read-only
+  file system: '/root/.cache/ruleborn/gate'` in `cache_dir()`
+  (render.py:171), since the check sandbox's HOME is read-only. BT-04a
+  is in `resync` (attempts 1). A new candidate, 8107ba62 (BT-01a and
+  its self-test line only), passed the full checks at 19:34Z and was
+  merged onto main's head (main had gained only the lock commit) as
+  99c9aa89, after the documentation check. The lock is cleared. Nothing
+  under docs/audit or docs/roadmap changed, so the pages are not
+  republished. The lock commits 4efc5f51 and the cycle's earlier
+  candidate commits carry a non-noreply author; later commits use the
+  noreply identity. **Requests:** SPbt01-R1 done; SP-bt-04-R1 stands
+  for the resync's candidate. **Started:** SP-bt-01 on BT-01b and
+  SP-bt-04 on BT-04a's resync, both at effort high (order 6: the merge
+  queue's lock, and a resync). With S1 they hold the cap of three under
+  `allowed_warning`. **stop_at** moved to 25 November 21:00Z (order 3).
+  **Next:** gate and merge the heist re-work, BT-04a's resync (adding
+  the render self-test line again) and BT-01b as they are ready.
+
 - **Cycle 185**, 24 November 2026, from about 17:39Z (session
   `session_01SNkKxpANimBpEAcBiAnifC`, started by the Opus 5.5 launcher,
   effort medium by order 6). The changes since cycle 184: S1 claimed the

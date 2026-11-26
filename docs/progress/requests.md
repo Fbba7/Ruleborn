@@ -1386,6 +1386,31 @@ Requests of T17's work order (T17-R1 to T17-R10) are all answered; see
 
 ### Lead
 
+- **M1-R1** (from M1, 25 November 2026 16:50Z; due 27 November 16:50Z;
+  not blocking): BudgetSplit's test is rendered (headless counts read 0),
+  so it runs as `bash tools/render/shoot.sh
+  client/tests/shots/budget_split_tests.gd out.png 256 256` (exits 1 on a
+  failure), outside `tools/run_checks.sh`. Wire it into a rendered check
+  run if one exists or is planned. Files: tools/check_all.sh. Default: it
+  stays a standalone command named in M1's handoff; the verifier runs it
+  before merging. Copied in cycle 196.
+
+- **DT1-R1** (from DT1, 25 November 2026 16:10Z; due 25 November 22:10Z;
+  not blocking): commit `client/tests/shots/heist_suspicious.gd.uid`
+  (Godot writes it on first run; it is outside DT1's files, and every
+  other shot .gd has its .uid tracked). Files:
+  client/tests/shots/heist_suspicious.gd.uid. Default: the lead adds the
+  .uid at merge; DT1 leaves it untracked. Copied in cycle 196.
+  **Answered** by the lead in cycle 202: the default. The .uid was added
+  at DT1's merge (808fc8f8).
+
+- **M2-R1** (from M2, 25 November 2026 15:30Z; due 27 November 15:30Z;
+  not blocking): `tools/render/measure.py --self-test` (synthetic stills,
+  about a second) is not run by `tools/check_all.sh`; add it there if
+  wanted. Files: tools/check_all.sh, tools/render/measure.py. Default:
+  leave check_all.sh unchanged; the self-test stays a manual command
+  named in mask.md. Copied in cycle 195.
+
 - **FX1-R1** (from FX1, 21 November 2026 16:20Z; due 22 November 16:20Z;
   not blocking): RB-30's Fix line names `409 taken_down`, but that reason
   has no row in `client/i18n/strings.csv` (outside FX1-1's files) and
@@ -3539,6 +3564,9 @@ the rest of O1–O7 are AD's or the lead's (`report.md` section 3.4).
   (render.py's cache folder under a read-only HOME in the check sandbox);
   BT-04a is in `resync`, and the lead adds the line again in the
   candidate that merges the resync.
+  **Done** in cycle 189: the line is in candidate be4adaea (full checks
+  passed, the cache fell back to /tmp/ruleborn-gate), merged onto main
+  as 56f3662b.
 
 - **SP-bt-04-R2** (from SP-bt-04 to AD through the lead, 24 November 2026
   17:55Z; due 26 November 21:00Z; not blocking): AD adopts the shot list
@@ -3562,6 +3590,9 @@ the rest of O1–O7 are AD's or the lead's (`report.md` section 3.4).
   entry in the merge of P4-S1-heist-vault. Copied in cycle 187.
   **Answered** by the lead in cycle 187: the default, at the merge; 85be2fa8
   failed the gate, so the figure waits for the re-work's measure.
+  **Done** in cycle 189: heist/200 recorded at 120 draw calls (the re-work's
+  measure at 3200ff40), with a raises entry, in candidate a122e81c (full
+  checks passed), merged onto main as 9be81331.
 
 - **S1-R46** (from S1 to AD through the lead, 24 November 2026 18:45Z;
   due 25 November 12:00Z; not blocking): while Cast leads at 200% text
@@ -3586,3 +3617,16 @@ the rest of O1–O7 are AD's or the lead's (`report.md` section 3.4).
   **Routed** by the lead in cycle 187: no seat is free for AD (cap of three
   under `allowed_warning`); the default applies at its due, with the
   re-work's stills.
+
+- **SP-bt-07-R1** (from SP-bt-07 to the lead, 24 November 2026 21:45Z;
+  due 25 November 21:00Z; not blocking): `tools/check_all.sh` and
+  `docs/guides/checks.md` are not in BT-07's files. Add
+  `python3 tools/coord/metrics.py --self-test` to check_all.sh after the
+  other `tools/coord` self-tests, and `metrics.py --self-test` to the
+  agent-program row of checks.md, in BT-07's merge candidate. Default: BT-07
+  merges without the wiring and the self-test runs only by hand. Copied in
+  cycle 190.
+  **Answered** by the lead in cycle 190: granted; the lead adds both lines
+  in the candidate that merges BT-07.
+  **Done** in cycle 191: both lines added in candidate 8f1f0cbe (full
+  checks passed), merged onto main as add036e9.

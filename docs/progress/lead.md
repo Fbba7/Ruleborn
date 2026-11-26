@@ -129,6 +129,9 @@ then rewrites the "Now" section below and `status/lead.json`, and pushes.
    agent's last one in the table below: while it is working, create none.
    One session per agent at a time; at most one restart per agent per
    cycle. Record every new session in the table.
+   Every new or restarted builder's prompt tells it to read
+   `docs/process/superpowers/README.md` first and follow CLAUDE.md
+   order 8 with the skills there.
 7. Write alerts to `docs/progress/owner-inbox.md`; ask the owner nothing,
    apply defaults. Keep the queue full (the protocol's "Keeping the queue
    full": a startable task or idle entry per free seat, phase 3 seeded once
@@ -214,8 +217,36 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxnyDUhJ1nCERqWyiAM` (cycle 188,
-24 November 2026 from about 20:14Z, started by the Opus 5.5 launcher).
+Latest lead cycle session: `session_01SNkKxnGQoazsb2Zn5jJzzd` (cycle 206,
+26 November 2026 from about 00:14Z, started by the Opus 5.5 launcher).
+Cycle 205's was `session_01SNkKxpVk3qU9Sg2wwL1V6J` (25 November, from
+about 23:38Z).
+Cycle 204's was `session_01SNkKxnHHPKMvqUk6akhCWX` (25 November, from
+about 23:15Z).
+Cycle 203's was `session_01SNkKxq8jXHuXvuJg4yvtE3` (25 November, from
+about 22:15Z).
+Cycle 202's was `session_01SNkKxqroqqoKeHuicPgcmk` (25 November, from
+about 20:50Z).
+Cycle 201's was `session_01SNkKxqSFEXjTCRxvhrgqb1` (25 November, from
+about 20:14Z).
+Cycle 197's was `session_01SNkKxoyugNa4BQjRBSzsYK` (25 November, from
+about 17:40Z).
+Cycle 196's was `session_01SNkKxoHmwS3dddh2WLvudH` (25 November, from
+about 17:14Z).
+Cycle 195's was `session_01SNkKxqxDHnxcUgHuGLSEXt` (25 November, from
+about 16:39Z).
+Cycle 193's was `session_01SNkKxqKcNj6xVjwrFQ9Xt4` (25 November, from
+about 15:15Z).
+Cycle 192's was `session_01SNkKxnzfoApztAshnsqsfp` (25 November, from
+about 14:39Z).
+Cycle 191's was `session_01SNkKxpEYznsGFjJLSHAYZS` (24 November, from
+about 22:39Z).
+Cycle 190's was `session_01SNkKxpurNviahy9ajdou9c` (24 November, from
+about 22:14Z).
+Cycle 189's was `session_01SNkKxo8JRgqBuCXFzt9dyF` (24 November, from
+about 21:10Z).
+Cycle 188's was `session_01SNkKxnyDUhJ1nCERqWyiAM` (24 November, from
+about 20:14Z).
 Cycle 187's was `session_01SNkKxo4wWyrJULuKf9ezgK` (24 November, from
 about 19:45Z).
 Cycle 186's was `session_01SNkKxqiFeCtTZE4nW7CtE5` (24 November, from
@@ -412,6 +443,27 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| M2 | `session_01SNkKxmfUr1jfnjsq8DnggV` (Opus 5.5, effort medium) | 3D0-M2-mask-screens (start, cycle 206: M1-R2's mask task seeded after the baseline merged; Opus 5.5 medium by order 7, a complex task in tools/render; M2's last session, `session_01SNkKxpBiaVYnEU6QASbpEV`, is idle, its task merged) | `claude/3d-mask` | 2026-11-26 00:50Z |
+| M1 | `session_01SNkKxpnpiNRd38EhMM9ukJ` (Opus 5.5, effort high) | 3D0-M1-baseline (restart, cycle 203: resync after the verifier found that --no-render overwrites the committed baseline data with nulls; Opus 5.5 high by order 7, a resync; M1's last session, `session_01SNkKxn9dm8J8WUsKvxtyJ6`, is idle) | `claude/3d-measure` | 2026-11-25 22:31Z |
+| M2 | `session_01SNkKxpBiaVYnEU6QASbpEV` (Opus 5.5, effort high) | 3D0-M2-find-it (restart, cycle 202: resync after the verifier failed the shown guard's sight check (pale dots and petals credit it); Opus 5.5 high by order 7, a resync; M2's last session, `session_01SNkKxoLp1JEhwF88WFhv8b`, is idle) | `claude/3d-mask` | 2026-11-25 21:00Z |
+| M1 | `session_01SNkKxn9dm8J8WUsKvxtyJ6` (Opus 5.5, effort high; idle, task sent to resync in cycle 203) | 3D0-M1-baseline (restart, cycle 200: resync after the verifier failed the table's coverage (screen_laws, universe_screens) and the '-' note; one tier up by order 7; M1's last session, `session_01SNkKxqcAXy4JEwSxwK6PFL`, is idle) | `claude/3d-measure` | 2026-11-25 19:51Z |
+| DT1 | `session_01SNkKxnqKic2JjCv5tCXbXz` (Opus 5.5, effort high) | 3D0-DT1-data-spec (restart, cycle 200: resync after the verifier failed the realm watch in the fill rates; already the top tier by order 7; DT1's last session, `session_01SNkKxodKBY94BomQhXexAr`, is idle) | `claude/3d-data` | 2026-11-25 19:49Z |
+| M2 | `session_01SNkKxoLp1JEhwF88WFhv8b` (Opus 5.5, effort high; idle, task sent to resync in cycle 202) | 3D0-M2-find-it (restart, cycle 199: resync after the verifier failed the route question and the off-frame guards; Opus 5.5 high by order 7, a resync; M2's last session, `session_01SNkKxpp86K3DcyB4kRkPow`, is idle) | `claude/3d-mask` | 2026-11-25 19:25Z |
+| M1 | `session_01SNkKxqcAXy4JEwSxwK6PFL` (Sonnet 5.5, effort medium; idle, task sent to resync in cycle 200) | 3D0-M1-baseline (start, cycle 197: the budget split and the mask tool merged; Sonnet 5.5 medium by order 7, a simple docs-only task; M1's last session, `session_01SNkKxnNfLkQ2DLurDzjM8E`, is idle, its task merged) | `claude/3d-measure` | 2026-11-25 18:28Z |
+| M2 | `session_01SNkKxpp86K3DcyB4kRkPow` (Sonnet 5.5, effort medium; idle, task sent to resync in cycle 199) | 3D0-M2-find-it (start, cycle 197: the mask tool merged; Sonnet 5.5 medium by order 7, a simple task in tools/render; M2's last session, `session_01SNkKxqUMV6Qs5KyydCjHjX`, is idle, its task merged) | `claude/3d-mask` | 2026-11-25 18:28Z |
+| DT1 | `session_01SNkKxodKBY94BomQhXexAr` (Opus 5.5, effort high; idle, task sent to resync in cycle 200) | 3D0-DT1-data-spec (restart, cycle 197: resync after the verifier failed section 3's guard states; already the top tier by order 7) | `claude/3d-data` | 2026-11-25 18:15Z |
+| DT1 | `session_01SNkKxpL9MBiEawLL7runx2` (Opus 5.5, effort high; idle, task sent to resync in cycle 197) | 3D0-DT1-data-spec (start, cycle 194: a new agent once M1's seat freed; Opus 5.5 high by order 7, it touches the extension and the replay's bytes) | `claude/3d-data` | 2026-11-25 15:42Z |
+| M1 | `session_01SNkKxnNfLkQ2DLurDzjM8E` (Opus 5.5, effort high) | 3D0-M1-budget-split (restart, cycle 194: resync after the verifier failed the split; one tier up by order 7) | `claude/3d-measure` | 2026-11-25 16:31Z |
+| M1 | `session_01SNkKxn3VgF7utqQN2JkCuy` (Sonnet 5.5, effort medium; idle, task sent to resync in cycle 194) | 3D0-M1-budget-split (start, cycle 192: a new agent; Sonnet 5.5 medium by order 7, a simple task in the shots and tools/render) | `claude/3d-measure` | 2026-11-25 14:42Z |
+| M2 | `session_01SNkKxqUMV6Qs5KyydCjHjX` (Opus 5.5, effort medium) | 3D0-M2-mask-tool (restart, cycle 195: stale since 16:15Z; the last session went idle and disconnected after GitHub 503s, its status commit 108abe5e unpushed; same tier, the stop was the network) | `claude/3d-mask` | 2026-11-25 16:41Z |
+| M2 | `session_01SNkKxpG1o34prYosYVfYED` (Opus 5.5, effort medium; idle and disconnected, replaced in cycle 195) | 3D0-M2-mask-tool (start, cycle 192: a new agent; Opus 5.5 medium by order 7, a complex task) | `claude/3d-mask` | 2026-11-25 14:42Z |
+| CF1 | `session_01SNkKxp5DfWujKR3BZxFjQg` (Opus 5.5, effort medium; idle, task merged in cycle 194) | 3D0-CF1-style-frames (start, cycle 192: a new agent; Opus 5.5 medium by order 7, judgement on looks) | `claude/3d-camera` | 2026-11-25 14:42Z |
+| AD | `session_01SNkKxqM8eV1Bdh5Hj1kPrX` (Opus 5.5, effort medium; idle, done) | P3-AD-wave-close (start by the overseer, by the owner's order: M63's O7 re-check; effort medium by order 6) | `claude/ui-ad` | 2026-11-24 23:30Z |
+| SP-bt-05 | `session_01SNkKxpZxYqKXESzt9K8ZVK` (Opus 5.5, effort medium; stopped) | BT-05 (start, cycle 191: a new agent, once BT-04b merged; effort medium by order 6, a tools-only launcher that adds a new schema and changes no stored one) | `claude/ui-spec-gate-run` | 2026-11-24 23:17Z |
+| SP-bt-06 | `session_01SNkKxr7UeYQUNErvUP7sgQ` (Opus 5.5, effort medium; stopped) | BT-06 (start, cycle 191: a new agent; effort medium by order 6, a tools-only check that adds new schemas and changes no stored one) | `claude/ui-spec-docs-check` | 2026-11-24 22:45Z |
+| SP-bt-09 | `session_01SNkKxnPBMN3yNvawTfEeo9` (Opus 5.5, effort medium; stopped) | BT-09 (start, cycle 190: a new agent; effort medium by order 6, one tools-only script, tools/setup_env.sh) | `claude/ui-spec-setup` | 2026-11-24 22:16Z |
+| SP-bt-07 | `session_01SNkKxntUxvJrAmwfuUT8wo` (Opus 5.5, effort medium) | BT-07 (start, cycle 189: a new agent; effort medium by order 6, a read-only tools-only task in tools/coord/metrics.*) | `claude/ui-spec-metrics` | 2026-11-24 21:34Z |
+| SP-bt-04 | `session_01SNkKxooiW2REvhyUn5DXCa` (Opus 5.5, effort medium) | BT-04b (start, cycle 189: BT-04a merged as 56f3662b; effort medium by order 6, a tools-only task in tools/gate/; SP-bt-04's last session, `session_01SNkKxob5FVPEP75EW56UMP`, is idle, its task merged) | `claude/ui-spec-gate-render` | 2026-11-24 21:34Z |
 | SP-bt-04 | `session_01SNkKxob5FVPEP75EW56UMP` (Opus 5.5, effort high) | BT-04a (resync, cycle 186: candidate 84be5f38 failed on render.py's self-test under the check sandbox's read-only HOME; effort high by order 6, a resync; SP-bt-04's last session, `session_01SNkKxnP8NpPyS23jXd4Upa`, is idle, its task ready at f1df3f1e) | `claude/ui-spec-gate-render` | 2026-11-24 19:35Z |
 | SP-bt-01 | `session_01SNkKxnk1jnaFLfc14YYCAq` (Opus 5.5, effort high) | BT-01b (start, cycle 186: BT-01a merged as 99c9aa89; effort high by order 6, the merge queue and its lock, concurrency; SP-bt-01's last session, `session_01SNkKxnoYoXvgs2BTqD6NXy`, is idle, its task merged) | `claude/ui-spec-coord` | 2026-11-24 19:35Z |
 | SP-bt-04 | `session_01SNkKxnP8NpPyS23jXd4Upa` (Opus 5.5, effort medium) | BT-04a (start, cycle 183: effort medium by order 6, a tools-only task in tools/gate/) | `claude/ui-spec-gate-render` | 2026-11-24 17:12Z |
@@ -830,16 +882,16 @@ Your session was created with the repository checked out at main; work in that c
 ### SP-bt-01
 
 ```text
-You are agent SP-bt-01 of the Ruleborn agent program (UI wave, the BT track). Read docs/guides/agent-brief.md first and follow it exactly (its section 'If you are a specialist' applies to you); then docs/guides/agent-protocol.md where the brief links to it.
+You are agent SP-bt-01 of the Ruleborn agent program (3D quality wave; you are the specialist for the coordinator script, not a BT-track task). Read docs/guides/agent-brief.md first and follow it exactly (its section 'If you are a specialist' applies to you); then docs/guides/agent-protocol.md where the brief links to it; then docs/process/superpowers/README.md, and follow CLAUDE.md order 8 with the skills there.
 
 Agent: SP-bt-01            Role: specialist: the coordinator script (tools/coord/)        Model: Opus 5.5, effort high
 Branch: claude/ui-spec-coord
 Owned files: only the files each SP-bt-01 task lists in the backlog, docs/progress/SP-bt-01.md, docs/progress/status/SP-bt-01.json
-Tasks: BT-01b (started in lead cycle 186; BT-01a merged in cycle 186): the merge-then-test queue in tools/coord/ (not owners.*), built on BT-01a's cycle.py: for each ready task, owners.py diff against main, a candidate taken from main's head (batching 2-3 disjoint ready tasks), the merge lock `merging` in docs/progress/status/lead.json on main (written and pushed before the checks, expires_at = started_at + 60 min, cleared when main moves or the candidate fails; an expired lock is cleared and noted), bash tools/run_checks.sh on the candidate, fast-forward of main on a pass (merging the candidate onto main's head and re-running only the documentation check when main gained only docs/progress/** commits meanwhile), `resync` with the failure lines on a fail, and the owner-inbox entries, as agent-protocol.md's merge queue and 'Running a cycle' in docs/progress/lead.md describe them. A dry-run mode prints the actions and pushes nothing; unit tests on fixture branches (local bare repositories in a temp dir, no network) pass under cycle.py --self-test, which check_all.sh already runs. Do not change archive.py's or cycle_needed.py's behaviour the lead relies on.
-STOP_AT: 2026-11-25T21:00:00Z (= 18:00 America/Sao_Paulo)
-Wave plan: docs/art/ui-quality/report.md section 3     Phase: 4
+Tasks: 3D0-CO-queue-flake (started in lead cycle 207): make tools/coord/merge_queue.py's self-test deterministic (M1-R3: the 'lock cleared' case reads last_merged as None about 1 run in 3), and make cycle.py read a status file's acks given as strings or as objects with an id (M2.json on claude/3d-mask crashes its dry run: unhashable dict). Write the failing tests first. Each task's done_when in docs/progress/backlog.json is the bar; a verifier on Opus 5.5 at effort high reviews your diff before it merges (CLAUDE.md order 7). Do not change archive.py's or cycle_needed.py's behaviour the lead relies on.
+STOP_AT: 2026-12-02T21:00:00Z
+Wave plan: docs/art/3d-quality/plan.md section 6     Phase: 0
 
-Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-spec-coord from it (create it if it does not exist) and push only to claude/ui-spec-coord with git push -u origin claude/ui-spec-coord, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is SP-bt-01, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
+Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci); then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; merge main into claude/ui-spec-coord first (create the branch from main if it does not exist) and push only to claude/ui-spec-coord with git push -u origin claude/ui-spec-coord, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is SP-bt-01, whose state is open or resync and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
 ```
 
 ### SP-bt-04
@@ -847,14 +899,134 @@ Your session was created with the repository checked out at main; work in that c
 ```text
 You are agent SP-bt-04 of the Ruleborn agent program (UI wave, the BT track). Read docs/guides/agent-brief.md first and follow it exactly (its section 'If you are a specialist' applies to you); then docs/guides/agent-protocol.md where the brief links to it.
 
-Agent: SP-bt-04            Role: specialist: the gate shot renderer (tools/gate/)        Model: Opus 5.5, effort high
+Agent: SP-bt-04            Role: specialist: the gate shot renderer (tools/gate/)        Model: Opus 5.5, effort medium
 Branch: claude/ui-spec-gate-render
 Owned files: only the files each SP-bt-04 task lists in the backlog, docs/progress/SP-bt-04.md, docs/progress/status/SP-bt-04.json
-Tasks: BT-04a (resync, cycle 186): your ready f1df3f1e failed the lead's full checks. The candidate 84be5f38 (BT-01a, BT-04a and the line `python3 tools/gate/render.py --self-test` of SP-bt-04-R1 in check_all.sh) ran under run_checks.sh's bwrap sandbox, where HOME is read-only and only the worktree and a private /tmp are writable. In section '== the UI wave gate's sheets and image checks, with their planted fails (AD-R3) ==', after 'render.py: the shot list's parser, ok', render() at render.py:229 (tempfile.mkdtemp(dir=cache_dir())) called cache_dir() at render.py:171, whose d.mkdir raised `OSError: [Errno 30] Read-only file system: '/root/.cache/ruleborn/gate'`. Fix render.py so its self-test still renders the fixture item in that sandbox (for example, fall back to TMPDIR or tempfile.gettempdir() when the cache folder cannot be created or written). Do not skip the render because HOME is read-only, and do not loosen the test. Reproduce the failure first and prove the fix inside the sandbox, for example with CHECK_CMD='bash client/build.sh && python3 tools/gate/render.py --self-test' bash tools/run_checks.sh start <sha>, and quote both results in your handoff. Then pre-check as usual and mark the task ready on your branch, carrying over the rest of f1df3f1e. The lead adds the check_all.sh line again in the merge candidate (SP-bt-04-R1 stands). README.md is in the task's exceptions. BT-04b is a later task, not this one.
+Tasks: BT-04b (started in lead cycle 189; BT-04a merged in cycle 189 as 56f3662b, with `python3 tools/gate/render.py --self-test` in check_all.sh): part 2 of the gate shot renderer in tools/gate/render.* and tools/gate/fixtures/**: frame strips, the 200% text and high-contrast variants and named crops for each shot in the shot list, built on BT-04a's render() and its build cache (which falls back to the temporary folder under a read-only HOME, as in run_checks.sh's sandbox). The self-test renders a fixture strip and a named crop, still inside that sandbox; prove it with CHECK_CMD='bash client/build.sh && python3 tools/gate/render.py --self-test' bash tools/run_checks.sh start <sha> and quote the result in your handoff. Never skip the render or loosen the test. See the task's done_when in the backlog. README.md is in the task's exceptions; a change outside the task's files is a request to the lead, with a default.
 STOP_AT: 2026-11-25T21:00:00Z (= 18:00 America/Sao_Paulo)
 Wave plan: docs/art/ui-quality/report.md section 3     Phase: 4
 
-Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-spec-gate-render from it (create it if it does not exist) and push only to claude/ui-spec-gate-render with git push -u origin claude/ui-spec-gate-render, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is SP-bt-04, whose state is open or resync and whose deps are all merged (BT-04a is in resync); when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
+Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-spec-gate-render from it (create it if it does not exist) and push only to claude/ui-spec-gate-render with git push -u origin claude/ui-spec-gate-render, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is SP-bt-04, whose state is open or resync and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
+```
+
+### SP-bt-07
+
+```text
+You are agent SP-bt-07 of the Ruleborn agent program (UI wave, the BT track). Read docs/guides/agent-brief.md first and follow it exactly (its section 'If you are a specialist' applies to you); then docs/guides/agent-protocol.md where the brief links to it.
+
+Agent: SP-bt-07            Role: specialist: the metrics report (tools/coord/metrics.*)        Model: Opus 5.5, effort medium
+Branch: claude/ui-spec-metrics
+Owned files: only the files each SP-bt-07 task lists in the backlog, docs/progress/SP-bt-07.md, docs/progress/status/SP-bt-07.json
+Tasks: BT-07 (started in lead cycle 189; BT-01b merged in cycle 189 as 56f3662b): the metrics report from coordination data, in tools/coord/metrics.* only. From docs/progress/backlog.json, backlog-archive.json, the status files, the gate's verdicts (docs/art/ui-quality/gate/verdicts/) and git history on main, compute the metrics of agent-protocol.md's 'Metrics' table (merge lead time ready to merged, oldest ready task's wait, resync rate, catch and false-fail rates per quality where the verdicts allow, split verdicts per day, stalls, blocked hours, usage per merged task where the data exists; say 'no data' for any metric the files cannot give, never invent it) and print them as a Markdown digest section, each with its review threshold and whether it is past it. Read-only: it writes no repository file. A --self-test on fixture data (no network) prints the section and checks its figures; the lead wires `python3 tools/coord/metrics.py --self-test` into check_all.sh in the merge candidate (ask for it as a request with that default). See the task's done_when in the backlog. Do not change cycle.py's, merge_queue.py's, archive.py's or cycle_needed.py's behaviour.
+STOP_AT: 2026-11-25T21:00:00Z (= 18:00 America/Sao_Paulo)
+Wave plan: docs/art/ui-quality/report.md section 3     Phase: 4
+
+Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-spec-metrics from it (create it if it does not exist) and push only to claude/ui-spec-metrics with git push -u origin claude/ui-spec-metrics, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is SP-bt-07, whose state is open or resync and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
+```
+
+### SP-bt-09
+
+```text
+You are agent SP-bt-09 of the Ruleborn agent program (UI wave, the BT track). Read docs/guides/agent-brief.md first and follow it exactly (its section 'If you are a specialist' applies to you); then docs/guides/agent-protocol.md where the brief links to it.
+
+Agent: SP-bt-09            Role: specialist: environment setup (tools/setup_env.sh)        Model: Opus 5.5, effort medium
+Branch: claude/ui-spec-setup
+Owned files: only the files each SP-bt-09 task lists in the backlog, docs/progress/SP-bt-09.md, docs/progress/status/SP-bt-09.json
+Tasks: BT-09 (started in lead cycle 190): environment setup with pinned versions, in tools/setup_env.sh only. One idempotent, non-interactive script that installs everything a fresh container lacks before tools/check_all.sh can pass (today by hand: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; Pillow and numpy for the Python that runs the checks (the November stop found the container's python3 3.11 without a working Debian Pillow); (cd tools/ui_research && npm ci); then bash client/build.sh), with every version pinned exactly and each step skipped when already satisfied. Prove the done_when: in your fresh container run only bash tools/setup_env.sh, then bash tools/run_checks.sh start <sha> and wait, and quote the PASS in your handoff; run the script a second time and show it changes nothing. It must not use the Playwright browser installer (the container's Chromium is preinstalled). README.md's tools listing is a request to the lead if the script needs a line there, with a default. See the task's done_when in the backlog. Do not change run_checks.sh, check_all.sh or client/build.sh.
+STOP_AT: 2026-11-25T21:00:00Z (= 18:00 America/Sao_Paulo)
+Wave plan: docs/art/ui-quality/report.md section 3     Phase: 4
+
+Your session was created with the repository checked out at main; work in that checkout. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-spec-setup from it (create it if it does not exist) and push only to claude/ui-spec-setup with git push -u origin claude/ui-spec-setup, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is SP-bt-09, whose state is open or resync and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
+```
+
+### SP-bt-05
+
+```text
+You are agent SP-bt-05 of the Ruleborn agent program (UI wave, the BT track). Read docs/guides/agent-brief.md first and follow it exactly (its section 'If you are a specialist' applies to you); then docs/guides/agent-protocol.md where the brief links to it.
+
+Agent: SP-bt-05            Role: specialist: the gate launcher and verdict writer (tools/gate/run.*)        Model: Opus 5.5, effort medium
+Branch: claude/ui-spec-gate-run
+Owned files: only the files each SP-bt-05 task lists in the backlog, docs/progress/SP-bt-05.md, docs/progress/status/SP-bt-05.json
+Tasks: BT-05 (started in lead cycle 191; BT-04b merged in cycle 191): the gate launcher and verdict writer in tools/gate/run.* and the verdict schema docs/progress/schema/verdict.json. Built on BT-04's tools/gate/render.py: for a task's gate_request {sha, items}, render the items' stills at that sha from the shot list, prepare one isolated judge call per sample (three samples per quality, shuffled order; the judge's inputs are only the stills, the rubric, the references and the item's files, never progress files or the maker's notes), and write the verdict objects to <verdicts>/<task_id>/<sha>.json exactly as agent-protocol.md's 'The gate', step 3, shows them, applying steps 4 and 5 (three passes pass, three fails fail, a split takes three more samples with 4 or more fails of 6 a fail; each fail adds 1 to the task's attempts, reported, not written to the backlog). The judge's model is never Fable 5.1 (CLAUDE.md order 2) and the tool writes no model ID of its own into a repository file: the judge field is read from its caller. The schema validates every verdict file already in docs/art/ui-quality/gate/verdicts/ (fix nothing there; report any that fail as a request to the lead with a default). A --self-test with a stub judge (no network, no session) writes verdict files into a temporary folder, validates them against the schema and checks the attempt count; ask the lead, as a request with that default, to wire `python3 tools/gate/run.py --self-test` into check_all.sh in the merge candidate. Never skip a render or loosen a test. See the task's done_when in the backlog.
+STOP_AT: 2026-11-25T21:00:00Z (= 18:00 America/Sao_Paulo)
+Wave plan: docs/art/ui-quality/report.md section 3     Phase: 4
+
+Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, set up the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-spec-gate-run from it (create it if it does not exist) and push only to claude/ui-spec-gate-run with git push -u origin claude/ui-spec-gate-run, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is SP-bt-05, whose state is open or resync and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
+```
+
+### SP-bt-06
+
+```text
+You are agent SP-bt-06 of the Ruleborn agent program (UI wave, the BT track). Read docs/guides/agent-brief.md first and follow it exactly (its section 'If you are a specialist' applies to you); then docs/guides/agent-protocol.md where the brief links to it.
+
+Agent: SP-bt-06            Role: specialist: the documentation consistency check (tools/docs/protocol_check.*)        Model: Opus 5.5, effort medium
+Branch: claude/ui-spec-docs-check
+Owned files: only the files each SP-bt-06 task lists in the backlog, docs/progress/SP-bt-06.md, docs/progress/status/SP-bt-06.json
+Tasks: BT-06 (started in lead cycle 191): the documentation consistency check, in tools/docs/protocol_check.* and docs/progress/schema/** (not docs/progress/schema/verdict.json, which is BT-05's). Write JSON schemas for docs/progress/backlog.json, the status files (docs/progress/status/*.json) and docs/progress/status/lead.json from what the files and docs/guides/agent-protocol.md say today, then a check that the state names (task states, agent_state, request states), the fields and the examples agree across docs/guides/agent-brief.md, docs/guides/agent-protocol.md, docs/art/ui-quality/report.md section 3, the schemas and the live backlog and status files, and fails, naming file and line, on any mismatch. A --self-test plants a mismatch in fixture copies (temporary folder, no network) and proves the check fails on it. Where the documents disagree today, do not edit them: list each disagreement as a request to the lead with a default (the lead fixes the docs before the check is wired); ask the lead, as a request with that default, to wire `python3 tools/docs/protocol_check.py` and its --self-test into check_all.sh in the merge candidate. README.md is in the task's exceptions. See the task's done_when in the backlog.
+STOP_AT: 2026-11-25T21:00:00Z (= 18:00 America/Sao_Paulo)
+Wave plan: docs/art/ui-quality/report.md section 3     Phase: 4
+
+Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, set up the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-spec-docs-check from it (create it if it does not exist) and push only to claude/ui-spec-docs-check with git push -u origin claude/ui-spec-docs-check, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is SP-bt-06, whose state is open or resync and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
+```
+
+### M1
+
+```text
+You are agent M1 of the Ruleborn agent program (3D quality wave). Read docs/guides/agent-brief.md first and follow it exactly; then docs/guides/agent-protocol.md where the brief links to it; then docs/art/3d-quality/plan.md, sections 6 and 7.
+
+Agent: M1            Role: measure track: budget split, then the baseline        Model: Sonnet 5.5, effort medium
+Branch: claude/3d-measure
+Owned files: only the files each M1 task lists in the backlog, docs/progress/M1.md, docs/progress/status/M1.json
+Tasks: 3D0-M1-budget-split, then 3D0-M1-baseline (after 3D0-M2-mask-tool merges). Each task's done_when in docs/progress/backlog.json is the bar; a verifier on Opus 5.5 at effort high reviews your diff before it merges (CLAUDE.md order 7). If the task is harder than your model and effort, say so in your status file and end your turn.
+STOP_AT: 2026-12-02T21:00:00Z
+Wave plan: docs/art/3d-quality/plan.md section 6     Phase: 0
+
+Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, set up the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci); then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/3d-measure from it (create it if it does not exist) and push only to claude/3d-measure with git push -u origin claude/3d-measure, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is M1, whose state is open or resync and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
+```
+
+### M2
+
+```text
+You are agent M2 of the Ruleborn agent program (3D quality wave). Read docs/guides/agent-brief.md first and follow it exactly; then docs/guides/agent-protocol.md where the brief links to it; then docs/art/3d-quality/plan.md, sections 6 and 7.
+
+Agent: M2            Role: measure track: the mask tool, then the find-it test        Model: Opus 5.5, effort medium (3D0-M2-find-it: Sonnet 5.5, effort medium)
+Branch: claude/3d-mask
+Owned files: only the files each M2 task lists in the backlog, docs/progress/M2.md, docs/progress/status/M2.json
+Tasks: 3D0-M2-mask-tool, then 3D0-M2-find-it. Each task's done_when in docs/progress/backlog.json is the bar; a verifier on Opus 5.5 at effort high reviews your diff before it merges (CLAUDE.md order 7). If the task is harder than your model and effort, say so in your status file and end your turn.
+STOP_AT: 2026-12-02T21:00:00Z
+Wave plan: docs/art/3d-quality/plan.md section 6     Phase: 0
+
+Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, set up the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci); then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/3d-mask from it (create it if it does not exist) and push only to claude/3d-mask with git push -u origin claude/3d-mask, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is M2, whose state is open or resync and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
+```
+
+### CF1
+
+```text
+You are agent CF1 of the Ruleborn agent program (3D quality wave). Read docs/guides/agent-brief.md first and follow it exactly; then docs/guides/agent-protocol.md where the brief links to it; then docs/art/3d-quality/plan.md, sections 6 and 7.
+
+Agent: CF1            Role: camera and framing track: the three style frames        Model: Opus 5.5, effort medium
+Branch: claude/3d-camera
+Owned files: only the files each CF1 task lists in the backlog, docs/progress/CF1.md, docs/progress/status/CF1.json
+Tasks: 3D0-CF1-style-frames. Each task's done_when in docs/progress/backlog.json is the bar; a verifier on Opus 5.5 at effort high reviews your diff before it merges (CLAUDE.md order 7). If the task is harder than your model and effort, say so in your status file and end your turn.
+STOP_AT: 2026-12-02T21:00:00Z
+Wave plan: docs/art/3d-quality/plan.md section 6     Phase: 0
+
+Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, set up the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci); then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/3d-camera from it (create it if it does not exist) and push only to claude/3d-camera with git push -u origin claude/3d-camera, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is CF1, whose state is open or resync and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
+```
+
+### DT1
+
+```text
+You are agent DT1 of the Ruleborn agent program (3D quality wave). Read docs/guides/agent-brief.md first and follow it exactly; then docs/guides/agent-protocol.md where the brief links to it; then docs/art/3d-quality/plan.md, sections 6 and 7.
+
+Agent: DT1            Role: data track: the data spec and guards() fields        Model: Opus 5.5, effort high
+Branch: claude/3d-data
+Owned files: only the files each DT1 task lists in the backlog, docs/progress/DT1.md, docs/progress/status/DT1.json
+Tasks: 3D0-DT1-data-spec. Each task's done_when in docs/progress/backlog.json is the bar; a verifier on Opus 5.5 at effort high reviews your diff before it merges (CLAUDE.md order 7). If the task is harder than your model and effort, say so in your status file and end your turn.
+STOP_AT: 2026-12-02T21:00:00Z
+Wave plan: docs/art/3d-quality/plan.md section 6     Phase: 0
+
+Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, set up the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci); then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/3d-data from it (create it if it does not exist) and push only to claude/3d-data with git push -u origin claude/3d-data, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is DT1, whose state is open or resync and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
 ```
 
 ## Standing notes
@@ -871,77 +1043,106 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
-- **Cycle 188**, 24 November 2026, from about 20:14Z (session
-  `session_01SNkKxnyDUhJ1nCERqWyiAM`, started by the Opus 5.5 launcher,
-  effort medium by order 6). The changes since cycle 187: S1 claimed the
-  heist re-work again (attempts 2, lease to 23:00Z), pushed the S1-R46
-  change (6188a5d0, a spent Cast takes the gold plate while it leads at
-  200% text) and renewed S1-R45 at 120 draw calls for heist/200;
-  SP-bt-01 pushed BT-01b (f490ff43, `tools/coord/merge_queue.py` and
-  `cycle.py --merge`) and runs its pre-check; SP-bt-04 pushed BT-04a's
-  resync (0fa16325: render.py's cache falls back to the temporary
-  folder, the commit is exported with git archive) and runs its
-  pre-check (expected end 20:30Z). **Merge and gate:** none: nothing is
-  ready, no merge lock; main did not move, so the pages are not
-  republished. **Requests:** none new; S1-R45's figure (120) is written
-  in the heist's merge. **Started nothing:** S1 is working, SP-bt-01 and
-  SP-bt-04 wait on their background pre-checks; the three hold the cap
-  of three under `allowed_warning`. **Next:** gate and merge the heist
-  re-work, BT-04a's resync (with SP-bt-04-R1's line) and BT-01b as they
-  are ready.
+- **Cycle 206**, 26 November 2026, from about 00:14Z (session
+  `session_01SNkKxnGQoazsb2Zn5jJzzd`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 205:
+  M1 marked 3D0-M1-baseline ready at dee58fa after its second pre-check
+  passed. **Verify / merge:** an Opus 5.5 high verifier passed the
+  baseline against its `done_when` (minor findings moved into
+  3D0-M1-baseline-2); candidate 34d85938 passed the full checks (the
+  first waiter hit its time limit; the second read PASS), and the
+  baseline merged onto main at 76fe289d. `cycle.py`'s dry run crashed on
+  M2.json's acks written as objects, so the queue steps were done by
+  hand. **Seeded:** 3D0-M2-mask-screens (M2, Opus 5.5 medium; M1-R2's
+  mask tool on the realm, universe and character screens),
+  3D0-M1-baseline-2 (M1, Sonnet 5.5 medium, after the mask task; the
+  n/m cells and the verifier's minor findings) and 3D0-CO-queue-flake
+  (the coordinator, Opus 5.5 high: the `merge_queue` self-test flake of
+  M1-R3 and the string-or-object acks). **Started:** M2 on
+  3D0-M2-mask-screens (`session_01SNkKxmfUr1jfnjsq8DnggV`). M1's seat
+  waits for the mask task; DT1's and CF1's seats are free with no 3D task
+  open for them. **Requests:** M1-R2 is handled by the two new tasks,
+  M1-R3 by the coordinator task; M2-R1 and M2-R2 stay at their defaults.
+  The verifier noted that a fresh build leaves
+  `client/tests/shots/style_frame_heist.gd.uid` untracked (not M1's
+  file). **Owner:** phase 0's work is merged but for the owner's two
+  items, the phone trial and the style-frame pick (owner inbox).
 
-- **Cycle 187**, 24 November 2026, from about 19:45Z (session
-  `session_01SNkKxo4wWyrJULuKf9ezgK`, started by the Opus 5.5 launcher,
-  effort medium by order 6). The changes since cycle 186: S1 marked the
-  heist re-work ready at 85be2fa8 (pre-check passed 18:36Z; guard.sh fails
-  only on heist/200, 121 of 118, S1-R45); SP-bt-01 claimed BT-01b and
-  SP-bt-04 claimed BT-04a's resync. **Gate:** 'heist at 200% text, pt_BR'
-  (Hierarchy) at 85be2fa8, rendered here with FIT=1 ('fit ok'), three
-  judge calls in shuffled order against kf-character-text200 and
-  today-heist: fail 0 of 3 (`verdicts/P4-S1-heist-vault/85be2fa8.json`).
-  Cast is larger now, but its spent leather plate has the value of Fugir
-  and the tray, and the loot panel (508, 0%), the timer and the alarm box
-  still outweigh it. Nothing merged; the merge lock was not taken.
-  **Escalation:** attempts 2, so P4-S1-heist-vault is open again from
-  claude/ui-screens-heist (8922c136), and a fresh S1 session takes it
-  from the handoff, at effort high (order 6: the vault, and a failed
-  attempt): `session_01SNkKxnAiVmwbdBsQYix7Y8`, started 19:52Z. **Requests:** S1-R45 to S1-R47 copied. S1-R46 granted: at
-  200% text a spent Cast takes the gold primary plate with the wand
-  dimmed; AD-R60 stands elsewhere. S1-R45 waits for the re-work's figure;
-  S1-R47 routed to its default (no seat for AD). With SP-bt-01 and
-  SP-bt-04, S1 holds the cap of three under `allowed_warning`.
-  **Next:** gate and merge the heist re-work, BT-04a's resync and BT-01b
-  as they are ready.
+- **Cycle 205**, 25 November 2026, from about 23:38Z (session
+  `session_01SNkKxpVk3qU9Sg2wwL1V6J`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 204:
+  M1's pre-check of 7f6f90c failed only on the coordinator's
+  `merge_queue` self-test ("lock cleared": `last_merged` read as None,
+  1 in 3 runs on the same code), and M1 asked for a fix (M1-R3); its
+  second pre-check (of dee58fa) runs. **Verify / merge:** nothing is
+  ready. **Started:** none. M1's session is idle between turns with the
+  pre-check running, inside its update window (00:10Z). M2's, DT1's and
+  CF1's seats are free with no 3D task open for them. **Requests:**
+  M1-R3 stays at its default (M1 re-runs the pre-check once; a PASS
+  stands); the flaky self-test is noted for a coordinator task if it
+  fails a candidate's full checks. M1-R2, M2-R1 and M2-R2 stay at their
+  defaults; M1-R2's task is seeded once the baseline merges. **Owner:**
+  the phone trial and the style-frame pick are still open (owner inbox).
 
-- **Cycle 186**, 24 November 2026, from about 18:14Z (session
-  `session_01SNkKxqiFeCtTZE4nW7CtE5`, started by the Opus 5.5 launcher,
-  effort medium by order 6). The changes since cycle 185: SP-bt-01
-  marked BT-01a ready at 37c99eba and SP-bt-04 marked BT-04a ready at
-  f1df3f1e, both pre-checks passed; S1 is still on the heist re-work.
-  **Merge:** a batch candidate of both, with SPbt01-R1's and
-  SP-bt-04-R1's self-test lines in `check_all.sh` and checks.md, under
-  the merge lock (4efc5f51). Its first run (e79c16e7) failed on this
-  container, not the candidate: the cycle changed `.git/config` during
-  the run (SEC-19's fingerprint) and the fresh-container setup had not
-  been run. Its second run (84be5f38, same tree, 18:58Z) failed on
-  BT-04a: `render.py --self-test` raised `OSError: [Errno 30] Read-only
-  file system: '/root/.cache/ruleborn/gate'` in `cache_dir()`
-  (render.py:171), since the check sandbox's HOME is read-only. BT-04a
-  is in `resync` (attempts 1). A new candidate, 8107ba62 (BT-01a and
-  its self-test line only), passed the full checks at 19:34Z and was
-  merged onto main's head (main had gained only the lock commit) as
-  99c9aa89, after the documentation check. The lock is cleared. Nothing
-  under docs/audit or docs/roadmap changed, so the pages are not
-  republished. The lock commits 4efc5f51 and the cycle's earlier
-  candidate commits carry a non-noreply author; later commits use the
-  noreply identity. **Requests:** SPbt01-R1 done; SP-bt-04-R1 stands
-  for the resync's candidate. **Started:** SP-bt-01 on BT-01b and
-  SP-bt-04 on BT-04a's resync, both at effort high (order 6: the merge
-  queue's lock, and a resync). With S1 they hold the cap of three under
-  `allowed_warning`. **stop_at** moved to 25 November 21:00Z (order 3).
-  **Next:** gate and merge the heist re-work, BT-04a's resync (adding
-  the render self-test line again) and BT-01b as they are ready.
+- **Cycle 204**, 25 November 2026, from about 23:15Z (session
+  `session_01SNkKxnHHPKMvqUk6akhCWX`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 203:
+  M1 pushed the second review of its resync (7f6f90c) and runs its
+  pre-check; the candidates of cycle 203 moved. **Verify / merge:**
+  nothing is ready. **Started:** none. M1's session is idle between
+  turns with its pre-check running, inside its update window (23:45Z).
+  M2's, DT1's and CF1's seats are free with no 3D task open for them.
+  **Requests:** M1-R2, M2-R1 and M2-R2 stay at their defaults; M1-R2's
+  task is seeded once the baseline merges. **Owner:** the phone trial
+  and the style-frame pick are still open (owner inbox).
 
+- **Restart, 25 November 2026** (the overseer). The owner restarted the
+  program on the 3D quality plan ("Based on the plan made by Fable, let's
+  start the work. Opus 5.5 Medium for complex tasks. Sonnet 5.5 Medium for
+  simple tasks. Opus 5.5 High for complex tasks and to verify the work of
+  others"); CLAUDE.md order 1 and the new order 7 record it. The UI wave
+  stays closed. `backlog.json` now reads wave "3D quality wave", phase 0,
+  `stop_at` 2026-12-02T21:00:00Z, and holds seven phase 0 tasks (plan.md
+  section 6, "First tasks, in order"):
+  - **M1** (`claude/3d-measure`, Sonnet 5.5 medium): 3D0-M1-budget-split,
+    then 3D0-M1-baseline once the mask tool merges.
+  - **M2** (`claude/3d-mask`, Opus 5.5 medium): 3D0-M2-mask-tool, then
+    3D0-M2-find-it (Sonnet 5.5 medium).
+  - **CF1** (`claude/3d-camera`, Opus 5.5 medium): 3D0-CF1-style-frames.
+  - **DT1** (`claude/3d-data`, Opus 5.5 high: it touches the extension
+    and the replay's bytes): 3D0-DT1-data-spec.
+  - **Owner:** 3D0-OW-phone-trial (D4), once the budget split merges; and
+    the pick of a style frame once CF1's frames merge. Never claimed by an
+    agent.
+  The four seats fill the cap of four. Before any merge, a verifier on
+  Opus 5.5 at effort high (a subagent of the cycle) reviews the diff
+  against `done_when` and plan.md and re-runs the checks; a failure goes
+  back to the builder. Reading of the owner's two Opus tiers: medium for
+  complex tasks, high for the hardest ones (order 7) and for every check.
+  The launcher, its second firing and the watchdog of 15 November were
+  re-enabled; the next lead cycle starts the four builders from the
+  prompts under "The agents' prompts".
+
+- **Stopped here, 24 November 2026** (the overseer, about 23:35Z). On
+  24 November, about 23:25Z, the owner ordered that "UI done" is
+  report.md's phases 0 to 3 and that every agent stops when phase 3
+  closes (CLAUDE.md order 1). At about 23:30Z the owner approved the
+  overseer's fast close ("Yes, do it"): the overseer did the lead's close
+  steps (M65). **Merged:** P3-AD-wave-close (AD, ready at 3bfb8325; AD-R67
+  and AD-R68 closed) onto main at **e33be6f9**. wave.md's ruling reads "The
+  wave stands at O7". **Phase 3 is closed.** **The program is stopped.**
+  **Builders, all stopped:** SP-bt-05 (BT-05, `claude/ui-spec-gate-run`,
+  tip 64697568, not ready), SP-bt-06 (BT-06, `claude/ui-spec-docs-check`,
+  tip 8b5338c5, not ready), SP-bt-09 (BT-09, `claude/ui-spec-setup`,
+  ready at 1a8a6ea7 with its pre-check passed, not merged). Their status
+  files are on their branches. The BT track, BT-08, icon batches 3 and 4
+  and the wave board's follow-up list are outside "UI done": no phase 4
+  is opened. **Lead:** idle after cycle 191; the merge lock is cleared.
+  **Scheduled tasks:** all disabled (launchers
+  `trig_01NksvDVV7iRJi4zrU7Uf7Te` and `trig_0155PATecuM4Cm5NGsEsbkX1`,
+  watchdog `trig_01RTRucUN1KoyRtkdMc3BAfH`, and last the overseer's
+  hourly status `trig_01B42Tpee2HLXTFaNUMUmofr`). Nothing restarts until
+  the owner, in their own words, says what comes next.
 - **Restart, 23 November 2026** (the overseer, about 21:20Z). The owner
   restarted the program, in the chat of the overseer session: "Continue,
   first the bugs then the UI" (CLAUDE.md order 1). It runs on Opus 5.5 at

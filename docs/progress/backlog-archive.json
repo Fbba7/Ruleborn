@@ -8029,6 +8029,385 @@
       "exceptions": [
         "docs/art/shots/home-screen/**"
       ]
+    },
+    {
+      "id": "BT-01a",
+      "title": "Coordinator, part 1: a dry-run cycle that reads every status file from origin, expires leases, copies states into the backlog, flags missed acknowledgements, request deadlines and stalls, and prints the actions",
+      "phase": 0,
+      "role": "specialist",
+      "model": "Opus 5.5",
+      "assigned_to": "SP-bt-01",
+      "files": [
+        "tools/coord/**",
+        "!tools/coord/owners.*"
+      ],
+      "deps": [],
+      "done_when": [
+        "Unit tests on fixture branches pass",
+        "--dry-run prints actions without pushing",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 4,
+      "tier": 1,
+      "critical": false,
+      "state": "merged",
+      "claim": {
+        "agent": "SP-bt-01",
+        "branch": "claude/ui-spec-coord",
+        "claimed_at": "2026-11-24T17:20:00Z",
+        "seen_at": "2026-11-24T17:45:00Z",
+        "lease_until": "2026-11-24T20:20:00Z"
+      },
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "37c99eba",
+      "merged_sha": "99c9aa89",
+      "updated_at": "2026-11-24T19:36:00Z",
+      "updated_by": "lead (cycle 186)"
+    },
+    {
+      "id": "P4-S1-heist-vault",
+      "title": "Heist at 200% text shows the Vault's progress and a wider playfield band (the wave board's phase 4 list, M57, M61)",
+      "phase": 4,
+      "role": "S1",
+      "model": "Opus 5.5",
+      "assigned_to": "S1",
+      "files": [
+        "client/scripts/heist_hud.gd",
+        "client/scripts/heist_screen.gd",
+        "client/tests/shots/screen_heist.gd",
+        "client/tests/heist_fx_tests.gd",
+        "docs/art/tracks/heist-pilot.md"
+      ],
+      "deps": [
+        "P3-S1-marker-1"
+      ],
+      "done_when": [
+        "The wave board's note (docs/art/ui-quality/gate/boards/wave.md on claude/ui-ad, 'Notes, which hold nothing', seeded in cycle 149 under M61 as phase 4's first heist task): at 200% text the loot panel shows the Vault's progress ('Vault 0%' and its crack, REHEARSE_LEGEND_VAULT) while the Vault is shut, in en, pt_BR and de, and the playfield band between the HUD and the hand is no narrower than at 150% text, by laying out the HUD in heist_hud.gd and heist_screen.gd; a change to KitHud.loot_fit or any kit file is a request to K1 through the lead, with a default",
+        "a test in client/tests/heist_fx_tests.gd mounts the heist at 200% text and finds the Vault's progress row in the loot panel while the Vault is shut, failing on main",
+        "M26: the heist's FIT=1 runs at 100%, 150% and 200% text in en, pt_BR and de and in high contrast all print 'fit ok', listed in the handoff; 'heist at 100% text', 'heist at 200% text, pt_BR' and 'heist in high contrast' still pass; the heist stills re-shot, each change named in docs/art/tracks/heist-pilot.md",
+        "AD previews the stills before ready (M10, M12, M23): the builder sends them to AD through the lead while the work can still change, and AD's objections are answered in this task",
+        "python3 tools/ui_bake/check_screens.py",
+        "bash tools/ui_bake/guard.sh",
+        "gate: Screen",
+        "current main merged into the branch, then the fresh-container setup line, bash client/build.sh, bash tools/check_all.sh and bash tools/ui_bake/guard.sh rerun on that merge, said in the handoff evidence (M11, M13)",
+        "python3 tools/coord/owners.py diff <task_id> <main> <ready_sha> passes before ready: nothing committed under docs/art/ui-quality/gate/verdicts/ or outside the task's files (M48)",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [
+        {
+          "item": "heist at 200% text, pt_BR",
+          "qualities": [
+            "Hierarchy"
+          ]
+        }
+      ],
+      "attempts": 2,
+      "estimate_h": 1.0,
+      "tier": 2,
+      "critical": false,
+      "state": "merged",
+      "claim": null,
+      "prior_branch": "claude/ui-screens-heist",
+      "prior_sha": "85be2fa8",
+      "ready_sha": "3200ff40",
+      "merged_sha": "9be81331",
+      "updated_at": "2026-11-24T22:12:00Z",
+      "updated_by": "lead (cycle 189)",
+      "exceptions": [
+        "docs/art/shots/heist-pilot/**"
+      ]
+    },
+    {
+      "id": "BT-01b",
+      "title": "Coordinator, part 2: the merge-then-test queue (owners.py diff, run_checks.sh on the candidate, the merge lock in status/lead.json, fast-forward) and the owner-inbox entries",
+      "phase": 0,
+      "role": "specialist",
+      "model": "Opus 5.5",
+      "assigned_to": "SP-bt-01",
+      "files": [
+        "tools/coord/**",
+        "!tools/coord/owners.*"
+      ],
+      "deps": [
+        "BT-01a"
+      ],
+      "done_when": [
+        "Unit tests on fixture branches pass",
+        "A dry-run mode prints actions without pushing",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 4,
+      "tier": 1,
+      "critical": false,
+      "state": "merged",
+      "claim": {
+        "agent": "SP-bt-01",
+        "branch": "claude/ui-spec-coord",
+        "claimed_at": "2026-11-24T19:45:00Z",
+        "seen_at": "2026-11-24T19:55:00Z",
+        "lease_until": "2026-11-24T22:45:00Z"
+      },
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": null,
+      "merged_sha": "56f3662b",
+      "updated_at": "2026-11-24T21:30:00Z",
+      "updated_by": "lead (cycle 189)"
+    },
+    {
+      "id": "BT-04a",
+      "title": "Gate shot renderer, part 1: the shot-list format and still rendering of a listed item at a given sha",
+      "phase": 0,
+      "role": "specialist",
+      "model": "Opus 5.5",
+      "assigned_to": "SP-bt-04",
+      "files": [
+        "tools/gate/render.*",
+        "tools/gate/fixtures/**"
+      ],
+      "deps": [],
+      "done_when": [
+        "Renders a fixture item at a given sha",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 1,
+      "estimate_h": 3,
+      "tier": 1,
+      "critical": false,
+      "state": "merged",
+      "claim": {
+        "agent": "SP-bt-04",
+        "branch": "claude/ui-spec-gate-render",
+        "claimed_at": "2026-11-24T19:40:00Z",
+        "seen_at": "2026-11-24T19:55:00Z",
+        "lease_until": "2026-11-24T22:40:00Z"
+      },
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "f1df3f1e",
+      "merged_sha": "56f3662b",
+      "exceptions": [
+        "README.md"
+      ],
+      "updated_at": "2026-11-24T21:30:00Z",
+      "updated_by": "lead (cycle 189)"
+    },
+    {
+      "id": "BT-07",
+      "title": "Metrics report from coordination data",
+      "phase": 1,
+      "role": "specialist",
+      "model": "Opus 5.5",
+      "assigned_to": "SP-bt-07",
+      "files": [
+        "tools/coord/metrics.*"
+      ],
+      "deps": [
+        "BT-01b"
+      ],
+      "done_when": [
+        "Digest section generated",
+        "bash tools/check_all.sh"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 3,
+      "tier": 2,
+      "critical": false,
+      "state": "merged",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "efea6a02",
+      "merged_sha": "add036e9",
+      "updated_at": "2026-11-24T23:20:00Z",
+      "updated_by": "lead (cycle 191)"
+    },
+    {
+      "id": "P3-AD-wave-close",
+      "title": "AD's O7 re-check (M63): preview settings-4's stills on main and rule the wave",
+      "phase": 3,
+      "role": "art director",
+      "model": "Opus 5.5",
+      "assigned_to": "AD",
+      "files": [
+        "docs/art/ui-quality/gate/boards/wave.md",
+        "docs/art/ui-quality/gate/boards/wave/**",
+        "docs/progress/AD.md",
+        "docs/progress/status/AD.json"
+      ],
+      "deps": [],
+      "done_when": [
+        "AD previews P3-S3-settings-4's stills on main (merged de193db4) against AD-R67's done_when (M12)",
+        "wave.md's ruling reads 'The wave stands at O7', or names the one re-work with a default"
+      ],
+      "gate_items": [],
+      "attempts": 1,
+      "estimate_h": 1,
+      "tier": 2,
+      "critical": true,
+      "state": "merged",
+      "claim": {
+        "agent": "AD",
+        "at": "2026-11-24T23:40:00Z"
+      },
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "3bfb8325",
+      "merged_sha": "e33be6f9",
+      "exceptions": []
+    },
+    {
+      "id": "3D0-CF1-style-frames",
+      "title": "Three heist style frames, as real renders, for the owner to pick: (a) camera at 11 tiles; (b) figures about 1.4x via readable_scale; (c) both, with the quiet ground",
+      "phase": 0,
+      "role": "camera and framing track",
+      "model": "Opus 5.5",
+      "effort": "medium",
+      "assigned_to": "CF1",
+      "files": [
+        "client/tests/shots/style_frame_*.gd",
+        "docs/art/3d-quality/style-frames/**",
+        "docs/art/3d-quality/style-frames.md",
+        "docs/progress/CF1.md",
+        "docs/progress/status/CF1.json"
+      ],
+      "deps": [],
+      "done_when": [
+        "The same heist moment rendered three ways, at phone size and 2x, in docs/art/3d-quality/style-frames/",
+        "style-frames.md shows them side by side with what each costs (plan section 6, phase 0) and asks the owner one question: which frame",
+        "No change to the game's default camera or scale: the frames are shot-only",
+        "bash tools/run_checks.sh passes"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 8,
+      "tier": 1,
+      "critical": true,
+      "state": "merged",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "4e6c51ee",
+      "merged_sha": "f07f36c1",
+      "exceptions": []
+    },
+    {
+      "id": "3D0-DT1-data-spec",
+      "title": "The data spec: what guards() adds (near, mid, suspicion), what noise and order previews need; and a shot moment with a suspicious guard",
+      "phase": 0,
+      "role": "data track",
+      "model": "Opus 5.5",
+      "effort": "high",
+      "assigned_to": "DT1",
+      "files": [
+        "client/ext/src/lib.rs",
+        "docs/art/3d-quality/data-spec.md",
+        "client/tests/shots/heist_suspicious.gd",
+        "docs/progress/DT1.md",
+        "docs/progress/status/DT1.json"
+      ],
+      "deps": [],
+      "done_when": [
+        "data-spec.md lists every field the 3D plan needs from the extension, with type, source in sim and cost",
+        "guards() returns near, mid and suspicion; the recorded replay stays byte-for-byte the same (a test shows it)",
+        "A shot moment with a suspicious guard renders",
+        "bash tools/run_checks.sh passes"
+      ],
+      "gate_items": [],
+      "attempts": 2,
+      "estimate_h": 10,
+      "tier": 1,
+      "critical": true,
+      "state": "merged",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "1657b290",
+      "merged_sha": "808fc8f8",
+      "exceptions": [
+        "client/tests/shots/heist_suspicious.gd.uid"
+      ],
+      "resync_reason": null
+    },
+    {
+      "id": "3D0-M2-find-it",
+      "title": "The find-it test: a fixed set of stills and clips with five questions each, scored against the mask",
+      "phase": 0,
+      "role": "measure track",
+      "model": "Opus 5.5",
+      "effort": "high",
+      "assigned_to": "M2",
+      "files": [
+        "tools/render/findit*",
+        "docs/art/3d-quality/find-it.md",
+        "docs/progress/M2.md",
+        "docs/progress/status/M2.json"
+      ],
+      "deps": [
+        "3D0-M2-mask-tool"
+      ],
+      "done_when": [
+        "find-it.md names the stills, clips and questions",
+        "The scorer answers from the mask with no judge, and scores today's build"
+      ],
+      "gate_items": [],
+      "attempts": 2,
+      "estimate_h": 6,
+      "tier": 1,
+      "critical": false,
+      "state": "merged",
+      "claim": null,
+      "prior_branch": "claude/3d-mask",
+      "prior_sha": "ce4d2dac",
+      "ready_sha": "ce4d2dac",
+      "merged_sha": "8aabe5ef",
+      "exceptions": [
+        "client/tests/shots/style_frame_heist.gd.uid"
+      ],
+      "resync_reason": "Verifier (cycle 202, Opus 5.5 high) failed ea4bf724; cycle 199's fixes are real (per-guard sight from marks3d, off-frame figures dropped, clip notes), done_when 1 met, full render reproduced 7 of 50. Must fix: (1) the shown guard passes on unrelated pale pixels with no cone drawn: findit.py:257 'drawn = n_pale >= SIGHT_PIXELS or (is_shown and n_red >= SIGHT_PIXELS)' credits pale to the shown guard, but the client never draws a fan for it (fx_ground.gd:45 skips i == shown); the pale test (findit.py:211) also takes the route preview's paper dots (~194,171,190; fx_ground.gd:161) and falling petals (~114,77,111): the shown guard's ring holds 129-561 such pixels (threshold 40), and with every red marks3d pixel blacked out escape-15 and escape-11 still pass the route. Use red only for the shown guard, pale only for the others; tighten the pale test to leave out the dots' paper (fans have blue >= red, dots and petals do not); fix the self-test base case (findit.py:456, :478) to give the shown guard red, add a case 'pale only near the shown guard -> not drawn', re-score. (2) find-it.md:65-69 ('40 red or pale') and :153-162 (pale takes only the fans; red only credits the shown guard) must match the fixed rule. Minor: M2.md and status/M2.json are stale (028837b, 5 of 50); a non-shown guard's ring could be credited by dots or a neighbour's fan within ~3.6 m (not in today's stills); shown_guard uses world distance and ignores selected_guard; route falls back to crew[0] when the chosen crew member is out of view."
+    },
+    {
+      "id": "3D0-M2-mask-tool",
+      "title": "The mask tool: a flat-colour render pass for actors, markers and ground types, and a script that computes Q1 to Q6, Q11 and Q12 for any still",
+      "phase": 0,
+      "role": "measure track",
+      "model": "Opus 5.5",
+      "effort": "medium",
+      "assigned_to": "M2",
+      "files": [
+        "tools/render/mask*",
+        "tools/render/measure*",
+        "client/tests/shots/mask_*.gd",
+        "docs/art/3d-quality/mask.md",
+        "docs/progress/M2.md",
+        "docs/progress/status/M2.json"
+      ],
+      "deps": [],
+      "done_when": [
+        "The mask pass and the measure script run from one command on any shot",
+        "Checked against the plan's hand measurements: crew 23 to 28 points at 15 tiles, 37.5%, 39%, and the eight-moment matrix, each within the tolerance mask.md states",
+        "Checked by hand on ten stills, recorded in mask.md",
+        "bash tools/run_checks.sh passes"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 12,
+      "tier": 1,
+      "critical": true,
+      "state": "merged",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "deafdd0a",
+      "merged_sha": "a34f20ac",
+      "exceptions": []
     }
   ],
   "idle_queue": [

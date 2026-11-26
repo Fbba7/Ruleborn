@@ -3,26 +3,26 @@
   "role": "AD",
   "branch": "claude/ui-ad",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
-  "task_id": "P3-AD-wave-board",
+  "agent_state": "stopped",
+  "task_id": "P3-AD-wave-close",
   "task_state": "ready",
-  "claimed_at": "2026-11-18T04:56:42Z",
-  "lease_until": "2026-11-18T07:56:42Z",
-  "updated_at": "2026-11-18T05:43:45Z",
-  "expected_next_update_by": "2026-11-18T06:29:00Z",
+  "claimed_at": "2026-11-24T23:31:37Z",
+  "lease_until": null,
+  "updated_at": "2026-11-24T23:31:37Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "baa01a1c27ec54d5791e0c05fff6558eb7921bdd",
-    "next_step": "ready: wave.md's ruling stands but for AD-R67 (settings at 100%, Hierarchy; S3 on settings_screen.gd, rank 1 under M57); AD previews the re-work's stills when its task runs"
+    "last_green_sha": "3bfb83251cef13f8c3a506adeec25737df7b4d13",
+    "next_step": "stopped: the wave stands at O7 (wave.md); AD-R67 closed at de193db4 after AD previewed the settings stills at 100%, 200% pt_BR and hc. Phase 3 closes when the lead records it on main."
   },
   "precheck": {
-    "sha": "baa01a1c27ec54d5791e0c05fff6558eb7921bdd",
+    "sha": "3bfb83251cef13f8c3a506adeec25737df7b4d13",
     "exit": 0,
-    "finished_at": "2026-11-18T05:43:17Z",
-    "summary": "All checks passed."
+    "finished_at": "2026-11-24T23:31:37Z",
+    "summary": "Docs-only change: check_docs_consistency.py passed; status file passes json.tool."
   },
   "gate_request": null,
-  "ready_sha": "baa01a1c27ec54d5791e0c05fff6558eb7921bdd",
+  "ready_sha": "3bfb83251cef13f8c3a506adeec25737df7b4d13",
   "stop_at": "2026-11-18T21:00:00Z",
   "acks": [
     "M12",
@@ -957,22 +957,6 @@
       "created_at": "2026-11-18T02:00:00Z",
       "due": "2026-11-20T02:00:00Z",
       "default": "Answered in the running P3-S3-offline-1, as an objection of its AD preview (or else a follow-up task): while offline at large text the stage gives the notice its height (the notice in the stage's top band beside '5 / 12' and the job chip, or the stage's gap above the name plate shortened by the notice's height), so the ability header stays above the foot in en, pt_BR and de; the roster keeps its notice as is; OFFLINE=1 TEXT=200 in pt_BR and de stays in that task's stills.",
-      "escalate_to": "lead"
-    },
-    {
-      "id": "AD-R67",
-      "from": "AD",
-      "to": "lead",
-      "ask": "Wave board (O7): audit 2's miss on P3-S3-settings-3 (settings at 100% text, Hierarchy) is still open on main, since settings_screen.gd has not changed since 7972485a. Section 3.6 needs no audit miss left unfixed, so this is phase 3's one exit item (rank 1 under M57). Give the Access tab at 100% one lead in the grayscale squint.",
-      "files": [
-        "client/scripts/settings_screen.gd",
-        "client/tests/shots/screen_settings.gd",
-        "docs/art/ui-quality/gate/boards/wave.md"
-      ],
-      "blocking": false,
-      "created_at": "2026-11-18T05:15:11Z",
-      "due": "2026-11-19T05:15:11Z",
-      "default": "a follow-up task for S3 on settings_screen.gd: the gold A / A buttons stay the tab's primary (key frame 05, board 5 F); the High contrast and Motion switch rows move off cream parchment onto the dark plate with cream words, as the law sample moved at 5fc97aac; the title keeps its plate, and the tab strip and Back stay as they are. Done when the gate passes settings at 100% on Hierarchy 3 of 3, the 200% and high-contrast forms still pass, and AD previews the stills (M12).",
       "escalate_to": "lead"
     }
   ],

@@ -1,0 +1,728 @@
+{
+ "budget": "budget: replay: 119336 triangles (75726 mesh + 43610 outline passes); 0 triangles in shadows; 77 draw calls, shadow passes included; 4186 triangles and 34 draw calls in other views; frame 123522 triangles, 111 draw calls",
+ "measure": {
+  "Q1": {
+   "band": 0.0,
+   "band_rows": [
+    0,
+    -1
+   ],
+   "panels_share": 0.619,
+   "strict_band": 0.0,
+   "strict_rows": [
+    0,
+    -1
+   ],
+   "uncovered_share": 0.381
+  },
+  "Q11": {
+   "chosen": {
+    "name": "c0",
+    "rating": "clear"
+   },
+   "guards": {
+    "g0": "off",
+    "g1": "off",
+    "g2": "clear",
+    "g3": "under panel",
+    "g4": "clear"
+   },
+   "island_at_edges": {
+    "bottom": false,
+    "left": true,
+    "right": false,
+    "top": false
+   },
+   "largest_figure_share": 0.071,
+   "nearest_guard": {
+    "name": "g4",
+    "rating": "clear"
+   },
+   "target": {
+    "name": "vault",
+    "rating": "clear",
+    "under_share": 0.0
+   }
+  },
+  "Q12": {
+   "building_foot_luma_ratio": [],
+   "buildings_with_shadow": 0,
+   "cliff_luma": 72.7,
+   "cliffs_darker": false,
+   "figure_shadow_pixels": {
+    "c0": 196,
+    "c1": 743,
+    "c2": 1968,
+    "g2": 1837,
+    "g3": 2208,
+    "g4": 1966
+   },
+   "figures": 6,
+   "figures_with_shadow": 6,
+   "top_luma": 39.5
+  },
+  "Q2": {
+   "crew": [
+    {
+     "bounds_points": 35.4,
+     "name": "c0",
+     "points": 25.0,
+     "role": "Scout",
+     "silhouette_points": 27.3
+    },
+    {
+     "bounds_points": 41.7,
+     "name": "c1",
+     "points": 29.0,
+     "role": "Breaker",
+     "silhouette_points": 23.7
+    },
+    {
+     "bounds_points": 46.9,
+     "name": "c2",
+     "points": 26.4,
+     "role": "Carrier",
+     "silhouette_points": 27.0
+    }
+   ],
+   "crew_least": 25.0,
+   "crew_most": 29.0,
+   "guards": [
+    {
+     "bounds_points": 48.6,
+     "name": "g2",
+     "points": 22.7,
+     "role": "guard",
+     "silhouette_points": 38.7
+    },
+    {
+     "bounds_points": 55.7,
+     "name": "g3",
+     "points": 41.1,
+     "role": "guard",
+     "silhouette_points": 46.0
+    },
+    {
+     "bounds_points": 49.0,
+     "name": "g4",
+     "points": 22.9,
+     "role": "guard",
+     "silhouette_points": 39.3
+    }
+   ],
+   "guards_least": 22.7,
+   "guards_most": 41.1,
+   "least": 22.7
+  },
+  "Q3": {
+   "figures": [
+    {
+     "name": "c0",
+     "pixels": 2654,
+     "share": 0.0946
+    },
+    {
+     "name": "c2",
+     "pixels": 3689,
+     "share": 0.2239
+    },
+    {
+     "name": "g2",
+     "pixels": 6251,
+     "share": 0.3913
+    },
+    {
+     "name": "g3",
+     "pixels": 1041,
+     "share": 0.2478
+    },
+    {
+     "name": "g4",
+     "pixels": 6262,
+     "share": 0.3999
+    }
+   ],
+   "least": 0.0946,
+   "worst": 0.3999
+  },
+  "Q4": {
+   "heads": [
+    {
+     "name": "c0",
+     "seen": 1.0
+    },
+    {
+     "name": "c1",
+     "seen": 0.0
+    },
+    {
+     "name": "c2",
+     "seen": 1.0
+    },
+    {
+     "name": "g2",
+     "seen": 1.0
+    },
+    {
+     "name": "g3",
+     "seen": 1.0
+    },
+    {
+     "name": "g4",
+     "seen": 1.0
+    }
+   ],
+   "markers": [
+    {
+     "box": [
+      0,
+      684,
+      936,
+      1756
+     ],
+     "seen": 0.544
+    },
+    {
+     "box": [
+      192,
+      732,
+      208,
+      748
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      556,
+      864,
+      568,
+      876
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      604,
+      904,
+      612,
+      916
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      300,
+      920,
+      308,
+      928
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      592,
+      932,
+      616,
+      952
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      576,
+      940,
+      584,
+      948
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      540,
+      956,
+      556,
+      980
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      596,
+      956,
+      608,
+      968
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      572,
+      964,
+      596,
+      984
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      548,
+      992,
+      564,
+      1016
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      484,
+      1000,
+      504,
+      1020
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      476,
+      1016,
+      480,
+      1028
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      492,
+      1024,
+      504,
+      1032
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      444,
+      1036,
+      460,
+      1052
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      388,
+      1072,
+      412,
+      1116
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      344,
+      1112,
+      364,
+      1132
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      372,
+      1120,
+      384,
+      1140
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      624,
+      1120,
+      636,
+      1132
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      860,
+      1124,
+      872,
+      1136
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      228,
+      1204,
+      240,
+      1228
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      244,
+      1208,
+      260,
+      1232
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      212,
+      1224,
+      224,
+      1240
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      172,
+      1240,
+      188,
+      1256
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      240,
+      1244,
+      256,
+      1264
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      232,
+      1264,
+      244,
+      1272
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      352,
+      1264,
+      364,
+      1276
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      156,
+      1272,
+      176,
+      1296
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      244,
+      1272,
+      256,
+      1284
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      324,
+      1272,
+      340,
+      1292
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      300,
+      1288,
+      308,
+      1296
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      784,
+      1288,
+      796,
+      1296
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      316,
+      1292,
+      324,
+      1304
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      108,
+      1308,
+      116,
+      1320
+     ],
+     "seen": 0.623
+    },
+    {
+     "box": [
+      396,
+      1308,
+      412,
+      1324
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      356,
+      1312,
+      376,
+      1328
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      408,
+      1328,
+      416,
+      1336
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      368,
+      1340,
+      376,
+      1352
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      392,
+      1340,
+      404,
+      1348
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      248,
+      1352,
+      260,
+      1368
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      392,
+      1356,
+      400,
+      1364
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      476,
+      1384,
+      488,
+      1392
+     ],
+     "seen": 1.0
+    }
+   ],
+   "pass": false,
+   "under_panel": [
+    {
+     "box": [
+      52,
+      768,
+      64,
+      776
+     ],
+     "seen": 0.0
+    },
+    {
+     "box": [
+      100,
+      776,
+      108,
+      788
+     ],
+     "seen": 0.0
+    },
+    {
+     "box": [
+      84,
+      1280,
+      92,
+      1288
+     ],
+     "seen": 0.0
+    },
+    {
+     "box": [
+      64,
+      1316,
+      96,
+      1340
+     ],
+     "seen": 0.0
+    },
+    {
+     "box": [
+      0,
+      1340,
+      12,
+      1360
+     ],
+     "seen": 0.0
+    },
+    {
+     "box": [
+      72,
+      1348,
+      80,
+      1356
+     ],
+     "seen": 0.0
+    },
+    {
+     "box": [
+      36,
+      1368,
+      44,
+      1380
+     ],
+     "seen": 0.0
+    },
+    {
+     "box": [
+      84,
+      1388,
+      96,
+      1400
+     ],
+     "seen": 0.0
+    },
+    {
+     "box": [
+      56,
+      1416,
+      68,
+      1432
+     ],
+     "seen": 0.0
+    },
+    {
+     "box": [
+      84,
+      1420,
+      96,
+      1436
+     ],
+     "seen": 0.0
+    },
+    {
+     "box": [
+      164,
+      1472,
+      176,
+      1480
+     ],
+     "seen": 0.0
+    },
+    {
+     "box": [
+      220,
+      1644,
+      232,
+      1652
+     ],
+     "seen": 0.0
+    },
+    {
+     "box": [
+      168,
+      1704,
+      176,
+      1716
+     ],
+     "seen": 0.0
+    }
+   ],
+   "worst": 0.0
+  },
+  "Q5": {
+   "buildings": 0,
+   "buildings_on_one_path": 0,
+   "decoration_on_walkable": 0.0377,
+   "decoration_pixels": 11114,
+   "path_links_every_building": false,
+   "paths": 0
+  },
+  "Q6": {
+   "covering": {
+    "c0": 0.286,
+    "c1": 0.503,
+    "c2": 0.335,
+    "exit": 0.05,
+    "g2": 0.179,
+    "g3": 0.773,
+    "g4": 0.213,
+    "vault": 0.202
+   },
+   "most": 15,
+   "per_object": {
+    "c0": 1,
+    "c1": 15,
+    "c2": 10,
+    "exit": 1,
+    "g2": 13,
+    "g3": 12,
+    "g4": 1,
+    "vault": 5
+   },
+   "worst_covering": 0.773
+  },
+  "env": {
+   "FRAME_H": "",
+   "HIDE": "",
+   "HOUR": "",
+   "MOMENT": "",
+   "ORTHO": "",
+   "SHOT": "/tmp/ruleborn_baseline/screen_replay/shot.png",
+   "ZOOM": ""
+  },
+  "frame": [
+   1080,
+   2340
+  ],
+  "still": "/tmp/ruleborn_baseline/screen_replay",
+  "zoom": 1
+ },
+ "name": "screen_replay",
+ "verdict": "ok",
+ "why": ""
+}

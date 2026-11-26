@@ -4,6 +4,51 @@ Alerts and questions for the owner, newest first. The lead also sends each one
 as a direct message (work-order decision D-03). An entry is closed by
 recording the answer under it.
 
+## 2026-11-26 00:50Z: the 3D baseline is merged; phase 0 waits on your two items (cycle 206)
+
+- **What:** M1's baseline (`docs/art/3d-quality/baseline.md`) merged onto
+  main at 76fe289d, after its full checks and the Opus 5.5 high verifier
+  passed. M2 now extends the mask tool to the realm, universe and
+  character screens, and M1 then fills the cells the baseline could not
+  measure yet.
+- **Needs the owner:** phase 0 closes only with your two items: the
+  phone trial (3D0-OW-phone-trial) and your pick of a style frame in
+  `docs/art/3d-quality/style-frames.md`.
+
+## 2026-11-25 18:30Z: the budget split and the mask tool are merged; the phone trial is yours now (cycle 197)
+
+- **What:** M1's budget split and M2's mask tool merged onto main at
+  a34f20ac, after their full checks and the Opus 5.5 high verifier
+  passed. M1 starts the baseline and M2 the find-it test. DT1's data
+  spec failed its review (its guard-state table did not match the sim)
+  and is being redone. One finding for the plan: the mask tool's Q11
+  vault match fails in 10 of 21 stills because of the vault column of
+  `docs/art/3d-quality/plan.md` 2.6, not because of the tool.
+- **Needs the owner:** the phone trial (3D0-OW-phone-trial), now that
+  the budget split is merged, and your pick of a style frame, still open
+  in `docs/art/3d-quality/style-frames.md`.
+
+## 2026-11-25 16:32Z: the three style frames are merged; your pick is open (cycle 194)
+
+- **What:** CF1's style frames merged onto main at f07f36c1, after their
+  full checks and the Opus 5.5 high verifier passed.
+  `docs/art/3d-quality/style-frames.md` shows the three frames and asks one
+  question: which frame the 3D wave follows. M1's budget split failed its
+  review and is being redone, so the phone trial waits for it.
+- **Needs the owner:** your pick of a style frame, in
+  `docs/art/3d-quality/style-frames.md`. Until then the wave builds the
+  parts that do not depend on it.
+
+## 2026-11-25 14:50Z: the 3D quality wave started with three builders, not four (cycle 192)
+
+- **What:** M1 (budget split), M2 (mask tool) and CF1 (style frames) are
+  started. The seven-day bar reads `allowed_warning`, so order 3's cap
+  drops to three on its own; DT1 (the data spec, plan.md's fifth first
+  task) waits for the first free seat or for the bar to clear.
+- **Needs the owner:** nothing now. Your two phase 0 tasks follow: the
+  phone trial once the budget split merges, and the pick of a style frame
+  once CF1's frames merge.
+
 ## 2026-11-21 21:18Z: the audit page's republish was refused by the session's permission check, for the second cycle running (cycle 163)
 
 - **What:** after FX1-3, FX2-4 and FX3-3 merged at e413e4a9 (cycle

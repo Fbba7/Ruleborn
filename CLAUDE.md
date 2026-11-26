@@ -108,6 +108,54 @@ the status files, requests and scheduled-task prompts.
   - **Where the work stood at the restart** is in the same file, "Now",
     entry "Stopped here, 21 November 2026".
 
+- **24 November 2026, about 23:25 UTC:** the owner ordered, in the chat
+  of the overseer session: "By UI done I mean this plan that we have done
+  and when it is done all agents should stop", after asking the lead to
+  close phase 3 (M63).
+  - **"UI done" is the plan of `docs/art/ui-quality/report.md`, phases 0
+    to 3.** The BT track, icon batches 3 and 4 and the wave board's
+    follow-up list ("phase 4") are not part of it. No phase 4 is opened.
+  - **Until phase 3 closes**, the lead starts no new task but AD's O7
+    re-check (M63). The running builders keep working on their current tasks,
+    committing as they go.
+  - **When phase 3 closes** (AD writes "The wave stands at O7" in
+    `wave.md` and the lead records phase 3 as closed on main), **the
+    program stops**, as a stop under this section: every builder stops
+    cleanly, the lead merges nothing more, and the overseer disables
+    every enabled scheduled task. It stays stopped until the owner, in
+    their own words, says what comes next.
+
+- **24 November 2026, about 23:35 UTC:** phase 3 closed, and **the
+  program is stopped**, by the owner's order of 24 November above. At
+  about 23:30 UTC the owner approved the overseer's fast close ("Yes, do
+  it"), in the chat of the overseer session; the overseer did the lead's
+  close steps. AD's line ("The wave stands at O7") merged onto main at
+  e33be6f9, and phase 3 is recorded as closed in `backlog.json` and
+  `docs/progress/lead.md`. Every builder is `stopped` (SP-bt-05, SP-bt-06
+  and SP-bt-09; their work on their branches, BT-09 ready but not
+  merged), the lead is idle, the merge lock is cleared, and no scheduled
+  task is enabled. Where the work stands is in
+  [`docs/progress/lead.md`](docs/progress/lead.md), "Now", entry
+  "Stopped here, 24 November 2026".
+
+- **25 November 2026:** the owner restarted it ("Based on the plan made
+  by Fable, let's start the work. Opus 5.5 Medium for complex tasks.
+  Sonnet 5.5 Medium for simple tasks. Opus 5.5 High for complex tasks and
+  to verify the work of others"), in the chat of the overseer session.
+  The program runs, with the models and efforts of order 7 and the cap of
+  four builders (order 3). Order 3's "keep working" applies again.
+  - **The work is the 3D quality plan,**
+    [`docs/art/3d-quality/plan.md`](docs/art/3d-quality/plan.md),
+    starting with its phase 0 ("First tasks, in order"). The UI wave is
+    closed; its BT track, icon batches 3 and 4 and its phase 4 stay
+    unopened.
+  - **The launcher and the watchdog of 15 November** start the lead's
+    cycles again. Their IDs are in
+    [`docs/progress/lead.md`](docs/progress/lead.md), "The program's
+    scheduled tasks and sessions".
+  - **Where the work stands** is in the same file, "Now", entry
+    "Restart, 25 November 2026".
+
 A session that is in the middle of a turn when the program is stopped
 finishes cleanly, so no work is lost: commit and push what it has to its
 own branch (never to main), set `agent_state: stopped` in its status file,
@@ -276,3 +324,68 @@ rule stands (Opus 5.5 only), and so does order 2 (never Fable 5.1).
   cycles and order 6's rule for the sessions the lead creates.
 - If `create_session` refuses the effort setting, create the session on
   Opus 5.5 without it and say so in your status file.
+
+## 7. Sonnet 5.5 for simple tasks, Opus 5.5 for complex ones and for checking
+
+On 25 November 2026 the owner ordered, in the chat of the overseer
+session: "Opus 5.5 Medium for complex tasks. Sonnet 5.5 Medium for simple
+tasks. Opus 5.5 High for complex tasks and to verify the work of others."
+This order replaces order 5's "Opus 5.5 only" and order 6. Order 2 stands:
+Fable 5.1 is never used, and neither is any model this order does not name.
+
+- **Simple tasks: Sonnet 5.5 at effort medium.** A task is simple when
+  none of the complex rules below holds: one track's own files, no frozen
+  contract, no stored schema, no wire protocol, a clear `done_when`.
+- **Complex tasks: Opus 5.5 at effort medium.** A task is complex when
+  any of order 6's complex rules holds, or it needs judgement on how
+  things look (style frames, framing rules, looks).
+- **The hardest tasks: Opus 5.5 at effort high.** A task runs at high when
+  it changes `sim/`, a frozen contract or a stored schema, spans more than
+  one of `sim/`, `server/`, `client/` and `tools/`, is a `resync`, or an
+  earlier session on it failed the checks, review or stalled.
+- **Checking others' work: Opus 5.5 at effort high, always.** Before the
+  lead merges any task, a verifier on Opus 5.5 at effort high (a subagent
+  of the lead's cycle, or a session) reviews the task's diff against its
+  `done_when` and the plan, and re-runs its checks. A task that fails the
+  review goes back to its builder; it is not merged.
+- **A builder that finds its task harder than its tier** says so in its
+  status file and ends its turn; the lead restarts the task one tier up.
+- **The lead's cycles, the launcher and the watchdog** run on Opus 5.5 at
+  effort medium. Where their stored prompts say "effort high" or "Opus
+  5.5 only", this order wins. The lead records each builder's model and
+  effort in the sessions table of `docs/progress/lead.md`.
+- If `create_session` refuses the model or effort, the lead says so with
+  the exact reason in its status file and uses the next tier up, never a
+  lower one and never another model.
+
+## 8. Builders use the Superpowers skills
+
+On 25 November 2026 the owner ordered, in the chat of the overseer
+session: "Use the superpowers skill for the development", then "Use the
+superpowers then". Order 7's models and efforts, and its verifier rule,
+stand.
+
+- **Every builder** working on a task uses these Superpowers skills:
+  - `test-driven-development`: it writes the failing test before the fix
+    or feature;
+  - `systematic-debugging`: for each defect, failed check or send-back;
+  - `verification-before-completion`: it re-runs the task's checks and
+    reads their output before writing that the task is done;
+  - `requesting-code-review`: before it hands the task to the lead.
+- **The lead's verifier** (order 7) also uses
+  `receiving-code-review`'s rules when it sends a task back, and the
+  builder that gets the send-back uses `receiving-code-review`.
+- **The repository's rules win** where a skill differs: the branch rules,
+  the protocol, the frozen contracts and the never-edit paths stay as
+  they are. A skill never lets a session push to main, merge, open a pull
+  request, or start a session or scheduled task.
+- **Where the skills come from:** on 25 November 2026 the owner chose
+  ("Then option 2") to copy them into the repository, because the
+  claude.ai plugin does not reach the cloud sessions. They are in
+  [`docs/process/superpowers/`](docs/process/superpowers/README.md),
+  from obra/superpowers at commit 22f0b46 (MIT). Each builder reads
+  them there, starting with the README. If a session finds the skills
+  missing, it follows the same practice from this order's list without
+  them, says so in its status file, and goes on working.
+- **Sessions already running** finish their current task; the next
+  session on each seat follows this order.
