@@ -96,6 +96,8 @@ GUARD_CMD = f"bash {GUARD} && echo 'All checks passed.'"
 WHO = "coordinator (merge queue)"
 MAX_BATCH = 3
 FAIL_LINES = 12
+# How long the queue waits for a started run to write its pid file (seconds).
+START_GRACE = 120
 ACK_HOURS = 2
 
 
@@ -208,10 +210,11 @@ class Checks:
     candidate's copy), polled until the run ends."""
 
     def __init__(self, repo: Git, env=None, full_cmd=None, docs_cmd=DOCS_CMD,
-                 guard_cmd=GUARD_CMD, poll=15, timeout_min=120):
+                 guard_cmd=GUARD_CMD, poll=15, timeout_min=120, start_grace=START_GRACE):
         self.repo, self.env = repo, env
         self.cmds = {"full": full_cmd, "docs": docs_cmd, "guard": guard_cmd}
         self.poll, self.timeout = poll, timeout_min * 60
+        self.start_grace = start_grace
 
     def _env(self, kind):
         env = dict(self.env if self.env is not None else os.environ)
@@ -232,6 +235,30 @@ class Checks:
         return subprocess.run(["bash", str(script), *args], capture_output=True, text=True,
                               env=self._env(kind), check=False)
 
+    def _pid_file(self, kind, sha) -> pathlib.Path:
+        # run_checks.sh's own naming: <CHECK_DIR>/check-<full sha>.pid.
+        d = pathlib.Path(self._env(kind).get("CHECK_DIR") or "/tmp")
+        return d / f"check-{self.repo.sha(sha) or sha}.pid"
+
+    def _settle(self, kind, sha):
+        """Wait for the runner start launched to write its pid file.
+
+        start waits five seconds for it; a loaded machine can take longer.
+        A result read before the file is there says LOST and removes the
+        run's worktree, so the run that follows fails or is lost. Past the
+        grace period, the result that follows tells what happened. Returns
+        whether the pid file turned up."""
+        pidf, waited = self._pid_file(kind, sha), 0
+        while waited < self.start_grace:
+            try:
+                if pidf.read_text().strip():
+                    return True
+            except OSError:
+                pass
+            time.sleep(self.poll)
+            waited += self.poll
+        return False
+
     def result(self, kind, sha) -> dict:
         r = self._sh(kind, "result", sha)
         try:
@@ -249,9 +276,21 @@ class Checks:
                 lines = (r.stderr or r.stdout).strip().splitlines()
                 return {"sha": sha, "state": "ERROR",
                         "summary": lines[0] if lines else f"start exited {r.returncode}"}
+            settled = self._settle(kind, sha)
+        else:
+            settled = True
         waited = 0
         while True:
             res = self.result(kind, sha)
+            if res["state"] == "LOST" and settled:
+                # result looks for the DONE file before it looks for the
+                # runner, so a run that ends between the two reads as LOST.
+                # The DONE file is in place before the runner exits: a second
+                # read tells such a run from one that was killed. A run whose
+                # pid file never turned up is not read again: the LOST read
+                # removed its worktree, so a runner that starts after it can
+                # only fail.
+                res = self.result(kind, sha)
             if res["state"] != "RUNNING":
                 break
             if waited >= self.timeout:
@@ -1025,7 +1064,7 @@ def self_test() -> list:
             m["id"][1:].isdigit() and int(m["id"][1:]) > 7 and m["acked_at"] is None
             for m in msgs.values()) and "src/shared.txt" in msgs["D"]["text"])
         check("lock cleared", lead["merging"] is None
-              and lead["last_merged"]["task_id"] == "ta")
+              and (lead["last_merged"] or {}).get("task_id") == "ta")
         check("te untouched", tasks["te"]["state"] == "working")
         git(coord, "fetch", "-q", "origin")
         log = git(coord, "log", "--format=%s%n%b", "origin/main")
@@ -1107,7 +1146,83 @@ def self_test() -> list:
         check("revert after reuse", te["state"] == "resync" and te["merged_sha"] is None
               and "reverted" in te["resync_reason"] and "revert" in [a["kind"] for a in rep.actions]
               and "FAIL_e" not in git(coord, "ls-tree", "--name-only", "origin/main"))
+
+        # Under load, run_checks.sh's start can return before its detached
+        # runner has written the pid file. A result read then says LOST and
+        # removes the run's worktree, so the queue must not read one before
+        # the pid file is there.
+        def fake(name, **kw):
+            d = tmp / name
+            d.mkdir()
+            return _FakeRunner(repo, {**env, "CHECK_DIR": str(d)}, **kw)
+        late = fake("late", pid_delay=1.0, states=["RUNNING", "PASS"])
+        res = late.run("full", "a" * 40)
+        late.timer.join()
+        check("late pid file: no early result", "LOST" not in late.seen)
+        check("late pid file: the run passes", res["state"] == "PASS")
+        # result looks for the DONE file, then for the runner: a run that ends
+        # between the two reads as LOST once, then as ended.
+        ended = fake("ended", states=["RUNNING", "LOST", "PASS"])
+        res = ended.run("full", "b" * 40)
+        check("run ended between reads: passes", res["state"] == "PASS")
+        lost = fake("lost", states=["RUNNING", "LOST", "LOST"])
+        res = lost.run("full", "c" * 40)
+        check("run lost: says so", res["state"] == "LOST")
+        # Past the grace period with no pid file, the first LOST read has
+        # already removed the run's worktree: a runner that turns up after it
+        # can only fail, so the queue takes that LOST as it is.
+        gone = fake("gone", pid_delay=None, pid_on_lost=True, start_grace=0.1,
+                    states=["RUNNING", "FAIL"])
+        res = gone.run("full", "d" * 40)
+        check("no pid file in the grace period: lost", res["state"] == "LOST")
     return fails
+
+
+class _FakeRunner(Checks):
+    """run_checks.sh as seen under load, for the self-test: start returns at
+    once, the runner writes its pid file pid_delay seconds later, and from
+    then on result gives states in turn (the last one again once they run
+    out). Before the pid file is there, result says LOST, as run_checks.sh's
+    does."""
+
+    def __init__(self, repo, env, states, pid_delay=0.0, pid_on_lost=False,
+                 start_grace=START_GRACE):
+        super().__init__(repo, env=env, full_cmd="true", poll=0.05, timeout_min=1,
+                         start_grace=start_grace)
+        self.states, self.pid_delay = list(states), pid_delay
+        # pid_delay None: start never writes the pid file. pid_on_lost: the
+        # runner writes it just after the first LOST read.
+        self.pid_on_lost = pid_on_lost
+        self.seen, self.timer = [], None
+
+    def _sh(self, kind, *args):
+        sha = args[1]
+        d = pathlib.Path(self._env(kind)["CHECK_DIR"])
+        pidf, logf = d / f"check-{sha}.pid", d / f"check-{sha}.log"
+        if args[0] == "start":
+            logf.write_text("")
+            write = lambda: pidf.write_text("4242\n")
+            if self.pid_delay is None:
+                pass
+            elif self.pid_delay:
+                import threading
+                self.timer = threading.Timer(self.pid_delay, write)
+                self.timer.start()
+            else:
+                write()
+            return subprocess.CompletedProcess(args, 0, f"started: sha={sha}\n", "")
+        if not logf.exists():
+            state = "NONE"
+        elif not (pidf.exists() and pidf.read_text().strip()):
+            state = "LOST"
+            if self.pid_on_lost:
+                pidf.write_text("4242\n")
+                self.pid_on_lost = False
+        else:
+            state = self.states.pop(0) if len(self.states) > 1 else self.states[0]
+        self.seen.append(state)
+        return subprocess.CompletedProcess(args, 0, json.dumps(
+            {"sha": sha, "state": state, "summary": "", "log": str(logf)}) + "\n", "")
 
 
 if __name__ == "__main__":

@@ -31,9 +31,9 @@ history). Then it works out, without writing anything:
   `merged` task is flagged, not copied.
 - **next tasks**: the tasks an agent could start now, within the building
   cap (`cycle_needed.needs`), as "start" actions for the lead.
-- **messages**: a message acknowledged in the recipient's pushed `acks` gets
-  `acked_at`; one past `ack_by` without it is flagged (the agent is
-  restarted by step 6).
+- **messages**: a message acknowledged in the recipient's pushed `acks` (each
+  ack a message id, or an object with the id in `id`) gets `acked_at`; one
+  past `ack_by` without it is flagged (the agent is restarted by step 6).
 - **requests**: every request in a status file that `requests.md` does not
   list yet is to be copied under its addressee; an answer pushed in any
   status file is to be copied too; an unanswered request past `due` is
@@ -327,8 +327,8 @@ def plan(world: dict, now: dt.datetime) -> dict:
         _act(actions, "start", tid, f"{tid} can start: start {tasks[tid].get('assigned_to')}")
 
     # 4. Messages.
-    acks = {a: set((i["status"] or {}).get("acks") or []) for a, i in statuses.items()}
-    acks["lead"] = set(lead.get("acks") or [])
+    acks = {a: ack_ids((i["status"] or {}).get("acks")) for a, i in statuses.items()}
+    acks["lead"] = ack_ids(lead.get("acks"))
     for m in backlog.get("messages", []):
         if m.get("acked_at"):
             continue
@@ -412,6 +412,17 @@ def plan(world: dict, now: dt.datetime) -> dict:
 
 
 _ID = re.compile(r"([A-Za-z0-9]+(?:-[A-Za-z0-9]+)*?-R)(\d+)")
+
+
+def ack_ids(acks) -> set:
+    """The message ids in a status file's acks: each given as a string, or as
+    an object whose id is the message's (the rest of it is the agent's note)."""
+    ids = set()
+    for a in acks or []:
+        a = a.get("id") if isinstance(a, dict) else a
+        if isinstance(a, str) and a:
+            ids.add(a)
+    return ids
 
 
 def listed_requests(text: str) -> dict:
@@ -534,6 +545,7 @@ def _fixture(tmp: pathlib.Path):
             {"id": "M1", "to": "S1", "ack_by": T("11:00"), "acked_at": None},
             {"id": "M2", "to": "S3", "ack_by": T("11:00"), "acked_at": None},
             {"id": "M3", "to": "lead", "ack_by": T("13:00"), "acked_at": None},
+            {"id": "M4", "to": "S2", "ack_by": T("13:00"), "acked_at": None},
         ],
     }
     write(BACKLOG, backlog)
@@ -567,6 +579,7 @@ def _fixture(tmp: pathlib.Path):
     commit("S2 work", T("06:00"))
     status("S2", T("06:05"), task_id="t2", task_state="working",
            expected_next_update_by=T("06:50"),
+           acks=["M9", {"id": "M4", "note": "an ack given as an object"}],
            requests=[{"id": "S2-R1", "from": "S2", "to": "S3", "ask": "a",
                       "due": T("10:00"), "default": "do b"},
                      {"id": "S2-R2", "from": "S2", "to": "S1", "ask": "b",
@@ -650,6 +663,7 @@ def self_test() -> int:
         check("start", has("start", "t6") and not has("start", "t5"))
         # Messages.
         check("ack copied", has("ack", "M1") and has("ack", "M3"))
+        check("ack given as an object", has("ack", "M4"))
         check("ack missed", has("flag", "M2", "not acknowledged"))
         # Requests.
         check("request copy", has("request", "S2-R1", "copy into") and has("request", "S2-R2", "copy into"))
