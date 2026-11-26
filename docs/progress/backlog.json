@@ -544,39 +544,6 @@
       "estimate_h": 3
     },
     {
-      "phase": 0,
-      "role": "coordinator",
-      "gate_items": [],
-      "attempts": 0,
-      "tier": 1,
-      "critical": false,
-      "state": "open",
-      "claim": null,
-      "prior_branch": null,
-      "prior_sha": null,
-      "ready_sha": null,
-      "merged_sha": null,
-      "exceptions": [],
-      "updated_at": "2026-11-26T01:30:00Z",
-      "updated_by": "lead",
-      "id": "3D0-CO-queue-flake",
-      "title": "Coordinator: merge_queue.py's self-test is deterministic (M1-R3: 'lock cleared' reads last_merged as None, about 1 run in 3), and cycle.py reads a status file's acks when they are objects (M2.json on claude/3d-mask crashes it: unhashable dict)",
-      "model": "Opus 5.5",
-      "effort": "high",
-      "assigned_to": "SP-bt-01",
-      "files": [
-        "tools/coord/merge_queue.py",
-        "tools/coord/cycle.py"
-      ],
-      "deps": [],
-      "done_when": [
-        "python3 tools/coord/cycle.py --self-test passes 20 runs in a row",
-        "cycle.py's dry run reads acks given as strings or as objects with an id, with a self-test case that fails before the fix",
-        "bash tools/check_all.sh"
-      ],
-      "estimate_h": 2
-    },
-    {
       "id": "3D0-OW-phone-trial",
       "title": "Owner: the renderer trial (Compatibility against Mobile) and one frame-time run on a real phone (D4)",
       "phase": 0,

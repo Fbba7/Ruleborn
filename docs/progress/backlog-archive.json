@@ -8408,6 +8408,39 @@
       "ready_sha": "deafdd0a",
       "merged_sha": "a34f20ac",
       "exceptions": []
+    },
+    {
+      "phase": 0,
+      "role": "coordinator",
+      "gate_items": [],
+      "attempts": 0,
+      "tier": 1,
+      "critical": false,
+      "state": "merged",
+      "claim": null,
+      "prior_branch": "claude/ui-spec-coord",
+      "prior_sha": null,
+      "ready_sha": "e0a0499c8d67a32480e6f56d48e1fee2e015144c",
+      "merged_sha": "443182df",
+      "exceptions": [],
+      "updated_at": "2026-11-26T03:05:00Z",
+      "updated_by": "lead",
+      "id": "3D0-CO-queue-flake",
+      "title": "Coordinator: merge_queue.py's self-test is deterministic (M1-R3: 'lock cleared' reads last_merged as None, about 1 run in 3), and cycle.py reads a status file's acks when they are objects (M2.json on claude/3d-mask crashes it: unhashable dict)",
+      "model": "Opus 5.5",
+      "effort": "high",
+      "assigned_to": "SP-bt-01",
+      "files": [
+        "tools/coord/merge_queue.py",
+        "tools/coord/cycle.py"
+      ],
+      "deps": [],
+      "done_when": [
+        "python3 tools/coord/cycle.py --self-test passes 20 runs in a row",
+        "cycle.py's dry run reads acks given as strings or as objects with an id, with a self-test case that fails before the fix",
+        "bash tools/check_all.sh"
+      ],
+      "estimate_h": 2
     }
   ],
   "idle_queue": [

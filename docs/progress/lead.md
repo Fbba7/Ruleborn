@@ -217,8 +217,10 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxoG12caN7yyrvRzWSB` (cycle 209,
-26 November 2026 from about 02:14Z, started by the Opus 5.5 launcher).
+Latest lead cycle session: `session_01SNkKxpQsrHbWjUUKuWhdXk` (cycle 210,
+26 November 2026 from about 02:39Z, started by the Opus 5.5 launcher).
+Cycle 209's was `session_01SNkKxoG12caN7yyrvRzWSB` (26 November, from
+about 02:14Z).
 Cycle 208's was `session_01SNkKxp2mpvTYM3zZh3Gi1C` (26 November, from
 about 01:38Z).
 Cycle 207's was `session_01SNkKxr9K2YqiE7qf9taX7r` (26 November, from
@@ -450,7 +452,7 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
 | M2 | `session_01SNkKxrB9QRrPjRunKNvHgP` (Opus 5.5, effort high) | 3D0-M2-mask-screens (restart, cycle 209: resync after the verifier failed universe Q11 (the galaxy backdrop counted as island) and the realm's buildings classed as decoration; Opus 5.5 high by order 7, a resync; M2's last session, `session_01SNkKxmfUr1jfnjsq8DnggV`, is idle) | `claude/3d-mask` | 2026-11-26 02:31Z |
-| SP-bt-01 | `session_01SNkKxqcX7brniT4BXdBWu8` (Opus 5.5, effort high) | 3D0-CO-queue-flake (start, cycle 207: the coordinator task of cycle 206, assigned to the coordinator specialist; Opus 5.5 high as the task names, the merge queue and its lock; SP-bt-01's last session, `session_01SNkKxnk1jnaFLfc14YYCAq`, is idle, its task merged) | `claude/ui-spec-coord` | 2026-11-26 01:19Z |
+| SP-bt-01 | `session_01SNkKxqcX7brniT4BXdBWu8` (Opus 5.5, effort high; idle, task merged in cycle 210) | 3D0-CO-queue-flake (start, cycle 207: the coordinator task of cycle 206, assigned to the coordinator specialist; Opus 5.5 high as the task names, the merge queue and its lock; SP-bt-01's last session, `session_01SNkKxnk1jnaFLfc14YYCAq`, is idle, its task merged) | `claude/ui-spec-coord` | 2026-11-26 01:19Z |
 | M2 | `session_01SNkKxmfUr1jfnjsq8DnggV` (Opus 5.5, effort medium; idle, task sent to resync in cycle 209) | 3D0-M2-mask-screens (start, cycle 206: M1-R2's mask task seeded after the baseline merged; Opus 5.5 medium by order 7, a complex task in tools/render; M2's last session, `session_01SNkKxpBiaVYnEU6QASbpEV`, is idle, its task merged) | `claude/3d-mask` | 2026-11-26 00:50Z |
 | M1 | `session_01SNkKxpnpiNRd38EhMM9ukJ` (Opus 5.5, effort high) | 3D0-M1-baseline (restart, cycle 203: resync after the verifier found that --no-render overwrites the committed baseline data with nulls; Opus 5.5 high by order 7, a resync; M1's last session, `session_01SNkKxn9dm8J8WUsKvxtyJ6`, is idle) | `claude/3d-measure` | 2026-11-25 22:31Z |
 | M2 | `session_01SNkKxpBiaVYnEU6QASbpEV` (Opus 5.5, effort high) | 3D0-M2-find-it (restart, cycle 202: resync after the verifier failed the shown guard's sight check (pale dots and petals credit it); Opus 5.5 high by order 7, a resync; M2's last session, `session_01SNkKxoLp1JEhwF88WFhv8b`, is idle) | `claude/3d-mask` | 2026-11-25 21:00Z |
@@ -1051,6 +1053,29 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 210**, 26 November 2026, from about 02:39Z (session
+  `session_01SNkKxpQsrHbWjUUKuWhdXk`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 209:
+  SP-bt-01 marked 3D0-CO-queue-flake ready at e0a0499c (pre-check PASS);
+  M2 claimed the 3D0-M2-mask-screens resync and is working.
+  **Verify / merge:** the candidate passed the ownership and claims
+  checks and the documents check, and differs from `ready_sha` only
+  under `docs/progress/`, so checks reused from the pre-check at
+  `e0a0499c`. The Opus 5.5 high verifier passed it: both self-tests 20
+  of 20 in a row, main's copy failed 3 of 24 parallel runs under load
+  and the candidate 0 of 72, and each reverted part of the fix makes its
+  self-test case fail. **Merged** 3D0-CO-queue-flake as 443182df;
+  main's `check_all.sh` runs after the merge. Minor points left to
+  their requests: `cycle_needed.py` still reads the lead's acks as
+  strings (SPbt01-R2), and `run_checks.sh`'s own LOST races stay for
+  its other callers (SPbt01-R3). **Started:** none; one builder (M2)
+  works, under the cap of three while the seven-day bar reads
+  `allowed_warning`. M1's seat waits for the mask task; SP-bt-01's,
+  DT1's and CF1's seats are free with no 3D task open for them.
+  **Requests:** M2-R1, M2-R2, SPbt01-R2 and SPbt01-R3 stay at their
+  defaults. **Owner:** the phone trial and the style-frame pick are
+  still open (owner inbox).
+
 - **Cycle 209**, 26 November 2026, from about 02:14Z (session
   `session_01SNkKxoG12caN7yyrvRzWSB`, started by the Opus 5.5 launcher,
   Opus 5.5 at effort medium by order 7). The changes since cycle 208:
@@ -1091,22 +1116,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   task open for them. **Requests:** M2-R1 and M2-R2 stay at their
   defaults. **Owner:** the phone trial and the style-frame pick are
   still open (owner inbox).
-
-- **Cycle 207**, 26 November 2026, from about 01:15Z (session
-  `session_01SNkKxr9K2YqiE7qf9taX7r`, started by the Opus 5.5 launcher,
-  Opus 5.5 at effort medium by order 7). The changes since cycle 206:
-  M2 claimed 3D0-M2-mask-screens and pushed a work-in-progress commit
-  (7dd9d05); its session is working. **Verify / merge:** nothing is
-  ready. **Assigned:** 3D0-CO-queue-flake goes to SP-bt-01, the
-  coordinator-script specialist (its seat owns `tools/coord/`; this is
-  a 3D-wave task, not a reopening of the BT track); its prompt now names
-  the task and order 8. **Started:** SP-bt-01 on 3D0-CO-queue-flake
-  (`session_01SNkKxqcX7brniT4BXdBWu8`, Opus 5.5 high). Two builders
-  work, under the cap of three while the seven-day bar reads
-  `allowed_warning`. M1's seat waits for the mask task; DT1's and CF1's
-  seats are free with no 3D task open for them. **Requests:** M2-R1 and
-  M2-R2 stay at their defaults. **Owner:** the phone trial and the
-  style-frame pick are still open (owner inbox).
 
 - **Restart, 25 November 2026** (the overseer). The owner restarted the
   program on the 3D quality plan ("Based on the plan made by Fable, let's
