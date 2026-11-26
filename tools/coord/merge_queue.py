@@ -278,6 +278,12 @@ class Checks:
         waited = 0
         while True:
             res = self.result(kind, sha)
+            if res["state"] == "LOST":
+                # result looks for the DONE file before it looks for the
+                # runner, so a run that ends between the two reads as LOST.
+                # The DONE file is in place before the runner exits: a second
+                # read tells such a run from one that was killed.
+                res = self.result(kind, sha)
             if res["state"] != "RUNNING":
                 break
             if waited >= self.timeout:
@@ -1138,45 +1144,61 @@ def self_test() -> list:
         # runner has written the pid file. A result read then says LOST and
         # removes the run's worktree, so the queue must not read one before
         # the pid file is there.
-        late_dir = tmp / "late"
-        late_dir.mkdir()
-        late = _LateStart(repo, {**env, "CHECK_DIR": str(late_dir)}, poll=0.05)
+        def fake(name, **kw):
+            d = tmp / name
+            d.mkdir()
+            return _FakeRunner(repo, {**env, "CHECK_DIR": str(d)}, **kw)
+        late = fake("late", pid_delay=1.0, states=["RUNNING", "PASS"])
         res = late.run("full", "a" * 40)
         late.timer.join()
-        check("late pid file: no early result", not late.lost)
+        check("late pid file: no early result", "LOST" not in late.seen)
         check("late pid file: the run passes", res["state"] == "PASS")
+        # result looks for the DONE file, then for the runner: a run that ends
+        # between the two reads as LOST once, then as ended.
+        ended = fake("ended", states=["RUNNING", "LOST", "PASS"])
+        res = ended.run("full", "b" * 40)
+        check("run ended between reads: passes", res["state"] == "PASS")
+        lost = fake("lost", states=["RUNNING", "LOST", "LOST"])
+        res = lost.run("full", "c" * 40)
+        check("run lost: says so", res["state"] == "LOST")
     return fails
 
 
-class _LateStart(Checks):
+class _FakeRunner(Checks):
     """run_checks.sh as seen under load, for the self-test: start returns at
-    once, and the runner writes its pid file a second later."""
+    once, the runner writes its pid file pid_delay seconds later, and from
+    then on result gives states in turn (the last one again once they run
+    out). Before the pid file is there, result says LOST, as run_checks.sh's
+    does."""
 
-    def __init__(self, repo, env, poll):
-        super().__init__(repo, env=env, full_cmd="true", poll=poll, timeout_min=1)
-        self.lost = False
-        self.polls = 0
-        self.timer = None
+    def __init__(self, repo, env, states, pid_delay=0.0):
+        super().__init__(repo, env=env, full_cmd="true", poll=0.05, timeout_min=1)
+        self.states, self.pid_delay = list(states), pid_delay
+        self.seen, self.timer = [], None
 
     def _sh(self, kind, *args):
         sha = args[1]
         d = pathlib.Path(self._env(kind)["CHECK_DIR"])
         pidf, logf = d / f"check-{sha}.pid", d / f"check-{sha}.log"
-        out = lambda state: subprocess.CompletedProcess(args, 0, json.dumps(
-            {"sha": sha, "state": state, "summary": "", "log": str(logf)}) + "\n", "")
         if args[0] == "start":
             logf.write_text("")
-            import threading
-            self.timer = threading.Timer(1.0, lambda: pidf.write_text("4242\n"))
-            self.timer.start()
+            write = lambda: pidf.write_text("4242\n")
+            if self.pid_delay:
+                import threading
+                self.timer = threading.Timer(self.pid_delay, write)
+                self.timer.start()
+            else:
+                write()
             return subprocess.CompletedProcess(args, 0, f"started: sha={sha}\n", "")
         if not logf.exists():
-            return out("NONE")
-        if not (pidf.exists() and pidf.read_text().strip()):
-            self.lost = True
-            return out("LOST")
-        self.polls += 1
-        return out("PASS" if self.polls > 1 else "RUNNING")
+            state = "NONE"
+        elif not (pidf.exists() and pidf.read_text().strip()):
+            state = "LOST"
+        else:
+            state = self.states.pop(0) if len(self.states) > 1 else self.states[0]
+        self.seen.append(state)
+        return subprocess.CompletedProcess(args, 0, json.dumps(
+            {"sha": sha, "state": state, "summary": "", "log": str(logf)}) + "\n", "")
 
 
 if __name__ == "__main__":
