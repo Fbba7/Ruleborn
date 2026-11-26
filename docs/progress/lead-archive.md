@@ -5,6 +5,31 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 211**, 26 November 2026, from about 03:39Z (session
+  `session_01SNkKxnwWHQpkgc5qyz6wAn`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 210:
+  M2 marked the 3D0-M2-mask-screens resync ready at 3ee3aa27 (pre-check
+  PASS). **Verify / merge:** the candidate passed the ownership and
+  claims checks and merges cleanly, but the Opus 5.5 high verifier
+  failed it. The first attempt's points are fixed (the galaxy no longer
+  counts as island; screen_realm's Q5 reads 2 of 6 buildings on one path
+  and Q12 0 of 4 shadowed; the 8% tolerance is in mask.md; `chosen` is
+  -1), and the self-test fails on main's measure.py. Blocking: the
+  universe map's 2D pins leak into world.png and id.png, because
+  `_own_2d(false)` sets `visible` and home.gd re-shows the pins every
+  frame; pin colours decode as wrong classes and universe Q11 under-reads
+  (universe_home under_share 0.007, 0.273 with the pins hidden). Minor:
+  mask.md does not say whether screen_realm's edge hits come from the
+  underside rock; M2.md's handoff is stale. Nothing merged; the task is
+  `resync` (attempt 2). **Started:** M2 on the resync
+  (`session_01SNkKxoEguEtd88C3hWyuT5`, Opus 5.5 high, a resync by order
+  7). One builder works, under the cap of three while the seven-day bar
+  reads `allowed_warning`. M1's seat waits for the mask task; SP-bt-01's,
+  DT1's and CF1's seats are free with no 3D task open for them.
+  **Requests:** M2-R1, M2-R2, SPbt01-R2 and SPbt01-R3 stay at their
+  defaults. **Owner:** the phone trial and the style-frame pick are
+  still open (owner inbox).
+
 - **Cycle 210**, 26 November 2026, from about 02:39Z (session
   `session_01SNkKxpQsrHbWjUUKuWhdXk`, started by the Opus 5.5 launcher,
   Opus 5.5 at effort medium by order 7). The changes since cycle 209:
