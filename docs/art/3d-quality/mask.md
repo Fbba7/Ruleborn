@@ -250,6 +250,67 @@ within about a point; `bounds_points` was visibly too tall, and
 `silhouette_points` matched a standing guard's body but left out its
 raised head under the camera's pitch, as the Q2 readings table says.
 
+## Each kind of screen
+
+The pass finds the screen's 3D view by what is drawn, not by the shot's
+name: the largest visible `WorldView` (a heist, or a realm screen's
+`StageView`), else the largest visible `StageHero` (a character stage),
+else the largest visible `UniverseView`. A view that is built but hidden
+does not count. `mask.json` says which it found in `"screen"`, and
+`measure.py` answers each quality that the kind of screen can show,
+and says why for the others (`WHY` in `measure.py`; `measure.json` holds
+`"applies": false` and the reason).
+
+| Kind | Shots (the baseline's "mask limit" rows) | Q1 | Q2 | Q3 | Q4 | Q5 | Q6 | Q11 | Q12 |
+|---|---|---|---|---|---|---|---|---|---|
+| `heist` | `screen_heist`, `screen_laws`, `screen_replay`, `screen_result`, the matrix | yes | yes | yes | yes | yes | yes | chosen crew, nearest guard, vault | figures, buildings, cliffs |
+| `realm` | `screen_realm`, `screen_builder`, `screen_curation`, `screen_defences` (`TAB=0`), `screen_landing`, `screen_planner`, `screen_scout` | yes | when figures are drawn | when figures are drawn | when figures are drawn | yes | when figures are drawn | the island | buildings, cliffs; figures when drawn |
+| `character` | `screen_character`, `screen_first`, `screen_forms`, `screen_hatch`, `screen_roster`, `screen_sage_hall` | yes | yes | yes | yes | no | no | the character | the character's shadow disc |
+| `universe` | `universe_home`, `universe_zoom`, `universe_map`, `universe_screen` | yes | no | no | no | no | no | the home island | no |
+| `none` | `screen_observatory` | yes | no | no | no | no | no | no | no |
+
+Why each "no" and "when":
+
+- **Realm, Q2 to Q4 and Q6.** A realm screen hides the heist's crew and
+  guards (`RealmScreen` sets `actors.visible = false`), so there are no
+  figures for heights, contrast, pile-ups or the markers on them. Where a
+  realm screen does draw figures (the builder's guards on their posts),
+  the pass lists them and these qualities are measured as on a heist.
+  The town's residents and workers are life in the realm, not figures the
+  player steers: they are decoration. Q5 and Q12's buildings and cliffs
+  apply: the plan's realm goals (section 4) are paths, buildings and
+  depth. Q11 rates the island: the plan's "the island not cut off on
+  realm screens".
+- **Character, Q5 and Q6.** A character stands on a plinth before a
+  backdrop, not on ground with paths and buildings, and the stage draws
+  no world markers. Q2 to Q4 measure each character (`h<i>`): height,
+  contrast with the plinth behind it, and how much of its head the
+  interface hides. Q11 rates the chosen character (the first, where the
+  screen chooses none) and its share of the frame's height (the plan's
+  "the character at least a third of the screen's height", `THIRD`).
+  Q12 counts the character's contact shadow: the stage's shadow disc under
+  each plinth, drawn in the id pass as a thin disc of radius 0.4 in the
+  figure's shadow code (the stage's own disc is a soft texture with no
+  clear edge).
+- **Universe, Q2 to Q6 and Q12.** The universe draws islands, not
+  figures; the islands are too small at this distance for paths and
+  buildings to read; and they float over the sky with nothing to cast a
+  shadow on. The universe's pins (`UniversePins`) are counted as
+  interface: they are the screen's labels, drawn in 2D over the world, not
+  markers in the world. Q1 says how much of the universe the interface
+  leaves clear; Q11 rates the player's island.
+- **None.** `screen_observatory` builds its card pictures in an offscreen
+  `StageView` that is never drawn (`stage_thumbs.gd`), so the frame holds
+  no 3D view. The pass saves the frame as `beauty.png` and as both `ui_`
+  passes (all interface), black world and id passes, and `mask.json` with
+  `"screen": "none"`; Q1 then reads the whole frame as interface.
+
+**Root-window shots.** A screen shot draws on the root window, which
+`project.godot` sizes at half the phone (540 × 1170, stretched). The pass
+scales each saved pass back to the frame's own 1080 × 2340 with no blending,
+so the id colours stay exact and every rectangle in `mask.json` matches the
+images, as on a heist shot's SubViewport.
+
 ## Known limits
 
 - **The plan's "nearest guard"** is matched by guard 0, not by the guard
