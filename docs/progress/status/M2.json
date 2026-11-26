@@ -3,27 +3,21 @@
   "role": "measure track",
   "branch": "claude/3d-mask",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
+  "agent_state": "active",
   "task_id": "3D0-M2-mask-screens",
-  "task_state": "ready",
-  "claimed_at": "2026-11-26T02:35:00Z",
-  "lease_until": "2026-11-26T06:31:25Z",
-  "updated_at": "2026-11-26T03:31:25Z",
-  "expected_next_update_by": "2026-11-26T06:31:25Z",
+  "task_state": "claimed",
+  "claimed_at": "2026-11-26T03:55:00Z",
+  "lease_until": "2026-11-26T06:55:00Z",
+  "updated_at": "2026-11-26T03:55:00Z",
+  "expected_next_update_by": "2026-11-26T04:40:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "3ee3aa2735019c9c7198ce304c5eb0c173768c9b",
-    "next_step": "ready for the verifier at 3ee3aa27"
+    "next_step": "resync attempt 2 (cycle 211): stop the universe pins leaking into world.png and id.png"
   },
-  "precheck": {
-    "sha": "3ee3aa2735019c9c7198ce304c5eb0c173768c9b",
-    "state": "PASS",
-    "exit": 0,
-    "finished_at": "2026-11-26T03:31:07Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
-  "ready_sha": "3ee3aa2735019c9c7198ce304c5eb0c173768c9b",
+  "ready_sha": null,
   "stop_at": "2026-12-02T21:00:00Z",
   "acks": [
     "cycle-206-start"
@@ -60,5 +54,5 @@
     }
   ],
   "answers": [],
-  "next_step": "3D0-M2-mask-screens ready at 3ee3aa27 (resync; pre-check PASS, owners diff clean, measure.py --self-test ok): verifier points 1-5 fixed, mask.md's results table re-rendered on all 22 mask-limit shots. Next: the verifier's review."
+  "next_step": "resync attempt 2: hide the stage's own 2D so home.gd cannot show it again; check id.png for stray colours; re-render the universe shots"
 }
