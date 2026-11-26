@@ -3,21 +3,27 @@
   "role": "specialist",
   "branch": "claude/ui-spec-coord",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "3D0-CO-queue-flake",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-26T01:30:00Z",
   "lease_until": "2026-11-26T04:30:00Z",
-  "updated_at": "2026-11-26T02:16:00Z",
-  "expected_next_update_by": "2026-11-26T03:01:00Z",
+  "updated_at": "2026-11-26T02:40:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": null,
-    "next_step": "Review done (ready; its Minor 1 fixed test-first); self-tests 20/20 sequential, 16/16 loaded; pre-check running"
+    "last_green_sha": "e0a0499c8d67a32480e6f56d48e1fee2e015144c",
+    "next_step": "Ready at e0a0499c (pre-check PASS 02:39Z; owners diff passes); waiting for the lead's verifier and merge"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "e0a0499c8d67a32480e6f56d48e1fee2e015144c",
+    "state": "PASS",
+    "exit": 0,
+    "finished_at": "2026-11-26T02:39:42Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "e0a0499c8d67a32480e6f56d48e1fee2e015144c",
   "stop_at": "2026-12-02T21:00:00Z",
   "acks": [],
   "requests": [
