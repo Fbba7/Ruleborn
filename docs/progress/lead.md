@@ -217,8 +217,10 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxpVk3qU9Sg2wwL1V6J` (cycle 205,
-25 November 2026 from about 23:38Z, started by the Opus 5.5 launcher).
+Latest lead cycle session: `session_01SNkKxnGQoazsb2Zn5jJzzd` (cycle 206,
+26 November 2026 from about 00:14Z, started by the Opus 5.5 launcher).
+Cycle 205's was `session_01SNkKxpVk3qU9Sg2wwL1V6J` (25 November, from
+about 23:38Z).
 Cycle 204's was `session_01SNkKxnHHPKMvqUk6akhCWX` (25 November, from
 about 23:15Z).
 Cycle 203's was `session_01SNkKxq8jXHuXvuJg4yvtE3` (25 November, from
@@ -441,6 +443,7 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| M2 | `session_01SNkKxmfUr1jfnjsq8DnggV` (Opus 5.5, effort medium) | 3D0-M2-mask-screens (start, cycle 206: M1-R2's mask task seeded after the baseline merged; Opus 5.5 medium by order 7, a complex task in tools/render; M2's last session, `session_01SNkKxpBiaVYnEU6QASbpEV`, is idle, its task merged) | `claude/3d-mask` | 2026-11-26 00:50Z |
 | M1 | `session_01SNkKxpnpiNRd38EhMM9ukJ` (Opus 5.5, effort high) | 3D0-M1-baseline (restart, cycle 203: resync after the verifier found that --no-render overwrites the committed baseline data with nulls; Opus 5.5 high by order 7, a resync; M1's last session, `session_01SNkKxn9dm8J8WUsKvxtyJ6`, is idle) | `claude/3d-measure` | 2026-11-25 22:31Z |
 | M2 | `session_01SNkKxpBiaVYnEU6QASbpEV` (Opus 5.5, effort high) | 3D0-M2-find-it (restart, cycle 202: resync after the verifier failed the shown guard's sight check (pale dots and petals credit it); Opus 5.5 high by order 7, a resync; M2's last session, `session_01SNkKxoLp1JEhwF88WFhv8b`, is idle) | `claude/3d-mask` | 2026-11-25 21:00Z |
 | M1 | `session_01SNkKxn9dm8J8WUsKvxtyJ6` (Opus 5.5, effort high; idle, task sent to resync in cycle 203) | 3D0-M1-baseline (restart, cycle 200: resync after the verifier failed the table's coverage (screen_laws, universe_screens) and the '-' note; one tier up by order 7; M1's last session, `session_01SNkKxqcAXy4JEwSxwK6PFL`, is idle) | `claude/3d-measure` | 2026-11-25 19:51Z |
@@ -1040,6 +1043,31 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 206**, 26 November 2026, from about 00:14Z (session
+  `session_01SNkKxnGQoazsb2Zn5jJzzd`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 205:
+  M1 marked 3D0-M1-baseline ready at dee58fa after its second pre-check
+  passed. **Verify / merge:** an Opus 5.5 high verifier passed the
+  baseline against its `done_when` (minor findings moved into
+  3D0-M1-baseline-2); candidate 34d85938 passed the full checks (the
+  first waiter hit its time limit; the second read PASS), and the
+  baseline merged onto main at 76fe289d. `cycle.py`'s dry run crashed on
+  M2.json's acks written as objects, so the queue steps were done by
+  hand. **Seeded:** 3D0-M2-mask-screens (M2, Opus 5.5 medium; M1-R2's
+  mask tool on the realm, universe and character screens),
+  3D0-M1-baseline-2 (M1, Sonnet 5.5 medium, after the mask task; the
+  n/m cells and the verifier's minor findings) and 3D0-CO-queue-flake
+  (the coordinator, Opus 5.5 high: the `merge_queue` self-test flake of
+  M1-R3 and the string-or-object acks). **Started:** M2 on
+  3D0-M2-mask-screens (`session_01SNkKxmfUr1jfnjsq8DnggV`). M1's seat
+  waits for the mask task; DT1's and CF1's seats are free with no 3D task
+  open for them. **Requests:** M1-R2 is handled by the two new tasks,
+  M1-R3 by the coordinator task; M2-R1 and M2-R2 stay at their defaults.
+  The verifier noted that a fresh build leaves
+  `client/tests/shots/style_frame_heist.gd.uid` untracked (not M1's
+  file). **Owner:** phase 0's work is merged but for the owner's two
+  items, the phone trial and the style-frame pick (owner inbox).
+
 - **Cycle 205**, 25 November 2026, from about 23:38Z (session
   `session_01SNkKxpVk3qU9Sg2wwL1V6J`, started by the Opus 5.5 launcher,
   Opus 5.5 at effort medium by order 7). The changes since cycle 204:
@@ -1067,13 +1095,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   **Requests:** M1-R2, M2-R1 and M2-R2 stay at their defaults; M1-R2's
   task is seeded once the baseline merges. **Owner:** the phone trial
   and the style-frame pick are still open (owner inbox).
-
-- **Superpowers copied into the repository**, 25 November 2026 (the
-  overseer). The owner chose to copy the skills of order 8 into
-  `docs/process/superpowers/` (obra/superpowers at 22f0b46, MIT). From
-  now on, every builder prompt points at its README (cycle step 6).
-  M2-find-it's current session was started without them; its next
-  session gets them.
 
 - **Restart, 25 November 2026** (the overseer). The owner restarted the
   program on the 3D quality plan ("Based on the plan made by Fable, let's

@@ -4,6 +4,17 @@ Alerts and questions for the owner, newest first. The lead also sends each one
 as a direct message (work-order decision D-03). An entry is closed by
 recording the answer under it.
 
+## 2026-11-26 00:50Z: the 3D baseline is merged; phase 0 waits on your two items (cycle 206)
+
+- **What:** M1's baseline (`docs/art/3d-quality/baseline.md`) merged onto
+  main at 76fe289d, after its full checks and the Opus 5.5 high verifier
+  passed. M2 now extends the mask tool to the realm, universe and
+  character screens, and M1 then fills the cells the baseline could not
+  measure yet.
+- **Needs the owner:** phase 0 closes only with your two items: the
+  phone trial (3D0-OW-phone-trial) and your pick of a style frame in
+  `docs/art/3d-quality/style-frames.md`.
+
 ## 2026-11-25 18:30Z: the budget split and the mask tool are merged; the phone trial is yours now (cycle 197)
 
 - **What:** M1's budget split and M2's mask tool merged onto main at

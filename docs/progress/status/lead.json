@@ -1,20 +1,13 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-26T00:18:00Z",
-  "expected_next_update_by": "2026-11-26T02:45:00Z",
-  "cycle": 205,
-  "merging": {
-    "candidate_sha": "34d85938c7f524cd3f7efb8d6f23fcefe1cb32a1",
-    "task_ids": [
-      "3D0-M1-baseline"
-    ],
-    "started_at": "2026-11-26T00:18:00Z",
-    "expires_at": "2026-11-26T01:18:00Z"
-  },
+  "updated_at": "2026-11-26T00:55:00Z",
+  "expected_next_update_by": "2026-11-26T03:55:00Z",
+  "cycle": 206,
+  "merging": null,
   "last_merged": {
-    "task_id": "3D0-M2-find-it",
-    "merged_sha": "8aabe5ef",
-    "at": "2026-11-25T23:14:00Z"
+    "task_id": "3D0-M1-baseline",
+    "merged_sha": "76fe289d",
+    "at": "2026-11-26T00:50:00Z"
   },
   "acks": [
     "M15",
@@ -59,9 +52,9 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Verify (Opus 5.5 high subagent) and merge 3D0-M1-baseline (resync; M1's second pre-check, of dee58fa, is running) when it marks ready. If the merge_queue self-test flake (M1-R3) fails a candidate's full checks, re-run once and seed a coordinator task to make it deterministic. Once the baseline merges, seed a task for M1-R2 (mask tool on the realm and character screens, then a baseline rerun). M2's, DT1's and CF1's seats are free with no 3D task open. Every session created follows CLAUDE.md order 8. Restart M1 if it goes stale (expected update by 00:10Z). The owner runs the phone trial and picks a style frame.",
+  "next_step": "Verify (Opus 5.5 high subagent) and merge 3D0-M2-mask-screens when M2 marks it ready, then start M1 on 3D0-M1-baseline-2 (Sonnet 5.5 medium). Run or assign 3D0-CO-queue-flake (Opus 5.5 high) so cycle.py reads acks as strings or objects and the merge_queue self-test stops flaking; until then do the queue steps by hand when the dry run crashes. DT1's and CF1's seats are free with no 3D task open. Every session created follows CLAUDE.md order 8. Restart M2 if it goes stale. The owner runs the phone trial and picks a style frame to close phase 0.",
   "seen": {
-    "at": "2026-11-25T23:41:01Z",
+    "at": "2026-11-26T00:51:41Z",
     "heads": {
       "claude/3d-camera": "18ae7ba4d527593a82b80c10b3c82e0f0d7e1610",
       "claude/3d-character-screens": "6053b249bee313648da3509142eeb2ba738bb62f",
@@ -72,7 +65,7 @@
       "claude/3d-law-fx": "358a1f08179d315ec69ff5dcb037e34e89ee7a2b",
       "claude/3d-look": "815e381279f5fdb9952b28866ed6dc4121f2b1d5",
       "claude/3d-mask": "2d7d962a69c834e7f74f2a321359fd276704f733",
-      "claude/3d-measure": "559fd77a2ab41e99e9ea7dc3b1a0cd4bc7f78995",
+      "claude/3d-measure": "5aad9e6a162a04b8b9e0fda9a804ade468094239",
       "claude/3d-screens": "11679b2bf4d2670e7067791d3bbf32cfd64edc2d",
       "claude/3d-screens-world": "ea319807b0a7c177e1b1413c76ae945d63f3f399",
       "claude/3d-universe": "8d38c65e16196661441a4471fc406d82ce181edc",
@@ -139,6 +132,7 @@
     },
     "ready": {},
     "startable": [
+      "3D0-M2-mask-screens",
       "BT-05",
       "BT-06",
       "BT-09"
