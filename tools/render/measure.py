@@ -740,7 +740,7 @@ def _universe_test() -> None:
         try:
             measure(d)
         except ValueError as e:
-            assert "id.png" in str(e) and "600 pixels" in str(e), e
+            assert str(e).startswith("id.png: 600 pixels "), e
         else:
             raise AssertionError("a pin in id.png was measured")
 

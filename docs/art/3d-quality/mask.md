@@ -358,8 +358,10 @@ Why each "no" and "when":
   `"screen": "none"`; Q1 then reads the whole frame as interface.
 
 **The shots on 26 November 2026** (`mask.py`, each with exit 0, no
-script error and no unclassed mesh; the resync's run, after the town's
-houses became buildings and the galaxy was hidden):
+script error, no unclassed mesh and no stray colour in `id.png`; the
+second resync's run, after the pins, the vignette, the result screen's
+fade and the clear colour round a small view were kept out of the id
+pass):
 
 | Shot | Kind | Figures | Buildings (Q5, Q12) | Q11 |
 |---|---|---|---|---|
@@ -369,13 +371,15 @@ houses became buildings and the galaxy was hidden):
 | `screen_result` | heist | crew 14.5–33.8 pt | none in frame | chosen under a panel |
 | `screen_realm` | realm | none | 6 (2 on one path), 0 of 4 shadowed | island cut left and right |
 | `screen_builder`, `screen_curation` | realm | guards 38–40 pt | 4 (1 on one path), 0 of 4 shadowed | island cut left and right |
-| `screen_defences` (`TAB=0`) | realm | crew 8–18.7 pt, guard 22.1 pt | 4 (2 on one path), 0 of 3 shadowed | island cut top and bottom |
+| `screen_defences` (`TAB=0`) | realm | crew 8–18.7 pt, guard 22.2 pt | 4 (2 on one path), 0 of 3 shadowed | island cut top and bottom |
 | `screen_planner` | realm | none | none in frame | island clear |
 | `screen_scout` | realm | none | none in frame | island cut left and right |
 | `screen_character`, `screen_forms`, `screen_hatch`, `screen_roster`, `screen_sage_hall` | character | one, 99–125 pt | not measured | clear, 13.6–17.6% of the height (fail) |
 | `screen_first` | character | three, 177–240 pt | not measured | h0 cut, h1 clear, h2 cut; 30.9% (fail) |
-| `universe_home`, `universe_zoom`, `universe_screen` | universe | not measured | not measured | the Heart clear |
-| `universe_map` | universe | not measured | not measured | the Heart under a panel (57% under its chips) |
+| `universe_home` | universe | not measured | not measured | the Heart clear (27.3% under the interface) |
+| `universe_zoom` | universe | not measured | not measured | the Heart clear (46.6% under, near the 50% line) |
+| `universe_screen` | universe | not measured | not measured | the Heart clear (22.1% under) |
+| `universe_map` | universe | not measured | not measured | the Heart under a panel (56.9% under its chips) |
 | `screen_observatory` | none | not measured | not measured | not measured |
 
 The town's houses read unshadowed (foot luma about 1.0 of the tops'):
@@ -415,6 +419,7 @@ images, as on a heist shot's SubViewport.
 - **Q12's cliffs-darker check** is weak on this island: cliff faces read
   115.1 against tops at 114.8 at sneak, 15 tiles. The measure works, but
   the island has few cliff pixels in frame, so it says little here.
+  `screen_replay` reads cliffs lighter than tops (47.2 against 39.1).
 - **The strict band** moves with the moment's bubbles and labels (19.1%
   at sneak, 15 tiles; the plan's 16.6% was from another frame). Use
   `band` for Q1's target.
