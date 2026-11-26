@@ -8441,6 +8441,44 @@
         "bash tools/check_all.sh"
       ],
       "estimate_h": 2
+    },
+    {
+      "id": "3D0-M1-baseline",
+      "title": "The baseline: every 3D shot in client/tests/shots/ rendered and measured with the mask tool; the table published beside the plan",
+      "phase": 0,
+      "role": "measure track",
+      "model": "Opus 5.5",
+      "effort": "high",
+      "assigned_to": "M1",
+      "files": [
+        "docs/art/3d-quality/baseline.md",
+        "docs/art/3d-quality/baseline/**",
+        "docs/progress/M1.md",
+        "docs/progress/status/M1.json"
+      ],
+      "deps": [
+        "3D0-M1-budget-split",
+        "3D0-M2-mask-tool"
+      ],
+      "done_when": [
+        "baseline.md has one row per 3D shot: budget split, draw calls, Q1 to Q6, Q11, Q12",
+        "Its numbers are reproducible with the one command it names"
+      ],
+      "gate_items": [],
+      "attempts": 2,
+      "estimate_h": 6,
+      "tier": 1,
+      "critical": true,
+      "state": "merged",
+      "claim": null,
+      "prior_branch": "claude/3d-measure",
+      "prior_sha": "dee58faac35be63bd944ed89aa0490954a127e36",
+      "ready_sha": "dee58faac35be63bd944ed89aa0490954a127e36",
+      "merged_sha": "76fe289d",
+      "exceptions": [],
+      "resync_reason": "Verifier (cycle 203, Opus 5.5 high) failed 4636c383. All five cycle-200 findings are fixed, and a 6-shot rerun (laws, realm, heist, universe_screen, replay, observatory) matched within the stated tolerance; table.py rebuilds baseline.md byte for byte. Blocking: (1) run.py:159-171: under --no-render, main() still calls collect() for every shot, which reads the work dir, not baseline/data/; with no work dir (a fresh checkout) every baseline/data/*.json is overwritten with budget: null, measure: null, baseline.md is rewritten with every cell '-' or 'n/m', and it exits 0 (reproduced: 23 files changed, 2,095 lines deleted). This contradicts baseline.md:17. Fix: under --no-render skip collecting and writing data and only call table.write; refuse to write a record when the shot's work dir is missing; add a test or self-check that fails before the fix. Minor, fix while there: (2) baseline.md:79 screen_observatory reads 0 triangles and 0 draw calls with no note (cards' universes drawn offscreen by StageThumbs): footnote it; baseline.md:62 should say the mask tool also stops on the observatory. (3) The Draw calls column shows only the world view's calls (heist 70) while plan Q14 is the frame's figure (heist 120 in the data): add a frame draw-calls column or say which one is shown. (4) run.py:18 says the verdict is kept in the data file but collect() (run.py:135-146) does not store it. (5) run.py:126-129: an error inside mask_pass.gd is always 'mask limit', even on screen_heist, screen_replay, screen_result and screen_laws, which must be measured: keep a must-measure set that fails the run. (6) baseline.md:11-13: say to run bash client/build.sh first. Opus 5.5 high by order 7 (a resync after a failed review).",
+      "updated_at": "2026-11-26T00:55:00Z",
+      "updated_by": "lead"
     }
   ],
   "idle_queue": [

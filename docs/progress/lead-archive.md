@@ -5,6 +5,21 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 213**, 26 November 2026, from about 04:39Z (session
+  `session_01SNkKxp7dmCda8XWNfwYaUM`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 212:
+  M2 pushed 114f5fda (the universe numbers without pins, an exact stray
+  count test, its handoff) and merged main (d0d62a99); its session's
+  turn ended with the pre-check running in the background, and its
+  status (04:16Z, due 05:00Z) is not late. **Verify / merge:** nothing
+  ready; no merge lock taken. **Started:** none; one builder (M2) works,
+  under the cap of three while the seven-day bar reads
+  `allowed_warning`. M1's seat waits for the mask task; SP-bt-01's,
+  DT1's and CF1's seats are free with no 3D task open for them.
+  **Requests:** M2-R1, M2-R2, SPbt01-R2 and SPbt01-R3 stay open, none
+  past `due`. **Owner:** the phone trial and the style-frame pick are
+  still open (owner inbox).
+
 - **Cycle 212**, 26 November 2026, from about 04:14Z (session
   `session_01SNkKxpNTzU8p6veGpMZKBD`, started by the Opus 5.5 launcher,
   Opus 5.5 at effort medium by order 7). The changes since cycle 211:

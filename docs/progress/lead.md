@@ -217,8 +217,10 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxpn5ZJDS7qZnMd2BFF` (cycle 214,
-26 November 2026 from about 05:14Z, started by the Opus 5.5 launcher).
+Latest lead cycle session: `session_01SNkKxrMr6XqWPqoaHeqqnU` (cycle 216,
+26 November 2026 from about 06:39Z, started by the Opus 5.5 launcher).
+Cycle 214's was `session_01SNkKxpn5ZJDS7qZnMd2BFF` (26 November, from
+about 05:14Z).
 Cycle 212's was `session_01SNkKxpNTzU8p6veGpMZKBD` (26 November, from
 about 04:14Z).
 Cycle 210's was `session_01SNkKxpQsrHbWjUUKuWhdXk` (26 November, from
@@ -455,12 +457,13 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
-| M2 | `session_01SNkKxqcJThi4swGsdinWkY` (Opus 5.5, effort high) | 3D0-M2-mask-screens (restart, cycle 214: resync attempt 3 after the verifier found the character screens count the stage's own interface (level_badge and the other screens' over/top) as world; Opus 5.5 high by order 7, a resync; M2's last session, `session_01SNkKxoEguEtd88C3hWyuT5`, is idle) | `claude/3d-mask` | 2026-11-26 05:25Z |
+| M1 | `session_01SNkKxoRqsBvbq2YTqR3XBd` (Sonnet 5.5, effort medium) | 3D0-M1-baseline-2 (start, cycle 216: 3D0-M2-mask-screens merged; Sonnet 5.5 medium by order 7, a simple task in M1's own docs files; M1's last session, `session_01SNkKxpnpiNRd38EhMM9ukJ`, is idle, its task merged) | `claude/3d-measure` | 2026-11-26 07:41Z |
+| M2 | `session_01SNkKxqcJThi4swGsdinWkY` (Opus 5.5, effort high; idle, task merged in cycle 216) | 3D0-M2-mask-screens (restart, cycle 214: resync attempt 3 after the verifier found the character screens count the stage's own interface (level_badge and the other screens' over/top) as world; Opus 5.5 high by order 7, a resync; M2's last session, `session_01SNkKxoEguEtd88C3hWyuT5`, is idle) | `claude/3d-mask` | 2026-11-26 05:25Z |
 | M2 | `session_01SNkKxoEguEtd88C3hWyuT5` (Opus 5.5, effort high; idle, task sent to resync in cycle 214) | 3D0-M2-mask-screens (restart, cycle 211: resync attempt 2 after the verifier found the universe map's 2D pins leak into world.png and id.png (home.gd re-shows them each frame), so universe Q11 under-reads; Opus 5.5 high by order 7, a resync; M2's last session, `session_01SNkKxrB9QRrPjRunKNvHgP`, is idle) | `claude/3d-mask` | 2026-11-26 03:51Z |
 | M2 | `session_01SNkKxrB9QRrPjRunKNvHgP` (Opus 5.5, effort high; idle, task sent to resync in cycle 211) | 3D0-M2-mask-screens (restart, cycle 209: resync after the verifier failed universe Q11 (the galaxy backdrop counted as island) and the realm's buildings classed as decoration; Opus 5.5 high by order 7, a resync; M2's last session, `session_01SNkKxmfUr1jfnjsq8DnggV`, is idle) | `claude/3d-mask` | 2026-11-26 02:31Z |
 | SP-bt-01 | `session_01SNkKxqcX7brniT4BXdBWu8` (Opus 5.5, effort high; idle, task merged in cycle 210) | 3D0-CO-queue-flake (start, cycle 207: the coordinator task of cycle 206, assigned to the coordinator specialist; Opus 5.5 high as the task names, the merge queue and its lock; SP-bt-01's last session, `session_01SNkKxnk1jnaFLfc14YYCAq`, is idle, its task merged) | `claude/ui-spec-coord` | 2026-11-26 01:19Z |
 | M2 | `session_01SNkKxmfUr1jfnjsq8DnggV` (Opus 5.5, effort medium; idle, task sent to resync in cycle 209) | 3D0-M2-mask-screens (start, cycle 206: M1-R2's mask task seeded after the baseline merged; Opus 5.5 medium by order 7, a complex task in tools/render; M2's last session, `session_01SNkKxpBiaVYnEU6QASbpEV`, is idle, its task merged) | `claude/3d-mask` | 2026-11-26 00:50Z |
-| M1 | `session_01SNkKxpnpiNRd38EhMM9ukJ` (Opus 5.5, effort high) | 3D0-M1-baseline (restart, cycle 203: resync after the verifier found that --no-render overwrites the committed baseline data with nulls; Opus 5.5 high by order 7, a resync; M1's last session, `session_01SNkKxn9dm8J8WUsKvxtyJ6`, is idle) | `claude/3d-measure` | 2026-11-25 22:31Z |
+| M1 | `session_01SNkKxpnpiNRd38EhMM9ukJ` (Opus 5.5, effort high; idle, task merged) | 3D0-M1-baseline (restart, cycle 203: resync after the verifier found that --no-render overwrites the committed baseline data with nulls; Opus 5.5 high by order 7, a resync; M1's last session, `session_01SNkKxn9dm8J8WUsKvxtyJ6`, is idle) | `claude/3d-measure` | 2026-11-25 22:31Z |
 | M2 | `session_01SNkKxpBiaVYnEU6QASbpEV` (Opus 5.5, effort high) | 3D0-M2-find-it (restart, cycle 202: resync after the verifier failed the shown guard's sight check (pale dots and petals credit it); Opus 5.5 high by order 7, a resync; M2's last session, `session_01SNkKxoLp1JEhwF88WFhv8b`, is idle) | `claude/3d-mask` | 2026-11-25 21:00Z |
 | M1 | `session_01SNkKxn9dm8J8WUsKvxtyJ6` (Opus 5.5, effort high; idle, task sent to resync in cycle 203) | 3D0-M1-baseline (restart, cycle 200: resync after the verifier failed the table's coverage (screen_laws, universe_screens) and the '-' note; one tier up by order 7; M1's last session, `session_01SNkKxqcAXy4JEwSxwK6PFL`, is idle) | `claude/3d-measure` | 2026-11-25 19:51Z |
 | DT1 | `session_01SNkKxnqKic2JjCv5tCXbXz` (Opus 5.5, effort high) | 3D0-DT1-data-spec (restart, cycle 200: resync after the verifier failed the realm watch in the fill rates; already the top tier by order 7; DT1's last session, `session_01SNkKxodKBY94BomQhXexAr`, is idle) | `claude/3d-data` | 2026-11-25 19:49Z |
@@ -1059,6 +1062,35 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 216**, 26 November 2026, from about 06:39Z (session
+  `session_01SNkKxrMr6XqWPqoaHeqqnU`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 215:
+  M2 marked the third resync of 3D0-M2-mask-screens ready at 9cd17e74
+  (pre-check PASS). **Verify / merge:** merge lock taken for candidate
+  54bb49a4 (main + 9cd17e74); ownership and claims checks pass, the
+  candidate differs from `ready_sha` only under `docs/progress/` and the
+  docs check passes, so the pre-check at 9cd17e74 is reused. The Opus 5.5
+  high verifier passed it: the stage's own interface (level_badge, over,
+  top) now counts as interface, screen_character Q1 reads 6.6%, the new
+  self-tests pass and fail on main's measure.py, and mask_pass.gd ran on
+  screen_character and screen_realm. Merged at cdd30db7 (redone onto
+  main's head after the lock commit); the post-merge check_all on main
+  passed (07:40Z, "All checks passed."). The verifier's non-blocking
+  notes: the merged M2.json and M2.md are stale bookkeeping;
+  mask_pass.gd stands at 1000 lines, gdlint's limit; check_all does not
+  run the mask self-tests (M2-R1); `_own2d` keeps references to freed
+  nodes if a stage's children are rebuilt; ruff style warnings. The
+  roadmap page was republished (version 179); the audit page's republish
+  was denied by the session's permission check and is not retried this
+  cycle. **Started:** M1 on 3D0-M1-baseline-2
+  (`session_01SNkKxoRqsBvbq2YTqR3XBd`, Sonnet 5.5 at effort medium, a
+  simple task); one builder works, under the cap of three while the
+  seven-day bar reads `allowed_warning`. M2's, SP-bt-01's, DT1's and
+  CF1's seats are free with no 3D task open for them. **Requests:**
+  M2-R1, M2-R2, SPbt01-R2 and SPbt01-R3 stay open, none past `due`.
+  **Owner:** the phone trial and the style-frame pick are still open
+  (owner inbox).
+
 - **Cycle 215**, 26 November 2026, from about 05:38Z (session
   `session_01SNkKxoEkNM6V8qJB1MhNqP`, started by the Opus 5.5 launcher,
   Opus 5.5 at effort medium by order 7). The changes since cycle 214:
@@ -1097,21 +1129,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   (`session_01SNkKxqcJThi4swGsdinWkY`, Opus 5.5 high, a resync by order
   7). One builder works, under the cap of three while the seven-day bar
   reads `allowed_warning`. M1's seat waits for the mask task; SP-bt-01's,
-  DT1's and CF1's seats are free with no 3D task open for them.
-  **Requests:** M2-R1, M2-R2, SPbt01-R2 and SPbt01-R3 stay open, none
-  past `due`. **Owner:** the phone trial and the style-frame pick are
-  still open (owner inbox).
-
-- **Cycle 213**, 26 November 2026, from about 04:39Z (session
-  `session_01SNkKxp7dmCda8XWNfwYaUM`, started by the Opus 5.5 launcher,
-  Opus 5.5 at effort medium by order 7). The changes since cycle 212:
-  M2 pushed 114f5fda (the universe numbers without pins, an exact stray
-  count test, its handoff) and merged main (d0d62a99); its session's
-  turn ended with the pre-check running in the background, and its
-  status (04:16Z, due 05:00Z) is not late. **Verify / merge:** nothing
-  ready; no merge lock taken. **Started:** none; one builder (M2) works,
-  under the cap of three while the seven-day bar reads
-  `allowed_warning`. M1's seat waits for the mask task; SP-bt-01's,
   DT1's and CF1's seats are free with no 3D task open for them.
   **Requests:** M2-R1, M2-R2, SPbt01-R2 and SPbt01-R3 stay open, none
   past `due`. **Owner:** the phone trial and the style-frame pick are
