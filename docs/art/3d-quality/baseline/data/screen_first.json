@@ -1,7 +1,165 @@
 {
  "budget": "draw calls 50, primitives 72080",
- "measure": null,
+ "measure": {
+  "Q1": {
+   "applies": true,
+   "band": 0.5897,
+   "band_rows": [
+    440,
+    1819
+   ],
+   "panels_share": 0.2627,
+   "strict_band": 0.5897,
+   "strict_rows": [
+    440,
+    1819
+   ],
+   "uncovered_share": 0.7373
+  },
+  "Q11": {
+   "applies": true,
+   "character": {
+    "height_share": 0.3085,
+    "name": "h0",
+    "rating": "cut",
+    "third": false
+   },
+   "characters": {
+    "h0": "cut",
+    "h1": "clear",
+    "h2": "cut"
+   },
+   "island_at_edges": {
+    "bottom": false,
+    "left": false,
+    "right": false,
+    "top": false
+   },
+   "largest_figure_share": 0.3085,
+   "pass": false
+  },
+  "Q12": {
+   "applies": true,
+   "building_foot_luma_ratio": [],
+   "buildings_why": "no building in frame",
+   "buildings_with_shadow": null,
+   "cliff_luma": null,
+   "cliffs_darker": null,
+   "figure_shadow_pixels": {
+    "h0": 11204,
+    "h1": 0,
+    "h2": 20332
+   },
+   "figures": 3,
+   "figures_with_shadow": 2,
+   "top_luma": 157.3
+  },
+  "Q2": {
+   "applies": true,
+   "characters": [
+    {
+     "bounds_points": 259.5,
+     "name": "h0",
+     "points": 239.8,
+     "role": "emberling",
+     "silhouette_points": 240.7
+    },
+    {
+     "bounds_points": 188.6,
+     "name": "h1",
+     "points": 177.3,
+     "role": "featherkin",
+     "silhouette_points": 162.0
+    },
+    {
+     "bounds_points": 214.1,
+     "name": "h2",
+     "points": 196.6,
+     "role": "tidewalker",
+     "silhouette_points": 206.7
+    }
+   ],
+   "characters_least": 177.3,
+   "characters_most": 239.8,
+   "crew": [],
+   "crew_least": null,
+   "crew_most": null,
+   "guards": [],
+   "guards_least": null,
+   "guards_most": null,
+   "least": 177.3
+  },
+  "Q3": {
+   "applies": true,
+   "figures": [
+    {
+     "name": "h0",
+     "pixels": 156944,
+     "share": 0.1052
+    },
+    {
+     "name": "h1",
+     "pixels": 121096,
+     "share": 0.1224
+    },
+    {
+     "name": "h2",
+     "pixels": 155332,
+     "share": 0.0571
+    }
+   ],
+   "least": 0.0571,
+   "worst": 0.1224
+  },
+  "Q4": {
+   "applies": true,
+   "heads": [
+    {
+     "name": "h0",
+     "seen": 1.0
+    },
+    {
+     "name": "h1",
+     "seen": 1.0
+    },
+    {
+     "name": "h2",
+     "seen": 0.975
+    }
+   ],
+   "markers": [],
+   "pass": true,
+   "under_panel": [],
+   "worst": 0.975
+  },
+  "Q5": {
+   "applies": false,
+   "why": "a character stands on a plinth, not on ground with paths and buildings"
+  },
+  "Q6": {
+   "applies": false,
+   "why": "a character screen draws no world markers"
+  },
+  "env": {
+   "FRAME_H": "",
+   "HIDE": "",
+   "HOUR": "",
+   "MOMENT": "",
+   "ORTHO": "",
+   "SCREEN": "",
+   "SHOT": "/tmp/ruleborn_baseline/screen_first/shot.png",
+   "TAB": "",
+   "ZOOM": ""
+  },
+  "frame": [
+   1080,
+   2340
+  ],
+  "screen": "character",
+  "still": "/tmp/ruleborn_baseline/screen_first",
+  "zoom": 0
+ },
  "name": "screen_first",
- "verdict": "mask limit",
- "why": "no WorldView in the shot"
+ "verdict": "ok",
+ "why": ""
 }

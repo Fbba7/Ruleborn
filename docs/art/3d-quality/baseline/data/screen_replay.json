@@ -2,6 +2,7 @@
  "budget": "budget: replay: 119336 triangles (75726 mesh + 43610 outline passes); 0 triangles in shadows; 77 draw calls, shadow passes included; 4186 triangles and 34 draw calls in other views; frame 123522 triangles, 111 draw calls",
  "measure": {
   "Q1": {
+   "applies": true,
    "band": 0.0,
    "band_rows": [
     0,
@@ -16,6 +17,7 @@
    "uncovered_share": 0.381
   },
   "Q11": {
+   "applies": true,
    "chosen": {
     "name": "c0",
     "rating": "clear"
@@ -45,12 +47,14 @@
    }
   },
   "Q12": {
+   "applies": true,
    "building_foot_luma_ratio": [],
-   "buildings_with_shadow": 0,
-   "cliff_luma": 72.7,
+   "buildings_why": "no building in frame",
+   "buildings_with_shadow": null,
+   "cliff_luma": 47.0,
    "cliffs_darker": false,
    "figure_shadow_pixels": {
-    "c0": 196,
+    "c0": 197,
     "c1": 743,
     "c2": 1968,
     "g2": 1837,
@@ -59,9 +63,13 @@
    },
    "figures": 6,
    "figures_with_shadow": 6,
-   "top_luma": 39.5
+   "top_luma": 39.1
   },
   "Q2": {
+   "applies": true,
+   "characters": [],
+   "characters_least": null,
+   "characters_most": null,
    "crew": [
     {
      "bounds_points": 35.4,
@@ -115,21 +123,22 @@
    "least": 22.7
   },
   "Q3": {
+   "applies": true,
    "figures": [
     {
      "name": "c0",
-     "pixels": 2654,
-     "share": 0.0946
+     "pixels": 2653,
+     "share": 0.0954
     },
     {
      "name": "c2",
      "pixels": 3689,
-     "share": 0.2239
+     "share": 0.2253
     },
     {
      "name": "g2",
      "pixels": 6251,
-     "share": 0.3913
+     "share": 0.3918
     },
     {
      "name": "g3",
@@ -139,13 +148,14 @@
     {
      "name": "g4",
      "pixels": 6262,
-     "share": 0.3999
+     "share": 0.3992
     }
    ],
-   "least": 0.0946,
-   "worst": 0.3999
+   "least": 0.0954,
+   "worst": 0.3992
   },
   "Q4": {
+   "applies": true,
    "heads": [
     {
      "name": "c0",
@@ -274,36 +284,18 @@
     },
     {
      "box": [
-      484,
-      1000,
-      504,
-      1020
-     ],
-     "seen": 1.0
-    },
-    {
-     "box": [
-      476,
-      1016,
-      480,
-      1028
-     ],
-     "seen": 1.0
-    },
-    {
-     "box": [
-      492,
-      1024,
-      504,
-      1032
-     ],
-     "seen": 1.0
-    },
-    {
-     "box": [
       444,
       1036,
       460,
+      1052
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      464,
+      1044,
+      472,
       1052
      ],
      "seen": 1.0
@@ -477,21 +469,12 @@
       116,
       1320
      ],
-     "seen": 0.623
-    },
-    {
-     "box": [
-      396,
-      1308,
-      412,
-      1324
-     ],
-     "seen": 1.0
+     "seen": 0.63
     },
     {
      "box": [
       356,
-      1312,
+      1308,
       376,
       1328
      ],
@@ -499,10 +482,19 @@
     },
     {
      "box": [
-      408,
-      1328,
+      396,
+      1308,
       416,
       1336
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      392,
+      1336,
+      404,
+      1348
      ],
      "seen": 1.0
     },
@@ -512,15 +504,6 @@
       1340,
       376,
       1352
-     ],
-     "seen": 1.0
-    },
-    {
-     "box": [
-      392,
-      1340,
-      404,
-      1348
      ],
      "seen": 1.0
     },
@@ -565,7 +548,7 @@
     },
     {
      "box": [
-      100,
+      96,
       776,
       108,
       788
@@ -610,6 +593,15 @@
     },
     {
      "box": [
+      16,
+      1368,
+      24,
+      1376
+     ],
+     "seen": 0.0
+    },
+    {
+     "box": [
       36,
       1368,
       44,
@@ -632,15 +624,6 @@
       1416,
       68,
       1432
-     ],
-     "seen": 0.0
-    },
-    {
-     "box": [
-      84,
-      1420,
-      96,
-      1436
      ],
      "seen": 0.0
     },
@@ -675,22 +658,25 @@
    "worst": 0.0
   },
   "Q5": {
+   "applies": true,
    "buildings": 0,
-   "buildings_on_one_path": 0,
+   "buildings_on_one_path": null,
+   "buildings_why": "no building in frame",
    "decoration_on_walkable": 0.0377,
    "decoration_pixels": 11114,
-   "path_links_every_building": false,
+   "path_links_every_building": null,
    "paths": 0
   },
   "Q6": {
+   "applies": true,
    "covering": {
     "c0": 0.286,
-    "c1": 0.503,
+    "c1": 0.504,
     "c2": 0.335,
     "exit": 0.05,
-    "g2": 0.179,
+    "g2": 0.178,
     "g3": 0.773,
-    "g4": 0.213,
+    "g4": 0.214,
     "vault": 0.202
    },
    "most": 15,
@@ -699,10 +685,10 @@
     "c1": 15,
     "c2": 10,
     "exit": 1,
-    "g2": 13,
+    "g2": 11,
     "g3": 12,
     "g4": 1,
-    "vault": 5
+    "vault": 4
    },
    "worst_covering": 0.773
   },
@@ -712,13 +698,16 @@
    "HOUR": "",
    "MOMENT": "",
    "ORTHO": "",
+   "SCREEN": "",
    "SHOT": "/tmp/ruleborn_baseline/screen_replay/shot.png",
+   "TAB": "",
    "ZOOM": ""
   },
   "frame": [
    1080,
    2340
   ],
+  "screen": "heist",
   "still": "/tmp/ruleborn_baseline/screen_replay",
   "zoom": 1
  },

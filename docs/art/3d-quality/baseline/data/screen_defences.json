@@ -1,7 +1,528 @@
 {
  "budget": "budget: DefencesScreen: 36011 triangles (27971 mesh + 8040 outline passes); 4892 triangles in shadows; 86 draw calls, shadow passes included; 13144 triangles and 127 draw calls in other views; frame 54047 triangles, 213 draw calls",
- "measure": null,
+ "measure": {
+  "Q1": {
+   "applies": true,
+   "band": 0.0256,
+   "band_rows": [
+    748,
+    807
+   ],
+   "panels_share": 0.8625,
+   "strict_band": 0.0,
+   "strict_rows": [
+    0,
+    -1
+   ],
+   "uncovered_share": 0.1375
+  },
+  "Q11": {
+   "applies": true,
+   "island": {
+    "pixels": 325676,
+    "rating": "cut",
+    "under_share": 0.293
+   },
+   "island_at_edges": {
+    "bottom": true,
+    "left": false,
+    "right": false,
+    "top": true
+   },
+   "pass": false
+  },
+  "Q12": {
+   "applies": true,
+   "building_foot_luma_ratio": [
+    1.083,
+    1.104,
+    0.975
+   ],
+   "buildings_with_shadow": 0,
+   "cliff_luma": 94.7,
+   "cliffs_darker": true,
+   "figure_shadow_pixels": {
+    "c0": 96,
+    "c1": 76,
+    "c2": 104,
+    "g0": 76,
+    "g1": 384
+   },
+   "figures": 5,
+   "figures_with_shadow": 5,
+   "top_luma": 114.2
+  },
+  "Q2": {
+   "applies": true,
+   "characters": [],
+   "characters_least": null,
+   "characters_most": null,
+   "crew": [
+    {
+     "bounds_points": 19.1,
+     "name": "c0",
+     "points": 8.0,
+     "role": "Scout",
+     "silhouette_points": 10.7
+    },
+    {
+     "bounds_points": 23.2,
+     "name": "c1",
+     "points": 12.1,
+     "role": "Breaker",
+     "silhouette_points": 12.0
+    },
+    {
+     "bounds_points": 30.7,
+     "name": "c2",
+     "points": 18.7,
+     "role": "Carrier",
+     "silhouette_points": 20.0
+    }
+   ],
+   "crew_least": 8.0,
+   "crew_most": 18.7,
+   "guards": [
+    {
+     "bounds_points": 31.7,
+     "name": "g0",
+     "points": 22.2,
+     "role": "guard",
+     "silhouette_points": 27.3
+    },
+    {
+     "bounds_points": 31.7,
+     "name": "g1",
+     "points": 22.2,
+     "role": "guard",
+     "silhouette_points": 27.3
+    }
+   ],
+   "guards_least": 22.2,
+   "guards_most": 22.2,
+   "least": 8.0
+  },
+  "Q3": {
+   "applies": true,
+   "figures": [
+    {
+     "name": "c0",
+     "pixels": 24,
+     "share": 0.3333
+    },
+    {
+     "name": "c1",
+     "pixels": 176,
+     "share": 0.1591
+    },
+    {
+     "name": "c2",
+     "pixels": 368,
+     "share": 0.5326
+    },
+    {
+     "name": "g0",
+     "pixels": 844,
+     "share": 0.2796
+    },
+    {
+     "name": "g1",
+     "pixels": 544,
+     "share": 0.4338
+    }
+   ],
+   "least": 0.1591,
+   "worst": 0.5326
+  },
+  "Q4": {
+   "applies": true,
+   "heads": [
+    {
+     "name": "c0",
+     "seen": 0.188
+    },
+    {
+     "name": "c1",
+     "seen": 0.0
+    },
+    {
+     "name": "c2",
+     "seen": 0.0
+    },
+    {
+     "name": "g0",
+     "seen": 0.416
+    },
+    {
+     "name": "g1",
+     "seen": 0.026
+    }
+   ],
+   "markers": [
+    {
+     "box": [
+      532,
+      456,
+      556,
+      472
+     ],
+     "seen": 0.444
+    },
+    {
+     "box": [
+      560,
+      472,
+      628,
+      516
+     ],
+     "seen": 0.232
+    },
+    {
+     "box": [
+      468,
+      524,
+      476,
+      536
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      540,
+      536,
+      548,
+      548
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      720,
+      540,
+      756,
+      608
+     ],
+     "seen": 0.347
+    },
+    {
+     "box": [
+      772,
+      540,
+      780,
+      560
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      636,
+      544,
+      668,
+      576
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      516,
+      568,
+      524,
+      584
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      440,
+      576,
+      452,
+      592
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      500,
+      576,
+      508,
+      588
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      360,
+      580,
+      368,
+      596
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      480,
+      588,
+      492,
+      604
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      456,
+      592,
+      464,
+      604
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      708,
+      592,
+      828,
+      700
+     ],
+     "seen": 0.516
+    },
+    {
+     "box": [
+      336,
+      604,
+      344,
+      616
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      608,
+      604,
+      720,
+      660
+     ],
+     "seen": 0.757
+    },
+    {
+     "box": [
+      344,
+      612,
+      376,
+      652
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      320,
+      620,
+      500,
+      720
+     ],
+     "seen": 0.895
+    },
+    {
+     "box": [
+      288,
+      628,
+      296,
+      648
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      220,
+      644,
+      228,
+      660
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      612,
+      672,
+      676,
+      716
+     ],
+     "seen": 0.124
+    },
+    {
+     "box": [
+      408,
+      712,
+      416,
+      728
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      628,
+      712,
+      636,
+      724
+     ],
+     "seen": 0.438
+    },
+    {
+     "box": [
+      556,
+      716,
+      564,
+      732
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      600,
+      720,
+      616,
+      748
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      648,
+      720,
+      712,
+      764
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      416,
+      752,
+      424,
+      764
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      624,
+      752,
+      636,
+      768
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      444,
+      772,
+      512,
+      816
+     ],
+     "seen": 0.861
+    },
+    {
+     "box": [
+      520,
+      800,
+      528,
+      812
+     ],
+     "seen": 0.846
+    }
+   ],
+   "pass": false,
+   "under_panel": [
+    {
+     "box": [
+      588,
+      620,
+      596,
+      636
+     ],
+     "seen": 0.0
+    },
+    {
+     "box": [
+      524,
+      672,
+      532,
+      692
+     ],
+     "seen": 0.0
+    },
+    {
+     "box": [
+      440,
+      704,
+      448,
+      716
+     ],
+     "seen": 0.0
+    },
+    {
+     "box": [
+      540,
+      712,
+      548,
+      728
+     ],
+     "seen": 0.0
+    }
+   ],
+   "worst": 0.0
+  },
+  "Q5": {
+   "applies": true,
+   "buildings": 4,
+   "buildings_on_one_path": 2,
+   "decoration_on_walkable": 0.0815,
+   "decoration_pixels": 4060,
+   "path_links_every_building": false,
+   "paths": 4
+  },
+  "Q6": {
+   "applies": true,
+   "covering": {
+    "c0": 0.44,
+    "c1": 0.393,
+    "c2": 0.75,
+    "exit": 0.15,
+    "g0": 0.447,
+    "g1": 0.448,
+    "vault": 0.465
+   },
+   "most": 16,
+   "per_object": {
+    "c0": 7,
+    "c1": 5,
+    "c2": 1,
+    "exit": 3,
+    "g0": 2,
+    "g1": 0,
+    "vault": 16
+   },
+   "worst_covering": 0.75
+  },
+  "env": {
+   "FRAME_H": "",
+   "HIDE": "",
+   "HOUR": "",
+   "MOMENT": "",
+   "ORTHO": "",
+   "SCREEN": "",
+   "SHOT": "/tmp/ruleborn_baseline/screen_defences/shot.png",
+   "TAB": "0",
+   "ZOOM": ""
+  },
+  "frame": [
+   1080,
+   2340
+  ],
+  "screen": "realm",
+  "still": "/tmp/ruleborn_baseline/screen_defences",
+  "zoom": 1
+ },
  "name": "screen_defences",
- "verdict": "mask limit",
- "why": "error inside mask_pass.gd: SCRIPT ERROR: Invalid assignment of property or key 'transparent_bg' with value of type 'bool' on a base object of type 'Nil'."
+ "verdict": "ok",
+ "why": ""
 }

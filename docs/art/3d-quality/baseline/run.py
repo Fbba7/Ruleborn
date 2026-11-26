@@ -12,13 +12,14 @@ screen_defences, etc.). A shot that prints no budget line of its own gets one
 added to a copy of its script (INJECT below); the script in client/ is not
 changed.
 
-It exits 1 when a shot fails for any reason but the mask tool's known limit
-(request M1-R2: no WorldView in the shot, or an error inside mask_pass.gd):
+It exits 1 when a shot fails for any reason but a limit of the mask tool
+(no WorldView in the shot, or an error inside mask_pass.gd; none is left in the
+table, so MUST_MEASURE below holds every shot):
 no work folder, no still, no "wrote" or "saved" line, no budget line, a script
 error in the shot, a renderer shader that failed to start (SHADER_RACE below: such a
 shot is rendered again alone first), a timeout, or the mask tool measured nothing
-for no known reason. A shot at the known limit keeps no measure (measure null). The heist shots of MUST_MEASURE are measured
-by the mask tool today, so on them the known limit is a failure too. Each
+for no known reason. A shot at a limit keeps no measure (measure null). The shots of MUST_MEASURE are measured
+by the mask tool today, so on them a limit is a failure too. Each
 shot's verdict is printed and kept in its data file ("verdict", "why"). Only
 a shot that is "ok" or at the known limit gets its data file written: a failed
 shot, or one with no work folder, keeps its old data file, so a broken run
@@ -57,10 +58,6 @@ INJECT = {
     "universe_screen": UNIVERSE_LINE,
 }
 
-# Shots the mask tool measures today: an error inside mask_pass.gd on one of
-# them is a regression, not the known limit of request M1-R2.
-MUST_MEASURE = {"screen_heist", "screen_replay", "screen_result", "screen_laws"}
-
 # name -> (shot script, environment)
 SHOTS = {
     "screen_heist": ("screen_heist.gd", {}),
@@ -86,6 +83,10 @@ SHOTS = {
     "universe_map": ("universe_screens.gd", {"SCREEN": "map"}),
     "universe_screen": ("universe_screens.gd", {"SCREEN": "universe"}),
 }
+
+# Shots the mask tool measures today (all of them, since 3D0-M2-mask-screens):
+# an error inside mask_pass.gd on one of them is a regression.
+MUST_MEASURE = set(SHOTS)
 
 BUDGET = re.compile(r"^budget: (\S+): (.*)$")
 

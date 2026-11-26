@@ -25,9 +25,9 @@ from `baseline/data/` (it exits 1 if that folder has no data file). `--only a,b`
 the script in `client/` as it is. It exits 1 if a shot fails (no work folder, no still, no budget
 line, a script error in the shot, a renderer shader that failed to start, a timeout, or the mask
 tool measured nothing for no known reason), and then keeps that shot's old data file. The mask
-tool's known limit (below) is reported, not a failure, except on `screen_heist`, `screen_replay`,
-`screen_result` and `screen_laws`, which it measures today. Each data file keeps its shot's verdict
-(`verdict`, `why`).
+tool's known limit (a shot it still cannot measure; none today) is reported, not a failure, except
+that every shot of the table is one the tool measures today, so on each of them the limit is a
+failure too. Each data file keeps its shot's verdict (`verdict`, `why`).
 `run.py`'s own tests, with no render:
 
 ```
@@ -37,9 +37,9 @@ python3 -m unittest discover -s docs/art/3d-quality/baseline -p 'test_*.py'
 Two full runs in the same container agree on every figure but a few: `screen_laws` and
 `screen_replay` moved by a few dozen outline-pass triangles (48 and 32, under 0.1% of the frame),
 `screen_laws`' Q3 by 2 points (27% and 29%), and `screen_heist`'s shadow pixels by a few (Q12 the
-same). `screen_heist`'s cliff luma, in its data file only, moved from 110 to 115; its top luma is
-115, so `cliffs_darker` there can read either way. Compare a rerun against this table at that
-tolerance.
+same). `screen_heist`'s cliff luma, in its data file only, moved by about 110 to 115 (110 in one run, 115
+in the other); its top luma is 115, so `cliffs_darker` there can read either way. Compare a rerun
+against this table at that tolerance.
 
 **The shader cache race.** Shots rendered side by side on a fresh shader cache (the first run in
 a container) can race to make the cache's folders; Godot then leaves a shader unstarted
@@ -80,37 +80,46 @@ views' included: plan Q14's figure (at most 120). A `*` marks a shot that prints
 totals only (no split; `universe_*` print their universe view's triangles, in the first column, and
 its draw calls, in View draw calls); a `-` in a budget column is a figure that shot does not print.
 
-**`n/m` means not measured** (request M1-R2): the mask tool measures only the heist's
-`WorldView` with its crew and guards. It finds no `WorldView` on the character stages and the universe
-view, and stops on `screen_defences`, the realm screens and `screen_observatory`. Some of these qualities do not apply
-there (Q2 to Q6 need crew and guards), but Q11 and Q12 do apply on realm, builder, defences and
-character (`plan.md`, section 4), and are not yet measured. A `-` in a measured row means the
-shot has nothing to measure for that quality (Q3 with no figure in the clear).
+**`n/m` means not measured**, and only where the mask tool says the screen cannot be
+([`mask.md`](mask.md), "Each kind of screen"; the reason is in each shot's `measure.json`):
+
+- **Realm screens** (`screen_realm`, `screen_planner`, `screen_scout`) draw no figures or markers,
+  so Q2, Q3, Q4 and Q6 are `n/m`; Q5, Q11 and Q12 are measured.
+- **Character stages** (`screen_character`, `screen_roster`, `screen_sage_hall`, `screen_forms`,
+  `screen_hatch`, `screen_first`) stand a figure on a plinth, with no ground, paths or world
+  markers: Q5 and Q6 are `n/m`; Q2 (the character's head), Q3, Q4, Q11 and Q12's figures are
+  measured.
+- **The universe view** (`universe_*`) draws islands, not figures or markers, and its islands float
+  over the sky with no ground to cast on: only Q1 and Q11 (the island) are measured.
+- **`screen_observatory`** draws no 3D world view on show: only Q1 is measured.
+
+In a measured row, a `-` means the shot has nothing to measure for that quality (Q3 with no figure
+in the clear; Q12's buildings with no building on ground in frame).
 
 | Shot | Mesh tri | Outline tri | Shadow tri | Other-view tri | View draw calls | Frame tri | Frame draw calls | Q1 band | Q2 crew / guard pt | Q3 worst | Q4 least seen | Q5 deco | Q6 most | Q11 chosen; guard; tallest | Q12 shadowed |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `screen_builder` | 27,770 | 7,991 | 4,230 | 1,846 | 74 | 41,837 | 151 | n/m | n/m | n/m | n/m | n/m | n/m | n/m | n/m |
-| `screen_character` | - | - | - | - | - | 13,752* | 93* | n/m | n/m | n/m | n/m | n/m | n/m | n/m | n/m |
-| `screen_curation` | 28,576 | 7,905 | 4,056 | 1,634 | 76 | 42,171 | 129 | n/m | n/m | n/m | n/m | n/m | n/m | n/m | n/m |
-| `screen_defences` | 27,971 | 8,040 | 4,892 | 13,144 | 86 | 54,047 | 213 | n/m | n/m | n/m | n/m | n/m | n/m | n/m | n/m |
-| `screen_first` | - | - | - | - | - | 72,080* | 50* | n/m | n/m | n/m | n/m | n/m | n/m | n/m | n/m |
-| `screen_forms` | - | - | - | - | - | 21,428* | 120* | n/m | n/m | n/m | n/m | n/m | n/m | n/m | n/m |
-| `screen_hatch` | - | - | - | - | - | 16,418* | 56* | n/m | n/m | n/m | n/m | n/m | n/m | n/m | n/m |
-| `screen_heist` | 56,480 | 28,966 | 0 | 7,287 | 70 | 92,733 | 120 | 39% | 24.2 / 38.9 | 32% | 8% | 4.1% | 13 | clear; clear; 6% | 4/5 |
-| `screen_landing` | 21,562 | 1,162 | 0 | 1,244 | 29 | 23,968 | 91 | n/m | n/m | n/m | n/m | n/m | n/m | n/m | n/m |
-| `screen_laws` | 55,854 | 28,406 | 0 | 6,714 | 68 | 90,974 | 117 | 39% | 24.2 / 38.8 | 29% | 10% | 4.0% | 17 | clear; clear; 7% | 4/5 |
-| `screen_observatory` (c) | 0 | 0 | 0 | 1,478 | 0 | 1,478 | 64 | n/m | n/m | n/m | n/m | n/m | n/m | n/m | n/m |
-| `screen_planner` | 37,732 | 216 | 7,306 | 1,304 | 90 | 46,558 | 147 | n/m | n/m | n/m | n/m | n/m | n/m | n/m | n/m |
-| `screen_realm` | 25,015 | 4,775 | 3,459 | 1,578 | 76 | 34,827 | 147 | n/m | n/m | n/m | n/m | n/m | n/m | n/m | n/m |
-| `screen_replay` (a) | 75,726 | 43,610 | 0 | 4,186 | 77 | 123,522 | 111 | 0% | 25.0 / 22.7 | 40% | 0% | 3.8% | 15 | clear; clear; 7% | 6/6 |
-| `screen_result` (b) | 61,010 | 33,094 | 0 | 4,394 | 56 | 98,498 | 103 | 0% | 14.5 / 21.9 | - | 0% | 0.0% | 1 | under panel; under panel; 8% | 0/9 |
-| `screen_roster` | - | - | - | - | - | 19,602* | 133* | n/m | n/m | n/m | n/m | n/m | n/m | n/m | n/m |
-| `screen_sage_hall` | - | - | - | - | - | 16,646* | 99* | n/m | n/m | n/m | n/m | n/m | n/m | n/m | n/m |
-| `screen_scout` | 17,677 | 1,693 | 5,278 | 970 | 63 | 25,618 | 116 | n/m | n/m | n/m | n/m | n/m | n/m | n/m | n/m |
-| `universe_home` | 33,085* | - | - | - | 33* | 68,770* | 148* | n/m | n/m | n/m | n/m | n/m | n/m | n/m | n/m |
-| `universe_map` | 34,065* | - | - | - | 33* | 56,073* | 79* | n/m | n/m | n/m | n/m | n/m | n/m | n/m | n/m |
-| `universe_screen` | 34,065* | - | - | - | 77* | 67,265* | 118* | n/m | n/m | n/m | n/m | n/m | n/m | n/m | n/m |
-| `universe_zoom` | 34,065* | - | - | - | 33* | 55,273* | 58* | n/m | n/m | n/m | n/m | n/m | n/m | n/m | n/m |
+| `screen_builder` | 27,770 | 7,991 | 4,230 | 1,846 | 74 | 41,837 | 151 | 36% | - / 40.0 | 31% | 26% | 5.1%; links every building: no | 28 | island cut | figures 2/2; buildings 0/4; cliffs darker: yes |
+| `screen_character` | - | - | - | - | - | 13,752* | 93* | 7% | 124.9 (character) | 4% | 100% | n/m | n/m | clear; tallest 18% | figures 1/1; buildings -; cliffs darker: - |
+| `screen_curation` | 28,576 | 7,905 | 4,056 | 1,634 | 76 | 42,171 | 129 | 26% | - / 38.3 | 38% | 39% | 6.7%; links every building: no | 30 | island cut | figures 2/2; buildings 0/4; cliffs darker: yes |
+| `screen_defences` | 27,971 | 8,040 | 4,892 | 13,144 | 86 | 54,047 | 213 | 3% | 8.0 / 22.2 | 53% | 0% | 8.2%; links every building: no | 16 | island cut | figures 5/5; buildings 0/3; cliffs darker: yes |
+| `screen_first` | - | - | - | - | - | 72,080* | 50* | 59% | 177.3 (character) | 12% | 98% | n/m | n/m | cut; tallest 31% | figures 2/3; buildings -; cliffs darker: - |
+| `screen_forms` | - | - | - | - | - | 21,428* | 120* | 0% | 99.6 (character) | 48% | 100% | n/m | n/m | clear; tallest 14% | figures 1/1; buildings -; cliffs darker: - |
+| `screen_hatch` | - | - | - | - | - | 16,418* | 56* | 34% | 134.3 (character) | 2% | 100% | n/m | n/m | clear; tallest 17% | figures 1/1; buildings -; cliffs darker: - |
+| `screen_heist` | 56,480 | 28,966 | 0 | 7,287 | 70 | 92,733 | 120 | 39% | 24.2 / 38.9 | 32% | 8% | 4.1%; links every building: yes | 13 | clear; clear; 6% | figures 4/5; buildings 0/1; cliffs darker: yes |
+| `screen_landing` | 21,562 | 1,162 | 0 | 1,244 | 29 | 23,968 | 91 | 10% | - / - | - | 6% | 2.4%; links every building: - | 31 | -; -; 0% | figures -; buildings -; cliffs darker: yes |
+| `screen_laws` | 55,854 | 28,358 | 0 | 6,714 | 68 | 90,926 | 117 | 39% | 24.2 / 38.8 | 27% | 10% | 4.0%; links every building: yes | 17 | clear; clear; 7% | figures 4/5; buildings 0/1; cliffs darker: yes |
+| `screen_observatory` (c) | 0 | 0 | 0 | 1,478 | 0 | 1,478 | 64 | 0% | n/m | n/m | n/m | n/m | n/m | n/m | n/m |
+| `screen_planner` | 37,732 | 216 | 7,306 | 1,304 | 90 | 46,558 | 147 | 19% | n/m | n/m | n/m | 1.3%; links every building: - | n/m | island clear | figures -; buildings -; cliffs darker: yes |
+| `screen_realm` | 25,015 | 4,775 | 3,459 | 1,578 | 76 | 34,827 | 147 | 46% | n/m | n/m | n/m | 4.8%; links every building: no | n/m | island cut | figures -; buildings 0/4; cliffs darker: yes |
+| `screen_replay` (a) | 75,726 | 43,610 | 0 | 4,186 | 77 | 123,522 | 111 | 0% | 25.0 / 22.7 | 40% | 0% | 3.8%; links every building: - | 15 | clear; clear; 7% | figures 6/6; buildings -; cliffs darker: no |
+| `screen_result` (b) | 61,010 | 33,094 | 0 | 4,394 | 56 | 98,498 | 103 | 0% | 14.5 / - | - | 0% | 0.0%; links every building: - | 38 | under panel; off; 6% | figures 3/3; buildings -; cliffs darker: - |
+| `screen_roster` | - | - | - | - | - | 19,602* | 133* | 0% | 100.2 (character) | 4% | 100% | n/m | n/m | clear; tallest 14% | figures 1/1; buildings -; cliffs darker: - |
+| `screen_sage_hall` | - | - | - | - | - | 16,646* | 99* | 0% | 112.0 (character) | 15% | 100% | n/m | n/m | clear; tallest 15% | figures 1/1; buildings -; cliffs darker: - |
+| `screen_scout` | 17,677 | 1,693 | 5,278 | 970 | 63 | 25,618 | 116 | 13% | n/m | n/m | n/m | 1.2%; links every building: - | n/m | island cut | figures -; buildings -; cliffs darker: yes |
+| `universe_home` | 33,085* | - | - | - | 33* | 68,770* | 148* | 12% | n/m | n/m | n/m | n/m | n/m | island clear | n/m |
+| `universe_map` | 34,065* | - | - | - | 33* | 56,073* | 79* | 13% | n/m | n/m | n/m | n/m | n/m | island under panel | n/m |
+| `universe_screen` | 34,065* | - | - | - | 77* | 67,265* | 118* | 13% | n/m | n/m | n/m | n/m | n/m | island clear | n/m |
+| `universe_zoom` | 34,065* | - | - | - | 33* | 55,273* | 58* | 32% | n/m | n/m | n/m | n/m | n/m | island clear | n/m |
 
 (a) `screen_replay`: the replay's edge vignette is counted as cover. Its dark left and right edges
 (110 to 144 px each, of 1080) cover a fifth or more of every row, so Q1's band reads 0% (62% of the
@@ -118,9 +127,9 @@ pixels read as cover, panels and vignette together); Q1 measures the vignette, n
 0% is real: crew member `c1`'s head (rows 1463 to 1484) lies under the "Golden replay" panel.
 
 (b) `screen_result`: the result screen draws a full-screen backdrop over the world, so the mask tool
-reads every pixel as cover (`panels_share` 1.0). Q1 0%, Q3's `-`, Q4 0%, Q5 0.0%, Q11's
-"under panel" and Q12's 0/9 all come from that backdrop (the still shows the world only faintly
-through it).
+reads every pixel as cover (`panels_share` 1.0). Q1 0%, Q3's `-`, Q4 0%, Q5 0.0% and Q11's
+"under panel" all come from that backdrop (the still shows the world only faintly through it);
+Q12 is read from each figure's own mask, not from the still.
 
 (c) `screen_observatory`: the screen has no world view on show (0 triangles, 0 draw calls in it).
 `StageThumbs` draws the cards' universes earlier, in a hidden offscreen `StageView`, and shows them
@@ -130,4 +139,9 @@ Q1 band is the clear band of the screen; Q2 is the least crew member / guard in 
 Q3 the worst share of a figure's pixels within 18 gray levels of the ground; Q4 the least visible
 share of a head or marker; Q5 decoration's share of walkable ground; Q6 the most markers on one
 object; Q11 the chosen crew member's and nearest guard's framing and the tallest figure's share of
-the height; Q12 figures with a shadow. The targets are in `plan.md`, section 4.
+the height (the island's framing on a realm or universe screen, the character's on a stage). Q5 reads
+decoration's share, then `links every building` (`yes` when one path reaches every building, `no`
+when one does not, `-` with no building in frame). Q12 reads `figures` and `buildings` as shadowed
+over measured (a building is measured when its foot has ground in frame) and `cliffs darker` as
+`yes` when the cliff faces are darker than the island's top. The targets are in `plan.md`,
+section 4.

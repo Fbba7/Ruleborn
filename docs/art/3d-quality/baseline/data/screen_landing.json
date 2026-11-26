@@ -1,7 +1,399 @@
 {
  "budget": "budget: HeistScreen: 22724 triangles (21562 mesh + 1162 outline passes); 0 triangles in shadows; 29 draw calls, shadow passes included; 1244 triangles and 62 draw calls in other views; frame 23968 triangles, 91 draw calls",
- "measure": null,
+ "measure": {
+  "Q1": {
+   "applies": true,
+   "band": 0.1034,
+   "band_rows": [
+    224,
+    465
+   ],
+   "panels_share": 0.5887,
+   "strict_band": 0.1009,
+   "strict_rows": [
+    224,
+    459
+   ],
+   "uncovered_share": 0.4113
+  },
+  "Q11": {
+   "applies": true,
+   "island_at_edges": {
+    "bottom": false,
+    "left": true,
+    "right": true,
+    "top": false
+   },
+   "largest_figure_share": 0.0,
+   "target": {
+    "name": "vault",
+    "rating": "under panel",
+    "under_share": 0.921
+   }
+  },
+  "Q12": {
+   "applies": true,
+   "building_foot_luma_ratio": [],
+   "buildings_why": "no building in frame",
+   "buildings_with_shadow": null,
+   "cliff_luma": 101.8,
+   "cliffs_darker": true,
+   "figure_shadow_pixels": {},
+   "figures": 0,
+   "figures_why": "no figure in frame",
+   "figures_with_shadow": null,
+   "top_luma": 112.8
+  },
+  "Q2": {
+   "applies": true,
+   "characters": [],
+   "characters_least": null,
+   "characters_most": null,
+   "crew": [],
+   "crew_least": null,
+   "crew_most": null,
+   "guards": [],
+   "guards_least": null,
+   "guards_most": null,
+   "least": null
+  },
+  "Q3": {
+   "applies": true,
+   "figures": [],
+   "figures_why": "no figure in frame",
+   "least": null,
+   "worst": null
+  },
+  "Q4": {
+   "applies": true,
+   "heads": [],
+   "markers": [
+    {
+     "box": [
+      496,
+      332,
+      584,
+      464
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      448,
+      460,
+      496,
+      496
+     ],
+     "seen": 0.456
+    },
+    {
+     "box": [
+      580,
+      460,
+      632,
+      496
+     ],
+     "seen": 0.265
+    },
+    {
+     "box": [
+      376,
+      508,
+      428,
+      544
+     ],
+     "seen": 0.064
+    },
+    {
+     "box": [
+      648,
+      508,
+      700,
+      544
+     ],
+     "seen": 0.215
+    },
+    {
+     "box": [
+      308,
+      556,
+      360,
+      592
+     ],
+     "seen": 0.39
+    },
+    {
+     "box": [
+      720,
+      556,
+      772,
+      592
+     ],
+     "seen": 0.383
+    },
+    {
+     "box": [
+      236,
+      604,
+      288,
+      640
+     ],
+     "seen": 0.864
+    },
+    {
+     "box": [
+      788,
+      604,
+      840,
+      640
+     ],
+     "seen": 0.853
+    },
+    {
+     "box": [
+      164,
+      652,
+      220,
+      692
+     ],
+     "seen": 0.97
+    },
+    {
+     "box": [
+      860,
+      652,
+      912,
+      692
+     ],
+     "seen": 0.95
+    },
+    {
+     "box": [
+      92,
+      704,
+      144,
+      740
+     ],
+     "seen": 0.108
+    },
+    {
+     "box": [
+      932,
+      704,
+      984,
+      740
+     ],
+     "seen": 0.111
+    },
+    {
+     "box": [
+      20,
+      752,
+      72,
+      792
+     ],
+     "seen": 0.491
+    },
+    {
+     "box": [
+      1008,
+      752,
+      1060,
+      792
+     ],
+     "seen": 0.483
+    },
+    {
+     "box": [
+      4,
+      964,
+      60,
+      1004
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      1020,
+      964,
+      1076,
+      1004
+     ],
+     "seen": 1.0
+    }
+   ],
+   "pass": false,
+   "under_panel": [
+    {
+     "box": [
+      320,
+      880,
+      460,
+      932
+     ],
+     "seen": 0.0
+    },
+    {
+     "box": [
+      72,
+      1016,
+      128,
+      1060
+     ],
+     "seen": 0.0
+    },
+    {
+     "box": [
+      952,
+      1016,
+      1008,
+      1060
+     ],
+     "seen": 0.0
+    },
+    {
+     "box": [
+      144,
+      1072,
+      200,
+      1116
+     ],
+     "seen": 0.0
+    },
+    {
+     "box": [
+      880,
+      1072,
+      936,
+      1116
+     ],
+     "seen": 0.0
+    },
+    {
+     "box": [
+      212,
+      1128,
+      268,
+      1172
+     ],
+     "seen": 0.0
+    },
+    {
+     "box": [
+      808,
+      1128,
+      864,
+      1172
+     ],
+     "seen": 0.0
+    },
+    {
+     "box": [
+      284,
+      1184,
+      344,
+      1228
+     ],
+     "seen": 0.0
+    },
+    {
+     "box": [
+      736,
+      1184,
+      792,
+      1228
+     ],
+     "seen": 0.0
+    },
+    {
+     "box": [
+      360,
+      1244,
+      416,
+      1288
+     ],
+     "seen": 0.0
+    },
+    {
+     "box": [
+      664,
+      1244,
+      720,
+      1288
+     ],
+     "seen": 0.0
+    },
+    {
+     "box": [
+      436,
+      1304,
+      492,
+      1348
+     ],
+     "seen": 0.0
+    },
+    {
+     "box": [
+      588,
+      1304,
+      644,
+      1348
+     ],
+     "seen": 0.0
+    },
+    {
+     "box": [
+      512,
+      1360,
+      568,
+      1408
+     ],
+     "seen": 0.0
+    }
+   ],
+   "worst": 0.064
+  },
+  "Q5": {
+   "applies": true,
+   "buildings": 0,
+   "buildings_on_one_path": null,
+   "buildings_why": "no building in frame",
+   "decoration_on_walkable": 0.0239,
+   "decoration_pixels": 3540,
+   "path_links_every_building": null,
+   "paths": 0
+  },
+  "Q6": {
+   "applies": true,
+   "covering": {
+    "vault": 0.076
+   },
+   "most": 31,
+   "per_object": {
+    "vault": 31
+   },
+   "worst_covering": 0.076
+  },
+  "env": {
+   "FRAME_H": "",
+   "HIDE": "",
+   "HOUR": "",
+   "MOMENT": "",
+   "ORTHO": "",
+   "SCREEN": "",
+   "SHOT": "/tmp/ruleborn_baseline/screen_landing/shot.png",
+   "TAB": "",
+   "ZOOM": ""
+  },
+  "frame": [
+   1080,
+   2340
+  ],
+  "screen": "heist",
+  "still": "/tmp/ruleborn_baseline/screen_landing",
+  "zoom": 1
+ },
  "name": "screen_landing",
- "verdict": "mask limit",
- "why": "error inside mask_pass.gd: SCRIPT ERROR: Invalid assignment of property or key 'transparent_bg' with value of type 'bool' on a base object of type 'Nil'."
+ "verdict": "ok",
+ "why": ""
 }

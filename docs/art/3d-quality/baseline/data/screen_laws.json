@@ -1,7 +1,8 @@
 {
- "budget": "budget: laws: 84260 triangles (55854 mesh + 28406 outline passes); 0 triangles in shadows; 68 draw calls, shadow passes included; 6714 triangles and 49 draw calls in other views; frame 90974 triangles, 117 draw calls",
+ "budget": "budget: laws: 84212 triangles (55854 mesh + 28358 outline passes); 0 triangles in shadows; 68 draw calls, shadow passes included; 6714 triangles and 49 draw calls in other views; frame 90926 triangles, 117 draw calls",
  "measure": {
   "Q1": {
+   "applies": true,
    "band": 0.391,
    "band_rows": [
     572,
@@ -16,6 +17,7 @@
    "uncovered_share": 0.6203
   },
   "Q11": {
+   "applies": true,
    "chosen": {
     "name": "c0",
     "rating": "clear"
@@ -42,24 +44,29 @@
    }
   },
   "Q12": {
+   "applies": true,
    "building_foot_luma_ratio": [
-    0.969
+    0.977
    ],
    "buildings_with_shadow": 0,
-   "cliff_luma": 115.1,
-   "cliffs_darker": false,
+   "cliff_luma": 108.3,
+   "cliffs_darker": true,
    "figure_shadow_pixels": {
     "c0": 243,
     "c1": 0,
-    "c2": 3268,
+    "c2": 3266,
     "g0": 1949,
-    "g1": 592
+    "g1": 605
    },
    "figures": 5,
    "figures_with_shadow": 4,
-   "top_luma": 113.9
+   "top_luma": 113.3
   },
   "Q2": {
+   "applies": true,
+   "characters": [],
+   "characters_least": null,
+   "characters_most": null,
    "crew": [
     {
      "bounds_points": 34.5,
@@ -96,47 +103,49 @@
     {
      "bounds_points": 52.7,
      "name": "g1",
-     "points": 39.3,
+     "points": 39.2,
      "role": "guard",
      "silhouette_points": 38.0
     }
    ],
    "guards_least": 38.8,
-   "guards_most": 39.3,
+   "guards_most": 39.2,
    "least": 24.2
   },
   "Q3": {
+   "applies": true,
    "figures": [
     {
      "name": "c0",
      "pixels": 2624,
-     "share": 0.1345
+     "share": 0.1296
     },
     {
      "name": "c1",
-     "pixels": 569,
-     "share": 0.2267
+     "pixels": 573,
+     "share": 0.2304
     },
     {
      "name": "c2",
-     "pixels": 3810,
-     "share": 0.2924
+     "pixels": 3815,
+     "share": 0.2705
     },
     {
      "name": "g0",
-     "pixels": 5331,
-     "share": 0.2579
+     "pixels": 5330,
+     "share": 0.2583
     },
     {
      "name": "g1",
-     "pixels": 3909,
-     "share": 0.1814
+     "pixels": 3874,
+     "share": 0.1879
     }
    ],
-   "least": 0.1345,
-   "worst": 0.2924
+   "least": 0.1296,
+   "worst": 0.2705
   },
   "Q4": {
+   "applies": true,
    "heads": [
     {
      "name": "c0",
@@ -545,20 +554,22 @@
    "worst": 0.096
   },
   "Q5": {
+   "applies": true,
    "buildings": 1,
    "buildings_on_one_path": 1,
    "decoration_on_walkable": 0.0401,
-   "decoration_pixels": 11942,
+   "decoration_pixels": 11944,
    "path_links_every_building": true,
    "paths": 1
   },
   "Q6": {
+   "applies": true,
    "covering": {
     "c0": 0.295,
-    "c1": 0.758,
+    "c1": 0.757,
     "c2": 0.222,
     "g0": 0.195,
-    "g1": 0.545,
+    "g1": 0.544,
     "vault": 0.224
    },
    "most": 17,
@@ -570,7 +581,7 @@
     "g1": 2,
     "vault": 10
    },
-   "worst_covering": 0.758
+   "worst_covering": 0.757
   },
   "env": {
    "FRAME_H": "",
@@ -578,13 +589,16 @@
    "HOUR": "",
    "MOMENT": "",
    "ORTHO": "",
+   "SCREEN": "",
    "SHOT": "/tmp/ruleborn_baseline/screen_laws/shot.png",
+   "TAB": "",
    "ZOOM": ""
   },
   "frame": [
    1080,
    2340
   ],
+  "screen": "heist",
   "still": "/tmp/ruleborn_baseline/screen_laws",
   "zoom": 1
  },

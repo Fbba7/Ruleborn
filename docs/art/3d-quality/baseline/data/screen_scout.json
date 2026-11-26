@@ -1,7 +1,95 @@
 {
  "budget": "budget: ScoutScreen: 19370 triangles (17677 mesh + 1693 outline passes); 5278 triangles in shadows; 63 draw calls, shadow passes included; 970 triangles and 53 draw calls in other views; frame 25618 triangles, 116 draw calls",
- "measure": null,
+ "measure": {
+  "Q1": {
+   "applies": true,
+   "band": 0.1291,
+   "band_rows": [
+    462,
+    763
+   ],
+   "panels_share": 0.4562,
+   "strict_band": 0.1256,
+   "strict_rows": [
+    462,
+    755
+   ],
+   "uncovered_share": 0.5438
+  },
+  "Q11": {
+   "applies": true,
+   "island": {
+    "pixels": 750108,
+    "rating": "cut",
+    "under_share": 0.206
+   },
+   "island_at_edges": {
+    "bottom": false,
+    "left": true,
+    "right": true,
+    "top": false
+   },
+   "pass": false
+  },
+  "Q12": {
+   "applies": true,
+   "building_foot_luma_ratio": [],
+   "buildings_why": "no building in frame",
+   "buildings_with_shadow": null,
+   "cliff_luma": 74.6,
+   "cliffs_darker": true,
+   "figure_shadow_pixels": {},
+   "figures": 0,
+   "figures_why": "no figure in frame",
+   "figures_with_shadow": null,
+   "top_luma": 136.9
+  },
+  "Q2": {
+   "applies": false,
+   "why": "a realm screen draws no figures"
+  },
+  "Q3": {
+   "applies": false,
+   "why": "a realm screen draws no figures"
+  },
+  "Q4": {
+   "applies": false,
+   "why": "a realm screen draws no figures or markers"
+  },
+  "Q5": {
+   "applies": true,
+   "buildings": 0,
+   "buildings_on_one_path": null,
+   "buildings_why": "no building in frame",
+   "decoration_on_walkable": 0.0121,
+   "decoration_pixels": 2904,
+   "path_links_every_building": null,
+   "paths": 0
+  },
+  "Q6": {
+   "applies": false,
+   "why": "a realm screen draws no figures or markers"
+  },
+  "env": {
+   "FRAME_H": "",
+   "HIDE": "",
+   "HOUR": "",
+   "MOMENT": "",
+   "ORTHO": "",
+   "SCREEN": "",
+   "SHOT": "/tmp/ruleborn_baseline/screen_scout/shot.png",
+   "TAB": "",
+   "ZOOM": ""
+  },
+  "frame": [
+   1080,
+   2340
+  ],
+  "screen": "realm",
+  "still": "/tmp/ruleborn_baseline/screen_scout",
+  "zoom": 1
+ },
  "name": "screen_scout",
- "verdict": "mask limit",
- "why": "error inside mask_pass.gd: SCRIPT ERROR: Invalid assignment of property or key 'transparent_bg' with value of type 'bool' on a base object of type 'Nil'."
+ "verdict": "ok",
+ "why": ""
 }

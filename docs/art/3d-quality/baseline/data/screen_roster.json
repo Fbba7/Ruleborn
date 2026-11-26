@@ -1,7 +1,126 @@
 {
  "budget": "draw calls 133, primitives 19602",
- "measure": null,
+ "measure": {
+  "Q1": {
+   "applies": true,
+   "band": 0.0,
+   "band_rows": [
+    0,
+    -1
+   ],
+   "panels_share": 0.9044,
+   "strict_band": 0.0,
+   "strict_rows": [
+    0,
+    -1
+   ],
+   "uncovered_share": 0.0956
+  },
+  "Q11": {
+   "applies": true,
+   "character": {
+    "height_share": 0.141,
+    "name": "h0",
+    "rating": "clear",
+    "third": false
+   },
+   "island_at_edges": {
+    "bottom": false,
+    "left": false,
+    "right": false,
+    "top": false
+   },
+   "largest_figure_share": 0.141,
+   "pass": false
+  },
+  "Q12": {
+   "applies": true,
+   "building_foot_luma_ratio": [],
+   "buildings_why": "no building in frame",
+   "buildings_with_shadow": null,
+   "cliff_luma": null,
+   "cliffs_darker": null,
+   "figure_shadow_pixels": {
+    "h0": 16648
+   },
+   "figures": 1,
+   "figures_with_shadow": 1,
+   "top_luma": 100.7
+  },
+  "Q2": {
+   "applies": true,
+   "characters": [
+    {
+     "bounds_points": 127.0,
+     "name": "h0",
+     "points": 100.2,
+     "role": "featherkin",
+     "silhouette_points": 110.0
+    }
+   ],
+   "characters_least": 100.2,
+   "characters_most": 100.2,
+   "crew": [],
+   "crew_least": null,
+   "crew_most": null,
+   "guards": [],
+   "guards_least": null,
+   "guards_most": null,
+   "least": 100.2
+  },
+  "Q3": {
+   "applies": true,
+   "figures": [
+    {
+     "name": "h0",
+     "pixels": 42368,
+     "share": 0.038
+    }
+   ],
+   "least": 0.038,
+   "worst": 0.038
+  },
+  "Q4": {
+   "applies": true,
+   "heads": [
+    {
+     "name": "h0",
+     "seen": 1.0
+    }
+   ],
+   "markers": [],
+   "pass": true,
+   "under_panel": [],
+   "worst": 1.0
+  },
+  "Q5": {
+   "applies": false,
+   "why": "a character stands on a plinth, not on ground with paths and buildings"
+  },
+  "Q6": {
+   "applies": false,
+   "why": "a character screen draws no world markers"
+  },
+  "env": {
+   "FRAME_H": "",
+   "HIDE": "",
+   "HOUR": "",
+   "MOMENT": "",
+   "ORTHO": "",
+   "SCREEN": "",
+   "SHOT": "/tmp/ruleborn_baseline/screen_roster/shot.png",
+   "TAB": "",
+   "ZOOM": ""
+  },
+  "frame": [
+   1080,
+   2340
+  ],
+  "screen": "character",
+  "still": "/tmp/ruleborn_baseline/screen_roster",
+  "zoom": 0
+ },
  "name": "screen_roster",
- "verdict": "mask limit",
- "why": "no WorldView in the shot"
+ "verdict": "ok",
+ "why": ""
 }

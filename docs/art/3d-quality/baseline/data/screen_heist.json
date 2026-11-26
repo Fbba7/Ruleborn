@@ -2,6 +2,7 @@
  "budget": "budget: heist: 85446 triangles (56480 mesh + 28966 outline passes); 0 triangles in shadows; 70 draw calls, shadow passes included; 7287 triangles and 50 draw calls in other views; frame 92733 triangles, 120 draw calls",
  "measure": {
   "Q1": {
+   "applies": true,
    "band": 0.391,
    "band_rows": [
     572,
@@ -16,6 +17,7 @@
    "uncovered_share": 0.6276
   },
   "Q11": {
+   "applies": true,
    "chosen": {
     "name": "c0",
     "rating": "clear"
@@ -42,12 +44,13 @@
    }
   },
   "Q12": {
+   "applies": true,
    "building_foot_luma_ratio": [
-    0.965
+    0.977
    ],
    "buildings_with_shadow": 0,
-   "cliff_luma": 114.8,
-   "cliffs_darker": false,
+   "cliff_luma": 102.9,
+   "cliffs_darker": true,
    "figure_shadow_pixels": {
     "c0": 238,
     "c1": 8,
@@ -57,9 +60,13 @@
    },
    "figures": 5,
    "figures_with_shadow": 4,
-   "top_luma": 114.7
+   "top_luma": 114.1
   },
   "Q2": {
+   "applies": true,
+   "characters": [],
+   "characters_least": null,
+   "characters_most": null,
    "crew": [
     {
      "bounds_points": 34.5,
@@ -106,37 +113,39 @@
    "least": 24.2
   },
   "Q3": {
+   "applies": true,
    "figures": [
     {
      "name": "c0",
      "pixels": 2666,
-     "share": 0.1264
+     "share": 0.1279
     },
     {
      "name": "c1",
-     "pixels": 625,
-     "share": 0.184
+     "pixels": 621,
+     "share": 0.1868
     },
     {
      "name": "c2",
      "pixels": 3489,
-     "share": 0.1622
+     "share": 0.1639
     },
     {
      "name": "g0",
      "pixels": 5381,
-     "share": 0.3209
+     "share": 0.3208
     },
     {
      "name": "g1",
-     "pixels": 4529,
-     "share": 0.1826
+     "pixels": 4533,
+     "share": 0.1822
     }
    ],
-   "least": 0.1264,
-   "worst": 0.3209
+   "least": 0.1279,
+   "worst": 0.3208
   },
   "Q4": {
+   "applies": true,
    "heads": [
     {
      "name": "c0",
@@ -144,7 +153,7 @@
     },
     {
      "name": "c1",
-     "seen": 0.083
+     "seen": 0.082
     },
     {
      "name": "c2",
@@ -270,7 +279,7 @@
     },
     {
      "box": [
-      332,
+      336,
       1152,
       348,
       1172
@@ -470,9 +479,10 @@
      "seen": 0.0
     }
    ],
-   "worst": 0.083
+   "worst": 0.082
   },
   "Q5": {
+   "applies": true,
    "buildings": 1,
    "buildings_on_one_path": 1,
    "decoration_on_walkable": 0.041,
@@ -481,6 +491,7 @@
    "paths": 1
   },
   "Q6": {
+   "applies": true,
    "covering": {
     "c0": 0.239,
     "c1": 0.697,
@@ -506,13 +517,16 @@
    "HOUR": "",
    "MOMENT": "",
    "ORTHO": "",
+   "SCREEN": "",
    "SHOT": "/tmp/ruleborn_baseline/screen_heist/shot.png",
+   "TAB": "",
    "ZOOM": ""
   },
   "frame": [
    1080,
    2340
   ],
+  "screen": "heist",
   "still": "/tmp/ruleborn_baseline/screen_heist",
   "zoom": 1
  },

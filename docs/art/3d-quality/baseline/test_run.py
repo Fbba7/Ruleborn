@@ -53,11 +53,13 @@ class Sandbox(unittest.TestCase):
         self.out = self.tmp / "baseline.md"
         self.work.mkdir()
         self.data.mkdir()
-        self.saved = run.WORK, run.DATA, run.OUT, run.run_one
+        self.saved = run.WORK, run.DATA, run.OUT, run.run_one, run.MUST_MEASURE
+        # the mechanism tests use realm and observatory as shots at the limit
+        run.MUST_MEASURE = {"screen_heist", "screen_replay", "screen_result", "screen_laws"}
         run.WORK, run.DATA, run.OUT = self.work, self.data, self.out
 
     def tearDown(self):
-        run.WORK, run.DATA, run.OUT, run.run_one = self.saved
+        run.WORK, run.DATA, run.OUT, run.run_one, run.MUST_MEASURE = self.saved
         shutil.rmtree(self.tmp)
 
 
@@ -243,8 +245,40 @@ class MustMeasure(Sandbox):
     def test_must_measure_names_real_shots(self):
         self.assertTrue(run.MUST_MEASURE <= set(run.SHOTS))
 
+    def test_the_mask_tool_must_measure_every_shot(self):
+        # the sandbox narrows MUST_MEASURE; the real one is every shot
+        self.assertEqual(self.saved[4], set(run.SHOTS))
+
+
+def published(name):
+    return json.loads((HERE / "data" / (name + ".json")).read_text())
+
 
 class Table(unittest.TestCase):
+    def test_every_published_shot_has_a_row_without_a_crash(self):
+        for f in sorted((HERE / "data").glob("*.json")):
+            self.assertEqual(len(table.q(json.loads(f.read_text()))), 8, f.name)
+
+    def test_the_realm_row_shows_q5_links_and_q12_buildings_and_cliffs(self):
+        cells = table.q(published("screen_realm"))
+        self.assertIn("links every building: ", cells[4])
+        self.assertRegex(cells[7], r"buildings \d+/\d+; cliffs darker: (yes|no)")
+        self.assertEqual(cells[1], table.NOT_MEASURED)
+
+    def test_the_character_row_measures_q2_and_q11_and_leaves_q5_q6(self):
+        cells = table.q(published("screen_character"))
+        self.assertIn("(character)", cells[1])
+        self.assertEqual((cells[4], cells[5]), (table.NOT_MEASURED,) * 2)
+
+    def test_the_heist_row_shows_the_q12_buildings_and_cliffs(self):
+        self.assertRegex(table.q(published("screen_heist"))[7], r"buildings .*cliffs darker: (yes|no)")
+
+    def test_the_tolerance_note_reads_about_110_to_115(self):
+        with tempfile.TemporaryDirectory() as d:
+            out = Path(d) / "b.md"
+            table.write(out, HERE / "data")
+            self.assertIn("about 110 to 115", out.read_text())
+
     def test_the_frame_draw_calls_have_their_own_column(self):
         rec = {"name": "screen_heist", "budget": HEIST_BUDGET, "measure": None}
         row = table.budget(rec)

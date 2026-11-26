@@ -1,7 +1,630 @@
 {
  "budget": "budget: BuilderScreen: 35761 triangles (27770 mesh + 7991 outline passes); 4230 triangles in shadows; 74 draw calls, shadow passes included; 1846 triangles and 77 draw calls in other views; frame 41837 triangles, 151 draw calls",
- "measure": null,
+ "measure": {
+  "Q1": {
+   "applies": true,
+   "band": 0.3615,
+   "band_rows": [
+    378,
+    1223
+   ],
+   "panels_share": 0.3645,
+   "strict_band": 0.112,
+   "strict_rows": [
+    962,
+    1223
+   ],
+   "uncovered_share": 0.6355
+  },
+  "Q11": {
+   "applies": true,
+   "island": {
+    "pixels": 1039828,
+    "rating": "cut",
+    "under_share": 0.266
+   },
+   "island_at_edges": {
+    "bottom": false,
+    "left": true,
+    "right": true,
+    "top": false
+   },
+   "pass": false
+  },
+  "Q12": {
+   "applies": true,
+   "building_foot_luma_ratio": [
+    0.953,
+    1.106,
+    1.0,
+    1.0
+   ],
+   "buildings_with_shadow": 0,
+   "cliff_luma": 80.7,
+   "cliffs_darker": true,
+   "figure_shadow_pixels": {
+    "g0": 1600,
+    "g1": 1864
+   },
+   "figures": 2,
+   "figures_with_shadow": 2,
+   "top_luma": 117.8
+  },
+  "Q2": {
+   "applies": true,
+   "characters": [],
+   "characters_least": null,
+   "characters_most": null,
+   "crew": [],
+   "crew_least": null,
+   "crew_most": null,
+   "guards": [
+    {
+     "bounds_points": 47.0,
+     "name": "g0",
+     "points": 40.0,
+     "role": "guard",
+     "silhouette_points": 34.0
+    },
+    {
+     "bounds_points": 47.0,
+     "name": "g1",
+     "points": 40.0,
+     "role": "guard",
+     "silhouette_points": 34.0
+    }
+   ],
+   "guards_least": 40.0,
+   "guards_most": 40.0,
+   "least": 40.0
+  },
+  "Q3": {
+   "applies": true,
+   "figures": [
+    {
+     "name": "g0",
+     "pixels": 2888,
+     "share": 0.313
+    },
+    {
+     "name": "g1",
+     "pixels": 5856,
+     "share": 0.2678
+    }
+   ],
+   "least": 0.2678,
+   "worst": 0.313
+  },
+  "Q4": {
+   "applies": true,
+   "heads": [
+    {
+     "name": "g0",
+     "seen": 0.718
+    },
+    {
+     "name": "g1",
+     "seen": 0.835
+    }
+   ],
+   "markers": [
+    {
+     "box": [
+      568,
+      480,
+      584,
+      500
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      408,
+      500,
+      424,
+      524
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      500,
+      516,
+      576,
+      560
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      552,
+      540,
+      732,
+      648
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      452,
+      544,
+      528,
+      588
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      348,
+      572,
+      364,
+      600
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      400,
+      572,
+      476,
+      620
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      500,
+      572,
+      576,
+      616
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      348,
+      604,
+      424,
+      648
+     ],
+     "seen": 0.909
+    },
+    {
+     "box": [
+      400,
+      604,
+      528,
+      736
+     ],
+     "seen": 0.879
+    },
+    {
+     "box": [
+      244,
+      632,
+      372,
+      736
+     ],
+     "seen": 0.829
+    },
+    {
+     "box": [
+      500,
+      632,
+      576,
+      676
+     ],
+     "seen": 0.843
+    },
+    {
+     "box": [
+      604,
+      632,
+      680,
+      676
+     ],
+     "seen": 0.822
+    },
+    {
+     "box": [
+      708,
+      632,
+      784,
+      676
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      348,
+      660,
+      424,
+      764
+     ],
+     "seen": 0.304
+    },
+    {
+     "box": [
+      552,
+      660,
+      628,
+      708
+     ],
+     "seen": 0.255
+    },
+    {
+     "box": [
+      656,
+      660,
+      836,
+      764
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      144,
+      692,
+      268,
+      764
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      40,
+      692,
+      732,
+      1176
+     ],
+     "seen": 0.95
+    },
+    {
+     "box": [
+      604,
+      692,
+      680,
+      736
+     ],
+     "seen": 0.937
+    },
+    {
+     "box": [
+      808,
+      692,
+      884,
+      736
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      244,
+      720,
+      320,
+      764
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      656,
+      720,
+      732,
+      764
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      808,
+      720,
+      936,
+      796
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      92,
+      748,
+      168,
+      796
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      192,
+      748,
+      268,
+      796
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      604,
+      748,
+      884,
+      912
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      912,
+      748,
+      988,
+      796
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      636,
+      760,
+      648,
+      784
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      40,
+      780,
+      116,
+      824
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      860,
+      780,
+      936,
+      824
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      708,
+      780,
+      1080,
+      1088
+     ],
+     "seen": 0.994
+    },
+    {
+     "box": [
+      0,
+      808,
+      64,
+      852
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      500,
+      808,
+      576,
+      852
+     ],
+     "seen": 0.481
+    },
+    {
+     "box": [
+      552,
+      840,
+      628,
+      884
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      0,
+      848,
+      12,
+      872
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      1064,
+      848,
+      1080,
+      872
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      0,
+      868,
+      64,
+      912
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      1016,
+      868,
+      1080,
+      912
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      552,
+      896,
+      628,
+      940
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      656,
+      896,
+      732,
+      940
+     ],
+     "seen": 0.689
+    },
+    {
+     "box": [
+      604,
+      928,
+      680,
+      972
+     ],
+     "seen": 0.73
+    },
+    {
+     "box": [
+      708,
+      928,
+      784,
+      972
+     ],
+     "seen": 0.735
+    },
+    {
+     "box": [
+      552,
+      956,
+      628,
+      1000
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      656,
+      956,
+      732,
+      1000
+     ],
+     "seen": 0.755
+    },
+    {
+     "box": [
+      860,
+      956,
+      936,
+      1000
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      604,
+      984,
+      680,
+      1028
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      500,
+      1072,
+      576,
+      1116
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      656,
+      1072,
+      732,
+      1120
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      604,
+      1104,
+      680,
+      1148
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      552,
+      1132,
+      628,
+      1176
+     ],
+     "seen": 1.0
+    },
+    {
+     "box": [
+      500,
+      1160,
+      576,
+      1208
+     ],
+     "seen": 1.0
+    }
+   ],
+   "pass": false,
+   "under_panel": [],
+   "worst": 0.255
+  },
+  "Q5": {
+   "applies": true,
+   "buildings": 4,
+   "buildings_on_one_path": 1,
+   "decoration_on_walkable": 0.0513,
+   "decoration_pixels": 11076,
+   "path_links_every_building": false,
+   "paths": 6
+  },
+  "Q6": {
+   "applies": true,
+   "covering": {
+    "g0": 0.471,
+    "g1": 0.23,
+    "vault": 0.655
+   },
+   "most": 28,
+   "per_object": {
+    "g0": 28,
+    "g1": 21,
+    "vault": 3
+   },
+   "worst_covering": 0.655
+  },
+  "env": {
+   "FRAME_H": "",
+   "HIDE": "",
+   "HOUR": "",
+   "MOMENT": "",
+   "ORTHO": "",
+   "SCREEN": "",
+   "SHOT": "/tmp/ruleborn_baseline/screen_builder/shot.png",
+   "TAB": "",
+   "ZOOM": ""
+  },
+  "frame": [
+   1080,
+   2340
+  ],
+  "screen": "realm",
+  "still": "/tmp/ruleborn_baseline/screen_builder",
+  "zoom": 1
+ },
  "name": "screen_builder",
- "verdict": "mask limit",
- "why": "error inside mask_pass.gd: SCRIPT ERROR: Invalid assignment of property or key 'transparent_bg' with value of type 'bool' on a base object of type 'Nil'."
+ "verdict": "ok",
+ "why": ""
 }

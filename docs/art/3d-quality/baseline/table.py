@@ -54,23 +54,52 @@ NOTES = {
 }
 
 
+def yn(x):
+    return "-" if x is None else ("yes" if x else "no")
+
+
 def q(rec: dict) -> list:
     r = rec.get("measure")
     if not r:
         return [NOT_MEASURED] * 8
-    q11 = r["Q11"]
-    rate = lambda k: q11.get(k, {}).get("rating", "-")  # noqa: E731
-    q2c = r["Q2"]["crew_least"]
-    q2g = r["Q2"]["guards_least"]
+    app = lambda k: r[k].get("applies", True)  # noqa: E731
+    nm = lambda k, f: f(r[k]) if app(k) else NOT_MEASURED  # noqa: E731
+
+    def q2(e):
+        parts = [(e.get(k + "_least")) for k in ("crew", "guards")]
+        if e.get("characters_least") is not None:
+            return f"{e['characters_least']} (character)"
+        return " / ".join("-" if p is None else str(p) for p in parts)
+
+    def q5(e):
+        n = e.get("buildings", 0)
+        link = "-" if not n else yn(e.get("path_links_every_building"))
+        return f"{e['decoration_on_walkable']:.1%}; links every building: {link}"
+
+    def q11(e):
+        rate = lambda k: e.get(k, {}).get("rating", "-")  # noqa: E731
+        if "island" in e:
+            return f"island {e['island']['rating']}"
+        if "character" in e:
+            return f"{e['character']['rating']}; tallest {e['largest_figure_share']:.0%}"
+        return f"{rate('chosen')}; {rate('nearest_guard')}; {e['largest_figure_share']:.0%}"
+
+    def q12(e):
+        f = e.get("figures_with_shadow")
+        figs = "-" if f is None else f"{f}/{e['figures']}"
+        nb = len(e.get("building_foot_luma_ratio") or [])
+        bld = "-" if e.get("buildings_with_shadow") is None else f"{e['buildings_with_shadow']}/{nb}"
+        return f"figures {figs}; buildings {bld}; cliffs darker: {yn(e.get('cliffs_darker'))}"
+
     return [
         pct(r["Q1"]["band"]),
-        f"{q2c if q2c is not None else '-'} / {q2g if q2g is not None else '-'}",
-        "-" if r["Q3"]["worst"] is None else pct(r["Q3"]["worst"]),
-        "-" if r["Q4"]["worst"] is None else f"{r['Q4']['worst']:.0%}",
-        f"{r['Q5']['decoration_on_walkable']:.1%}",
-        str(r["Q6"]["most"]),
-        f"{rate('chosen')}; {rate('nearest_guard')}; {q11['largest_figure_share']:.0%}",
-        f"{r['Q12']['figures_with_shadow']}/{r['Q12']['figures']}",
+        nm("Q2", q2),
+        nm("Q3", lambda e: "-" if e["worst"] is None else pct(e["worst"])),
+        nm("Q4", lambda e: "-" if e["worst"] is None else f"{e['worst']:.0%}"),
+        nm("Q5", q5),
+        nm("Q6", lambda e: str(e["most"])),
+        nm("Q11", q11),
+        nm("Q12", q12),
     ]
 
 
@@ -102,17 +131,17 @@ def write(path: Path, data: Path = HERE / "data") -> None:
            "the script in `client/` as it is. It exits 1 if a shot fails (no work folder, no still, no budget",
            "line, a script error in the shot, a renderer shader that failed to start, a timeout, or the mask",
            "tool measured nothing for no known reason), and then keeps that shot's old data file. The mask",
-           "tool's known limit (below) is reported, not a failure, except on `screen_heist`, `screen_replay`,",
-           "`screen_result` and `screen_laws`, which it measures today. Each data file keeps its shot's verdict",
-           "(`verdict`, `why`).",
+           "tool's known limit (a shot it still cannot measure; none today) is reported, not a failure, except",
+           "that every shot of the table is one the tool measures today, so on each of them the limit is a",
+           "failure too. Each data file keeps its shot's verdict (`verdict`, `why`).",
            "`run.py`'s own tests, with no render:", "",
            "```", "python3 -m unittest discover -s docs/art/3d-quality/baseline -p 'test_*.py'", "```", "",
            "Two full runs in the same container agree on every figure but a few: `screen_laws` and",
            "`screen_replay` moved by a few dozen outline-pass triangles (48 and 32, under 0.1% of the frame),",
            "`screen_laws`' Q3 by 2 points (27% and 29%), and `screen_heist`'s shadow pixels by a few (Q12 the",
-           "same). `screen_heist`'s cliff luma, in its data file only, moved from 110 to 115; its top luma is",
-           "115, so `cliffs_darker` there can read either way. Compare a rerun against this table at that",
-           "tolerance.", "",
+           "same). `screen_heist`'s cliff luma, in its data file only, moved by about 110 to 115 (110 in one run, 115",
+           "in the other); its top luma is 115, so `cliffs_darker` there can read either way. Compare a rerun",
+           "against this table at that tolerance.", "",
            "**The shader cache race.** Shots rendered side by side on a fresh shader cache (the first run in",
            "a container) can race to make the cache's folders; Godot then leaves a shader unstarted",
            "(`ShaderGLES3::initialize` errors in the log; the \"never freed\" notice at exit is not one)",
@@ -146,12 +175,21 @@ def write(path: Path, data: Path = HERE / "data") -> None:
            "views' included: plan Q14's figure (at most 120). A `*` marks a shot that prints the renderer's frame",
            "totals only (no split; `universe_*` print their universe view's triangles, in the first column, and",
            "its draw calls, in View draw calls); a `-` in a budget column is a figure that shot does not print.", "",
-           f"**`{NOT_MEASURED}` means not measured** (request M1-R2): the mask tool measures only the heist's",
-           "`WorldView` with its crew and guards. It finds no `WorldView` on the character stages and the universe",
-           "view, and stops on `screen_defences`, the realm screens and `screen_observatory`. Some of these qualities do not apply",
-           "there (Q2 to Q6 need crew and guards), but Q11 and Q12 do apply on realm, builder, defences and",
-           "character (`plan.md`, section 4), and are not yet measured. A `-` in a measured row means the",
-           "shot has nothing to measure for that quality (Q3 with no figure in the clear).", "",
+           f"**`{NOT_MEASURED}` means not measured**, and only where the mask tool says the screen cannot be",
+           "([`mask.md`](mask.md), \"Each kind of screen\"; the reason is in each shot's `measure.json`):",
+           "",
+           "- **Realm screens** (`screen_realm`, `screen_planner`, `screen_scout`) draw no figures or markers,",
+           "  so Q2, Q3, Q4 and Q6 are `n/m`; Q5, Q11 and Q12 are measured.",
+           "- **Character stages** (`screen_character`, `screen_roster`, `screen_sage_hall`, `screen_forms`,",
+           "  `screen_hatch`, `screen_first`) stand a figure on a plinth, with no ground, paths or world",
+           "  markers: Q5 and Q6 are `n/m`; Q2 (the character's head), Q3, Q4, Q11 and Q12's figures are",
+           "  measured.",
+           "- **The universe view** (`universe_*`) draws islands, not figures or markers, and its islands float",
+           "  over the sky with no ground to cast on: only Q1 and Q11 (the island) are measured.",
+           "- **`screen_observatory`** draws no 3D world view on show: only Q1 is measured.",
+           "",
+           "In a measured row, a `-` means the shot has nothing to measure for that quality (Q3 with no figure",
+           "in the clear; Q12's buildings with no building on ground in frame).", "",
            "| " + " | ".join(head) + " |", "|" + "---|" * len(head)]
     for r in rows:
         out.append("| " + " | ".join(r) + " |")
@@ -162,9 +200,9 @@ def write(path: Path, data: Path = HERE / "data") -> None:
             "0% is real: crew member `c1`'s head (rows 1463 to 1484) lies under the \"Golden replay\" panel.",
             "",
             "(b) `screen_result`: the result screen draws a full-screen backdrop over the world, so the mask tool",
-            "reads every pixel as cover (`panels_share` 1.0). Q1 0%, Q3's `-`, Q4 0%, Q5 0.0%, Q11's",
-            "\"under panel\" and Q12's 0/9 all come from that backdrop (the still shows the world only faintly",
-            "through it).",
+            "reads every pixel as cover (`panels_share` 1.0). Q1 0%, Q3's `-`, Q4 0%, Q5 0.0% and Q11's",
+            "\"under panel\" all come from that backdrop (the still shows the world only faintly through it);",
+            "Q12 is read from each figure's own mask, not from the still.",
             "",
             "(c) `screen_observatory`: the screen has no world view on show (0 triangles, 0 draw calls in it).",
             "`StageThumbs` draws the cards' universes earlier, in a hidden offscreen `StageView`, and shows them",
@@ -174,5 +212,10 @@ def write(path: Path, data: Path = HERE / "data") -> None:
             "Q3 the worst share of a figure's pixels within 18 gray levels of the ground; Q4 the least visible",
             "share of a head or marker; Q5 decoration's share of walkable ground; Q6 the most markers on one",
             "object; Q11 the chosen crew member's and nearest guard's framing and the tallest figure's share of",
-            "the height; Q12 figures with a shadow. The targets are in `plan.md`, section 4.", ""]
+            "the height (the island's framing on a realm or universe screen, the character's on a stage). Q5 reads",
+            "decoration's share, then `links every building` (`yes` when one path reaches every building, `no`",
+            "when one does not, `-` with no building in frame). Q12 reads `figures` and `buildings` as shadowed",
+            "over measured (a building is measured when its foot has ground in frame) and `cliffs darker` as",
+            "`yes` when the cliff faces are darker than the island's top. The targets are in `plan.md`,",
+            "section 4.", ""]
     path.write_text("\n".join(out))

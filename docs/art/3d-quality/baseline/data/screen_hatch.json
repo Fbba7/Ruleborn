@@ -1,7 +1,126 @@
 {
  "budget": "draw calls 56, primitives 16418",
- "measure": null,
+ "measure": {
+  "Q1": {
+   "applies": true,
+   "band": 0.3385,
+   "band_rows": [
+    0,
+    791
+   ],
+   "panels_share": 0.664,
+   "strict_band": 0.3385,
+   "strict_rows": [
+    0,
+    791
+   ],
+   "uncovered_share": 0.336
+  },
+  "Q11": {
+   "applies": true,
+   "character": {
+    "height_share": 0.1735,
+    "name": "h0",
+    "rating": "clear",
+    "third": false
+   },
+   "island_at_edges": {
+    "bottom": true,
+    "left": false,
+    "right": false,
+    "top": false
+   },
+   "largest_figure_share": 0.1735,
+   "pass": false
+  },
+  "Q12": {
+   "applies": true,
+   "building_foot_luma_ratio": [],
+   "buildings_why": "no building in frame",
+   "buildings_with_shadow": null,
+   "cliff_luma": null,
+   "cliffs_darker": null,
+   "figure_shadow_pixels": {
+    "h0": 19972
+   },
+   "figures": 1,
+   "figures_with_shadow": 1,
+   "top_luma": 66.4
+  },
+  "Q2": {
+   "applies": true,
+   "characters": [
+    {
+     "bounds_points": 176.2,
+     "name": "h0",
+     "points": 134.3,
+     "role": "egg",
+     "silhouette_points": 135.3
+    }
+   ],
+   "characters_least": 134.3,
+   "characters_most": 134.3,
+   "crew": [],
+   "crew_least": null,
+   "crew_most": null,
+   "guards": [],
+   "guards_least": null,
+   "guards_most": null,
+   "least": 134.3
+  },
+  "Q3": {
+   "applies": true,
+   "figures": [
+    {
+     "name": "h0",
+     "pixels": 88808,
+     "share": 0.0192
+    }
+   ],
+   "least": 0.0192,
+   "worst": 0.0192
+  },
+  "Q4": {
+   "applies": true,
+   "heads": [
+    {
+     "name": "h0",
+     "seen": 1.0
+    }
+   ],
+   "markers": [],
+   "pass": true,
+   "under_panel": [],
+   "worst": 1.0
+  },
+  "Q5": {
+   "applies": false,
+   "why": "a character stands on a plinth, not on ground with paths and buildings"
+  },
+  "Q6": {
+   "applies": false,
+   "why": "a character screen draws no world markers"
+  },
+  "env": {
+   "FRAME_H": "",
+   "HIDE": "",
+   "HOUR": "",
+   "MOMENT": "",
+   "ORTHO": "",
+   "SCREEN": "",
+   "SHOT": "/tmp/ruleborn_baseline/screen_hatch/shot.png",
+   "TAB": "",
+   "ZOOM": ""
+  },
+  "frame": [
+   1080,
+   2340
+  ],
+  "screen": "character",
+  "still": "/tmp/ruleborn_baseline/screen_hatch",
+  "zoom": 0
+ },
  "name": "screen_hatch",
- "verdict": "mask limit",
- "why": "no WorldView in the shot"
+ "verdict": "ok",
+ "why": ""
 }

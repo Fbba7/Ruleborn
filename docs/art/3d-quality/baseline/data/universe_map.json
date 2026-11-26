@@ -1,7 +1,81 @@
 {
  "budget": "triangles 34065 draw calls 33 frame 56073 prims 79 calls",
- "measure": null,
+ "measure": {
+  "Q1": {
+   "applies": true,
+   "band": 0.1282,
+   "band_rows": [
+    2040,
+    2339
+   ],
+   "panels_share": 0.4169,
+   "strict_band": 0.0897,
+   "strict_rows": [
+    1018,
+    1227
+   ],
+   "uncovered_share": 0.5831
+  },
+  "Q11": {
+   "applies": true,
+   "island": {
+    "name": "heart",
+    "pixels": 46844,
+    "rating": "under panel",
+    "under_share": 0.569
+   },
+   "island_at_edges": {
+    "bottom": false,
+    "left": false,
+    "right": false,
+    "top": false
+   },
+   "pass": false
+  },
+  "Q12": {
+   "applies": false,
+   "why": "the islands float over the sky with no ground to cast on"
+  },
+  "Q2": {
+   "applies": false,
+   "why": "the universe draws islands, not figures"
+  },
+  "Q3": {
+   "applies": false,
+   "why": "the universe draws islands, not figures"
+  },
+  "Q4": {
+   "applies": false,
+   "why": "the universe's pins are interface, not world markers"
+  },
+  "Q5": {
+   "applies": false,
+   "why": "the islands are too small for paths and buildings to read"
+  },
+  "Q6": {
+   "applies": false,
+   "why": "the universe's pins are interface, not world markers"
+  },
+  "env": {
+   "FRAME_H": "",
+   "HIDE": "",
+   "HOUR": "",
+   "MOMENT": "",
+   "ORTHO": "",
+   "SCREEN": "map",
+   "SHOT": "/tmp/ruleborn_baseline/universe_map/shot.png",
+   "TAB": "",
+   "ZOOM": ""
+  },
+  "frame": [
+   1080,
+   2340
+  ],
+  "screen": "universe",
+  "still": "/tmp/ruleborn_baseline/universe_map",
+  "zoom": 0
+ },
  "name": "universe_map",
- "verdict": "mask limit",
- "why": "no WorldView in the shot"
+ "verdict": "ok",
+ "why": ""
 }

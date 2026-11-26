@@ -1,7 +1,69 @@
 {
  "budget": "budget: ObservatoryScreen: 0 triangles (0 mesh + 0 outline passes); 0 triangles in shadows; 0 draw calls, shadow passes included; 1478 triangles and 64 draw calls in other views; frame 1478 triangles, 64 draw calls",
- "measure": null,
+ "measure": {
+  "Q1": {
+   "applies": true,
+   "band": 0.0,
+   "band_rows": [
+    0,
+    -1
+   ],
+   "panels_share": 1.0,
+   "strict_band": 0.0,
+   "strict_rows": [
+    0,
+    -1
+   ],
+   "uncovered_share": 0.0
+  },
+  "Q11": {
+   "applies": false,
+   "why": "the screen draws no 3D world view"
+  },
+  "Q12": {
+   "applies": false,
+   "why": "the screen draws no 3D world view"
+  },
+  "Q2": {
+   "applies": false,
+   "why": "the screen draws no 3D world view"
+  },
+  "Q3": {
+   "applies": false,
+   "why": "the screen draws no 3D world view"
+  },
+  "Q4": {
+   "applies": false,
+   "why": "the screen draws no 3D world view"
+  },
+  "Q5": {
+   "applies": false,
+   "why": "the screen draws no 3D world view"
+  },
+  "Q6": {
+   "applies": false,
+   "why": "the screen draws no 3D world view"
+  },
+  "env": {
+   "FRAME_H": "",
+   "HIDE": "",
+   "HOUR": "",
+   "MOMENT": "",
+   "ORTHO": "",
+   "SCREEN": "",
+   "SHOT": "/tmp/ruleborn_baseline/screen_observatory/shot.png",
+   "TAB": "",
+   "ZOOM": ""
+  },
+  "frame": [
+   1080,
+   2340
+  ],
+  "screen": "none",
+  "still": "/tmp/ruleborn_baseline/screen_observatory",
+  "zoom": 0
+ },
  "name": "screen_observatory",
- "verdict": "mask limit",
- "why": "error inside mask_pass.gd: SCRIPT ERROR: Invalid assignment of property or key 'transparent_bg' with value of type 'bool' on a base object of type 'Nil'."
+ "verdict": "ok",
+ "why": ""
 }
