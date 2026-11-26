@@ -67,6 +67,7 @@ const COVER := [
 
 ## The kit's own materials: buildings and dressing.
 const KIT := ["kit_toon.gdshader", "kit_clear.gdshader"]
+const TINTS := ["look_cloud.gdshader", "look_mist.gdshader", "law_fx_tint.gdshader"]
 
 const SHADER := """
 shader_type spatial;
@@ -453,11 +454,8 @@ func _classify(g: GeometryInstance3D) -> void:
 			_marks3d.append(g)
 			g.visible = false
 			return
-		elif (
-			(m != null and m == view.look.sky_material)
-			or shader_path.get_file() in ["look_cloud.gdshader", "look_mist.gdshader"]
-		):
-			# The sky, its clouds and the mist sheets under the island.
+		elif (m != null and m == view.look.sky_material) or shader_path.get_file() in TINTS:
+			# The sky, its clouds, the mist under the island, a law's tint.
 			g.visible = false
 			return
 		elif shader_path.get_file() in ["water.gdshader", "look_fall.gdshader"]:

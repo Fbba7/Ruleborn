@@ -313,7 +313,10 @@ Why each "no" and "when":
   the first that is not clear (else the tallest), and passes when every
   one is clear and the tallest takes at least a third of the frame's
   height (the plan's "the character at least a third of the screen's
-  height", `THIRD`). A screen with one character rates that one.
+  height", `THIRD`). A screen with one character rates that one. A
+  character pushed wholly off the frame is rated "off" and fails the
+  screen; a screen with no character at all gives `null` and the reason
+  "no character on the screen".
   Q12 counts the character's contact shadow: the stage's shadow disc under
   each plinth, drawn in the id pass as a thin disc of radius 0.4 in the
   figure's shadow code (the stage's own disc is a soft texture with no
@@ -340,20 +343,30 @@ Why each "no" and "when":
   `"screen": "none"`; Q1 then reads the whole frame as interface.
 
 **The shots on 26 November 2026** (`mask.py`, each with exit 0, no
-script error and no unclassed mesh):
+script error and no unclassed mesh; the resync's run, after the town's
+houses became buildings and the galaxy was hidden):
 
-| Shot | Kind | Figures | Q11 |
-|---|---|---|---|
-| `screen_heist` | heist | crew 24.2–28.2 pt, guards 38.9–39.6 pt | all clear |
-| `screen_landing` | heist | none yet | target under a panel |
-| `screen_builder`, `screen_curation` | realm | guards 38–40 pt | island cut left and right |
-| `screen_defences` (`TAB=0`) | realm | crew 8–18.7 pt, guard 22.1 pt | island cut |
-| `screen_planner` | realm | none | island clear |
-| `screen_scout` | realm | none | island cut left and right |
-| `screen_character`, `screen_forms`, `screen_hatch`, `screen_roster`, `screen_sage_hall` | character | one, 99–134 pt | clear, 13.6–17.6% of the height (fail) |
-| `screen_first` | character | three, 177–240 pt | cut, 30.9% (fail) |
-| `universe_home`, `universe_zoom`, `universe_map`, `universe_screen` | universe | none | island cut |
-| `screen_observatory` | none | none | not measured |
+| Shot | Kind | Figures | Buildings (Q5, Q12) | Q11 |
+|---|---|---|---|---|
+| `screen_heist`, `screen_laws` | heist | crew 24.2–28.4 pt, guards 38.9–39.6 pt | 1, on the path, unshadowed | all clear |
+| `screen_landing` | heist | none yet ("no figure in frame") | none in frame | target under a panel |
+| `screen_replay` | heist | crew 25–29 pt, guards 22.7–41.1 pt | none in frame | all clear |
+| `screen_result` | heist | crew 14.5–33.8 pt | none in frame | chosen under a panel |
+| `screen_realm` | realm | none | 6 (2 on one path), 0 of 4 shadowed | island cut left and right |
+| `screen_builder`, `screen_curation` | realm | guards 38–40 pt | 4 (1 on one path), 0 of 4 shadowed | island cut left and right |
+| `screen_defences` (`TAB=0`) | realm | crew 8–18.7 pt, guard 22.1 pt | 4 (2 on one path), 0 of 3 shadowed | island cut top and bottom |
+| `screen_planner` | realm | none | none in frame | island clear |
+| `screen_scout` | realm | none | none in frame | island cut left and right |
+| `screen_character`, `screen_forms`, `screen_hatch`, `screen_roster`, `screen_sage_hall` | character | one, 99–125 pt | not measured | clear, 13.6–17.6% of the height (fail) |
+| `screen_first` | character | three, 177–240 pt | not measured | h0 cut, h1 clear, h2 cut; 30.9% (fail) |
+| `universe_home`, `universe_zoom`, `universe_screen` | universe | not measured | not measured | the Heart clear |
+| `universe_map` | universe | not measured | not measured | the Heart under a panel (57% under its chips) |
+| `screen_observatory` | none | not measured | not measured | not measured |
+
+The town's houses read unshadowed (foot luma about 1.0 of the tops'):
+that is the look, not the pass. A law's screen tint (`law_fx_tint`, one
+quad before the camera on `screen_replay` and `screen_result`) is hidden
+with the sky: it is a wash over the frame, not a thing in the world.
 
 **Root-window shots.** A screen shot draws on the root window, which
 `project.godot` sizes at half the phone (540 × 1170, stretched). The pass
@@ -384,5 +397,10 @@ images, as on a heist shot's SubViewport.
 - **Stacked figures.** Crew on one tile (entry) hide each other. Their
   heights come from their bounds and are right, but Q3 and Q4 count the
   hidden ones as hidden, which is what the player sees.
+- **The universe's rated island** is the view's `focus_id` whenever that
+  island exists, at any zoom. A shot that comes back to zoom 0 with an
+  earlier focus left in `focus_id` rates that island, not the Heart;
+  `"island"` in `mask.json` says which one was rated. Today's four
+  universe shots all rate the Heart.
 - **`measure.py --self-test`** is not run by `tools/check_all.sh` (not
   this task's file); the lead may add it.

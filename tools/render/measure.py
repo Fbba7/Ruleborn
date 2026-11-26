@@ -360,9 +360,11 @@ class Still:
             return {"island": island, "island_at_edges": edges, "pass": island["rating"] == CLEAR}
         if self.screen == "character":
             out = {"island_at_edges": edges}
-            figs = [f for f in self.figures if f["kind"] == "character" and self.in_frame(f)]
+            # A character pushed off the frame is rated (off), not dropped.
+            figs = [f for f in self.figures if f["kind"] == "character" and f.get("visible", True)
+                    and not f.get("down", False)]
             if not figs:
-                return dict(out, character={"rating": OFF, "height_share": 0.0, "third": False}, **{"pass": False})
+                return dict(out, why="no character on the screen", **{"pass": None})
             def share(f):
                 ys = np.nonzero(f["solo"].any(axis=1))[0]
                 return round(float(ys[-1] - ys[0] + 1) / self.h, 4) if len(ys) else 0.0
@@ -458,7 +460,7 @@ class Still:
             out.update(figures_with_shadow=None, figures_why="no figure in frame")
         if not house_shadow:
             out.update(buildings_with_shadow=None,
-                       buildings_why="no building in frame" if not tops.any() or not (self.cls == BUILDING).any()
+                       buildings_why="no building in frame" if not ((self.cls == BUILDING) & ~self.covered).any()
                        else "no building with ground at its foot in frame")
         return out
 
@@ -501,6 +503,8 @@ def summary(r: dict) -> str:
             sides = ", ".join(k for k, v in e["island_at_edges"].items() if v) or "none"
             name = f" {e['island']['name']}" if "name" in e["island"] else ""
             return f"island{name} {e['island']['rating']} (edges touched: {sides})"
+        if "why" in e:
+            return f"character: {e['why']}"
         if "character" in e:
             c = e["character"]
             group = (" (of " + ", ".join(f"{k} {v}" for k, v in e["characters"].items()) + ")"
@@ -663,6 +667,13 @@ def _realm_test() -> None:
         assert r["Q12"]["figures_with_shadow"] is None, r["Q12"]
         text = summary(r)
         assert "0 of 0" not in text and "0/0" not in text, text
+        # A building whose foot is off the ground (the island cut away under
+        # it): it is in frame, so the reason names the foot, not the building.
+        idp[50:110, 0:80, :3] = code(BACKGROUND)
+        idp[60:80, 30:50, :3] = code(BUILDING, 3)
+        _still(d, w, h, idp, world, info)
+        r = measure(d)
+        assert r["Q12"]["buildings_why"] == "no building with ground at its foot in frame", r["Q12"]
 
 
 def _universe_test() -> None:
@@ -752,6 +763,20 @@ def _character_test() -> None:
         q11 = measure(d)["Q11"]
         assert q11["characters"] == {"h0": CLEAR, "h1": CUT}, q11
         assert q11["character"]["name"] == "h1" and q11["pass"] is False, q11
+        # The second pushed wholly off the frame: still rated (off), and it
+        # fails the screen.
+        idp[45:125, 80:90, :3] = 0
+        _still(d, w, h, idp, world, info, {"h0": solo, "h1": np.zeros((h, w, 4), np.uint8)}, behind)
+        r = measure(d)
+        assert r["Q11"]["characters"] == {"h0": CLEAR, "h1": OFF} and r["Q11"]["pass"] is False, r["Q11"]
+        assert "character h1 off" in summary(r), summary(r)
+        # No character on the screen at all: nothing to rate, never a fail
+        # over nothing, and the summary gives the reason.
+        info["figures"] = []
+        _still(d, w, h, idp, world, info, {}, behind)
+        r = measure(d)
+        assert r["Q11"]["pass"] is None and r["Q11"]["why"] == "no character on the screen", r["Q11"]
+        assert "no character on the screen" in summary(r), summary(r)
 
 
 if __name__ == "__main__":
