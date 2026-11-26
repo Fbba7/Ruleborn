@@ -1056,6 +1056,21 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 213**, 26 November 2026, from about 04:39Z (session
+  `session_01SNkKxp7dmCda8XWNfwYaUM`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 212:
+  M2 pushed 114f5fda (the universe numbers without pins, an exact stray
+  count test, its handoff) and merged main (d0d62a99); its session's
+  turn ended with the pre-check running in the background, and its
+  status (04:16Z, due 05:00Z) is not late. **Verify / merge:** nothing
+  ready; no merge lock taken. **Started:** none; one builder (M2) works,
+  under the cap of three while the seven-day bar reads
+  `allowed_warning`. M1's seat waits for the mask task; SP-bt-01's,
+  DT1's and CF1's seats are free with no 3D task open for them.
+  **Requests:** M2-R1, M2-R2, SPbt01-R2 and SPbt01-R3 stay open, none
+  past `due`. **Owner:** the phone trial and the style-frame pick are
+  still open (owner inbox).
+
 - **Cycle 212**, 26 November 2026, from about 04:14Z (session
   `session_01SNkKxpNTzU8p6veGpMZKBD`, started by the Opus 5.5 launcher,
   Opus 5.5 at effort medium by order 7). The changes since cycle 211:
@@ -1092,29 +1107,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   (`session_01SNkKxoEguEtd88C3hWyuT5`, Opus 5.5 high, a resync by order
   7). One builder works, under the cap of three while the seven-day bar
   reads `allowed_warning`. M1's seat waits for the mask task; SP-bt-01's,
-  DT1's and CF1's seats are free with no 3D task open for them.
-  **Requests:** M2-R1, M2-R2, SPbt01-R2 and SPbt01-R3 stay at their
-  defaults. **Owner:** the phone trial and the style-frame pick are
-  still open (owner inbox).
-
-- **Cycle 210**, 26 November 2026, from about 02:39Z (session
-  `session_01SNkKxpQsrHbWjUUKuWhdXk`, started by the Opus 5.5 launcher,
-  Opus 5.5 at effort medium by order 7). The changes since cycle 209:
-  SP-bt-01 marked 3D0-CO-queue-flake ready at e0a0499c (pre-check PASS);
-  M2 claimed the 3D0-M2-mask-screens resync and is working.
-  **Verify / merge:** the candidate passed the ownership and claims
-  checks and the documents check, and differs from `ready_sha` only
-  under `docs/progress/`, so checks reused from the pre-check at
-  `e0a0499c`. The Opus 5.5 high verifier passed it: both self-tests 20
-  of 20 in a row, main's copy failed 3 of 24 parallel runs under load
-  and the candidate 0 of 72, and each reverted part of the fix makes its
-  self-test case fail. **Merged** 3D0-CO-queue-flake as 443182df;
-  main's `check_all.sh` after the merge passed ("All checks passed."). Minor points left to
-  their requests: `cycle_needed.py` still reads the lead's acks as
-  strings (SPbt01-R2), and `run_checks.sh`'s own LOST races stay for
-  its other callers (SPbt01-R3). **Started:** none; one builder (M2)
-  works, under the cap of three while the seven-day bar reads
-  `allowed_warning`. M1's seat waits for the mask task; SP-bt-01's,
   DT1's and CF1's seats are free with no 3D task open for them.
   **Requests:** M2-R1, M2-R2, SPbt01-R2 and SPbt01-R3 stay at their
   defaults. **Owner:** the phone trial and the style-frame pick are
