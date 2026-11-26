@@ -297,23 +297,23 @@ func _save(name: String) -> void:
 	print("mask: saved ", name)
 
 
-## The frame's 2D items that are not the world view: the interface.
+## The frame's 2D items outside the world view: the interface, and the view.
 func _list_ui() -> void:
 	for n in frame.find_children("*", "CanvasItem", true, false):
 		var c := n as CanvasItem
-		if c == holder or holder.is_ancestor_of(c):
+		if holder.is_ancestor_of(c):
 			continue
-		_ui.append([c, c.is_ancestor_of(holder), c.modulate, c.self_modulate])
+		_ui.append([c, c == holder or c.is_ancestor_of(holder), c.modulate, c.self_modulate])
 
 
-## The interface see-through (`shown` false) or back as it was.
+## The interface see-through (`shown` false) or back as it was. The world
+## view and its holders lose their tint and fade (the result screen's).
 func _set_ui(shown: bool) -> void:
 	for e: Array in _ui:
 		var c: CanvasItem = e[0]
+		c.modulate = e[2] if shown else Color(1, 1, 1, float(e[1]))
 		if e[1]:
 			c.self_modulate = e[3] if shown else Color(1, 1, 1, 0)
-		else:
-			c.modulate = e[2] if shown else Color(1, 1, 1, 0)
 
 
 ## Hide every 3D thing under the world but the camera and the environment.
@@ -819,6 +819,7 @@ func _flat_env(env: Environment) -> void:
 	_shader.code = SHADER
 	env.background_mode = Environment.BG_COLOR
 	env.background_color = Color.BLACK
+	RenderingServer.set_default_clear_color(Color.BLACK)
 	env.tonemap_mode = Environment.TONE_MAPPER_LINEAR
 	env.tonemap_exposure = 1.0
 	env.tonemap_white = 1.0
@@ -835,7 +836,6 @@ func _flatten_stage(env: Environment) -> void:
 		w3d.add_child(node)
 	_flat_env(env)
 	vp.transparent_bg = false
-	RenderingServer.set_default_clear_color(Color.BLACK)
 	_own_2d(false)
 	if screen == "universe":
 		_home_roots = _universe_home()
