@@ -1,0 +1,7 @@
+{
+ "budget": "budget: PlannerScreen: 37948 triangles (37732 mesh + 216 outline passes); 7306 triangles in shadows; 90 draw calls, shadow passes included; 1304 triangles and 57 draw calls in other views; frame 46558 triangles, 147 draw calls",
+ "measure": null,
+ "name": "screen_planner",
+ "verdict": "mask limit",
+ "why": "error inside mask_pass.gd: SCRIPT ERROR: Invalid assignment of property or key 'transparent_bg' with value of type 'bool' on a base object of type 'Nil'."
+}

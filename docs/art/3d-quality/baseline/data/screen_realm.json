@@ -1,0 +1,7 @@
+{
+ "budget": "budget: RealmScreen: 29790 triangles (25015 mesh + 4775 outline passes); 3459 triangles in shadows; 76 draw calls, shadow passes included; 1578 triangles and 71 draw calls in other views; frame 34827 triangles, 147 draw calls",
+ "measure": null,
+ "name": "screen_realm",
+ "verdict": "mask limit",
+ "why": "error inside mask_pass.gd: SCRIPT ERROR: Invalid assignment of property or key 'transparent_bg' with value of type 'bool' on a base object of type 'Nil'."
+}
