@@ -3,21 +3,27 @@
   "role": "measure track",
   "branch": "claude/3d-mask",
   "model": "Opus 5.5",
-  "agent_state": "working",
+  "agent_state": "idle",
   "task_id": "3D0-M2-mask-screens",
-  "task_state": "claimed",
+  "task_state": "ready",
   "claimed_at": "2026-11-26T00:53:00Z",
   "lease_until": "2026-11-26T03:53:00Z",
-  "updated_at": "2026-11-26T00:53:00Z",
-  "expected_next_update_by": "2026-11-26T02:00:00Z",
+  "updated_at": "2026-11-26T02:20:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "ea00cc7",
-    "next_step": "failing self-tests for a realm still and a character still, then the mask pass on the mask-limit screens"
+    "last_green_sha": "15f1b796cc962bc56a6c08cdd7c02e1804606a07",
+    "next_step": "verifier review of 3D0-M2-mask-screens, then merge"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "15f1b796cc962bc56a6c08cdd7c02e1804606a07",
+    "state": "PASS",
+    "exit": 0,
+    "finished_at": "2026-11-26T02:15:30Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "15f1b796cc962bc56a6c08cdd7c02e1804606a07",
   "stop_at": "2026-12-02T21:00:00Z",
   "acks": [
     "cycle-206-start"
