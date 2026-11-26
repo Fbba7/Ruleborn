@@ -3,21 +3,27 @@
   "role": "measure track",
   "branch": "claude/3d-mask",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "3D0-M2-mask-screens",
-  "task_state": "working",
+  "task_state": "ready",
   "claimed_at": "2026-11-26T05:30:00Z",
   "lease_until": "2026-11-26T08:30:00Z",
-  "updated_at": "2026-11-26T05:30:00Z",
-  "expected_next_update_by": "2026-11-26T06:15:00Z",
+  "updated_at": "2026-11-26T06:20:00Z",
+  "expected_next_update_by": null,
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "d0d62a9952186f6fb2180ad7aad5fb508e6ff856",
-    "next_step": "resync 3: a stage's own interface (level_badge, over, top) counted as interface, not world; failing test first"
+    "last_green_sha": "9cd17e74a3d0807203ca5dcf60c4d32aebc7e937",
+    "next_step": "waiting for the verifier's review of 9cd17e7"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "9cd17e74a3d0807203ca5dcf60c4d32aebc7e937",
+    "state": "PASS",
+    "exit": 0,
+    "finished_at": "2026-11-26T06:15:20Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "9cd17e74a3d0807203ca5dcf60c4d32aebc7e937",
   "stop_at": "2026-12-02T21:00:00Z",
   "acks": [
     "cycle-206-start"
@@ -54,5 +60,5 @@
     }
   ],
   "answers": [],
-  "next_step": "ready at d0d62a99 after resync attempt 2: universe pins kept out of the id pass, stray-colour check in measure.py, universe shots re-measured; waiting for the verifier"
+  "next_step": "ready at 9cd17e7 after resync attempt 3: only a stage's backdrop and foot fade are world, its other 2D children (level_badge, over, top) are interface; black under the frame in world.png; stage screens re-measured; waiting for the verifier"
 }
