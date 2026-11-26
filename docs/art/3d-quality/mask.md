@@ -131,12 +131,15 @@ frame under the interface; "off" is under 5% on the frame. A figure's
 whole outline is its solo pass; the vault's is its own pixels in
 `id.png`, with its projected bounds telling how much the frame cuts off.
 
-**A count over nothing is not a measure.** Where Q5 or Q12 would count
-over no buildings or no figures, `measure.json` holds `null` for the count
-and a reason (`buildings_why`, `figures_why`: "no building in frame", "no
-building with ground at its foot in frame", "no figure in frame"), and the
-summary prints the reason, never "0 of 0". The self-test's realm still
-checks it.
+**A count over nothing is not a measure.** Where Q3, Q4, Q5 or Q12 would
+count over no figures, heads, markers or buildings, `measure.json` holds
+`null` for the count (and for Q4's `pass`) and a reason (`figures_why`,
+`buildings_why`, Q4's `why`: "no figure in frame", "no building in
+frame", "no building with ground at its foot in frame", "no head or
+marker in frame"), and the summary prints the reason, never "0 of 0" or
+a pass over nothing. Q12's `cliffs_darker` is `null` where the frame
+holds no cliff face or no top. The self-test's realm still (no building)
+and a heist still with no figure (as `screen_landing`) check it.
 
 ## Tolerances
 

@@ -229,8 +229,8 @@ class Still:
             lost = int((np.abs(gray_w - gray_b)[m] <= GRAY).sum())
             out.append({"name": f["name"], "pixels": n, "share": round(lost / n, 4)})
         shares = [r["share"] for r in out]
-        return {"figures": out, "worst": max(shares) if shares else None,
-                "least": min(shares) if shares else None}
+        res = {"figures": out, "worst": max(shares) if shares else None, "least": min(shares) if shares else None}
+        return res if out else dict(res, figures_why="no figure in frame")
 
     # Q4: heads and markers stay visible.
     def q4(self):
@@ -262,9 +262,9 @@ class Still:
             # pile-up: listed, not counted.
             (under if seen == 0.0 else marks).append(row)
         worst = [r["seen"] for r in heads + marks]
-        return {"heads": heads, "markers": marks, "under_panel": under,
-                "worst": min(worst) if worst else None,
-                "pass": all(v >= SEEN for v in worst)}
+        out = {"heads": heads, "markers": marks, "under_panel": under,
+               "worst": min(worst) if worst else None, "pass": all(v >= SEEN for v in worst)}
+        return out if worst else dict(out, why="no head or marker in frame", **{"pass": None})
 
     # Q5: quiet ground.
     def q5(self):
@@ -452,7 +452,7 @@ class Still:
                "buildings_with_shadow": sum(1 for r in house_shadow if r < 0.85),
                "cliff_luma": round(float(gray[cliff].mean()), 1) if cliff.any() else None,
                "top_luma": round(ground_mean, 1) if tops.any() else None,
-               "cliffs_darker": bool(cliff.any() and tops.any() and gray[cliff].mean() < ground_mean)}
+               "cliffs_darker": bool(gray[cliff].mean() < ground_mean) if cliff.any() and tops.any() else None}
         # A count over nothing is not a measure (never "0 of 0").
         if not shadows:
             out.update(figures_with_shadow=None, figures_why="no figure in frame")
@@ -517,13 +517,13 @@ def summary(r: dict) -> str:
         return ", ".join(parts) or "no figures in frame"
 
     def q4(e):
-        return f"least seen {e['worst']} ({'pass' if e['pass'] else 'fail'})"
+        return e.get("why") or f"least seen {e['worst']} ({'pass' if e['pass'] else 'fail'})"
 
     return "\n".join([
         line("Q1", lambda e: f"band {e['band']:.1%} (rows {e['band_rows'][0]}-{e['band_rows'][1]}), "
                              f"strict {e['strict_band']:.1%}, panels {e['panels_share']:.1%} of the pixels"),
         line("Q2", q2),
-        line("Q3", lambda e: f"figure pixels near the ground's gray: {e['least']} to {e['worst']}"),
+        line("Q3", lambda e: e.get("figures_why") or f"figure pixels near the ground's gray: {e['least']} to {e['worst']}"),
         line("Q4", q4),
         line("Q5", lambda e: f"decoration on walkable {e['decoration_on_walkable']:.1%}; "
                              + (f"{e['buildings_why']}, path not measured" if e.get("buildings_why") else
@@ -534,7 +534,9 @@ def summary(r: dict) -> str:
                                f"shadows {e['figures_with_shadow']}/{e['figures']}") + ", "
                               + (f"buildings: {e['buildings_why']}" if e.get("buildings_why") else
                                  f"buildings shadowed {e['buildings_with_shadow']}/{len(e['building_foot_luma_ratio'])}")
-                              + f", cliffs darker {e['cliffs_darker']} ({e['cliff_luma']} vs {e['top_luma']})"),
+                              + (f", cliffs darker {e['cliffs_darker']} ({e['cliff_luma']} vs {e['top_luma']})"
+                                 if e["cliff_luma"] is not None and e["top_luma"] is not None
+                                 else ", cliffs: no cliff and top in frame")),
     ])
 
 
@@ -584,6 +586,11 @@ def self_test() -> None:
         assert runs(np.array([1, 0, 1, 1, 1, 0, 1], bool)) == (2, 3)
         assert r["screen"] == "heist" and r["Q2"].get("applies", True), r["Q2"]
         summary(r)
+        # A heist before the crew land (screen_landing): no figure to measure.
+        (d / "mask.json").write_text(json.dumps(dict(info, figures=[], chosen=-1)))
+        r = measure(d)
+        assert r["Q3"]["worst"] is None and r["Q3"]["figures_why"] == "no figure in frame", r["Q3"]
+        assert "None" not in summary(r), summary(r)
     _realm_test()
     _universe_test()
     _character_test()
