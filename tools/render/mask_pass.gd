@@ -151,7 +151,7 @@ var _stage_figs: Array = []
 ## Whether the world view draws its crew and guards: a realm screen hides
 ## them (RealmScreen), and then the frame has no figures to measure.
 var _figs_drawn := true
-## A stage's own 2D children but its viewport: [item, visible, alpha].
+## A stage's own 2D children but its viewport: [item, visible, alpha, world].
 var _own2d: Array = []
 ## The nodes a universe screen's rated island is drawn under.
 var _home_roots: Array = []
