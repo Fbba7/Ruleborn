@@ -1,9 +1,16 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-25T23:45:00Z",
+  "updated_at": "2026-11-26T00:18:00Z",
   "expected_next_update_by": "2026-11-26T02:45:00Z",
   "cycle": 205,
-  "merging": null,
+  "merging": {
+    "candidate_sha": "34d85938c7f524cd3f7efb8d6f23fcefe1cb32a1",
+    "task_ids": [
+      "3D0-M1-baseline"
+    ],
+    "started_at": "2026-11-26T00:18:00Z",
+    "expires_at": "2026-11-26T01:18:00Z"
+  },
   "last_merged": {
     "task_id": "3D0-M2-find-it",
     "merged_sha": "8aabe5ef",
