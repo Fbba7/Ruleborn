@@ -1065,7 +1065,7 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   of 20 in a row, main's copy failed 3 of 24 parallel runs under load
   and the candidate 0 of 72, and each reverted part of the fix makes its
   self-test case fail. **Merged** 3D0-CO-queue-flake as 443182df;
-  main's `check_all.sh` runs after the merge. Minor points left to
+  main's `check_all.sh` after the merge passed ("All checks passed."). Minor points left to
   their requests: `cycle_needed.py` still reads the lead's acks as
   strings (SPbt01-R2), and `run_checks.sh`'s own LOST races stay for
   its other callers (SPbt01-R3). **Started:** none; one builder (M2)
