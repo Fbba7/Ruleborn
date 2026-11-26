@@ -7,13 +7,13 @@
   "task_id": "3D0-M2-mask-screens",
   "task_state": "claimed",
   "claimed_at": "2026-11-26T02:35:00Z",
-  "lease_until": "2026-11-26T05:35:00Z",
-  "updated_at": "2026-11-26T02:35:00Z",
-  "expected_next_update_by": "2026-11-26T03:20:00Z",
+  "lease_until": "2026-11-26T05:42:07Z",
+  "updated_at": "2026-11-26T02:42:07Z",
+  "expected_next_update_by": "2026-11-26T03:27:07Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "15f1b796cc962bc56a6c08cdd7c02e1804606a07",
-    "next_step": "resync: fix the verifier's points (universe Q11 backdrop, realm buildings, edges, tolerance, chosen)"
+    "next_step": "fixes coded (universe home island, realm town buildings, no 0-of-0, chosen -1, self-test cases); next: render the mask-limit shots, check realm edges, update mask.md"
   },
   "precheck": null,
   "gate_request": null,

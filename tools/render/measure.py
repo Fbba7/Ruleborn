@@ -278,9 +278,15 @@ class Still:
             near = grow(cells, 3)
             joined.append(sum(1 for _m, _b, hc in houses if near & hc))
         best = max(joined) if joined else 0
-        return {"decoration_on_walkable": round(float(deco.sum() / max(1, walk.sum())), 4),
-                "decoration_pixels": int(deco.sum()), "paths": len(paths), "buildings": len(houses),
-                "buildings_on_one_path": best, "path_links_every_building": bool(houses) and best == len(houses)}
+        out = {"decoration_on_walkable": round(float(deco.sum() / max(1, walk.sum())), 4),
+               "decoration_pixels": int(deco.sum()), "paths": len(paths), "buildings": len(houses),
+               "buildings_on_one_path": best, "path_links_every_building": best == len(houses)}
+        if not houses:
+            # No building in frame: whether a path links them is not a
+            # measure at all (never "0 of 0").
+            out.update(buildings_on_one_path=None, path_links_every_building=None,
+                       buildings_why="no building in frame")
+        return out
 
     def _objects(self):
         objs = []
@@ -328,8 +334,13 @@ class Still:
     def island_rating(self):
         """The island on a realm or universe screen: cut where the ground
         reaches an edge of the view, under panel when half or more of it is
-        under the interface, else clear."""
+        under the interface, else clear. On a universe screen the pass names
+        the island it rates (`island` in mask.json, the focused one or the
+        heart) and draws it with index 1; the other islands are not rated."""
         island = (self.cls >= WALKABLE) & (self.cls <= BUILDING)
+        name = self.info.get("island")
+        if self.screen == "universe" and name:
+            island &= self.idx == 1
         x, y, w, h = [int(round(v)) for v in self.info["view_rect"]]
         x0, y0, x1, y1 = max(0, x), max(0, y), min(self.w, x + w) - 1, min(self.h, y + h) - 1
         edges = {"left": bool(island[y0:y1, x0].any()), "right": bool(island[y0:y1, x1].any()),
@@ -337,7 +348,10 @@ class Still:
         n = int(island.sum())
         under = float((island & self.covered).sum() / max(1, n))
         rating = OFF if n == 0 else CUT if any(edges.values()) else UNDER if under >= 0.5 else CLEAR
-        return edges, {"rating": rating, "pixels": n, "under_share": round(under, 3)}
+        out = {"rating": rating, "pixels": n, "under_share": round(under, 3)}
+        if self.screen == "universe" and name:
+            out["name"] = name
+        return edges, out
 
     # Q11: framing.
     def q11(self):
@@ -349,14 +363,29 @@ class Still:
             figs = [f for f in self.figures if f["kind"] == "character" and self.in_frame(f)]
             if not figs:
                 return dict(out, character={"rating": OFF, "height_share": 0.0, "third": False}, **{"pass": False})
-            pick = next((f for f in figs if f["index"] == self.info.get("chosen", -1)), figs[0])
-            ys = np.nonzero(pick["solo"].any(axis=1))[0]
-            share = round(float(ys[-1] - ys[0] + 1) / self.h, 4)
-            rating = self.rate(pick["solo"], self._whole(pick))
-            out["character"] = {"name": pick["name"], "rating": rating, "height_share": share,
-                                "third": share >= THIRD}
-            out["largest_figure_share"] = share
-            out["pass"] = rating == CLEAR and share >= THIRD
+            def share(f):
+                ys = np.nonzero(f["solo"].any(axis=1))[0]
+                return round(float(ys[-1] - ys[0] + 1) / self.h, 4) if len(ys) else 0.0
+
+            chosen = next((f for f in figs if f["index"] == self.info.get("chosen", -1)), None)
+            if chosen is not None or len(figs) == 1:
+                pick = chosen or figs[0]
+                rating = self.rate(pick["solo"], self._whole(pick))
+                tall = share(pick)
+            else:
+                # No choice on the screen (the welcome's group): every
+                # character is rated; the worst one is reported, and the
+                # tallest must reach the third.
+                ratings = {f["name"]: self.rate(f["solo"], self._whole(f)) for f in figs}
+                out["characters"] = ratings
+                tall = max(share(f) for f in figs)
+                worst = next((f for f in figs if ratings[f["name"]] != CLEAR), None)
+                pick = worst or max(figs, key=share)
+                rating = ratings[pick["name"]]
+            out["character"] = {"name": pick["name"], "rating": rating, "height_share": share(pick),
+                                "third": tall >= THIRD}
+            out["largest_figure_share"] = tall
+            out["pass"] = rating == CLEAR and tall >= THIRD
             return out
         crew = [f for f in self.figures if f["kind"] == "crew" and f.get("visible", True)]
         chosen = self.info.get("chosen", -1)
@@ -417,13 +446,21 @@ class Still:
             g = band & tops
             if g.sum() >= 20 and ground_mean:
                 house_shadow.append(round(float(gray[g].mean()) / ground_mean, 3))
-        return {"figure_shadow_pixels": shadows,
-                "figures_with_shadow": sum(1 for v in shadows.values() if v >= 20), "figures": len(shadows),
-                "building_foot_luma_ratio": house_shadow,
-                "buildings_with_shadow": sum(1 for r in house_shadow if r < 0.85),
-                "cliff_luma": round(float(gray[cliff].mean()), 1) if cliff.any() else None,
-                "top_luma": round(ground_mean, 1) if tops.any() else None,
-                "cliffs_darker": bool(cliff.any() and tops.any() and gray[cliff].mean() < ground_mean)}
+        out = {"figure_shadow_pixels": shadows,
+               "figures_with_shadow": sum(1 for v in shadows.values() if v >= 20), "figures": len(shadows),
+               "building_foot_luma_ratio": house_shadow,
+               "buildings_with_shadow": sum(1 for r in house_shadow if r < 0.85),
+               "cliff_luma": round(float(gray[cliff].mean()), 1) if cliff.any() else None,
+               "top_luma": round(ground_mean, 1) if tops.any() else None,
+               "cliffs_darker": bool(cliff.any() and tops.any() and gray[cliff].mean() < ground_mean)}
+        # A count over nothing is not a measure (never "0 of 0").
+        if not shadows:
+            out.update(figures_with_shadow=None, figures_why="no figure in frame")
+        if not house_shadow:
+            out.update(buildings_with_shadow=None,
+                       buildings_why="no building in frame" if not tops.any() or not (self.cls == BUILDING).any()
+                       else "no building with ground at its foot in frame")
+        return out
 
 
 def measure(folder: Path) -> dict:
@@ -462,10 +499,14 @@ def summary(r: dict) -> str:
     def q11(e):
         if "island" in e:
             sides = ", ".join(k for k, v in e["island_at_edges"].items() if v) or "none"
-            return f"island {e['island']['rating']} (edges touched: {sides})"
+            name = f" {e['island']['name']}" if "name" in e["island"] else ""
+            return f"island{name} {e['island']['rating']} (edges touched: {sides})"
         if "character" in e:
             c = e["character"]
-            return f"character {c['rating']}, {c['height_share']:.1%} of the height ({'pass' if e['pass'] else 'fail'})"
+            group = (" (of " + ", ".join(f"{k} {v}" for k, v in e["characters"].items()) + ")"
+                     if "characters" in e else "")
+            return (f"character {c['name']} {c['rating']}{group}, tallest {e['largest_figure_share']:.1%} "
+                    f"of the height ({'pass' if e['pass'] else 'fail'})")
         rating = lambda k: e.get(k, {}).get("rating", "-")  # noqa: E731
         return (f"chosen {rating('chosen')}, nearest guard {rating('nearest_guard')}, target {rating('target')}; "
                 f"largest figure {e['largest_figure_share']:.1%} of the height")
@@ -485,12 +526,15 @@ def summary(r: dict) -> str:
         line("Q3", lambda e: f"figure pixels near the ground's gray: {e['least']} to {e['worst']}"),
         line("Q4", q4),
         line("Q5", lambda e: f"decoration on walkable {e['decoration_on_walkable']:.1%}; "
-                             f"{e['buildings_on_one_path']} of {e['buildings']} buildings on one path"),
+                             + (f"{e['buildings_why']}, path not measured" if e.get("buildings_why") else
+                                f"{e['buildings_on_one_path']} of {e['buildings']} buildings on one path")),
         line("Q6", lambda e: f"most markers on one object {e['most']}; worst covering {e['worst_covering']}"),
         line("Q11", q11),
-        line("Q12", lambda e: f"shadows {e['figures_with_shadow']}/{e['figures']}, buildings shadowed "
-                              f"{e['buildings_with_shadow']}/{len(e['building_foot_luma_ratio'])}, cliffs darker "
-                              f"{e['cliffs_darker']} ({e['cliff_luma']} vs {e['top_luma']})"),
+        line("Q12", lambda e: (f"{e['figures_why']}" if e.get("figures_why") else
+                               f"shadows {e['figures_with_shadow']}/{e['figures']}") + ", "
+                              + (f"buildings: {e['buildings_why']}" if e.get("buildings_why") else
+                                 f"buildings shadowed {e['buildings_with_shadow']}/{len(e['building_foot_luma_ratio'])}")
+                              + f", cliffs darker {e['cliffs_darker']} ({e['cliff_luma']} vs {e['top_luma']})"),
     ])
 
 
@@ -541,6 +585,7 @@ def self_test() -> None:
         assert r["screen"] == "heist" and r["Q2"].get("applies", True), r["Q2"]
         summary(r)
     _realm_test()
+    _universe_test()
     _character_test()
     print("measure self-test: ok")
 
@@ -600,6 +645,47 @@ def _realm_test() -> None:
         _still(d, w, h, idp, world, info)
         r = measure(d)
         assert r["Q11"]["island"]["rating"] == CLEAR and r["Q11"]["pass"], r["Q11"]
+        # The pass found no building (the town drawn as decoration): the
+        # buildings' path and foot shadow are not measured, never "0 of 0".
+        idp[60:80, 30:50, :3] = code(DECORATION, 1)
+        _still(d, w, h, idp, world, info)
+        r = measure(d)
+        assert r["Q5"]["buildings"] == 0 and r["Q5"]["path_links_every_building"] is None, r["Q5"]
+        assert r["Q5"]["buildings_why"], r["Q5"]
+        assert r["Q12"]["buildings_with_shadow"] is None and r["Q12"]["buildings_why"], r["Q12"]
+        assert r["Q12"]["figures_with_shadow"] is None, r["Q12"]
+        text = summary(r)
+        assert "0 of 0" not in text and "0/0" not in text, text
+
+
+def _universe_test() -> None:
+    """A universe still: the other islands and what the pass leaves of the
+    sky reach every edge; the home island (index 1, `island` in mask.json)
+    is inside the frame, so Q11 rates it clear; moved off the right edge, cut."""
+    import tempfile
+    w, h = 90, 195
+    with tempfile.TemporaryDirectory() as tmp:
+        d = Path(tmp)
+        idp = np.zeros((h, w, 4), np.uint8)
+        idp[..., 3] = 255
+        idp[40:130, :, :3] = code(GROUND_OTHER)
+        idp[60:100, 30:60, :3] = code(GROUND_OTHER, 1)
+        idp[70:80, 40:50, :3] = code(BUILDING, 1)
+        world = np.full((h, w, 4), 80, np.uint8)
+        world[..., 3] = 255
+        info = {"screen": "universe", "frame": [w, h], "view_rect": [0, 0, w, h], "chosen": -1, "zoom": 0,
+                "figures": [], "island": "heart"}
+        _still(d, w, h, idp, world, info)
+        r = measure(d)
+        q11 = r["Q11"]
+        assert q11["island"]["rating"] == CLEAR and q11["pass"], q11
+        assert q11["island"]["name"] == "heart" and q11["island"]["pixels"] == 40 * 30, q11
+        assert not any(q11["island_at_edges"].values()), q11
+        idp[60:100, 60:90, :3] = code(GROUND_OTHER, 1)
+        _still(d, w, h, idp, world, info)
+        q11 = measure(d)["Q11"]
+        assert q11["island"]["rating"] == CUT and q11["island_at_edges"]["right"], q11
+        assert not q11["island_at_edges"]["left"], q11
 
 
 def _character_test() -> None:
@@ -644,6 +730,21 @@ def _character_test() -> None:
         _still(d, w, h, idp, world, info, {"h0": solo}, behind)
         q11 = measure(d)["Q11"]
         assert not q11["character"]["third"] and q11["pass"] is False, q11
+        # Two characters and no choice (the welcome's group, `chosen` -1):
+        # every one is rated, and the second, cut by the right edge, fails it.
+        idp[45:75, 40:52, :3] = code(CREW, 0)
+        solo[45:75, 40:52] = (40, 8, 8, 255)
+        info["figures"][0]["rect"] = [40, 45, 12, 80]
+        idp[45:125, 80:90, :3] = code(CREW, 1)
+        solo1 = np.zeros((h, w, 4), np.uint8)
+        solo1[45:125, 80:90] = (40, 8, 8, 255)
+        info["figures"].append({"kind": "character", "index": 1, "role": "rogue", "visible": True,
+                                "rect": [80, 45, 20, 80], "head": [90, 45], "feet": [90, 125], "world": [1, 0, 0]})
+        info["chosen"] = -1
+        _still(d, w, h, idp, world, info, {"h0": solo, "h1": solo1}, behind)
+        q11 = measure(d)["Q11"]
+        assert q11["characters"] == {"h0": CLEAR, "h1": CUT}, q11
+        assert q11["character"]["name"] == "h1" and q11["pass"] is False, q11
 
 
 if __name__ == "__main__":

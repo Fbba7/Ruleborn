@@ -65,6 +65,9 @@ const COVER := [
 	RealmKit.F.STAIRS,
 ]
 
+## The kit's own materials: buildings and dressing.
+const KIT := ["kit_toon.gdshader", "kit_clear.gdshader"]
+
 const SHADER := """
 shader_type spatial;
 render_mode unshaded, cull_disabled, shadows_disabled, fog_disabled, depth_draw_opaque;
@@ -161,6 +164,8 @@ var _stage_figs: Array = []
 var _figs_drawn := true
 ## A stage's own 2D children but its viewport: [item, visible].
 var _own2d: Array = []
+## The nodes a universe screen's rated island is drawn under.
+var _home_roots: Array = []
 
 
 func run(on: SceneTree) -> void:
@@ -224,7 +229,7 @@ func _run_world(v: WorldView) -> void:
 	env.fog_enabled = false
 	env.glow_enabled = false
 	env.adjustment_enabled = false
-	var hidden3d := _hide_3d(true)
+	var hidden3d := _hide_3d()
 	view.anchors.visible = false
 	var keep_bg := [env.background_mode, env.background_color]
 	env.background_mode = Environment.BG_COLOR
@@ -311,10 +316,10 @@ func _set_ui(shown: bool) -> void:
 
 
 ## Hide every 3D thing under the world but the camera and the environment.
-func _hide_3d(_all: bool) -> Array:
+func _hide_3d() -> Array:
 	var was: Array = []
-	for n in view.world.get_children():
-		if n is Node3D and n != view.camera and n.visible:
+	for n in w3d.get_children():
+		if n is Node3D and n != cam and n.visible:
 			was.append(n)
 			(n as Node3D).visible = false
 	return was
@@ -372,18 +377,8 @@ func _tile_kind(t: Vector2i) -> int:
 ## Every 3D thing a flat colour by what it is; no sky, fog, outlines or
 ## edge smoothing.
 func _flatten() -> void:
-	_shader = Shader.new()
-	_shader.code = SHADER
 	_tile_texture()
-	var env := view.environment
-	env.background_mode = Environment.BG_COLOR
-	env.background_color = Color.BLACK
-	env.tonemap_mode = Environment.TONE_MAPPER_LINEAR
-	env.tonemap_exposure = 1.0
-	env.tonemap_white = 1.0
-	view.viewport.msaa_3d = Viewport.MSAA_DISABLED
-	view.viewport.screen_space_aa = Viewport.SCREEN_SPACE_AA_DISABLED
-	view.container.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_flat_env(view.environment)
 	for n in view.world.find_children("*", "GeometryInstance3D", true, false):
 		var g := n as GeometryInstance3D
 		var m := g.material_override as ShaderMaterial
@@ -404,11 +399,9 @@ func _flatten() -> void:
 ## world, not under an `effects` node: a marker, like T5's effects.
 func _in_law_fx(g: Node) -> bool:
 	var n := g.get_parent()
-	while n != null:
-		if n is LawFx:
-			return true
+	while n != null and not n is LawFx:
 		n = n.get_parent()
-	return false
+	return n != null
 
 
 func _classify(g: GeometryInstance3D) -> void:
@@ -446,17 +439,15 @@ func _classify(g: GeometryInstance3D) -> void:
 			_marks3d.append(g)
 			g.visible = false
 			return
+		elif _town_building(g):
+			# The town's houses (StageTown) stand on open tiles round the
+			# island: buildings by what they are, not by the tile below.
+			cls = Vector3(BUILDING, 0, 0)
 		elif _town_figure(g):
 			# The town's residents and workers (StageTown): life in the
 			# realm, not figures the player steers; their blobs with them.
 			cls = Vector3(DECORATION, 0, 0)
-		elif (
-			_in_layers(g)
-			and not (
-				shader_path.ends_with("kit_toon.gdshader")
-				or shader_path.ends_with("kit_clear.gdshader")
-			)
-		):
+		elif _in_layers(g) and not shader_path.get_file() in KIT:
 			# A screen's own layer over the realm (tiles, ghosts, the scout's
 			# mist, the town's smoke and chosen ring): markers, not world.
 			_marks3d.append(g)
@@ -472,10 +463,7 @@ func _classify(g: GeometryInstance3D) -> void:
 			cls = Vector3(WATER, 0, 0)
 		elif shader_path.ends_with("kit_ground.gdshader"):
 			mode = 1
-		elif (
-			shader_path.ends_with("kit_toon.gdshader")
-			or shader_path.ends_with("kit_clear.gdshader")
-		):
+		elif shader_path.get_file() in KIT:
 			mode = 2
 		elif view.statics.is_ancestor_of(g):
 			# The island round the grid (WorldLook): ground by its normal.
@@ -505,6 +493,12 @@ func _classify(g: GeometryInstance3D) -> void:
 func _in_layers(g: Node) -> bool:
 	var layers: Variant = view.get("layers")
 	return layers is Node and (layers as Node).is_ancestor_of(g)
+
+
+## Whether `g` is a town's houses or their trim (StageTown's own meshes).
+func _town_building(g: Node) -> bool:
+	var town := g.get_parent()
+	return _in_layers(g) and town is StageTown and g in [town.get("houses"), town.get("trim")]
 
 
 ## Whether `g` is part of a town's resident or worker (StageTown).
@@ -574,12 +568,7 @@ func _is_shadow(actor: Node3D, g: Node) -> bool:
 func _solos() -> void:
 	if not _figs_drawn:
 		return
-	var all: Array = []
-	for n in view.world.get_children():
-		if n is Node3D and n != view.camera and n.visible:
-			all.append(n)
-	for n: Node3D in all:
-		n.visible = false
+	var all := _hide_3d()
 	view.actors.visible = true
 	var figures: Array = []
 	for k in view._crew.size():
@@ -678,22 +667,17 @@ func _write_json() -> void:
 		figures.append(_figure(view._crew[k], "crew", k, crew[k] if k < crew.size() else {}))
 	for k in view._guards.size() if _figs_drawn else 0:
 		figures.append(_figure(view._guards[k], "guard", k, guards[k] if k < guards.size() else {}))
+	var r := view.get_global_rect()
 	var d := {
 		"screen": screen,
 		"frame": [frame.get_visible_rect().size.x, frame.get_visible_rect().size.y],
-		"view_rect":
-		[
-			view.get_global_rect().position.x,
-			view.get_global_rect().position.y,
-			view.get_global_rect().size.x,
-			view.get_global_rect().size.y
-		],
+		"view_rect": [r.position.x, r.position.y, r.size.x, r.size.y],
 		"figures": figures,
 		"chosen": view.chosen,
 		"zoom": view.zoom,
 		"zoom_f": view._zoom_f,
 		"size": [view._size.x, view._size.y],
-		"env": {},
+		"env": _env_keys(),
 	}
 	if view._vault != null and view._vault.is_inside_tree():
 		d["vault"] = _bounds_of(view._vault)
@@ -703,11 +687,7 @@ func _write_json() -> void:
 		var v: Dictionary = world_data.vault()
 		if v.has("at"):
 			d["vault_at"] = [v["at"].x, v["at"].y]
-	for key: String in ["MOMENT", "ZOOM", "HOUR", "HIDE", "ORTHO", "FRAME_H", "SHOT"]:
-		d["env"][key] = OS.get_environment(key)
-	var f := FileAccess.open(out.path_join("mask.json"), FileAccess.WRITE)
-	f.store_string(JSON.stringify(d, "  "))
-	f.close()
+	_store(d)
 
 
 func _bounds_of(g: VisualInstance3D) -> Dictionary:
@@ -829,27 +809,63 @@ func _own_2d(shown: bool) -> void:
 		(e[0] as CanvasItem).visible = e[1] if shown else false
 
 
-func _flatten_stage(env: Environment) -> void:
+## The id frame's settings: the flat shader, black behind, no tone curve
+## and no edge smoothing.
+func _flat_env(env: Environment) -> void:
 	_shader = Shader.new()
 	_shader.code = SHADER
-	if env == null:
-		env = Environment.new()
-		var node := WorldEnvironment.new()
-		node.environment = env
-		w3d.add_child(node)
 	env.background_mode = Environment.BG_COLOR
 	env.background_color = Color.BLACK
 	env.tonemap_mode = Environment.TONE_MAPPER_LINEAR
 	env.tonemap_exposure = 1.0
 	env.tonemap_white = 1.0
-	vp.transparent_bg = false
 	vp.msaa_3d = Viewport.MSAA_DISABLED
 	vp.screen_space_aa = Viewport.SCREEN_SPACE_AA_DISABLED
 	cont.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+
+
+func _flatten_stage(env: Environment) -> void:
+	if env == null:
+		env = Environment.new()
+		var node := WorldEnvironment.new()
+		node.environment = env
+		w3d.add_child(node)
+	_flat_env(env)
+	vp.transparent_bg = false
 	RenderingServer.set_default_clear_color(Color.BLACK)
 	_own_2d(false)
+	if screen == "universe":
+		_home_roots = _universe_home()
 	for n in w3d.find_children("*", "GeometryInstance3D", true, false):
 		_classify_stage(n as GeometryInstance3D)
+
+
+## The island a universe screen's Q11 rates (`_home_id`), drawn with index
+## 1. Over the whole universe the view draws merged copies (UniverseWhole):
+## hidden, and the meshes they stand for shown, so its own can be told apart.
+func _universe_home() -> Array:
+	var u := holder as UniverseView
+	var home := _home_id()
+	if u.zoom == 0 and not u._whole.is_empty():
+		for n in u.statics.find_children("*", "MeshInstance3D", true, false):
+			if n.has_meta("whole"):
+				n.visible = false
+			elif UniverseWhole.LAYERS.any(n.has_meta):
+				n.visible = true
+	var citadel := u.statics.get_node_or_null("Citadel") if home == "heart" else null
+	var roots: Array = [u._rocks.get(home), u._close.get(home), citadel]
+	roots.append_array(u._lods.get(home, []))
+	return roots.filter(func(r: Variant) -> bool: return r != null)
+
+
+## The focused island's id when the view has one, else the Heart's.
+func _home_id() -> String:
+	var u := holder as UniverseView
+	return u.focus_id if u.islands.has(u.focus_id) else "heart"
+
+
+func _in_home(g: Node) -> bool:
+	return _home_roots.any(func(r: Node) -> bool: return r == g or r.is_ancestor_of(g))
 
 
 func _classify_stage(g: GeometryInstance3D) -> void:
@@ -891,20 +907,21 @@ func _classify_stage(g: GeometryInstance3D) -> void:
 			shader_path.ends_with("universe_dome.gdshader")
 			or shader_path.ends_with("universe_veil.gdshader")
 			or shader_path.ends_with("universe_glow.gdshader")
+			or shader_path.ends_with("universe_galaxy.gdshader")
 			or shader_path.ends_with("look_cloud.gdshader")
 			or shader_path.ends_with("stage_mist.gdshader")
 		):
-			# Glass, veils, glows and clouds: light over the world, not things.
+			# Glass, veils, glows, clouds and the galaxy behind the
+			# universe (StarSky): light and sky, not things.
 			g.visible = false
 			return
 		var moving := movers is Node and (movers as Node).is_ancestor_of(g)
 		if moving or (people != null and people.is_ancestor_of(g)):
 			cls = Vector3(DECORATION, 0, 0)
-		elif (
-			shader_path.ends_with("kit_toon.gdshader")
-			or shader_path.ends_with("kit_clear.gdshader")
-		):
+		elif shader_path.get_file() in KIT:
 			cls = Vector3(BUILDING, 0, 0)
+		if _in_home(g):
+			cls.y = 1
 	var ink := _outline_of(g) if cls.x == CREW else null
 	g.material_override = _material(0, cls)
 	if ink != null:
@@ -919,11 +936,7 @@ func _classify_stage(g: GeometryInstance3D) -> void:
 
 ## Each figure of a stage alone, flat, without its table or shadow.
 func _solos_stage() -> void:
-	var all: Array = []
-	for n in w3d.get_children():
-		if n is Node3D and n != cam and (n as Node3D).visible:
-			all.append(n)
-			(n as Node3D).visible = false
+	var all := _hide_3d()
 	for f: Array in _stage_figs:
 		var fig: Node3D = f[1]
 		var table: Node3D = f[2]
@@ -953,14 +966,17 @@ func _write_stage_json() -> void:
 		figures.append(d)
 	var r := holder.get_global_rect()
 	var z: Variant = holder.get("zoom")
+	# A stage chooses none of its characters (Q11 rates each); a universe
+	# screen names the island Q11 rates.
 	_store(
 		{
 			"screen": screen,
 			"frame": [frame.get_visible_rect().size.x, frame.get_visible_rect().size.y],
 			"view_rect": [r.position.x, r.position.y, r.size.x, r.size.y],
 			"figures": figures,
-			"chosen": 0 if not figures.is_empty() else -1,
+			"chosen": -1,
 			"zoom": int(z) if z != null else 0,
+			"island": _home_id() if screen == "universe" else "",
 			"env": _env_keys(),
 		}
 	)
