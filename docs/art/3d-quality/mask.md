@@ -26,6 +26,10 @@ draws the same frame the shot drew. `measure.py` then writes
 - `python3 tools/render/measure.py OUTDIR` does the same, and
   `python3 tools/render/measure.py --self-test` checks the measures on
   drawn test masks.
+- `python3 tools/render/mask.py --self-test` renders a character stage
+  with a plate added to it, as the character screen adds its pills, and
+  checks that each pass shows or hides the plate, the backdrop and the
+  stage's foot fade as the passes' table says.
 - `python3 tools/render/mask_matrix.py OUTDIR --jobs 3` renders the plan's
   eight-moment matrix (seven moments at 15, 11 and 7 tiles) and compares
   each still with the plan's table. It writes `OUTDIR/matrix.md`.
@@ -41,7 +45,7 @@ twenty-five with three jobs.
 |---|---|
 | `beauty.png` | The frame as the shot left it |
 | `ui_a.png`, `ui_b.png` | The frame with the 3D world swapped for flat red, then flat green. Where the two agree, the interface covers the world; where they differ, the world shows through, in proportion to the difference |
-| `world.png` | The 3D world alone: no interface, no 2D markers |
+| `world.png` | The 3D world alone: no interface, no 2D markers, black where the frame draws nothing |
 | `behind.png` | The same without the figures: the ground behind them |
 | `markers.png` | The 2D markers alone (speech bubbles, labels, icons) on a clear background |
 | `marks3d.png` | The 3D markers alone (rings, sight edge, overlay, effects) on black |
@@ -317,7 +321,15 @@ Why each "no" and "when":
   realm screens".
 - **Character, Q5 and Q6.** A character stands on a plinth before a
   backdrop, not on ground with paths and buildings, and the stage draws
-  no world markers. Q2 to Q4 measure each character (`h<i>`): height,
+  no world markers. Only the stage's backdrop (`StageHeroBackdrop`) and its
+  foot fade (the gradient under the plinth) are the stage's world, drawn
+  in `world.png` and covered in `ui_a` and `ui_b`. Every other 2D child of
+  the stage is interface: the character screen's level badge (its "5/12"
+  and "working" pills, gold arrows and name plate, `character_screen.gd`)
+  and the `over` and `top` layers that `roster_screen.gd`,
+  `forms_screen.gd`, `sage_hall_screen.gd` and `first_screen.gd` add to
+  it. They stay in `ui_a` and `ui_b`, and are made see-through for
+  `world.png`, `behind.png` and `id.png`. Q2 to Q4 measure each character (`h<i>`): height,
   contrast with the plinth behind it, and how much of its head the
   interface hides. A stage chooses none of its characters (`mask.json`
   holds `"chosen": -1`), so Q11 rates each of them (`characters`), names
@@ -393,6 +405,31 @@ the world view (the project's sky-blue clear colour showed round
 lifts the world view's own tint and fade (`screen_result` draws its
 island at 30% alpha, tinted violet), in `world.png` too. All three
 decoded as classes before the stray check above caught them.
+
+**Q1 on the stage screens** (the third resync's run, 26 November 2026,
+after the stage's pills, arrows, plates and title layers were counted as
+interface; each with exit 0, no script error and no stray colour):
+
+| Shot | Q1 band (rows) | strict | Covered pixels |
+|---|---|---|---|
+| `screen_character` | 6.6% (0 to 153) | 6.6% | 78.7% |
+| `screen_first` | 59.0% (440 to 1819) | 59.0% | 26.3% |
+| `screen_hatch` | 33.9% (0 to 791) | 33.9% | 66.4% |
+| `screen_forms` | 0.0% | 0.0% | 91.5% |
+| `screen_roster` | 0.0% | 0.0% | 90.4% |
+| `screen_sage_hall` | 0.0% | 0.0% | 91.1% |
+| `universe_home` | 12.0% (1090 to 1371) | 12.0% | 47.0% |
+| `universe_zoom` | 32.0% (1592 to 2339) | 29.4% | 9.4% |
+| `universe_map` | 12.8% (2040 to 2339) | 9.0% | 41.7% |
+| `universe_screen` | 12.8% (2040 to 2339) | 8.7% | 50.6% |
+
+`screen_character`'s band was 27.4% (rows 0 to 641) while the pills,
+arrows and name plate counted as world; the plate now ends the band at
+row 153. `screen_forms`, `screen_roster` and `screen_sage_hall` draw their
+stage in a card beside its text, so no row of the frame is four fifths
+clear of interface (`BAND_ROW`): the band is 0, and the stage
+shows in the uncovered 8.5% to 9.6% of the pixels. The universe rows are
+as before the change: the universe's pins were already interface.
 
 **`screen_realm`'s cut.** Its island touches the left and right edges
 with its own meadow rim (other ground of tile kind "outside", rows 828
