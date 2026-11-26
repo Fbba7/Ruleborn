@@ -3,27 +3,21 @@
   "role": "measure track",
   "branch": "claude/3d-mask",
   "model": "Opus 5.5",
-  "agent_state": "waiting",
+  "agent_state": "active",
   "task_id": "3D0-M2-mask-screens",
-  "task_state": "ready",
-  "claimed_at": "2026-11-26T03:55:00Z",
-  "lease_until": "2026-11-26T06:55:00Z",
-  "updated_at": "2026-11-26T05:04:00Z",
-  "expected_next_update_by": null,
+  "task_state": "working",
+  "claimed_at": "2026-11-26T05:30:00Z",
+  "lease_until": "2026-11-26T08:30:00Z",
+  "updated_at": "2026-11-26T05:30:00Z",
+  "expected_next_update_by": "2026-11-26T06:15:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": "d0d62a9952186f6fb2180ad7aad5fb508e6ff856",
-    "next_step": "verifier's review of 3D0-M2-mask-screens at d0d62a99"
+    "next_step": "resync 3: a stage's own interface (level_badge, over, top) counted as interface, not world; failing test first"
   },
-  "precheck": {
-    "sha": "d0d62a9952186f6fb2180ad7aad5fb508e6ff856",
-    "state": "PASS",
-    "exit": 0,
-    "finished_at": "2026-11-26T05:03:06Z",
-    "summary": "All checks passed."
-  },
+  "precheck": null,
   "gate_request": null,
-  "ready_sha": "d0d62a9952186f6fb2180ad7aad5fb508e6ff856",
+  "ready_sha": null,
   "stop_at": "2026-12-02T21:00:00Z",
   "acks": [
     "cycle-206-start"
