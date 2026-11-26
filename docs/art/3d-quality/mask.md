@@ -131,6 +131,13 @@ frame under the interface; "off" is under 5% on the frame. A figure's
 whole outline is its solo pass; the vault's is its own pixels in
 `id.png`, with its projected bounds telling how much the frame cuts off.
 
+**A count over nothing is not a measure.** Where Q5 or Q12 would count
+over no buildings or no figures, `measure.json` holds `null` for the count
+and a reason (`buildings_why`, `figures_why`: "no building in frame", "no
+building with ground at its foot in frame", "no figure in frame"), and the
+summary prints the reason, never "0 of 0". The self-test's realm still
+checks it.
+
 ## Tolerances
 
 | Check | Plan | Tolerance |
@@ -140,10 +147,15 @@ whole outline is its solo pass; the vault's is its own pixels in
 | Q2 crew at 15 tiles | 23 to 28 points | each end within 8% of the plan's range |
 | Q2 heights in the matrix | the table's ranges | each end within 8% of the plan's range |
 | Q11 ratings in the matrix | the table's words | the same word |
+| A screen shot's figure heights, run against run | the same shot | each within 8% |
 
 8% is two points at 28 points: the plan's ranges come from bounds that
 include a figure's idle pose and outline, which move by about that much
-between frames.
+between frames. A screen shot is not pinned to one frame of the idle
+either: two runs of `screen_defences` (`TAB=0`) read its guard at 22.1
+and 20.4 points, so the results table below is good to 8% per height,
+and a rating near a threshold (the island's edges, `THIRD`) can change
+word between runs.
 
 ## Against the plan
 
@@ -265,8 +277,8 @@ and says why for the others (`WHY` in `measure.py`; `measure.json` holds
 |---|---|---|---|---|---|---|---|---|---|
 | `heist` | `screen_heist`, `screen_laws`, `screen_replay`, `screen_result`, `screen_landing` (the heist before the crew land), the matrix | yes | yes | yes | yes | yes | yes | chosen crew, nearest guard, vault | figures, buildings, cliffs |
 | `realm` | `screen_realm`, `screen_builder`, `screen_curation`, `screen_defences` (`TAB=0`), `screen_planner`, `screen_scout` | yes | when figures are drawn | when figures are drawn | when figures are drawn | yes | when figures are drawn | the island | buildings, cliffs; figures when drawn |
-| `character` | `screen_character`, `screen_first`, `screen_forms`, `screen_hatch`, `screen_roster`, `screen_sage_hall` | yes | yes | yes | yes | no | no | the character | the character's shadow disc |
-| `universe` | `universe_home`, `universe_zoom`, `universe_map`, `universe_screen` | yes | no | no | no | no | no | the home island | no |
+| `character` | `screen_character`, `screen_first`, `screen_forms`, `screen_hatch`, `screen_roster`, `screen_sage_hall` | yes | yes | yes | yes | no | no | each character | the character's shadow disc |
+| `universe` | `universe_home`, `universe_zoom`, `universe_map`, `universe_screen` | yes | no | no | no | no | no | the focused island (the Heart where none is focused) | no |
 | `none` | `screen_observatory` | yes | no | no | no | no | no | no | no |
 
 Why each "no" and "when":
@@ -281,7 +293,11 @@ Why each "no" and "when":
   none, and say so. A woven law's signature (`LawFx`, which a realm's
   `StageView` hangs under its world) is a 3D marker, as T5's effects are.
   The town's residents and workers are life in the realm, not figures the
-  player steers: they are decoration. Q5 and Q12's buildings and cliffs
+  player steers: they are decoration. The town's houses and their trim
+  (`StageTown.houses` and `trim`, under the screen's layers) are
+  buildings, though they stand on open tiles round the grid. The mist
+  sheets under the island (`look_mist`) are sky, and the falls
+  (`look_fall`) water, not cliffs. Q5 and Q12's buildings and cliffs
   apply: the plan's realm goals (section 4) are paths, buildings and
   depth. Q11 rates the island: the plan's "the island not cut off on
   realm screens".
@@ -289,9 +305,12 @@ Why each "no" and "when":
   backdrop, not on ground with paths and buildings, and the stage draws
   no world markers. Q2 to Q4 measure each character (`h<i>`): height,
   contrast with the plinth behind it, and how much of its head the
-  interface hides. Q11 rates the chosen character (the first, where the
-  screen chooses none) and its share of the frame's height (the plan's
-  "the character at least a third of the screen's height", `THIRD`).
+  interface hides. A stage chooses none of its characters (`mask.json`
+  holds `"chosen": -1`), so Q11 rates each of them (`characters`), names
+  the first that is not clear (else the tallest), and passes when every
+  one is clear and the tallest takes at least a third of the frame's
+  height (the plan's "the character at least a third of the screen's
+  height", `THIRD`). A screen with one character rates that one.
   Q12 counts the character's contact shadow: the stage's shadow disc under
   each plinth, drawn in the id pass as a thin disc of radius 0.4 in the
   figure's shadow code (the stage's own disc is a soft texture with no
@@ -302,7 +321,15 @@ Why each "no" and "when":
   shadow on. The universe's pins (`UniversePins`) are counted as
   interface: they are the screen's labels, drawn in 2D over the world, not
   markers in the world. Q1 says how much of the universe the interface
-  leaves clear; Q11 rates the player's island.
+  leaves clear. Q11 rates one island: the focused one, or the Heart (the
+  player's own) where the camera focuses none; `mask.json` names it in
+  `"island"`. The pass draws that island's meshes (its rock, its near and
+  far looks, its close-up, and the Citadel for the Heart) with id index
+  1 and every other island with index 0, and hides the galaxy behind
+  them (`StarSky`, `universe_galaxy`), which otherwise fills the frame.
+  At the widest zoom the universe draws one merged copy of all its
+  islands (`UniverseWhole`); the pass draws the sources instead, so the
+  rated island can be told from the rest.
 - **None.** `screen_observatory` builds its card pictures in an offscreen
   `StageView` that is never drawn (`stage_thumbs.gd`), so the frame holds
   no 3D view. The pass saves the frame as `beauty.png` and as both `ui_`

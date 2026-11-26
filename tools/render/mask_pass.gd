@@ -455,11 +455,12 @@ func _classify(g: GeometryInstance3D) -> void:
 			return
 		elif (
 			(m != null and m == view.look.sky_material)
-			or shader_path.ends_with("look_cloud.gdshader")
+			or shader_path.get_file() in ["look_cloud.gdshader", "look_mist.gdshader"]
 		):
+			# The sky, its clouds and the mist sheets under the island.
 			g.visible = false
 			return
-		elif shader_path.ends_with("water.gdshader"):
+		elif shader_path.get_file() in ["water.gdshader", "look_fall.gdshader"]:
 			cls = Vector3(WATER, 0, 0)
 		elif shader_path.ends_with("kit_ground.gdshader"):
 			mode = 1
@@ -568,7 +569,7 @@ func _is_shadow(actor: Node3D, g: Node) -> bool:
 func _solos() -> void:
 	if not _figs_drawn:
 		return
-	var all := _hide_3d()
+	_hide_3d()
 	view.actors.visible = true
 	var figures: Array = []
 	for k in view._crew.size():
