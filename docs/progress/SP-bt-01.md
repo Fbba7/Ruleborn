@@ -1,23 +1,30 @@
 # SP-bt-01 the coordinator script: progress
 
-- Status: Green (BT-01a ready at 37c99eba; pre-check PASS).
-- Progress: 0 of 2 tasks merged; 0 items passed by the gate (BT-01a has no gate items).
-- Done: BT-01a ready (tools/coord/cycle.py, the dry-run cycle).
-- Next: BT-01b, the merge queue, once the lead opens it.
+- Status: Green (3D0-CO-queue-flake in review; self-tests 20/20 sequential, 64/64 under load).
+- Progress: 0 of 1 tasks merged in this session; 0 items passed by the gate (the task has no gate items).
+- Done: both causes of the merge-queue self-test flake fixed; cycle.py reads acks given as strings or objects.
+- Next: code review, then the pre-check, then ready.
 - Blocked by: none.
 - Owner decision needed: none.
 
 | Deliverable | Weight (h) | Status | Evidence |
 |---|---:|---|---|
-| BT-01a dry-run coordinator cycle | 4 | ready (37c99eba) | `python3 tools/coord/cycle.py --self-test` |
-| BT-01b merge queue | 4 | open (later task) | - |
+| BT-01a dry-run coordinator cycle | 4 | merged (earlier session) | `python3 tools/coord/cycle.py --self-test` |
+| 3D0-CO-queue-flake | 2 | in review | `python3 tools/coord/cycle.py --self-test`, 20 runs in a row |
 
 ## Handoff
-- Last verified commit: 37c99eba (pre-check PASS, 17:46Z; `owners.py diff BT-01a` passes).
-- Done: `tools/coord/cycle.py --dry-run [--json] [--out FILE]` reads the backlog, lead.json and requests.md from origin's main and each roster agent's status from its branch. It prints what a cycle would do: copy states, claims and ready_sha (only moves the agent may make); expire lapsed leases (prior_branch/prior_sha when the branch holds work besides its progress files); list startable tasks (cycle_needed.needs); set acked_at for acknowledged messages and flag missed ones; copy new requests and answers into requests.md (ranges such as "S1-R1 to S1-R7" are parsed); flag past-due requests, stalls, busy stalls and tasks waiting more than 2 h as blocked or ready. It writes and pushes nothing; without `--dry-run` it exits 2. `--self-test` builds fixture branches in local bare repositories (no network) and checks that the remote heads and the working tree are unchanged after a run.
-- Half done: request SPbt01-R1. tools/check_all.sh is not in BT-01a's files, so the lead adds `python3 tools/coord/cycle.py --self-test` after the archive.py self-test line, and adds it to the agent-program row of docs/guides/checks.md.
-- Open hypotheses: on the live repository, the dry run lists 25 acknowledged messages whose acked_at is unset, and about 55 old requests still open in requests.md past due. Both are real lead bookkeeping, not noise from the script.
-- Next step: BT-01b adds the write mode and the merge queue on top of plan().
+- Last verified commit: 89270a01 (self-tests pass; the pre-check is next).
+- Done, merge queue (`tools/coord/merge_queue.py`). The "lock cleared" flake (`last_merged` read as None) came from `tools/run_checks.sh` reporting LOST for a run that was fine, so the queue took its "cannot run the checks" path. Two races, both handled in the queue, not in run_checks.sh:
+  - `start` waits only 5 s for the detached runner's pid file. Under load a `result` read before the file exists says LOST, and its cleanup removes the run's worktree. `Checks.run` now waits up to `START_GRACE` (120 s) for `<CHECK_DIR>/check-<full sha>.pid` after its own `start`, before the first `result`.
+  - `result` checks for the `.done` file, then whether the runner is alive. A run that ends between the two reads as LOST. The runner moves `.done` into place before it exits, so `Checks.run` reads a LOST result a second time before taking it. A run that is really lost still reads LOST. The second read is skipped when the pid file never turned up in the grace period: that first LOST read removed the worktree, and a runner that starts after it could only end as a misleading FAIL (found by the code review).
+  - The "lock cleared" check no longer crashes on a None `last_merged`.
+  - New self-test cases with a fake runner: a late pid file, a run that ends between the reads, a run that is really lost, and a pid file that turns up only after the grace period. The first, second and fourth fail on the code before their fix; the third guards that a lost run still reads as lost.
+- Done, acks (`tools/coord/cycle.py`). `ack_ids()` reads a status file's `acks` given as strings or as objects with an `id`. Before the fix, M2.json's object acks crashed `plan()` with "unhashable type: 'dict'". The self-test fixture now has S2 acking M4 as an object, with the check "ack given as an object", which failed before the fix.
+- Verified: 20 of 20 sequential runs of `python3 tools/coord/cycle.py --self-test`; 64 of 64 under load (4 rounds of 16 parallel runs beside 8 CPU hogs). The dry run against the live repository works.
+- Requests: SPbt01-R2 (cycle_needed.py would crash on object acks in lead.json) and SPbt01-R3 (the two races in run_checks.sh belong to its owner). Both are in the status file, each with a default.
+- Next step: the lead's verifier reviews the diff; then the merge.
 
 ## Tried and failed
 - Copying an old status after its lease lapsed re-claimed the task. Fixed: an unchanged status is copied only while the task's claim is still the agent's.
+- The flake did not reproduce on an idle machine. It showed only under CPU load, which is how both races were found.
+- The first fake-runner test let its pid-file timer fire after the temp folder was deleted (FileNotFoundError). Fixed by joining the timer after the run.
