@@ -36,7 +36,39 @@ HEAD = 0.30  # Q4: a head is the top 30% of a figure's outline
 SEEN = 0.80  # Q4: at least 80% visible
 SOLO = 24  # a solo pixel belongs to the figure when a channel is above this (the backdrop stays under it)
 MARK_ALPHA = 0.3  # a 2D marker pixel is one at least this opaque
+# An id pixel is a class colour when each channel is at most ID_BELOW under
+# its code and ID_ABOVE over it. The renderer writes the lowest codes a little
+# dark (14 as 9, 32 as 30, 42 as 41; 70 and up exact, measured on heist,
+# character and universe stills on 26 November 2026).
+ID_BELOW, ID_ABOVE = 5, 2
+STRAY_MAX = 0  # id pixels that may match no class colour before a still is refused
 CLEAR, CUT, UNDER, OFF = "clear", "cut", "under panel", "off"
+THIRD = 1 / 3  # Q11 on a character screen: the character at least a third of the screen's height
+
+# Which questions each kind of screen answers (mask.md, "Kinds of screen").
+# mask.json's "screen" names the kind; a mask without one is a heist still.
+# A question left out is not measured there, and says why.
+SCREENS = ("heist", "realm", "character", "universe", "none")
+WHY = {
+    "realm": {
+        "Q2": "a realm screen draws no figures", "Q3": "a realm screen draws no figures",
+        "Q4": "a realm screen draws no figures or markers", "Q6": "a realm screen draws no figures or markers",
+    },
+    "character": {
+        "Q5": "a character stands on a plinth, not on ground with paths and buildings",
+        "Q6": "a character screen draws no world markers",
+    },
+    "universe": {
+        "Q2": "the universe draws islands, not figures", "Q3": "the universe draws islands, not figures",
+        "Q4": "the universe's pins are interface, not world markers",
+        "Q5": "the islands are too small for paths and buildings to read",
+        "Q6": "the universe's pins are interface, not world markers",
+        "Q12": "the islands float over the sky with no ground to cast on",
+    },
+    "none": {q: "the screen draws no 3D world view" for q in ("Q2", "Q3", "Q4", "Q5", "Q6", "Q11", "Q12")},
+}
+FIGURE_QUESTIONS = ("Q2", "Q3", "Q4", "Q6")
+PREFIX = {"crew": "c", "guard": "g", "character": "h"}
 
 
 def load(path: Path) -> np.ndarray:
@@ -59,6 +91,17 @@ def decode(idp: np.ndarray):
     # Black is the background, not class 0 at index 0's code (32, 32, 14).
     cls = np.where(idp[..., :3].max(axis=2) < 16, BACKGROUND, cls)
     return cls, idx
+
+
+def stray(idp: np.ndarray) -> int:
+    """How many of the id pass's pixels are neither the black background
+    nor a class colour (`code`, within ID_BELOW and ID_ABOVE): something
+    drawn over the pass that is not the world, such as a screen's 2D pins."""
+    rgb = idp[..., :3].astype(int)
+    near = [((rgb[..., c] - start) % step <= ID_ABOVE) | ((rgb[..., c] - start) % step >= step - ID_BELOW)
+            for c, start, step in ((0, 32, 64), (1, 32, 64), (2, 14, 28))]
+    ok = (near[0] & near[1] & near[2]) | (rgb.max(axis=2) < 16)
+    return int((~ok).sum())
 
 
 def code(cls: int, idx: int = 0):
@@ -132,14 +175,21 @@ class Still:
         self.markers2d = self.markers.copy()
         if (folder / "marks3d.png").exists():
             self.markers |= load(folder / "marks3d.png")[..., :3].max(axis=2) > 24
-        self.cls, self.idx = decode(load(folder / "id.png"))
-        self.figures = self.info["figures"]
+        idp = load(folder / "id.png")
+        n = stray(idp)
+        if n > STRAY_MAX:
+            raise ValueError(f"id.png: {n} pixels match no class colour; something 2D was drawn over the id pass")
+        self.cls, self.idx = decode(idp)
+        self.screen = self.info.get("screen", "heist")
+        if self.screen not in SCREENS:
+            raise ValueError(f"mask.json: unknown screen {self.screen!r}")
+        self.figures = self.info.get("figures", [])
         for f in self.figures:
-            name = ("c" if f["kind"] == "crew" else "g") + str(f["index"])
+            name = PREFIX[f["kind"]] + str(f["index"])
             p = folder / f"solo_{name}.png"
             f["name"] = name
             f["solo"] = (load(p)[..., :3].max(axis=2) > SOLO) if p.exists() else np.zeros((self.h, self.w), bool)
-            kind = CREW if f["kind"] == "crew" else GUARD
+            kind = GUARD if f["kind"] == "guard" else CREW
             f["seen"] = (self.cls == kind) & (self.idx == f["index"]) & ~self.covered
             f["px"] = int(f["solo"].sum())
 
@@ -162,7 +212,7 @@ class Still:
 
     # Q2: figure size.
     def q2(self):
-        out = {"crew": [], "guards": []}
+        out = {"crew": [], "guards": [], "characters": []}
         for f in self.figures:
             if not self.in_frame(f) or "rect" not in f:
                 continue
@@ -179,12 +229,12 @@ class Still:
                    "points": round(span * self.pt, 1) if span is not None else silhouette,
                    "silhouette_points": silhouette,
                    "bounds_points": round(f["rect"][3] * self.pt, 1)}
-            out["crew" if f["kind"] == "crew" else "guards"].append(row)
-        for k in ("crew", "guards"):
+            out[{"crew": "crew", "guard": "guards", "character": "characters"}[f["kind"]]].append(row)
+        for k in ("crew", "guards", "characters"):
             pts = [r["points"] for r in out[k]]
             out[k + "_least"] = min(pts) if pts else None
             out[k + "_most"] = max(pts) if pts else None
-        least = [v for v in (out["crew_least"], out["guards_least"]) if v is not None]
+        least = [v for v in (out["crew_least"], out["guards_least"], out["characters_least"]) if v is not None]
         out["least"] = min(least) if least else None
         return out
 
@@ -200,8 +250,8 @@ class Still:
             lost = int((np.abs(gray_w - gray_b)[m] <= GRAY).sum())
             out.append({"name": f["name"], "pixels": n, "share": round(lost / n, 4)})
         shares = [r["share"] for r in out]
-        return {"figures": out, "worst": max(shares) if shares else None,
-                "least": min(shares) if shares else None}
+        res = {"figures": out, "worst": max(shares) if shares else None, "least": min(shares) if shares else None}
+        return res if out else dict(res, figures_why="no figure in frame")
 
     # Q4: heads and markers stay visible.
     def q4(self):
@@ -233,9 +283,9 @@ class Still:
             # pile-up: listed, not counted.
             (under if seen == 0.0 else marks).append(row)
         worst = [r["seen"] for r in heads + marks]
-        return {"heads": heads, "markers": marks, "under_panel": under,
-                "worst": min(worst) if worst else None,
-                "pass": all(v >= SEEN for v in worst)}
+        out = {"heads": heads, "markers": marks, "under_panel": under,
+               "worst": min(worst) if worst else None, "pass": all(v >= SEEN for v in worst)}
+        return out if worst else dict(out, why="no head or marker in frame", **{"pass": None})
 
     # Q5: quiet ground.
     def q5(self):
@@ -249,9 +299,15 @@ class Still:
             near = grow(cells, 3)
             joined.append(sum(1 for _m, _b, hc in houses if near & hc))
         best = max(joined) if joined else 0
-        return {"decoration_on_walkable": round(float(deco.sum() / max(1, walk.sum())), 4),
-                "decoration_pixels": int(deco.sum()), "paths": len(paths), "buildings": len(houses),
-                "buildings_on_one_path": best, "path_links_every_building": bool(houses) and best == len(houses)}
+        out = {"decoration_on_walkable": round(float(deco.sum() / max(1, walk.sum())), 4),
+               "decoration_pixels": int(deco.sum()), "paths": len(paths), "buildings": len(houses),
+               "buildings_on_one_path": best, "path_links_every_building": best == len(houses)}
+        if not houses:
+            # No building in frame: whether a path links them is not a
+            # measure at all (never "0 of 0").
+            out.update(buildings_on_one_path=None, path_links_every_building=None,
+                       buildings_why="no building in frame")
+        return out
 
     def _objects(self):
         objs = []
@@ -296,8 +352,64 @@ class Still:
             return CUT
         return CLEAR
 
+    def island_rating(self):
+        """The island on a realm or universe screen: cut where the ground
+        reaches an edge of the view, under panel when half or more of it is
+        under the interface, else clear. On a universe screen the pass names
+        the island it rates (`island` in mask.json, the focused one or the
+        heart) and draws it with index 1; the other islands are not rated."""
+        island = (self.cls >= WALKABLE) & (self.cls <= BUILDING)
+        name = self.info.get("island")
+        if self.screen == "universe" and name:
+            island &= self.idx == 1
+        x, y, w, h = [int(round(v)) for v in self.info["view_rect"]]
+        x0, y0, x1, y1 = max(0, x), max(0, y), min(self.w, x + w) - 1, min(self.h, y + h) - 1
+        edges = {"left": bool(island[y0:y1, x0].any()), "right": bool(island[y0:y1, x1].any()),
+                 "top": bool(island[y0, x0:x1].any()), "bottom": bool(island[y1, x0:x1].any())}
+        n = int(island.sum())
+        under = float((island & self.covered).sum() / max(1, n))
+        rating = OFF if n == 0 else CUT if any(edges.values()) else UNDER if under >= 0.5 else CLEAR
+        out = {"rating": rating, "pixels": n, "under_share": round(under, 3)}
+        if self.screen == "universe" and name:
+            out["name"] = name
+        return edges, out
+
     # Q11: framing.
     def q11(self):
+        edges, island = self.island_rating()
+        if self.screen in ("realm", "universe"):
+            return {"island": island, "island_at_edges": edges, "pass": island["rating"] == CLEAR}
+        if self.screen == "character":
+            out = {"island_at_edges": edges}
+            # A character pushed off the frame is rated (off), not dropped.
+            figs = [f for f in self.figures if f["kind"] == "character" and f.get("visible", True)
+                    and not f.get("down", False)]
+            if not figs:
+                return dict(out, why="no character on the screen", **{"pass": None})
+            def share(f):
+                ys = np.nonzero(f["solo"].any(axis=1))[0]
+                return round(float(ys[-1] - ys[0] + 1) / self.h, 4) if len(ys) else 0.0
+
+            chosen = next((f for f in figs if f["index"] == self.info.get("chosen", -1)), None)
+            if chosen is not None or len(figs) == 1:
+                pick = chosen or figs[0]
+                rating = self.rate(pick["solo"], self._whole(pick))
+                tall = share(pick)
+            else:
+                # No choice on the screen (the welcome's group): every
+                # character is rated; the worst one is reported, and the
+                # tallest must reach the third.
+                ratings = {f["name"]: self.rate(f["solo"], self._whole(f)) for f in figs}
+                out["characters"] = ratings
+                tall = max(share(f) for f in figs)
+                worst = next((f for f in figs if ratings[f["name"]] != CLEAR), None)
+                pick = worst or max(figs, key=share)
+                rating = ratings[pick["name"]]
+            out["character"] = {"name": pick["name"], "rating": rating, "height_share": share(pick),
+                                "third": tall >= THIRD}
+            out["largest_figure_share"] = tall
+            out["pass"] = rating == CLEAR and tall >= THIRD
+            return out
         crew = [f for f in self.figures if f["kind"] == "crew" and f.get("visible", True)]
         chosen = self.info.get("chosen", -1)
         pick = next((f for f in crew if f["index"] == chosen), crew[0] if crew else None)
@@ -321,11 +433,7 @@ class Still:
             whole = float(m.sum()) / part if part > 0 else 0.0
             out["target"] = {"name": "vault", "rating": self.rate(m, whole),
                              "under_share": round(float((m & self.covered).sum() / max(1, m.sum())), 3)}
-        island = (self.cls >= WALKABLE) & (self.cls <= BUILDING)
-        x, y, w, h = [int(round(v)) for v in self.info["view_rect"]]
-        x0, y0, x1, y1 = max(0, x), max(0, y), min(self.w, x + w) - 1, min(self.h, y + h) - 1
-        out["island_at_edges"] = {"left": bool(island[y0:y1, x0].any()), "right": bool(island[y0:y1, x1].any()),
-                                  "top": bool(island[y0, x0:x1].any()), "bottom": bool(island[y1, x0:x1].any())}
+        out["island_at_edges"] = edges
         tallest = max((f["rect"][3] for f in self.figures if self.in_frame(f) and "rect" in f), default=0)
         out["largest_figure_share"] = round(tallest / self.h, 3)
         return out
@@ -347,7 +455,7 @@ class Still:
         for f in self.figures:
             if not self.in_frame(f):
                 continue
-            kind = SHADOW if f["kind"] == "crew" else GUARD_SHADOW
+            kind = GUARD_SHADOW if f["kind"] == "guard" else SHADOW
             n = int(((self.cls == kind) & (self.idx == f["index"])).sum())
             shadows[f["name"]] = n
         gray = luma(self.world[..., :3])
@@ -361,20 +469,35 @@ class Still:
             g = band & tops
             if g.sum() >= 20 and ground_mean:
                 house_shadow.append(round(float(gray[g].mean()) / ground_mean, 3))
-        return {"figure_shadow_pixels": shadows,
-                "figures_with_shadow": sum(1 for v in shadows.values() if v >= 20), "figures": len(shadows),
-                "building_foot_luma_ratio": house_shadow,
-                "buildings_with_shadow": sum(1 for r in house_shadow if r < 0.85),
-                "cliff_luma": round(float(gray[cliff].mean()), 1) if cliff.any() else None,
-                "top_luma": round(ground_mean, 1) if tops.any() else None,
-                "cliffs_darker": bool(cliff.any() and tops.any() and gray[cliff].mean() < ground_mean)}
+        out = {"figure_shadow_pixels": shadows,
+               "figures_with_shadow": sum(1 for v in shadows.values() if v >= 20), "figures": len(shadows),
+               "building_foot_luma_ratio": house_shadow,
+               "buildings_with_shadow": sum(1 for r in house_shadow if r < 0.85),
+               "cliff_luma": round(float(gray[cliff].mean()), 1) if cliff.any() else None,
+               "top_luma": round(ground_mean, 1) if tops.any() else None,
+               "cliffs_darker": bool(gray[cliff].mean() < ground_mean) if cliff.any() and tops.any() else None}
+        # A count over nothing is not a measure (never "0 of 0").
+        if not shadows:
+            out.update(figures_with_shadow=None, figures_why="no figure in frame")
+        if not house_shadow:
+            out.update(buildings_with_shadow=None,
+                       buildings_why="no building in frame" if not ((self.cls == BUILDING) & ~self.covered).any()
+                       else "no building with ground at its foot in frame")
+        return out
 
 
 def measure(folder: Path) -> dict:
     s = Still(Path(folder))
-    return {"still": str(folder), "frame": [s.w, s.h], "env": s.info.get("env", {}), "zoom": s.info.get("zoom"),
-            "Q1": s.q1(), "Q2": s.q2(), "Q3": s.q3(), "Q4": s.q4(), "Q5": s.q5(), "Q6": s.q6(),
-            "Q11": s.q11(), "Q12": s.q12()}
+    out = {"still": str(folder), "screen": s.screen, "frame": [s.w, s.h], "env": s.info.get("env", {}),
+           "zoom": s.info.get("zoom")}
+    why = dict(WHY.get(s.screen, {}))
+    if s.screen == "realm" and any(s.in_frame(f) for f in s.figures):
+        # A realm screen with figures on it (a camp's crew) answers the
+        # figure questions as a heist does.
+        why = {q: v for q, v in why.items() if q not in FIGURE_QUESTIONS}
+    for q in ("Q1", "Q2", "Q3", "Q4", "Q5", "Q6", "Q11", "Q12"):
+        out[q] = {"applies": False, "why": why[q]} if q in why else dict(getattr(s, q.lower())(), applies=True)
+    return out
 
 
 def write(folder: Path, result: dict) -> None:
@@ -387,22 +510,58 @@ def write(folder: Path, result: dict) -> None:
 
 
 def summary(r: dict) -> str:
-    q11 = r["Q11"]
-    rating = lambda k: q11.get(k, {}).get("rating", "-")  # noqa: E731
+    def line(q, text):
+        e = r[q]
+        if not e.get("applies", True):
+            return f"{q:<3} not measured: {e['why']}"
+        try:
+            return f"{q:<3} " + text(e)
+        except (KeyError, TypeError):
+            return f"{q:<3} " + json.dumps({k: v for k, v in e.items() if not isinstance(v, (list, dict))})
+
+    def q11(e):
+        if "island" in e:
+            sides = ", ".join(k for k, v in e["island_at_edges"].items() if v) or "none"
+            name = f" {e['island']['name']}" if "name" in e["island"] else ""
+            return f"island{name} {e['island']['rating']} (edges touched: {sides})"
+        if "why" in e:
+            return f"character: {e['why']}"
+        if "character" in e:
+            c = e["character"]
+            group = (" (of " + ", ".join(f"{k} {v}" for k, v in e["characters"].items()) + ")"
+                     if "characters" in e else "")
+            return (f"character {c['name']} {c['rating']}{group}, tallest {e['largest_figure_share']:.1%} "
+                    f"of the height ({'pass' if e['pass'] else 'fail'})")
+        rating = lambda k: e.get(k, {}).get("rating", "-")  # noqa: E731
+        return (f"chosen {rating('chosen')}, nearest guard {rating('nearest_guard')}, target {rating('target')}; "
+                f"largest figure {e['largest_figure_share']:.1%} of the height")
+
+    def q2(e):
+        parts = [f"{k} {e[k + '_least']}-{e[k + '_most']} pt" for k in ("crew", "guards", "characters")
+                 if e.get(k + "_least") is not None]
+        return ", ".join(parts) or "no figures in frame"
+
+    def q4(e):
+        return e.get("why") or f"least seen {e['worst']} ({'pass' if e['pass'] else 'fail'})"
+
     return "\n".join([
-        f"Q1  band {r['Q1']['band']:.1%} (rows {r['Q1']['band_rows'][0]}-{r['Q1']['band_rows'][1]}), "
-        f"strict {r['Q1']['strict_band']:.1%}, panels {r['Q1']['panels_share']:.1%} of the pixels",
-        f"Q2  crew {r['Q2']['crew_least']}-{r['Q2']['crew_most']} pt, guards {r['Q2']['guards_least']}-"
-        f"{r['Q2']['guards_most']} pt",
-        f"Q3  figure pixels near the ground's gray: {r['Q3']['least']} to {r['Q3']['worst']}",
-        f"Q4  least seen {r['Q4']['worst']} ({'pass' if r['Q4']['pass'] else 'fail'})",
-        f"Q5  decoration on walkable {r['Q5']['decoration_on_walkable']:.1%}; "
-        f"{r['Q5']['buildings_on_one_path']} of {r['Q5']['buildings']} buildings on one path",
-        f"Q6  most markers on one object {r['Q6']['most']}; worst covering {r['Q6']['worst_covering']}",
-        f"Q11 chosen {rating('chosen')}, nearest guard {rating('nearest_guard')}, target {rating('target')}; "
-        f"largest figure {q11['largest_figure_share']:.1%} of the height",
-        f"Q12 shadows {r['Q12']['figures_with_shadow']}/{r['Q12']['figures']}, cliffs darker "
-        f"{r['Q12']['cliffs_darker']} ({r['Q12']['cliff_luma']} vs {r['Q12']['top_luma']})",
+        line("Q1", lambda e: f"band {e['band']:.1%} (rows {e['band_rows'][0]}-{e['band_rows'][1]}), "
+                             f"strict {e['strict_band']:.1%}, panels {e['panels_share']:.1%} of the pixels"),
+        line("Q2", q2),
+        line("Q3", lambda e: e.get("figures_why") or f"figure pixels near the ground's gray: {e['least']} to {e['worst']}"),
+        line("Q4", q4),
+        line("Q5", lambda e: f"decoration on walkable {e['decoration_on_walkable']:.1%}; "
+                             + (f"{e['buildings_why']}, path not measured" if e.get("buildings_why") else
+                                f"{e['buildings_on_one_path']} of {e['buildings']} buildings on one path")),
+        line("Q6", lambda e: f"most markers on one object {e['most']}; worst covering {e['worst_covering']}"),
+        line("Q11", q11),
+        line("Q12", lambda e: (f"{e['figures_why']}" if e.get("figures_why") else
+                               f"shadows {e['figures_with_shadow']}/{e['figures']}") + ", "
+                              + (f"buildings: {e['buildings_why']}" if e.get("buildings_why") else
+                                 f"buildings shadowed {e['buildings_with_shadow']}/{len(e['building_foot_luma_ratio'])}")
+                              + (f", cliffs darker {e['cliffs_darker']} ({e['cliff_luma']} vs {e['top_luma']})"
+                                 if e["cliff_luma"] is not None and e["top_luma"] is not None
+                                 else ", cliffs: no cliff and top in frame")),
     ])
 
 
@@ -450,7 +609,213 @@ def self_test() -> None:
         assert r["Q11"]["chosen"]["rating"] == CLEAR, r["Q11"]
         assert r["Q11"]["island_at_edges"]["left"], r["Q11"]
         assert runs(np.array([1, 0, 1, 1, 1, 0, 1], bool)) == (2, 3)
+        assert r["screen"] == "heist" and r["Q2"].get("applies", True), r["Q2"]
+        summary(r)
+        # A heist before the crew land (screen_landing): no figure to measure.
+        (d / "mask.json").write_text(json.dumps(dict(info, figures=[], chosen=-1)))
+        r = measure(d)
+        assert r["Q3"]["worst"] is None and r["Q3"]["figures_why"] == "no figure in frame", r["Q3"]
+        assert "None" not in summary(r), summary(r)
+    # The renderer's own darkening of the lowest codes is a class colour;
+    # a channel 3 over its code, or 6 under, is not.
+    assert stray(np.array([[code(GROUND_OTHER), code(DECORATION), (30, 96, 41), (1, 1, 3)]], np.uint8)) == 0
+    assert stray(np.array([[(160, 96, 9), (224, 30, 9)]], np.uint8)) == 0
+    assert stray(np.array([[(163, 96, 14), (160, 90, 14), (160, 96, 8)]], np.uint8)) == 3
+    _realm_test()
+    _universe_test()
+    _character_test()
     print("measure self-test: ok")
+
+
+def _still(d: Path, w: int, h: int, idp: np.ndarray, world: np.ndarray, info: dict, solos=None, behind=None) -> None:
+    """Write a drawn still: panels over rows 0-39 and 130 to the end."""
+    ua = np.zeros((h, w, 4), np.uint8)
+    ua[..., 3] = 255
+    ub = ua.copy()
+    ua[..., 0] = 255
+    ub[..., 1] = 255
+    for im in (ua, ub):
+        im[:40] = (90, 90, 90, 255)
+        im[130:] = (90, 90, 90, 255)
+    Image.fromarray(ua).save(d / "ui_a.png")
+    Image.fromarray(ub).save(d / "ui_b.png")
+    Image.fromarray(idp).save(d / "id.png")
+    Image.fromarray(world).save(d / "world.png")
+    Image.fromarray(world if behind is None else behind).save(d / "behind.png")
+    Image.fromarray(np.zeros((h, w, 4), np.uint8)).save(d / "markers.png")
+    for name, solo in (solos or {}).items():
+        Image.fromarray(solo).save(d / f"solo_{name}.png")
+    (d / "mask.json").write_text(json.dumps(info))
+
+
+def _realm_test() -> None:
+    """A realm still: no figures; the island runs off the left edge, one
+    building with a darker foot, a cliff darker than the tops."""
+    import tempfile
+    w, h = 90, 195
+    with tempfile.TemporaryDirectory() as tmp:
+        d = Path(tmp)
+        idp = np.zeros((h, w, 4), np.uint8)
+        idp[..., 3] = 255
+        idp[50:110, 0:80, :3] = code(WALKABLE, T_OPEN)
+        idp[110:125, 0:80, :3] = code(CLIFF)
+        idp[60:80, 30:50, :3] = code(BUILDING, 3)
+        world = np.zeros((h, w, 4), np.uint8)
+        world[..., 3] = 255
+        world[50:110, 0:80, :3] = 150
+        world[80:96, 30:50, :3] = 90  # the building's foot shadow
+        world[110:125, 0:80, :3] = 60
+        world[60:80, 30:50, :3] = 200
+        info = {"screen": "realm", "frame": [w, h], "view_rect": [0, 0, w, h], "chosen": -1, "zoom": 0,
+                "figures": []}
+        _still(d, w, h, idp, world, info)
+        r = measure(d)
+        for q in ("Q2", "Q3", "Q4", "Q6"):
+            assert r[q]["applies"] is False and r[q]["why"], (q, r[q])
+        assert r["Q11"]["island"]["rating"] == CUT and r["Q11"]["island_at_edges"]["left"], r["Q11"]
+        assert not r["Q11"]["island_at_edges"]["right"], r["Q11"]
+        assert r["Q11"]["pass"] is False, r["Q11"]
+        assert r["Q12"]["buildings_with_shadow"] == 1 and r["Q12"]["cliffs_darker"], r["Q12"]
+        assert "Q2  not measured" in summary(r), summary(r)
+        # The same island drawn inside the frame passes.
+        idp[50:125, 0:5, :3] = 0
+        _still(d, w, h, idp, world, info)
+        r = measure(d)
+        assert r["Q11"]["island"]["rating"] == CLEAR and r["Q11"]["pass"], r["Q11"]
+        # The pass found no building (the town drawn as decoration): the
+        # buildings' path and foot shadow are not measured, never "0 of 0".
+        idp[60:80, 30:50, :3] = code(DECORATION, 1)
+        _still(d, w, h, idp, world, info)
+        r = measure(d)
+        assert r["Q5"]["buildings"] == 0 and r["Q5"]["path_links_every_building"] is None, r["Q5"]
+        assert r["Q5"]["buildings_why"], r["Q5"]
+        assert r["Q12"]["buildings_with_shadow"] is None and r["Q12"]["buildings_why"], r["Q12"]
+        assert r["Q12"]["figures_with_shadow"] is None, r["Q12"]
+        text = summary(r)
+        assert "0 of 0" not in text and "0/0" not in text, text
+        # A building whose foot is off the ground (the island cut away under
+        # it): it is in frame, so the reason names the foot, not the building.
+        idp[50:110, 0:80, :3] = code(BACKGROUND)
+        idp[60:80, 30:50, :3] = code(BUILDING, 3)
+        _still(d, w, h, idp, world, info)
+        r = measure(d)
+        assert r["Q12"]["buildings_why"] == "no building with ground at its foot in frame", r["Q12"]
+
+
+def _universe_test() -> None:
+    """A universe still: the other islands and what the pass leaves of the
+    sky reach every edge; the home island (index 1, `island` in mask.json)
+    is inside the frame, so Q11 rates it clear; moved off the right edge, cut."""
+    import tempfile
+    w, h = 90, 195
+    with tempfile.TemporaryDirectory() as tmp:
+        d = Path(tmp)
+        idp = np.zeros((h, w, 4), np.uint8)
+        idp[..., 3] = 255
+        idp[40:130, :, :3] = code(GROUND_OTHER)
+        idp[60:100, 30:60, :3] = code(GROUND_OTHER, 1)
+        idp[70:80, 40:50, :3] = code(BUILDING, 1)
+        world = np.full((h, w, 4), 80, np.uint8)
+        world[..., 3] = 255
+        info = {"screen": "universe", "frame": [w, h], "view_rect": [0, 0, w, h], "chosen": -1, "zoom": 0,
+                "figures": [], "island": "heart"}
+        _still(d, w, h, idp, world, info)
+        r = measure(d)
+        q11 = r["Q11"]
+        assert q11["island"]["rating"] == CLEAR and q11["pass"], q11
+        assert q11["island"]["name"] == "heart" and q11["island"]["pixels"] == 40 * 30, q11
+        assert not any(q11["island_at_edges"].values()), q11
+        idp[60:100, 60:90, :3] = code(GROUND_OTHER, 1)
+        _still(d, w, h, idp, world, info)
+        q11 = measure(d)["Q11"]
+        assert q11["island"]["rating"] == CUT and q11["island_at_edges"]["right"], q11
+        assert not q11["island_at_edges"]["left"], q11
+        # A pin drawn over the id pass (the home screen's UniversePins shown
+        # again by home.gd): a plate and its label in colours no class is
+        # drawn in. Its pixels decode as some class all the same, so the
+        # measure refuses the still rather than read them.
+        idp[140:160, 10:40, :3] = (205, 170, 96)
+        idp[146:150, 14:36, :3] = 250
+        _still(d, w, h, idp, world, info)
+        try:
+            measure(d)
+        except ValueError as e:
+            assert str(e).startswith("id.png: 600 pixels "), e
+        else:
+            raise AssertionError("a pin in id.png was measured")
+
+
+def _character_test() -> None:
+    """A character still: one figure 80 of 195 rows tall (over a third),
+    its contact shadow under it, before a plain backdrop."""
+    import tempfile
+    w, h = 90, 195
+    with tempfile.TemporaryDirectory() as tmp:
+        d = Path(tmp)
+        idp = np.zeros((h, w, 4), np.uint8)
+        idp[..., 3] = 255
+        idp[120:128, 30:60, :3] = code(GROUND_OTHER)
+        idp[45:125, 40:52, :3] = code(CREW, 0)
+        idp[125:128, 36:56, :3] = code(SHADOW, 0)
+        world = np.full((h, w, 4), 30, np.uint8)
+        world[..., 3] = 255
+        world[45:125, 40:52, :3] = 200
+        behind = np.full((h, w, 4), 30, np.uint8)
+        behind[..., 3] = 255
+        solo = np.zeros((h, w, 4), np.uint8)
+        solo[45:125, 40:52] = (40, 8, 8, 255)
+        info = {"screen": "character", "frame": [w, h], "view_rect": [0, 0, w, h], "chosen": 0, "zoom": 0,
+                "figures": [{"kind": "character", "index": 0, "role": "skyskipper", "visible": True,
+                             "rect": [40, 45, 12, 80], "head": [46, 45], "feet": [46, 125], "world": [0, 0, 0]}]}
+        _still(d, w, h, idp, world, info, {"h0": solo}, behind)
+        r = measure(d)
+        assert r["screen"] == "character", r
+        for q in ("Q5", "Q6"):
+            assert r[q]["applies"] is False, (q, r[q])
+        assert r["Q2"]["characters_least"] == round(80 * 360 / w, 1), r["Q2"]
+        assert r["Q3"]["worst"] == 0.0, r["Q3"]
+        assert r["Q4"]["pass"], r["Q4"]
+        q11 = r["Q11"]
+        assert q11["character"]["rating"] == CLEAR and q11["pass"], q11
+        assert abs(q11["character"]["height_share"] - 80 / 195) < 1e-3 and q11["character"]["third"], q11
+        assert r["Q12"]["figures_with_shadow"] == 1 and r["Q12"]["figure_shadow_pixels"] == {"h0": 60}, r["Q12"]
+        summary(r)
+        # Drawn 50 rows tall it is under a third of the height.
+        idp[45:75, 40:52, :3] = 0
+        solo[45:75] = 0
+        info["figures"][0]["rect"] = [40, 75, 12, 50]
+        _still(d, w, h, idp, world, info, {"h0": solo}, behind)
+        q11 = measure(d)["Q11"]
+        assert not q11["character"]["third"] and q11["pass"] is False, q11
+        # Two characters and no choice (the welcome's group, `chosen` -1):
+        # every one is rated, and the second, cut by the right edge, fails it.
+        idp[45:75, 40:52, :3] = code(CREW, 0)
+        solo[45:75, 40:52] = (40, 8, 8, 255)
+        info["figures"][0]["rect"] = [40, 45, 12, 80]
+        idp[45:125, 80:90, :3] = code(CREW, 1)
+        solo1 = np.zeros((h, w, 4), np.uint8)
+        solo1[45:125, 80:90] = (40, 8, 8, 255)
+        info["figures"].append({"kind": "character", "index": 1, "role": "rogue", "visible": True,
+                                "rect": [80, 45, 20, 80], "head": [90, 45], "feet": [90, 125], "world": [1, 0, 0]})
+        info["chosen"] = -1
+        _still(d, w, h, idp, world, info, {"h0": solo, "h1": solo1}, behind)
+        q11 = measure(d)["Q11"]
+        assert q11["characters"] == {"h0": CLEAR, "h1": CUT}, q11
+        assert q11["character"]["name"] == "h1" and q11["pass"] is False, q11
+        # The second pushed wholly off the frame: still rated (off), and it
+        # fails the screen.
+        idp[45:125, 80:90, :3] = 0
+        _still(d, w, h, idp, world, info, {"h0": solo, "h1": np.zeros((h, w, 4), np.uint8)}, behind)
+        r = measure(d)
+        assert r["Q11"]["characters"] == {"h0": CLEAR, "h1": OFF} and r["Q11"]["pass"] is False, r["Q11"]
+        assert "character h1 off" in summary(r), summary(r)
+        # No character on the screen at all: nothing to rate, never a fail
+        # over nothing, and the summary gives the reason.
+        info["figures"] = []
+        _still(d, w, h, idp, world, info, {}, behind)
+        r = measure(d)
+        assert r["Q11"]["pass"] is None and r["Q11"]["why"] == "no character on the screen", r["Q11"]
+        assert "no character on the screen" in summary(r), summary(r)
 
 
 if __name__ == "__main__":

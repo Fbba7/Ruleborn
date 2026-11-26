@@ -46,7 +46,7 @@ twenty-five with three jobs.
 | `markers.png` | The 2D markers alone (speech bubbles, labels, icons) on a clear background |
 | `marks3d.png` | The 3D markers alone (rings, sight edge, overlay, effects) on black |
 | `id.png` | Every 3D thing in a flat colour that codes what it is |
-| `solo_c<i>.png`, `solo_g<i>.png` | Each figure alone, its whole outline even where something hides it |
+| `solo_c<i>.png`, `solo_g<i>.png`, `solo_h<i>.png` | Each figure (crew, guard, character) alone, its whole outline even where something hides it |
 | `mask.json` | The frame, each figure's projected bounds, feet, head and span, the vault, the exit, the camera and the shot's settings |
 
 **The id code.** Red and green carry the class (red `class // 4`, green
@@ -55,6 +55,17 @@ number, or the tile's kind on the ground (step 28 from 14). The colours are
 written as they are, with no sRGB step, so each arrives within a few levels
 of its code; `measure.py` reads each channel in its band of 64 or 28. A
 pixel whose channels are all under 16 is the background.
+
+**Nothing but class colours.** `measure.py` refuses an `id.png` that
+holds any pixel more than 5 levels under or 2 over its code in some
+channel (`ID_BELOW`, `ID_ABOVE`, `STRAY_MAX = 0`), with "pixels match no
+class colour; something 2D was drawn over the id pass". The renderer
+writes the lowest codes a little dark (14 as 9, 32 as 30, 42 as 41; 70
+and up exact), hence the wider band below. Anything 2D left over the id
+pass (a label, a pin, a wash, a screen's background) mixes colours that
+fall outside the bands, so it stops the measure instead of decoding as
+wrong classes. The self-test checks the bands and a still with a
+universe pin drawn over its id pass.
 
 | Class | Red, green | | Class | Red, green |
 |---|---|---|---|---|
@@ -131,6 +142,16 @@ frame under the interface; "off" is under 5% on the frame. A figure's
 whole outline is its solo pass; the vault's is its own pixels in
 `id.png`, with its projected bounds telling how much the frame cuts off.
 
+**A count over nothing is not a measure.** Where Q3, Q4, Q5 or Q12 would
+count over no figures, heads, markers or buildings, `measure.json` holds
+`null` for the count (and for Q4's `pass`) and a reason (`figures_why`,
+`buildings_why`, Q4's `why`: "no figure in frame", "no building in
+frame", "no building with ground at its foot in frame", "no head or
+marker in frame"), and the summary prints the reason, never "0 of 0" or
+a pass over nothing. Q12's `cliffs_darker` is `null` where the frame
+holds no cliff face or no top. The self-test's realm still (no building)
+and a heist still with no figure (as `screen_landing`) check it.
+
 ## Tolerances
 
 | Check | Plan | Tolerance |
@@ -140,10 +161,15 @@ whole outline is its solo pass; the vault's is its own pixels in
 | Q2 crew at 15 tiles | 23 to 28 points | each end within 8% of the plan's range |
 | Q2 heights in the matrix | the table's ranges | each end within 8% of the plan's range |
 | Q11 ratings in the matrix | the table's words | the same word |
+| A screen shot's figure heights, run against run | the same shot | each within 8% |
 
 8% is two points at 28 points: the plan's ranges come from bounds that
 include a figure's idle pose and outline, which move by about that much
-between frames.
+between frames. A screen shot is not pinned to one frame of the idle
+either: two runs of `screen_defences` (`TAB=0`) read its guard at 22.1
+and 20.4 points, so the results table below is good to 8% per height,
+and a rating near a threshold (the island's edges, `THIRD`) can change
+word between runs.
 
 ## Against the plan
 
@@ -250,6 +276,136 @@ within about a point; `bounds_points` was visibly too tall, and
 `silhouette_points` matched a standing guard's body but left out its
 raised head under the camera's pitch, as the Q2 readings table says.
 
+## Each kind of screen
+
+The pass finds the screen's 3D view by what is drawn, not by the shot's
+name: the largest visible `WorldView` (a heist, or a realm screen's
+`StageView`), else the largest visible `StageHero` (a character stage),
+else the largest visible `UniverseView`. A view that is built but hidden
+does not count. `mask.json` says which it found in `"screen"`, and
+`measure.py` answers each quality that the kind of screen can show,
+and says why for the others (`WHY` in `measure.py`; `measure.json` holds
+`"applies": false` and the reason).
+
+| Kind | Shots (the baseline's "mask limit" rows) | Q1 | Q2 | Q3 | Q4 | Q5 | Q6 | Q11 | Q12 |
+|---|---|---|---|---|---|---|---|---|---|
+| `heist` | `screen_heist`, `screen_laws`, `screen_replay`, `screen_result`, `screen_landing` (the heist before the crew land), the matrix | yes | yes | yes | yes | yes | yes | chosen crew, nearest guard, vault | figures, buildings, cliffs |
+| `realm` | `screen_realm`, `screen_builder`, `screen_curation`, `screen_defences` (`TAB=0`), `screen_planner`, `screen_scout` | yes | when figures are drawn | when figures are drawn | when figures are drawn | yes | when figures are drawn | the island | buildings, cliffs; figures when drawn |
+| `character` | `screen_character`, `screen_first`, `screen_forms`, `screen_hatch`, `screen_roster`, `screen_sage_hall` | yes | yes | yes | yes | no | no | each character | the character's shadow disc |
+| `universe` | `universe_home`, `universe_zoom`, `universe_map`, `universe_screen` | yes | no | no | no | no | no | the focused island (the Heart where none is focused) | no |
+| `none` | `screen_observatory` | yes | no | no | no | no | no | no | no |
+
+Why each "no" and "when":
+
+- **Realm, Q2 to Q4 and Q6.** A realm screen hides the heist's crew and
+  guards (`RealmScreen` sets `actors.visible = false`), so there are no
+  figures for heights, contrast, pile-ups or the markers on them. Where a
+  realm screen does draw figures (the guards on their posts in
+  `screen_builder` and `screen_curation`, the crew and guards of
+  `screen_defences`), the pass lists them and these qualities are measured
+  as on a heist. `screen_realm`, `screen_planner` and `screen_scout` draw
+  none, and say so. A woven law's signature (`LawFx`, which a realm's
+  `StageView` hangs under its world) is a 3D marker, as T5's effects are.
+  The town's residents and workers are life in the realm, not figures the
+  player steers: they are decoration. The town's houses and their trim
+  (`StageTown.houses` and `trim`, under the screen's layers) are
+  buildings, though they stand on open tiles round the grid. The mist
+  sheets under the island (`look_mist`) are sky, and the falls
+  (`look_fall`) water, not cliffs. Q5 and Q12's buildings and cliffs
+  apply: the plan's realm goals (section 4) are paths, buildings and
+  depth. Q11 rates the island: the plan's "the island not cut off on
+  realm screens".
+- **Character, Q5 and Q6.** A character stands on a plinth before a
+  backdrop, not on ground with paths and buildings, and the stage draws
+  no world markers. Q2 to Q4 measure each character (`h<i>`): height,
+  contrast with the plinth behind it, and how much of its head the
+  interface hides. A stage chooses none of its characters (`mask.json`
+  holds `"chosen": -1`), so Q11 rates each of them (`characters`), names
+  the first that is not clear (else the tallest), and passes when every
+  one is clear and the tallest takes at least a third of the frame's
+  height (the plan's "the character at least a third of the screen's
+  height", `THIRD`). A screen with one character rates that one. A
+  character pushed wholly off the frame is rated "off" and fails the
+  screen; a screen with no character at all gives `null` and the reason
+  "no character on the screen".
+  Q12 counts the character's contact shadow: the stage's shadow disc under
+  each plinth, drawn in the id pass as a thin disc of radius 0.4 in the
+  figure's shadow code (the stage's own disc is a soft texture with no
+  clear edge).
+- **Universe, Q2 to Q6 and Q12.** The universe draws islands, not
+  figures; the islands are too small at this distance for paths and
+  buildings to read; and they float over the sky with nothing to cast a
+  shadow on. The universe's pins (`UniversePins`) are counted as
+  interface: they are the screen's labels, drawn in 2D over the world, not
+  markers in the world. They stay over the cover in `ui_a` and `ui_b`,
+  and are made see-through (alpha 0, not only hidden) for `world.png`
+  and `id.png`: the universe screen sets the pins' `visible` again every
+  frame (`home.gd`, `_fit_pins`), so hiding them by `visible` alone let
+  them back into those passes. Q1 says how much of the universe the interface
+  leaves clear. Q11 rates one island: the focused one, or the Heart (the
+  player's own) where the camera focuses none; `mask.json` names it in
+  `"island"`. The pass draws that island's meshes (its rock, its near and
+  far looks, its close-up, and the Citadel for the Heart) with id index
+  1 and every other island with index 0, and hides the galaxy behind
+  them (`StarSky`, `universe_galaxy`), which otherwise fills the frame.
+  At the widest zoom the universe draws one merged copy of all its
+  islands (`UniverseWhole`); the pass draws the sources instead, so the
+  rated island can be told from the rest.
+- **None.** `screen_observatory` builds its card pictures in an offscreen
+  `StageView` that is never drawn (`stage_thumbs.gd`), so the frame holds
+  no 3D view. The pass saves the frame as `beauty.png` and as both `ui_`
+  passes (all interface), black world and id passes, and `mask.json` with
+  `"screen": "none"`; Q1 then reads the whole frame as interface.
+
+**The shots on 26 November 2026** (`mask.py`, each with exit 0, no
+script error, no unclassed mesh and no stray colour in `id.png`; the
+second resync's run, after the pins, the vignette, the result screen's
+fade and the clear colour round a small view were kept out of the id
+pass):
+
+| Shot | Kind | Figures | Buildings (Q5, Q12) | Q11 |
+|---|---|---|---|---|
+| `screen_heist`, `screen_laws` | heist | crew 24.2–28.4 pt, guards 38.9–39.6 pt | 1, on the path, unshadowed | all clear |
+| `screen_landing` | heist | none yet ("no figure in frame") | none in frame | target under a panel |
+| `screen_replay` | heist | crew 25–29 pt, guards 22.7–41.1 pt | none in frame | all clear |
+| `screen_result` | heist | crew 14.5–33.8 pt | none in frame | chosen under a panel |
+| `screen_realm` | realm | none | 6 (2 on one path), 0 of 4 shadowed | island cut left and right |
+| `screen_builder`, `screen_curation` | realm | guards 38–40 pt | 4 (1 on one path), 0 of 4 shadowed | island cut left and right |
+| `screen_defences` (`TAB=0`) | realm | crew 8–18.7 pt, guard 22.2 pt | 4 (2 on one path), 0 of 3 shadowed | island cut top and bottom |
+| `screen_planner` | realm | none | none in frame | island clear |
+| `screen_scout` | realm | none | none in frame | island cut left and right |
+| `screen_character`, `screen_forms`, `screen_hatch`, `screen_roster`, `screen_sage_hall` | character | one, 99–125 pt | not measured | clear, 13.6–17.6% of the height (fail) |
+| `screen_first` | character | three, 177–240 pt | not measured | h0 cut, h1 clear, h2 cut; 30.9% (fail) |
+| `universe_home` | universe | not measured | not measured | the Heart clear (27.3% under the interface) |
+| `universe_zoom` | universe | not measured | not measured | the Heart clear (46.6% under, near the 50% line) |
+| `universe_screen` | universe | not measured | not measured | the Heart clear (22.1% under) |
+| `universe_map` | universe | not measured | not measured | the Heart under a panel (56.9% under its chips) |
+| `screen_observatory` | none | not measured | not measured | not measured |
+
+The town's houses read unshadowed (foot luma about 1.0 of the tops'):
+that is the look, not the pass. A law's screen tint (`law_fx_tint`, one
+quad before the camera on `screen_replay` and `screen_result`) is hidden
+with the sky: it is a wash over the frame, not a thing in the world.
+So is the look's vignette and haze (`world_look.gd`, a 2D layer over the
+3D world), which the id pass hides. The id pass also draws black behind
+the world view (the project's sky-blue clear colour showed round
+`screen_defences`' small view once its interface was see-through), and
+lifts the world view's own tint and fade (`screen_result` draws its
+island at 30% alpha, tinted violet), in `world.png` too. All three
+decoded as classes before the stray check above caught them.
+
+**`screen_realm`'s cut.** Its island touches the left and right edges
+with its own meadow rim (other ground of tile kind "outside", rows 828
+to 1405) and the cliff face at the rim's foot (rows 840 to 1407), not
+with the underside rock below it: the beauty shows the meadow running
+off both sides, so "cut" is what the eye sees.
+
+**Root-window shots.** A screen shot draws on the root window, which
+`project.godot` sizes at half the phone (540 × 1170, stretched). The pass
+scales each saved pass back to the frame's own 1080 × 2340 with no blending,
+so the id colours stay exact and every rectangle in `mask.json` matches the
+images, as on a heist shot's SubViewport.
+
 ## Known limits
 
 - **The plan's "nearest guard"** is matched by guard 0, not by the guard
@@ -263,6 +419,7 @@ raised head under the camera's pitch, as the Q2 readings table says.
 - **Q12's cliffs-darker check** is weak on this island: cliff faces read
   115.1 against tops at 114.8 at sneak, 15 tiles. The measure works, but
   the island has few cliff pixels in frame, so it says little here.
+  `screen_replay` reads cliffs lighter than tops (47.2 against 39.1).
 - **The strict band** moves with the moment's bubbles and labels (19.1%
   at sneak, 15 tiles; the plan's 16.6% was from another frame). Use
   `band` for Q1's target.
@@ -273,5 +430,13 @@ raised head under the camera's pitch, as the Q2 readings table says.
 - **Stacked figures.** Crew on one tile (entry) hide each other. Their
   heights come from their bounds and are right, but Q3 and Q4 count the
   hidden ones as hidden, which is what the player sees.
+- **The universe's rated island** is the view's `focus_id` whenever that
+  island exists, at any zoom. A shot that comes back to zoom 0 with an
+  earlier focus left in `focus_id` rates that island, not the Heart;
+  `"island"` in `mask.json` says which one was rated. Today's four
+  universe shots all rate the Heart.
 - **`measure.py --self-test`** is not run by `tools/check_all.sh` (not
   this task's file); the lead may add it.
+- **`mask_pass.gd` is at gdlint's 1000-line limit**
+  (`client/gdlintrc`). A further pass or class needs the file split (a
+  stage pass and a world pass, say) before it can grow.
