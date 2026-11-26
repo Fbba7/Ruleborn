@@ -3,21 +3,27 @@
   "role": "measure track",
   "branch": "claude/3d-mask",
   "model": "Opus 5.5",
-  "agent_state": "active",
+  "agent_state": "waiting",
   "task_id": "3D0-M2-mask-screens",
-  "task_state": "claimed",
+  "task_state": "ready",
   "claimed_at": "2026-11-26T02:35:00Z",
-  "lease_until": "2026-11-26T05:49:42Z",
-  "updated_at": "2026-11-26T02:49:42Z",
-  "expected_next_update_by": "2026-11-26T03:27:07Z",
+  "lease_until": "2026-11-26T06:31:25Z",
+  "updated_at": "2026-11-26T03:31:25Z",
+  "expected_next_update_by": "2026-11-26T06:31:25Z",
   "long_run": null,
   "progress_marker": {
-    "last_green_sha": "15f1b796cc962bc56a6c08cdd7c02e1804606a07",
-    "next_step": "fixes coded (universe home island, realm town buildings, no 0-of-0, chosen -1, self-test cases); next: render the mask-limit shots, check realm edges, update mask.md"
+    "last_green_sha": "3ee3aa2735019c9c7198ce304c5eb0c173768c9b",
+    "next_step": "ready for the verifier at 3ee3aa27"
   },
-  "precheck": null,
+  "precheck": {
+    "sha": "3ee3aa2735019c9c7198ce304c5eb0c173768c9b",
+    "state": "PASS",
+    "exit": 0,
+    "finished_at": "2026-11-26T03:31:07Z",
+    "summary": "All checks passed."
+  },
   "gate_request": null,
-  "ready_sha": null,
+  "ready_sha": "3ee3aa2735019c9c7198ce304c5eb0c173768c9b",
   "stop_at": "2026-12-02T21:00:00Z",
   "acks": [
     "cycle-206-start"
@@ -54,5 +60,5 @@
     }
   ],
   "answers": [],
-  "next_step": "Resync of 3D0-M2-mask-screens: verifier points 1-5 fixed on the branch; re-rendering every mask-limit shot to refresh mask.md's results table (screen_realm added), then pre-check and ready."
+  "next_step": "3D0-M2-mask-screens ready at 3ee3aa27 (resync; pre-check PASS, owners diff clean, measure.py --self-test ok): verifier points 1-5 fixed, mask.md's results table re-rendered on all 22 mask-limit shots. Next: the verifier's review."
 }
