@@ -217,8 +217,12 @@ launcher `trig_015MfKt65r6dHc7ozcWK9gRj` (into
 `session_01SNkKxoZzkq3w8QP1Q43bBT`) and watchdog
 `trig_01TrtGdoG6u7tDQe4Yn6BLpF` (into `session_01SNkKxmyJfHHm4UViVkYKYY`).
 
-Latest lead cycle session: `session_01SNkKxnGQoazsb2Zn5jJzzd` (cycle 206,
-26 November 2026 from about 00:14Z, started by the Opus 5.5 launcher).
+Latest lead cycle session: `session_01SNkKxp2mpvTYM3zZh3Gi1C` (cycle 208,
+26 November 2026 from about 01:38Z, started by the Opus 5.5 launcher).
+Cycle 207's was `session_01SNkKxr9K2YqiE7qf9taX7r` (26 November, from
+about 01:15Z).
+Cycle 206's was `session_01SNkKxnGQoazsb2Zn5jJzzd` (26 November, from
+about 00:14Z).
 Cycle 205's was `session_01SNkKxpVk3qU9Sg2wwL1V6J` (25 November, from
 about 23:38Z).
 Cycle 204's was `session_01SNkKxnHHPKMvqUk6akhCWX` (25 November, from
@@ -443,6 +447,7 @@ Agent sessions (on the repository at main, tagged `ruleborn:ui-wave` and
 
 | Agent | Session | Task | Branch | Created |
 |---|---|---|---|---|
+| SP-bt-01 | `session_01SNkKxqcX7brniT4BXdBWu8` (Opus 5.5, effort high) | 3D0-CO-queue-flake (start, cycle 207: the coordinator task of cycle 206, assigned to the coordinator specialist; Opus 5.5 high as the task names, the merge queue and its lock; SP-bt-01's last session, `session_01SNkKxnk1jnaFLfc14YYCAq`, is idle, its task merged) | `claude/ui-spec-coord` | 2026-11-26 01:19Z |
 | M2 | `session_01SNkKxmfUr1jfnjsq8DnggV` (Opus 5.5, effort medium) | 3D0-M2-mask-screens (start, cycle 206: M1-R2's mask task seeded after the baseline merged; Opus 5.5 medium by order 7, a complex task in tools/render; M2's last session, `session_01SNkKxpBiaVYnEU6QASbpEV`, is idle, its task merged) | `claude/3d-mask` | 2026-11-26 00:50Z |
 | M1 | `session_01SNkKxpnpiNRd38EhMM9ukJ` (Opus 5.5, effort high) | 3D0-M1-baseline (restart, cycle 203: resync after the verifier found that --no-render overwrites the committed baseline data with nulls; Opus 5.5 high by order 7, a resync; M1's last session, `session_01SNkKxn9dm8J8WUsKvxtyJ6`, is idle) | `claude/3d-measure` | 2026-11-25 22:31Z |
 | M2 | `session_01SNkKxpBiaVYnEU6QASbpEV` (Opus 5.5, effort high) | 3D0-M2-find-it (restart, cycle 202: resync after the verifier failed the shown guard's sight check (pale dots and petals credit it); Opus 5.5 high by order 7, a resync; M2's last session, `session_01SNkKxoLp1JEhwF88WFhv8b`, is idle) | `claude/3d-mask` | 2026-11-25 21:00Z |
@@ -882,16 +887,16 @@ Your session was created with the repository checked out at main; work in that c
 ### SP-bt-01
 
 ```text
-You are agent SP-bt-01 of the Ruleborn agent program (UI wave, the BT track). Read docs/guides/agent-brief.md first and follow it exactly (its section 'If you are a specialist' applies to you); then docs/guides/agent-protocol.md where the brief links to it.
+You are agent SP-bt-01 of the Ruleborn agent program (3D quality wave; you are the specialist for the coordinator script, not a BT-track task). Read docs/guides/agent-brief.md first and follow it exactly (its section 'If you are a specialist' applies to you); then docs/guides/agent-protocol.md where the brief links to it; then docs/process/superpowers/README.md, and follow CLAUDE.md order 8 with the skills there.
 
 Agent: SP-bt-01            Role: specialist: the coordinator script (tools/coord/)        Model: Opus 5.5, effort high
 Branch: claude/ui-spec-coord
 Owned files: only the files each SP-bt-01 task lists in the backlog, docs/progress/SP-bt-01.md, docs/progress/status/SP-bt-01.json
-Tasks: BT-01b (started in lead cycle 186; BT-01a merged in cycle 186): the merge-then-test queue in tools/coord/ (not owners.*), built on BT-01a's cycle.py: for each ready task, owners.py diff against main, a candidate taken from main's head (batching 2-3 disjoint ready tasks), the merge lock `merging` in docs/progress/status/lead.json on main (written and pushed before the checks, expires_at = started_at + 60 min, cleared when main moves or the candidate fails; an expired lock is cleared and noted), bash tools/run_checks.sh on the candidate, fast-forward of main on a pass (merging the candidate onto main's head and re-running only the documentation check when main gained only docs/progress/** commits meanwhile), `resync` with the failure lines on a fail, and the owner-inbox entries, as agent-protocol.md's merge queue and 'Running a cycle' in docs/progress/lead.md describe them. A dry-run mode prints the actions and pushes nothing; unit tests on fixture branches (local bare repositories in a temp dir, no network) pass under cycle.py --self-test, which check_all.sh already runs. Do not change archive.py's or cycle_needed.py's behaviour the lead relies on.
-STOP_AT: 2026-11-25T21:00:00Z (= 18:00 America/Sao_Paulo)
-Wave plan: docs/art/ui-quality/report.md section 3     Phase: 4
+Tasks: 3D0-CO-queue-flake (started in lead cycle 207): make tools/coord/merge_queue.py's self-test deterministic (M1-R3: the 'lock cleared' case reads last_merged as None about 1 run in 3), and make cycle.py read a status file's acks given as strings or as objects with an id (M2.json on claude/3d-mask crashes its dry run: unhashable dict). Write the failing tests first. Each task's done_when in docs/progress/backlog.json is the bar; a verifier on Opus 5.5 at effort high reviews your diff before it merges (CLAUDE.md order 7). Do not change archive.py's or cycle_needed.py's behaviour the lead relies on.
+STOP_AT: 2026-12-02T21:00:00Z
+Wave plan: docs/art/3d-quality/plan.md section 6     Phase: 0
 
-Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci) for three.js, which the icon bake needs; then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; branch claude/ui-spec-coord from it (create it if it does not exist) and push only to claude/ui-spec-coord with git push -u origin claude/ui-spec-coord, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is SP-bt-01, whose state is open and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
+Your session was created with the repository checked out at main; work in that checkout. Before your first pre-check, install the tools a fresh container lacks: rustup target add wasm32-unknown-unknown aarch64-linux-android aarch64-apple-ios; pip install "gdtoolkit==4.*" "playwright==1.63.0"; (cd tools/ui_research && npm ci); then bash client/build.sh. Main is claude/videogame-project-analysis-ewkkk2; merge main into claude/ui-spec-coord first (create the branch from main if it does not exist) and push only to claude/ui-spec-coord with git push -u origin claude/ui-spec-coord, retrying after 2, 4, 8 and 16 seconds on network failures. Take the first task in docs/progress/backlog.json on main whose assigned_to is SP-bt-01, whose state is open or resync and whose deps are all merged; when none is left, set agent_state "done", push, and end the session. One task per session. Pre-check with bash tools/run_checks.sh (start, then wait in the background, then record) before marking a task ready. Do not open a pull request. Do not stop to ask the owner anything: requests go to the lead in your status file, with a default.
 ```
 
 ### SP-bt-04
@@ -972,12 +977,12 @@ Your session was created with the repository checked out at main; work in that c
 ### M1
 
 ```text
-You are agent M1 of the Ruleborn agent program (3D quality wave). Read docs/guides/agent-brief.md first and follow it exactly; then docs/guides/agent-protocol.md where the brief links to it; then docs/art/3d-quality/plan.md, sections 6 and 7.
+You are agent M1 of the Ruleborn agent program (3D quality wave). Read docs/guides/agent-brief.md first and follow it exactly; then docs/guides/agent-protocol.md where the brief links to it; then docs/process/superpowers/README.md, and follow CLAUDE.md order 8 with the skills there; then docs/art/3d-quality/plan.md, sections 6 and 7.
 
 Agent: M1            Role: measure track: budget split, then the baseline        Model: Sonnet 5.5, effort medium
 Branch: claude/3d-measure
 Owned files: only the files each M1 task lists in the backlog, docs/progress/M1.md, docs/progress/status/M1.json
-Tasks: 3D0-M1-budget-split, then 3D0-M1-baseline (after 3D0-M2-mask-tool merges). Each task's done_when in docs/progress/backlog.json is the bar; a verifier on Opus 5.5 at effort high reviews your diff before it merges (CLAUDE.md order 7). If the task is harder than your model and effort, say so in your status file and end your turn.
+Tasks: 3D0-M1-budget-split, then 3D0-M1-baseline (after 3D0-M2-mask-tool merges), then 3D0-M1-baseline-2 (after 3D0-M2-mask-screens merges). Each task's done_when in docs/progress/backlog.json is the bar; a verifier on Opus 5.5 at effort high reviews your diff before it merges (CLAUDE.md order 7). If the task is harder than your model and effort, say so in your status file and end your turn.
 STOP_AT: 2026-12-02T21:00:00Z
 Wave plan: docs/art/3d-quality/plan.md section 6     Phase: 0
 
@@ -987,12 +992,12 @@ Your session was created with the repository checked out at main; work in that c
 ### M2
 
 ```text
-You are agent M2 of the Ruleborn agent program (3D quality wave). Read docs/guides/agent-brief.md first and follow it exactly; then docs/guides/agent-protocol.md where the brief links to it; then docs/art/3d-quality/plan.md, sections 6 and 7.
+You are agent M2 of the Ruleborn agent program (3D quality wave). Read docs/guides/agent-brief.md first and follow it exactly; then docs/guides/agent-protocol.md where the brief links to it; then docs/process/superpowers/README.md, and follow CLAUDE.md order 8 with the skills there; then docs/art/3d-quality/plan.md, sections 6 and 7.
 
 Agent: M2            Role: measure track: the mask tool, then the find-it test        Model: Opus 5.5, effort medium (3D0-M2-find-it: Sonnet 5.5, effort medium)
 Branch: claude/3d-mask
 Owned files: only the files each M2 task lists in the backlog, docs/progress/M2.md, docs/progress/status/M2.json
-Tasks: 3D0-M2-mask-tool, then 3D0-M2-find-it. Each task's done_when in docs/progress/backlog.json is the bar; a verifier on Opus 5.5 at effort high reviews your diff before it merges (CLAUDE.md order 7). If the task is harder than your model and effort, say so in your status file and end your turn.
+Tasks: 3D0-M2-mask-tool, then 3D0-M2-find-it, then 3D0-M2-mask-screens (Opus 5.5, effort high on its resync). Each task's done_when in docs/progress/backlog.json is the bar; a verifier on Opus 5.5 at effort high reviews your diff before it merges (CLAUDE.md order 7). If the task is harder than your model and effort, say so in your status file and end your turn.
 STOP_AT: 2026-12-02T21:00:00Z
 Wave plan: docs/art/3d-quality/plan.md section 6     Phase: 0
 
@@ -1043,6 +1048,37 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
 
 ## Now
 
+- **Cycle 208**, 26 November 2026, from about 01:38Z (session
+  `session_01SNkKxp2mpvTYM3zZh3Gi1C`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 207:
+  M2 pushed its mask pass on the realm, character, universe and plain
+  screens (efb722a, merged main at 15f1b79) and is idle between turns
+  with its check_all running, inside its update window (02:00Z);
+  SP-bt-01 pushed its fix (00d0814: a started check run is settled, acks
+  given as objects are read) and runs its load test. **Verify / merge:**
+  nothing is ready. **Started:** none; two builders work, under the cap
+  of three while the seven-day bar reads `allowed_warning`. M1's seat
+  waits for the mask task; DT1's and CF1's seats are free with no 3D
+  task open for them. **Requests:** M2-R1 and M2-R2 stay at their
+  defaults. **Owner:** the phone trial and the style-frame pick are
+  still open (owner inbox).
+
+- **Cycle 207**, 26 November 2026, from about 01:15Z (session
+  `session_01SNkKxr9K2YqiE7qf9taX7r`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 206:
+  M2 claimed 3D0-M2-mask-screens and pushed a work-in-progress commit
+  (7dd9d05); its session is working. **Verify / merge:** nothing is
+  ready. **Assigned:** 3D0-CO-queue-flake goes to SP-bt-01, the
+  coordinator-script specialist (its seat owns `tools/coord/`; this is
+  a 3D-wave task, not a reopening of the BT track); its prompt now names
+  the task and order 8. **Started:** SP-bt-01 on 3D0-CO-queue-flake
+  (`session_01SNkKxqcX7brniT4BXdBWu8`, Opus 5.5 high). Two builders
+  work, under the cap of three while the seven-day bar reads
+  `allowed_warning`. M1's seat waits for the mask task; DT1's and CF1's
+  seats are free with no 3D task open for them. **Requests:** M2-R1 and
+  M2-R2 stay at their defaults. **Owner:** the phone trial and the
+  style-frame pick are still open (owner inbox).
+
 - **Cycle 206**, 26 November 2026, from about 00:14Z (session
   `session_01SNkKxnGQoazsb2Zn5jJzzd`, started by the Opus 5.5 launcher,
   Opus 5.5 at effort medium by order 7). The changes since cycle 205:
@@ -1067,34 +1103,6 @@ Notes that stay true from cycle to cycle; `archive.py` never moves them.
   `client/tests/shots/style_frame_heist.gd.uid` untracked (not M1's
   file). **Owner:** phase 0's work is merged but for the owner's two
   items, the phone trial and the style-frame pick (owner inbox).
-
-- **Cycle 205**, 25 November 2026, from about 23:38Z (session
-  `session_01SNkKxpVk3qU9Sg2wwL1V6J`, started by the Opus 5.5 launcher,
-  Opus 5.5 at effort medium by order 7). The changes since cycle 204:
-  M1's pre-check of 7f6f90c failed only on the coordinator's
-  `merge_queue` self-test ("lock cleared": `last_merged` read as None,
-  1 in 3 runs on the same code), and M1 asked for a fix (M1-R3); its
-  second pre-check (of dee58fa) runs. **Verify / merge:** nothing is
-  ready. **Started:** none. M1's session is idle between turns with the
-  pre-check running, inside its update window (00:10Z). M2's, DT1's and
-  CF1's seats are free with no 3D task open for them. **Requests:**
-  M1-R3 stays at its default (M1 re-runs the pre-check once; a PASS
-  stands); the flaky self-test is noted for a coordinator task if it
-  fails a candidate's full checks. M1-R2, M2-R1 and M2-R2 stay at their
-  defaults; M1-R2's task is seeded once the baseline merges. **Owner:**
-  the phone trial and the style-frame pick are still open (owner inbox).
-
-- **Cycle 204**, 25 November 2026, from about 23:15Z (session
-  `session_01SNkKxnHHPKMvqUk6akhCWX`, started by the Opus 5.5 launcher,
-  Opus 5.5 at effort medium by order 7). The changes since cycle 203:
-  M1 pushed the second review of its resync (7f6f90c) and runs its
-  pre-check; the candidates of cycle 203 moved. **Verify / merge:**
-  nothing is ready. **Started:** none. M1's session is idle between
-  turns with its pre-check running, inside its update window (23:45Z).
-  M2's, DT1's and CF1's seats are free with no 3D task open for them.
-  **Requests:** M1-R2, M2-R1 and M2-R2 stay at their defaults; M1-R2's
-  task is seeded once the baseline merges. **Owner:** the phone trial
-  and the style-frame pick are still open (owner inbox).
 
 - **Restart, 25 November 2026** (the overseer). The owner restarted the
   program on the 3D quality plan ("Based on the plan made by Fable, let's
