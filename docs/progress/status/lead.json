@@ -1,8 +1,8 @@
 {
   "agent": "lead",
-  "updated_at": "2026-11-26T01:45:00Z",
-  "expected_next_update_by": "2026-11-26T04:45:00Z",
-  "cycle": 208,
+  "updated_at": "2026-11-26T02:45:00Z",
+  "expected_next_update_by": "2026-11-26T05:45:00Z",
+  "cycle": 209,
   "merging": null,
   "last_merged": {
     "task_id": "3D0-M1-baseline",
@@ -52,9 +52,9 @@
     "Owner's order of 10 November 2026, 08:28Z: \"Deploy and then stop cleanly\" (CLAUDE.md order 1). The launcher trig_01ChLd51gPMwzsKrXifYfkYj (08:30Z) and the watchdog trig_016aHfeAQkYXB6Z5X361irkE are disabled by the overseer and stay disabled; never re-enable them. One final lead cycle (cycle 50), started by the overseer by hand, merges what is ready; after it the program is stopped.",
     "Restarted by the owner on 9 November 2026, on Fable 5.2 only (CLAUDE.md orders 1 and 4). Launcher trig_01ChLd51gPMwzsKrXifYfkYj and watchdog trig_016aHfeAQkYXB6Z5X361irkE, created at 21:32Z after the restart was on main. The pair created at 20:55Z (trig_015MfKt65r6dHc7ozcWK9gRj, trig_01TrtGdoG6u7tDQe4Yn6BLpF) started no cycle and is disabled, like the older ones; never re-enable any of them (lead.md)."
   ],
-  "next_step": "Verify (Opus 5.5 high subagent) and merge 3D0-M2-mask-screens when M2 marks it ready, then start M1 on 3D0-M1-baseline-2 (Sonnet 5.5 medium). Verify and merge 3D0-CO-queue-flake when SP-bt-01 marks it ready; until it merges, do the queue steps by hand when cycle.py's dry run crashes on M2.json's acks. DT1's and CF1's seats are free with no 3D task open. Every session created follows CLAUDE.md order 8. Restart M2 or SP-bt-01 if stale. The owner runs the phone trial and picks a style frame to close phase 0.",
+  "next_step": "Verify (Opus 5.5 high subagent) and merge 3D0-CO-queue-flake when SP-bt-01 marks it ready; until it merges, do the queue steps by hand when cycle.py's dry run crashes on acks given as objects. Verify and merge 3D0-M2-mask-screens when M2's resync (session_01SNkKxrB9QRrPjRunKNvHgP, Opus 5.5 high) marks it ready, then start M1 on 3D0-M1-baseline-2 (Sonnet 5.5 medium). DT1's and CF1's seats are free with no 3D task open. Every session created follows CLAUDE.md order 8. Restart M2 or SP-bt-01 if stale. The owner runs the phone trial and picks a style frame to close phase 0.",
   "seen": {
-    "at": "2026-11-26T01:42:29Z",
+    "at": "2026-11-26T02:32:12Z",
     "heads": {
       "claude/3d-camera": "18ae7ba4d527593a82b80c10b3c82e0f0d7e1610",
       "claude/3d-character-screens": "6053b249bee313648da3509142eeb2ba738bb62f",
@@ -64,7 +64,7 @@
       "claude/3d-kit": "ca2308becc903e76c6709028982e8ca7066e5a08",
       "claude/3d-law-fx": "358a1f08179d315ec69ff5dcb037e34e89ee7a2b",
       "claude/3d-look": "815e381279f5fdb9952b28866ed6dc4121f2b1d5",
-      "claude/3d-mask": "15f1b796cc962bc56a6c08cdd7c02e1804606a07",
+      "claude/3d-mask": "9bdba0200f6a91579075c2dbd1047754afcf6191",
       "claude/3d-measure": "5aad9e6a162a04b8b9e0fda9a804ade468094239",
       "claude/3d-screens": "11679b2bf4d2670e7067791d3bbf32cfd64edc2d",
       "claude/3d-screens-world": "ea319807b0a7c177e1b1413c76ae945d63f3f399",
@@ -92,7 +92,7 @@
       "claude/ui-screens-heist": "24bfbadb848c9a31025e0c16387c5dc5fba2c409",
       "claude/ui-screens-home": "eded364b11d503933f1d657683a2b622f66ca972",
       "claude/ui-screens-meta": "8e73789bd8519aeb195e6e36d013d5290353975b",
-      "claude/ui-spec-coord": "00d0814dea98ecfd33ca8255001f5166af98d541",
+      "claude/ui-spec-coord": "e0a0499c8d67a32480e6f56d48e1fee2e015144c",
       "claude/ui-spec-docs-check": "5510c6bcfb2ce42b310abbac703daffe4adf06ac",
       "claude/ui-spec-gate-render": "c0e3a29dc88c94a9ceb5326b9ca8e5e9a933459b",
       "claude/ui-spec-gate-run": "23825261d8051e9eff16d12d6809321a00b2776d",
@@ -134,7 +134,6 @@
     "ready": {},
     "startable": [
       "3D0-CO-queue-flake",
-      "3D0-M2-mask-screens",
       "BT-05",
       "BT-06",
       "BT-09"

@@ -5,6 +5,31 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Cycle 206**, 26 November 2026, from about 00:14Z (session
+  `session_01SNkKxnGQoazsb2Zn5jJzzd`, started by the Opus 5.5 launcher,
+  Opus 5.5 at effort medium by order 7). The changes since cycle 205:
+  M1 marked 3D0-M1-baseline ready at dee58fa after its second pre-check
+  passed. **Verify / merge:** an Opus 5.5 high verifier passed the
+  baseline against its `done_when` (minor findings moved into
+  3D0-M1-baseline-2); candidate 34d85938 passed the full checks (the
+  first waiter hit its time limit; the second read PASS), and the
+  baseline merged onto main at 76fe289d. `cycle.py`'s dry run crashed on
+  M2.json's acks written as objects, so the queue steps were done by
+  hand. **Seeded:** 3D0-M2-mask-screens (M2, Opus 5.5 medium; M1-R2's
+  mask tool on the realm, universe and character screens),
+  3D0-M1-baseline-2 (M1, Sonnet 5.5 medium, after the mask task; the
+  n/m cells and the verifier's minor findings) and 3D0-CO-queue-flake
+  (the coordinator, Opus 5.5 high: the `merge_queue` self-test flake of
+  M1-R3 and the string-or-object acks). **Started:** M2 on
+  3D0-M2-mask-screens (`session_01SNkKxmfUr1jfnjsq8DnggV`). M1's seat
+  waits for the mask task; DT1's and CF1's seats are free with no 3D task
+  open for them. **Requests:** M1-R2 is handled by the two new tasks,
+  M1-R3 by the coordinator task; M2-R1 and M2-R2 stay at their defaults.
+  The verifier noted that a fresh build leaves
+  `client/tests/shots/style_frame_heist.gd.uid` untracked (not M1's
+  file). **Owner:** phase 0's work is merged but for the owner's two
+  items, the phone trial and the style-frame pick (owner inbox).
+
 - **Cycle 205**, 25 November 2026, from about 23:38Z (session
   `session_01SNkKxpVk3qU9Sg2wwL1V6J`, started by the Opus 5.5 launcher,
   Opus 5.5 at effort medium by order 7). The changes since cycle 204:
