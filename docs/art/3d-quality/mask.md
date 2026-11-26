@@ -46,7 +46,7 @@ twenty-five with three jobs.
 | `markers.png` | The 2D markers alone (speech bubbles, labels, icons) on a clear background |
 | `marks3d.png` | The 3D markers alone (rings, sight edge, overlay, effects) on black |
 | `id.png` | Every 3D thing in a flat colour that codes what it is |
-| `solo_c<i>.png`, `solo_g<i>.png` | Each figure alone, its whole outline even where something hides it |
+| `solo_c<i>.png`, `solo_g<i>.png`, `solo_h<i>.png` | Each figure (crew, guard, character) alone, its whole outline even where something hides it |
 | `mask.json` | The frame, each figure's projected bounds, feet, head and span, the vault, the exit, the camera and the shot's settings |
 
 **The id code.** Red and green carry the class (red `class // 4`, green
@@ -263,8 +263,8 @@ and says why for the others (`WHY` in `measure.py`; `measure.json` holds
 
 | Kind | Shots (the baseline's "mask limit" rows) | Q1 | Q2 | Q3 | Q4 | Q5 | Q6 | Q11 | Q12 |
 |---|---|---|---|---|---|---|---|---|---|
-| `heist` | `screen_heist`, `screen_laws`, `screen_replay`, `screen_result`, the matrix | yes | yes | yes | yes | yes | yes | chosen crew, nearest guard, vault | figures, buildings, cliffs |
-| `realm` | `screen_realm`, `screen_builder`, `screen_curation`, `screen_defences` (`TAB=0`), `screen_landing`, `screen_planner`, `screen_scout` | yes | when figures are drawn | when figures are drawn | when figures are drawn | yes | when figures are drawn | the island | buildings, cliffs; figures when drawn |
+| `heist` | `screen_heist`, `screen_laws`, `screen_replay`, `screen_result`, `screen_landing` (the heist before the crew land), the matrix | yes | yes | yes | yes | yes | yes | chosen crew, nearest guard, vault | figures, buildings, cliffs |
+| `realm` | `screen_realm`, `screen_builder`, `screen_curation`, `screen_defences` (`TAB=0`), `screen_planner`, `screen_scout` | yes | when figures are drawn | when figures are drawn | when figures are drawn | yes | when figures are drawn | the island | buildings, cliffs; figures when drawn |
 | `character` | `screen_character`, `screen_first`, `screen_forms`, `screen_hatch`, `screen_roster`, `screen_sage_hall` | yes | yes | yes | yes | no | no | the character | the character's shadow disc |
 | `universe` | `universe_home`, `universe_zoom`, `universe_map`, `universe_screen` | yes | no | no | no | no | no | the home island | no |
 | `none` | `screen_observatory` | yes | no | no | no | no | no | no | no |
@@ -274,8 +274,12 @@ Why each "no" and "when":
 - **Realm, Q2 to Q4 and Q6.** A realm screen hides the heist's crew and
   guards (`RealmScreen` sets `actors.visible = false`), so there are no
   figures for heights, contrast, pile-ups or the markers on them. Where a
-  realm screen does draw figures (the builder's guards on their posts),
-  the pass lists them and these qualities are measured as on a heist.
+  realm screen does draw figures (the guards on their posts in
+  `screen_builder` and `screen_curation`, the crew and guards of
+  `screen_defences`), the pass lists them and these qualities are measured
+  as on a heist. `screen_realm`, `screen_planner` and `screen_scout` draw
+  none, and say so. A woven law's signature (`LawFx`, which a realm's
+  `StageView` hangs under its world) is a 3D marker, as T5's effects are.
   The town's residents and workers are life in the realm, not figures the
   player steers: they are decoration. Q5 and Q12's buildings and cliffs
   apply: the plan's realm goals (section 4) are paths, buildings and
@@ -304,6 +308,22 @@ Why each "no" and "when":
   no 3D view. The pass saves the frame as `beauty.png` and as both `ui_`
   passes (all interface), black world and id passes, and `mask.json` with
   `"screen": "none"`; Q1 then reads the whole frame as interface.
+
+**The shots on 26 November 2026** (`mask.py`, each with exit 0, no
+script error and no unclassed mesh):
+
+| Shot | Kind | Figures | Q11 |
+|---|---|---|---|
+| `screen_heist` | heist | crew 24.2–28.2 pt, guards 38.9–39.6 pt | all clear |
+| `screen_landing` | heist | none yet | target under a panel |
+| `screen_builder`, `screen_curation` | realm | guards 38–40 pt | island cut left and right |
+| `screen_defences` (`TAB=0`) | realm | crew 8–18.7 pt, guard 22.1 pt | island cut |
+| `screen_planner` | realm | none | island clear |
+| `screen_scout` | realm | none | island cut left and right |
+| `screen_character`, `screen_forms`, `screen_hatch`, `screen_roster`, `screen_sage_hall` | character | one, 99–134 pt | clear, 13.6–17.6% of the height (fail) |
+| `screen_first` | character | three, 177–240 pt | cut, 30.9% (fail) |
+| `universe_home`, `universe_zoom`, `universe_map`, `universe_screen` | universe | none | island cut |
+| `screen_observatory` | none | none | not measured |
 
 **Root-window shots.** A screen shot draws on the root window, which
 `project.godot` sizes at half the phone (540 × 1170, stretched). The pass

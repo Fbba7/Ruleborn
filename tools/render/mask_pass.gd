@@ -400,6 +400,17 @@ func _flatten() -> void:
 		_classify(n as GeometryInstance3D)
 
 
+## A woven law's signature (LawFx), which a stage view hangs under its
+## world, not under an `effects` node: a marker, like T5's effects.
+func _in_law_fx(g: Node) -> bool:
+	var n := g.get_parent()
+	while n != null:
+		if n is LawFx:
+			return true
+		n = n.get_parent()
+	return false
+
+
 func _classify(g: GeometryInstance3D) -> void:
 	g.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	var cls := Vector3(-1, 0, 0)
@@ -429,6 +440,7 @@ func _classify(g: GeometryInstance3D) -> void:
 			or g == view._rings
 			or view.effects.is_ancestor_of(g)
 			or view.actors.is_ancestor_of(g)
+			or _in_law_fx(g)
 		):
 			# 3D markers keep their own look for marks3d.png; not in id.png.
 			_marks3d.append(g)
