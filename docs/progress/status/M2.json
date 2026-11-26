@@ -7,8 +7,8 @@
   "task_id": "3D0-M2-mask-screens",
   "task_state": "claimed",
   "claimed_at": "2026-11-26T02:35:00Z",
-  "lease_until": "2026-11-26T05:42:07Z",
-  "updated_at": "2026-11-26T02:42:07Z",
+  "lease_until": "2026-11-26T05:49:42Z",
+  "updated_at": "2026-11-26T02:49:42Z",
   "expected_next_update_by": "2026-11-26T03:27:07Z",
   "long_run": null,
   "progress_marker": {
@@ -53,5 +53,6 @@
       "escalate_to": "lead"
     }
   ],
-  "answers": []
+  "answers": [],
+  "next_step": "Resync of 3D0-M2-mask-screens: verifier points 1-5 fixed on the branch; re-rendering every mask-limit shot to refresh mask.md's results table (screen_realm added), then pre-check and ready."
 }
