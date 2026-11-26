@@ -977,12 +977,12 @@ Your session was created with the repository checked out at main; work in that c
 ### M1
 
 ```text
-You are agent M1 of the Ruleborn agent program (3D quality wave). Read docs/guides/agent-brief.md first and follow it exactly; then docs/guides/agent-protocol.md where the brief links to it; then docs/art/3d-quality/plan.md, sections 6 and 7.
+You are agent M1 of the Ruleborn agent program (3D quality wave). Read docs/guides/agent-brief.md first and follow it exactly; then docs/guides/agent-protocol.md where the brief links to it; then docs/process/superpowers/README.md, and follow CLAUDE.md order 8 with the skills there; then docs/art/3d-quality/plan.md, sections 6 and 7.
 
 Agent: M1            Role: measure track: budget split, then the baseline        Model: Sonnet 5.5, effort medium
 Branch: claude/3d-measure
 Owned files: only the files each M1 task lists in the backlog, docs/progress/M1.md, docs/progress/status/M1.json
-Tasks: 3D0-M1-budget-split, then 3D0-M1-baseline (after 3D0-M2-mask-tool merges). Each task's done_when in docs/progress/backlog.json is the bar; a verifier on Opus 5.5 at effort high reviews your diff before it merges (CLAUDE.md order 7). If the task is harder than your model and effort, say so in your status file and end your turn.
+Tasks: 3D0-M1-budget-split, then 3D0-M1-baseline (after 3D0-M2-mask-tool merges), then 3D0-M1-baseline-2 (after 3D0-M2-mask-screens merges). Each task's done_when in docs/progress/backlog.json is the bar; a verifier on Opus 5.5 at effort high reviews your diff before it merges (CLAUDE.md order 7). If the task is harder than your model and effort, say so in your status file and end your turn.
 STOP_AT: 2026-12-02T21:00:00Z
 Wave plan: docs/art/3d-quality/plan.md section 6     Phase: 0
 
@@ -992,12 +992,12 @@ Your session was created with the repository checked out at main; work in that c
 ### M2
 
 ```text
-You are agent M2 of the Ruleborn agent program (3D quality wave). Read docs/guides/agent-brief.md first and follow it exactly; then docs/guides/agent-protocol.md where the brief links to it; then docs/art/3d-quality/plan.md, sections 6 and 7.
+You are agent M2 of the Ruleborn agent program (3D quality wave). Read docs/guides/agent-brief.md first and follow it exactly; then docs/guides/agent-protocol.md where the brief links to it; then docs/process/superpowers/README.md, and follow CLAUDE.md order 8 with the skills there; then docs/art/3d-quality/plan.md, sections 6 and 7.
 
 Agent: M2            Role: measure track: the mask tool, then the find-it test        Model: Opus 5.5, effort medium (3D0-M2-find-it: Sonnet 5.5, effort medium)
 Branch: claude/3d-mask
 Owned files: only the files each M2 task lists in the backlog, docs/progress/M2.md, docs/progress/status/M2.json
-Tasks: 3D0-M2-mask-tool, then 3D0-M2-find-it. Each task's done_when in docs/progress/backlog.json is the bar; a verifier on Opus 5.5 at effort high reviews your diff before it merges (CLAUDE.md order 7). If the task is harder than your model and effort, say so in your status file and end your turn.
+Tasks: 3D0-M2-mask-tool, then 3D0-M2-find-it, then 3D0-M2-mask-screens (Opus 5.5, effort high on its resync). Each task's done_when in docs/progress/backlog.json is the bar; a verifier on Opus 5.5 at effort high reviews your diff before it merges (CLAUDE.md order 7). If the task is harder than your model and effort, say so in your status file and end your turn.
 STOP_AT: 2026-12-02T21:00:00Z
 Wave plan: docs/art/3d-quality/plan.md section 6     Phase: 0
 
