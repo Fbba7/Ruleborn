@@ -8372,6 +8372,42 @@
         "client/tests/shots/style_frame_heist.gd.uid"
       ],
       "resync_reason": "Verifier (cycle 202, Opus 5.5 high) failed ea4bf724; cycle 199's fixes are real (per-guard sight from marks3d, off-frame figures dropped, clip notes), done_when 1 met, full render reproduced 7 of 50. Must fix: (1) the shown guard passes on unrelated pale pixels with no cone drawn: findit.py:257 'drawn = n_pale >= SIGHT_PIXELS or (is_shown and n_red >= SIGHT_PIXELS)' credits pale to the shown guard, but the client never draws a fan for it (fx_ground.gd:45 skips i == shown); the pale test (findit.py:211) also takes the route preview's paper dots (~194,171,190; fx_ground.gd:161) and falling petals (~114,77,111): the shown guard's ring holds 129-561 such pixels (threshold 40), and with every red marks3d pixel blacked out escape-15 and escape-11 still pass the route. Use red only for the shown guard, pale only for the others; tighten the pale test to leave out the dots' paper (fans have blue >= red, dots and petals do not); fix the self-test base case (findit.py:456, :478) to give the shown guard red, add a case 'pale only near the shown guard -> not drawn', re-score. (2) find-it.md:65-69 ('40 red or pale') and :153-162 (pale takes only the fans; red only credits the shown guard) must match the fixed rule. Minor: M2.md and status/M2.json are stale (028837b, 5 of 50); a non-shown guard's ring could be credited by dots or a neighbour's fan within ~3.6 m (not in today's stills); shown_guard uses world distance and ignores selected_guard; route falls back to crew[0] when the chosen crew member is out of view."
+    },
+    {
+      "id": "3D0-M2-mask-tool",
+      "title": "The mask tool: a flat-colour render pass for actors, markers and ground types, and a script that computes Q1 to Q6, Q11 and Q12 for any still",
+      "phase": 0,
+      "role": "measure track",
+      "model": "Opus 5.5",
+      "effort": "medium",
+      "assigned_to": "M2",
+      "files": [
+        "tools/render/mask*",
+        "tools/render/measure*",
+        "client/tests/shots/mask_*.gd",
+        "docs/art/3d-quality/mask.md",
+        "docs/progress/M2.md",
+        "docs/progress/status/M2.json"
+      ],
+      "deps": [],
+      "done_when": [
+        "The mask pass and the measure script run from one command on any shot",
+        "Checked against the plan's hand measurements: crew 23 to 28 points at 15 tiles, 37.5%, 39%, and the eight-moment matrix, each within the tolerance mask.md states",
+        "Checked by hand on ten stills, recorded in mask.md",
+        "bash tools/run_checks.sh passes"
+      ],
+      "gate_items": [],
+      "attempts": 0,
+      "estimate_h": 12,
+      "tier": 1,
+      "critical": true,
+      "state": "merged",
+      "claim": null,
+      "prior_branch": null,
+      "prior_sha": null,
+      "ready_sha": "deafdd0a",
+      "merged_sha": "a34f20ac",
+      "exceptions": []
     }
   ],
   "idle_queue": [

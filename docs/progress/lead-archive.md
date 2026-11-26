@@ -5,6 +5,13 @@ newest first. Nothing here is current; lead.md's "Now" is.
 
 ## Now (archived)
 
+- **Superpowers copied into the repository**, 25 November 2026 (the
+  overseer). The owner chose to copy the skills of order 8 into
+  `docs/process/superpowers/` (obra/superpowers at 22f0b46, MIT). From
+  now on, every builder prompt points at its README (cycle step 6).
+  M2-find-it's current session was started without them; its next
+  session gets them.
+
 - **Cycle 203**, 25 November 2026, from about 22:15Z (session
   `session_01SNkKxq8jXHuXvuJg4yvtE3`, started by the Opus 5.5 launcher,
   Opus 5.5 at effort medium by order 7). The changes since cycle 202:
