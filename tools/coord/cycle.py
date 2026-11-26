@@ -32,8 +32,8 @@ history). Then it works out, without writing anything:
 - **next tasks**: the tasks an agent could start now, within the building
   cap (`cycle_needed.needs`), as "start" actions for the lead.
 - **messages**: a message acknowledged in the recipient's pushed `acks` (each
-  ack a message id, or an object with the id in `id`) gets `acked_at`; one past `ack_by` without it is flagged (the agent is
-  restarted by step 6).
+  ack a message id, or an object with the id in `id`) gets `acked_at`; one
+  past `ack_by` without it is flagged (the agent is restarted by step 6).
 - **requests**: every request in a status file that `requests.md` does not
   list yet is to be copied under its addressee; an answer pushed in any
   status file is to be copied too; an unanswered request past `due` is

@@ -8,12 +8,12 @@
   "task_state": "working",
   "claimed_at": "2026-11-26T01:30:00Z",
   "lease_until": "2026-11-26T04:30:00Z",
-  "updated_at": "2026-11-26T01:56:00Z",
-  "expected_next_update_by": "2026-11-26T02:41:00Z",
+  "updated_at": "2026-11-26T02:16:00Z",
+  "expected_next_update_by": "2026-11-26T03:01:00Z",
   "long_run": null,
   "progress_marker": {
     "last_green_sha": null,
-    "next_step": "Main merged (89270a01); code review running; then pre-check and ready"
+    "next_step": "Review done (ready; its Minor 1 fixed test-first); self-tests 20/20 sequential, 16/16 loaded; pre-check running"
   },
   "precheck": null,
   "gate_request": null,

@@ -246,16 +246,18 @@ class Checks:
         start waits five seconds for it; a loaded machine can take longer.
         A result read before the file is there says LOST and removes the
         run's worktree, so the run that follows fails or is lost. Past the
-        grace period, the result that follows tells what happened."""
+        grace period, the result that follows tells what happened. Returns
+        whether the pid file turned up."""
         pidf, waited = self._pid_file(kind, sha), 0
         while waited < self.start_grace:
             try:
                 if pidf.read_text().strip():
-                    return
+                    return True
             except OSError:
                 pass
             time.sleep(self.poll)
             waited += self.poll
+        return False
 
     def result(self, kind, sha) -> dict:
         r = self._sh(kind, "result", sha)
@@ -274,15 +276,20 @@ class Checks:
                 lines = (r.stderr or r.stdout).strip().splitlines()
                 return {"sha": sha, "state": "ERROR",
                         "summary": lines[0] if lines else f"start exited {r.returncode}"}
-            self._settle(kind, sha)
+            settled = self._settle(kind, sha)
+        else:
+            settled = True
         waited = 0
         while True:
             res = self.result(kind, sha)
-            if res["state"] == "LOST":
+            if res["state"] == "LOST" and settled:
                 # result looks for the DONE file before it looks for the
                 # runner, so a run that ends between the two reads as LOST.
                 # The DONE file is in place before the runner exits: a second
-                # read tells such a run from one that was killed.
+                # read tells such a run from one that was killed. A run whose
+                # pid file never turned up is not read again: the LOST read
+                # removed its worktree, so a runner that starts after it can
+                # only fail.
                 res = self.result(kind, sha)
             if res["state"] != "RUNNING":
                 break
@@ -1161,6 +1168,13 @@ def self_test() -> list:
         lost = fake("lost", states=["RUNNING", "LOST", "LOST"])
         res = lost.run("full", "c" * 40)
         check("run lost: says so", res["state"] == "LOST")
+        # Past the grace period with no pid file, the first LOST read has
+        # already removed the run's worktree: a runner that turns up after it
+        # can only fail, so the queue takes that LOST as it is.
+        gone = fake("gone", pid_delay=None, pid_on_lost=True, start_grace=0.1,
+                    states=["RUNNING", "FAIL"])
+        res = gone.run("full", "d" * 40)
+        check("no pid file in the grace period: lost", res["state"] == "LOST")
     return fails
 
 
@@ -1171,9 +1185,14 @@ class _FakeRunner(Checks):
     out). Before the pid file is there, result says LOST, as run_checks.sh's
     does."""
 
-    def __init__(self, repo, env, states, pid_delay=0.0):
-        super().__init__(repo, env=env, full_cmd="true", poll=0.05, timeout_min=1)
+    def __init__(self, repo, env, states, pid_delay=0.0, pid_on_lost=False,
+                 start_grace=START_GRACE):
+        super().__init__(repo, env=env, full_cmd="true", poll=0.05, timeout_min=1,
+                         start_grace=start_grace)
         self.states, self.pid_delay = list(states), pid_delay
+        # pid_delay None: start never writes the pid file. pid_on_lost: the
+        # runner writes it just after the first LOST read.
+        self.pid_on_lost = pid_on_lost
         self.seen, self.timer = [], None
 
     def _sh(self, kind, *args):
@@ -1183,7 +1202,9 @@ class _FakeRunner(Checks):
         if args[0] == "start":
             logf.write_text("")
             write = lambda: pidf.write_text("4242\n")
-            if self.pid_delay:
+            if self.pid_delay is None:
+                pass
+            elif self.pid_delay:
                 import threading
                 self.timer = threading.Timer(self.pid_delay, write)
                 self.timer.start()
@@ -1194,6 +1215,9 @@ class _FakeRunner(Checks):
             state = "NONE"
         elif not (pidf.exists() and pidf.read_text().strip()):
             state = "LOST"
+            if self.pid_on_lost:
+                pidf.write_text("4242\n")
+                self.pid_on_lost = False
         else:
             state = self.states.pop(0) if len(self.states) > 1 else self.states[0]
         self.seen.append(state)
