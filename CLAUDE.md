@@ -156,6 +156,18 @@ the status files, requests and scheduled-task prompts.
   - **Where the work stands** is in the same file, "Now", entry
     "Restart, 25 November 2026".
 
+- **26 November 2026, about 08:02 UTC:** the owner stopped it again
+  ("Pause everything"), in the chat of the overseer session. **The
+  program is stopped.** The overseer disabled every enabled scheduled
+  task (the two launcher tasks, the watchdog and its own two-hourly
+  status check-in), found the lead idle after cycle 216 (which merged
+  3D0-M2-mask-screens at cdd30db7) with no merge lock set, and
+  interrupted M1 on 3D0-M1-baseline-2, whose work is on
+  `claude/3d-measure` (d2d97b5f, not merged). Phase 0 of the 3D quality
+  plan stands at 8 of 10 tasks merged; 3D0-M1-baseline-2 and the owner's
+  3D0-OW-phone-trial are open. Where the work stands is in
+  [`docs/progress/lead.md`](docs/progress/lead.md), "Now".
+
 A session that is in the middle of a turn when the program is stopped
 finishes cleanly, so no work is lost: commit and push what it has to its
 own branch (never to main), set `agent_state: stopped` in its status file,
