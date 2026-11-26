@@ -163,7 +163,9 @@ the status files, requests and scheduled-task prompts.
   status check-in), found the lead idle after cycle 216 (which merged
   3D0-M2-mask-screens at cdd30db7) with no merge lock set, and
   interrupted M1 on 3D0-M1-baseline-2, whose work is on
-  `claude/3d-measure` (d2d97b5f, not merged). Phase 0 of the 3D quality
+  `claude/3d-measure` (d2d97b5f, not merged). M1's own background wait
+  woke it again at about 08:22 UTC, so the overseer interrupted it again
+  and archived its session (nothing unpushed). Phase 0 of the 3D quality
   plan stands at 8 of 10 tasks merged; 3D0-M1-baseline-2 and the owner's
   3D0-OW-phone-trial are open. Where the work stands is in
   [`docs/progress/lead.md`](docs/progress/lead.md), "Now".
