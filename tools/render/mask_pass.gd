@@ -2,27 +2,15 @@ extends RefCounted
 ## The mask pass (3D0-M2-mask-tool): run by tools/render/mask.py after a
 ## shot script has drawn its still, in place of the shot's own quit(). It
 ## draws the same frame again several ways and writes each to MASK_OUT:
-##
-## - `beauty.png`: the frame as the shot left it.
-## - `ui_a.png`, `ui_b.png`: the frame with the 3D world replaced by flat red,
-##   then flat green; where the two agree, the interface covers the world.
-## - `world.png`: the 3D world alone, no interface and no 2D markers.
-## - `behind.png`: the same without the figures: the ground behind them.
-## - `markers.png`: the 2D markers alone (FxAnchors), on a clear background.
-## - `id.png`: every 3D thing a flat colour that codes what it is: red and
-##   green the class (class // 4 and class % 4, each n * 64 + 32), blue the
-##   index (a figure's number, or the tile's kind; n * 28 + 14), written as
-##   they are (no sRGB step), so each arrives within a few levels. A figure
-##   keeps its ink outline, drawn in its own code.
-## - `marks3d.png`: the 3D markers alone (rings, sight edge, overlay,
-##   effects) in their own look, on black.
-## - `solo_c<i>.png`, `solo_g<i>.png`: each figure alone, flat, for its
-##   whole outline even where something hides it.
-## - `mask.json`: the frame's size, each figure's projected bounds, head,
-##   feet and tile, the vault, the exit and the shot's settings.
-##
-## tools/render/measure.py reads them. docs/art/3d-quality/mask.md is the
-## method and its checks.
+## `beauty.png` (the frame as left); `ui_a.png`, `ui_b.png` (the world flat
+## red, then green: where they agree, interface covers it); `world.png` (the
+## world alone, no interface or 2D markers); `behind.png` (that without the
+## figures); `markers.png` (the 2D markers alone, on clear); `id.png` (each 3D
+## thing in a flat code: red and green the class, blue the index); `marks3d.png`
+## (the 3D markers alone); `solo_*.png` (each figure alone, flat); and
+## `mask.json` (the frame, each figure's bounds, head, feet and tile, and the
+## shot's settings). tools/render/measure.py reads them;
+## docs/art/3d-quality/mask.md is the method, the codes and the checks.
 
 ## The classes of `id.png`, as measure.py reads them.
 const BACKGROUND := 0
@@ -720,9 +708,15 @@ func _run_stage(v: Control, kind: String) -> void:
 		var tables: Array = v.get("tables")
 		for k in figs.size():
 			_stage_figs.append(["h%d" % k, figs[k], tables[k] if k < tables.size() else figs[k]])
+	# The stage's backdrop and foot fade are its world; every other 2D child
+	# (the character screen's pills, arrows and plate) is interface.
+	var foot: Variant = v.get("_foot_ramp")
 	for c in v.get_children():
 		if c is CanvasItem and c != cont:
-			_own2d.append([c, (c as CanvasItem).visible, (c as CanvasItem).modulate.a])
+			var tex: Variant = c.get("texture")
+			var fade: bool = foot != null and tex is GradientTexture2D and tex.gradient == foot
+			var own: bool = c == v.get("backdrop") or fade
+			_own2d.append([c, (c as CanvasItem).visible, (c as CanvasItem).modulate.a, own])
 	await _save("beauty")
 	_list_ui()
 	var env := _env_of()
@@ -730,9 +724,7 @@ func _run_stage(v: Control, kind: String) -> void:
 		env.fog_enabled = false
 		env.glow_enabled = false
 		env.adjustment_enabled = false
-	# The universe's pins are its interface (they stay over the cover);
-	# a stage's foot fade is its world (hidden, the cover stands for it).
-	_own_2d(kind == "universe")
+	_own_2d(true, false)
 	var cover := ColorRect.new()
 	cover.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	cover.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -744,14 +736,21 @@ func _run_stage(v: Control, kind: String) -> void:
 	cont.remove_child(cover)
 	cover.free()
 	_set_ui(false)
-	_own_2d(kind == "character")
+	_own_2d(false, true)
+	# Black where the frame draws nothing (the project's clear colour).
+	var under := ColorRect.new()
+	under.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	under.color = Color.BLACK
+	frame.add_child(under)
+	frame.move_child(under, 0)
 	await _save("world")
 	for f: Array in _stage_figs:
 		(f[1] as Node3D).visible = false
 	await _save("behind")
 	for f: Array in _stage_figs:
 		(f[1] as Node3D).visible = true
-	_own_2d(false)
+	under.free()
+	_own_2d(false, false)
 	cont.modulate.a = 0.0
 	frame.transparent_bg = true
 	await _save("markers")
@@ -803,11 +802,12 @@ func _env_of() -> Environment:
 	return null
 
 
-## The stage's own 2D children shown as they were (`shown`) or hidden.
-## Hidden by alpha too: the home screen shows its pins again every frame
-## (home.gd's _fit_pins), and nothing on a screen sets their alpha.
-func _own_2d(shown: bool) -> void:
+## The stage's own 2D children as they were, or hidden: its interface
+## shown if `ui`, its world (backdrop, foot fade) if `world`. Hidden by
+## alpha too: home.gd's _fit_pins shows the universe's pins every frame.
+func _own_2d(ui: bool, world: bool) -> void:
 	for e: Array in _own2d:
+		var shown: bool = world if e[3] else ui
 		(e[0] as CanvasItem).visible = e[1] if shown else false
 		(e[0] as CanvasItem).modulate.a = e[2] if shown else 0.0
 
@@ -836,7 +836,7 @@ func _flatten_stage(env: Environment) -> void:
 		w3d.add_child(node)
 	_flat_env(env)
 	vp.transparent_bg = false
-	_own_2d(false)
+	_own_2d(false, false)
 	if screen == "universe":
 		_home_roots = _universe_home()
 	for n in w3d.find_children("*", "GeometryInstance3D", true, false):
